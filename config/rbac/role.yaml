@@ -1,0 +1,104 @@
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  creationTimestamp: null
+  name: manager-role
+rules:
+- apiGroups:
+  - flux-framework.org
+  resources:
+  - deployments
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - flux-framework.org
+  resources:
+  - fluxes
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - flux-framework.org
+  resources:
+  - fluxes/finalizers
+  verbs:
+  - update
+- apiGroups:
+  - flux-framework.org
+  resources:
+  - fluxes/status
+  verbs:
+  - get
+  - patch
+  - update
+- apiGroups:
+  - flux-framework.org
+  resources:
+  - fluxsetups
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - flux-framework.org
+  resources:
+  - fluxsetups/finalizers
+  verbs:
+  - update
+- apiGroups:
+  - flux-framework.org
+  resources:
+  - fluxsetups/status
+  verbs:
+  - get
+  - patch
+  - update
+- apiGroups:
+  - flux-framework.org
+  resources:
+  - pods
+  verbs:
+  - create
+  - get
+  - list
+  - watch
+- apiGroups:
+  - flux-framework.org
+  resources:
+  - services
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - flux-framework.org
+  resources:
+  - statefulsets
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch

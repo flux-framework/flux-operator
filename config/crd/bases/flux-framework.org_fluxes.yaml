@@ -1,0 +1,58 @@
+---
+apiVersion: apiextensions.k8s.io/v1
+kind: CustomResourceDefinition
+metadata:
+  annotations:
+    controller-gen.kubebuilder.io/version: v0.9.0
+  creationTimestamp: null
+  name: fluxes.flux-framework.org
+spec:
+  group: flux-framework.org
+  names:
+    kind: Flux
+    listKind: FluxList
+    plural: fluxes
+    singular: flux
+  scope: Namespaced
+  versions:
+  - name: v1alpha1
+    schema:
+      openAPIV3Schema:
+        description: Flux is the Schema for the fluxes API
+        properties:
+          apiVersion:
+            description: 'APIVersion defines the versioned schema of this representation
+              of an object. Servers should convert recognized schemas to the latest
+              internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources'
+            type: string
+          kind:
+            description: 'Kind is a string value representing the REST resource this
+              object represents. Servers may infer this from the endpoint the client
+              submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds'
+            type: string
+          metadata:
+            type: object
+          spec:
+            description: FluxSpec defines the desired state of Flux
+            properties:
+              command:
+                description: Single user executable to provide to flux start
+                type: string
+              image:
+                description: Container image must contain flux and flux-sched install
+                  This container is provided by the user via Flux, but is also passed
+                  to the FluxSetup reconciler, which needs to run the same container
+                  image. Likely these could be separated, but I'm not sure how that
+                  works yet.
+                type: string
+            required:
+            - command
+            type: object
+          status:
+            description: FluxStatus defines the observed state of Flux
+            type: object
+        type: object
+    served: true
+    storage: true
+    subresources:
+      status: {}

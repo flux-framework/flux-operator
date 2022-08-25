@@ -1,0 +1,50 @@
+apiVersion: flux-framework.org/v1alpha1
+kind: FluxSetup
+metadata:
+  name: flux-sample
+  namespace: flux-operator
+spec:
+  hostfile:
+    config: |
+      apiVersion: v1
+      kind: ConfigMap
+      metadata:
+        name: etc-hosts
+      data:
+        hostfile: | 
+          flux-workers-0.flux-workers 10.0.0.1
+          flux-workers-1.flux-workers 10.0.0.2
+
+  cert:
+    config: |
+      apiVersion: v1
+      kind: Secret
+      metadata:
+        name: secret-tls
+      type: kubernetes.io/tls
+      data:
+        # the data is abbreviated in this example
+        tls.crt: |
+            MIIC2DCCAcCgAwIBAgIBATANBgkqh ...
+        tls.key: |
+            MIIEpgIBAAKCAQEA7yn3bRHQ5FHMQ ...  
+
+  # TODO this should be serialized into this same data
+  # and have it's own broker type
+  broker:
+    config: |
+      apiVersion: v1
+      kind: ConfigMap
+      metadata:
+        name: flux-config
+      data:
+        hostfile: |
+          [bootstrap]
+          curve_cert = "/mnt/curve/curve.cert" 
+          default_port = 8050
+          default_bind = "tcp://eth0:%p"
+          default_connect = "tcp://%h:%p"
+          hosts = [
+            { host="flux-workers-0.flux-workers"},
+            { host="flux-workers-1.flux-workers"},
+          ]
