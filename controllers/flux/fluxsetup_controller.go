@@ -98,6 +98,12 @@ func (r *FluxSetupReconciler) Reconcile(ctx context.Context, req ctrl.Request) (
 
 	log.Info("🥑️ Found instance 🥑️", "Flux Image: ", flux.Spec.Image)
 
+	// Get existing deployment (statefulset, a result, and error)
+	_, result, err := r.getStatefulSet(ctx, &instance, flux.Spec.Image)
+	if err != nil {
+		return result, err
+	}
+
 	return ctrl.Result{}, nil
 }
 

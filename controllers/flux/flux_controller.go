@@ -39,8 +39,7 @@ type FluxReconciler struct {
 
 // Reconcile is part of the main kubernetes reconciliation loop which aims to
 // move the current state of the cluster closer to the desired state.
-// TODO(user): Modify the Reconcile function to compare the state specified by
-// the Flux object against the actual cluster state, and then
+// We compare the state of the Flux object to the actual cluster state and
 // perform operations to make the cluster state reflect the state specified by
 // the user.
 //
