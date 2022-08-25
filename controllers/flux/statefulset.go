@@ -18,7 +18,6 @@ package controllers
 
 import (
 	"context"
-	"fmt"
 
 	appsv1 "k8s.io/api/apps/v1"
 	corev1 "k8s.io/api/core/v1"
@@ -32,7 +31,7 @@ import (
 	api "flux-framework/flux-operator/api/v1alpha1"
 )
 
-// getDeployment gets the existing deployment, if it's done
+// getStatefulSet gets the existing statefulset, if it's done
 func (r *FluxSetupReconciler) getStatefulSet(ctx context.Context, instance *api.FluxSetup, containerImage string) (*appsv1.StatefulSet, ctrl.Result, error) {
 
 	log := logctrl.FromContext(ctx).WithValues("FluxSetup", instance.Namespace)
@@ -55,16 +54,17 @@ func (r *FluxSetupReconciler) getStatefulSet(ctx context.Context, instance *api.
 			log.Error(err, "Failed to get StatefulSet")
 			return existing, ctrl.Result{}, err
 		}
+	} else {
+		log.Info("🎉 Found existing StatefulSet 🎉", "Namespace", existing.Namespace, "Name", existing.Name, "Image", existing.Spec.Template.Spec.Containers[0].Image)
 	}
 	return existing, ctrl.Result{}, err
 }
 
-// createDeployment creates the stateful set
+// createStatefulSet creates the stateful set
 func (r *FluxSetupReconciler) createStatefulSet(instance *api.FluxSetup, containerImage string) *appsv1.StatefulSet {
 	labels := setupLabels(instance, "flux-workers")
-	fmt.Println("LABELS")
-	fmt.Println(labels)
 	set := &appsv1.StatefulSet{
+		TypeMeta: metav1.TypeMeta{},
 		ObjectMeta: metav1.ObjectMeta{
 			Name:      instance.Name,
 			Namespace: instance.Namespace,
@@ -79,11 +79,10 @@ func (r *FluxSetupReconciler) createStatefulSet(instance *api.FluxSetup, contain
 				ObjectMeta: metav1.ObjectMeta{
 					Name:      instance.Name,
 					Namespace: instance.Namespace,
+					Labels:    labels,
 				},
 				Spec: corev1.PodSpec{
 					Containers: []corev1.Container{{
-
-						// This comes from the Flux custom resource (from the user)
 						Image:           containerImage,
 						ImagePullPolicy: corev1.PullAlways,
 						Name:            instance.Name,
@@ -93,6 +92,7 @@ func (r *FluxSetupReconciler) createStatefulSet(instance *api.FluxSetup, contain
 				},
 			},
 		},
+		Status: appsv1.StatefulSetStatus{},
 	}
 	ctrl.SetControllerReference(instance, set, r.Scheme)
 	return set

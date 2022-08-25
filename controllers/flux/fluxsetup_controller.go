@@ -94,6 +94,7 @@ func (r *FluxSetupReconciler) Reconcile(ctx context.Context, req ctrl.Request) (
 		log.Info("Failed to get FluxSetup resource. Re-running reconcile.")
 		return ctrl.Result{}, err
 	}
+	flux.SetDefaults()
 	instance.SetDefaults()
 
 	log.Info("🥑️ Found instance 🥑️", "Flux Image: ", flux.Spec.Image)
@@ -103,7 +104,6 @@ func (r *FluxSetupReconciler) Reconcile(ctx context.Context, req ctrl.Request) (
 	if err != nil {
 		return result, err
 	}
-
 	return ctrl.Result{}, nil
 }
 

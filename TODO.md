@@ -3,6 +3,7 @@
 - [x] Figure out adding namespaces to config/samples - should be flux-operator
 - [ ] ConfigMap -> Name doesn't match any [spec I can find](https://github.com/kubernetes/api/blob/e9a69791a998e7ead3a95fec1e420d52d62aa0f8/core/v1/types.go#L1605).
 - [ ] Each of config files written (e.g., hostname, broker, cert) should have their own types and more simply generated. The strategy right now is just temporary.
+- [ ] Stateful set (figure out how to create properly, doesn't seem to have pods)
 
 ## Design
 

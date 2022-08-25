@@ -17,6 +17,7 @@ limitations under the License.
 package v1alpha1
 
 import (
+	"fmt"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
@@ -53,6 +54,8 @@ func (s *FluxSetup) SetDefaults() {
 	if s.Spec.Size == 0 {
 		s.Spec.Size = 1
 	}
+	fmt.Printf("🤓 FluxSetup.Size %d\n", s.Spec.Size)
+	fmt.Println()
 }
 
 // ConfigMap describes configuration options

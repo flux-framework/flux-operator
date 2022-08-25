@@ -17,6 +17,7 @@ limitations under the License.
 package v1alpha1
 
 import (
+	"fmt"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
@@ -63,6 +64,10 @@ func (f *Flux) SetDefaults() {
 	if f.Spec.Image == "" {
 		f.Spec.Image = "fluxrm/flux-sched:focal"
 	}
+
+	fmt.Println()
+	fmt.Printf("🤓 Flux.Image %s\n", f.Spec.Image)
+	fmt.Printf("🤓 Flux.Command %s\n", f.Spec.Command)
 }
 
 //+kubebuilder:object:root=true

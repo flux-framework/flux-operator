@@ -241,7 +241,20 @@ At this point, I needed to try and represent what I saw in the various config fi
 
 And then see the instructions above for [using the operator](#using-the-operator).
 
+## Useful Resources
+
+I found the following resources really useful:
+
+ - [RedHat OpenShift API Spec](https://docs.openshift.com/container-platform/3.11/rest_api/objects/index.html#objectmeta-meta-v1) for digging into layers of objects
+ - [Kubernetes API](https://github.com/kubernetes/api/blob/2f9e58849198f8675bc0928c69acf7e50af77551/apps/v1/types.go): top level folders apps/core/batch useful!
+
 ## Troubleshooting
+
+To view a resource (in the flux-operator namespace):
+
+```bash
+$ kubectl --namespace flux-operator get pods
+```
 
 If you need to clean things up (ensuring you only have this one pod and service running first) I've found it easier to do:
 
