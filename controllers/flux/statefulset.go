@@ -17,18 +17,54 @@ limitations under the License.
 package controllers
 
 import (
+	"context"
+
 	appsv1 "k8s.io/api/apps/v1"
 	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	ctrl "sigs.k8s.io/controller-runtime"
+	logctrl "sigs.k8s.io/controller-runtime/pkg/log"
+
+	"k8s.io/apimachinery/pkg/api/errors"
+	"k8s.io/apimachinery/pkg/types"
 
 	api "flux-framework/flux-operator/api/v1alpha1"
 )
 
-// createDeployment creates the stateful set
-func (r *FluxSetupReconciler) createDeployment(instance *api.FluxSetup, containerImage string) *appsv1.StatefulSet {
+// getStatefulSet gets the existing statefulset, if it's done
+func (r *FluxSetupReconciler) getStatefulSet(ctx context.Context, instance *api.FluxSetup, containerImage string) (*appsv1.StatefulSet, ctrl.Result, error) {
+
+	log := logctrl.FromContext(ctx).WithValues("FluxSetup", instance.Namespace)
+	existing := &appsv1.StatefulSet{}
+	err := r.Get(ctx, types.NamespacedName{Name: instance.Name, Namespace: instance.Namespace}, existing)
+	if err != nil {
+
+		// Case 1: not found yet, check if deployment needs deletion
+		if errors.IsNotFound(err) {
+			dep := r.createStatefulSet(instance, containerImage)
+			log.Info("✨ Creating a new StatefulSet ✨", "Namespace", dep.Namespace, "Deployment.Name", dep.Name)
+			err = r.Create(ctx, dep)
+			if err != nil {
+				log.Error(err, "❌ Failed to create new StatefulSet", "Namespace", dep.Namespace, "Name", dep.Name)
+				return existing, ctrl.Result{}, err
+			}
+			// Deployment created successfully - return and requeue
+			return existing, ctrl.Result{Requeue: true}, nil
+		} else if err != nil {
+			log.Error(err, "Failed to get StatefulSet")
+			return existing, ctrl.Result{}, err
+		}
+	} else {
+		log.Info("🎉 Found existing StatefulSet 🎉", "Namespace", existing.Namespace, "Name", existing.Name, "Image", existing.Spec.Template.Spec.Containers[0].Image)
+	}
+	return existing, ctrl.Result{}, err
+}
+
+// createStatefulSet creates the stateful set
+func (r *FluxSetupReconciler) createStatefulSet(instance *api.FluxSetup, containerImage string) *appsv1.StatefulSet {
 	labels := setupLabels(instance, "flux-workers")
 	set := &appsv1.StatefulSet{
+		TypeMeta: metav1.TypeMeta{},
 		ObjectMeta: metav1.ObjectMeta{
 			Name:      instance.Name,
 			Namespace: instance.Namespace,
@@ -43,11 +79,10 @@ func (r *FluxSetupReconciler) createDeployment(instance *api.FluxSetup, containe
 				ObjectMeta: metav1.ObjectMeta{
 					Name:      instance.Name,
 					Namespace: instance.Namespace,
+					Labels:    labels,
 				},
 				Spec: corev1.PodSpec{
 					Containers: []corev1.Container{{
-
-						// This comes from the Flux custom resource (from the user)
 						Image:           containerImage,
 						ImagePullPolicy: corev1.PullAlways,
 						Name:            instance.Name,
@@ -57,6 +92,7 @@ func (r *FluxSetupReconciler) createDeployment(instance *api.FluxSetup, containe
 				},
 			},
 		},
+		Status: appsv1.StatefulSetStatus{},
 	}
 	ctrl.SetControllerReference(instance, set, r.Scheme)
 	return set
