@@ -42,7 +42,7 @@ func (r *FluxSetupReconciler) getStatefulSet(ctx context.Context, instance *api.
 		// Case 1: not found yet, check if deployment needs deletion
 		if errors.IsNotFound(err) {
 			dep := r.createStatefulSet(instance, containerImage)
-			log.Info("✨ Creating a new StatefulSet ✨", "Namespace", dep.Namespace, "Deployment.Name", dep.Name)
+			log.Info("✨ Creating a new StatefulSet ✨", "Namespace", dep.Namespace, "Name", dep.Name)
 			err = r.Create(ctx, dep)
 			if err != nil {
 				log.Error(err, "❌ Failed to create new StatefulSet", "Namespace", dep.Namespace, "Name", dep.Name)
@@ -57,6 +57,9 @@ func (r *FluxSetupReconciler) getStatefulSet(ctx context.Context, instance *api.
 	} else {
 		log.Info("🎉 Found existing StatefulSet 🎉", "Namespace", existing.Namespace, "Name", existing.Name, "Image", existing.Spec.Template.Spec.Containers[0].Image)
 	}
+
+	// Debugging to write yaml to yaml directory at root
+	saveDebugYaml(existing, "stateful-set.yaml")
 	return existing, ctrl.Result{}, err
 }
 

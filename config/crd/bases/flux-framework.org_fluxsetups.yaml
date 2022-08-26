@@ -36,14 +36,12 @@ spec:
             description: FluxSetupSpec defines the desired state of Flux
             properties:
               broker:
-                description: Broker describes the broker config (and any other attributes
-                  we can eventually add)
+                description: Broker with a hostfile for flux-config
                 properties:
-                  config:
-                    description: Data holds the configuration file data
+                  hostfile:
                     type: string
                 required:
-                - config
+                - hostfile
                 type: object
               cert:
                 description: CurveCert is just a placeholder for what eventually will
@@ -55,16 +53,13 @@ spec:
                 required:
                 - config
                 type: object
-              hostfile:
-                description: TODO these three things should eventually be properly
-                  mapped into go structs CurveCert is just a placeholder for what
-                  eventually will be done by the operator
+              etc-hosts:
+                description: THe hostfile ConfigMap etc-hosts
                 properties:
-                  config:
-                    description: Data holds the configuration file data
+                  hostfile:
                     type: string
                 required:
-                - config
+                - hostfile
                 type: object
               size:
                 description: Size of the statefulset replias
@@ -73,7 +68,7 @@ spec:
             required:
             - broker
             - cert
-            - hostfile
+            - etc-hosts
             type: object
           status:
             description: FluxSetupStatus defines the observed state of a FluxSetup

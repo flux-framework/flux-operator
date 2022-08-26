@@ -241,6 +241,16 @@ At this point, I needed to try and represent what I saw in the various config fi
 
 And then see the instructions above for [using the operator](#using-the-operator).
 
+### 5. Debugging Yaml
+
+Since many configs are created in the operator, I always write them out in yaml to the [yaml](yaml)
+directory. We can remove these bits of the code after we are done. I also found the following debugging commands useful:
+
+```bash
+# Why didn't my statefulset create?
+kubectl describe statefulset flux-sample
+```
+
 ## Useful Resources
 
 I found the following resources really useful:
@@ -260,7 +270,13 @@ If you need to clean things up (ensuring you only have this one pod and service 
 
 ```bash
 $ kubectl delete pod --all
+
+# Service shorthand
 $ kubectl delete svc --all
+$ kubectl delete statefulset --all
+
+# ConfigMap shorthand
+$ kubectl delete cm --all
 ```
 
 If you see:
@@ -276,6 +292,20 @@ $ rm bin/kustomize
 $ make install
 ```
 
+If your resource (config/samples) don't seem to be taking, remember you need to apply them for changes to take
+effect:
+
+```bash
+$ bin/kustomize build config/samples | kubectl apply -f -
+```
+
+Also remember since we are providing the instance as a reference (`&instance`) to get the fields from that
+you need to do:
+
+```go
+(*instance).Spec.Field
+```
+Otherwise it shows up as an empty string.
 
 ## Wisdom
 
