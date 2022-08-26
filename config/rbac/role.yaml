@@ -8,6 +8,18 @@ rules:
 - apiGroups:
   - flux-framework.org
   resources:
+  - configmaps
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - flux-framework.org
+  resources:
   - deployments
   verbs:
   - create
@@ -75,8 +87,11 @@ rules:
   - pods
   verbs:
   - create
+  - delete
   - get
   - list
+  - patch
+  - update
   - watch
 - apiGroups:
   - flux-framework.org

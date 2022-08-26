@@ -44,9 +44,10 @@ type FluxSetupReconciler struct {
 //+kubebuilder:rbac:groups=flux-framework.org,resources=fluxsetups/status,verbs=get;update;patch
 //+kubebuilder:rbac:groups=flux-framework.org,resources=fluxsetups/finalizers,verbs=update
 
+//+kubebuilder:rbac:groups=flux-framework.org,resources=configmaps,verbs=get;list;watch;create;update;patch;delete
 //+kubebuilder:rbac:groups=flux-framework.org,resources=statefulsets,verbs=get;list;watch;create;update;patch;delete
 //+kubebuilder:rbac:groups=flux-framework.org,resources=deployments,verbs=get;list;watch;create;update;patch;delete
-//+kubebuilder:rbac:groups=flux-framework.org,resources=pods,verbs=get;list;watch;create;
+//+kubebuilder:rbac:groups=flux-framework.org,resources=pods,verbs=get;list;watch;create;update;patch;delete
 //+kubebuilder:rbac:groups=flux-framework.org,resources=services,verbs=get;list;watch;create;update;patch;delete
 
 // Reconcile is part of the main kubernetes reconciliation loop which aims to
