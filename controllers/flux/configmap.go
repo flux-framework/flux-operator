@@ -55,7 +55,7 @@ func (r *FluxSetupReconciler) getBrokerConfig(ctx context.Context, instance *api
 			return existing, ctrl.Result{}, err
 		}
 	} else {
-		log.Info("🎉 Found existing Broker ConfigMap 🎉", "Namespace", existing.Namespace, "Name", existing.Name)
+		log.Info("🎉 Found existing Broker ConfigMap 🎉", "Namespace", existing.Namespace, "Name", existing.Name, "Data", (*existing).Data)
 	}
 	saveDebugYaml(existing, "broker.yaml")
 	return existing, ctrl.Result{}, err
@@ -83,7 +83,7 @@ func (r *FluxSetupReconciler) getEtcHostsConfig(ctx context.Context, instance *a
 			return existing, ctrl.Result{}, err
 		}
 	} else {
-		log.Info("🎉 Found existing etc-hosts ConfigMap 🎉", "Namespace", existing.Namespace, "Name", existing.Name)
+		log.Info("🎉 Found existing etc-hosts ConfigMap 🎉", "Namespace", existing.Namespace, "Name", existing.Name, "Data", (*existing).Data)
 	}
 	saveDebugYaml(existing, "etc-hosts-config.yaml")
 	return existing, ctrl.Result{}, err
