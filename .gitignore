@@ -19,6 +19,7 @@ testbin/*
 !vendor/**/zz_generated.*
 vendor
 main
+yaml/*.yaml
 
 # editor and IDE paraphernalia
 .idea

@@ -32,19 +32,29 @@ type FluxSetupSpec struct {
 	// +optional
 	Size int32 `json:"size"`
 
-	// TODO these three things should eventually be properly mapped into go structs
-	// CurveCert is just a placeholder for what eventually will be done by the operator
-	Hostfile ConfigMap `json:"hostfile"`
+	// THe hostfile ConfigMap etc-hosts
+	EtcHosts FluxEtcHosts `json:"etc-hosts"`
 
 	// CurveCert is just a placeholder for what eventually will be done by the operator
 	Cert ConfigMap `json:"cert"`
 
-	// Broker describes the broker config (and any other attributes we can eventually add)
-	Broker ConfigMap `json:"broker"`
+	// Broker with a hostfile for flux-config
+	Broker FluxBroker `json:"broker"`
 }
 
 // FluxSetupStatus defines the observed state of a FluxSetup
 type FluxSetupStatus struct {
+}
+
+// The Flux broker takes a hostfile and config name
+type FluxBroker struct {
+	Hostfile string `json:"hostfile"`
+}
+
+// Flux etc-hosts also takes a name and Hostfile
+// I've created them separately in case we want further (unique) customization
+type FluxEtcHosts struct {
+	Hostfile string `json:"hostfile"`
 }
 
 // SetDefaults ensures that empty settings are defined with defaults
@@ -54,7 +64,9 @@ func (s *FluxSetup) SetDefaults() {
 	if s.Spec.Size == 0 {
 		s.Spec.Size = 1
 	}
-	fmt.Printf("🤓 FluxSetup.Size %d\n", s.Spec.Size)
+	fmt.Printf("🤓 FluxSetup.Size %d\n", (*s).Spec.Size)
+	fmt.Printf("🤓 FluxSetup.Broker.Hostfile %s\n", (*s).Spec.Broker.Hostfile)
+	fmt.Printf("🤓 FluxSetup.EtcHosts.Hostfile \n%s\n", (*s).Spec.EtcHosts.Hostfile)
 	fmt.Println()
 }
 

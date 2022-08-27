@@ -48,9 +48,9 @@ func (r *FluxSetupReconciler) createJob(instance *api.Flux, containerImage strin
 					RestartPolicy: corev1.RestartPolicyAlways,
 					Containers: []corev1.Container{{
 						Name:            "driver",
-						Image:           instance.Spec.Image,
+						Image:           (*instance).Spec.Image,
 						ImagePullPolicy: corev1.PullAlways,
-						Command:         []string{"flux", "start", "-o", "--config-path=/etc/flux/", instance.Spec.Command},
+						Command:         []string{"flux", "start", "-o", "--config-path=/etc/flux/", (*instance).Spec.Command},
 						VolumeMounts:    getVolumeMounts(),
 					}},
 					Volumes: getVolumes(),

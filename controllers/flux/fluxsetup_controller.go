@@ -18,6 +18,7 @@ package controllers
 
 import (
 	"context"
+	"fmt"
 
 	appsv1 "k8s.io/api/apps/v1"
 	corev1 "k8s.io/api/core/v1"
@@ -43,9 +44,10 @@ type FluxSetupReconciler struct {
 //+kubebuilder:rbac:groups=flux-framework.org,resources=fluxsetups/status,verbs=get;update;patch
 //+kubebuilder:rbac:groups=flux-framework.org,resources=fluxsetups/finalizers,verbs=update
 
+//+kubebuilder:rbac:groups=flux-framework.org,resources=configmaps,verbs=get;list;watch;create;update;patch;delete
 //+kubebuilder:rbac:groups=flux-framework.org,resources=statefulsets,verbs=get;list;watch;create;update;patch;delete
 //+kubebuilder:rbac:groups=flux-framework.org,resources=deployments,verbs=get;list;watch;create;update;patch;delete
-//+kubebuilder:rbac:groups=flux-framework.org,resources=pods,verbs=get;list;watch;create;
+//+kubebuilder:rbac:groups=flux-framework.org,resources=pods,verbs=get;list;watch;create;update;patch;delete
 //+kubebuilder:rbac:groups=flux-framework.org,resources=services,verbs=get;list;watch;create;update;patch;delete
 
 // Reconcile is part of the main kubernetes reconciliation loop which aims to
@@ -98,9 +100,21 @@ func (r *FluxSetupReconciler) Reconcile(ctx context.Context, req ctrl.Request) (
 	instance.SetDefaults()
 
 	log.Info("🥑️ Found instance 🥑️", "Flux Image: ", flux.Spec.Image)
+	fmt.Printf("\n🪵 Broker Hostfile %s\n", instance.Spec.Broker.Hostfile)
+	fmt.Printf("\n🪵 EtcHosts Hostfile \n%s\n", instance.Spec.EtcHosts.Hostfile)
+
+	// Ensure the configs are created (for volume sources)
+	_, result, err := r.getBrokerConfig(ctx, &instance)
+	if err != nil {
+		return result, err
+	}
+	_, result, err = r.getEtcHostsConfig(ctx, &instance)
+	if err != nil {
+		return result, err
+	}
 
 	// Get existing deployment (statefulset, a result, and error)
-	_, result, err := r.getStatefulSet(ctx, &instance, flux.Spec.Image)
+	_, result, err = r.getStatefulSet(ctx, &instance, flux.Spec.Image)
 	if err != nil {
 		return result, err
 	}
@@ -111,6 +125,7 @@ func (r *FluxSetupReconciler) Reconcile(ctx context.Context, req ctrl.Request) (
 func (r *FluxSetupReconciler) SetupWithManager(mgr ctrl.Manager) error {
 	return ctrl.NewControllerManagedBy(mgr).
 		For(&api.FluxSetup{}).
+		Owns(&corev1.ConfigMap{}).
 		Owns(&appsv1.StatefulSet{}).
 		Owns(&corev1.Service{}).
 		// Defaults to 1, putting here so we know it exists!

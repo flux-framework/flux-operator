@@ -38,9 +38,8 @@ Know how this stuff works? Then here you go!
 $ git clone https://github.com/flux-framework/flux-operator
 $ cd flux-operator
 
-# Start a minikube cluster or kind
+# Start a minikube cluster
 $ minikube start
-$ kind create cluster
 
 # Make a flux operator namespace
 $ kubectl create namespace flux-operator
@@ -81,20 +80,10 @@ $ cd flux-operator
 
 ### 1. Start a Cluster
 
-First, start a cluster with minikube or kind.
+First, start a cluster with minikube:
 
 ```bash
 $ minikube start
-```
-```bash
-$ kind create cluster
-```
-
-I tried loading the image for flux first (into kind). I'm not sure this is required (it's definitely not required for Kubernetes).
-
-```bash
-$ docker pull fluxrm/flux-sched:focal
-$ kind load docker-image fluxrm/flux-sched:focal
 ```
 
 And make a flux operator namespace
@@ -104,8 +93,7 @@ $ kubectl create namespace flux-operator
 namespace/flux-operator created
 ```
 
-If you haven't ever installed minkube, you can see [install instructions here](https://minikube.sigs.k8s.io/docs/start/),
-or [instructions here for kind](https://kind.sigs.k8s.io/docs/user/quick-start/#installing-from-release-binaries).
+If you haven't ever installed minkube, you can see [install instructions here](https://minikube.sigs.k8s.io/docs/start/).
 
 ### 2. Build
 
@@ -164,9 +152,6 @@ And one of the following:
 ```bash
 $ minikube stop
 ```
-```bash
-$ kind delete cluster 
-```
 
 ## Making the operator
 
@@ -192,13 +177,6 @@ $ minikube start
 
 # or for the first time
 $ minikube start init
-```
-
-or you can use [kind](https://kind.sigs.k8s.io/docs/user/quick-start/):
-
-```bash
-# Default cluster context name is `kind`.
-$ kind create cluster
 ```
 
 ### 3. Local Workspace
@@ -241,6 +219,16 @@ At this point, I needed to try and represent what I saw in the various config fi
 
 And then see the instructions above for [using the operator](#using-the-operator).
 
+### 5. Debugging Yaml
+
+Since many configs are created in the operator, I always write them out in yaml to the [yaml](yaml)
+directory. We can remove these bits of the code after we are done. I also found the following debugging commands useful:
+
+```bash
+# Why didn't my statefulset create?
+kubectl describe statefulset flux-sample
+```
+
 ## Useful Resources
 
 I found the following resources really useful:
@@ -260,7 +248,13 @@ If you need to clean things up (ensuring you only have this one pod and service 
 
 ```bash
 $ kubectl delete pod --all
+
+# Service shorthand
 $ kubectl delete svc --all
+$ kubectl delete statefulset --all
+
+# ConfigMap shorthand
+$ kubectl delete cm --all
 ```
 
 If you see:
@@ -276,6 +270,20 @@ $ rm bin/kustomize
 $ make install
 ```
 
+If your resource (config/samples) don't seem to be taking, remember you need to apply them for changes to take
+effect:
+
+```bash
+$ bin/kustomize build config/samples | kubectl apply -f -
+```
+
+Also remember since we are providing the instance as a reference (`&instance`) to get the fields from that
+you need to do:
+
+```go
+(*instance).Spec.Field
+```
+Otherwise it shows up as an empty string.
 
 ## Wisdom
 
