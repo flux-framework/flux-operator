@@ -45,9 +45,12 @@ func getVolumes() []corev1.Volume {
 			// There wasn't a Name here so I reproduced the paths and key
 			// See link and comment in TODO.md
 			ConfigMap: &corev1.ConfigMapVolumeSource{
+				LocalObjectReference: corev1.LocalObjectReference{
+					Name: "flux-config",
+				},
 				Items: []corev1.KeyToPath{{
 					Key:  "flux-config",
-					Path: "/etc/flux/config",
+					Path: "etc/flux/config",
 				}},
 			},
 		},
@@ -55,9 +58,12 @@ func getVolumes() []corev1.Volume {
 		Name: "etc-hosts",
 		VolumeSource: corev1.VolumeSource{
 			ConfigMap: &corev1.ConfigMapVolumeSource{
+				LocalObjectReference: corev1.LocalObjectReference{
+					Name: "etc-hosts",
+				},
 				Items: []corev1.KeyToPath{{
 					Key:  "etc-hosts",
-					Path: "/etc/hosts",
+					Path: "etc/hosts",
 				}},
 			},
 		},

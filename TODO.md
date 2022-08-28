@@ -3,10 +3,10 @@
 - [x] consolidate configmap functions into shared functionality (less redundancy)
 - [x] Debug why the configmaps aren't being populated with the hostfile (it wasn't working with kind, worked without changes with minikube)
 - [x] Figure out adding namespaces to config/samples - should be flux-operator
-- [ ] ConfigMap -> Name doesn't match any [spec I can find](https://github.com/kubernetes/api/blob/e9a69791a998e7ead3a95fec1e420d52d62aa0f8/core/v1/types.go#L1605).
 - [x] Each of config files written (e.g., hostname, broker, cert) should have their own types and more simply generated. The strategy right now is just temporary.
 - [ ] Cert needs to be separated / generated
-- [ ] Stateful set (figure out how to create properly, doesn't seem to have pods) (figured out need to create ConfigMaps for Volumes)
+- [x] Stateful set (figure out how to create properly, doesn't seem to have pods) (figured out need to create ConfigMaps for Volumes)
+- [ ] Stateful set is created but it cannot see configmaps "MountVolume.SetUp failed for volume "etc-hosts" : configmap references non-existent config key: etc-hosts"
 - [ ] A means to generate / update certs - I don't think manually doing it is the right approach, but there is a comment that cert-manager isn't supported?
   - https://kubernetes.io/docs/tasks/configmap-secret/managing-secret-using-kustomize/
   - This is useful https://github.com/jetstack/kustomize-cert-manager-demo
