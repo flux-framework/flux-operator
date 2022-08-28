@@ -104,11 +104,17 @@ func (r *FluxSetupReconciler) Reconcile(ctx context.Context, req ctrl.Request) (
 	fmt.Printf("\n🪵 EtcHosts Hostfile \n%s\n", instance.Spec.EtcHosts.Hostfile)
 
 	// Ensure the configs are created (for volume sources)
-	_, result, err := r.getBrokerConfig(ctx, &instance)
+	_, result, err := r.getHostfileConfig(ctx, &instance, "flux-config", instance.Spec.Broker.Hostfile)
 	if err != nil {
 		return result, err
 	}
-	_, result, err = r.getEtcHostsConfig(ctx, &instance)
+	_, result, err = r.getHostfileConfig(ctx, &instance, "etc-hosts", instance.Spec.EtcHosts.Hostfile)
+	if err != nil {
+		return result, err
+	}
+
+	// And the secret curve cert
+	_, result, err = r.getCurveCert(ctx, &instance)
 	if err != nil {
 		return result, err
 	}
