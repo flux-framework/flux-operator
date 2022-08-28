@@ -31,91 +31,46 @@ import (
 	api "flux-framework/flux-operator/api/v1alpha1"
 )
 
-// getBrokerConfig gets the existing broker config, if it's done
-func (r *FluxSetupReconciler) getBrokerConfig(ctx context.Context, instance *api.FluxSetup) (*corev1.ConfigMap, ctrl.Result, error) {
+// getHostfileConfig gets an existing configmap, if it's done
+func (r *FluxSetupReconciler) getHostfileConfig(ctx context.Context, instance *api.FluxSetup, configName string, hostfile string) (*corev1.ConfigMap, ctrl.Result, error) {
 
 	log := logctrl.FromContext(ctx).WithValues("FluxSetup", instance.Namespace)
 	existing := &corev1.ConfigMap{}
-	err := r.Get(ctx, types.NamespacedName{Name: "flux-config", Namespace: instance.Namespace}, existing)
+	err := r.Get(ctx, types.NamespacedName{Name: configName, Namespace: instance.Namespace}, existing)
 	if err != nil {
 
 		// Case 1: not found yet, and hostfile is ready (recreate)
 		if errors.IsNotFound(err) {
-			dep := r.createBrokerConfig(instance)
-			log.Info("✨ Creating a new Broker ConfigMap ✨", "Namespace", dep.Namespace, "Name", dep.Name, "Data", (*dep).Data)
+			dep := r.createHostfileConfig(instance, configName, hostfile)
+			log.Info("✨ Creating a new ConfigMap ✨", "Type", configName, "Namespace", dep.Namespace, "Name", dep.Name, "Data", (*dep).Data)
 			err = r.Create(ctx, dep)
 			if err != nil {
-				log.Error(err, "❌ Failed to create new Broker ConfigMap", "Namespace", dep.Namespace, "Name", (*dep).Name)
+				log.Error(err, "❌ Failed to create new ConfigMap", "Type", configName, "Namespace", dep.Namespace, "Name", (*dep).Name)
 				return existing, ctrl.Result{}, err
 			}
 			// Successful - return and requeue
 			return existing, ctrl.Result{Requeue: true}, nil
 		} else if err != nil {
-			log.Error(err, "Failed to get Broker ConfigMap")
+			log.Error(err, "Failed to get ConfigMap")
 			return existing, ctrl.Result{}, err
 		}
 	} else {
-		log.Info("🎉 Found existing Broker ConfigMap 🎉", "Namespace", existing.Namespace, "Name", existing.Name, "Data", (*existing).Data)
+		log.Info("🎉 Found existing ConfigMap 🎉", "Type", configName, "Namespace", existing.Namespace, "Name", existing.Name, "Data", (*existing).Data)
 	}
-	saveDebugYaml(existing, "broker.yaml")
-	return existing, ctrl.Result{}, err
-}
-
-// getBrokerConfig gets the existing broker config, if it's done
-func (r *FluxSetupReconciler) getEtcHostsConfig(ctx context.Context, instance *api.FluxSetup) (*corev1.ConfigMap, ctrl.Result, error) {
-
-	log := logctrl.FromContext(ctx).WithValues("FluxSetup", instance.Namespace)
-	existing := &corev1.ConfigMap{}
-	err := r.Get(ctx, types.NamespacedName{Name: "etc-hosts", Namespace: instance.Namespace}, existing)
-	if err != nil {
-		if errors.IsNotFound(err) {
-			dep := r.createEtcHostsConfig(instance)
-			log.Info("✨ Creating a new etc-hosts ConfigMap ✨", "Namespace", dep.Namespace, "Name", dep.Name, "Data", (*dep).Data)
-			err = r.Create(ctx, dep)
-			if err != nil {
-				log.Error(err, "❌ Failed to create new etc-hosts ConfigMap", "Namespace", dep.Namespace, "Name", dep.Name)
-				return existing, ctrl.Result{}, err
-			}
-			// Successful - return and requeue
-			return existing, ctrl.Result{Requeue: true}, nil
-		} else if err != nil {
-			log.Error(err, "Failed to get Broker ConfigMap")
-			return existing, ctrl.Result{}, err
-		}
-	} else {
-		log.Info("🎉 Found existing etc-hosts ConfigMap 🎉", "Namespace", existing.Namespace, "Name", existing.Name, "Data", (*existing).Data)
-	}
-	saveDebugYaml(existing, "etc-hosts-config.yaml")
+	saveDebugYaml(existing, configName+".yaml")
 	return existing, ctrl.Result{}, err
 }
 
 // createBrokerConfig creates the stateful set
-func (r *FluxSetupReconciler) createBrokerConfig(instance *api.FluxSetup) *corev1.ConfigMap {
-	broker := &corev1.ConfigMap{
-		TypeMeta: metav1.TypeMeta{},
-		ObjectMeta: metav1.ObjectMeta{
-			Name:      "flux-config",
-			Namespace: instance.Namespace,
-		},
-		Data: map[string]string{
-			"hostfile": (*instance).Spec.Broker.Hostfile,
-		},
-	}
-	fmt.Println(broker.Data)
-	ctrl.SetControllerReference(instance, broker, r.Scheme)
-	return broker
-}
-
-// createEtcHostsConfig creates the stateful set
-func (r *FluxSetupReconciler) createEtcHostsConfig(instance *api.FluxSetup) *corev1.ConfigMap {
+func (r *FluxSetupReconciler) createHostfileConfig(instance *api.FluxSetup, configName string, hostfile string) *corev1.ConfigMap {
 	cm := &corev1.ConfigMap{
 		TypeMeta: metav1.TypeMeta{},
 		ObjectMeta: metav1.ObjectMeta{
-			Name:      "etc-hosts",
+			Name:      configName,
 			Namespace: instance.Namespace,
 		},
 		Data: map[string]string{
-			"hostfile": (*instance).Spec.EtcHosts.Hostfile,
+			"hostfile": hostfile,
 		},
 	}
 	fmt.Println(cm.Data)

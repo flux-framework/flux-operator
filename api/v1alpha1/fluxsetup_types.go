@@ -33,27 +33,21 @@ type FluxSetupSpec struct {
 	Size int32 `json:"size"`
 
 	// THe hostfile ConfigMap etc-hosts
-	EtcHosts FluxEtcHosts `json:"etc-hosts"`
+	EtcHosts FluxHostConfig `json:"etc-hosts"`
 
-	// CurveCert is just a placeholder for what eventually will be done by the operator
-	Cert ConfigMap `json:"cert"`
+	// Custom tls.key and tls.cert
+	Cert CurveCert `json:"cert"`
 
 	// Broker with a hostfile for flux-config
-	Broker FluxBroker `json:"broker"`
+	Broker FluxHostConfig `json:"broker"`
 }
 
 // FluxSetupStatus defines the observed state of a FluxSetup
 type FluxSetupStatus struct {
 }
 
-// The Flux broker takes a hostfile and config name
-type FluxBroker struct {
-	Hostfile string `json:"hostfile"`
-}
-
-// Flux etc-hosts also takes a name and Hostfile
-// I've created them separately in case we want further (unique) customization
-type FluxEtcHosts struct {
+// The Flux Host config is a ConfigMap with Hostanme data
+type FluxHostConfig struct {
 	Hostfile string `json:"hostfile"`
 }
 
@@ -68,6 +62,12 @@ func (s *FluxSetup) SetDefaults() {
 	fmt.Printf("🤓 FluxSetup.Broker.Hostfile %s\n", (*s).Spec.Broker.Hostfile)
 	fmt.Printf("🤓 FluxSetup.EtcHosts.Hostfile \n%s\n", (*s).Spec.EtcHosts.Hostfile)
 	fmt.Println()
+}
+
+// ConfigMap describes configuration options
+type CurveCert struct {
+	TLSKey  string `json:"tls-key"`
+	TLSCert string `json:"tls-cert"`
 }
 
 // ConfigMap describes configuration options

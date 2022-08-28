@@ -44,14 +44,15 @@ spec:
                 - hostfile
                 type: object
               cert:
-                description: CurveCert is just a placeholder for what eventually will
-                  be done by the operator
+                description: Custom tls.key and tls.cert
                 properties:
-                  config:
-                    description: Data holds the configuration file data
+                  tls-cert:
+                    type: string
+                  tls-key:
                     type: string
                 required:
-                - config
+                - tls-cert
+                - tls-key
                 type: object
               etc-hosts:
                 description: THe hostfile ConfigMap etc-hosts

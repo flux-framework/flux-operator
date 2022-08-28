@@ -55,6 +55,19 @@ $ make manifests
 $ make install
 ```
 
+Generate your secrets and put them in [config/samples](config/samples):
+
+**TODO** I don't think this is best practice, but cert-manager doesn't seem to work with this?
+For now I'm making an empty set of secrets.
+
+```bash
+$ mkdir -p ./config/samples/secrets
+openssl req -x509 -nodes -newkey rsa:4096 -sha256 -days 365 -extensions v3_ca \
+  -subj "/O=Flux Operator Certificates" \
+  -keyout ./config/samples/secrets/tls.key \
+  -out ./config/samples/secrets/tls.crt
+```
+
 And then edit your [config/samples](config/samples) and deploy them, and start the operator!
 
 ```bash
@@ -226,7 +239,7 @@ directory. We can remove these bits of the code after we are done. I also found 
 
 ```bash
 # Why didn't my statefulset create?
-kubectl describe statefulset flux-sample
+kubectl describe -n flux-operator statefulset
 ```
 
 ## Useful Resources
