@@ -257,6 +257,12 @@ To view a resource (in the flux-operator namespace):
 $ kubectl --namespace flux-operator get pods
 ```
 
+I found this helpful for debugging the stateful set - e.g., it was stuck on ContainerCreating:
+
+```bash
+$ kubectl describe -n flux-operator pods
+```
+
 If you need to clean things up (ensuring you only have this one pod and service running first) I've found it easier to do:
 
 ```bash
