@@ -17,21 +17,25 @@ import (
 // Shared function to return consistent set of volume mounts
 // for the FluxJob and Flux Statefulset
 func getVolumeMounts() []corev1.VolumeMount {
-	return []corev1.VolumeMount{{
-		Name:      "curve-auth",
-		MountPath: "/mnt/curve/",
-		ReadOnly:  true,
-	},
+	return []corev1.VolumeMount{
+		{
+			Name:      "curve-auth",
+			MountPath: "/mnt/curve/",
+			ReadOnly:  true,
+		},
 		{
 			Name:      "flux-config",
-			MountPath: "/etc/flux/config/",
+			MountPath: "/etc/flux/",
 			ReadOnly:  true,
 		},
-		{
-			Name:      "etc-hosts",
-			MountPath: "/etc/hosts",
-			ReadOnly:  true,
-		},
+
+		// Disabled for now - not sure we want to do this because the container
+		// is mounting stuff there too, and wouldn't this be controlled by the operator?
+		//		{
+		//			Name:      "etc-hosts",
+		//			MountPath: "/etc/",
+		//			ReadOnly:  false,
+		//		},
 	}
 }
 
@@ -48,9 +52,10 @@ func getVolumes() []corev1.Volume {
 				LocalObjectReference: corev1.LocalObjectReference{
 					Name: "flux-config",
 				},
+				// /etc/flux/config
 				Items: []corev1.KeyToPath{{
-					Key:  "flux-config",
-					Path: "etc/flux/config",
+					Key:  "hostfile",
+					Path: "config",
 				}},
 			},
 		},
@@ -61,9 +66,10 @@ func getVolumes() []corev1.Volume {
 				LocalObjectReference: corev1.LocalObjectReference{
 					Name: "etc-hosts",
 				},
+				// /etc/hosts
 				Items: []corev1.KeyToPath{{
-					Key:  "etc-hosts",
-					Path: "etc/hosts",
+					Key:  "hostfile",
+					Path: "hosts",
 				}},
 			},
 		},
@@ -72,14 +78,19 @@ func getVolumes() []corev1.Volume {
 		VolumeSource: corev1.VolumeSource{
 			Secret: &corev1.SecretVolumeSource{
 				SecretName: "secret-tls",
-				Items: []corev1.KeyToPath{{
-					Key:  "curve-cert",
-					Path: "curve.cert",
-				},
+
+				// /mnt/curve/curve.cert
+				// /mnt/curve/curve.key
+				Items: []corev1.KeyToPath{
 					{
-						Key:  "curve-key",
+						Key:  "tls.crt",
+						Path: "curve.cert",
+					},
+					{
+						Key:  "tls.key",
 						Path: "curve.key",
-					}},
+					},
+				},
 			},
 		},
 	}}
