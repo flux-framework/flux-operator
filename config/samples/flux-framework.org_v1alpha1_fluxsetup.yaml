@@ -9,10 +9,6 @@ spec:
       flux-workers-0.flux-workers 10.0.0.1
       flux-workers-1.flux-workers 10.0.0.2
 
-  cert:
-    tls-cert: ""
-    tls.key: ""
-
   broker:
     hostfile: |
       [bootstrap]

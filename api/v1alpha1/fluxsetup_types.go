@@ -29,9 +29,6 @@ type FluxSetupSpec struct {
 	// THe hostfile ConfigMap etc-hosts
 	EtcHosts FluxHostConfig `json:"etc-hosts"`
 
-	// Custom tls.key and tls.cert
-	Cert CurveCert `json:"cert"`
-
 	// Broker with a hostfile for flux-config
 	Broker FluxHostConfig `json:"broker"`
 }
@@ -56,12 +53,6 @@ func (s *FluxSetup) SetDefaults() {
 	fmt.Printf("🤓 FluxSetup.Broker.Hostfile %s\n", (*s).Spec.Broker.Hostfile)
 	fmt.Printf("🤓 FluxSetup.EtcHosts.Hostfile \n%s\n", (*s).Spec.EtcHosts.Hostfile)
 	fmt.Println()
-}
-
-// ConfigMap describes configuration options
-type CurveCert struct {
-	TLSKey  string `json:"tls-key"`
-	TLSCert string `json:"tls-cert"`
 }
 
 // ConfigMap describes configuration options

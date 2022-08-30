@@ -38,6 +38,7 @@ type FluxSetupReconciler struct {
 //+kubebuilder:rbac:groups=flux-framework.org,resources=fluxsetups/status,verbs=get;update;patch
 //+kubebuilder:rbac:groups=flux-framework.org,resources=fluxsetups/finalizers,verbs=update
 
+//+kubebuilder:rbac:groups=flux-framework.org,resources=secrets,verbs=get;list;watch;create;update;patch;delete
 //+kubebuilder:rbac:groups=flux-framework.org,resources=configmaps,verbs=get;list;watch;create;update;patch;delete
 //+kubebuilder:rbac:groups=flux-framework.org,resources=statefulsets,verbs=get;list;watch;create;update;patch;delete
 //+kubebuilder:rbac:groups=flux-framework.org,resources=deployments,verbs=get;list;watch;create;update;patch;delete
@@ -107,7 +108,7 @@ func (r *FluxSetupReconciler) Reconcile(ctx context.Context, req ctrl.Request) (
 		return result, err
 	}
 
-	// And the secret curve cert
+	// And generate the secret curve cert
 	_, result, err = r.getCurveCert(ctx, &instance)
 	if err != nil {
 		return result, err
@@ -128,6 +129,7 @@ func (r *FluxSetupReconciler) SetupWithManager(mgr ctrl.Manager) error {
 		Owns(&corev1.ConfigMap{}).
 		Owns(&appsv1.StatefulSet{}).
 		Owns(&corev1.Service{}).
+		Owns(&corev1.Secret{}).
 		// Defaults to 1, putting here so we know it exists!
 		WithOptions(controller.Options{MaxConcurrentReconciles: 1}).
 		Complete(r)

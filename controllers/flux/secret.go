@@ -22,11 +22,10 @@ import (
 	"k8s.io/apimachinery/pkg/types"
 
 	api "flux-framework/flux-operator/api/v1alpha1"
+	"flux-framework/flux-operator/pkg/certs"
 )
 
-// getCurveCert gets (or creates) the curve secret
-// TODO this looks like a way to check for needing to update?
-// https://github.com/redhat-cop/cert-utils-operator/blob/dbf1df07a63460852a159943bb16650e139af6eb/controllers/route/route_controller.go#L291
+// generateCurveCert makes a new Secret if it doesn't exist
 func (r *FluxSetupReconciler) getCurveCert(ctx context.Context, instance *api.FluxSetup) (*corev1.Secret, ctrl.Result, error) {
 
 	log := logctrl.FromContext(ctx).WithValues("FluxSetup", instance.Namespace)
@@ -37,7 +36,7 @@ func (r *FluxSetupReconciler) getCurveCert(ctx context.Context, instance *api.Fl
 		// Case 1: not found yet, and hostfile is ready (recreate)
 		if errors.IsNotFound(err) {
 			dep := r.createCurveSecret(instance)
-			log.Info("✨ Creating a new Curve Secret ✨", "Namespace", dep.Namespace, "Name", dep.Name, "Data", (*dep).Data)
+			log.Info("✨ Creating a new Secret ✨", "Namespace", dep.Namespace, "Name", dep.Name, "Data", (*dep).Data)
 			err = r.Create(ctx, dep)
 			if err != nil {
 				log.Error(err, "❌ Failed to create new Curve Secret", "Namespace", dep.Namespace, "Name", (*dep).Name)
@@ -50,7 +49,7 @@ func (r *FluxSetupReconciler) getCurveCert(ctx context.Context, instance *api.Fl
 			return existing, ctrl.Result{}, err
 		}
 	} else {
-		log.Info("🎉 Found existing Broker ConfigMap 🎉", "Namespace", existing.Namespace, "Name", existing.Name, "Data", (*existing).Data)
+		log.Info("🎉 Found existing Secret 🎉", "Namespace", existing.Namespace, "Name", existing.Name, "Data", (*existing).Data)
 	}
 	saveDebugYaml(existing, "secret.yaml")
 	return existing, ctrl.Result{}, err
@@ -74,11 +73,20 @@ func (r *FluxSetupReconciler) getCurveCert(ctx context.Context, instance *api.Fl
          MIIEpgIBAAKCAQEA7yn3bRHQ5FHMQ ...
 */
 func (r *FluxSetupReconciler) createCurveSecret(instance *api.FluxSetup) *corev1.Secret {
+
+	// TODO do we need hosts here?
+	c := certs.NewCertificate([]string{}, false)
+	c.Generate()
+
 	cert := &corev1.Secret{
 		TypeMeta: metav1.TypeMeta{},
 		ObjectMeta: metav1.ObjectMeta{
 			Name:      "secret-tls",
 			Namespace: instance.Namespace,
+		},
+		Data: map[string][]byte{
+			"tls.key": []byte(c.Public),
+			"tls.crt": []byte(c.Private),
 		},
 	}
 	ctrl.SetControllerReference(instance, cert, r.Scheme)

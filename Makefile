@@ -109,6 +109,7 @@ test: manifests generate fmt vet envtest ## Run tests.
 .PHONY: clean
 clean:
 	kubectl delete -n flux-operator svc --all
+	kubectl delete -n flux-operator secret --all
 	kubectl delete -n flux-operator cm --all
 	kubectl delete -n flux-operator statefulset --all
 	kubectl delete -n flux-operator pods --all

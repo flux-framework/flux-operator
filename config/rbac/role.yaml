@@ -96,6 +96,18 @@ rules:
 - apiGroups:
   - flux-framework.org
   resources:
+  - secrets
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - flux-framework.org
+  resources:
   - services
   verbs:
   - create
