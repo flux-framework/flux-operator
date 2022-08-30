@@ -56,22 +56,6 @@ func (r *FluxSetupReconciler) getCurveCert(ctx context.Context, instance *api.Fl
 }
 
 // createCurveSecret creates the secret
-// I think we need to do https://kubernetes.io/docs/tasks/configmap-secret/managing-secret-using-kustomize/
-// This is useful https://github.com/jetstack/kustomize-cert-manager-demo
-// And https://www.jetstack.io/blog/kustomize-cert-manager/
-/*
-   apiVersion: v1
-   kind: Secret
-   metadata:
-     name: secret-tls
-   type: kubernetes.io/tls
-   data:
-     # the data is abbreviated in this example
-     tls.crt: |
-         MIIC2DCCAcCgAwIBAgIBATANBgkqh ...
-     tls.key: |
-         MIIEpgIBAAKCAQEA7yn3bRHQ5FHMQ ...
-*/
 func (r *FluxSetupReconciler) createCurveSecret(instance *api.FluxSetup) *corev1.Secret {
 
 	// TODO do we need hosts here?

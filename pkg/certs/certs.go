@@ -85,9 +85,7 @@ func (c *Certificate) Generate() {
 	out := &bytes.Buffer{}
 	pem.Encode(out, &pem.Block{Type: "CERTIFICATE", Bytes: certBytes})
 	c.Public = out.String()
-	fmt.Println(c.Public)
 	out.Reset()
 	pem.Encode(out, pemBlockForKey(private))
 	c.Private = out.String()
-	fmt.Println(c.Private)
 }
