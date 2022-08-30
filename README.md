@@ -276,6 +276,12 @@ $ kubectl delete statefulset --all
 $ kubectl delete cm --all
 ```
 
+One time I messed something up and my metrics server was still running (and I couldn't start again) and I killed it like this:
+
+```bash
+$ kill $(lsof -t -i:8080)
+```
+
 If you see:
 
 ```bash

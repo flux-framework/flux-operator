@@ -43,17 +43,6 @@ spec:
                 required:
                 - hostfile
                 type: object
-              cert:
-                description: Custom tls.key and tls.cert
-                properties:
-                  tls-cert:
-                    type: string
-                  tls-key:
-                    type: string
-                required:
-                - tls-cert
-                - tls-key
-                type: object
               etc-hosts:
                 description: THe hostfile ConfigMap etc-hosts
                 properties:
@@ -68,7 +57,6 @@ spec:
                 type: integer
             required:
             - broker
-            - cert
             - etc-hosts
             type: object
           status:
