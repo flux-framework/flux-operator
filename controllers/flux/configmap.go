@@ -25,6 +25,17 @@ import (
 	api "flux-framework/flux-operator/api/v1alpha1"
 )
 
+var BrokerConfigTemplate = `
+[bootstrap]
+curve_cert = "/mnt/curve/curve.cert"
+default_port = 8050
+default_bind = "tcp://eth0:%%p"
+default_connect = "tcp://%%h:%%p"
+hosts = [
+	{ host="%s-%s"},
+]
+`
+
 // getHostfileConfig gets an existing configmap, if it's done
 func (r *FluxSetupReconciler) getHostfileConfig(ctx context.Context, instance *api.FluxSetup, configName string, hostfile string) (*corev1.ConfigMap, ctrl.Result, error) {
 
@@ -35,6 +46,10 @@ func (r *FluxSetupReconciler) getHostfileConfig(ctx context.Context, instance *a
 
 		// Case 1: not found yet, and hostfile is ready (recreate)
 		if errors.IsNotFound(err) {
+			// check if its broker.toml TODO : Convert all configMaps to use template stirngs
+			if configName == "flux-config" {
+				hostfile = generateFluxConfig(instance.Name, instance.Spec.Size)
+			}
 			dep := r.createHostfileConfig(instance, configName, hostfile)
 			log.Info("✨ Creating a new ConfigMap ✨", "Type", configName, "Namespace", dep.Namespace, "Name", dep.Name, "Data", (*dep).Data)
 			err = r.Create(ctx, dep)
@@ -53,6 +68,19 @@ func (r *FluxSetupReconciler) getHostfileConfig(ctx context.Context, instance *a
 	}
 	saveDebugYaml(existing, configName+".yaml")
 	return existing, ctrl.Result{}, err
+}
+
+// generateFluxConfig creates the broker.toml file used to boostrap flux
+func generateFluxConfig(name string, size int32) string {
+	var hosts string
+	if size == 1 {
+		hosts = "0"
+	} else {
+		hosts = fmt.Sprintf("[0-%d]", size-1)
+	}
+	fluxConfig := fmt.Sprintf(BrokerConfigTemplate, name, hosts)
+
+	return fluxConfig
 }
 
 // createBrokerConfig creates the stateful set
