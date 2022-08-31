@@ -46,7 +46,7 @@ func (r *FluxSetupReconciler) getHostfileConfig(ctx context.Context, instance *a
 
 		// Case 1: not found yet, and hostfile is ready (recreate)
 		if errors.IsNotFound(err) {
-			// check if its broker.toml TODO : Convert all 3 configMaps to use template stirngs
+			// check if its broker.toml TODO : Convert all configMaps to use template stirngs
 			if configName == "flux-config" {
 				hostfile = generateFluxConfig(instance.Name, instance.Spec.Size)
 			}
@@ -70,6 +70,7 @@ func (r *FluxSetupReconciler) getHostfileConfig(ctx context.Context, instance *a
 	return existing, ctrl.Result{}, err
 }
 
+// generateFluxConfig creates the broker.toml file used to boostrap flux
 func generateFluxConfig(name string, size int32) string {
 	var hosts string
 	if size == 1 {
