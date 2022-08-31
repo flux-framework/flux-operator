@@ -25,7 +25,8 @@ import (
 	api "flux-framework/flux-operator/api/v1alpha1"
 )
 
-var BrokerConfigTemplate = `
+var (
+	brokerConfigTemplate = `
 [bootstrap]
 curve_cert = "/mnt/curve/curve.cert"
 default_port = 8050
@@ -35,6 +36,7 @@ hosts = [
 	{ host="%s-%s"},
 ]
 `
+)
 
 // getHostfileConfig gets an existing configmap, if it's done
 func (r *FluxSetupReconciler) getHostfileConfig(ctx context.Context, instance *api.FluxSetup, configName string, hostfile string) (*corev1.ConfigMap, ctrl.Result, error) {
@@ -46,7 +48,7 @@ func (r *FluxSetupReconciler) getHostfileConfig(ctx context.Context, instance *a
 
 		// Case 1: not found yet, and hostfile is ready (recreate)
 		if errors.IsNotFound(err) {
-			// check if its broker.toml TODO : Convert all configMaps to use template stirngs
+			// check if its broker.toml TODO : Convert all configMaps to use template strings
 			if configName == "flux-config" {
 				hostfile = generateFluxConfig(instance.Name, instance.Spec.Size)
 			}
@@ -78,7 +80,7 @@ func generateFluxConfig(name string, size int32) string {
 	} else {
 		hosts = fmt.Sprintf("[0-%d]", size-1)
 	}
-	fluxConfig := fmt.Sprintf(BrokerConfigTemplate, name, hosts)
+	fluxConfig := fmt.Sprintf(brokerConfigTemplate, name, hosts)
 
 	return fluxConfig
 }

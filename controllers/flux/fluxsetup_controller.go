@@ -94,12 +94,12 @@ func (r *FluxSetupReconciler) Reconcile(ctx context.Context, req ctrl.Request) (
 	flux.SetDefaults()
 	instance.SetDefaults()
 
-	log.Info("🥑️ Found instance 🥑️", "Flux Image: ", flux.Spec.Image)
-	fmt.Printf("\n🪵 Broker Hostfile %s\n", instance.Spec.Broker.Hostfile)
+	log.Info("🥑️ Found instance 🥑️", "Flux Image: ", flux.Spec.Image, "Size: ", fmt.Sprint(instance.Spec.Size))
 	fmt.Printf("\n🪵 EtcHosts Hostfile \n%s\n", instance.Spec.EtcHosts.Hostfile)
 
 	// Ensure the configs are created (for volume sources)
-	_, result, err := r.getHostfileConfig(ctx, &instance, "flux-config", instance.Spec.Broker.Hostfile)
+	// The hostfile here is empty because we generate it entirely
+	_, result, err := r.getHostfileConfig(ctx, &instance, "flux-config", "")
 	if err != nil {
 		return result, err
 	}

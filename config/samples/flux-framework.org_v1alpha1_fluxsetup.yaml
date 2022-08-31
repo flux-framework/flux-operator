@@ -9,15 +9,3 @@ spec:
     hostfile: |
       flux-workers-0.flux-workers 10.0.0.1
       flux-workers-1.flux-workers 10.0.0.2
-
-  broker:
-    hostfile: |
-      [bootstrap]
-        curve_cert = "/mnt/curve/curve.cert" 
-        default_port = 8050
-        default_bind = "tcp://eth0:%p"
-        default_connect = "tcp://%h:%p"
-        hosts = [
-          { host="flux-workers-0.flux-workers"},
-          { host="flux-workers-1.flux-workers"},
-        ]
