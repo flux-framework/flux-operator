@@ -4,6 +4,7 @@ metadata:
   name: flux-sample
   namespace: flux-operator
 spec:
+  size: 2
   etc-hosts:
     hostfile: |
       flux-workers-0.flux-workers 10.0.0.1

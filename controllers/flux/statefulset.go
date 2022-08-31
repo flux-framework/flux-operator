@@ -83,6 +83,8 @@ func (r *FluxSetupReconciler) createStatefulSet(instance *api.FluxSetup, contain
 						Image:           containerImage,
 						ImagePullPolicy: corev1.PullAlways,
 						Name:            instance.Name,
+						Command:         []string{"/bin/bash"},
+						Args:            []string{"-c", "sleep infinity"},
 						VolumeMounts:    getVolumeMounts(),
 					}},
 					Volumes: getVolumes(),
