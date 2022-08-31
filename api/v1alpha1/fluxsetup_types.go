@@ -28,9 +28,6 @@ type FluxSetupSpec struct {
 
 	// THe hostfile ConfigMap etc-hosts
 	EtcHosts FluxHostConfig `json:"etc-hosts"`
-
-	// Broker with a hostfile for flux-config
-	Broker FluxHostConfig `json:"broker"`
 }
 
 // FluxSetupStatus defines the observed state of a FluxSetup
@@ -50,7 +47,6 @@ func (s *FluxSetup) SetDefaults() {
 		s.Spec.Size = 1
 	}
 	fmt.Printf("🤓 FluxSetup.Size %d\n", (*s).Spec.Size)
-	fmt.Printf("🤓 FluxSetup.Broker.Hostfile %s\n", (*s).Spec.Broker.Hostfile)
 	fmt.Printf("🤓 FluxSetup.EtcHosts.Hostfile \n%s\n", (*s).Spec.EtcHosts.Hostfile)
 	fmt.Println()
 }

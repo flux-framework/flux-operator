@@ -35,14 +35,6 @@ spec:
           spec:
             description: FluxSetupSpec defines the desired state of Flux
             properties:
-              broker:
-                description: Broker with a hostfile for flux-config
-                properties:
-                  hostfile:
-                    type: string
-                required:
-                - hostfile
-                type: object
               etc-hosts:
                 description: THe hostfile ConfigMap etc-hosts
                 properties:
@@ -56,7 +48,6 @@ spec:
                 format: int32
                 type: integer
             required:
-            - broker
             - etc-hosts
             type: object
           status:
