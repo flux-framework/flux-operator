@@ -34,19 +34,6 @@ spec:
             type: object
           spec:
             description: MiniCluster defines a Flux MiniCluster
-            properties:
-              command:
-                description: Single user executable to provide to flux start
-                type: string
-              image:
-                description: Container image must contain flux and flux-sched install
-                  This container is provided by the user via Flux, but is also passed
-                  to the FluxSetup reconciler, which needs to run the same container
-                  image. Likely these could be separated, but I'm not sure how that
-                  works yet.
-                type: string
-            required:
-            - command
             type: object
           status:
             description: MiniClusterStatus defines the observed state of Flux

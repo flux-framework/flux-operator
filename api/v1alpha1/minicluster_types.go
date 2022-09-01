@@ -17,16 +17,6 @@ import (
 // MiniCluster defines a Flux MiniCluster
 type MiniClusterSpec struct {
 	// Important: Run "make" and "make manifests" to regenerate code after modifying this file
-
-	// Container image must contain flux and flux-sched install
-	// This container is provided by the user via Flux, but is also passed
-	// to the FluxSetup reconciler, which needs to run the same container image.
-	// Likely these could be separated, but I'm not sure how that works yet.
-	// +optional
-	Image string `json:"image"`
-
-	// Single user executable to provide to flux start
-	Command string `json:"command"`
 }
 
 // MiniClusterStatus defines the observed state of Flux
