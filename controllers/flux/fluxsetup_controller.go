@@ -19,7 +19,6 @@ import (
 
 	"k8s.io/apimachinery/pkg/api/errors"
 	"k8s.io/apimachinery/pkg/runtime"
-	"k8s.io/client-go/util/workqueue"
 
 	ctrl "sigs.k8s.io/controller-runtime"
 
@@ -115,15 +114,6 @@ func (r *FluxSetupReconciler) Reconcile(ctx context.Context, req ctrl.Request) (
 	}
 	return ctrl.Result{}, nil
 }
-
-// setupHandler handles events for fluxSetup (for Flux to see)
-// Not using this yet - not sure how it works lol
-type setupHandler struct {}
-
-func (h *setupHandler) Create(e event.CreateEvent, q workqueue.RateLimitingInterface) {}
-func (h *setupHandler) Update(e event.UpdateEvent, q workqueue.RateLimitingInterface) {}
-func (h *setupHandler) Delete(event.DeleteEvent, workqueue.RateLimitingInterface) {}
-func (h *setupHandler) Generic(event.GenericEvent, workqueue.RateLimitingInterface) {}
 
 // SetupWithManager sets up the controller with the Manager.
 func (r *FluxSetupReconciler) SetupWithManager(mgr ctrl.Manager) error {
