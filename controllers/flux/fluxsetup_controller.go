@@ -19,6 +19,8 @@ import (
 
 	"k8s.io/apimachinery/pkg/api/errors"
 	"k8s.io/apimachinery/pkg/runtime"
+	"k8s.io/client-go/util/workqueue"
+
 	ctrl "sigs.k8s.io/controller-runtime"
 
 	"sigs.k8s.io/controller-runtime/pkg/client"
@@ -45,15 +47,7 @@ type FluxSetupReconciler struct {
 //+kubebuilder:rbac:groups=flux-framework.org,resources=pods,verbs=get;list;watch;create;update;patch;delete
 //+kubebuilder:rbac:groups=flux-framework.org,resources=services,verbs=get;list;watch;create;update;patch;delete
 
-// Reconcile is part of the main kubernetes reconciliation loop which aims to
-// move the current state of the cluster closer to the desired state.
-// TODO(user): Modify the Reconcile function to compare the state specified by
-// the Flux object against the actual cluster state, and then
-// perform operations to make the cluster state reflect the state specified by
-// the user.
-//
-// For more details, check Reconcile and its Result here:
-// - https://pkg.go.dev/sigs.k8s.io/controller-runtime@v0.12.1/pkg/reconcile
+// Reconcile moves the current state of the cluster closer to the desired state.
 func (r *FluxSetupReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl.Result, error) {
 
 	// Create a new FluxSetup and Flux instance
@@ -121,6 +115,15 @@ func (r *FluxSetupReconciler) Reconcile(ctx context.Context, req ctrl.Request) (
 	}
 	return ctrl.Result{}, nil
 }
+
+// setupHandler handles events for fluxSetup (for Flux to see)
+// Not using this yet - not sure how it works lol
+type setupHandler struct {}
+
+func (h *setupHandler) Create(e event.CreateEvent, q workqueue.RateLimitingInterface) {}
+func (h *setupHandler) Update(e event.UpdateEvent, q workqueue.RateLimitingInterface) {}
+func (h *setupHandler) Delete(event.DeleteEvent, workqueue.RateLimitingInterface) {}
+func (h *setupHandler) Generic(event.GenericEvent, workqueue.RateLimitingInterface) {}
 
 // SetupWithManager sets up the controller with the Manager.
 func (r *FluxSetupReconciler) SetupWithManager(mgr ctrl.Manager) error {

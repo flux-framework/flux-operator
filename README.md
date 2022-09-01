@@ -106,6 +106,12 @@ $ kubectl create namespace flux-operator
 namespace/flux-operator created
 ```
 
+You can set this namespace to be the default (if you don't want to enter `-n flux-operator` for future commands:
+
+```bash
+$ kubectl config set-context --current --namespace=flux-operator
+```
+
 If you haven't ever installed minkube, you can see [install instructions here](https://minikube.sigs.k8s.io/docs/start/).
 
 ### 2. Build

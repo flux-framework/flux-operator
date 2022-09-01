@@ -32,6 +32,9 @@ type FluxSetupSpec struct {
 
 // FluxSetupStatus defines the observed state of a FluxSetup
 type FluxSetupStatus struct {
+	// Conditions show observations of current state.
+	// +optional
+	Conditions []metav1.Condition `json:"conditions,omitempty"`
 }
 
 // The Flux Host config is a ConfigMap with Hostanme data
