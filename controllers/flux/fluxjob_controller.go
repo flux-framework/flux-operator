@@ -21,8 +21,8 @@ import (
 	api "flux-framework/flux-operator/api/v1alpha1"
 )
 
-// FluxReconciler reconciles a Flux object
-type FluxReconciler struct {
+// FluxJobReconciler reconciles a FluxJob object
+type FluxJobReconciler struct {
 	client.Client
 	Scheme *runtime.Scheme
 }
@@ -39,17 +39,25 @@ type FluxReconciler struct {
 //
 // For more details, check Reconcile and its Result here:
 // - https://pkg.go.dev/sigs.k8s.io/controller-runtime@v0.12.1/pkg/reconcile
-func (r *FluxReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl.Result, error) {
+func (r *FluxJobReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl.Result, error) {
 	_ = log.FromContext(ctx)
 
+	// TODO:
+	// 1. Get the original job CRD
+	// 2. Generate a unique identifier for it - the name plus mangled string
+	// 3. Create a MiniCluster CRD that has status PENDING waiting for resources, with the id
+	// 4. keep reconciling until we can get that MiniCluster and see it has status READY
+	// 5. When ready, run the job!
+	// 6. Continue reconciling until we can get STATUS-> Complete (the FLuxSetup should be watching)
+	// 7. Then we're done.
 	// TODO(user): your logic here
 
 	return ctrl.Result{}, nil
 }
 
 // SetupWithManager sets up the controller with the Manager.
-func (r *FluxReconciler) SetupWithManager(mgr ctrl.Manager) error {
+func (r *FluxJobReconciler) SetupWithManager(mgr ctrl.Manager) error {
 	return ctrl.NewControllerManagedBy(mgr).
-		For(&api.Flux{}).
+		For(&api.FluxJob{}).
 		Complete(r)
 }

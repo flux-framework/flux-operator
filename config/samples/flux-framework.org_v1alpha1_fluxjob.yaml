@@ -1,5 +1,5 @@
 apiVersion: flux-framework.org/v1alpha1
-kind: Flux
+kind: FluxJob
 metadata:
   name: flux-sample
   namespace: flux-operator

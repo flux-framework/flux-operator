@@ -22,6 +22,16 @@ var (
 // SetupControllers sets up all controllers.
 func SetupControllers(mgr ctrl.Manager) (string, error) {
 
+	// User facing Flux Reconciler - receives the job
+	if err := (&controllers.FluxJobReconciler{
+		Client: mgr.GetClient(),
+		Scheme: mgr.GetScheme(),
+	}).SetupWithManager(mgr); err != nil {
+		setupLog.Error(err, "unable to create controller", "controller", "FluxJob")
+		return "FluxJob", err
+	}
+	return "", nil
+
 	// Admin (internal) Flux Setup Reconciler (setup first!)
 	if err := (&controllers.FluxSetupReconciler{
 		Client: mgr.GetClient(),
@@ -30,14 +40,4 @@ func SetupControllers(mgr ctrl.Manager) (string, error) {
 		setupLog.Error(err, "unable to create controller", "controller", "FluxSetup")
 		return "FluxSetup", err
 	}
-
-	// User facing Flux Reconciler
-	if err := (&controllers.FluxReconciler{
-		Client: mgr.GetClient(),
-		Scheme: mgr.GetScheme(),
-	}).SetupWithManager(mgr); err != nil {
-		setupLog.Error(err, "unable to create controller", "controller", "Flux")
-		return "Flux", err
-	}
-	return "", nil
 }

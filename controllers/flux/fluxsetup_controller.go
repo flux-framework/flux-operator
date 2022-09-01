@@ -49,9 +49,9 @@ type FluxSetupReconciler struct {
 // Reconcile moves the current state of the cluster closer to the desired state.
 func (r *FluxSetupReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl.Result, error) {
 
-	// Create a new FluxSetup and Flux instance
+	// Create a new FluxSetup and FluxJob instance
 	var instance api.FluxSetup
-	var flux api.Flux
+	var flux api.FluxJob
 
 	// Prepare a logger to communicate to the developer user
 	// Note that we could attach a named logger to the reconciler object,

@@ -5,20 +5,20 @@ metadata:
   annotations:
     controller-gen.kubebuilder.io/version: v0.9.0
   creationTimestamp: null
-  name: fluxes.flux-framework.org
+  name: fluxjobs.flux-framework.org
 spec:
   group: flux-framework.org
   names:
-    kind: Flux
-    listKind: FluxList
-    plural: fluxes
-    singular: flux
+    kind: FluxJob
+    listKind: FluxJobList
+    plural: fluxjobs
+    singular: fluxjob
   scope: Namespaced
   versions:
   - name: v1alpha1
     schema:
       openAPIV3Schema:
-        description: Flux is the Schema for the fluxes API
+        description: FluxJob is the Schema for the fluxes API
         properties:
           apiVersion:
             description: 'APIVersion defines the versioned schema of this representation
@@ -33,7 +33,7 @@ spec:
           metadata:
             type: object
           spec:
-            description: FluxSpec defines the desired state of Flux
+            description: FluxJobSpec defines the desired state of Flux
             properties:
               command:
                 description: Single user executable to provide to flux start
@@ -49,7 +49,7 @@ spec:
             - command
             type: object
           status:
-            description: FluxStatus defines the observed state of Flux
+            description: FluxJobStatus defines the observed state of Flux
             type: object
         type: object
     served: true

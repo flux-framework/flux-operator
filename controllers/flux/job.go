@@ -20,7 +20,7 @@ import (
 )
 
 // createJob is used by Flux to create the Job spec
-func (r *FluxSetupReconciler) createJob(instance *api.Flux, containerImage string) *batchv1.Job {
+func (r *FluxSetupReconciler) createJob(instance *api.FluxJob, containerImage string) *batchv1.Job {
 	labels := labels(instance, "flux-rank0")
 	job := &batchv1.Job{
 		ObjectMeta: metav1.ObjectMeta{
