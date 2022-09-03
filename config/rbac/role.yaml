@@ -32,7 +32,7 @@ rules:
 - apiGroups:
   - flux-framework.org
   resources:
-  - fluxes
+  - fluxjobs
   verbs:
   - create
   - delete
@@ -44,17 +44,27 @@ rules:
 - apiGroups:
   - flux-framework.org
   resources:
-  - fluxes/finalizers
+  - fluxjobs/finalizers
   verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
   - update
+  - watch
 - apiGroups:
   - flux-framework.org
   resources:
-  - fluxes/status
+  - fluxjobs/status
   verbs:
+  - create
+  - delete
   - get
+  - list
   - patch
   - update
+  - watch
 - apiGroups:
   - flux-framework.org
   resources:
@@ -81,6 +91,42 @@ rules:
   - get
   - patch
   - update
+- apiGroups:
+  - flux-framework.org
+  resources:
+  - miniclusters
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - flux-framework.org
+  resources:
+  - miniclusters/finalizers
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - flux-framework.org
+  resources:
+  - miniclusters/status
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
 - apiGroups:
   - flux-framework.org
   resources:

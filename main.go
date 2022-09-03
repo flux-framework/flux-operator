@@ -19,6 +19,7 @@ import (
 	_ "k8s.io/client-go/plugin/pkg/client/auth"
 
 	"k8s.io/apimachinery/pkg/runtime"
+
 	utilruntime "k8s.io/apimachinery/pkg/util/runtime"
 	clientgoscheme "k8s.io/client-go/kubernetes/scheme"
 	ctrl "sigs.k8s.io/controller-runtime"
@@ -26,6 +27,7 @@ import (
 	"sigs.k8s.io/controller-runtime/pkg/log/zap"
 
 	api "flux-framework/flux-operator/api/v1alpha1"
+	"flux-framework/flux-operator/pkg/flux"
 
 	"flux-framework/flux-operator/controllers/core"
 	//+kubebuilder:scaffold:imports
@@ -84,24 +86,33 @@ func main() {
 		os.Exit(1)
 	}
 
-	if failedCtrl, err := core.SetupControllers(mgr); err != nil {
+	// TODO setup certs here akin to
+	// https://github.com/kubernetes-sigs/kueue/blob/f6d5c9ec0c9af0dddef6e40c9f1556398aa7ef12/main.go#L103-L112 ?
+
+	queues := flux.NewManager(mgr.GetClient())
+
+	if failedCtrl, err := core.SetupControllers(mgr, queues); err != nil {
 		setupLog.Error(err, "Unable to create controller", "controller", failedCtrl)
 		os.Exit(1)
 	}
 	//+kubebuilder:scaffold:builder
 
+	setupChecks(mgr)
+
+	setupLog.Info("starting manager")
+	if err := mgr.Start(ctrl.SetupSignalHandler()); err != nil {
+		setupLog.Error(err, "problem running manager")
+		os.Exit(1)
+	}
+}
+
+func setupChecks(mgr ctrl.Manager) {
 	if err := mgr.AddHealthzCheck("healthz", healthz.Ping); err != nil {
 		setupLog.Error(err, "unable to set up health check")
 		os.Exit(1)
 	}
 	if err := mgr.AddReadyzCheck("readyz", healthz.Ping); err != nil {
 		setupLog.Error(err, "unable to set up ready check")
-		os.Exit(1)
-	}
-
-	setupLog.Info("starting manager")
-	if err := mgr.Start(ctrl.SetupSignalHandler()); err != nil {
-		setupLog.Error(err, "problem running manager")
 		os.Exit(1)
 	}
 }

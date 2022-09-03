@@ -12,6 +12,7 @@ package v1alpha1
 
 import (
 	"fmt"
+
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
@@ -26,17 +27,22 @@ type FluxJobSpec struct {
 	// This container is provided by the user via Flux, but is also passed
 	// to the FluxSetup reconciler, which needs to run the same container image.
 	// Likely these could be separated, but I'm not sure how that works yet.
-	// +optional
+	// TODO can kubebuilder provide a default?
 	Image string `json:"image"`
 
 	// Single user executable to provide to flux start
+	// +optional
 	Command string `json:"command"`
 }
 
 // FluxJobStatus defines the observed state of Flux
 type FluxJobStatus struct {
-	// INSERT ADDITIONAL STATUS FIELD - define observed state of cluster
-	// Important: Run "make" to regenerate code after modifying this file
+
+	// The JobUid is set internally to associate to a miniCluster
+	JobId string `json:"jobid"`
+
+	// conditions hold the latest Flux Job and MiniCluster states
+	Conditions []metav1.Condition `json:"conditions,omitempty"`
 }
 
 //+kubebuilder:object:root=true

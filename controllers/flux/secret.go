@@ -30,14 +30,14 @@ func (r *FluxSetupReconciler) getCurveCert(ctx context.Context, instance *api.Fl
 
 	log := logctrl.FromContext(ctx).WithValues("FluxSetup", instance.Namespace)
 	existing := &corev1.Secret{}
-	err := r.Get(ctx, types.NamespacedName{Name: "secret-tls", Namespace: instance.Namespace}, existing)
+	err := r.Client.Get(ctx, types.NamespacedName{Name: "secret-tls", Namespace: instance.Namespace}, existing)
 	if err != nil {
 
 		// Case 1: not found yet, and hostfile is ready (recreate)
 		if errors.IsNotFound(err) {
 			dep := r.createCurveSecret(instance)
 			log.Info("✨ Creating a new Secret ✨", "Namespace", dep.Namespace, "Name", dep.Name, "Data", (*dep).Data)
-			err = r.Create(ctx, dep)
+			err = r.Client.Create(ctx, dep)
 			if err != nil {
 				log.Error(err, "❌ Failed to create new Curve Secret", "Namespace", dep.Namespace, "Name", (*dep).Name)
 				return existing, ctrl.Result{}, err

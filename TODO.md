@@ -1,5 +1,13 @@
 # TODO
 
+### Design 2
+
+ - [ ] klog can be changed to add V(2) to handle verbository from the command line, see https://pkg.go.dev/k8s.io/klog/v2
+ - [ ] pkg/util/heap should implement an actual heap
+ - [ ] kubebuilder should be able to provide defaults in the *_types.
+ 
+### Design 1 (not currently working on)
+
 - [x] consolidate configmap functions into shared functionality (less redundancy)
 - [x] Debug why the configmaps aren't being populated with the hostfile (it wasn't working with kind, worked without changes with minikube)
 - [x] Figure out adding namespaces to config/samples - should be flux-operator

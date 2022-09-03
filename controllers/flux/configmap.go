@@ -43,7 +43,7 @@ func (r *FluxSetupReconciler) getHostfileConfig(ctx context.Context, instance *a
 
 	log := logctrl.FromContext(ctx).WithValues("FluxSetup", instance.Namespace)
 	existing := &corev1.ConfigMap{}
-	err := r.Get(ctx, types.NamespacedName{Name: configName, Namespace: instance.Namespace}, existing)
+	err := r.Client.Get(ctx, types.NamespacedName{Name: configName, Namespace: instance.Namespace}, existing)
 	if err != nil {
 
 		// Case 1: not found yet, and hostfile is ready (recreate)
@@ -54,7 +54,7 @@ func (r *FluxSetupReconciler) getHostfileConfig(ctx context.Context, instance *a
 			}
 			dep := r.createHostfileConfig(instance, configName, hostfile)
 			log.Info("✨ Creating a new ConfigMap ✨", "Type", configName, "Namespace", dep.Namespace, "Name", dep.Name, "Data", (*dep).Data)
-			err = r.Create(ctx, dep)
+			err = r.Client.Create(ctx, dep)
 			if err != nil {
 				log.Error(err, "❌ Failed to create new ConfigMap", "Type", configName, "Namespace", dep.Namespace, "Name", (*dep).Name)
 				return existing, ctrl.Result{}, err

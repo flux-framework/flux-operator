@@ -19,10 +19,11 @@ type MiniClusterSpec struct {
 	// Important: Run "make" and "make manifests" to regenerate code after modifying this file
 }
 
-// MiniClusterStatus defines the observed state of Flux
+// MiniClusterStatus defines the observed state of the MiniCluster
 type MiniClusterStatus struct {
-	// INSERT ADDITIONAL STATUS FIELD - define observed state of cluster
 	// Important: Run "make" to regenerate code after modifying this file
+	// conditions hold the latest MiniCluster states
+	Conditions []metav1.Condition `json:"conditions,omitempty"`
 }
 
 //+kubebuilder:object:root=true

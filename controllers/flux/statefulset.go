@@ -30,14 +30,14 @@ func (r *FluxSetupReconciler) getStatefulSet(ctx context.Context, instance *api.
 
 	log := logctrl.FromContext(ctx).WithValues("FluxSetup", instance.Namespace)
 	existing := &appsv1.StatefulSet{}
-	err := r.Get(ctx, types.NamespacedName{Name: instance.Name, Namespace: instance.Namespace}, existing)
+	err := r.Client.Get(ctx, types.NamespacedName{Name: instance.Name, Namespace: instance.Namespace}, existing)
 	if err != nil {
 
 		// Case 1: not found yet, check if deployment needs deletion
 		if errors.IsNotFound(err) {
 			dep := r.createStatefulSet(instance, containerImage)
 			log.Info("✨ Creating a new StatefulSet ✨", "Namespace", dep.Namespace, "Name", dep.Name)
-			err = r.Create(ctx, dep)
+			err = r.Client.Create(ctx, dep)
 			if err != nil {
 				log.Error(err, "❌ Failed to create new StatefulSet", "Namespace", dep.Namespace, "Name", dep.Name)
 				return existing, ctrl.Result{}, err

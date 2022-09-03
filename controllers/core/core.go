@@ -12,6 +12,8 @@ package core
 
 import (
 	controllers "flux-framework/flux-operator/controllers/flux"
+	"flux-framework/flux-operator/pkg/flux"
+
 	ctrl "sigs.k8s.io/controller-runtime"
 )
 
@@ -20,24 +22,21 @@ var (
 )
 
 // SetupControllers sets up all controllers.
-func SetupControllers(mgr ctrl.Manager) (string, error) {
+func SetupControllers(mgr ctrl.Manager, manager *flux.Manager) (string, error) {
 
-	// User facing Flux Reconciler - receives the job
-	if err := (&controllers.FluxJobReconciler{
-		Client: mgr.GetClient(),
-		Scheme: mgr.GetScheme(),
-	}).SetupWithManager(mgr); err != nil {
+	// Admin (internal) Flux Setup Reconciler (setup first!)
+	setupReconciler := controllers.NewFluxSetupReconciler(mgr.GetClient(), mgr.GetScheme(), manager)
+	if err := setupReconciler.SetupWithManager(mgr); err != nil {
+		setupLog.Error(err, "unable to create controller", "controller", "FluxSetup")
+		return "FluxSetup", err
+	}
+
+	// User facing Flux Reconciler - receives the job.
+	// We provide the setupReconciler as a watcher
+	jobReconciler := controllers.NewFluxJobReconciler(mgr.GetClient(), mgr.GetScheme(), manager, setupReconciler)
+	if err := jobReconciler.SetupWithManager(mgr); err != nil {
 		setupLog.Error(err, "unable to create controller", "controller", "FluxJob")
 		return "FluxJob", err
 	}
 	return "", nil
-
-	// Admin (internal) Flux Setup Reconciler (setup first!)
-	if err := (&controllers.FluxSetupReconciler{
-		Client: mgr.GetClient(),
-		Scheme: mgr.GetScheme(),
-	}).SetupWithManager(mgr); err != nil {
-		setupLog.Error(err, "unable to create controller", "controller", "FluxSetup")
-		return "FluxSetup", err
-	}
 }

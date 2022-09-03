@@ -19,13 +19,14 @@ The sections below will describe:
 
 The basic idea is that we have two controllers:
 
- - Flux: is a user facing controller (meaning we have a CR, a simple yaml the user can provide an image and entrypoint)
+ - FluxJob: is a user facing job controller (meaning we have a CR, a simple yaml the user can provide an image and entrypoint)
  - FluxSetup: is more an internal or admin controller, meaning no CR, but there is a CRD (custom resource definition).
  
 And you can find the following:
 
  - [Flux Controllers](controllers/flux) are under `controllers/flux` for each of `Flux` and `FluxSetup`
  - [API Spec](api/v1alpha1/) are under `api/v1alpha1/` also for each of `Flux` and `FluxSetup`
+ - [Packages](pkg) include supporting packages for a flux manager and jobs, etc.
  - [TODO.md](TODO.md) is a set of TODOs @vsoch took notes on as she developed.
 
 
@@ -81,6 +82,19 @@ fluxsetup.flux-framework.org/flux-sample configured
 $ make run
 ```
 
+There is also a courtesy function to clean, and apply the samples:
+
+```bash
+$ make clean
+$ make apply
+$ make run
+```
+
+or run all three for easy development!
+
+```bash
+$ make redo
+```
 
 ## Using the Operator
 
@@ -338,7 +352,11 @@ A workspace object is when you need to record some piece of knowledge about a th
 
 Know that the scaffolded k8sClient includes a cache that automatically updates based on watches, and may give you out-of-date data (but this is fine because if it is out-of-date, there should be a reconcile in the queue already). Also know that there is a way to request objets bypassing a cache (look for APIReader).  This gives a read-only, but direct access to the API.  Useful for e.g. those workspace objects.
 
-#### Release
+#### License
+
+This work is heavily inspired from [kueue](https://github.com/kubernetes-sigs/kueue) for the design. I am totally new to operator design and tried
+several basic designs, and decided to mimic this setup (a simplified version) for a first shot, and for my own learning. kueue at the time of
+this was also under the [Apache-2.0](https://github.com/kubernetes-sigs/kueue/blob/ec9b75eaadb5c78dab919d8ea6055d33b2eb09a2/LICENSE) license.
 
 SPDX-License-Identifier: Apache-2.0
 
