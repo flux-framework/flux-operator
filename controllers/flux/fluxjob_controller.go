@@ -12,8 +12,10 @@ package controllers
 
 import (
 	"context"
+	"time"
 
 	"github.com/go-logr/logr"
+	batchv1 "k8s.io/api/batch/v1"
 	"k8s.io/apimachinery/pkg/runtime"
 	"k8s.io/klog/v2"
 	ctrl "sigs.k8s.io/controller-runtime"
@@ -45,6 +47,10 @@ type FluxJobReconciler struct {
 	watchers    []JobUpdateWatcher
 }
 
+var (
+	ownerKey = ".metadata.controller"
+)
+
 func NewFluxJobReconciler(client client.Client, scheme *runtime.Scheme, q *flux.Manager, watchers ...JobUpdateWatcher) *FluxJobReconciler {
 	return &FluxJobReconciler{
 		log:         ctrl.Log.WithName("fluxjob-reconciler"),
@@ -59,9 +65,11 @@ func NewFluxJobReconciler(client client.Client, scheme *runtime.Scheme, q *flux.
 //+kubebuilder:rbac:groups=flux-framework.org,resources=fluxjobs/status,verbs=get;list;watch;create;update;patch;delete
 //+kubebuilder:rbac:groups=flux-framework.org,resources=fluxjobs/finalizers,verbs=get;list;watch;create;update;patch;delete
 
-//+kubebuilder:rbac:groups=flux-framework.org,resources=miniclusters,verbs=get;list;watch;create;update;patch;delete
-//+kubebuilder:rbac:groups=flux-framework.org,resources=miniclusters/status,verbs=get;list;watch;create;update;patch;delete
-//+kubebuilder:rbac:groups=flux-framework.org,resources=miniclusters/finalizers,verbs=get;list;watch;create;update;patch;delete
+//+kubebuilder:rbac:groups=flux-framework.org,resources=jobs,verbs=get;list;watch;create;update;patch;delete
+
+//+kubebuilder:rbac:groups="",resources=events,verbs=create;watch;update
+//+kubebuilder:rbac:groups=batch,resources=jobs,verbs=get;list;watch;update;patch
+//+kubebuilder:rbac:groups=batch,resources=jobs/status,verbs=get
 
 // Reconcile is part of the main kubernetes reconciliation loop which aims to
 // move the current state of the cluster closer to the desired state.
@@ -83,8 +91,8 @@ func (r *FluxJobReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ct
 
 	log := logctrl.FromContext(ctx).WithValues("FluxJob", req.NamespacedName)
 
-	// Keep developed informed what is going on.
-	log.Info("⚡️ Event received! ⚡️")
+	// Keep developer informed what is going on.
+	log.Info("🕵 Event received by FluxJob!")
 	log.Info("Request: ", "req", req)
 
 	// Does the Flux Job exist yet (based on name and namespace)
@@ -93,18 +101,109 @@ func (r *FluxJobReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ct
 
 		// Create it, doesn't exist yet
 		if errors.IsNotFound(err) {
-			log.Info("Flux Job not found . Ignoring since object must be deleted.")
+			log.Info("🌀 Flux Job not found . Ignoring since object must be deleted.")
 			return ctrl.Result{}, nil
 		}
-		log.Info("Failed to get Flux Job. Re-running reconcile.")
+		log.Info("🌀 Failed to get Flux Job. Re-running reconcile.")
 		return ctrl.Result{}, err
 	}
 	// If we don't have them, set minicluster conditions on the fluxjob
+	// I don't think this should trigger...
 	if len(fluxjob.Status.Conditions) == 0 || fluxjob.Status.JobId == "" {
 		return r.newJob(ctx, &fluxjob)
 	}
 
-	log.Info("🏃 Found Flux Job 🏃 ", "Image: ", fluxjob.Spec.Image, "Command: ", fluxjob.Spec.Command, "Name", fluxjob.Status.JobId)
+	// Get the current job status
+	status := jobctrl.GetCondition(&fluxjob)
+
+	// If it's running, let it keep running (for now)
+	if status == jobctrl.ConditionJobRunning {
+		// TODO check pods for being finished
+		// TODO can we put a requeue checking time? Maybe a minute?
+		return ctrl.Result{RequeueAfter: time.Minute}, nil
+	}
+
+	r.log.Info("🌀 Reconciling Flux Job", "Image: ", fluxjob.Spec.Image, "Command: ", fluxjob.Spec.Command, "Name:", fluxjob.Status.JobId, "Conditions:", jobctrl.GetCondition(&fluxjob))
+
+	// If it's waiting, either it's been admitted (in the fluxmanager) or needs to continue waiting
+	if status == jobctrl.ConditionJobWaiting {
+
+		// Determine if job is running, update status to running
+		if r.fluxManager.IsRunningJob(&fluxjob) {
+
+		}
+	}
+
+	// TODO do we need to ensure that there is only one instance of the batchjobs owned by FluxJob, or FluxJob
+	// for this reconciler request?
+
+	/*jobFinishedCond, jobFinished := jobFinishedCondition(&fluxjob)
+	// 2. create new workload if none exists
+	if wl == nil {
+		// Nothing to do if the job is finished
+		if jobFinished {
+			return ctrl.Result{}, nil
+		}
+		err := r.handleJobWithNoWorkload(ctx, &job)
+		if err != nil {
+			log.Error(err, "Handling job with no workload")
+		}
+		return ctrl.Result{}, err
+	}
+
+	// 3. handle a finished job
+	if jobFinished {
+		added := false
+		wl.Status.Conditions, added = appendFinishedConditionIfNotExists(wl.Status.Conditions, jobFinishedCond)
+		if !added {
+			return ctrl.Result{}, nil
+		}
+		err := r.client.Status().Update(ctx, wl)
+		if err != nil {
+			log.Error(err, "Updating workload status")
+		}
+		return ctrl.Result{}, err
+	}
+
+	// 4. Handle a not finished job
+	if jobSuspended(&job) {
+		// 4.1 start the job if the workload has been admitted, and the job is still suspended
+		if wl.Spec.Admission != nil {
+			log.V(2).Info("Job admitted, unsuspending")
+			err := r.startJob(ctx, wl, &job)
+			if err != nil {
+				log.Error(err, "Unsuspending job")
+			}
+			return ctrl.Result{}, err
+		}
+
+		// 4.2 update queue name if changed.
+		q := queueName(&job)
+		if wl.Spec.QueueName != q {
+			log.V(2).Info("Job changed queues, updating workload")
+			wl.Spec.QueueName = q
+			err := r.client.Update(ctx, wl)
+			if err != nil {
+				log.Error(err, "Updating workload queue")
+			}
+			return ctrl.Result{}, err
+		}
+		log.V(3).Info("Job is suspended and workload not yet admitted by a clusterQueue, nothing to do")
+		return ctrl.Result{}, nil
+	}
+
+	if wl.Spec.Admission == nil {
+		// 4.3 the job must be suspended if the workload is not yet admitted.
+		log.V(2).Info("Running job is not admitted by a cluster queue, suspending")
+		err := r.stopJob(ctx, wl, &job, "Not admitted by cluster queue")
+		if err != nil {
+			log.Error(err, "Suspending job with non admitted workload")
+		}
+		return ctrl.Result{}, err
+	}*/
+
+	// 4.4 workload is admitted and job is running, nothing to do.
+	log.Info("🌀 Job running with admitted workload, nothing to do")
 
 	// This will reconcile and trigger the watch on the MiniCluster
 	return ctrl.Result{}, nil
@@ -144,20 +243,19 @@ func (r *FluxJobReconciler) Create(e event.CreateEvent) bool {
 	// We will tell FluxSetup there is a new job request
 	defer r.notifyWatchers(job)
 	status := jobStatus(job)
-	log := r.log.WithValues("job", klog.KObj(job))
-	log.Info("🌀 Job create event")
+	r.log.Info("🌀 Job create event", "Name:", job.Name)
 
 	// If it's waiting or running, do nothing
 	// TODO might there be some need to update something if waiting?
 	// I assume after it's running you can't, but maybe yes for waiting
 	if status == jobctrl.Running || status == jobctrl.Waiting {
-		log.Info("🌀 Job is running or waiting", "Name:", job.Name)
+		r.log.Info("🌀 Job is running or waiting", "Name:", job.Name)
 		return false
 	}
 
 	// If it's finished we need to clean up
 	if status == jobctrl.Finished {
-		log.Info("🌀 Job is finished", "Name:", job.Name)
+		r.log.Info("🌀 Job is finished", "Name:", job.Name)
 		return true
 	}
 
@@ -168,15 +266,15 @@ func (r *FluxJobReconciler) Create(e event.CreateEvent) bool {
 	// TODO handle any figuring out of resources?
 	// https://github.com/kubernetes-sigs/kueue/blob/main/pkg/controller/core/workload_controller.go#L280
 
-	// As an alternative we could store a variable on the spec to indicate admitted,
-	// but I think using conditions are more best practice
+	// Add the job to the waiting queue - when it is moved to the heap
+	// it is considered running.
 	if !r.fluxManager.AddOrUpdateJob(jobCopy) {
-		log.Info("🌀 Issue adding or updating job; ignored for now")
+		r.log.Info("🌀 Issue adding or updating job; ignored for now")
 		return false
 	}
 	// If we get here update the job condition to be waiting
-	log.Info("🌀 Job was added or updated!", "Name:", job.Name)
 	jobctrl.FlagConditionWaiting(job)
+	r.log.Info("🌀 Job was added or updated!", "Name:", job.Name, "Condition:", jobctrl.GetCondition(job))
 	return true
 }
 
@@ -186,7 +284,7 @@ func (r *FluxJobReconciler) Delete(e event.DeleteEvent) bool {
 	//	defer r.notifyWatchers(wl)
 	//	status := workloadStatus(wl)
 	log := r.log.WithValues("job", klog.KObj(job))
-	log.Info("Job delete event")
+	log.Info("🌀 Job delete event")
 
 	/*	if !e.DeleteStateUnknown {
 			status = workloadStatus(wl)
@@ -225,7 +323,7 @@ func (r *FluxJobReconciler) Update(e event.UpdateEvent) bool {
 	//	defer r.notifyWatchers(wl)
 	//	status := workloadStatus(wl)
 	log := r.log.WithValues("job", klog.KObj(newJob))
-	log.Info("Workload update event")
+	log.Info("🌀 Job update event")
 
 	/*	oldWl := e.ObjectOld.(*kueue.Workload)
 		wl := e.ObjectNew.(*kueue.Workload)
@@ -317,6 +415,7 @@ func (r *FluxJobReconciler) newJob(ctx context.Context, fluxjob *api.FluxJob) (c
 		return ctrl.Result{Requeue: true}, nil
 	}
 
+	// This should be done in create? Just in case...
 	// Get available conditions and set on copy
 	conditions := jobctrl.GetJobConditions()
 	fluxjobCopy.Status.Conditions = conditions
@@ -332,6 +431,7 @@ func (r *FluxJobReconciler) SetupWithManager(mgr ctrl.Manager) error {
 
 		// This references the Create/Delete/Update,etc functions above
 		// they return a boolean to indicate if we should reconcile given the event
+		Owns(&batchv1.Job{}).
 		WithEventFilter(r).
 		Complete(r)
 }

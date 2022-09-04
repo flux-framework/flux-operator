@@ -6,6 +6,30 @@ metadata:
   name: manager-role
 rules:
 - apiGroups:
+  - ""
+  resources:
+  - events
+  verbs:
+  - create
+  - update
+  - watch
+- apiGroups:
+  - batch
+  resources:
+  - jobs
+  verbs:
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - batch
+  resources:
+  - jobs/status
+  verbs:
+  - get
+- apiGroups:
   - flux-framework.org
   resources:
   - configmaps
@@ -94,31 +118,7 @@ rules:
 - apiGroups:
   - flux-framework.org
   resources:
-  - miniclusters
-  verbs:
-  - create
-  - delete
-  - get
-  - list
-  - patch
-  - update
-  - watch
-- apiGroups:
-  - flux-framework.org
-  resources:
-  - miniclusters/finalizers
-  verbs:
-  - create
-  - delete
-  - get
-  - list
-  - patch
-  - update
-  - watch
-- apiGroups:
-  - flux-framework.org
-  resources:
-  - miniclusters/status
+  - jobs
   verbs:
   - create
   - delete

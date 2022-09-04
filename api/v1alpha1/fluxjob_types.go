@@ -30,6 +30,11 @@ type FluxJobSpec struct {
 	// TODO can kubebuilder provide a default?
 	Image string `json:"image"`
 
+	// Size (number of jobs to run)
+	// +kubebuilder:default=1
+	// +optional
+	Size int `json:"size"`
+
 	// Single user executable to provide to flux start
 	// +optional
 	Command string `json:"command"`
@@ -68,6 +73,7 @@ func (f *FluxJob) SetDefaults() {
 	fmt.Println()
 	fmt.Printf("🤓 FluxJob.Image %s\n", f.Spec.Image)
 	fmt.Printf("🤓 FluxJob.Command %s\n", f.Spec.Command)
+	fmt.Printf("🤓 FluxJob.Size %s\n", fmt.Sprint(f.Spec.Size))
 }
 
 //+kubebuilder:object:root=true

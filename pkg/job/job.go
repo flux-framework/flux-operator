@@ -57,6 +57,7 @@ func FindCondition(status *api.FluxJobStatus, conditionType string) int {
 	return -1
 }
 
+// UpdateCondition sets all conditions to false except for the selected
 func UpdateCondition(job *api.FluxJob, conditionType string) {
 	for i, condition := range job.Status.Conditions {
 		if condition.Type == conditionType {
@@ -65,6 +66,17 @@ func UpdateCondition(job *api.FluxJob, conditionType string) {
 			job.Status.Conditions[i].Status = metav1.ConditionFalse
 		}
 	}
+}
+
+// GetCondition gets the active condition
+// If we eventually allow more than one condition this can return multiple
+func GetCondition(job *api.FluxJob) string {
+	for _, condition := range job.Status.Conditions {
+		if condition.Status == metav1.ConditionTrue {
+			return condition.Reason
+		}
+	}
+	return "AllFalse"
 }
 
 func NewInfo(job *api.FluxJob) *Info {
@@ -77,3 +89,13 @@ func NewInfo(job *api.FluxJob) *Info {
 func FlagConditionWaiting(job *api.FluxJob) {
 	UpdateCondition(job, ConditionJobWaiting)
 }
+
+// TODO determined if finished
+/*func IsFinished(job *api.FluxJob) (batchv1.JobConditionType, bool) {
+	for _, c := range j.Status.Conditions {
+		if (c.Type == batchv1.JobComplete || c.Type == batchv1.JobFailed) && c.Status == corev1.ConditionTrue {
+			return c.Type, true
+		}
+	}
+	return "", false
+}*/

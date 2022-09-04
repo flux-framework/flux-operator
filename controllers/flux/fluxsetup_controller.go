@@ -16,6 +16,7 @@ import (
 
 	"github.com/go-logr/logr"
 	appsv1 "k8s.io/api/apps/v1"
+	batchv1 "k8s.io/api/batch/v1"
 	corev1 "k8s.io/api/core/v1"
 	"k8s.io/client-go/util/workqueue"
 	"k8s.io/klog/v2"
@@ -39,6 +40,7 @@ import (
 	api "flux-framework/flux-operator/api/v1alpha1"
 	"flux-framework/flux-operator/pkg/defaults"
 	"flux-framework/flux-operator/pkg/flux"
+	jobctrl "flux-framework/flux-operator/pkg/job"
 )
 
 // Buffer for job update channel
@@ -56,7 +58,7 @@ type FluxSetupReconciler struct {
 
 func NewFluxSetupReconciler(client client.Client, scheme *runtime.Scheme, q *flux.Manager) *FluxSetupReconciler {
 	return &FluxSetupReconciler{
-		log:              ctrl.Log.WithName("fluxsetup-reconciler"),
+		log:              ctrl.Log.WithName("setup-reconciler"),
 		Client:           client,
 		Scheme:           scheme,
 		fluxManager:      q,
@@ -74,6 +76,7 @@ func NewFluxSetupReconciler(client client.Client, scheme *runtime.Scheme, q *flu
 //+kubebuilder:rbac:groups=flux-framework.org,resources=deployments,verbs=get;list;watch;create;update;patch;delete
 //+kubebuilder:rbac:groups=flux-framework.org,resources=pods,verbs=get;list;watch;create;update;patch;delete
 //+kubebuilder:rbac:groups=flux-framework.org,resources=services,verbs=get;list;watch;create;update;patch;delete
+//+kubebuilder:rbac:groups=flux-framework.org,resources=jobs,verbs=get;list;watch;create;update;patch;delete
 
 // Reconcile moves the current state of the cluster closer to the desired state.
 func (r *FluxSetupReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl.Result, error) {
@@ -81,31 +84,28 @@ func (r *FluxSetupReconciler) Reconcile(ctx context.Context, req ctrl.Request) (
 	// Create a new FluxSetup and FluxJob instance
 	var setup api.FluxSetup
 
-	// Prepare a logger for reconcile
-	log := ctrl.LoggerFrom(ctx).WithValues("FluxSetup", klog.KObj(&setup))
-	ctx = ctrl.LoggerInto(ctx, log)
-
 	// Keep developed informed what is going on.
-	log.Info("Reconciling FluxSetup")
-	log.Info("⚡️ Event received! ⚡️")
-	log.Info("Request: ", "req", req)
+	r.log.Info("🌞 Reconciling FluxSetup")
+	r.log.Info("🕵 Event received by FluxSetup!")
+	r.log.Info("Request: ", "req", req)
 
 	// Get the fluxSetup
 	err := r.Client.Get(ctx, req.NamespacedName, &setup)
 	if err != nil {
 		if errors.IsNotFound(err) {
-			log.Info("FluxSetup resource not found. Ignoring since object must be deleted.")
+			r.log.Info("🌞 FluxSetup resource not found. Ignoring since object must be deleted.")
 			return ctrl.Result{}, nil
 		}
-		log.Info("Failed to get FluxSetup resource. Re-running reconcile.")
+		r.log.Info("🌞 Failed to get FluxSetup resource. Re-running reconcile.")
 		return ctrl.Result{}, err
 	}
 
 	// This currently just shows defaults
 	setup.SetDefaults()
-	log.Info("🥑️ Found FluxSetup 🥑️", "Name: ", setup.Name, "Namespace:", setup.Namespace)
+	r.log.Info("🌞 Found FluxSetup", "Name: ", setup.Name, "Namespace:", setup.Namespace, "MaxSize:", setup.Spec.MaxSize)
 
-	// TODO this Status function needs some way to get total jobs (queue uses a cache)
+	// TODO this Status function needs some way to get total jobs (kueue uses a cache)
+	// This should be linked with the ability to control / limit resources
 	status, err := r.Status(&setup)
 	if !equality.Semantic.DeepEqual(status, setup.Status) {
 		setup.Status = status
@@ -148,8 +148,9 @@ func (r *FluxSetupReconciler) Reconcile(ctx context.Context, req ctrl.Request) (
 // STATUS
 func (r *FluxSetupReconciler) Status(setup *api.FluxSetup) (api.FluxSetupStatus, error) {
 	return api.FluxSetupStatus{
-		UsedResources:    1, // TODO
-		PendingWorkloads: int32(r.fluxManager.Pending(setup)),
+		UsedResources: 1, // TODO
+		WaitingJobs:   int32(r.fluxManager.JobsPending()),
+		RunningJobs:   int32(r.fluxManager.JobsRunning()),
 	}, nil
 }
 
@@ -157,6 +158,7 @@ func (r *FluxSetupReconciler) Status(setup *api.FluxSetup) (api.FluxSetupStatus,
 // NotifyJobUpdate is called from FluxJob when there is a new Job
 // It adds an event to the update channel
 func (r *FluxSetupReconciler) NotifyJobUpdate(job *api.FluxJob) {
+	r.log.Info("🌞 FluxSetup is being notified of a FluxJob update")
 	r.jobUpdateChannel <- event.GenericEvent{Object: job}
 }
 
@@ -176,13 +178,14 @@ func (r *FluxSetupReconciler) Create(e event.CreateEvent) bool {
 		return true
 	}
 	log := r.log.WithValues("FluxSetup", klog.KObj(setup))
-	log.Info("⚙ FluxSetup create event")
+	log.Info("🌞 FluxSetup create event")
 	ctx := ctrl.LoggerInto(context.Background(), log)
 
 	// Add the new setup to the manager
 	if err := r.fluxManager.InitQueue(ctx, setup); err != nil {
-		log.Error(err, "Failed to init Flux Manager queue")
+		log.Error(err, "🌞 Failed to init Flux Manager queue")
 	}
+	log.Info("🌞 Flux Manager queue created in FluxSetup Create, asking for Reconcile")
 	return true
 }
 
@@ -193,7 +196,7 @@ func (r *FluxSetupReconciler) Delete(e event.DeleteEvent) bool {
 		return true
 	}
 	log := r.log.WithValues("FluxSetup", klog.KObj(setup))
-	log.V(2).Info("⚙ FluxSetup delete event")
+	log.Info("🌞 FluxSetup delete event")
 
 	/*defer r.notifyWatchers(cq, nil)
 
@@ -206,6 +209,7 @@ func (r *FluxSetupReconciler) Delete(e event.DeleteEvent) bool {
 func (r *FluxSetupReconciler) Update(e event.UpdateEvent) bool {
 	_, match := e.ObjectOld.(*api.FluxSetup)
 	newSetup, newMatch := e.ObjectNew.(*api.FluxSetup)
+	r.log.Info("🌞 FluxSetup Update Event", "setup", klog.KObj(newSetup))
 
 	if !match || !newMatch {
 		// No need to interact with the cache for other objects.
@@ -213,7 +217,7 @@ func (r *FluxSetupReconciler) Update(e event.UpdateEvent) bool {
 	}
 
 	log := r.log.WithValues("FluxSetup", klog.KObj(newSetup))
-	log.V(2).Info("FluxSetup update event")
+	log.Info("🌞 FluxSetup update event")
 
 	if newSetup.DeletionTimestamp != nil {
 		return true
@@ -230,7 +234,7 @@ func (r *FluxSetupReconciler) Update(e event.UpdateEvent) bool {
 }
 
 func (r *FluxSetupReconciler) Generic(e event.GenericEvent) bool {
-	r.log.Info("⚙ FluxSetup Generic event", "setup", klog.KObj(e.Object))
+	r.log.Info("🌞 FluxSetup Generic event", "setup", klog.KObj(e.Object))
 	return true
 }
 
@@ -239,6 +243,7 @@ func (r *FluxSetupReconciler) Generic(e event.GenericEvent) bool {
 // The events come from a channel Source, so only the Generic handler will get events.
 type jobHandler struct {
 	fluxManager *flux.Manager
+	log         logr.Logger
 }
 
 func (h *jobHandler) Create(event.CreateEvent, workqueue.RateLimitingInterface) {}
@@ -248,9 +253,24 @@ func (h *jobHandler) Delete(event.DeleteEvent, workqueue.RateLimitingInterface) 
 // Generic adds a request for a new job
 func (h *jobHandler) Generic(e event.GenericEvent, q workqueue.RateLimitingInterface) {
 	job := e.Object.(*api.FluxJob)
-	req := h.requestForJob(job)
-	if req != nil {
-		q.AddAfter(*req, defaults.UpdatesBatchPeriod)
+
+	condition := jobctrl.GetCondition(job)
+	h.log.Info("🎧 FluxSetup Job Update Channel received job", "Name:", job.Name, "Size", job.Spec.Size, "Condition:", condition)
+
+	// If the condition is waiting for resources, we should check if we can admit
+	if condition == jobctrl.ConditionJobWaiting {
+
+		// This is where the job should come in "waiting for resources" and we should
+		// provide them and TODO update the status of the cluster if they are available
+		// TODO get current queue status and compare to size of job
+		// Right now we assume we can accept infinite!
+		if h.fluxManager.AddOrUpdateJob(job) {
+			h.log.Info("🎧 FluxSetup Job Update Channel Job Accepted", "Name:", job.Name, "Size", job.Spec.Size, "Condition:", condition)
+			req := h.requestForJob(job)
+			if req != nil {
+				q.AddAfter(*req, defaults.UpdatesBatchPeriod)
+			}
+		}
 	}
 }
 
@@ -271,10 +291,12 @@ func (r *FluxSetupReconciler) SetupWithManager(mgr ctrl.Manager) error {
 	// We pass the flux manager to the update handler
 	jobUpdateHandler := jobHandler{
 		fluxManager: r.fluxManager,
+		log:         r.log,
 	}
 	return ctrl.NewControllerManagedBy(mgr).
 		For(&api.FluxSetup{}).
 		//		Watches(&source.Kind{Type: &api.FluxJob{}}, &handler.EnqueueRequestForObject{}).
+		Owns(&batchv1.Job{}).
 		Owns(&corev1.ConfigMap{}).
 		Owns(&appsv1.StatefulSet{}).
 		Owns(&corev1.Service{}).

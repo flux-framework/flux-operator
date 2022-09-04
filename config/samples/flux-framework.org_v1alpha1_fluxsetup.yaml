@@ -4,7 +4,13 @@ metadata:
   name: flux-sample
   namespace: flux-operator
 spec:
-  size: 2
+
+  # Mini cluster defaults (if not specified by job)
+  mini-cluster:
+    size: 1
+
+  # Maximum size for deployment (pods)
+  max-size: 20
   etc-hosts:
     hostfile: |
       flux-workers-0.flux-workers 10.0.0.1

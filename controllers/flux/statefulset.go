@@ -67,7 +67,7 @@ func (r *FluxSetupReconciler) createStatefulSet(instance *api.FluxSetup, contain
 			Namespace: instance.Namespace,
 		},
 		Spec: appsv1.StatefulSetSpec{
-			Replicas: &instance.Spec.Size,
+			Replicas: &instance.Spec.MiniCluster.Size,
 			Selector: &metav1.LabelSelector{
 				MatchLabels: labels,
 			},

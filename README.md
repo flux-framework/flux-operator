@@ -30,6 +30,21 @@ And you can find the following:
  - [TODO.md](TODO.md) is a set of TODOs @vsoch took notes on as she developed.
 
 
+## Design
+
+I am trying to mirror a design that is used by kueue, where the two controllers are aware of the state of the cluster via a third "manager" that can hold a queue of jobs. The assumption here is that the user is submitting jobs (FluxJob that will map to batchv1.Job) and the cluster (FluxSetup) has some max amount of room available, and we need those two things to be aware of one another. Currently the flow I'm working on is the following:
+
+1. We create the FluxSetup
+2. The Create event creates a queue (and asks for reconcile). 
+  The reconcile needs to do some consolidation (not done yet) - it should always get the current number of running batch jobs and save to status and check against quota (TODO). Create should also eventually be able to manage cleaning up old setups to replace with new (in TODO). Right now we assume unlimited quota for the namespace, which of course isn't true!
+3. A FluxJob is submit (e.g., by a user). Developer note: `make redo` submits the job after the original FluxSetup creation. 
+4. The job is generally checked for status, and should be flagged as waiting and Create returns True. This will trigger the Job reconcile loop and the setup watcher.
+4. The setup watches a channel with job updates, and this is connected to the jobHandler. The jobHandler is called only on a Generic event, and this is when the job needs to 
+
+Some current additional notes:
+
+1. FluxJob submit before the FluxSetup is ready are ignored. We don't have a Queue init yet to support them, and the assumption is that the user can re-submit.
+
 ## Quick Start
 
 Know how this stuff works? Then here you go!
@@ -56,44 +71,24 @@ $ make manifests
 $ make install
 ```
 
-Generate your secrets and put them in [config/samples](config/samples):
-
-**TODO** I don't think this is best practice, but cert-manager doesn't seem to work with this?
-For now I'm making an empty set of secrets.
-
-```bash
-$ mkdir -p ./config/samples/secrets
-openssl req -x509 -nodes -newkey rsa:4096 -sha256 -days 365 -extensions v3_ca \
-  -subj "/O=Flux Operator Certificates" \
-  -keyout ./config/samples/secrets/tls.key \
-  -out ./config/samples/secrets/tls.crt
-```
-
-And then edit your [config/samples](config/samples) and deploy them, and start the operator!
-
-```bash
-$ bin/kustomize build config/samples | kubectl apply -f -
-```
-```
-flux.flux-framework.org/flux-sample configured
-fluxsetup.flux-framework.org/flux-sample configured
-```
-```bash
-$ make run
-```
-
 There is also a courtesy function to clean, and apply the samples:
 
 ```bash
-$ make clean
-$ make apply
-$ make run
+$ make clean  # remove old flux-operator namespaced items
+$ make apply  # apply the setup and job config
+$ make run    # run the cluster
+$ make job    # submit a job
 ```
 
-or run all three for easy development!
+or run all three for easy development! The below command ensures to submit a job after the FluxSetup is applied so it won't be ignored (jobs submit before there is a cluster setup are ignored and require the user to re-submit).
 
 ```bash
-$ make redo
+$ make redo  # clean, apply, and run
+```
+And then submit your job in a different terminal
+
+```bash
+$ make job
 ```
 
 ## Using the Operator
@@ -148,31 +143,7 @@ And install. Note that this places an executable [bin/kustomize](bin/kustomize) 
 $ make install
 ```
 
-### 3. Deploy
-
-Note that you will be using the config yamls [here](config/samples/_v1alpha1_lolcow.yaml) to start, which include a greeting and port.
-We will look at these later for demonstrating how the operator watches for changes. Apply your configs (kustomize is in the bin).
-
-```bash
-$ bin/kustomize build config/samples | kubectl apply -f -
-flux.flux-framework.org/job created
-```
-
-And finally, run it.
-
-```bash
-$ make run
-```
-
-And you should be able to open the web-ui:
-
-```bash
-$ minikube service job
-```
-
-Note that if you get a 404 page, do `kubectl get svc` and wait until the service goes from "pending" to "ready."
-
-### 7. Cleanup
+### 3. Cleanup
 
 When cleaning up, you can control+c to kill the operator from running, and then:
 
@@ -329,28 +300,6 @@ you need to do:
 (*instance).Spec.Field
 ```
 Otherwise it shows up as an empty string.
-
-## Wisdom
-
-**from the kubebuilder slack**
-
-### Learned Knowledge
-
-- Reconciling should only take into account the spec of your object, and the real world.  Don't use status to hold knowledge for future reconcile loops.  Use a workspace object instead.
-- Status should only hold observations of the reconcile loop.  Conditions, perhaps a "Phase", IDs of stuff you've found, etc.
-- Use k8s ownership model to help with cleaning up things that should automatically be reclaimed when your object is deleted.
-- Use finalizers to do manual clean-up-tasks
-- Send events, but be very limited in how often you send events.  We've opted now to send events, essentially only when a Condition is modified (e.g. a Condition changes state or reason).
-- Try not to do too many things in a single reconcile.  One thing is fine.  e.g. see one thing out of order?  Fix that and ask to be reconciled.  The next time you'll see that it's in order and you can check the next thing.  The resulting code is very robust and can handle almost any failure you throw at it.
-- Add "kubebuilder:printcolums" markers to help kubectl-users get a nice summary when they do "kubectl get yourthing".
-- Accept and embrace that you will be reconciling an out-of-date object from time to time.  It shouldn't really matter.  If it does, you might want to change things around so that it doesn't matter.  Inconsistency is a fact of k8s life.
-- Place extra care in taking errors and elevating them to useful conditions, and/or events.  These are the most visible part of an operator, and the go-to-place for humans when trying to figure out why your code doesn't work.  If you've taken the time to extract the error text from the underlying system into an Event, your users will be able to fix the problem much quicker.
-
-### What is a workspace?
-
-A workspace object is when you need to record some piece of knowledge about a thing you're doing, so that later you can use that when reconciling this object. MyObject "foo" is reconciled; so to record the thing you need to remember, create a MyObjectWorkspace — Owned by the MyObject, and with the same name + namespace.  MyObjectWorkspace doesn't need a reconciler; it's simply a tool for you to remember the thing. Next time you reconcile a MyObject, also read your MyObjectWorkspace so you can remember "what happened last time". E.g. I've made a controller to create an EC2 instance, and we needed to be completely sure that we didn't make the "launch instance" API call twice.  EC2 has a "post once only" technique whereby you specify a nonce to avoid duplicate API calls.  You would write the nonce to the workspace use the nonce to call the EC2 API write any status info of what you observed to the status. Rremove the nonce when you know that you've stored the results (e.g. instance IDs or whatever) When you reconcile, if the nonce is set, you can re-use it because it means that the EC2 call failed somehow.  EC2 uses the nonce the second time to recognise that "heh, this is the same request as before ..." Stuff like this nonce shouldn't go in your status. Put simply, the status should really never be used as input for your reconcile.
-
-Know that the scaffolded k8sClient includes a cache that automatically updates based on watches, and may give you out-of-date data (but this is fine because if it is out-of-date, there should be a reconcile in the queue already). Also know that there is a way to request objets bypassing a cache (look for APIReader).  This gives a read-only, but direct access to the API.  Useful for e.g. those workspace objects.
 
 #### License
 

@@ -45,6 +45,10 @@ spec:
                   image. Likely these could be separated, but I'm not sure how that
                   works yet. TODO can kubebuilder provide a default?
                 type: string
+              size:
+                default: 1
+                description: Size (number of jobs to run)
+                type: integer
             required:
             - image
             type: object

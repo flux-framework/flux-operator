@@ -43,6 +43,18 @@ spec:
                 required:
                 - hostfile
                 type: object
+              max-size:
+                default: 20
+                format: int32
+                type: integer
+              mini-cluster:
+                properties:
+                  size:
+                    default: 1
+                    description: Default size of the statefulset replias
+                    format: int32
+                    type: integer
+                type: object
               namespaceSelector:
                 description: namespaces that are allowed to submit jobs to the queue
                 properties:
@@ -92,25 +104,21 @@ spec:
                 description: QueueStrategy indicates the queueing strategy of the
                   jobs
                 type: string
-              size:
-                default: 1
-                description: Size of the statefulset replias
-                format: int32
-                type: integer
             required:
             - etc-hosts
+            - mini-cluster
             type: object
           status:
             description: FluxSetupStatus defines the observed state of a FluxSetup
             properties:
               admittedWorkloads:
-                description: AdmittedWorkloads is the number of workloads currently
-                  admitted to this clusterQueue and haven't finished yet.
+                description: RunningJobs is the number of FluxJob currently running
+                  (not finished)
                 format: int32
                 type: integer
               pendingWorkloads:
-                description: PendingWorkloads is the number of workloads currently
-                  waiting to be admitted to this clusterQueue.
+                description: WaitingJobs is the number of FluxJob currently waiting
+                  (not running)
                 format: int32
                 type: integer
               usedResources:

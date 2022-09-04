@@ -50,7 +50,7 @@ func (r *FluxSetupReconciler) getHostfileConfig(ctx context.Context, instance *a
 		if errors.IsNotFound(err) {
 			// check if its broker.toml TODO : Convert all configMaps to use template strings
 			if configName == "flux-config" {
-				hostfile = generateFluxConfig(instance.Name, instance.Spec.Size)
+				hostfile = generateFluxConfig(instance.Name, instance.Spec.MiniCluster.Size)
 			}
 			dep := r.createHostfileConfig(instance, configName, hostfile)
 			log.Info("✨ Creating a new ConfigMap ✨", "Type", configName, "Namespace", dep.Namespace, "Name", dep.Name, "Data", (*dep).Data)

@@ -16,14 +16,12 @@ import (
 	jobctrl "flux-framework/flux-operator/pkg/job"
 	"sync"
 
-	"k8s.io/apimachinery/pkg/util/sets"
 	"sigs.k8s.io/controller-runtime/pkg/client"
 )
 
 // Errors
 var (
 	errSetupAlreadyExists = errors.New("setup already exists")
-	errSetupDoesNotExist  = errors.New("setup doesn't exist")
 )
 
 type Manager struct {
@@ -31,17 +29,14 @@ type Manager struct {
 	cond sync.Cond
 
 	client client.Client
-	queues map[string]Queue
 
-	// Key is cohort's name. Value is a set of associated Queue names.
-	cohorts map[string]sets.String
+	// Currently we want one setup == one queue
+	queue Queue
 }
 
 func NewManager(client client.Client) *Manager {
 	m := &Manager{
-		client:  client,
-		queues:  make(map[string]Queue),
-		cohorts: make(map[string]sets.String),
+		client: client,
 	}
 	m.cond.L = &m.RWMutex
 	return m
@@ -54,10 +49,24 @@ func (m *Manager) AddOrUpdateJob(job *api.FluxJob) bool {
 	return m.addOrUpdateJob(job)
 }
 
-func (m *Manager) Pending(setup *api.FluxSetup) int {
+// AddOrUpdateJob adds or updates a job, triggered by the FluxJob creation
+func (m *Manager) IsRunningJob(job *api.FluxJob) bool {
+	m.Lock()
+	defer m.Unlock()
+	info := jobctrl.NewInfo(job)
+	return m.queue.IsRunningJob(info)
+}
+
+func (m *Manager) JobsPending() int {
 	m.RLock()
 	defer m.RUnlock()
-	return m.queues[setup.Name].Pending()
+	return m.queue.Pending()
+}
+
+func (m *Manager) JobsRunning() int {
+	m.RLock()
+	defer m.RUnlock()
+	return m.queue.Running()
 }
 
 func (m *Manager) addOrUpdateJob(job *api.FluxJob) bool {
@@ -65,25 +74,29 @@ func (m *Manager) addOrUpdateJob(job *api.FluxJob) bool {
 	info := jobctrl.NewInfo(job)
 
 	// If we don't have a setup yet
-	if len(m.queues) == 0 {
+	if m.queue == nil {
 		return false
 	}
-	// Grab the first one
-	for _, q := range m.queues {
-		// This always returns true
-		q.PushOrUpdate(info)
-		break
-	}
+
+	// This always returns true
+	m.queue.PushOrUpdate(info)
+
 	// TODO report pending jobs here
+	// TODO what does broadcast do?
 	m.Broadcast()
 	return true
+}
+
+func (m *Manager) HasQueue() bool {
+	return m.queue != nil
 }
 
 func (m *Manager) InitQueue(ctx context.Context, setup *api.FluxSetup) error {
 	m.Lock()
 	defer m.Unlock()
 
-	if _, ok := m.queues[setup.Name]; ok {
+	// We already have a queue
+	if m.HasQueue() {
 		return errSetupAlreadyExists
 	}
 
@@ -95,16 +108,29 @@ func (m *Manager) InitQueue(ctx context.Context, setup *api.FluxSetup) error {
 	}
 
 	// Store the queue namespaced by the setup for now
-	m.queues[setup.Name] = createdQueue
-
-	// Ensuring waiting jobs are added to the heap
-	queued := createdQueue.QueueWaitingJobs(ctx, m.client)
+	m.queue = createdQueue
+	queued := m.QueueWaitingJobs(ctx)
 
 	// TODO report pending jbos to some metric server here
 	if queued {
 		m.Broadcast()
 	}
 	return nil
+}
+
+// CleanUpOnContext tracks the context. When closed, it wakes routines waiting
+// on elements to be available. It should be called before doing any calls to
+// Heads.
+func (m *Manager) CleanUpOnContext(ctx context.Context) {
+	<-ctx.Done()
+	m.Broadcast()
+}
+
+// QueueWaitingJobs can be called on init or by the scheduler
+func (m *Manager) QueueWaitingJobs(ctx context.Context) bool {
+	// Ensuring waiting jobs are added to the heap
+	queued := m.queue.QueueWaitingJobs(ctx, m.client)
+	return queued
 }
 
 // Awake go routines waiting on the condition

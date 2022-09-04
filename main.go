@@ -11,6 +11,7 @@ SPDX-License-Identifier: Apache-2.0
 package main
 
 import (
+	"context"
 	"flag"
 	"os"
 
@@ -27,7 +28,9 @@ import (
 	"sigs.k8s.io/controller-runtime/pkg/log/zap"
 
 	api "flux-framework/flux-operator/api/v1alpha1"
+	"flux-framework/flux-operator/pkg/defaults"
 	"flux-framework/flux-operator/pkg/flux"
+	"flux-framework/flux-operator/pkg/scheduler"
 
 	"flux-framework/flux-operator/controllers/core"
 	//+kubebuilder:scaffold:imports
@@ -89,14 +92,16 @@ func main() {
 	// TODO setup certs here akin to
 	// https://github.com/kubernetes-sigs/kueue/blob/f6d5c9ec0c9af0dddef6e40c9f1556398aa7ef12/main.go#L103-L112 ?
 
-	queues := flux.NewManager(mgr.GetClient())
+	fluxManager := flux.NewManager(mgr.GetClient())
 
-	if failedCtrl, err := core.SetupControllers(mgr, queues); err != nil {
+	if failedCtrl, err := core.SetupControllers(mgr, fluxManager); err != nil {
 		setupLog.Error(err, "Unable to create controller", "controller", failedCtrl)
 		os.Exit(1)
 	}
 	//+kubebuilder:scaffold:builder
 
+	// The scheduler right now is a loop to move waiting jobs to the heap
+	setupScheduler(context.TODO(), mgr, fluxManager)
 	setupChecks(mgr)
 
 	setupLog.Info("starting manager")
@@ -115,4 +120,13 @@ func setupChecks(mgr ctrl.Manager) {
 		setupLog.Error(err, "unable to set up ready check")
 		os.Exit(1)
 	}
+}
+
+func setupScheduler(ctx context.Context, mgr ctrl.Manager, fluxManager *flux.Manager) {
+	sched := scheduler.New(
+		fluxManager,
+		mgr.GetClient(),
+		mgr.GetEventRecorderFor(defaults.AdmissionName),
+	)
+	go sched.Start(ctx)
 }

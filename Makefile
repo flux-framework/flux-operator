@@ -117,13 +117,17 @@ clean:
 	kubectl delete -n flux-operator FluxJob --all
 	rm -rf yaml/*.yaml
 
-.PHONY: apply
-apply:
+applyall:
 	bin/kustomize build config/samples | kubectl apply -f -
 
-# Clean, apply and run, and apply the job again
+apply:
+	kubectl apply -f config/samples/flux-framework.org_v1alpha1_fluxsetup.yaml
+
+# Clean, apply and run, and apply the job
 redo: clean apply run
-	bin/kustomize build config/samples/flux-framework.org_v1alpha1_fluxjob.yaml | kubectl apply -f -
+
+job:
+	kubectl apply -f config/samples/flux-framework.org_v1alpha1_fluxjob.yaml
 
 ##@ Build
 

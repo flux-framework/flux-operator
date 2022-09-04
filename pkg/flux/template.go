@@ -16,6 +16,8 @@ import (
 	corev1 "k8s.io/api/core/v1"
 	"k8s.io/apimachinery/pkg/api/equality"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	ctrl "sigs.k8s.io/controller-runtime"
+
 	"k8s.io/apimachinery/pkg/labels"
 	"k8s.io/apimachinery/pkg/types"
 	"sigs.k8s.io/controller-runtime/pkg/client"
@@ -31,6 +33,9 @@ import (
 type QueueTemplate struct {
 	QueueStrategy api.QueueStrategy
 
+	// This is probably a bad design and we should have a continuously
+	// running controller, but for now I have a waiting jobs lookup,
+	// and a heap that waiting jobs are moved to
 	heap              heap.Heap
 	cohort            string
 	namespaceSelector labels.Selector
@@ -69,18 +74,22 @@ func (c *QueueTemplate) QueueWaitingJobs(ctx context.Context, client client.Clie
 		return false
 	}
 
+	log := ctrl.LoggerFrom(context.TODO())
+	log.Info("Queue", "Waiting Jobs:", c.waitingJobs)
 	waitingJobs := make(map[string]*jobctrl.Info)
 	wasMoved := false
 	for key, jobInfo := range c.waitingJobs {
 		ns := corev1.Namespace{}
 		err := client.Get(ctx, types.NamespacedName{Name: jobInfo.Obj.Namespace}, &ns)
 		if err != nil || !c.namespaceSelector.Matches(labels.Set(ns.Labels)) {
+			log.Info("Queue", "Job Still Waiting", jobInfo.Obj.Name)
 			waitingJobs[key] = jobInfo
 		} else {
 			// Note that this is a stupid function that just adds the job info
 			// if it doesn't exist yet, the actual heap functionality
 			// needs to be implemented
 			wasMoved = c.heap.PushIfNotPresent(jobInfo) || wasMoved
+			log.Info("Queue", "Job Added to Heap", jobInfo.Obj.Name)
 		}
 	}
 	c.waitingJobs = waitingJobs
@@ -104,14 +113,22 @@ func (c *QueueTemplate) PushOrUpdate(info *jobctrl.Info) {
 	c.heap.PushOrUpdate(info)
 }
 
-func (c *QueueTemplate) Pending() int {
-	return c.PendingActive() + c.PendingWaiting()
+func (c *QueueTemplate) IsRunningJob(info *jobctrl.Info) bool {
+	key := info.JobKey()
+
+	// Is it waiting?
+	if c.waitingJobs[key] != nil {
+		return false
+	}
+
+	// Is it currently in the heap (running)
+	return c.heap.Exists(info)
 }
 
-func (c *QueueTemplate) PendingActive() int {
+func (c *QueueTemplate) Running() int {
 	return c.heap.Len()
 }
 
-func (c *QueueTemplate) PendingWaiting() int {
+func (c *QueueTemplate) Pending() int {
 	return len(c.waitingJobs)
 }
