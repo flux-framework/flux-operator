@@ -26,16 +26,16 @@ import (
 )
 
 // generateCurveCert makes a new Secret if it doesn't exist
-func (r *FluxSetupReconciler) getCurveCert(ctx context.Context, instance *api.FluxSetup) (*corev1.Secret, ctrl.Result, error) {
+func (r *FluxJobReconciler) getCurveCert(ctx context.Context, fluxjob *api.FluxJob) (*corev1.Secret, ctrl.Result, error) {
 
-	log := logctrl.FromContext(ctx).WithValues("FluxSetup", instance.Namespace)
+	log := logctrl.FromContext(ctx).WithValues("FluxJob", fluxjob.Namespace)
 	existing := &corev1.Secret{}
-	err := r.Client.Get(ctx, types.NamespacedName{Name: "secret-tls", Namespace: instance.Namespace}, existing)
+	err := r.Client.Get(ctx, types.NamespacedName{Name: "secret-tls", Namespace: fluxjob.Namespace}, existing)
 	if err != nil {
 
 		// Case 1: not found yet, and hostfile is ready (recreate)
 		if errors.IsNotFound(err) {
-			dep := r.createCurveSecret(instance)
+			dep := r.createCurveSecret(fluxjob)
 			log.Info("✨ Creating a new Secret ✨", "Namespace", dep.Namespace, "Name", dep.Name, "Data", (*dep).Data)
 			err = r.Client.Create(ctx, dep)
 			if err != nil {
@@ -56,7 +56,7 @@ func (r *FluxSetupReconciler) getCurveCert(ctx context.Context, instance *api.Fl
 }
 
 // createCurveSecret creates the secret
-func (r *FluxSetupReconciler) createCurveSecret(instance *api.FluxSetup) *corev1.Secret {
+func (r *FluxJobReconciler) createCurveSecret(fluxjob *api.FluxJob) *corev1.Secret {
 
 	// TODO do we need hosts here?
 	c := certs.NewCertificate([]string{}, false)
@@ -66,13 +66,13 @@ func (r *FluxSetupReconciler) createCurveSecret(instance *api.FluxSetup) *corev1
 		TypeMeta: metav1.TypeMeta{},
 		ObjectMeta: metav1.ObjectMeta{
 			Name:      "secret-tls",
-			Namespace: instance.Namespace,
+			Namespace: fluxjob.Namespace,
 		},
 		Data: map[string][]byte{
 			"tls.key": []byte(c.Public),
 			"tls.crt": []byte(c.Private),
 		},
 	}
-	ctrl.SetControllerReference(instance, cert, r.Scheme)
+	ctrl.SetControllerReference(fluxjob, cert, r.Scheme)
 	return cert
 }

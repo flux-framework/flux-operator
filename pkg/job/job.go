@@ -90,6 +90,10 @@ func FlagConditionWaiting(job *api.FluxJob) {
 	UpdateCondition(job, ConditionJobWaiting)
 }
 
+func FlagConditionReady(job *api.FluxJob) {
+	UpdateCondition(job, ConditionJobReady)
+}
+
 // TODO determined if finished
 /*func IsFinished(job *api.FluxJob) (batchv1.JobConditionType, bool) {
 	for _, c := range j.Status.Conditions {

@@ -215,7 +215,6 @@ func (in *FluxSetupList) DeepCopyObject() runtime.Object {
 func (in *FluxSetupSpec) DeepCopyInto(out *FluxSetupSpec) {
 	*out = *in
 	out.MiniCluster = in.MiniCluster
-	out.EtcHosts = in.EtcHosts
 	if in.NamespaceSelector != nil {
 		in, out := &in.NamespaceSelector, &out.NamespaceSelector
 		*out = new(v1.LabelSelector)

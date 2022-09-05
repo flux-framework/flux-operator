@@ -28,8 +28,6 @@ import (
 	"flux-framework/flux-operator/pkg/flux"
 	jobctrl "flux-framework/flux-operator/pkg/job"
 	"flux-framework/flux-operator/pkg/util/uuid"
-
-	logctrl "sigs.k8s.io/controller-runtime/pkg/log"
 )
 
 // This interface allows us to define a NotifyJobUpdate functionn
@@ -76,11 +74,6 @@ func NewFluxJobReconciler(client client.Client, scheme *runtime.Scheme, q *flux.
 // We compare the state of the Flux object to the actual cluster state and
 // perform operations to make the cluster state reflect the state specified by
 // the user.
-// LOGIC:
-// 1. Get the original job CRD
-// 2. Generate a unique identifier for it - the name plus mangled string
-// 3. Update the status to be pending resources
-// 4.
 //
 // For more details, check Reconcile and its Result here:
 // - https://pkg.go.dev/sigs.k8s.io/controller-runtime@v0.12.1/pkg/reconcile
@@ -89,11 +82,9 @@ func (r *FluxJobReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ct
 	// Create a new FluxJob
 	var fluxjob api.FluxJob
 
-	log := logctrl.FromContext(ctx).WithValues("FluxJob", req.NamespacedName)
-
 	// Keep developer informed what is going on.
-	log.Info("🕵 Event received by FluxJob!")
-	log.Info("Request: ", "req", req)
+	r.log.Info("🕵 Event received by FluxJob!")
+	r.log.Info("Request: ", "req", req)
 
 	// Does the Flux Job exist yet (based on name and namespace)
 	err := r.Client.Get(ctx, req.NamespacedName, &fluxjob)
@@ -101,10 +92,10 @@ func (r *FluxJobReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ct
 
 		// Create it, doesn't exist yet
 		if errors.IsNotFound(err) {
-			log.Info("🌀 Flux Job not found . Ignoring since object must be deleted.")
+			r.log.Info("🌀 Flux Job not found . Ignoring since object must be deleted.")
 			return ctrl.Result{}, nil
 		}
-		log.Info("🌀 Failed to get Flux Job. Re-running reconcile.")
+		r.log.Info("🌀 Failed to get Flux Job. Re-running reconcile.")
 		return ctrl.Result{}, err
 	}
 	// If we don't have them, set minicluster conditions on the fluxjob
@@ -128,82 +119,28 @@ func (r *FluxJobReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ct
 	// If it's waiting, either it's been admitted (in the fluxmanager) or needs to continue waiting
 	if status == jobctrl.ConditionJobWaiting {
 
-		// Determine if job is running, update status to running
+		// If the FluxJob condition is waiting but the manager says running,
+		// this means it was moved to the running heap
+		// We need to create the MiniCluster and update the status to
+		// be running
 		if r.fluxManager.IsRunningJob(&fluxjob) {
 
+			// This will either reconcile with an updated state, or cause the
+			// job to re-enter this loop to create other resources for the
+			// MiniCluster. When the state changes from waiting to
+			// ready, then we know the mini cluster is done (and can do)
+			// something else?
+			return r.newMiniCluster(ctx, &fluxjob)
 		}
 	}
 
+	// If the status is Ready. this means we should submit the job (how?)
 	// TODO do we need to ensure that there is only one instance of the batchjobs owned by FluxJob, or FluxJob
 	// for this reconciler request?
 
-	/*jobFinishedCond, jobFinished := jobFinishedCondition(&fluxjob)
-	// 2. create new workload if none exists
-	if wl == nil {
-		// Nothing to do if the job is finished
-		if jobFinished {
-			return ctrl.Result{}, nil
-		}
-		err := r.handleJobWithNoWorkload(ctx, &job)
-		if err != nil {
-			log.Error(err, "Handling job with no workload")
-		}
-		return ctrl.Result{}, err
-	}
-
-	// 3. handle a finished job
-	if jobFinished {
-		added := false
-		wl.Status.Conditions, added = appendFinishedConditionIfNotExists(wl.Status.Conditions, jobFinishedCond)
-		if !added {
-			return ctrl.Result{}, nil
-		}
-		err := r.client.Status().Update(ctx, wl)
-		if err != nil {
-			log.Error(err, "Updating workload status")
-		}
-		return ctrl.Result{}, err
-	}
-
-	// 4. Handle a not finished job
-	if jobSuspended(&job) {
-		// 4.1 start the job if the workload has been admitted, and the job is still suspended
-		if wl.Spec.Admission != nil {
-			log.V(2).Info("Job admitted, unsuspending")
-			err := r.startJob(ctx, wl, &job)
-			if err != nil {
-				log.Error(err, "Unsuspending job")
-			}
-			return ctrl.Result{}, err
-		}
-
-		// 4.2 update queue name if changed.
-		q := queueName(&job)
-		if wl.Spec.QueueName != q {
-			log.V(2).Info("Job changed queues, updating workload")
-			wl.Spec.QueueName = q
-			err := r.client.Update(ctx, wl)
-			if err != nil {
-				log.Error(err, "Updating workload queue")
-			}
-			return ctrl.Result{}, err
-		}
-		log.V(3).Info("Job is suspended and workload not yet admitted by a clusterQueue, nothing to do")
-		return ctrl.Result{}, nil
-	}
-
-	if wl.Spec.Admission == nil {
-		// 4.3 the job must be suspended if the workload is not yet admitted.
-		log.V(2).Info("Running job is not admitted by a cluster queue, suspending")
-		err := r.stopJob(ctx, wl, &job, "Not admitted by cluster queue")
-		if err != nil {
-			log.Error(err, "Suspending job with non admitted workload")
-		}
-		return ctrl.Result{}, err
-	}*/
-
-	// 4.4 workload is admitted and job is running, nothing to do.
-	log.Info("🌀 Job running with admitted workload, nothing to do")
+	// TODO will need to look for running, and then state of mini cluster to determine
+	// finished and then possibly clean up.
+	r.log.Info("🌀 Mini Cluster is Ready!")
 
 	// This will reconcile and trigger the watch on the MiniCluster
 	return ctrl.Result{}, nil

@@ -73,6 +73,10 @@ func (s *Scheduler) schedule(ctx context.Context) {
 	if s.fluxManager.QueueWaitingJobs(ctx) {
 		s.log.Info("📅 Scheduler", "Status:", "New jobs were queued")
 	}
+
+	// This is a dummy scheduler - we should (for now) see jobs "running" as we don't
+	// have any algorithm in place to check against resources and now allow them to
+	// move from waiting -> running (the faux heap).
 	s.log.Info("📅 Scheduler", "Status:", fmt.Sprintf("%d jobs are pending", s.fluxManager.JobsPending()))
 	s.log.Info("📅 Scheduler", "Status:", fmt.Sprintf("%d jobs are running", s.fluxManager.JobsRunning()))
 }

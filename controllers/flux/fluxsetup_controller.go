@@ -115,36 +115,6 @@ func (r *FluxSetupReconciler) Reconcile(ctx context.Context, req ctrl.Request) (
 	return ctrl.Result{}, nil
 }
 
-/*
-	flux.SetDefaults()
-	instance.SetDefaults()
-
-	log.Info("🥑️ Found instance 🥑️", "Flux Image: ", flux.Spec.Image, "Size: ", fmt.Sprint(instance.Spec.Size))
-	fmt.Printf("\n🪵 EtcHosts Hostfile \n%s\n", instance.Spec.EtcHosts.Hostfile)
-
-	// Ensure the configs are created (for volume sources)
-	// The hostfile here is empty because we generate it entirely
-	_, result, err := r.getHostfileConfig(ctx, &instance, "flux-config", "")
-	if err != nil {
-		return result, err
-	}
-	_, result, err = r.getHostfileConfig(ctx, &instance, "etc-hosts", instance.Spec.EtcHosts.Hostfile)
-	if err != nil {
-		return result, err
-	}
-
-	// And generate the secret curve cert
-	_, result, err = r.getCurveCert(ctx, &instance)
-	if err != nil {
-		return result, err
-	}
-
-	// Get existing deployment (statefulset, a result, and error)
-	_, result, err = r.getStatefulSet(ctx, &instance, flux.Spec.Image)
-	if err != nil {
-		return result, err
-	}*/
-
 // STATUS
 func (r *FluxSetupReconciler) Status(setup *api.FluxSetup) (api.FluxSetupStatus, error) {
 	return api.FluxSetupStatus{

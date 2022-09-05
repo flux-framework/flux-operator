@@ -35,14 +35,6 @@ spec:
           spec:
             description: FluxSetupSpec defines the desired state of Flux
             properties:
-              etc-hosts:
-                description: THe hostfile ConfigMap etc-hosts
-                properties:
-                  hostfile:
-                    type: string
-                required:
-                - hostfile
-                type: object
               max-size:
                 default: 20
                 format: int32
@@ -105,7 +97,6 @@ spec:
                   jobs
                 type: string
             required:
-            - etc-hosts
             - mini-cluster
             type: object
           status:

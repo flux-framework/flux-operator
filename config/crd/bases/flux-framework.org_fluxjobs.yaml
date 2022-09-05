@@ -48,6 +48,7 @@ spec:
               size:
                 default: 1
                 description: Size (number of jobs to run)
+                format: int32
                 type: integer
             required:
             - image

@@ -19,14 +19,24 @@ import (
 const (
 
 	// FluxJob State
-	// Requested: The default when the job is requested
-	// Waiting: The job is waiting to be admitted (there are resources)
-	// Admitted: There are resources, and the job has permission to run
-	// Running: The job is running
+	// Requested:
+	//     The default when the job is requested
+	// Waiting + in waiting queue:
+	//     The job is waiting to be admitted (there are resources) - before added to heap
+	// Waiting + in heap:
+	//     There are resources, and the job has permission to run. We are creating the
+	//     MiniCluster (in the heap) and reconciling until it's all there.
+	// Ready:
+	//     We finished creating the MiniCluster, and it's ready to run!
+	// Running:
+	//     Resources are created, and status is switched from Waiting -> Running by FluxJob
+	//     This should be when we kick off the command. The job is running
+	// Finished:
+	//     When resources are done (TBA how determined)
 	// Finished the job is finished running!
 	ConditionJobRequested string = "JobRequested"
 	ConditionJobWaiting   string = "JobWaitingForResources"
-	ConditionJobAdmitted  string = "JobAdmitted"
+	ConditionJobReady     string = "JobMiniClusterReady"
 	ConditionJobRunning   string = "JobRunning"
 	ConditionJobFinished  string = "JobFinished"
 )
@@ -42,13 +52,13 @@ func getJobRequestedCondition(status metav1.ConditionStatus) metav1.Condition {
 	}
 }
 
-func getJobAdmittedCondition(status metav1.ConditionStatus) metav1.Condition {
+func getJobReadyCondition(status metav1.ConditionStatus) metav1.Condition {
 	now := time.Now()
 	return metav1.Condition{
-		Type:               ConditionJobAdmitted,
-		Reason:             ConditionJobAdmitted,
+		Type:               ConditionJobReady,
+		Reason:             ConditionJobReady,
 		Status:             status,
-		Message:            ConditionJobAdmitted,
+		Message:            ConditionJobReady,
 		LastTransitionTime: metav1.Time{Time: now},
 	}
 }
@@ -93,7 +103,7 @@ func GetJobConditions() []metav1.Condition {
 		getJobRequestedCondition(metav1.ConditionTrue),
 		getJobWaitingCondition(metav1.ConditionFalse),
 		getJobRunningCondition(metav1.ConditionFalse),
-		getJobAdmittedCondition(metav1.ConditionFalse),
+		getJobReadyCondition(metav1.ConditionFalse),
 		getJobFinishedCondition(metav1.ConditionFalse),
 	}
 }

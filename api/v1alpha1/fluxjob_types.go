@@ -33,7 +33,7 @@ type FluxJobSpec struct {
 	// Size (number of jobs to run)
 	// +kubebuilder:default=1
 	// +optional
-	Size int `json:"size"`
+	Size int32 `json:"size"`
 
 	// Single user executable to provide to flux start
 	// +optional

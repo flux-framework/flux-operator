@@ -11,7 +11,3 @@ spec:
 
   # Maximum size for deployment (pods)
   max-size: 20
-  etc-hosts:
-    hostfile: |
-      flux-workers-0.flux-workers 10.0.0.1
-      flux-workers-1.flux-workers 10.0.0.2

@@ -43,9 +43,6 @@ type FluxSetupSpec struct {
 	// +optional
 	MaxSize int32 `json:"max-size"`
 
-	// THe hostfile ConfigMap etc-hosts
-	EtcHosts FluxHostConfig `json:"etc-hosts"`
-
 	// namespaces that are allowed to submit jobs to the queue
 	NamespaceSelector *metav1.LabelSelector `json:"namespaceSelector,omitempty"`
 
@@ -89,7 +86,6 @@ func (s *FluxSetup) SetDefaults() {
 		s.Spec.MaxSize = 20
 	}
 	fmt.Printf("🤓 FluxSetup.MaxSize %d\n", (*s).Spec.MaxSize)
-	fmt.Printf("🤓 FluxSetup.EtcHosts.Hostfile \n%s\n", (*s).Spec.EtcHosts.Hostfile)
 	fmt.Printf("🤓 FluxSetup.MiniCluster.Size %d\n", (*s).Spec.MiniCluster.Size)
 }
 
