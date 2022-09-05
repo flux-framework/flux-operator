@@ -57,6 +57,13 @@ func (m *Manager) IsRunningJob(job *api.FluxJob) bool {
 	return m.queue.IsRunningJob(info)
 }
 
+func (m *Manager) IsWaitingJob(job *api.FluxJob) bool {
+	m.Lock()
+	defer m.Unlock()
+	info := jobctrl.NewInfo(job)
+	return m.queue.IsWaitingJob(info)
+}
+
 func (m *Manager) JobsPending() int {
 	m.RLock()
 	defer m.RUnlock()
@@ -67,6 +74,13 @@ func (m *Manager) JobsRunning() int {
 	m.RLock()
 	defer m.RUnlock()
 	return m.queue.Running()
+}
+
+func (m *Manager) Delete(job *api.FluxJob) bool {
+	m.RLock()
+	defer m.RUnlock()
+	info := jobctrl.NewInfo(job)
+	return m.queue.Delete(info)
 }
 
 func (m *Manager) addOrUpdateJob(job *api.FluxJob) bool {

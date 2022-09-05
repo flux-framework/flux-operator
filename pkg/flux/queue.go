@@ -38,8 +38,14 @@ type Queue interface {
 	// Is a job running in the queue?
 	IsRunningJob(info *jobctrl.Info) bool
 
+	// Is a job waiting?
+	IsWaitingJob(info *jobctrl.Info) bool
+
 	// PushOrUpdate adds the job to the heap
 	PushOrUpdate(*jobctrl.Info)
+
+	// Delete a job from waiting or running
+	Delete(*jobctrl.Info) bool
 
 	// Pending is the count of pending jobs
 	Pending() int

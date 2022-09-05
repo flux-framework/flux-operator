@@ -52,6 +52,19 @@ func (h *Heap) PushIfNotPresent(info *jobctrl.Info) bool {
 	return false
 }
 
+// Push a new job to the heap if not present
+func (h *Heap) Delete(info *jobctrl.Info) bool {
+
+	key := info.Obj.Name
+
+	// If the JobInfo name isn't in items, add it
+	if _, exists := h.items[key]; exists {
+		delete(h.items, key)
+		return true
+	}
+	return false
+}
+
 // GetByKey gets a job based on the key
 func (h *Heap) Exists(info *jobctrl.Info) bool {
 

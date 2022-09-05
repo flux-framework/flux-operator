@@ -113,6 +113,24 @@ func (c *QueueTemplate) PushOrUpdate(info *jobctrl.Info) {
 	c.heap.PushOrUpdate(info)
 }
 
+func (c *QueueTemplate) Delete(info *jobctrl.Info) bool {
+	key := info.JobKey()
+	existing := c.waitingJobs[key]
+
+	// Did we find it waiting or in the heap (running)?
+	found := false
+
+	// Delete from waiting jobs
+	if existing != nil {
+		found = true
+		delete(c.waitingJobs, key)
+	}
+	// Delete from heap
+	found = c.heap.Delete(info) || found
+	return found
+
+}
+
 func (c *QueueTemplate) IsRunningJob(info *jobctrl.Info) bool {
 	key := info.JobKey()
 
@@ -123,6 +141,12 @@ func (c *QueueTemplate) IsRunningJob(info *jobctrl.Info) bool {
 
 	// Is it currently in the heap (running)
 	return c.heap.Exists(info)
+}
+
+func (c *QueueTemplate) IsWaitingJob(info *jobctrl.Info) bool {
+	key := info.JobKey()
+	existing := c.waitingJobs[key]
+	return existing != nil
 }
 
 func (c *QueueTemplate) Running() int {

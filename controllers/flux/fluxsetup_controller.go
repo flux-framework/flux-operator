@@ -168,8 +168,8 @@ func (r *FluxSetupReconciler) Delete(e event.DeleteEvent) bool {
 	log := r.log.WithValues("FluxSetup", klog.KObj(setup))
 	log.Info("🌞 FluxSetup delete event")
 
+	// TODO what does it mean to delete the queue?
 	/*defer r.notifyWatchers(cq, nil)
-
 	r.log.V(2).Info("ClusterQueue delete event", "clusterQueue", klog.KObj(cq))
 	r.cache.DeleteClusterQueue(cq)
 	r.qManager.DeleteClusterQueue(cq)*/
@@ -220,7 +220,7 @@ func (h *jobHandler) Create(event.CreateEvent, workqueue.RateLimitingInterface) 
 func (h *jobHandler) Update(event.UpdateEvent, workqueue.RateLimitingInterface) {}
 func (h *jobHandler) Delete(event.DeleteEvent, workqueue.RateLimitingInterface) {}
 
-// Generic adds a request for a new job
+// Generic adds a request for a new job, this is called after FluxJob create
 func (h *jobHandler) Generic(e event.GenericEvent, q workqueue.RateLimitingInterface) {
 	job := e.Object.(*api.FluxJob)
 
@@ -233,6 +233,8 @@ func (h *jobHandler) Generic(e event.GenericEvent, q workqueue.RateLimitingInter
 		// This is where the job should come in "waiting for resources" and we should
 		// provide them and TODO update the status of the cluster if they are available
 		// TODO get current queue status and compare to size of job
+		// TODO this could also be managed by the FluxJob since we have access to
+		// the fluxManager. Or maybe the scheduler should be a part of FluxSetup?
 		// Right now we assume we can accept infinite!
 		if h.fluxManager.AddOrUpdateJob(job) {
 			h.log.Info("🎧 FluxSetup Job Update Channel Job Accepted", "Name:", job.Name, "Size", job.Spec.Size, "Condition:", condition)

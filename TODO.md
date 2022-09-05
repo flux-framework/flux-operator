@@ -5,9 +5,11 @@
  - [ ] klog can be changed to add V(2) to handle verbository from the command line, see https://pkg.go.dev/k8s.io/klog/v2
  - [ ] pkg/util/heap should implement an actual heap
  - [ ] kubebuilder should be able to provide defaults in the *_types.
- - [ ] FluxSetup create should do some handling to ensure we only have one setup. If there is an existing setup it should update with the new one and then the old be deleted (without messing up running jobs).
+ - [ ] FluxSetup - how should we handle deletion / update?
  - [ ] Currently we have no representation of quota - we need to be able to set (and check) hard limits defined in the setup. Kueue has a scheduler entity. 
  - [x] Figure out logging connected to reconciler
+ - [ ] Figure out how to "launch" a job?
+ - [ ] Details for etc-hosts
 
 ### Design 1 (not currently working on)
 

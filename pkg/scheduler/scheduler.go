@@ -41,7 +41,7 @@ func New(manager *flux.Manager, cl client.Client, recorder record.EventRecorder)
 	s := &Scheduler{
 		fluxManager: manager,
 		client:      cl,
-		log:         ctrl.Log.WithName("scheduler"),
+		log:         ctrl.Log.WithName("fluxjob-scheduler"),
 		recorder:    recorder,
 	}
 	//s.applyAdmission = s.applyAdmissionWithSSA

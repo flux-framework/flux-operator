@@ -12,6 +12,7 @@ package job
 import (
 	api "flux-framework/flux-operator/api/v1alpha1"
 
+	"github.com/mitchellh/hashstructure/v2"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
@@ -86,6 +87,21 @@ func NewInfo(job *api.FluxJob) *Info {
 	return info
 }
 
+// JobsEqual takes a hash of the specs and assesses equality
+func JobsEqual(jobA *api.FluxJob, jobB *api.FluxJob) bool {
+
+	// For any failures, assume not equal
+	hashA, err := hashstructure.Hash(jobA.Spec, hashstructure.FormatV2, nil)
+	if err != nil {
+		return false
+	}
+	hashB, err := hashstructure.Hash(jobB.Spec, hashstructure.FormatV2, nil)
+	if err != nil {
+		return false
+	}
+	return hashA == hashB
+}
+
 func FlagConditionWaiting(job *api.FluxJob) {
 	UpdateCondition(job, ConditionJobWaiting)
 }
@@ -93,8 +109,16 @@ func FlagConditionWaiting(job *api.FluxJob) {
 func FlagConditionReady(job *api.FluxJob) {
 	UpdateCondition(job, ConditionJobReady)
 }
+func FlagConditionRunning(job *api.FluxJob) {
+	UpdateCondition(job, ConditionJobRunning)
+}
 
-// TODO determined if finished
+func FlagConditionFinished(job *api.FluxJob) {
+	UpdateCondition(job, ConditionJobFinished)
+}
+
+// TODO here is how we determed if a batch job was successful / not
+// I'm not sure yet where batch fits in, but maybe...
 /*func IsFinished(job *api.FluxJob) (batchv1.JobConditionType, bool) {
 	for _, c := range j.Status.Conditions {
 		if (c.Type == batchv1.JobComplete || c.Type == batchv1.JobFailed) && c.Status == corev1.ConditionTrue {
