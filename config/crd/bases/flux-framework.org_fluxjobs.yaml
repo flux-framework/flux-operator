@@ -39,11 +39,8 @@ spec:
                 description: Single user executable to provide to flux start
                 type: string
               image:
+                default: fluxrm/flux-sched:focal
                 description: Container image must contain flux and flux-sched install
-                  This container is provided by the user via Flux, but is also passed
-                  to the FluxSetup reconciler, which needs to run the same container
-                  image. Likely these could be separated, but I'm not sure how that
-                  works yet. TODO can kubebuilder provide a default?
                 type: string
               size:
                 default: 1
@@ -62,8 +59,8 @@ spec:
                   description: "Condition contains details for one aspect of the current
                     state of this API Resource. --- This struct is intended for direct
                     use as an array at the field path .status.conditions.  For example,
-                    type FooStatus struct{ // Represents the observations of a foo's
-                    current state. // Known .status.conditions.type are: \"Available\",
+                    \n type FooStatus struct{ // Represents the observations of a
+                    foo's current state. // Known .status.conditions.type are: \"Available\",
                     \"Progressing\", and \"Degraded\" // +patchMergeKey=type // +patchStrategy=merge
                     // +listType=map // +listMapKey=type Conditions []metav1.Condition
                     `json:\"conditions,omitempty\" patchStrategy:\"merge\" patchMergeKey:\"type\"

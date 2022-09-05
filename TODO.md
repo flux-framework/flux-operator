@@ -4,12 +4,13 @@
 
  - [ ] klog can be changed to add V(2) to handle verbository from the command line, see https://pkg.go.dev/k8s.io/klog/v2
  - [ ] pkg/util/heap should implement an actual heap
- - [ ] kubebuilder should be able to provide defaults in the *_types.
+ - [x] kubebuilder should be able to provide defaults in the *_types.
  - [ ] FluxSetup - how should we handle deletion / update?
  - [ ] Currently we have no representation of quota - we need to be able to set (and check) hard limits defined in the setup. Kueue has a scheduler entity. 
  - [x] Figure out logging connected to reconciler
  - [ ] Figure out how to "launch" a job?
  - [ ] Details for etc-hosts
+ - [ ] Cert needs to be separated / generated
 
 ### Design 1 (not currently working on)
 
@@ -17,14 +18,7 @@
 - [x] Debug why the configmaps aren't being populated with the hostfile (it wasn't working with kind, worked without changes with minikube)
 - [x] Figure out adding namespaces to config/samples - should be flux-operator
 - [x] Each of config files written (e.g., hostname, broker, cert) should have their own types and more simply generated. The strategy right now is just temporary.
-- [ ] Cert needs to be separated / generated
 - [x] Stateful set (figure out how to create properly, doesn't seem to have pods) (figured out need to create ConfigMaps for Volumes)
-- [ ] Stateful set is created but it cannot see configmaps "MountVolume.SetUp failed for volume "etc-hosts" : configmap references non-existent config key: etc-hosts"
-- [ ] A means to generate / update certs - I don't think manually doing it is the right approach, but there is a comment that cert-manager isn't supported?
-  - https://kubernetes.io/docs/tasks/configmap-secret/managing-secret-using-kustomize/
-  - This is useful https://github.com/jetstack/kustomize-cert-manager-demo
-  - And https://www.jetstack.io/blog/kustomize-cert-manager/
-  - https://github.com/kubernetes-sigs/kustomize/blob/master/examples/secretGeneratorPlugin.md
   
 ## Design 1
 

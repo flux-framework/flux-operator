@@ -6,3 +6,4 @@ metadata:
 spec:
   image: fluxrm/flux-sched:focal
   command: sleep
+  size: 2

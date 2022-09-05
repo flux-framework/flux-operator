@@ -16,7 +16,6 @@ import (
 	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	ctrl "sigs.k8s.io/controller-runtime"
-	logctrl "sigs.k8s.io/controller-runtime/pkg/log"
 
 	"k8s.io/apimachinery/pkg/api/errors"
 	"k8s.io/apimachinery/pkg/types"
@@ -28,7 +27,6 @@ import (
 // generateCurveCert makes a new Secret if it doesn't exist
 func (r *FluxJobReconciler) getCurveCert(ctx context.Context, fluxjob *api.FluxJob) (*corev1.Secret, ctrl.Result, error) {
 
-	log := logctrl.FromContext(ctx).WithValues("FluxJob", fluxjob.Namespace)
 	existing := &corev1.Secret{}
 	err := r.Client.Get(ctx, types.NamespacedName{Name: "secret-tls", Namespace: fluxjob.Namespace}, existing)
 	if err != nil {
@@ -36,20 +34,20 @@ func (r *FluxJobReconciler) getCurveCert(ctx context.Context, fluxjob *api.FluxJ
 		// Case 1: not found yet, and hostfile is ready (recreate)
 		if errors.IsNotFound(err) {
 			dep := r.createCurveSecret(fluxjob)
-			log.Info("✨ Creating a new Secret ✨", "Namespace", dep.Namespace, "Name", dep.Name, "Data", (*dep).Data)
+			r.log.Info("✨ Creating a new Secret ✨", "Namespace", dep.Namespace, "Name", dep.Name, "Data", (*dep).Data)
 			err = r.Client.Create(ctx, dep)
 			if err != nil {
-				log.Error(err, "❌ Failed to create new Curve Secret", "Namespace", dep.Namespace, "Name", (*dep).Name)
+				r.log.Error(err, "❌ Failed to create new Curve Secret", "Namespace", dep.Namespace, "Name", (*dep).Name)
 				return existing, ctrl.Result{}, err
 			}
 			// Successful - return and requeue
 			return existing, ctrl.Result{Requeue: true}, nil
 		} else if err != nil {
-			log.Error(err, "Failed to get Broker ConfigMap")
+			r.log.Error(err, "Failed to get Broker ConfigMap")
 			return existing, ctrl.Result{}, err
 		}
 	} else {
-		log.Info("🎉 Found existing Secret 🎉", "Namespace", existing.Namespace, "Name", existing.Name, "Data", (*existing).Data)
+		r.log.Info("🎉 Found existing Secret 🎉", "Namespace", existing.Namespace, "Name", existing.Name, "Data", (*existing).Data)
 	}
 	saveDebugYaml(existing, "secret.yaml")
 	return existing, ctrl.Result{}, err

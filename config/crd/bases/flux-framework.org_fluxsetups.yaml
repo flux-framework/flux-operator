@@ -37,6 +37,8 @@ spec:
             properties:
               max-size:
                 default: 20
+                description: MaxSize (I think) should refer to the maximum number
+                  of pods A minicluster (statefulset) can have any number
                 format: int32
                 type: integer
               mini-cluster:
@@ -97,6 +99,7 @@ spec:
                   jobs
                 type: string
             required:
+            - max-size
             - mini-cluster
             type: object
           status:

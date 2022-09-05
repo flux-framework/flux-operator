@@ -12,7 +12,6 @@ package controllers
 
 import (
 	"context"
-	//	"fmt"
 
 	"github.com/go-logr/logr"
 	appsv1 "k8s.io/api/apps/v1"
@@ -21,7 +20,6 @@ import (
 	"k8s.io/client-go/util/workqueue"
 	"k8s.io/klog/v2"
 
-	//	"k8s.io/apimachinery/pkg/api/errors"
 	"k8s.io/apimachinery/pkg/api/equality"
 	"k8s.io/apimachinery/pkg/api/errors"
 	"k8s.io/apimachinery/pkg/runtime"
@@ -34,8 +32,6 @@ import (
 	"sigs.k8s.io/controller-runtime/pkg/event"
 	"sigs.k8s.io/controller-runtime/pkg/reconcile"
 	"sigs.k8s.io/controller-runtime/pkg/source"
-
-	//	logctrl "sigs.k8s.io/controller-runtime/pkg/log"
 
 	api "flux-framework/flux-operator/api/v1alpha1"
 	"flux-framework/flux-operator/pkg/defaults"
@@ -147,15 +143,11 @@ func (r *FluxSetupReconciler) Create(e event.CreateEvent) bool {
 		// No need to interact with the cache for other objects.
 		return true
 	}
-	log := r.log.WithValues("FluxSetup", klog.KObj(setup))
-	log.Info("🌞 FluxSetup create event")
-	ctx := ctrl.LoggerInto(context.Background(), log)
-
 	// Add the new setup to the manager
-	if err := r.fluxManager.InitQueue(ctx, setup); err != nil {
-		log.Error(err, "🌞 Failed to init Flux Manager queue")
+	if err := r.fluxManager.InitQueue(context.Background(), setup); err != nil {
+		r.log.Error(err, "🌞 Failed to init Flux Manager queue")
 	}
-	log.Info("🌞 Flux Manager queue created in FluxSetup Create, asking for Reconcile")
+	r.log.Info("🌞 Flux Manager queue created in FluxSetup Create, asking for Reconcile")
 	return true
 }
 
@@ -168,38 +160,29 @@ func (r *FluxSetupReconciler) Delete(e event.DeleteEvent) bool {
 	log := r.log.WithValues("FluxSetup", klog.KObj(setup))
 	log.Info("🌞 FluxSetup delete event")
 
-	// TODO what does it mean to delete the queue?
-	/*defer r.notifyWatchers(cq, nil)
-	r.log.V(2).Info("ClusterQueue delete event", "clusterQueue", klog.KObj(cq))
-	r.cache.DeleteClusterQueue(cq)
-	r.qManager.DeleteClusterQueue(cq)*/
+	// TODO what does it mean to delete the setup / queue?
+	/*defer r.notifyWatchers(setup, nil)
+	r.fluxManager.DeleteQueue()?*/
 	return true
 }
 
 func (r *FluxSetupReconciler) Update(e event.UpdateEvent) bool {
 	_, match := e.ObjectOld.(*api.FluxSetup)
 	newSetup, newMatch := e.ObjectNew.(*api.FluxSetup)
-	r.log.Info("🌞 FluxSetup Update Event", "setup", klog.KObj(newSetup))
 
 	if !match || !newMatch {
 		// No need to interact with the cache for other objects.
 		return true
 	}
+	r.log.Info("🌞 FluxSetup update event")
 
-	log := r.log.WithValues("FluxSetup", klog.KObj(newSetup))
-	log.Info("🌞 FluxSetup update event")
-
+	// The setup was deleted?
 	if newSetup.DeletionTimestamp != nil {
 		return true
 	}
-	/*defer r.notifyWatchers(oldCq, newCq)
-
-	if err := r.cache.UpdateClusterQueue(newCq); err != nil {
-		log.Error(err, "Failed to update clusterQueue in cache")
-	}
-	if err := r.qManager.UpdateClusterQueue(context.Background(), newCq); err != nil {
-		log.Error(err, "Failed to update clusterQueue in queue manager")
-	}*/
+	// Do we need to notify watchers?
+	/*defer r.notifyWatchers(oldSetup, newSetup)
+	// TODO what does it mean to updaet a setup?*/
 	return true
 }
 
@@ -250,6 +233,7 @@ func (h *jobHandler) Generic(e event.GenericEvent, q workqueue.RateLimitingInter
 func (h *jobHandler) requestForJob(job *api.FluxJob) *reconcile.Request {
 	// TODO likely we want to set defaults here
 	// TODO should we set a uuid job name here?
+	// Where do we need to use it?
 	return &reconcile.Request{
 		NamespacedName: types.NamespacedName{
 			Name: job.Name,
@@ -267,7 +251,6 @@ func (r *FluxSetupReconciler) SetupWithManager(mgr ctrl.Manager) error {
 	}
 	return ctrl.NewControllerManagedBy(mgr).
 		For(&api.FluxSetup{}).
-		//		Watches(&source.Kind{Type: &api.FluxJob{}}, &handler.EnqueueRequestForObject{}).
 		Owns(&batchv1.Job{}).
 		Owns(&corev1.ConfigMap{}).
 		Owns(&appsv1.StatefulSet{}).

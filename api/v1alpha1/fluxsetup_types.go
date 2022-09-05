@@ -39,8 +39,9 @@ type FluxSetupSpec struct {
 
 	MiniCluster MiniClusterSpec `json:"mini-cluster"`
 
+	// MaxSize (I think) should refer to the maximum number of pods
+	// A minicluster (statefulset) can have any number
 	// +kubebuilder:default=20
-	// +optional
 	MaxSize int32 `json:"max-size"`
 
 	// namespaces that are allowed to submit jobs to the queue
@@ -82,9 +83,6 @@ type FluxHostConfig struct {
 func (s *FluxSetup) SetDefaults() {
 
 	// If FluxSetup doesn't have a size, default to 1
-	if s.Spec.MaxSize == 0 {
-		s.Spec.MaxSize = 20
-	}
 	fmt.Printf("🤓 FluxSetup.MaxSize %d\n", (*s).Spec.MaxSize)
 	fmt.Printf("🤓 FluxSetup.MiniCluster.Size %d\n", (*s).Spec.MiniCluster.Size)
 }

@@ -21,25 +21,40 @@ The basic idea is that we have two controllers:
 
  - FluxJob: is a user facing job controller (meaning we have a CR, a simple yaml the user can provide an image and entrypoint)
  - FluxSetup: is more an internal or admin controller, meaning no CR, but there is a CRD (custom resource definition).
- 
+
+And then other entities that are also important:
+
+ - A **MiniCluster**: is a concept that is mapped to a FluxJob. A FluxJob, when it's given permission to run, creates a MiniCluster, which (currently) is a StatefulSet, ConfigMaps and Secrets. The idea is that the Job submitter owns that MiniCluster to submit jobs to.
+ - A **scheduler**: currently is created alongside the FluxJob and FluxSetup, and can access the same manager and queue. The scheduler does nothing aside from moving jobs from waiting to running, and currently is a simple loop. We eventually want this to be more.
+
+The scheduler above should not be confused with anything intelligent to schedule jobs - it's imagined as a simple check to see if we have resources on our cluster for a new MiniClusters, and grant them permission for create if we do.
+
 And you can find the following:
 
  - [Flux Controllers](controllers/flux) are under `controllers/flux` for each of `Flux` and `FluxSetup`
  - [API Spec](api/v1alpha1/) are under `api/v1alpha1/` also for each of `Flux` and `FluxSetup`
  - [Packages](pkg) include supporting packages for a flux manager and jobs, etc.
- - [TODO.md](TODO.md) is a set of TODOs @vsoch took notes on as she developed.
-
+ - [TODO.md](TODO.md) is a set of things to be worked on, if you'd like to contribute!
 
 ## Design
 
-I am trying to mirror a design that is used by kueue, where the two controllers are aware of the state of the cluster via a third "manager" that can hold a queue of jobs. The assumption here is that the user is submitting jobs (FluxJob that will map to batchv1.Job) and the cluster (FluxSetup) has some max amount of room available, and we need those two things to be aware of one another. Currently the flow I'm working on is the following:
+I am trying to mirror a design that is used by kueue, where the two controllers are aware of the state of the cluster via a third "manager" that can hold a queue of jobs. The assumption here is that the user is submitting jobs (FluxJob that will map to a "MiniCluster") and the cluster (FluxSetup) has some max amount of room available, and we need those two things to be aware of one another. Currently the flow I'm working on is the following:
 
 1. We create the FluxSetup
-2. The Create event creates a queue (and asks for reconcile). 
-  The reconcile needs to do some consolidation (not done yet) - it should always get the current number of running batch jobs and save to status and check against quota (TODO). Create should also eventually be able to manage cleaning up old setups to replace with new (in TODO). Right now we assume unlimited quota for the namespace, which of course isn't true!
-3. A FluxJob is submit (e.g., by a user). Developer note: `make redo` submits the job after the original FluxSetup creation. 
-4. The job is generally checked for status, and should be flagged as waiting and Create returns True. This will trigger the Job reconcile loop and the setup watcher.
-4. The setup watches a channel with job updates, and this is connected to the jobHandler. The jobHandler is called only on a Generic event, and this is when the job needs to 
+ - The Create event creates a queue (and asks for reconcile). 
+ -  The reconcile should always get the current number of running batch jobs and save to status and check against quota (not done yet). We also need Create/Update to manage cleaning up old setups to replace with new (not done yet). Right now we assume unlimited quota for the namespace, which of course isn't true!
+2. A FluxJob is submit (e.g., by a user) requesting a MiniCluster
+3. The FluxSetup is watching for the Create event, and when it sees a new job, it adds it to the manager queue (under waiting jobs). The job is flagged as waiting. We eventually want the setup to do more checks here for available resources, but currently we allow everything to be put into waiting.
+4. Moving from waiting -> the manager->queue->heap indicates running, and this is done by the scheduler.
+5. During this time, the FluxJob reconcile loop is continually running, and controls the lifecycle of the MiniCluster, per request of the user and status of the cluster.
+ - If the job status is requested, we add it to the waiting queue and flag as waiting. This will happen right after the job is created, and then run reconcile again.
+ - If a job is waiting, this could mean two things.
+   - It's in the queue heap (allowed to run), in which case we create the MiniCluster and update status to Ready
+   - It's still waiting, we ask to reconcile until we see it's allowed to run
+ - If a job is ready, it just had its MiniCluster created! At this point we need to "launch" our job (not done yet).
+ - If it's running, we need to check to see if it's finished, and flag as finished if yes (not done yet). If it's not finished, we keep the status as running and re-reconcile.
+ - If the job is finished, we need to clean up
+ - When we reach the bottom of the loop, we don't need to reconcile again.
 
 Some current additional notes:
 

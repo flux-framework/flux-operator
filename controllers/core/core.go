@@ -14,6 +14,7 @@ import (
 	controllers "flux-framework/flux-operator/controllers/flux"
 	"flux-framework/flux-operator/pkg/flux"
 
+	"k8s.io/client-go/rest"
 	ctrl "sigs.k8s.io/controller-runtime"
 )
 
@@ -22,7 +23,7 @@ var (
 )
 
 // SetupControllers sets up all controllers.
-func SetupControllers(mgr ctrl.Manager, manager *flux.Manager) (string, error) {
+func SetupControllers(mgr ctrl.Manager, manager *flux.Manager, restClient rest.Interface) (string, error) {
 
 	// Admin (internal) Flux Setup Reconciler (setup first!)
 	setupReconciler := controllers.NewFluxSetupReconciler(mgr.GetClient(), mgr.GetScheme(), manager)
@@ -33,7 +34,14 @@ func SetupControllers(mgr ctrl.Manager, manager *flux.Manager) (string, error) {
 
 	// User facing Flux Reconciler - receives the job.
 	// We provide the setupReconciler as a watcher
-	jobReconciler := controllers.NewFluxJobReconciler(mgr.GetClient(), mgr.GetScheme(), manager, setupReconciler)
+	jobReconciler := controllers.NewFluxJobReconciler(
+		mgr.GetClient(),
+		mgr.GetScheme(),
+		manager,
+		*(mgr.GetConfig()),
+		restClient,
+		setupReconciler,
+	)
 	if err := jobReconciler.SetupWithManager(mgr); err != nil {
 		setupLog.Error(err, "unable to create controller", "controller", "FluxJob")
 		return "FluxJob", err

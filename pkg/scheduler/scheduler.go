@@ -26,10 +26,6 @@ import (
 	"sigs.k8s.io/controller-runtime/pkg/client"
 )
 
-const (
-	errCouldNotAdmitWL = "Could not admit workload and assigning flavors in apiserver"
-)
-
 type Scheduler struct {
 	fluxManager *flux.Manager
 	client      client.Client
@@ -44,7 +40,6 @@ func New(manager *flux.Manager, cl client.Client, recorder record.EventRecorder)
 		log:         ctrl.Log.WithName("fluxjob-scheduler"),
 		recorder:    recorder,
 	}
-	//s.applyAdmission = s.applyAdmissionWithSSA
 	return s
 }
 
@@ -80,8 +75,3 @@ func (s *Scheduler) schedule(ctx context.Context) {
 	s.log.Info("📅 Scheduler", "Status:", fmt.Sprintf("%d jobs are pending", s.fluxManager.JobsPending()))
 	s.log.Info("📅 Scheduler", "Status:", fmt.Sprintf("%d jobs are running", s.fluxManager.JobsRunning()))
 }
-
-// I think this will be important to patch something...
-//func (s *Scheduler) applyAdmissionWithSSA(ctx context.Context, job *api.FluxJob) error {
-//	return s.client.Patch(ctx, job, client.Apply, client.FieldOwner(constants.AdmissionName))
-//}

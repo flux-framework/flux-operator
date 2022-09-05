@@ -13,13 +13,17 @@ package controllers
 import (
 	"context"
 	"fmt"
+	"os"
 
 	jobctrl "flux-framework/flux-operator/pkg/job"
 
 	appsv1 "k8s.io/api/apps/v1"
 	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	"k8s.io/apimachinery/pkg/runtime"
+	"k8s.io/client-go/tools/remotecommand"
 	ctrl "sigs.k8s.io/controller-runtime"
+	"sigs.k8s.io/controller-runtime/pkg/client"
 
 	"k8s.io/apimachinery/pkg/api/errors"
 	"k8s.io/apimachinery/pkg/types"
@@ -38,6 +42,8 @@ hosts = [
 	{ host="%s-%s"},
 ]
 `
+	// Dummy hostfile that we eventually need to generate dymically
+	// 172.17.0.3      flux-sample-0
 	dummyHostfile = `
 flux-workers-0.flux-workers 10.0.0.1
 flux-workers-1.flux-workers 10.0.0.2`
@@ -47,9 +53,7 @@ flux-workers-1.flux-workers 10.0.0.2`
 // 1. A stateful set with some number of pods
 // 2. A service to expose the mini-cluster
 // 3. Config maps for secrets and other things.
-// 4. And then possible some way to trigger a main job across them?
-//    I think this is where a batch job might come in but I haven't figured it
-//    out yet.
+// 4. We "launch" a job by exec-ing a command to a stateful set container
 // newMiniCluster creates a new mini cluster, a stateful set for running flux!
 func (r *FluxJobReconciler) newMiniCluster(ctx context.Context, fluxjob *api.FluxJob) (ctrl.Result, error) {
 
@@ -74,10 +78,14 @@ func (r *FluxJobReconciler) newMiniCluster(ctx context.Context, fluxjob *api.Flu
 	}
 
 	// Get existing deployment (statefulset, a result, and error)
-	_, result, err = r.getStatefulSet(ctx, fluxjob, fluxjob.Spec.Image)
+	set, result, err := r.getStatefulSet(ctx, fluxjob, fluxjob.Spec.Image)
 	if err != nil {
 		return result, err
 	}
+
+	// Create the actual hostfile from the pods
+	hostfile := r.createEtcHosts(set, fluxjob)
+	r.log.Info("✨ Hostfile created", "Hostfile", hostfile)
 
 	// If we get here, update the status to be ready
 	status := jobctrl.GetCondition(fluxjob)
@@ -89,6 +97,132 @@ func (r *FluxJobReconciler) newMiniCluster(ctx context.Context, fluxjob *api.Flu
 
 	// And we re-queue so the Ready condition triggers next steps!
 	return ctrl.Result{Requeue: true}, nil
+}
+
+// LaunchJob is a wrapper to launch job, returning the reconcile result/error
+func (r *FluxJobReconciler) LaunchJob(ctx context.Context, fluxjob *api.FluxJob) (ctrl.Result, error) {
+
+	// If the job command is empty, don't continue
+	// This will keep the cluster running (for debugging?) but not exec a command
+	if fluxjob.Spec.Command == "" {
+		return ctrl.Result{Requeue: true}, nil
+	}
+
+	// Launch the job! Flag as running if successful
+	err := r.fauxLaunchJob(ctx, fluxjob)
+	jobCopy := fluxjob.DeepCopy()
+
+	// No error, flag it running!
+	if err == nil {
+		jobctrl.FlagConditionRunning(jobCopy)
+		r.log.Error(err, "🌀 Mini Cluster launched job!")
+
+	} else {
+		// This is a quasi flag to say "don't try running this again"
+		jobCopy.Spec.Command = ""
+		r.log.Error(err, "🌀 Mini Cluster Error launching job, try updating command.")
+	}
+
+	r.Client.Status().Update(ctx, jobCopy)
+	return ctrl.Result{Requeue: true}, nil
+}
+
+// fauxLaunchJob is here just to fake launching a job, for the time being.
+func (r *FluxJobReconciler) fauxLaunchJob(ctx context.Context, fluxjob *api.FluxJob) error {
+	return nil
+}
+
+// launchJob actually tries executing the job command to a pod node
+// TODO this isn't working yet - we don't have permission to execute on the pods
+// could we figure out how to add the permission, or create a service to interact
+// with instead?
+func (r *FluxJobReconciler) launchJob(ctx context.Context, fluxjob *api.FluxJob) error {
+
+	// Retrieve the stateful set, we will get the first pod name
+	set := &appsv1.StatefulSet{}
+	err := r.Client.Get(ctx, types.NamespacedName{Name: fluxjob.Name, Namespace: fluxjob.Namespace}, set)
+	if err != nil {
+		r.log.Error(err, "🌀 Mini Cluster Error finding StatefulSet")
+		return err
+	}
+
+	command := []string{
+		"sh",
+		"-c",
+		"sleep 1",
+	}
+
+	// Programatically get pods
+	pods := r.getMiniClusterPods(ctx, fluxjob)
+	if len(pods.Items) == 0 {
+		err = fmt.Errorf("No pods found in listing.")
+		r.log.Error(err, "🌀 No pods are running in this MiniCluster, cannot launch a job.")
+		return err
+	}
+	// Target the first pod to exec a command to
+	pod := pods.Items[0]
+	container := pod.Spec.Containers[0]
+	r.log.Error(err, "🌀 Executing command to pod in statefulset", "Name:", pod.Name, "Container:", container.Name)
+
+	// Prepare a request to execute to the pod in the statefulset
+	execReq := r.RESTClient.Post().Namespace(fluxjob.Namespace).Resource("pods").
+		Name(pod.GetName()).
+		Namespace(fluxjob.Namespace).
+		SubResource("exec").
+		VersionedParams(&corev1.PodExecOptions{
+			Container: container.Name,
+			Command:   command,
+			Stdin:     true,
+			Stdout:    true,
+			Stderr:    true,
+		}, runtime.NewParameterCodec(r.Scheme))
+
+	exec, err := remotecommand.NewSPDYExecutor(r.RESTConfig, "POST", execReq.URL())
+	if err != nil {
+		r.log.Error(err, "🌀 Error executing command to pod in statefulset", "Name:", pod.Name)
+		return err
+	}
+
+	// This is just for debugging for now :)
+	return exec.Stream(remotecommand.StreamOptions{
+		Stdin:  os.Stdin,
+		Stdout: os.Stdout,
+		Stderr: os.Stderr,
+		Tty:    false,
+	})
+}
+
+func (r *FluxJobReconciler) getMiniClusterPods(ctx context.Context, fluxjob *api.FluxJob) *corev1.PodList {
+
+	podList := &corev1.PodList{}
+	opts := []client.ListOption{
+		client.InNamespace(fluxjob.Namespace),
+		//		client.MatchingLabels{"instance": fluxjob.Name},
+		//		client.MatchingFields{"status.phase": "Running"},
+	}
+	err := r.Client.List(ctx, podList, opts...)
+	if err != nil {
+		r.log.Error(err, "🌀 Error listing MiniCluster pods", "Name:", podList)
+		return podList
+	}
+
+	// This is just for debugging
+	for _, pod := range podList.Items {
+		r.log.Error(err, "🌀 Found Pod", "Name:", pod.Name, "Container:", pod.Spec.Containers)
+	}
+	return podList
+}
+
+// This is what an actual pod in a stateful set entry looks like
+// TODO we need to figure out how to generate an etc hosts so the pods
+// can see one another! Here are some ideas;
+// 1. Create a service DNS https://stackoverflow.com/questions/63415324/is-it-possible-for-a-pod-running-in-a-satrefulset-to-get-the-hostname-of-the-all
+// 2. Create the pods, get the ips, and then somehow update them
+//    This might be an issue if they are re-created (and the changes lost)
+// 172.17.0.3      flux-sample-0
+func (r *FluxJobReconciler) createEtcHosts(set *appsv1.StatefulSet, fluxjob *api.FluxJob) map[string]string {
+	lookup := map[string]string{}
+	return lookup
 }
 
 /*
@@ -173,15 +307,8 @@ func (r *FluxJobReconciler) createStatefulSet(fluxjob *api.FluxJob, containerIma
 					Labels:    labels,
 				},
 				Spec: corev1.PodSpec{
-					Containers: []corev1.Container{{
-						Image:           containerImage,
-						ImagePullPolicy: corev1.PullAlways,
-						Name:            fluxjob.Name,
-						Command:         []string{"/bin/bash"},
-						Args:            []string{"-c", "sleep infinity"},
-						VolumeMounts:    getVolumeMounts(),
-					}},
-					Volumes: getVolumes(),
+					Volumes:    getVolumes(),
+					Containers: []corev1.Container{{Image: containerImage, ImagePullPolicy: corev1.PullAlways, Name: fluxjob.Name, Command: []string{"/bin/bash"}, Args: []string{"-c", "sleep infinity"}, VolumeMounts: getVolumeMounts()}},
 				},
 			},
 		},

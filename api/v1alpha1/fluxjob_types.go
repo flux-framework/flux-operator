@@ -24,10 +24,7 @@ type FluxJobSpec struct {
 	// Important: Run "make" and "make manifests" to regenerate code after modifying this file
 
 	// Container image must contain flux and flux-sched install
-	// This container is provided by the user via Flux, but is also passed
-	// to the FluxSetup reconciler, which needs to run the same container image.
-	// Likely these could be separated, but I'm not sure how that works yet.
-	// TODO can kubebuilder provide a default?
+	// +kubebuilder:default="fluxrm/flux-sched:focal"
 	Image string `json:"image"`
 
 	// Size (number of jobs to run)
@@ -64,12 +61,6 @@ type FluxJob struct {
 
 // SetDefaults ensures that empty settings are defined with defaults
 func (f *FluxJob) SetDefaults() {
-
-	// Default container image to use
-	if f.Spec.Image == "" {
-		f.Spec.Image = "fluxrm/flux-sched:focal"
-	}
-
 	fmt.Println()
 	fmt.Printf("🤓 FluxJob.Image %s\n", f.Spec.Image)
 	fmt.Printf("🤓 FluxJob.Command %s\n", f.Spec.Command)

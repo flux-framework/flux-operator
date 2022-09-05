@@ -32,6 +32,18 @@ rules:
 - apiGroups:
   - flux-framework.org
   resources:
+  - ""
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - flux-framework.org
+  resources:
   - configmaps
   verbs:
   - create

@@ -15,8 +15,12 @@ import (
 	"time"
 
 	"github.com/go-logr/logr"
+	appsv1 "k8s.io/api/apps/v1"
 	batchv1 "k8s.io/api/batch/v1"
+	corev1 "k8s.io/api/core/v1"
+
 	"k8s.io/apimachinery/pkg/runtime"
+	"k8s.io/client-go/rest"
 	"k8s.io/klog/v2"
 	ctrl "sigs.k8s.io/controller-runtime"
 	"sigs.k8s.io/controller-runtime/pkg/client"
@@ -43,19 +47,23 @@ type FluxJobReconciler struct {
 	log         logr.Logger
 	fluxManager *flux.Manager
 	watchers    []JobUpdateWatcher
+	RESTClient  rest.Interface
+	RESTConfig  *rest.Config
 }
 
 var (
 	ownerKey = ".metadata.controller"
 )
 
-func NewFluxJobReconciler(client client.Client, scheme *runtime.Scheme, q *flux.Manager, watchers ...JobUpdateWatcher) *FluxJobReconciler {
+func NewFluxJobReconciler(client client.Client, scheme *runtime.Scheme, q *flux.Manager, restConfig rest.Config, restClient rest.Interface, watchers ...JobUpdateWatcher) *FluxJobReconciler {
 	return &FluxJobReconciler{
 		log:         ctrl.Log.WithName("fluxjob-reconciler"),
 		Client:      client,
 		Scheme:      scheme,
 		fluxManager: q,
 		watchers:    watchers,
+		RESTClient:  restClient,
+		RESTConfig:  &restConfig,
 	}
 }
 
@@ -63,7 +71,10 @@ func NewFluxJobReconciler(client client.Client, scheme *runtime.Scheme, q *flux.
 //+kubebuilder:rbac:groups=flux-framework.org,resources=fluxjobs/status,verbs=get;list;watch;create;update;patch;delete
 //+kubebuilder:rbac:groups=flux-framework.org,resources=fluxjobs/finalizers,verbs=get;list;watch;create;update;patch;delete
 
+//+kubebuilder:rbac:groups=flux-framework.org,resources=statefulsets,verbs=get;list;watch;create;update;patch;delete
+//+kubebuilder:rbac:groups=flux-framework.org,resources=pods,verbs=get;list;watch;create;update;patch;delete
 //+kubebuilder:rbac:groups=flux-framework.org,resources=jobs,verbs=get;list;watch;create;update;patch;delete
+//+kubebuilder:rbac:groups=flux-framework.org,resources="",verbs=get;list;watch;create;update;patch;delete
 
 //+kubebuilder:rbac:groups="",resources=events,verbs=create;watch;update
 //+kubebuilder:rbac:groups=batch,resources=jobs,verbs=get;list;watch;update;patch
@@ -99,7 +110,7 @@ func (r *FluxJobReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ct
 		return ctrl.Result{}, err
 	}
 	// If we don't have them, set minicluster conditions on the fluxjob
-	// I don't think this should trigger...
+	// I don't think this should trigger... just in case!
 	if len(fluxjob.Status.Conditions) == 0 || fluxjob.Status.JobId == "" {
 		return r.newJob(ctx, &fluxjob)
 	}
@@ -139,6 +150,9 @@ func (r *FluxJobReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ct
 			// and go beyond this loop.
 			return r.newMiniCluster(ctx, &fluxjob)
 		}
+
+		// If it's waiting but not actually running, we need to check again later
+		return ctrl.Result{Requeue: true}, nil
 	}
 
 	// By the time we get here we've done Waiting -> Ready
@@ -147,15 +161,18 @@ func (r *FluxJobReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ct
 	if status == jobctrl.ConditionJobReady {
 		r.log.Info("🌀 Mini Cluster is Ready!")
 
-		// TODO launch job?
-		jobCopy := fluxjob.DeepCopy()
-		jobctrl.FlagConditionRunning(jobCopy)
-		r.Client.Status().Update(ctx, jobCopy)
-		return ctrl.Result{Requeue: true}, nil
+		// Launching the job handles updating the status
+		// If the job fails, we should not retry until the command or job is tweaked
+		// We set the command to empty so it will stay ready (but not launch)
+		return r.LaunchJob(ctx, &fluxjob)
 	}
 
 	if status == jobctrl.ConditionJobRunning {
 		// TODO will need to look for running, and then finished state (and change here)
+		// TODO decide if when finished if we want to return it to some kind of
+		// ready state, or clean up entirely (likely desired). There should be
+		// some ability to keep the cluster running, however, to accept new
+		// commands if desired. Maybe this should be a FluxSetup variable?
 		// finished and then possibly clean up.
 		r.log.Info("🌀 Mini Cluster is Running!")
 		return ctrl.Result{RequeueAfter: time.Minute}, nil
@@ -193,7 +210,12 @@ func jobStatus(job *api.FluxJob) string {
 
 // Called when a new job is created
 func (r *FluxJobReconciler) Create(e event.CreateEvent) bool {
-	job := e.Object.(*api.FluxJob)
+
+	// Only respond to job events!
+	job, match := e.Object.(*api.FluxJob)
+	if !match {
+		return true
+	}
 
 	// Add conditions - they should never exist for a new job
 	job.Status.Conditions = jobctrl.GetJobConditions()
@@ -209,7 +231,11 @@ func (r *FluxJobReconciler) Create(e event.CreateEvent) bool {
 
 func (r *FluxJobReconciler) Delete(e event.DeleteEvent) bool {
 
-	job := e.Object.(*api.FluxJob)
+	job, match := e.Object.(*api.FluxJob)
+	if !match {
+		return true
+	}
+
 	// TODO any reason to notify watchers here?
 	//	defer r.notifyWatchers(wl)
 	log := r.log.WithValues("job", klog.KObj(job))
@@ -230,9 +256,12 @@ func (r *FluxJobReconciler) Delete(e event.DeleteEvent) bool {
 }
 
 func (r *FluxJobReconciler) Update(e event.UpdateEvent) bool {
+	oldJob, match := e.ObjectOld.(*api.FluxJob)
+	if !match {
+		return true
+	}
 
 	// Figure out the state of the old job
-	oldJob := e.ObjectOld.(*api.FluxJob)
 	job := e.ObjectNew.(*api.FluxJob)
 
 	r.log.Info("🌀 Job update event")
@@ -301,7 +330,9 @@ func (r *FluxJobReconciler) SetupWithManager(mgr ctrl.Manager) error {
 
 		// This references the Create/Delete/Update,etc functions above
 		// they return a boolean to indicate if we should reconcile given the event
-		Owns(&batchv1.Job{}).
 		WithEventFilter(r).
+		Owns(&appsv1.StatefulSet{}).
+		Owns(&corev1.Pod{}).
+		Owns(&batchv1.Job{}).
 		Complete(r)
 }
