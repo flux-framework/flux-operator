@@ -12,6 +12,7 @@ package core
 
 import (
 	controllers "flux-framework/flux-operator/controllers/flux"
+
 	ctrl "sigs.k8s.io/controller-runtime"
 )
 
@@ -30,7 +31,6 @@ func SetupControllers(mgr ctrl.Manager) (string, error) {
 		setupLog.Error(err, "unable to create controller", "controller", "FluxJob")
 		return "FluxJob", err
 	}
-	return "", nil
 
 	// Admin (internal) Flux Setup Reconciler (setup first!)
 	if err := (&controllers.FluxSetupReconciler{
@@ -40,4 +40,5 @@ func SetupControllers(mgr ctrl.Manager) (string, error) {
 		setupLog.Error(err, "unable to create controller", "controller", "FluxSetup")
 		return "FluxSetup", err
 	}
+	return "", nil
 }

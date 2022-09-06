@@ -39,6 +39,10 @@ type FluxSetupReconciler struct {
 //+kubebuilder:rbac:groups=flux-framework.org,resources=fluxsetups/status,verbs=get;update;patch
 //+kubebuilder:rbac:groups=flux-framework.org,resources=fluxsetups/finalizers,verbs=update
 
+//+kubebuilder:rbac:groups=flux-framework.org,resources=miniclusters,verbs=get;list;watch;create;update;patch;delete
+//+kubebuilder:rbac:groups=flux-framework.org,resources=miniclusters/status,verbs=get;update;patch
+//+kubebuilder:rbac:groups=flux-framework.org,resources=miniclusters/finalizers,verbs=update
+
 //+kubebuilder:rbac:groups=flux-framework.org,resources=secrets,verbs=get;list;watch;create;update;patch;delete
 //+kubebuilder:rbac:groups=flux-framework.org,resources=configmaps,verbs=get;list;watch;create;update;patch;delete
 //+kubebuilder:rbac:groups=flux-framework.org,resources=statefulsets,verbs=get;list;watch;create;update;patch;delete
@@ -71,7 +75,7 @@ func (r *FluxSetupReconciler) Reconcile(ctx context.Context, req ctrl.Request) (
 			return ctrl.Result{}, nil
 		}
 		log.Info("Failed to get Flux resource. Re-running reconcile.")
-		return ctrl.Result{}, err
+		return ctrl.Result{Requeue: true}, err
 	}
 
 	// Get the fluxSetup
@@ -82,7 +86,7 @@ func (r *FluxSetupReconciler) Reconcile(ctx context.Context, req ctrl.Request) (
 			return ctrl.Result{}, nil
 		}
 		log.Info("Failed to get FluxSetup resource. Re-running reconcile.")
-		return ctrl.Result{}, err
+		return ctrl.Result{Requeue: true}, err
 	}
 	flux.SetDefaults()
 	instance.SetDefaults()
@@ -90,28 +94,35 @@ func (r *FluxSetupReconciler) Reconcile(ctx context.Context, req ctrl.Request) (
 	log.Info("🥑️ Found instance 🥑️", "Flux Image: ", flux.Spec.Image, "Size: ", fmt.Sprint(instance.Spec.Size))
 	fmt.Printf("\n🪵 EtcHosts Hostfile \n%s\n", instance.Spec.EtcHosts.Hostfile)
 
-	// Ensure the configs are created (for volume sources)
-	// The hostfile here is empty because we generate it entirely
-	_, result, err := r.getHostfileConfig(ctx, &instance, "flux-config", "")
+	// Try getting the MiniCluster CRD first (this doesn't work)
+	cluster, result, err := r.getMiniCluster(ctx, &instance)
 	if err != nil {
 		return result, err
 	}
-	_, result, err = r.getHostfileConfig(ctx, &instance, "etc-hosts", instance.Spec.EtcHosts.Hostfile)
-	if err != nil {
-		return result, err
-	}
+	log.Info("🥑️ Found minicluster 🥑️", "Name: ", cluster.Name)
+	/*
+		// Ensure the configs are created (for volume sources)
+		// The hostfile here is empty because we generate it entirely
+		_, result, err := r.getHostfileConfig(ctx, &instance, "flux-config", "")
+		if err != nil {
+			return result, err
+		}
+		_, result, err = r.getHostfileConfig(ctx, &instance, "etc-hosts", instance.Spec.EtcHosts.Hostfile)
+		if err != nil {
+			return result, err
+		}
 
-	// And generate the secret curve cert
-	_, result, err = r.getCurveCert(ctx, &instance)
-	if err != nil {
-		return result, err
-	}
+		// And generate the secret curve cert
+		_, result, err = r.getCurveCert(ctx, &instance)
+		if err != nil {
+			return result, err
+		}
 
-	// Get existing deployment (statefulset, a result, and error)
-	_, result, err = r.getStatefulSet(ctx, &instance, flux.Spec.Image)
-	if err != nil {
-		return result, err
-	}
+		// Get existing deployment (statefulset, a result, and error)
+		_, result, err = r.getStatefulSet(ctx, &instance, flux.Spec.Image)
+		if err != nil {
+			return result, err
+		}*/
 	return ctrl.Result{}, nil
 }
 
@@ -119,6 +130,7 @@ func (r *FluxSetupReconciler) Reconcile(ctx context.Context, req ctrl.Request) (
 func (r *FluxSetupReconciler) SetupWithManager(mgr ctrl.Manager) error {
 	return ctrl.NewControllerManagedBy(mgr).
 		For(&api.FluxSetup{}).
+		Owns(&api.MiniCluster{}).
 		Owns(&corev1.ConfigMap{}).
 		Owns(&appsv1.StatefulSet{}).
 		Owns(&corev1.Service{}).
