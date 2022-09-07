@@ -56,81 +56,43 @@ rules:
 - apiGroups:
   - flux-framework.org
   resources:
-  - deployments
-  verbs:
-  - create
-  - delete
-  - get
-  - list
-  - patch
-  - update
-  - watch
-- apiGroups:
-  - flux-framework.org
-  resources:
-  - fluxjobs
-  verbs:
-  - create
-  - delete
-  - get
-  - list
-  - patch
-  - update
-  - watch
-- apiGroups:
-  - flux-framework.org
-  resources:
-  - fluxjobs/finalizers
-  verbs:
-  - create
-  - delete
-  - get
-  - list
-  - patch
-  - update
-  - watch
-- apiGroups:
-  - flux-framework.org
-  resources:
-  - fluxjobs/status
-  verbs:
-  - create
-  - delete
-  - get
-  - list
-  - patch
-  - update
-  - watch
-- apiGroups:
-  - flux-framework.org
-  resources:
-  - fluxsetups
-  verbs:
-  - create
-  - delete
-  - get
-  - list
-  - patch
-  - update
-  - watch
-- apiGroups:
-  - flux-framework.org
-  resources:
-  - fluxsetups/finalizers
-  verbs:
-  - update
-- apiGroups:
-  - flux-framework.org
-  resources:
-  - fluxsetups/status
-  verbs:
-  - get
-  - patch
-  - update
-- apiGroups:
-  - flux-framework.org
-  resources:
   - jobs
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - flux-framework.org
+  resources:
+  - miniclusters
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - flux-framework.org
+  resources:
+  - miniclusters/finalizers
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - flux-framework.org
+  resources:
+  - miniclusters/status
   verbs:
   - create
   - delete
@@ -155,18 +117,6 @@ rules:
   - flux-framework.org
   resources:
   - secrets
-  verbs:
-  - create
-  - delete
-  - get
-  - list
-  - patch
-  - update
-  - watch
-- apiGroups:
-  - flux-framework.org
-  resources:
-  - services
   verbs:
   - create
   - delete

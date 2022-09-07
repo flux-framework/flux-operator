@@ -18,7 +18,7 @@ import (
 
 const (
 
-	// FluxJob State
+	// MiniCluster State
 	// Requested:
 	//     The default when the job is requested
 	// Waiting + in waiting queue:
@@ -29,7 +29,7 @@ const (
 	// Ready:
 	//     We finished creating the MiniCluster, and it's ready to run!
 	// Running:
-	//     Resources are created, and status is switched from Waiting -> Running by FluxJob
+	//     Resources are created, and status is switched from Waiting -> Running by MiniCluster
 	//     This should be when we kick off the command. The job is running
 	// Finished:
 	//     When resources are done (TBA how determined)

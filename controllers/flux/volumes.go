@@ -15,7 +15,7 @@ import (
 )
 
 // Shared function to return consistent set of volume mounts
-// for the FluxJob and Flux Statefulset
+// for the MiniCluster and Flux Statefulset
 func getVolumeMounts() []corev1.VolumeMount {
 	return []corev1.VolumeMount{
 		{
@@ -39,7 +39,7 @@ func getVolumeMounts() []corev1.VolumeMount {
 	}
 }
 
-// getVolumes that are shared between FluxJob and statefulset
+// getVolumes that are shared between MiniCluster and statefulset
 func getVolumes() []corev1.Volume {
 
 	return []corev1.Volume{{

@@ -17,48 +17,19 @@ The sections below will describe:
 
 ## Organization
 
-The basic idea is that we have two controllers:
-
- - FluxJob: is a user facing job controller (meaning we have a CR, a simple yaml the user can provide an image and entrypoint)
- - FluxSetup: is more an internal or admin controller, meaning no CR, but there is a CRD (custom resource definition).
-
-And then other entities that are also important:
-
- - A **MiniCluster**: is a concept that is mapped to a FluxJob. A FluxJob, when it's given permission to run, creates a MiniCluster, which (currently) is a StatefulSet, ConfigMaps and Secrets. The idea is that the Job submitter owns that MiniCluster to submit jobs to.
- - A **scheduler**: currently is created alongside the FluxJob and FluxSetup, and can access the same manager and queue. The scheduler does nothing aside from moving jobs from waiting to running, and currently is a simple loop. We eventually want this to be more.
-
-The scheduler above should not be confused with anything intelligent to schedule jobs - it's imagined as a simple check to see if we have resources on our cluster for a new MiniClusters, and grant them permission for create if we do.
+The basic idea is that we present the idea of a **MiniCluster** that is a custom resource definition (CRD)
+that defines a job container (that must have flux) that (when submit) will create a set of config maps,
+secrets (e.g., tls), and the final Batch job that has the pod containers running with flux. Since
+this is a batchv1.Job, it will have states that we can track.
 
 And you can find the following:
 
- - [Flux Controllers](controllers/flux) are under `controllers/flux` for each of `Flux` and `FluxSetup`
- - [API Spec](api/v1alpha1/) are under `api/v1alpha1/` also for each of `Flux` and `FluxSetup`
- - [Packages](pkg) include supporting packages for a flux manager and jobs, etc.
+ - [Flux Controllers](controllers/flux) are under `controllers/flux` for the `MiniCluster`
+ - [API Spec](api/v1alpha1/) are under `api/v1alpha1/` also for `MiniCluster`
+ - [Packages](pkg) include supporting packages for job conditions (state), if we eventually want that.
  - [TODO.md](TODO.md) is a set of things to be worked on, if you'd like to contribute!
+ - [Documentation](docs) is currently a place to document design, and eventually can be more user-facing docs.
 
-## Design
-
-I am trying to mirror a design that is used by kueue, where the two controllers are aware of the state of the cluster via a third "manager" that can hold a queue of jobs. The assumption here is that the user is submitting jobs (FluxJob that will map to a "MiniCluster") and the cluster (FluxSetup) has some max amount of room available, and we need those two things to be aware of one another. Currently the flow I'm working on is the following:
-
-1. We create the FluxSetup
- - The Create event creates a queue (and asks for reconcile). 
- -  The reconcile should always get the current number of running batch jobs and save to status and check against quota (not done yet). We also need Create/Update to manage cleaning up old setups to replace with new (not done yet). Right now we assume unlimited quota for the namespace, which of course isn't true!
-2. A FluxJob is submit (e.g., by a user) requesting a MiniCluster
-3. The FluxSetup is watching for the Create event, and when it sees a new job, it adds it to the manager queue (under waiting jobs). The job is flagged as waiting. We eventually want the setup to do more checks here for available resources, but currently we allow everything to be put into waiting.
-4. Moving from waiting -> the manager->queue->heap indicates running, and this is done by the scheduler.
-5. During this time, the FluxJob reconcile loop is continually running, and controls the lifecycle of the MiniCluster, per request of the user and status of the cluster.
- - If the job status is requested, we add it to the waiting queue and flag as waiting. This will happen right after the job is created, and then run reconcile again.
- - If a job is waiting, this could mean two things.
-   - It's in the queue heap (allowed to run), in which case we create the MiniCluster and update status to Ready
-   - It's still waiting, we ask to reconcile until we see it's allowed to run
- - If a job is ready, it just had its MiniCluster created! At this point we need to "launch" our job (not done yet).
- - If it's running, we need to check to see if it's finished, and flag as finished if yes (not done yet). If it's not finished, we keep the status as running and re-reconcile.
- - If the job is finished, we need to clean up
- - When we reach the bottom of the loop, we don't need to reconcile again.
-
-Some current additional notes:
-
-1. FluxJob submit before the FluxSetup is ready are ignored. We don't have a Queue init yet to support them, and the assumption is that the user can re-submit.
 
 ## Quick Start
 
@@ -91,19 +62,13 @@ There is also a courtesy function to clean, and apply the samples:
 ```bash
 $ make clean  # remove old flux-operator namespaced items
 $ make apply  # apply the setup and job config
-$ make run    # run the cluster
-$ make job    # submit a job
+$ make run    # make the cluster (e.g.., setting up the batch job)
 ```
 
 or run all three for easy development! The below command ensures to submit a job after the FluxSetup is applied so it won't be ignored (jobs submit before there is a cluster setup are ignored and require the user to re-submit).
 
 ```bash
 $ make redo  # clean, apply, and run
-```
-And then submit your job in a different terminal
-
-```bash
-$ make job
 ```
 
 ## Using the Operator
@@ -163,10 +128,10 @@ $ make install
 When cleaning up, you can control+c to kill the operator from running, and then:
 
 ```bash
-$ kubectl delete pod --all
-$ kubectl delete svc --all
+$ make clean
 ```
-And one of the following:
+
+And then:
 
 ```bash
 $ minikube stop
@@ -215,7 +180,7 @@ Note that you don't need to do this, obviously, if you are using the existing op
 Now let's create a controller, and call it Flux (again, no need to do this if you are using the one here).
 
 ```bash
-$ operator-sdk create api --version=v1alpha1 --kind=Flux
+$ operator-sdk create api --version=v1alpha1 --kind=MiniCluster
 ```
 (say yes to create a resource and controller). Make sure to install all dependencies (I think this might not be necessary - I saw it happen when I ran the previous command).
 
@@ -223,16 +188,6 @@ $ operator-sdk create api --version=v1alpha1 --kind=Flux
 $ go mod tidy
 $ go mod vendor
 ```
-
-At this point I chat with Eduardo about operator design, and we decided to go for a simple design:
-
-- Flux: would have a CR that defines a job and exposes an entrypoint command / container to the user
-- FluxSetup would have most of the content of [here](https://lc.llnl.gov/confluence/display/HFMCCEL/Flux+Operator+Design) and be more of an internal or admin setup.
-
-To generate FluxSetup I think I could (maybe?) have run this command again, but instead I added a new entry to the [PROJECT](PROJECT) and then generated [api/v1alpha1/fluxsetup_types.go](api/v1alpha1/fluxsetup_types.go) from the `flux_types.go` (and changing all the references from Flux to FluxSetup). 
-I also needed to (manually) make [controllers/fluxsetup_controller.go](controllers/fluxsetup_controller.go) and ensure it was updated to use FluxSetup, and then adding
-it's creation to [main.go](main.go). Yes, this is a bit of manual work, but I think I'll only need to do it once.
-At this point, I needed to try and represent what I saw in the various config files in this types file.
 
 **under development**
 

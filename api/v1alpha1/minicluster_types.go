@@ -19,8 +19,11 @@ import (
 // EDIT THIS FILE!  THIS IS SCAFFOLDING FOR YOU TO OWN!
 // NOTE: json tags are required.  Any new fields you add must have json tags for the fields to be serialized.
 
-// FluxJobSpec defines the desired state of Flux
-type FluxJobSpec struct {
+// MiniCluster defines the desired state of a Flux MiniCluster
+// "I am a Flux user and I want to launch a MiniCluster for my job!"
+// A MiniCluster corresponds to a Batch Job -> StatefulSet + ConfigMaps
+// A "task" within that cluster is flux running something.
+type MiniClusterSpec struct {
 	// Important: Run "make" and "make manifests" to regenerate code after modifying this file
 
 	// Container image must contain flux and flux-sched install
@@ -37,8 +40,8 @@ type FluxJobSpec struct {
 	Command string `json:"command"`
 }
 
-// FluxJobStatus defines the observed state of Flux
-type FluxJobStatus struct {
+// MiniClusterStatus defines the observed state of Flux
+type MiniClusterStatus struct {
 
 	// The JobUid is set internally to associate to a miniCluster
 	JobId string `json:"jobid"`
@@ -50,32 +53,32 @@ type FluxJobStatus struct {
 //+kubebuilder:object:root=true
 //+kubebuilder:subresource:status
 
-// FluxJob is the Schema for the fluxes API
-type FluxJob struct {
+// MiniCluster is the Schema for a Flux job launcher on K8s
+type MiniCluster struct {
 	metav1.TypeMeta   `json:",inline"`
 	metav1.ObjectMeta `json:"metadata,omitempty"`
 
-	Spec   FluxJobSpec   `json:"spec,omitempty"`
-	Status FluxJobStatus `json:"status,omitempty"`
+	Spec   MiniClusterSpec   `json:"spec,omitempty"`
+	Status MiniClusterStatus `json:"status,omitempty"`
 }
 
 // SetDefaults ensures that empty settings are defined with defaults
-func (f *FluxJob) SetDefaults() {
+func (f *MiniCluster) SetDefaults() {
 	fmt.Println()
-	fmt.Printf("🤓 FluxJob.Image %s\n", f.Spec.Image)
-	fmt.Printf("🤓 FluxJob.Command %s\n", f.Spec.Command)
-	fmt.Printf("🤓 FluxJob.Size %s\n", fmt.Sprint(f.Spec.Size))
+	fmt.Printf("🤓 MiniCluster.Image %s\n", f.Spec.Image)
+	fmt.Printf("🤓 MiniCluster.Command %s\n", f.Spec.Command)
+	fmt.Printf("🤓 MiniCluster.Size %s\n", fmt.Sprint(f.Spec.Size))
 }
 
 //+kubebuilder:object:root=true
 
-// FluxJobList contains a list of Flux
-type FluxJobList struct {
+// MiniClusterList contains a list of MiniCluster
+type MiniClusterList struct {
 	metav1.TypeMeta `json:",inline"`
 	metav1.ListMeta `json:"metadata,omitempty"`
-	Items           []FluxJob `json:"items"`
+	Items           []MiniCluster `json:"items"`
 }
 
 func init() {
-	SchemeBuilder.Register(&FluxJob{}, &FluxJobList{})
+	SchemeBuilder.Register(&MiniCluster{}, &MiniClusterList{})
 }

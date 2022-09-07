@@ -111,23 +111,19 @@ clean:
 	kubectl delete -n flux-operator svc --all
 	kubectl delete -n flux-operator secret --all
 	kubectl delete -n flux-operator cm --all
-	kubectl delete -n flux-operator statefulset --all
 	kubectl delete -n flux-operator pods --all
-	kubectl delete -n flux-operator FluxSetup --all
-	kubectl delete -n flux-operator FluxJob --all
+	kubectl delete -n flux-operator jobs --all
+	kubectl delete -n flux-operator MiniCluster --all
 	rm -rf yaml/*.yaml
 
 applyall:
 	bin/kustomize build config/samples | kubectl apply -f -
 
 apply:
-	kubectl apply -f config/samples/flux-framework.org_v1alpha1_fluxsetup.yaml
+	kubectl apply -f config/samples/flux-framework.org_v1alpha1_minicluster.yaml
 
 # Clean, apply and run, and apply the job
 redo: clean apply run
-
-job:
-	kubectl apply -f config/samples/flux-framework.org_v1alpha1_fluxjob.yaml
 
 ##@ Build
 

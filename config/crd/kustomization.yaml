@@ -3,8 +3,6 @@
 # It should be run by config/default
 resources:
 - bases/flux-framework.org_miniclusters.yaml
-- bases/flux-framework.org_fluxjobs.yaml
-- bases/flux-framework.org_fluxsetups.yaml
 #+kubebuilder:scaffold:crdkustomizeresource
 
 patchesStrategicMerge:

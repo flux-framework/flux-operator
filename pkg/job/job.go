@@ -26,7 +26,7 @@ const (
 
 // Info holds job data in the flux manager
 type Info struct {
-	Obj *api.FluxJob
+	Obj *api.MiniCluster
 
 	// If admitted, the name of the running queue
 	RunningQueue string
@@ -36,14 +36,14 @@ func (i *Info) JobKey() string {
 	return i.Obj.Name
 }
 
-func HasCondition(job *api.FluxJob, condition string) bool {
+func HasCondition(job *api.MiniCluster, condition string) bool {
 	i := FindCondition(&job.Status, condition)
 	return i != -1 && job.Status.Conditions[i].Status == metav1.ConditionTrue
 }
 
 // FindConditionIndex finds the provided condition from the given status and returns the index.
 // Returns -1 if the condition is not present.
-func FindCondition(status *api.FluxJobStatus, conditionType string) int {
+func FindCondition(status *api.MiniClusterStatus, conditionType string) int {
 
 	// Index of -1 means we have zero conditions
 	if status == nil || status.Conditions == nil {
@@ -59,7 +59,7 @@ func FindCondition(status *api.FluxJobStatus, conditionType string) int {
 }
 
 // UpdateCondition sets all conditions to false except for the selected
-func UpdateCondition(job *api.FluxJob, conditionType string) {
+func UpdateCondition(job *api.MiniCluster, conditionType string) {
 	for i, condition := range job.Status.Conditions {
 		if condition.Type == conditionType {
 			job.Status.Conditions[i].Status = metav1.ConditionTrue
@@ -71,7 +71,7 @@ func UpdateCondition(job *api.FluxJob, conditionType string) {
 
 // GetCondition gets the active condition
 // If we eventually allow more than one condition this can return multiple
-func GetCondition(job *api.FluxJob) string {
+func GetCondition(job *api.MiniCluster) string {
 	for _, condition := range job.Status.Conditions {
 		if condition.Status == metav1.ConditionTrue {
 			return condition.Reason
@@ -80,7 +80,7 @@ func GetCondition(job *api.FluxJob) string {
 	return "AllFalse"
 }
 
-func NewInfo(job *api.FluxJob) *Info {
+func NewInfo(job *api.MiniCluster) *Info {
 	info := &Info{
 		Obj: job,
 	}
@@ -88,7 +88,7 @@ func NewInfo(job *api.FluxJob) *Info {
 }
 
 // JobsEqual takes a hash of the specs and assesses equality
-func JobsEqual(jobA *api.FluxJob, jobB *api.FluxJob) bool {
+func JobsEqual(jobA *api.MiniCluster, jobB *api.MiniCluster) bool {
 
 	// For any failures, assume not equal
 	hashA, err := hashstructure.Hash(jobA.Spec, hashstructure.FormatV2, nil)
@@ -102,24 +102,24 @@ func JobsEqual(jobA *api.FluxJob, jobB *api.FluxJob) bool {
 	return hashA == hashB
 }
 
-func FlagConditionWaiting(job *api.FluxJob) {
+func FlagConditionWaiting(job *api.MiniCluster) {
 	UpdateCondition(job, ConditionJobWaiting)
 }
 
-func FlagConditionReady(job *api.FluxJob) {
+func FlagConditionReady(job *api.MiniCluster) {
 	UpdateCondition(job, ConditionJobReady)
 }
-func FlagConditionRunning(job *api.FluxJob) {
+func FlagConditionRunning(job *api.MiniCluster) {
 	UpdateCondition(job, ConditionJobRunning)
 }
 
-func FlagConditionFinished(job *api.FluxJob) {
+func FlagConditionFinished(job *api.MiniCluster) {
 	UpdateCondition(job, ConditionJobFinished)
 }
 
 // TODO here is how we determed if a batch job was successful / not
 // I'm not sure yet where batch fits in, but maybe...
-/*func IsFinished(job *api.FluxJob) (batchv1.JobConditionType, bool) {
+/*func IsFinished(job *api.MiniCluster) (batchv1.JobConditionType, bool) {
 	for _, c := range j.Status.Conditions {
 		if (c.Type == batchv1.JobComplete || c.Type == batchv1.JobFailed) && c.Status == corev1.ConditionTrue {
 			return c.Type, true

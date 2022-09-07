@@ -18,7 +18,7 @@ spec:
   - name: v1alpha1
     schema:
       openAPIV3Schema:
-        description: MiniCluster is the Schema for a mini flux instance
+        description: MiniCluster is the Schema for a Flux job launcher on K8s
         properties:
           apiVersion:
             description: 'APIVersion defines the versioned schema of this representation
@@ -33,20 +33,37 @@ spec:
           metadata:
             type: object
           spec:
-            description: MiniCluster defines a Flux MiniCluster
+            description: MiniCluster defines the desired state of a Flux MiniCluster
+              "I am a Flux user and I want to launch a MiniCluster for my job!" A
+              MiniCluster corresponds to a Batch Job -> StatefulSet + ConfigMaps A
+              "task" within that cluster is flux running something.
+            properties:
+              command:
+                description: Single user executable to provide to flux start
+                type: string
+              image:
+                default: fluxrm/flux-sched:focal
+                description: Container image must contain flux and flux-sched install
+                type: string
+              size:
+                default: 1
+                description: Size (number of jobs to run)
+                format: int32
+                type: integer
+            required:
+            - image
             type: object
           status:
-            description: MiniClusterStatus defines the observed state of the MiniCluster
+            description: MiniClusterStatus defines the observed state of Flux
             properties:
               conditions:
-                description: 'Important: Run "make" to regenerate code after modifying
-                  this file conditions hold the latest MiniCluster states'
+                description: conditions hold the latest Flux Job and MiniCluster states
                 items:
                   description: "Condition contains details for one aspect of the current
                     state of this API Resource. --- This struct is intended for direct
                     use as an array at the field path .status.conditions.  For example,
-                    type FooStatus struct{ // Represents the observations of a foo's
-                    current state. // Known .status.conditions.type are: \"Available\",
+                    \n type FooStatus struct{ // Represents the observations of a
+                    foo's current state. // Known .status.conditions.type are: \"Available\",
                     \"Progressing\", and \"Degraded\" // +patchMergeKey=type // +patchStrategy=merge
                     // +listType=map // +listMapKey=type Conditions []metav1.Condition
                     `json:\"conditions,omitempty\" patchStrategy:\"merge\" patchMergeKey:\"type\"
@@ -108,6 +125,11 @@ spec:
                   - type
                   type: object
                 type: array
+              jobid:
+                description: The JobUid is set internally to associate to a miniCluster
+                type: string
+            required:
+            - jobid
             type: object
         type: object
     served: true
