@@ -11,8 +11,6 @@ SPDX-License-Identifier: Apache-2.0
 package controllers
 
 import (
-	"fmt"
-
 	batchv1 "k8s.io/api/batch/v1"
 	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
@@ -31,27 +29,39 @@ func (r *MiniClusterReconciler) newMiniClusterJob(cluster *api.MiniCluster) *bat
 	// Before the stateful set was doing this for us, but for a batch job it's manaul
 	containers := r.getMiniClusterContainers(cluster)
 
+	// Number of retries before marking as failed
+	backoffLimit := int32(100)
+	completionMode := batchv1.IndexedCompletion
+
 	job := &batchv1.Job{
 		ObjectMeta: metav1.ObjectMeta{
+
+			// In the example from Dan this was "indexed-job"
 			Name:      cluster.Name,
 			Namespace: cluster.Namespace,
 		},
 
 		// https://github.com/kubernetes/api/blob/2f9e58849198f8675bc0928c69acf7e50af77551/batch/v1/types.go#L205
 		Spec: batchv1.JobSpec{
+
 			//			Selector:       &metav1.LabelSelector{MatchLabels: labels},
-			ManualSelector: new(bool),
+			BackoffLimit: &backoffLimit,
+			Completions:  &cluster.Spec.Size,
+			Parallelism:  &cluster.Spec.Size,
+
+			// This would set a limit on the amount of time allowed to run
+			// ActiveDeadlineSeconds: ...
 			Template: corev1.PodTemplateSpec{ObjectMeta: metav1.ObjectMeta{Name: cluster.Name, Namespace: cluster.Namespace}, Spec: corev1.PodSpec{
-				Volumes:        getVolumes(),
-				InitContainers: []corev1.Container{},
-				Containers:     containers,
-				RestartPolicy:  corev1.RestartPolicyOnFailure,
+				Volumes:       getVolumes(),
+				Containers:    containers,
+				RestartPolicy: corev1.RestartPolicyOnFailure,
 
 				// Note that this spec also has variables for Host networking and DNS
 				// These might be important (eventually)
 				// Look at expanding this spec again to re-evaluate what we need
 			}},
-			// TODO I think we eventually want CompletionMode Indexed here
+			// TODO I think we eventually can try CompletionMode Indexed here
+			CompletionMode: &completionMode,
 		},
 	}
 	ctrl.SetControllerReference(cluster, job, r.Scheme)
@@ -67,23 +77,24 @@ func (r *MiniClusterReconciler) getMiniClusterContainers(cluster *api.MiniCluste
 	containers := []corev1.Container{
 		{
 			// Call this the driver container, number 0
-			Name:            cluster.Name + "-0",
+			Name:            cluster.Name,
 			Image:           (*cluster).Spec.Image,
 			ImagePullPolicy: corev1.PullAlways,
-			Command:         []string{"flux", "start", "-o", "--config-path=/etc/flux/", (*cluster).Spec.Command},
-			VolumeMounts:    getVolumeMounts(),
+			Command:         []string{"cat", "/etc/hosts"},
+			//			Command:         []string{"flux", "start", "-o", "--config-path=/etc/flux/", (*cluster).Spec.Command},
+			VolumeMounts: getVolumeMounts(),
 		},
 	}
 
 	// Ensure we add containers up to the size
 	// We start at 1 since we already added the driver above
-	for i := 1; i < int(cluster.Spec.Size); i++ {
+	/*for i := 1; i < int(cluster.Spec.Size); i++ {
 		newContainer := corev1.Container{
 
 			// Emulate how a stateful set names things
 			Name:            fmt.Sprintf("%s-%d", cluster.Name, i),
 			Image:           (*cluster).Spec.Image,
-			ImagePullPolicy: corev1.PullAlways,
+			ImagePullPolicy: corev1.PullIfNotPresent,
 
 			// The assumption is that flux should be started (once) on the driver node
 			// And we just need these containers to keep running.
@@ -92,7 +103,7 @@ func (r *MiniClusterReconciler) getMiniClusterContainers(cluster *api.MiniCluste
 			VolumeMounts: getVolumeMounts(),
 		}
 		containers = append(containers, newContainer)
-	}
+	}*/
 
 	return containers
 }
