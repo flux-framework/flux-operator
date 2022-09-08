@@ -45,11 +45,19 @@ spec:
                 default: fluxrm/flux-sched:focal
                 description: Container image must contain flux and flux-sched install
                 type: string
+              pullAlways:
+                default: false
+                description: Allow the user to dictate pulling By default we pull
+                  if not present. Setting this to true will indicate to pull always
+                type: boolean
               size:
                 default: 1
                 description: Size (number of jobs to run)
                 format: int32
                 type: integer
+              workingDir:
+                description: Working directory to run command from
+                type: string
             required:
             - image
             type: object

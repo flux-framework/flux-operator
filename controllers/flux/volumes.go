@@ -23,11 +23,13 @@ func getVolumeMounts() []corev1.VolumeMount {
 			MountPath: "/mnt/curve/",
 			ReadOnly:  true,
 		},
-		{
-			Name:      "flux-config",
-			MountPath: "/etc/flux/",
-			ReadOnly:  true,
-		},
+
+		// Disabled for now too - /etc/flux also needs write
+		//{
+		//	Name:      "flux-config",
+		//	MountPath: "/etc/flux/",
+		//	ReadOnly:  false,
+		//},
 
 		// Disabled for now - not sure we want to do this because the container
 		// is mounting stuff there too, and wouldn't this be controlled by the operator?

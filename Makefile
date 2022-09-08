@@ -125,6 +125,9 @@ apply:
 # Clean, apply and run, and apply the job
 redo: clean apply run
 
+log:
+	kubectl logs -n flux-operator job.batch/flux-sample
+
 ##@ Build
 
 .PHONY: build

@@ -70,40 +70,24 @@ func (r *MiniClusterReconciler) newMiniClusterJob(cluster *api.MiniCluster) *bat
 
 func (r *MiniClusterReconciler) getMiniClusterContainers(cluster *api.MiniCluster) []corev1.Container {
 
+	// Allow the user to dictate pulling
+	pullPolicy := corev1.PullIfNotPresent
+	if (*cluster).Spec.PullAlways {
+		pullPolicy = corev1.PullAlways
+	}
 	// Create the initial "driver" container to start flux
-	// TODO we might eventually need to coordinate so this isn't started until the cluster is up?
-	// TODO we should also set a minimum number of containers (unless there is a case for
-	// creating an empty cluster?)
 	containers := []corev1.Container{
 		{
 			// Call this the driver container, number 0
 			Name:            cluster.Name,
 			Image:           (*cluster).Spec.Image,
-			ImagePullPolicy: corev1.PullAlways,
-			Command:         []string{"cat", "/etc/hosts"},
-			//			Command:         []string{"flux", "start", "-o", "--config-path=/etc/flux/", (*cluster).Spec.Command},
+			ImagePullPolicy: pullPolicy,
+			// Re-add config when we can reliably write it
+			// Command:         []string{"flux", "start", "-o", "--config-path=/etc/flux/", (*cluster).Spec.Command},
+			Command:      []string{"flux", "start", "-o", (*cluster).Spec.Command},
+			WorkingDir:   (*cluster).Spec.WorkingDir,
 			VolumeMounts: getVolumeMounts(),
 		},
 	}
-
-	// Ensure we add containers up to the size
-	// We start at 1 since we already added the driver above
-	/*for i := 1; i < int(cluster.Spec.Size); i++ {
-		newContainer := corev1.Container{
-
-			// Emulate how a stateful set names things
-			Name:            fmt.Sprintf("%s-%d", cluster.Name, i),
-			Image:           (*cluster).Spec.Image,
-			ImagePullPolicy: corev1.PullIfNotPresent,
-
-			// The assumption is that flux should be started (once) on the driver node
-			// And we just need these containers to keep running.
-			// TODO what should the command be?
-			Command:      []string{"flux", "start", "-o", "--config-path=/etc/flux/", (*cluster).Spec.Command},
-			VolumeMounts: getVolumeMounts(),
-		}
-		containers = append(containers, newContainer)
-	}*/
-
 	return containers
 }

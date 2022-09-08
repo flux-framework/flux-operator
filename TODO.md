@@ -2,9 +2,10 @@
 
 ### Design 3
 
- - [ ] debug pod containers not seeing config again (e.g., mounts not creating)
+ - [ ] figure out where to put flux hostname / config - volume needs write
+ - [x] debug pod containers not seeing config again (e.g., mounts not creating)
  - [ ] Should there be a min/max size for the MiniCluster CRD?
- - [ ] Should the secondary (non-driver) pods have a different start command?
+ - [x] Should the secondary (non-driver) pods have a different start command? (answer is no - with the Indexed job it's all the same command)
  - [ ] MiniCluster - how should we handle deletion / update?
  - [ ] Do we want to be able to launch additional tasks? (e.g., after the original job started)
  - [ ] Currently we have no representation of quota - we need to be able to set (and check) hard limits from the scheduler (or maybe we get that out of the box)?

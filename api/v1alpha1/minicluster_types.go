@@ -35,6 +35,17 @@ type MiniClusterSpec struct {
 	// +optional
 	Size int32 `json:"size"`
 
+	// Working directory to run command from
+	// +optional
+	WorkingDir string `json:"workingDir"`
+
+	// Allow the user to dictate pulling
+	// By default we pull if not present. Setting
+	// this to true will indicate to pull always
+	// +kubebuilder:default=false
+	// +optional
+	PullAlways bool `json:"pullAlways"`
+
 	// Single user executable to provide to flux start
 	// +optional
 	Command string `json:"command"`

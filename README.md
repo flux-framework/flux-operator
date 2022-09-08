@@ -70,6 +70,17 @@ or run all three for easy development! The below command ensures to submit a job
 ```bash
 $ make redo  # clean, apply, and run
 ```
+To see logs for the job, you'd do:
+
+```bash
+$ kubectl logs -n flux-operator job.batch/flux-sample
+```
+
+And this is also:
+
+```bash
+$ make log
+```
 
 ## Using the Operator
 
