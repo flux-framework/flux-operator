@@ -1,0 +1,10 @@
+dockerbuild:
+
+  build_args:
+    flux_sched_tag:
+      key: flux-sched
+      versions:
+       - focal
+       - focal-v0.22.0
+       - focal-v0.23.0
+       - focal-v0.24.0
