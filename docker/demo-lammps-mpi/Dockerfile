@@ -17,8 +17,8 @@ RUN apt-get update && \
     apt-get install -y fftw3-dev fftw3
 
 # install laamps
-RUN git clone --depth 1 --branch stable_29Sep2021_update2 https://github.com/lammps/lammps.git /opt/laamps && \
-    cd /opt/laamps && \
+RUN git clone --depth 1 --branch stable_29Sep2021_update2 https://github.com/lammps/lammps.git /opt/lammps && \
+    cd /opt/lammps && \
     mkdir build && \
     cd build && \
     . /etc/profile && \ 
