@@ -12,6 +12,8 @@ package core
 
 import (
 	controllers "flux-framework/flux-operator/controllers/flux"
+
+	"k8s.io/client-go/rest"
 	ctrl "sigs.k8s.io/controller-runtime"
 )
 
@@ -20,24 +22,17 @@ var (
 )
 
 // SetupControllers sets up all controllers.
-func SetupControllers(mgr ctrl.Manager) (string, error) {
-
-	// Admin (internal) Flux Setup Reconciler (setup first!)
-	if err := (&controllers.FluxSetupReconciler{
-		Client: mgr.GetClient(),
-		Scheme: mgr.GetScheme(),
-	}).SetupWithManager(mgr); err != nil {
-		setupLog.Error(err, "unable to create controller", "controller", "FluxSetup")
-		return "FluxSetup", err
-	}
-
-	// User facing Flux Reconciler
-	if err := (&controllers.FluxReconciler{
-		Client: mgr.GetClient(),
-		Scheme: mgr.GetScheme(),
-	}).SetupWithManager(mgr); err != nil {
-		setupLog.Error(err, "unable to create controller", "controller", "Flux")
-		return "Flux", err
+func SetupControllers(mgr ctrl.Manager, restClient rest.Interface) (string, error) {
+	jobReconciler := controllers.NewMiniClusterReconciler(
+		mgr.GetClient(),
+		mgr.GetScheme(),
+		*(mgr.GetConfig()),
+		restClient,
+		// other watching reconcilers could be added here!
+	)
+	if err := jobReconciler.SetupWithManager(mgr); err != nil {
+		setupLog.Error(err, "unable to create controller", "controller", "MiniCluster")
+		return "MiniCluster", err
 	}
 	return "", nil
 }

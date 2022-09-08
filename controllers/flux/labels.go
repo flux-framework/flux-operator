@@ -15,7 +15,7 @@ import (
 )
 
 // setup labels fetches and sets labels for setup
-func setupLabels(v *api.FluxSetup, tier string) map[string]string {
+func setupLabels(v *api.MiniCluster, tier string) map[string]string {
 	return map[string]string{
 		"app":             "flux-workers",
 		"visitorssite_cr": v.Name,
@@ -23,8 +23,8 @@ func setupLabels(v *api.FluxSetup, tier string) map[string]string {
 	}
 }
 
-// flux labels fetches and sets labels for Flux
-func labels(v *api.Flux, tier string) map[string]string {
+// labels fetches and sets labels for MiniCluster
+func labels(v *api.MiniCluster, tier string) map[string]string {
 	return map[string]string{
 		"app":             "flux-rank0",
 		"visitorssite_cr": v.Name,

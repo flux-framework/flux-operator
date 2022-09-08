@@ -15,7 +15,7 @@ import (
 )
 
 // Shared function to return consistent set of volume mounts
-// for the FluxJob and Flux Statefulset
+// for the MiniCluster and Flux Statefulset
 func getVolumeMounts() []corev1.VolumeMount {
 	return []corev1.VolumeMount{
 		{
@@ -23,11 +23,13 @@ func getVolumeMounts() []corev1.VolumeMount {
 			MountPath: "/mnt/curve/",
 			ReadOnly:  true,
 		},
-		{
-			Name:      "flux-config",
-			MountPath: "/etc/flux/",
-			ReadOnly:  true,
-		},
+
+		// Disabled for now too - /etc/flux also needs write
+		//{
+		//	Name:      "flux-config",
+		//	MountPath: "/etc/flux/",
+		//	ReadOnly:  false,
+		//},
 
 		// Disabled for now - not sure we want to do this because the container
 		// is mounting stuff there too, and wouldn't this be controlled by the operator?
@@ -39,7 +41,7 @@ func getVolumeMounts() []corev1.VolumeMount {
 	}
 }
 
-// getVolumes that are shared between FluxJob and statefulset
+// getVolumes that are shared between MiniCluster and statefulset
 func getVolumes() []corev1.Volume {
 
 	return []corev1.Volume{{

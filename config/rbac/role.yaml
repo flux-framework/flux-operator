@@ -6,6 +6,42 @@ metadata:
   name: manager-role
 rules:
 - apiGroups:
+  - ""
+  resources:
+  - events
+  verbs:
+  - create
+  - update
+  - watch
+- apiGroups:
+  - batch
+  resources:
+  - jobs
+  verbs:
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - batch
+  resources:
+  - jobs/status
+  verbs:
+  - get
+- apiGroups:
+  - flux-framework.org
+  resources:
+  - ""
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
   - flux-framework.org
   resources:
   - configmaps
@@ -20,7 +56,7 @@ rules:
 - apiGroups:
   - flux-framework.org
   resources:
-  - deployments
+  - jobs
   verbs:
   - create
   - delete
@@ -32,7 +68,7 @@ rules:
 - apiGroups:
   - flux-framework.org
   resources:
-  - fluxes
+  - miniclusters
   verbs:
   - create
   - delete
@@ -44,21 +80,7 @@ rules:
 - apiGroups:
   - flux-framework.org
   resources:
-  - fluxes/finalizers
-  verbs:
-  - update
-- apiGroups:
-  - flux-framework.org
-  resources:
-  - fluxes/status
-  verbs:
-  - get
-  - patch
-  - update
-- apiGroups:
-  - flux-framework.org
-  resources:
-  - fluxsetups
+  - miniclusters/finalizers
   verbs:
   - create
   - delete
@@ -70,17 +92,15 @@ rules:
 - apiGroups:
   - flux-framework.org
   resources:
-  - fluxsetups/finalizers
+  - miniclusters/status
   verbs:
-  - update
-- apiGroups:
-  - flux-framework.org
-  resources:
-  - fluxsetups/status
-  verbs:
+  - create
+  - delete
   - get
+  - list
   - patch
   - update
+  - watch
 - apiGroups:
   - flux-framework.org
   resources:
@@ -97,18 +117,6 @@ rules:
   - flux-framework.org
   resources:
   - secrets
-  verbs:
-  - create
-  - delete
-  - get
-  - list
-  - patch
-  - update
-  - watch
-- apiGroups:
-  - flux-framework.org
-  resources:
-  - services
   verbs:
   - create
   - delete

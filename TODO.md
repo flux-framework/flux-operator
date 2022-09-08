@@ -1,26 +1,27 @@
 # TODO
 
+### Design 3
+
+ - [ ] figure out where to put flux hostname / config - volume needs write
+ - [x] debug pod containers not seeing config again (e.g., mounts not creating)
+ - [ ] Should there be a min/max size for the MiniCluster CRD?
+ - [x] Should the secondary (non-driver) pods have a different start command? (answer is no - with the Indexed job it's all the same command)
+ - [ ] MiniCluster - how should we handle deletion / update?
+ - [ ] Do we want to be able to launch additional tasks? (e.g., after the original job started)
+ - [ ] Currently we have no representation of quota - we need to be able to set (and check) hard limits from the scheduler (or maybe we get that out of the box)?
+ - [ ] Details for etc-hosts (or will this just work?)
+ - [ ] klog can be changed to add V(2) to handle verbository from the command line, see https://pkg.go.dev/k8s.io/klog/v2
+
+### Design 2 (not currently working on)
+
+ - [ ] pkg/util/heap should implement an actual heap
+ - [x] kubebuilder should be able to provide defaults in the *_types.
+ - [x] Figure out logging connected to reconciler
+
+### Design 1 (not currently working on)
+
 - [x] consolidate configmap functions into shared functionality (less redundancy)
 - [x] Debug why the configmaps aren't being populated with the hostfile (it wasn't working with kind, worked without changes with minikube)
 - [x] Figure out adding namespaces to config/samples - should be flux-operator
 - [x] Each of config files written (e.g., hostname, broker, cert) should have their own types and more simply generated. The strategy right now is just temporary.
-- [ ] Cert needs to be separated / generated
 - [x] Stateful set (figure out how to create properly, doesn't seem to have pods) (figured out need to create ConfigMaps for Volumes)
-- [ ] Stateful set is created but it cannot see configmaps "MountVolume.SetUp failed for volume "etc-hosts" : configmap references non-existent config key: etc-hosts"
-- [ ] A means to generate / update certs - I don't think manually doing it is the right approach, but there is a comment that cert-manager isn't supported?
-  - https://kubernetes.io/docs/tasks/configmap-secret/managing-secret-using-kustomize/
-  - This is useful https://github.com/jetstack/kustomize-cert-manager-demo
-  - And https://www.jetstack.io/blog/kustomize-cert-manager/
-  - https://github.com/kubernetes-sigs/kustomize/blob/master/examples/secretGeneratorPlugin.md
-  
-## Design
-
-We create a new custom controller that listens for FluxJob resources. When a new FluxJob is created, the controller goes through the following steps:
-
- 1. Create ConfigMap that contains:
-   - A broker.toml file that lists the pods in the worker StatefulSet plus the Flux rank 0 (in the form of flux-workers-0, flux-workers-1, ...) which defines their rank in the Flux TBON
-   - /etc/hosts with a mapping between pod names and IPs (should be able to generate this before the StatefulSet  or IndexedJob per this MPI Operator line which occurs before the StatefulSet creation
- 2. Create the worker StatefulSet that contains the desired replicas minus 1, as rank 0 also does work. If we use IndexedJob  we can create all desired replicas
- 3. Wait for the worker pods to enter Running state.
- 4. Create the launcher Job.
- 5. After the launcher job finishes, set the replicas to 0 in the worker StatefulSet, or delete the IndexedJob 

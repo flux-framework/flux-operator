@@ -16,7 +16,6 @@ import (
 	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	ctrl "sigs.k8s.io/controller-runtime"
-	logctrl "sigs.k8s.io/controller-runtime/pkg/log"
 
 	"k8s.io/apimachinery/pkg/api/errors"
 	"k8s.io/apimachinery/pkg/types"
@@ -26,37 +25,36 @@ import (
 )
 
 // generateCurveCert makes a new Secret if it doesn't exist
-func (r *FluxSetupReconciler) getCurveCert(ctx context.Context, instance *api.FluxSetup) (*corev1.Secret, ctrl.Result, error) {
+func (r *MiniClusterReconciler) getCurveCert(ctx context.Context, cluster *api.MiniCluster) (*corev1.Secret, ctrl.Result, error) {
 
-	log := logctrl.FromContext(ctx).WithValues("FluxSetup", instance.Namespace)
 	existing := &corev1.Secret{}
-	err := r.Get(ctx, types.NamespacedName{Name: "secret-tls", Namespace: instance.Namespace}, existing)
+	err := r.Client.Get(ctx, types.NamespacedName{Name: "secret-tls", Namespace: cluster.Namespace}, existing)
 	if err != nil {
 
 		// Case 1: not found yet, and hostfile is ready (recreate)
 		if errors.IsNotFound(err) {
-			dep := r.createCurveSecret(instance)
-			log.Info("✨ Creating a new Secret ✨", "Namespace", dep.Namespace, "Name", dep.Name, "Data", (*dep).Data)
-			err = r.Create(ctx, dep)
+			dep := r.createCurveSecret(cluster)
+			r.log.Info("✨ Creating a new Secret ✨", "Namespace", dep.Namespace, "Name", dep.Name, "Data", (*dep).Data)
+			err = r.Client.Create(ctx, dep)
 			if err != nil {
-				log.Error(err, "❌ Failed to create new Curve Secret", "Namespace", dep.Namespace, "Name", (*dep).Name)
+				r.log.Error(err, "❌ Failed to create new Curve Secret", "Namespace", dep.Namespace, "Name", (*dep).Name)
 				return existing, ctrl.Result{}, err
 			}
 			// Successful - return and requeue
 			return existing, ctrl.Result{Requeue: true}, nil
 		} else if err != nil {
-			log.Error(err, "Failed to get Broker ConfigMap")
+			r.log.Error(err, "Failed to get Broker ConfigMap")
 			return existing, ctrl.Result{}, err
 		}
 	} else {
-		log.Info("🎉 Found existing Secret 🎉", "Namespace", existing.Namespace, "Name", existing.Name, "Data", (*existing).Data)
+		r.log.Info("🎉 Found existing Secret 🎉", "Namespace", existing.Namespace, "Name", existing.Name, "Data", (*existing).Data)
 	}
 	saveDebugYaml(existing, "secret.yaml")
 	return existing, ctrl.Result{}, err
 }
 
 // createCurveSecret creates the secret
-func (r *FluxSetupReconciler) createCurveSecret(instance *api.FluxSetup) *corev1.Secret {
+func (r *MiniClusterReconciler) createCurveSecret(cluster *api.MiniCluster) *corev1.Secret {
 
 	// TODO do we need hosts here?
 	c := certs.NewCertificate([]string{}, false)
@@ -66,13 +64,13 @@ func (r *FluxSetupReconciler) createCurveSecret(instance *api.FluxSetup) *corev1
 		TypeMeta: metav1.TypeMeta{},
 		ObjectMeta: metav1.ObjectMeta{
 			Name:      "secret-tls",
-			Namespace: instance.Namespace,
+			Namespace: cluster.Namespace,
 		},
 		Data: map[string][]byte{
 			"tls.key": []byte(c.Public),
 			"tls.crt": []byte(c.Private),
 		},
 	}
-	ctrl.SetControllerReference(instance, cert, r.Scheme)
+	ctrl.SetControllerReference(cluster, cert, r.Scheme)
 	return cert
 }

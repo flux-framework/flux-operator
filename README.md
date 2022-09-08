@@ -17,16 +17,18 @@ The sections below will describe:
 
 ## Organization
 
-The basic idea is that we have two controllers:
+The basic idea is that we present the idea of a **MiniCluster** that is a custom resource definition (CRD)
+that defines a job container (that must have flux) that (when submit) will create a set of config maps,
+secrets (e.g., tls), and the final Batch job that has the pod containers running with flux. Since
+this is a batchv1.Job, it will have states that we can track.
 
- - Flux: is a user facing controller (meaning we have a CR, a simple yaml the user can provide an image and entrypoint)
- - FluxSetup: is more an internal or admin controller, meaning no CR, but there is a CRD (custom resource definition).
- 
 And you can find the following:
 
- - [Flux Controllers](controllers/flux) are under `controllers/flux` for each of `Flux` and `FluxSetup`
- - [API Spec](api/v1alpha1/) are under `api/v1alpha1/` also for each of `Flux` and `FluxSetup`
- - [TODO.md](TODO.md) is a set of TODOs @vsoch took notes on as she developed.
+ - [Flux Controllers](controllers/flux) are under `controllers/flux` for the `MiniCluster`
+ - [API Spec](api/v1alpha1/) are under `api/v1alpha1/` also for `MiniCluster`
+ - [Packages](pkg) include supporting packages for job conditions (state), if we eventually want that.
+ - [TODO.md](TODO.md) is a set of things to be worked on, if you'd like to contribute!
+ - [Documentation](docs) is currently a place to document design, and eventually can be more user-facing docs.
 
 
 ## Quick Start
@@ -55,32 +57,30 @@ $ make manifests
 $ make install
 ```
 
-Generate your secrets and put them in [config/samples](config/samples):
-
-**TODO** I don't think this is best practice, but cert-manager doesn't seem to work with this?
-For now I'm making an empty set of secrets.
+There is also a courtesy function to clean, and apply the samples:
 
 ```bash
-$ mkdir -p ./config/samples/secrets
-openssl req -x509 -nodes -newkey rsa:4096 -sha256 -days 365 -extensions v3_ca \
-  -subj "/O=Flux Operator Certificates" \
-  -keyout ./config/samples/secrets/tls.key \
-  -out ./config/samples/secrets/tls.crt
+$ make clean  # remove old flux-operator namespaced items
+$ make apply  # apply the setup and job config
+$ make run    # make the cluster (e.g.., setting up the batch job)
 ```
 
-And then edit your [config/samples](config/samples) and deploy them, and start the operator!
+or run all three for easy development! The below command ensures to submit a job after the FluxSetup is applied so it won't be ignored (jobs submit before there is a cluster setup are ignored and require the user to re-submit).
 
 ```bash
-$ bin/kustomize build config/samples | kubectl apply -f -
+$ make redo  # clean, apply, and run
 ```
-```
-flux.flux-framework.org/flux-sample configured
-fluxsetup.flux-framework.org/flux-sample configured
-```
+To see logs for the job, you'd do:
+
 ```bash
-$ make run
+$ kubectl logs -n flux-operator job.batch/flux-sample
 ```
 
+And this is also:
+
+```bash
+$ make log
+```
 
 ## Using the Operator
 
@@ -134,39 +134,15 @@ And install. Note that this places an executable [bin/kustomize](bin/kustomize) 
 $ make install
 ```
 
-### 3. Deploy
-
-Note that you will be using the config yamls [here](config/samples/_v1alpha1_lolcow.yaml) to start, which include a greeting and port.
-We will look at these later for demonstrating how the operator watches for changes. Apply your configs (kustomize is in the bin).
-
-```bash
-$ bin/kustomize build config/samples | kubectl apply -f -
-flux.flux-framework.org/job created
-```
-
-And finally, run it.
-
-```bash
-$ make run
-```
-
-And you should be able to open the web-ui:
-
-```bash
-$ minikube service job
-```
-
-Note that if you get a 404 page, do `kubectl get svc` and wait until the service goes from "pending" to "ready."
-
-### 7. Cleanup
+### 3. Cleanup
 
 When cleaning up, you can control+c to kill the operator from running, and then:
 
 ```bash
-$ kubectl delete pod --all
-$ kubectl delete svc --all
+$ make clean
 ```
-And one of the following:
+
+And then:
 
 ```bash
 $ minikube stop
@@ -215,7 +191,7 @@ Note that you don't need to do this, obviously, if you are using the existing op
 Now let's create a controller, and call it Flux (again, no need to do this if you are using the one here).
 
 ```bash
-$ operator-sdk create api --version=v1alpha1 --kind=Flux
+$ operator-sdk create api --version=v1alpha1 --kind=MiniCluster
 ```
 (say yes to create a resource and controller). Make sure to install all dependencies (I think this might not be necessary - I saw it happen when I ran the previous command).
 
@@ -223,16 +199,6 @@ $ operator-sdk create api --version=v1alpha1 --kind=Flux
 $ go mod tidy
 $ go mod vendor
 ```
-
-At this point I chat with Eduardo about operator design, and we decided to go for a simple design:
-
-- Flux: would have a CR that defines a job and exposes an entrypoint command / container to the user
-- FluxSetup would have most of the content of [here](https://lc.llnl.gov/confluence/display/HFMCCEL/Flux+Operator+Design) and be more of an internal or admin setup.
-
-To generate FluxSetup I think I could (maybe?) have run this command again, but instead I added a new entry to the [PROJECT](PROJECT) and then generated [api/v1alpha1/fluxsetup_types.go](api/v1alpha1/fluxsetup_types.go) from the `flux_types.go` (and changing all the references from Flux to FluxSetup). 
-I also needed to (manually) make [controllers/fluxsetup_controller.go](controllers/fluxsetup_controller.go) and ensure it was updated to use FluxSetup, and then adding
-it's creation to [main.go](main.go). Yes, this is a bit of manual work, but I think I'll only need to do it once.
-At this point, I needed to try and represent what I saw in the various config files in this types file.
 
 **under development**
 
@@ -316,29 +282,11 @@ you need to do:
 ```
 Otherwise it shows up as an empty string.
 
-## Wisdom
+#### License
 
-**from the kubebuilder slack**
-
-### Learned Knowledge
-
-- Reconciling should only take into account the spec of your object, and the real world.  Don't use status to hold knowledge for future reconcile loops.  Use a workspace object instead.
-- Status should only hold observations of the reconcile loop.  Conditions, perhaps a "Phase", IDs of stuff you've found, etc.
-- Use k8s ownership model to help with cleaning up things that should automatically be reclaimed when your object is deleted.
-- Use finalizers to do manual clean-up-tasks
-- Send events, but be very limited in how often you send events.  We've opted now to send events, essentially only when a Condition is modified (e.g. a Condition changes state or reason).
-- Try not to do too many things in a single reconcile.  One thing is fine.  e.g. see one thing out of order?  Fix that and ask to be reconciled.  The next time you'll see that it's in order and you can check the next thing.  The resulting code is very robust and can handle almost any failure you throw at it.
-- Add "kubebuilder:printcolums" markers to help kubectl-users get a nice summary when they do "kubectl get yourthing".
-- Accept and embrace that you will be reconciling an out-of-date object from time to time.  It shouldn't really matter.  If it does, you might want to change things around so that it doesn't matter.  Inconsistency is a fact of k8s life.
-- Place extra care in taking errors and elevating them to useful conditions, and/or events.  These are the most visible part of an operator, and the go-to-place for humans when trying to figure out why your code doesn't work.  If you've taken the time to extract the error text from the underlying system into an Event, your users will be able to fix the problem much quicker.
-
-### What is a workspace?
-
-A workspace object is when you need to record some piece of knowledge about a thing you're doing, so that later you can use that when reconciling this object. MyObject "foo" is reconciled; so to record the thing you need to remember, create a MyObjectWorkspace — Owned by the MyObject, and with the same name + namespace.  MyObjectWorkspace doesn't need a reconciler; it's simply a tool for you to remember the thing. Next time you reconcile a MyObject, also read your MyObjectWorkspace so you can remember "what happened last time". E.g. I've made a controller to create an EC2 instance, and we needed to be completely sure that we didn't make the "launch instance" API call twice.  EC2 has a "post once only" technique whereby you specify a nonce to avoid duplicate API calls.  You would write the nonce to the workspace use the nonce to call the EC2 API write any status info of what you observed to the status. Rremove the nonce when you know that you've stored the results (e.g. instance IDs or whatever) When you reconcile, if the nonce is set, you can re-use it because it means that the EC2 call failed somehow.  EC2 uses the nonce the second time to recognise that "heh, this is the same request as before ..." Stuff like this nonce shouldn't go in your status. Put simply, the status should really never be used as input for your reconcile.
-
-Know that the scaffolded k8sClient includes a cache that automatically updates based on watches, and may give you out-of-date data (but this is fine because if it is out-of-date, there should be a reconcile in the queue already). Also know that there is a way to request objets bypassing a cache (look for APIReader).  This gives a read-only, but direct access to the API.  Useful for e.g. those workspace objects.
-
-#### Release
+This work is heavily inspired from [kueue](https://github.com/kubernetes-sigs/kueue) for the design. I am totally new to operator design and tried
+several basic designs, and decided to mimic this setup (a simplified version) for a first shot, and for my own learning. kueue at the time of
+this was also under the [Apache-2.0](https://github.com/kubernetes-sigs/kueue/blob/ec9b75eaadb5c78dab919d8ea6055d33b2eb09a2/LICENSE) license.
 
 SPDX-License-Identifier: Apache-2.0
 

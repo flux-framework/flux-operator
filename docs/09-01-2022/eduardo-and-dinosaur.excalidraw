@@ -314,12 +314,12 @@
       "locked": false,
       "fontSize": 20,
       "fontFamily": 1,
-      "text": "FluxJob",
+      "text": "MiniCluster",
       "baseline": 18,
       "textAlign": "left",
       "verticalAlign": "top",
       "containerId": null,
-      "originalText": "FluxJob"
+      "originalText": "MiniCluster"
     },
     {
       "type": "text",
@@ -2073,12 +2073,12 @@
       "locked": false,
       "fontSize": 20,
       "fontFamily": 1,
-      "text": "1. FluxJob request comes from the user\n2. The FluxJob creates a mini-cluster, sets its own status to PENDING (reason, waiting for resources)\n3. FluxSetup is watching for mini-cluster creation\n4. Flux-Setup either:\n    - determines there are enough resources, creates , updates status\n    - finds there are podless stateful sets, cleans them up, \n5. Each FluxJob is also watching for a specific mini-cluster update, if status is READY we run the job\n6. The mini-cluster is done when the pods no longer exist\n7. A random uid plus the flux job name gives an identifier ",
+      "text": "1. MiniCluster request comes from the user\n2. The MiniCluster creates a mini-cluster, sets its own status to PENDING (reason, waiting for resources)\n3. FluxSetup is watching for mini-cluster creation\n4. Flux-Setup either:\n    - determines there are enough resources, creates , updates status\n    - finds there are podless stateful sets, cleans them up, \n5. Each MiniCluster is also watching for a specific mini-cluster update, if status is READY we run the job\n6. The mini-cluster is done when the pods no longer exist\n7. A random uid plus the flux job name gives an identifier ",
       "baseline": 226,
       "textAlign": "left",
       "verticalAlign": "top",
       "containerId": null,
-      "originalText": "1. FluxJob request comes from the user\n2. The FluxJob creates a mini-cluster, sets its own status to PENDING (reason, waiting for resources)\n3. FluxSetup is watching for mini-cluster creation\n4. Flux-Setup either:\n    - determines there are enough resources, creates , updates status\n    - finds there are podless stateful sets, cleans them up, \n5. Each FluxJob is also watching for a specific mini-cluster update, if status is READY we run the job\n6. The mini-cluster is done when the pods no longer exist\n7. A random uid plus the flux job name gives an identifier "
+      "originalText": "1. MiniCluster request comes from the user\n2. The MiniCluster creates a mini-cluster, sets its own status to PENDING (reason, waiting for resources)\n3. FluxSetup is watching for mini-cluster creation\n4. Flux-Setup either:\n    - determines there are enough resources, creates , updates status\n    - finds there are podless stateful sets, cleans them up, \n5. Each MiniCluster is also watching for a specific mini-cluster update, if status is READY we run the job\n6. The mini-cluster is done when the pods no longer exist\n7. A random uid plus the flux job name gives an identifier "
     },
     {
       "type": "text",
