@@ -32,6 +32,7 @@ func (r *MiniClusterReconciler) newMiniClusterJob(cluster *api.MiniCluster) *bat
 	// Number of retries before marking as failed
 	backoffLimit := int32(100)
 	completionMode := batchv1.IndexedCompletion
+	createJobDNS := true
 
 	job := &batchv1.Job{
 		ObjectMeta: metav1.ObjectMeta{
@@ -52,13 +53,13 @@ func (r *MiniClusterReconciler) newMiniClusterJob(cluster *api.MiniCluster) *bat
 			// This would set a limit on the amount of time allowed to run
 			// ActiveDeadlineSeconds: ...
 			Template: corev1.PodTemplateSpec{ObjectMeta: metav1.ObjectMeta{Name: cluster.Name, Namespace: cluster.Namespace}, Spec: corev1.PodSpec{
-				Volumes:       getVolumes(),
+				Volumes:       getVolumes(cluster),
 				Containers:    containers,
 				RestartPolicy: corev1.RestartPolicyOnFailure,
 
-				// Note that this spec also has variables for Host networking and DNS
-				// These might be important (eventually)
-				// Look at expanding this spec again to re-evaluate what we need
+				// Create a Service-style DNS entry like:
+				// pod-instance-1.default-subdomain.my-namespace.svc.cluster-domain.example
+				SetHostnameAsFQDN: &createJobDNS,
 			}},
 			// TODO I think we eventually can try CompletionMode Indexed here
 			CompletionMode: &completionMode,
@@ -83,10 +84,9 @@ func (r *MiniClusterReconciler) getMiniClusterContainers(cluster *api.MiniCluste
 			Image:           (*cluster).Spec.Image,
 			ImagePullPolicy: pullPolicy,
 			// Re-add config when we can reliably write it
-			// Command:         []string{"flux", "start", "-o", "--config-path=/etc/flux/", (*cluster).Spec.Command},
-			Command:      []string{"flux", "start", "-o", (*cluster).Spec.Command},
+			Command:      []string{"flux", "start", "-o", "--config-path=/etc/flux/config", (*cluster).Spec.Command},
 			WorkingDir:   (*cluster).Spec.WorkingDir,
-			VolumeMounts: getVolumeMounts(),
+			VolumeMounts: getVolumeMounts(cluster),
 		},
 	}
 	return containers

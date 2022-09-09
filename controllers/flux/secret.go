@@ -28,7 +28,7 @@ import (
 func (r *MiniClusterReconciler) getCurveCert(ctx context.Context, cluster *api.MiniCluster) (*corev1.Secret, ctrl.Result, error) {
 
 	existing := &corev1.Secret{}
-	err := r.Client.Get(ctx, types.NamespacedName{Name: "secret-tls", Namespace: cluster.Namespace}, existing)
+	err := r.Client.Get(ctx, types.NamespacedName{Name: cluster.Name + curveAuthSuffix, Namespace: cluster.Namespace}, existing)
 	if err != nil {
 
 		// Case 1: not found yet, and hostfile is ready (recreate)
@@ -59,11 +59,13 @@ func (r *MiniClusterReconciler) createCurveSecret(cluster *api.MiniCluster) *cor
 	// TODO do we need hosts here?
 	c := certs.NewCertificate([]string{}, false)
 	c.Generate()
+	r.log.Info(c.Private)
+	r.log.Info(c.Public)
 
 	cert := &corev1.Secret{
 		TypeMeta: metav1.TypeMeta{},
 		ObjectMeta: metav1.ObjectMeta{
-			Name:      "secret-tls",
+			Name:      cluster.Name + curveAuthSuffix,
 			Namespace: cluster.Namespace,
 		},
 		Data: map[string][]byte{

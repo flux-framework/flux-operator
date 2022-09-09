@@ -1,12 +1,14 @@
 # Flux Operator
 
+![docs/09-07-2022/design-three-team.png](docs/09-07-2022/design-three-team.png)
+
 🚧️ Under Construction! 🚧️
 
 This is currently a scaffolding that is having functionality added as @vsoch figures it out.
 Come back and check later for updates! To work on this operator you should:
 
  - Have a recent version of Go installed (1.18.1)
- - Have minikube or kind installed
+ - Have minikube installed
   
 The sections below will describe:
 
