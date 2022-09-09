@@ -29,10 +29,7 @@ func getVolumeMounts(cluster *api.MiniCluster) []corev1.VolumeMount {
 		{
 			Name:      cluster.Name + curveAuthSuffix,
 			MountPath: "/mnt/curve/",
-			ReadOnly:  true,
 		},
-
-		// Disabled for now too - /etc/flux also needs write
 		{
 			Name:      cluster.Name + fluxConfigSuffix,
 			MountPath: "/etc/flux/config",
@@ -51,7 +48,7 @@ func getVolumeMounts(cluster *api.MiniCluster) []corev1.VolumeMount {
 
 // getVolumes that are shared between MiniCluster and statefulset
 func getVolumes(cluster *api.MiniCluster) []corev1.Volume {
-	permMode := int32(0600)
+	//	permMode := int32(0600)
 	return []corev1.Volume{{
 		Name: cluster.Name + fluxConfigSuffix,
 		VolumeSource: corev1.VolumeSource{
@@ -83,26 +80,12 @@ func getVolumes(cluster *api.MiniCluster) []corev1.Volume {
 			},
 		},
 	}, {
+
+		// We use an empty volume (that can be shared by the container and init container)
+		// to run flux keygen and generate the /mnt/curve/curve.crt
 		Name: cluster.Name + curveAuthSuffix,
 		VolumeSource: corev1.VolumeSource{
-			Secret: &corev1.SecretVolumeSource{
-				SecretName: cluster.Name + curveAuthSuffix,
-
-				// /mnt/curve/curve.cert
-				// /mnt/curve/curve.key
-				Items: []corev1.KeyToPath{
-					{
-						Key:  "tls.crt",
-						Path: "curve.cert",
-						Mode: &permMode,
-					},
-					{
-						Key:  "tls.key",
-						Path: "curve.key",
-						Mode: &permMode,
-					},
-				},
-			},
+			EmptyDir: &corev1.EmptyDirVolumeSource{},
 		},
 	}}
 }
