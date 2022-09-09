@@ -32,6 +32,7 @@ func (r *MiniClusterReconciler) newMiniClusterJob(cluster *api.MiniCluster) *bat
 	// Number of retries before marking as failed
 	backoffLimit := int32(100)
 	completionMode := batchv1.IndexedCompletion
+	createJobDNS := true
 
 	job := &batchv1.Job{
 		ObjectMeta: metav1.ObjectMeta{
@@ -45,27 +46,59 @@ func (r *MiniClusterReconciler) newMiniClusterJob(cluster *api.MiniCluster) *bat
 		Spec: batchv1.JobSpec{
 
 			//			Selector:       &metav1.LabelSelector{MatchLabels: labels},
-			BackoffLimit: &backoffLimit,
-			Completions:  &cluster.Spec.Size,
-			Parallelism:  &cluster.Spec.Size,
+			BackoffLimit:   &backoffLimit,
+			Completions:    &cluster.Spec.Size,
+			Parallelism:    &cluster.Spec.Size,
+			CompletionMode: &completionMode,
 
 			// This would set a limit on the amount of time allowed to run
 			// ActiveDeadlineSeconds: ...
-			Template: corev1.PodTemplateSpec{ObjectMeta: metav1.ObjectMeta{Name: cluster.Name, Namespace: cluster.Namespace}, Spec: corev1.PodSpec{
-				Volumes:       getVolumes(),
-				Containers:    containers,
-				RestartPolicy: corev1.RestartPolicyOnFailure,
+			Template: corev1.PodTemplateSpec{
+				ObjectMeta: metav1.ObjectMeta{
+					Name:      cluster.Name,
+					Namespace: cluster.Namespace,
+				},
+				Spec: corev1.PodSpec{
+					Volumes:    getVolumes(cluster),
+					Containers: containers,
 
-				// Note that this spec also has variables for Host networking and DNS
-				// These might be important (eventually)
-				// Look at expanding this spec again to re-evaluate what we need
-			}},
-			// TODO I think we eventually can try CompletionMode Indexed here
-			CompletionMode: &completionMode,
+					// The init containers use flux-keygen to create certs
+					InitContainers: r.getMiniClusterInitContainer(cluster),
+					RestartPolicy:  corev1.RestartPolicyOnFailure,
+
+					// Create a Service-style DNS entry like:
+					// pod-instance-1.default-subdomain.my-namespace.svc.cluster-domain.example
+					SetHostnameAsFQDN: &createJobDNS,
+				}},
 		},
 	}
 	ctrl.SetControllerReference(cluster, job, r.Scheme)
 	return job
+}
+
+// The init containers create the curve.cert if it does not exist using flux
+// We do this because libsodium / zmq libraries are already in the container
+func (r *MiniClusterReconciler) getMiniClusterInitContainer(cluster *api.MiniCluster) []corev1.Container {
+
+	// Allow the user to dictate pulling
+	pullPolicy := corev1.PullIfNotPresent
+	if (*cluster).Spec.PullAlways {
+		pullPolicy = corev1.PullAlways
+	}
+
+	containers := []corev1.Container{
+		{
+			// Call this the driver container, number 0
+			Name:            cluster.Name + "-init",
+			Image:           (*cluster).Spec.Image,
+			ImagePullPolicy: pullPolicy,
+
+			// Don't provide the name here - it will get from the host
+			Command:      []string{"flux", "keygen", "/mnt/curve/curve.cert"},
+			VolumeMounts: getVolumeMounts(cluster),
+		},
+	}
+	return containers
 }
 
 func (r *MiniClusterReconciler) getMiniClusterContainers(cluster *api.MiniCluster) []corev1.Container {
@@ -82,11 +115,11 @@ func (r *MiniClusterReconciler) getMiniClusterContainers(cluster *api.MiniCluste
 			Name:            cluster.Name,
 			Image:           (*cluster).Spec.Image,
 			ImagePullPolicy: pullPolicy,
-			// Re-add config when we can reliably write it
-			// Command:         []string{"flux", "start", "-o", "--config-path=/etc/flux/", (*cluster).Spec.Command},
-			Command:      []string{"flux", "start", "-o", (*cluster).Spec.Command},
+
+			// config is a directory with any number of toml files to be used, we use a brokers.toml
+			Command:      []string{"flux", "start", "-o", "--config-path=/etc/flux/config", (*cluster).Spec.Command},
 			WorkingDir:   (*cluster).Spec.WorkingDir,
-			VolumeMounts: getVolumeMounts(),
+			VolumeMounts: getVolumeMounts(cluster),
 		},
 	}
 	return containers

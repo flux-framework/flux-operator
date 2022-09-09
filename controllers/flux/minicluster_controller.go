@@ -103,6 +103,12 @@ func (r *MiniClusterReconciler) Reconcile(ctx context.Context, req ctrl.Request)
 		return ctrl.Result{Requeue: true}, err
 	}
 
+	// Don't continue if they provided 0 size, that makes no sense!
+	if cluster.Spec.Size == 0 {
+		r.log.Info("🌀 A MiniCluster without nodes? Is this a cluster for invisible ants? Canceling!")
+		return ctrl.Result{}, nil
+	}
+
 	// Get the current job status
 	status := jobctrl.GetCondition(&cluster)
 

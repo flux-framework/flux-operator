@@ -1,12 +1,14 @@
 # Flux Operator
 
+![docs/09-07-2022/design-three-team.png](docs/09-07-2022/design-three-team.png)
+
 🚧️ Under Construction! 🚧️
 
 This is currently a scaffolding that is having functionality added as @vsoch figures it out.
 Come back and check later for updates! To work on this operator you should:
 
  - Have a recent version of Go installed (1.18.1)
- - Have minikube or kind installed
+ - Have minikube installed
   
 The sections below will describe:
 
@@ -30,6 +32,12 @@ And you can find the following:
  - [TODO.md](TODO.md) is a set of things to be worked on, if you'd like to contribute!
  - [Documentation](docs) is currently a place to document design, and eventually can be more user-facing docs.
 
+## Design
+
+ - A **MiniCluster** is an [indexed job](https://kubernetes.io/docs/tasks/job/indexed-parallel-processing-static/) so we can create N copies of the "same" base containers (each with flux, and the connected workers in our cluster)
+ - The flux config is written to a volume at `/etc/flux/config` (created via a config map) as a brokers.toml file.
+ - We use an [initContainer](https://kubernetes.io/docs/concepts/workloads/pods/init-containers/) with an Empty volume (shared between init and worker) to generate the curve certificates (`/mnt/curve/curve.cert`). The broker sees them via the definition of that path in the broker.toml in our config directory mentioned above.
+ - TODO we need to figure out how the pods can see one another (TBA)
 
 ## Quick Start
 
