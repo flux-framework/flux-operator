@@ -36,8 +36,8 @@ And you can find the following:
 
  - A **MiniCluster** is an [indexed job](https://kubernetes.io/docs/tasks/job/indexed-parallel-processing-static/) so we can create N copies of the "same" base containers (each with flux, and the connected workers in our cluster)
  - The flux config is written to a volume at `/etc/flux/config` (created via a config map) as a brokers.toml file.
- - We use an [initContainer](https://kubernetes.io/docs/concepts/workloads/pods/init-containers/) with an Empty volume (shared between init and worker) to generate the curve certificates (`/mnt/curve/curve.cert`). The broker sees them via the definition of that path in the broker.toml in our config directory mentioned above.
- - TODO we need to figure out how the pods can see one another (TBA)
+ - We use an [initContainer](https://kubernetes.io/docs/concepts/workloads/pods/init-containers/) with an Empty volume (shared between init and worker) to generate the curve certificates (`/mnt/curve/curve.cert`). The broker sees them via the definition of that path in the broker.toml in our config directory mentioned above. Currently ever container generates its own curve.cert so this needs to be updated to have just one.
+ - Networking is a bit of a hack - we have a wrapper starting script that essentially waits until a file is populated with hostnames. While it's waiting, we are waiting for the pods to be created and allocated an ip address, and then we write the addresses to this update file (that will echo into `/etc/hosts`). When the Pod is re-created with the same ip address, the second time around the file is run to update the hosts, and then we submit the job.
 
 ## Quick Start
 
@@ -88,6 +88,18 @@ And this is also:
 
 ```bash
 $ make log
+```
+
+List running pods (each pod is part of a batch job)
+
+```bash
+$ make list
+```
+
+And shell into one with the helper script:
+
+```bash
+./shell.sh flux-sample-0-b5rw6
 ```
 
 ## Using the Operator

@@ -19,6 +19,24 @@ import (
 	api "flux-framework/flux-operator/api/v1alpha1"
 )
 
+// newMiniClusterJobService creates the service
+func (r *MiniClusterReconciler) newMiniClusterJobService(cluster *api.MiniCluster, job *batchv1.Job) *corev1.Service {
+
+	// And create the service for the pods' network (maybe should be separate)?
+	svc := &corev1.Service{
+		TypeMeta: metav1.TypeMeta{},
+		ObjectMeta: metav1.ObjectMeta{
+			Name:      cluster.Name,
+			Namespace: cluster.Namespace,
+		},
+		Spec: corev1.ServiceSpec{
+			Selector: map[string]string{"job": cluster.Name},
+		},
+	}
+	ctrl.SetControllerReference(cluster, svc, r.Scheme)
+	return svc
+}
+
 // newMiniCluster is used to create the MiniCluster Job
 func (r *MiniClusterReconciler) newMiniClusterJob(cluster *api.MiniCluster) *batchv1.Job {
 
@@ -32,7 +50,6 @@ func (r *MiniClusterReconciler) newMiniClusterJob(cluster *api.MiniCluster) *bat
 	// Number of retries before marking as failed
 	backoffLimit := int32(100)
 	completionMode := batchv1.IndexedCompletion
-	createJobDNS := true
 
 	job := &batchv1.Job{
 		ObjectMeta: metav1.ObjectMeta{
@@ -57,18 +74,33 @@ func (r *MiniClusterReconciler) newMiniClusterJob(cluster *api.MiniCluster) *bat
 				ObjectMeta: metav1.ObjectMeta{
 					Name:      cluster.Name,
 					Namespace: cluster.Namespace,
+
+					// Job is used as selector for service
+					Labels: map[string]string{"name": cluster.Name, "namespace": cluster.Namespace, "job": cluster.Name},
 				},
 				Spec: corev1.PodSpec{
+					// Following example in:
+					// https://github.com/alculquicondor/enhancements/blob/master/keps/sig-apps/2214-indexed-job/README.md
+					// When this is set, we see:
+					// 172.17.0.7      flux-sample-0.flux-sample.flux-operator.svc.cluster.local       flux-sample-0
+					// The FQDN setting doesn't seem to work
+					Subdomain:  cluster.Name,
 					Volumes:    getVolumes(cluster),
 					Containers: containers,
 
-					// The init containers use flux-keygen to create certs
+					// The init containers use flux keygen to create certs
+					// There are multiple now but eventually we need just one
 					InitContainers: r.getMiniClusterInitContainer(cluster),
 					RestartPolicy:  corev1.RestartPolicyOnFailure,
 
 					// Create a Service-style DNS entry like:
 					// pod-instance-1.default-subdomain.my-namespace.svc.cluster-domain.example
-					SetHostnameAsFQDN: &createJobDNS,
+					// Note from @vsoch: when I tested and shelled into pod, this didn't seem to take
+					// e.g., hostname --fqdn returned flux-sample-1
+					// We might eventually want a wrapper that waits for all hosts to be seen before starting, e.g., like
+					// https://github.com/kubeflow/mpi-operator/blob/3f808b1c592c767b8d4b60613cad385c7a81dee0/build/base/intel-entrypoint.sh
+					//SetHostnameAsFQDN: &createJobDNS,
+					//HostNetwork:       true,
 				}},
 		},
 	}
@@ -88,14 +120,25 @@ func (r *MiniClusterReconciler) getMiniClusterInitContainer(cluster *api.MiniClu
 
 	containers := []corev1.Container{
 		{
-			// Call this the driver container, number 0
-			Name:            cluster.Name + "-init",
-			Image:           (*cluster).Spec.Image,
-			ImagePullPolicy: pullPolicy,
+			Name:  cluster.Name + "-init",
+			Image: (*cluster).Spec.Image,
 
-			// Don't provide the name here - it will get from the host
-			Command:      []string{"flux", "keygen", "/mnt/curve/curve.cert"},
-			VolumeMounts: getVolumeMounts(cluster),
+			// TODO this should be done in a script (via CM volume) that checks the index envar
+			Command:         []string{"flux", "keygen", "/mnt/curve/curve.cert"},
+			Resources:       corev1.ResourceRequirements{},
+			VolumeMounts:    getVolumeMounts(cluster),
+			ImagePullPolicy: pullPolicy,
+			Stdin:           true,
+			TTY:             true,
+
+			// Just setting this for testing
+			// It's added to the JOB_COMPLETION_INDEX variable
+			Env: []corev1.EnvVar{
+				{
+					Name:  "FLUX_OPERATOR_CONTAINER_TYPE",
+					Value: "INIT",
+				},
+			},
 		},
 	}
 	return containers
@@ -116,10 +159,22 @@ func (r *MiniClusterReconciler) getMiniClusterContainers(cluster *api.MiniCluste
 			Image:           (*cluster).Spec.Image,
 			ImagePullPolicy: pullPolicy,
 
+			// This is a wrapper that is going to wait for the generation of update_hosts.sh
+			// Once it's there, we update /etc/hosts, and run the command to start flux.
+			// Currently we will add the current node again, likely we want to delete the last line first
+			Command: []string{"/bin/bash", "/flux_operator/wait.sh", (*cluster).Spec.Command},
 			// config is a directory with any number of toml files to be used, we use a brokers.toml
-			Command:      []string{"flux", "start", "-o", "--config-path=/etc/flux/config", (*cluster).Spec.Command},
+			// Command:      []string{"flux", "start", "-o", "--config-path=/etc/flux/config", (*cluster).Spec.Command},
 			WorkingDir:   (*cluster).Spec.WorkingDir,
 			VolumeMounts: getVolumeMounts(cluster),
+			Stdin:        true,
+			TTY:          true,
+			Env: []corev1.EnvVar{
+				{
+					Name:  "FLUX_OPERATOR_CONTAINER_TYPE",
+					Value: "WORKER",
+				},
+			},
 		},
 	}
 	return containers
