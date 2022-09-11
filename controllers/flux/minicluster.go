@@ -13,7 +13,6 @@ package controllers
 import (
 	"context"
 	"fmt"
-	"os"
 	"sort"
 	"strings"
 
@@ -22,8 +21,6 @@ import (
 	batchv1 "k8s.io/api/batch/v1"
 	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-	"k8s.io/apimachinery/pkg/runtime"
-	"k8s.io/client-go/tools/remotecommand"
 	ctrl "sigs.k8s.io/controller-runtime"
 	"sigs.k8s.io/controller-runtime/pkg/client"
 
@@ -34,10 +31,9 @@ import (
 )
 
 // This is a MiniCluster! A MiniCluster is associated with a running MiniCluster and include:
-// 1. A stateful set with some number of pods
-// 2. A service to expose the mini-cluster (still needed?)
-// 3. Config maps for secrets and other things.
-// 4. We "launch" a job by starting the Indexed job on the connected nodes
+// 1. An indexed job with some number of pods
+// 2. Config maps for secrets and other things.
+// 3. We "launch" a job by starting the Indexed job on the connected nodes
 // newMiniCluster creates a new mini cluster, a stateful set for running flux!
 func (r *MiniClusterReconciler) ensureMiniCluster(ctx context.Context, cluster *api.MiniCluster) (ctrl.Result, error) {
 
@@ -117,49 +113,6 @@ func (r *MiniClusterReconciler) getMiniCluster(ctx context.Context, cluster *api
 	return existing, ctrl.Result{}, err
 }
 
-// podExec executes a comand to a named pod
-// This is not currenty in use. This seems to run but I don't see expected output
-func (r *MiniClusterReconciler) podExec(pod corev1.Pod, ctx context.Context, cluster *api.MiniCluster) error {
-
-	command := []string{
-		"/bin/sh",
-		"-c",
-		"echo",
-		"hello",
-		"world",
-	}
-
-	// Prepare a request to execute to the pod in the statefulset
-	execReq := r.RESTClient.Post().Namespace(cluster.Namespace).Resource("pods").
-		Name(pod.Name).
-		Namespace(cluster.Namespace).
-		SubResource("exec").
-		VersionedParams(&corev1.PodExecOptions{
-			Command:   command,
-			Container: pod.Spec.Containers[0].Name,
-			Stdin:     true,
-			Stdout:    true,
-			Stderr:    true,
-			TTY:       true,
-		}, runtime.NewParameterCodec(r.Scheme))
-
-	exec, err := remotecommand.NewSPDYExecutor(r.RESTConfig, "POST", execReq.URL())
-	if err != nil {
-		r.log.Error(err, "🌀 Error preparing command to execute to pod", "Name:", pod.Name)
-		return err
-	}
-
-	// This is just for debugging for now :)
-	err = exec.Stream(remotecommand.StreamOptions{
-		Stdin:  os.Stdin,
-		Stdout: os.Stdout,
-		Stderr: nil,
-		Tty:    true,
-	})
-	r.log.Info("🌀 PodExec", "Container", pod.Spec.Containers[0].Name)
-	return err
-}
-
 func (r *MiniClusterReconciler) getMiniClusterIPS(ctx context.Context, cluster *api.MiniCluster) map[string]string {
 
 	ips := map[string]string{}
@@ -169,7 +122,7 @@ func (r *MiniClusterReconciler) getMiniClusterIPS(ctx context.Context, cluster *
 			continue
 		}
 
-		// The pod isn't ready
+		// The pod isn't ready!
 		if pod.Status.PodIP == "" {
 			continue
 		}
@@ -183,8 +136,6 @@ func (r *MiniClusterReconciler) getMiniClusterPods(ctx context.Context, cluster 
 	podList := &corev1.PodList{}
 	opts := []client.ListOption{
 		client.InNamespace(cluster.Namespace),
-		//		client.MatchingLabels{"instance": cluster.Name},
-		//		client.MatchingFields{"status.phase": "Running"},
 	}
 	err := r.Client.List(ctx, podList, opts...)
 	if err != nil {
@@ -196,11 +147,6 @@ func (r *MiniClusterReconciler) getMiniClusterPods(ctx context.Context, cluster 
 	sort.Slice(podList.Items, func(i, j int) bool {
 		return podList.Items[i].Name < podList.Items[j].Name
 	})
-
-	// This is just for debugging
-	//for _, pod := range podList.Items {
-	//	r.log.Info("🌀 Found Pod", "Name:", pod.Name, "Container:", pod.Spec.Containers, "IP", pod.Status.PodIP)
-	//}
 	return podList
 }
 
@@ -243,13 +189,16 @@ func (r *MiniClusterReconciler) getConfigMap(ctx context.Context, cluster *api.M
 
 			// check if its broker.toml (the flux config)
 			if configName == "flux-config" {
-				data["hostfile"] = generateFluxConfig(cluster.Name, cluster.Spec.Size)
+				data["hostfile"] = generateFluxConfig(cluster)
 			}
 
 			// Initial "empty" set of start/wait scripts until we have host ips
 			if configName == "entrypoint" {
 				data["start-flux"] = startFluxTemplate
-				data["wait"] = waitToStartTemplate
+
+				// The main logic for generating the Curve certificate, start commands, is here
+				data["wait"] = generateWaitScript(cluster)
+
 				// This will be updated after initial creation and we have host ips!
 				data["update-hosts"] = ""
 			}
@@ -274,16 +223,32 @@ func (r *MiniClusterReconciler) getConfigMap(ctx context.Context, cluster *api.M
 }
 
 // generateFluxConfig creates the broker.toml file used to boostrap flux
-func generateFluxConfig(name string, size int32) string {
-	var hosts string
-	if size == 1 {
-		hosts = "0"
-	} else {
-		hosts = fmt.Sprintf("[0-%d]", size-1)
-	}
-	fluxConfig := fmt.Sprintf(brokerConfigTemplate, name, hosts)
-
+func generateFluxConfig(cluster *api.MiniCluster) string {
+	hosts := fmt.Sprintf("[%s]", generateRange(int(cluster.Spec.Size)))
+	fluxConfig := fmt.Sprintf(brokerConfigTemplate, cluster.Name, hosts)
 	return fluxConfig
+}
+
+// generateWaitScript generates the main script to start everything up!
+func generateWaitScript(cluster *api.MiniCluster) string {
+
+	// The first pod (0) should always generate the curve certificate
+	mainHost := fmt.Sprintf("%s-0", cluster.Name)
+	cores := generateRange(int(cluster.Spec.Cores))
+	hosts := fmt.Sprintf("%s[%s]", cluster.Name, generateRange(int(cluster.Spec.Size)))
+	waitScript := fmt.Sprintf(waitToStartTemplate, mainHost, hosts, cores)
+	return waitScript
+}
+
+// generateRange is a shared function to generate a range string
+func generateRange(size int) string {
+	var rangeString string
+	if size == 1 {
+		rangeString = "0"
+	} else {
+		rangeString = fmt.Sprintf("0-%d", size-1)
+	}
+	return rangeString
 }
 
 // getHostfileConfig gets an existing configmap, if it's done

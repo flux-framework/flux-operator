@@ -22,9 +22,6 @@ import (
 // newMiniCluster is used to create the MiniCluster Job
 func (r *MiniClusterReconciler) newMiniClusterJob(cluster *api.MiniCluster) *batchv1.Job {
 
-	// Question from V: what are labels for?
-	//	labels := labels(cluster, "flux-rank0")
-
 	// We need to create the number of containers (and names) that the user requests
 	// Before the stateful set was doing this for us, but for a batch job it's manaul
 	containers := r.getMiniClusterContainers(cluster)
@@ -41,10 +38,8 @@ func (r *MiniClusterReconciler) newMiniClusterJob(cluster *api.MiniCluster) *bat
 			Namespace: cluster.Namespace,
 		},
 
-		// https://github.com/kubernetes/api/blob/2f9e58849198f8675bc0928c69acf7e50af77551/batch/v1/types.go#L205
 		Spec: batchv1.JobSpec{
 
-			//			Selector:       &metav1.LabelSelector{MatchLabels: labels},
 			BackoffLimit:   &backoffLimit,
 			Completions:    &cluster.Spec.Size,
 			Parallelism:    &cluster.Spec.Size,
@@ -66,55 +61,15 @@ func (r *MiniClusterReconciler) newMiniClusterJob(cluster *api.MiniCluster) *bat
 					// When this is set, we see:
 					// 172.17.0.7      flux-sample-0.flux-sample.flux-operator.svc.cluster.local       flux-sample-0
 					// The FQDN setting doesn't seem to work
-					Subdomain:  cluster.Name,
-					Volumes:    getVolumes(cluster),
-					Containers: containers,
-
-					// The init containers use flux keygen to create certs
-					// There are multiple now but eventually we need just one
-					InitContainers: r.getMiniClusterInitContainer(cluster),
-					RestartPolicy:  corev1.RestartPolicyOnFailure,
+					Subdomain:     cluster.Name,
+					Volumes:       getVolumes(cluster),
+					Containers:    containers,
+					RestartPolicy: corev1.RestartPolicyOnFailure,
 				}},
 		},
 	}
 	ctrl.SetControllerReference(cluster, job, r.Scheme)
 	return job
-}
-
-// The init containers create the curve.cert if it does not exist using flux
-// We do this because libsodium / zmq libraries are already in the container
-func (r *MiniClusterReconciler) getMiniClusterInitContainer(cluster *api.MiniCluster) []corev1.Container {
-
-	// Allow the user to dictate pulling
-	pullPolicy := corev1.PullIfNotPresent
-	if (*cluster).Spec.PullAlways {
-		pullPolicy = corev1.PullAlways
-	}
-
-	containers := []corev1.Container{
-		{
-			Name:  cluster.Name + "-init",
-			Image: (*cluster).Spec.Image,
-
-			// TODO this should be done in a script (via CM volume) that checks the index envar
-			Command:         []string{"flux", "keygen", "/mnt/curve/curve.cert"},
-			Resources:       corev1.ResourceRequirements{},
-			VolumeMounts:    getVolumeMounts(cluster),
-			ImagePullPolicy: pullPolicy,
-			Stdin:           true,
-			TTY:             true,
-
-			// Just setting this for testing
-			// It's added to the JOB_COMPLETION_INDEX variable
-			Env: []corev1.EnvVar{
-				{
-					Name:  "FLUX_OPERATOR_CONTAINER_TYPE",
-					Value: "INIT",
-				},
-			},
-		},
-	}
-	return containers
 }
 
 func (r *MiniClusterReconciler) getMiniClusterContainers(cluster *api.MiniCluster) []corev1.Container {
@@ -139,12 +94,6 @@ func (r *MiniClusterReconciler) getMiniClusterContainers(cluster *api.MiniCluste
 			VolumeMounts: getVolumeMounts(cluster),
 			Stdin:        true,
 			TTY:          true,
-			Env: []corev1.EnvVar{
-				{
-					Name:  "FLUX_OPERATOR_CONTAINER_TYPE",
-					Value: "WORKER",
-				},
-			},
 		},
 	}
 	return containers
