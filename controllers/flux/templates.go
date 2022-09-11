@@ -65,6 +65,9 @@ if [ $(hostname) == "${mainHost}" ]; then
     printf "Resources\n"
 	cat /etc/flux/system/R
 
+	# TODO - need to start to connect to other nodes
+	# pdshex -w flux-sample-[0-5] systemctl start flux
+
 	# Start flux with the original entrypoint
     printf "/bin/sh /flux_operator/start.sh $@\n"
     /bin/sh /flux_operator/start.sh $@

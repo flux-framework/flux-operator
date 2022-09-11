@@ -17,9 +17,9 @@ import (
 )
 
 const (
-	entrypointSuffix = "-entrypoint"
-	fluxConfigSuffix = "-flux-config"
-	curveAuthSuffix  = "-curve-auth"
+	entrypointSuffix  = "-entrypoint"
+	fluxConfigSuffix  = "-flux-config"
+	curveVolumeSuffix = "-curve-mount"
 )
 
 // Shared function to return consistent set of volume mounts
@@ -27,7 +27,7 @@ const (
 func getVolumeMounts(cluster *api.MiniCluster) []corev1.VolumeMount {
 	return []corev1.VolumeMount{
 		{
-			Name:      cluster.Name + curveAuthSuffix,
+			Name:      cluster.Name + curveVolumeSuffix,
 			MountPath: "/mnt/curve/",
 		},
 		{
@@ -64,11 +64,14 @@ func getVolumes(cluster *api.MiniCluster) []corev1.Volume {
 		},
 	}, {
 
-		// We use an empty volume (that can be shared by the container and init container)
+		// We use persistent volume (that can be shared by several containers)
 		// to run flux keygen and generate the /mnt/curve/curve.crt
-		Name: cluster.Name + curveAuthSuffix,
+		Name: cluster.Name + curveVolumeSuffix,
 		VolumeSource: corev1.VolumeSource{
-			EmptyDir: &corev1.EmptyDirVolumeSource{},
+			PersistentVolumeClaim: &corev1.PersistentVolumeClaimVolumeSource{
+				ClaimName: cluster.Name + curveVolumeSuffix,
+				ReadOnly:  false,
+			},
 		},
 	}, {
 		Name: cluster.Name + entrypointSuffix,

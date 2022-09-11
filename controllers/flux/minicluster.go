@@ -25,6 +25,7 @@ import (
 	"sigs.k8s.io/controller-runtime/pkg/client"
 
 	"k8s.io/apimachinery/pkg/api/errors"
+	"k8s.io/apimachinery/pkg/api/resource"
 	"k8s.io/apimachinery/pkg/types"
 
 	api "flux-framework/flux-operator/api/v1alpha1"
@@ -45,6 +46,12 @@ func (r *MiniClusterReconciler) ensureMiniCluster(ctx context.Context, cluster *
 
 	// Add initial config map with entrypoint scripts (wait.sh, start.sh, empty update_hosts.sh)
 	_, result, err = r.getConfigMap(ctx, cluster, "entrypoint", cluster.Name+entrypointSuffix)
+	if err != nil {
+		return result, err
+	}
+
+	// A persistent volume claim with the certificate for nodes to share
+	_, result, err = r.getPersistentVolume(ctx, cluster, cluster.Name+curveVolumeSuffix)
 	if err != nil {
 		return result, err
 	}
@@ -131,6 +138,7 @@ func (r *MiniClusterReconciler) getMiniClusterIPS(ctx context.Context, cluster *
 	return ips
 }
 
+// getMiniClusterPods returns a sorted (by name) podlist in the MiniCluster
 func (r *MiniClusterReconciler) getMiniClusterPods(ctx context.Context, cluster *api.MiniCluster) *corev1.PodList {
 
 	podList := &corev1.PodList{}
@@ -168,10 +176,42 @@ func (r *MiniClusterReconciler) generateDiscoverHostsFile(cluster *api.MiniClust
 		content = fmt.Sprintf("%s\necho %s 	%s	%s >> /etc/hosts", content, ip_address, fqdn, hostname)
 	}
 
+	// Add one more newline for better readability
+	content += "\n"
+
 	// This is wrapping the entrypoint, so the last command needs to take args and start flux
 	// The last set of arguments from the call should be the container entrypoint
 	r.log.Info("🌀 MiniCluster Discover Hosts", "/flux_operator/update_hosts.sh", content)
 	return content
+}
+
+// getPersistentVolume creates the PVC claim for the curve certificate (to be written once)
+func (r *MiniClusterReconciler) getPersistentVolume(ctx context.Context, cluster *api.MiniCluster, configFullName string) (*corev1.PersistentVolumeClaim, ctrl.Result, error) {
+
+	existing := &corev1.PersistentVolumeClaim{}
+	err := r.Client.Get(ctx, types.NamespacedName{Name: configFullName, Namespace: cluster.Namespace}, existing)
+	if err != nil {
+
+		// Case 1: not found yet, and hostfile is ready (recreate)
+		if errors.IsNotFound(err) {
+			volume := r.createPersistentVolumeClaim(cluster, configFullName)
+			r.log.Info("✨ Creating MiniCluster Mounted Volume ✨", "Type", configFullName, "Namespace", volume.Namespace, "Name", volume.Name)
+			err = r.Client.Create(ctx, volume)
+			if err != nil {
+				r.log.Error(err, "❌ Failed to create MiniCluster Mounted Volume", "Type", configFullName, "Namespace", volume.Namespace, "Name", (*volume).Name)
+				return existing, ctrl.Result{}, err
+			}
+			// Successful - return and requeue
+			return existing, ctrl.Result{Requeue: true}, nil
+		} else if err != nil {
+			r.log.Error(err, "Failed to get MiniCluster Mounted Volume")
+			return existing, ctrl.Result{}, err
+		}
+	} else {
+		r.log.Info("🎉 Found existing MiniCluster Mounted Volume", "Type", configFullName, "Namespace", existing.Namespace, "Name", existing.Name)
+	}
+	saveDebugYaml(existing, configFullName+".yaml")
+	return existing, ctrl.Result{}, err
 }
 
 // getHostfileConfig gets an existing configmap, if it's done
@@ -291,4 +331,22 @@ func (r *MiniClusterReconciler) createConfigMap(cluster *api.MiniCluster, config
 	fmt.Println(cm.Data)
 	ctrl.SetControllerReference(cluster, cm, r.Scheme)
 	return cm
+}
+
+// createConfigMap generates a config map with some kind of data
+func (r *MiniClusterReconciler) createPersistentVolumeClaim(cluster *api.MiniCluster, configName string) *corev1.PersistentVolumeClaim {
+	volume := &corev1.PersistentVolumeClaim{
+		TypeMeta:   metav1.TypeMeta{},
+		ObjectMeta: metav1.ObjectMeta{Name: configName, Namespace: cluster.Namespace},
+		Spec: corev1.PersistentVolumeClaimSpec{
+			AccessModes: []corev1.PersistentVolumeAccessMode{corev1.ReadWriteMany},
+
+			// No idea how much to ask for here! I made it up.
+			Resources: corev1.ResourceRequirements{Requests: corev1.ResourceList{
+				corev1.ResourceStorage: *resource.NewQuantity(1024, resource.BinarySI),
+			}},
+		},
+	}
+	ctrl.SetControllerReference(cluster, volume, r.Scheme)
+	return volume
 }
