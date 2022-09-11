@@ -28,7 +28,6 @@ import (
 
 	api "flux-framework/flux-operator/api/v1alpha1"
 	jobctrl "flux-framework/flux-operator/pkg/job"
-	"flux-framework/flux-operator/pkg/util/uuid"
 )
 
 // This interface allows us to define a NotifyMiniClusterUpdate function
@@ -211,29 +210,6 @@ func (r *MiniClusterReconciler) Update(e event.UpdateEvent) bool {
 func (r *MiniClusterReconciler) Generic(e event.GenericEvent) bool {
 	r.log.V(3).Info("Ignore generic event", "obj", klog.KObj(e.Object), "kind", e.Object.GetObjectKind().GroupVersionKind())
 	return false
-}
-
-// newJob inits a new job, creating both the id and original conditions
-func (r *MiniClusterReconciler) newJob(ctx context.Context, cluster *api.MiniCluster) (ctrl.Result, error) {
-
-	// We should never edit the object directly?
-	clusterCopy := cluster.DeepCopy()
-
-	// If we haven't generated a JobId yet, do that now
-	// This might be eventually useful for labels / selector of some kind
-	if cluster.Status.JobId == "" {
-		clusterCopy.Status.JobId = uuid.Generate(cluster.Name)
-		r.Client.Status().Update(ctx, clusterCopy)
-		return ctrl.Result{Requeue: true}, nil
-	}
-
-	// This should be done in create? Just in case...
-	// Get available conditions and set on copy
-	conditions := jobctrl.GetJobConditions()
-	clusterCopy.Status.Conditions = conditions
-
-	// Update the status of the resource on the CRD
-	return ctrl.Result{Requeue: true}, r.Client.Status().Update(ctx, clusterCopy)
 }
 
 // SetupWithManager sets up the controller with the Manager.

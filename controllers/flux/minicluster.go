@@ -160,19 +160,6 @@ func (r *MiniClusterReconciler) podExec(pod corev1.Pod, ctx context.Context, clu
 	return err
 }
 
-// Get a list of string (expected) hostnames
-func (r *MiniClusterReconciler) getHostnames(ctx context.Context, cluster *api.MiniCluster) []string {
-
-	// We always should have one host
-	hosts := []string{fmt.Sprintf("%s-0", cluster.Name)}
-
-	// Generate list of hosts
-	for i := 1; i < int(cluster.Spec.Size); i++ {
-		hosts = append(hosts, fmt.Sprintf("%s-%d", cluster.Name, i))
-	}
-	return hosts
-}
-
 func (r *MiniClusterReconciler) getMiniClusterIPS(ctx context.Context, cluster *api.MiniCluster) map[string]string {
 
 	ips := map[string]string{}
@@ -259,8 +246,7 @@ func (r *MiniClusterReconciler) getConfigMap(ctx context.Context, cluster *api.M
 				data["hostfile"] = generateFluxConfig(cluster.Name, cluster.Spec.Size)
 			}
 
-			// A bit redundant here, but works for now.
-			// This shouldn't be called by top level creation function unless all 6 exist
+			// Initial "empty" set of start/wait scripts until we have host ips
 			if configName == "entrypoint" {
 				data["start-flux"] = startFluxTemplate
 				data["wait"] = waitToStartTemplate
