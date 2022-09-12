@@ -13,6 +13,7 @@ package controllers
 import (
 	"context"
 	"fmt"
+	"path"
 	"sort"
 	"strings"
 
@@ -20,6 +21,7 @@ import (
 
 	batchv1 "k8s.io/api/batch/v1"
 	corev1 "k8s.io/api/core/v1"
+	v1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	ctrl "sigs.k8s.io/controller-runtime"
 	"sigs.k8s.io/controller-runtime/pkg/client"
@@ -50,6 +52,9 @@ func (r *MiniClusterReconciler) ensureMiniCluster(ctx context.Context, cluster *
 		return result, err
 	}
 
+	// TODO the claim is used I think when the host supports provisioning.
+	// A local host (developer machine) does not, so for the meantime we use a persistent volume instead
+	// We might want a way to know when to switch between these two!
 	// A persistent volume claim with the certificate for nodes to share
 	_, result, err = r.getPersistentVolume(ctx, cluster, cluster.Name+curveVolumeSuffix)
 	if err != nil {
@@ -186,7 +191,7 @@ func (r *MiniClusterReconciler) generateDiscoverHostsFile(cluster *api.MiniClust
 }
 
 // getPersistentVolume creates the PVC claim for the curve certificate (to be written once)
-func (r *MiniClusterReconciler) getPersistentVolume(ctx context.Context, cluster *api.MiniCluster, configFullName string) (*corev1.PersistentVolumeClaim, ctrl.Result, error) {
+func (r *MiniClusterReconciler) getPersistentVolumeClaim(ctx context.Context, cluster *api.MiniCluster, configFullName string) (*corev1.PersistentVolumeClaim, ctrl.Result, error) {
 
 	existing := &corev1.PersistentVolumeClaim{}
 	err := r.Client.Get(ctx, types.NamespacedName{Name: configFullName, Namespace: cluster.Namespace}, existing)
@@ -202,7 +207,36 @@ func (r *MiniClusterReconciler) getPersistentVolume(ctx context.Context, cluster
 				return existing, ctrl.Result{}, err
 			}
 			// Successful - return and requeue
-			return existing, ctrl.Result{Requeue: true}, nil
+			return volume, ctrl.Result{Requeue: true}, nil
+		} else if err != nil {
+			r.log.Error(err, "Failed to get MiniCluster Mounted Volume")
+			return existing, ctrl.Result{}, err
+		}
+	} else {
+		r.log.Info("🎉 Found existing MiniCluster Mounted Volume", "Type", configFullName, "Namespace", existing.Namespace, "Name", existing.Name)
+	}
+	saveDebugYaml(existing, configFullName+".yaml")
+	return existing, ctrl.Result{}, err
+}
+
+// getPersistentVolume creates the PV for the curve certificate (to be written once)
+func (r *MiniClusterReconciler) getPersistentVolume(ctx context.Context, cluster *api.MiniCluster, configFullName string) (*corev1.PersistentVolume, ctrl.Result, error) {
+
+	existing := &corev1.PersistentVolume{}
+	err := r.Client.Get(ctx, types.NamespacedName{Name: configFullName, Namespace: cluster.Namespace}, existing)
+	if err != nil {
+
+		// Case 1: not found yet, and hostfile is ready (recreate)
+		if errors.IsNotFound(err) {
+			volume := r.createPersistentVolume(cluster, configFullName)
+			r.log.Info("✨ Creating MiniCluster Mounted Volume ✨", "Type", configFullName, "Namespace", volume.Namespace, "Name", volume.Name)
+			err = r.Client.Create(ctx, volume)
+			if err != nil {
+				r.log.Error(err, "❌ Failed to create MiniCluster Mounted Volume", "Type", configFullName, "Namespace", volume.Namespace, "Name", (*volume).Name)
+				return existing, ctrl.Result{}, err
+			}
+			// Successful - return and requeue
+			return volume, ctrl.Result{Requeue: true}, nil
 		} else if err != nil {
 			r.log.Error(err, "Failed to get MiniCluster Mounted Volume")
 			return existing, ctrl.Result{}, err
@@ -243,20 +277,20 @@ func (r *MiniClusterReconciler) getConfigMap(ctx context.Context, cluster *api.M
 				data["update-hosts"] = ""
 			}
 			dep := r.createConfigMap(cluster, configFullName, data)
-			r.log.Info("✨ Creating MiniCluster ConfigMap ✨", "Type", configName, "Namespace", dep.Namespace, "Name", dep.Name, "Data", (*dep).Data)
+			r.log.Info("✨ Creating MiniCluster ConfigMap ✨", "Type", configName, "Namespace", dep.Namespace, "Name", dep.Name)
 			err = r.Client.Create(ctx, dep)
 			if err != nil {
 				r.log.Error(err, "❌ Failed to create MiniCluster ConfigMap", "Type", configName, "Namespace", dep.Namespace, "Name", (*dep).Name)
 				return existing, ctrl.Result{}, err
 			}
 			// Successful - return and requeue
-			return existing, ctrl.Result{Requeue: true}, nil
+			return dep, ctrl.Result{Requeue: true}, nil
 		} else if err != nil {
 			r.log.Error(err, "Failed to get MiniCluster ConfigMap")
 			return existing, ctrl.Result{}, err
 		}
 	} else {
-		r.log.Info("🎉 Found existing MiniCluster ConfigMap", "Type", configName, "Namespace", existing.Namespace, "Name", existing.Name, "Data", (*existing).Data)
+		r.log.Info("🎉 Found existing MiniCluster ConfigMap", "Type", configName, "Namespace", existing.Namespace, "Name", existing.Name)
 	}
 	saveDebugYaml(existing, configName+".yaml")
 	return existing, ctrl.Result{}, err
@@ -274,8 +308,8 @@ func generateWaitScript(cluster *api.MiniCluster) string {
 
 	// The first pod (0) should always generate the curve certificate
 	mainHost := fmt.Sprintf("%s-0", cluster.Name)
-	cores := generateRange(int(cluster.Spec.Cores))
-	hosts := fmt.Sprintf("%s[%s]", cluster.Name, generateRange(int(cluster.Spec.Size)))
+	cores := generateRange(int(cluster.Spec.Size))
+	hosts := fmt.Sprintf("%s-[%s]", cluster.Name, generateRange(int(cluster.Spec.Size)))
 	waitScript := fmt.Sprintf(waitToStartTemplate, mainHost, hosts, cores)
 	return waitScript
 }
@@ -333,7 +367,8 @@ func (r *MiniClusterReconciler) createConfigMap(cluster *api.MiniCluster, config
 	return cm
 }
 
-// createConfigMap generates a config map with some kind of data
+// createPersistentVolumeClaim generates a PVC
+// This tends to choke on MiniKube, I'm not sure it has a provisioner?
 func (r *MiniClusterReconciler) createPersistentVolumeClaim(cluster *api.MiniCluster, configName string) *corev1.PersistentVolumeClaim {
 	volume := &corev1.PersistentVolumeClaim{
 		TypeMeta:   metav1.TypeMeta{},
@@ -345,6 +380,28 @@ func (r *MiniClusterReconciler) createPersistentVolumeClaim(cluster *api.MiniClu
 			Resources: corev1.ResourceRequirements{Requests: corev1.ResourceList{
 				corev1.ResourceStorage: *resource.NewQuantity(1024, resource.BinarySI),
 			}},
+		},
+	}
+	ctrl.SetControllerReference(cluster, volume, r.Scheme)
+	return volume
+}
+
+// createPersistentVolume creates a volume in /tmp, which doesn't seem to choke
+func (r *MiniClusterReconciler) createPersistentVolume(cluster *api.MiniCluster, configName string) *corev1.PersistentVolume {
+	volume := &corev1.PersistentVolume{
+		TypeMeta:   metav1.TypeMeta{},
+		ObjectMeta: metav1.ObjectMeta{Name: configName, Namespace: cluster.Namespace},
+		Spec: corev1.PersistentVolumeSpec{
+			AccessModes: []corev1.PersistentVolumeAccessMode{corev1.ReadWriteMany},
+			Capacity: map[corev1.ResourceName]resource.Quantity{
+				corev1.ResourceStorage: *resource.NewQuantity(1024, resource.BinarySI),
+			},
+			PersistentVolumeSource: v1.PersistentVolumeSource{
+				HostPath: &corev1.HostPathVolumeSource{
+					Path: path.Join("/tmp/", configName),
+				},
+			},
+			StorageClassName: "manual",
 		},
 	}
 	ctrl.SetControllerReference(cluster, volume, r.Scheme)

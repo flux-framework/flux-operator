@@ -102,6 +102,14 @@ And shell into one with the helper script:
 ./shell.sh flux-sample-0-b5rw6
 ```
 
+### Starting Fresh
+
+If you want to blow up your minikube and start fresh (pulling the container again too):
+
+```bash
+make reset
+```
+
 ## Using the Operator
 
 If you aren't starting from scratch, then you can use the code here to see how things work!
@@ -167,6 +175,57 @@ And then:
 ```bash
 $ minikube stop
 ```
+
+## What is Happening?
+
+If you follow the commands above, you'll see a lot of terminal output, and it might not be clear what
+is happening. Let's talk about it here. Generally, you'll first see the config maps and supporting resources 
+being created. Since we are developing (for the time being) on a local machine, instead of a persistent volume
+claim (which requires a Kubernetes cluster with a provisioner) you'll get a persistent volume
+written to `/tmp` in the job namespace. If you try to use the latter it typically freezer.
+
+The first time the pods are created, they won't have ips (yet) so you'll see an empty list in the logs.
+As they are creating and getting ips, after that is finished you'll see the same output but with a 
+lookup of hostnames to ip addresses, and after it will tell you the cluster is ready.
+
+```
+1.6629325562267003e+09  INFO    minicluster-reconciler  🌀 Mini Cluster is Ready!
+```
+When you are waiting and run `make log` in a separate terminal you'll see output from one of the pods 
+in the job. Typically the first bit of time you'll be waiting:
+
+```bash
+$ make log
+kubectl logs -n flux-operator job.batch/flux-sample
+Found 6 pods, using pod/flux-sample-0-njnnd
+Host updating script not available yet, waiting...
+```
+It's waiting for the `/flux_operator/update_hosts.sh` script. When this is available, it will be found
+and the job setup will continue, first adding the found hosts to `/etc/hosts` and then (for the main node,
+which typically is `<name>-0`). When this happens, you'll see the host file cat to the screen:
+
+```bash
+Host updating script not available yet, waiting...
+# Kubernetes-managed hosts file.
+127.0.0.1       localhost
+::1     localhost ip6-localhost ip6-loopback
+fe00::0 ip6-localnet
+fe00::0 ip6-mcastprefix
+fe00::1 ip6-allnodes
+fe00::2 ip6-allrouters
+172.17.0.4      flux-sample-1.flux-sample.flux-operator.svc.cluster.local       flux-sample-1
+172.17.0.2 flux-sample-0-flux-sample.flux-operator.svc.cluster.local flux-sample-0
+172.17.0.4 flux-sample-1-flux-sample.flux-operator.svc.cluster.local flux-sample-1
+172.17.0.6 flux-sample-2-flux-sample.flux-operator.svc.cluster.local flux-sample-2
+172.17.0.7 flux-sample-3-flux-sample.flux-operator.svc.cluster.local flux-sample-3
+172.17.0.5 flux-sample-4-flux-sample.flux-operator.svc.cluster.local flux-sample-4
+172.17.0.8 flux-sample-5-flux-sample.flux-operator.svc.cluster.local flux-sample-5
+flux-sample-1 is sleeping waiting for main flux node
+```
+
+It will use `pdsh` to start the cluster. You can look at [controllers/flux/templates.go](controllers/flux/templates.go)
+for all the scripts and logic that are run.
+
 
 ## Making the operator
 

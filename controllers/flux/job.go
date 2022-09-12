@@ -45,8 +45,7 @@ func (r *MiniClusterReconciler) newMiniClusterJob(cluster *api.MiniCluster) *bat
 			Parallelism:    &cluster.Spec.Size,
 			CompletionMode: &completionMode,
 
-			// This would set a limit on the amount of time allowed to run
-			// ActiveDeadlineSeconds: ...
+			// Note there is parameter to limit runtime
 			Template: corev1.PodTemplateSpec{
 				ObjectMeta: metav1.ObjectMeta{
 					Name:      cluster.Name,
@@ -56,11 +55,6 @@ func (r *MiniClusterReconciler) newMiniClusterJob(cluster *api.MiniCluster) *bat
 					Labels: map[string]string{"name": cluster.Name, "namespace": cluster.Namespace, "job": cluster.Name},
 				},
 				Spec: corev1.PodSpec{
-					// Following example in:
-					// https://github.com/alculquicondor/enhancements/blob/master/keps/sig-apps/2214-indexed-job/README.md
-					// When this is set, we see:
-					// 172.17.0.7      flux-sample-0.flux-sample.flux-operator.svc.cluster.local       flux-sample-0
-					// The FQDN setting doesn't seem to work
 					Subdomain:     cluster.Name,
 					Volumes:       getVolumes(cluster),
 					Containers:    containers,

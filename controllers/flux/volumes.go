@@ -12,6 +12,7 @@ package controllers
 
 import (
 	api "flux-framework/flux-operator/api/v1alpha1"
+	"path"
 
 	corev1 "k8s.io/api/core/v1"
 )
@@ -68,9 +69,8 @@ func getVolumes(cluster *api.MiniCluster) []corev1.Volume {
 		// to run flux keygen and generate the /mnt/curve/curve.crt
 		Name: cluster.Name + curveVolumeSuffix,
 		VolumeSource: corev1.VolumeSource{
-			PersistentVolumeClaim: &corev1.PersistentVolumeClaimVolumeSource{
-				ClaimName: cluster.Name + curveVolumeSuffix,
-				ReadOnly:  false,
+			HostPath: &corev1.HostPathVolumeSource{
+				Path: path.Join("/tmp", cluster.Name+curveVolumeSuffix),
 			},
 		},
 	}, {
