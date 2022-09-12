@@ -268,7 +268,6 @@ func (r *MiniClusterReconciler) getConfigMap(ctx context.Context, cluster *api.M
 
 			// Initial "empty" set of start/wait scripts until we have host ips
 			if configName == "entrypoint" {
-				data["start-flux"] = startFluxTemplate
 
 				// The main logic for generating the Curve certificate, start commands, is here
 				data["wait"] = generateWaitScript(cluster)

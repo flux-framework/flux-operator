@@ -35,11 +35,6 @@ type MiniClusterSpec struct {
 	// +optional
 	Size int32 `json:"size"`
 
-	// Cores to be used per node for flux resources
-	// +kubebuilder:default=3
-	// +optional
-	Cores int32 `json:"cores"`
-
 	// Working directory to run command from
 	// +optional
 	WorkingDir string `json:"workingDir"`
