@@ -106,11 +106,26 @@ vet: ## Run go vet against code.
 test: manifests generate fmt vet envtest ## Run tests.
 	KUBEBUILDER_ASSETS="$(shell $(ENVTEST) use $(ENVTEST_K8S_VERSION) -p path)" go test ./... -coverprofile cover.out
 
+.PHONY: list
+list:
+	kubectl get -n flux-operator pods
+
+.PHONY: reset
+reset:
+	minikube stop
+	minikube delete
+	minikube start
+	kubectl create namespace flux-operator
+	make install
+	make redo
+
 .PHONY: clean
 clean:
 	kubectl delete -n flux-operator svc --all
 	kubectl delete -n flux-operator secret --all
 	kubectl delete -n flux-operator cm --all
+	kubectl delete -n flux-operator pvc --all
+	kubectl delete -n flux-operator pv --all
 	kubectl delete -n flux-operator pods --all
 	kubectl delete -n flux-operator jobs --all
 	kubectl delete -n flux-operator MiniCluster --all

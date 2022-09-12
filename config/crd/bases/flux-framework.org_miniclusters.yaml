@@ -41,6 +41,11 @@ spec:
               command:
                 description: Single user executable to provide to flux start
                 type: string
+              cores:
+                default: 3
+                description: Cores to be used per node for flux resources
+                format: int32
+                type: integer
               image:
                 default: fluxrm/flux-sched:focal
                 description: Container image must contain flux and flux-sched install

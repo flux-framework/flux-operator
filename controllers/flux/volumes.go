@@ -12,14 +12,15 @@ package controllers
 
 import (
 	api "flux-framework/flux-operator/api/v1alpha1"
+	"path"
 
 	corev1 "k8s.io/api/core/v1"
 )
 
 const (
-	etcHostsSuffix   = "-etc-hosts"
-	fluxConfigSuffix = "-flux-config"
-	curveAuthSuffix  = "-curve-auth"
+	entrypointSuffix  = "-entrypoint"
+	fluxConfigSuffix  = "-flux-config"
+	curveVolumeSuffix = "-curve-mount"
 )
 
 // Shared function to return consistent set of volume mounts
@@ -27,7 +28,7 @@ const (
 func getVolumeMounts(cluster *api.MiniCluster) []corev1.VolumeMount {
 	return []corev1.VolumeMount{
 		{
-			Name:      cluster.Name + curveAuthSuffix,
+			Name:      cluster.Name + curveVolumeSuffix,
 			MountPath: "/mnt/curve/",
 		},
 		{
@@ -36,19 +37,18 @@ func getVolumeMounts(cluster *api.MiniCluster) []corev1.VolumeMount {
 			ReadOnly:  true,
 		},
 
-		// Disabled for now - not sure we want to do this because the container
-		// is mounting stuff there too, and wouldn't this be controlled by the operator?
-		//		{
-		//			Name:      cluster.Name + etcHostsSuffix,
-		//			MountPath: "/etc/",
-		//			ReadOnly:  false,
-		//		},
+		// Entrypoint that helps to discover hosts, added after creation
+		{
+			Name:      cluster.Name + entrypointSuffix,
+			MountPath: "/flux_operator/",
+			ReadOnly:  false,
+		},
 	}
 }
 
 // getVolumes that are shared between MiniCluster and statefulset
 func getVolumes(cluster *api.MiniCluster) []corev1.Volume {
-	//	permMode := int32(0600)
+	makeExecutable := int32(0777)
 	return []corev1.Volume{{
 		Name: cluster.Name + fluxConfigSuffix,
 		VolumeSource: corev1.VolumeSource{
@@ -64,28 +64,40 @@ func getVolumes(cluster *api.MiniCluster) []corev1.Volume {
 			},
 		},
 	}, {
-		Name: cluster.Name + etcHostsSuffix,
+
+		// We use persistent volume (that can be shared by several containers)
+		// to run flux keygen and generate the /mnt/curve/curve.crt
+		Name: cluster.Name + curveVolumeSuffix,
+		VolumeSource: corev1.VolumeSource{
+			HostPath: &corev1.HostPathVolumeSource{
+				Path: path.Join("/tmp", cluster.Name+curveVolumeSuffix),
+			},
+		},
+	}, {
+		Name: cluster.Name + entrypointSuffix,
 		VolumeSource: corev1.VolumeSource{
 			ConfigMap: &corev1.ConfigMapVolumeSource{
 
 				// Namespace based on the cluster
 				LocalObjectReference: corev1.LocalObjectReference{
-					Name: cluster.Name + etcHostsSuffix,
+					Name: cluster.Name + entrypointSuffix,
 				},
-				// /etc/hosts
+				// /flux_operator/start.sh
+				// /flux_operator/wait.sh
 				Items: []corev1.KeyToPath{{
-					Key:  "hostfile",
-					Path: "hosts",
+					Key:  "start-flux",
+					Path: "start.sh",
+					Mode: &makeExecutable,
+				}, {
+					Key:  "wait",
+					Path: "wait.sh",
+					Mode: &makeExecutable,
+				}, {
+					Key:  "update-hosts",
+					Path: "update_hosts.sh",
+					Mode: &makeExecutable,
 				}},
 			},
-		},
-	}, {
-
-		// We use an empty volume (that can be shared by the container and init container)
-		// to run flux keygen and generate the /mnt/curve/curve.crt
-		Name: cluster.Name + curveAuthSuffix,
-		VolumeSource: corev1.VolumeSource{
-			EmptyDir: &corev1.EmptyDirVolumeSource{},
 		},
 	}}
 }

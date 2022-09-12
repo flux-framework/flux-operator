@@ -60,6 +60,7 @@ rules:
   verbs:
   - create
   - delete
+  - exec
   - get
   - list
   - patch
@@ -72,6 +73,7 @@ rules:
   verbs:
   - create
   - delete
+  - exec
   - get
   - list
   - patch
@@ -108,6 +110,7 @@ rules:
   verbs:
   - create
   - delete
+  - exec
   - get
   - list
   - patch

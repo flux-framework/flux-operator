@@ -36,8 +36,8 @@ And you can find the following:
 
  - A **MiniCluster** is an [indexed job](https://kubernetes.io/docs/tasks/job/indexed-parallel-processing-static/) so we can create N copies of the "same" base containers (each with flux, and the connected workers in our cluster)
  - The flux config is written to a volume at `/etc/flux/config` (created via a config map) as a brokers.toml file.
- - We use an [initContainer](https://kubernetes.io/docs/concepts/workloads/pods/init-containers/) with an Empty volume (shared between init and worker) to generate the curve certificates (`/mnt/curve/curve.cert`). The broker sees them via the definition of that path in the broker.toml in our config directory mentioned above.
- - TODO we need to figure out how the pods can see one another (TBA)
+ - We use an [initContainer](https://kubernetes.io/docs/concepts/workloads/pods/init-containers/) with an Empty volume (shared between init and worker) to generate the curve certificates (`/mnt/curve/curve.cert`). The broker sees them via the definition of that path in the broker.toml in our config directory mentioned above. Currently ever container generates its own curve.cert so this needs to be updated to have just one.
+ - Networking is a bit of a hack - we have a wrapper starting script that essentially waits until a file is populated with hostnames. While it's waiting, we are waiting for the pods to be created and allocated an ip address, and then we write the addresses to this update file (that will echo into `/etc/hosts`). When the Pod is re-created with the same ip address, the second time around the file is run to update the hosts, and then we submit the job.
 
 ## Quick Start
 
@@ -88,6 +88,26 @@ And this is also:
 
 ```bash
 $ make log
+```
+
+List running pods (each pod is part of a batch job)
+
+```bash
+$ make list
+```
+
+And shell into one with the helper script:
+
+```bash
+./shell.sh flux-sample-0-b5rw6
+```
+
+### Starting Fresh
+
+If you want to blow up your minikube and start fresh (pulling the container again too):
+
+```bash
+make reset
 ```
 
 ## Using the Operator
@@ -155,6 +175,66 @@ And then:
 ```bash
 $ minikube stop
 ```
+
+## What is Happening?
+
+If you follow the commands above, you'll see a lot of terminal output, and it might not be clear what
+is happening. Let's talk about it here. Generally, you'll first see the config maps and supporting resources 
+being created. Since we are developing (for the time being) on a local machine, instead of a persistent volume
+claim (which requires a Kubernetes cluster with a provisioner) you'll get a persistent volume
+written to `/tmp` in the job namespace. If you try to use the latter it typically freezer.
+
+The first time the pods are created, they won't have ips (yet) so you'll see an empty list in the logs.
+As they are creating and getting ips, after that is finished you'll see the same output but with a 
+lookup of hostnames to ip addresses, and after it will tell you the cluster is ready.
+
+```
+1.6629325562267003e+09  INFO    minicluster-reconciler  🌀 Mini Cluster is Ready!
+```
+When you are waiting and run `make log` in a separate terminal you'll see output from one of the pods 
+in the job. Typically the first bit of time you'll be waiting:
+
+```bash
+$ make log
+kubectl logs -n flux-operator job.batch/flux-sample
+Found 6 pods, using pod/flux-sample-0-njnnd
+Host updating script not available yet, waiting...
+```
+It's waiting for the `/flux_operator/update_hosts.sh` script. When this is available, it will be found
+and the job setup will continue, first adding the found hosts to `/etc/hosts` and then (for the main node,
+which typically is `<name>-0`). When this happens, you'll see the host file cat to the screen:
+
+```bash
+Host updating script not available yet, waiting...
+# Kubernetes-managed hosts file.
+127.0.0.1       localhost
+::1     localhost ip6-localhost ip6-loopback
+fe00::0 ip6-localnet
+fe00::0 ip6-mcastprefix
+fe00::1 ip6-allnodes
+fe00::2 ip6-allrouters
+172.17.0.4      flux-sample-1.flux-sample.flux-operator.svc.cluster.local       flux-sample-1
+172.17.0.2 flux-sample-0-flux-sample.flux-operator.svc.cluster.local flux-sample-0
+172.17.0.4 flux-sample-1-flux-sample.flux-operator.svc.cluster.local flux-sample-1
+172.17.0.6 flux-sample-2-flux-sample.flux-operator.svc.cluster.local flux-sample-2
+172.17.0.7 flux-sample-3-flux-sample.flux-operator.svc.cluster.local flux-sample-3
+172.17.0.5 flux-sample-4-flux-sample.flux-operator.svc.cluster.local flux-sample-4
+172.17.0.8 flux-sample-5-flux-sample.flux-operator.svc.cluster.local flux-sample-5
+flux-sample-1 is sleeping waiting for main flux node
+```
+
+And then final configs are created, the flux user is created, and the main
+node creates the certificate and we start the cluster. You can look at 
+[controllers/flux/templates.go](controllers/flux/templates.go)
+for all the scripts and logic that are run. It's not perfectly figured out
+but we are close! The current state is that the nodes are waiting for one
+another:
+
+```bash
+2022-09-12T02:25:21.793030Z broker.err[0]: quorum delayed: waiting for flux-sample-[1-5] (rank 1-5)
+```
+
+Probably because I mis-configured something - I've never been a flux admin before! 
 
 ## Making the operator
 
