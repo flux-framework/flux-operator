@@ -84,16 +84,15 @@ func getVolumes(cluster *api.MiniCluster) []corev1.Volume {
 				},
 				// /flux_operator/wait.sh
 				// /flux_operator/update_hosts.sh
-				Items: []corev1.KeyToPath{
-					{
-						Key:  "wait",
-						Path: "wait.sh",
-						Mode: &makeExecutable,
-					}, {
-						Key:  "update-hosts",
-						Path: "update_hosts.sh",
-						Mode: &makeExecutable,
-					}},
+				Items: []corev1.KeyToPath{{
+					Key:  "wait",
+					Path: "wait.sh",
+					Mode: &makeExecutable,
+				}, {
+					Key:  "update-hosts",
+					Path: "update_hosts.sh",
+					Mode: &makeExecutable,
+				}},
 			},
 		},
 	}}
