@@ -3,8 +3,11 @@
 ### Design 3
 
  - [x] figure out where to put flux hostname / config - volume needs write
+ - [ ] I don't know what "cores" means - added to the MiniCluster config but maybe is just automatically derived?
+ - [ ] debug nodes finding on another (see How it works in README.md)
+ - [ ] can (and should) we use generics to reduce redudancy of code? (e.g., the `get<X>` functions)
+ - [ ] I think if a pod dies the IP address might change, so eventually we want to test that (and may need more logic for re-updating /etc/hosts)
  - [x] debug pod containers not seeing config again (e.g., mounts not creating)
- - [ ] should cron be required in the initial container?
  - [ ] Should there be a min/max size for the MiniCluster CRD?
  - [x] Should the secondary (non-driver) pods have a different start command? (answer is no - with the Indexed job it's all the same command)
  - [ ] MiniCluster - how should we handle deletion / update?
@@ -12,6 +15,7 @@
  - [ ] Currently we have no representation of quota - we need to be able to set (and check) hard limits from the scheduler (or maybe we get that out of the box)?
  - [x] Details for etc-hosts (or will this just work? - no it won't just work)
  - [ ] klog can be changed to add V(2) to handle verbository from the command line, see https://pkg.go.dev/k8s.io/klog/v2
+ - [ ] At some point we want more intelligent use of labels/selectors (I haven't really read about them yet)
 
 ### Design 2 (not currently working on)
 
