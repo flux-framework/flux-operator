@@ -226,12 +226,12 @@ flux-sample-1 is sleeping waiting for main flux node
 And then final configs are created, the flux user is created, and the main
 node creates the certificate and we start the cluster. You can look at 
 [controllers/flux/templates.go](controllers/flux/templates.go)
-for all the scripts and logic that are run. It's not perfectly figured out
-but we are close! The current state is that the nodes are waiting for one
-another:
+for all the scripts and logic that are run. It takes about ~90 seconds for the
+whole thing to come up and run. If `make log` doesn't show you the main node
+(where we run the command) you get `make list` to get the identifier and then:
 
 ```bash
-2022-09-12T02:25:21.793030Z broker.err[0]: quorum delayed: waiting for flux-sample-[1-5] (rank 1-5)
+$ kubectl logs -n flux-operator flux-sample-0-zfbvm
 ```
 
 Probably because I mis-configured something - I've never been a flux admin before! 

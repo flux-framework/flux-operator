@@ -3,9 +3,13 @@
 ### Design 3
 
  - [x] figure out where to put flux hostname / config - volume needs write
- - [ ] I don't know what "cores" means - added to the MiniCluster config but maybe is just automatically derived?
- - [ ] debug nodes finding on another (see How it works in README.md)
- - [ ] can (and should) we use generics to reduce redudancy of code? (e.g., the `get<X>` functions)
+ - [ ] Are `--cores` properly set?
+ - [x] debug nodes finding on another (see How it works in README.md)
+ - [ ] can (and should) we use generics to reduce redudancy of code? (e.g., the `get<X>` functions) (@vsoch would like to do this)
+ - [ ] what should be the proper start command for the main/worker nodes
+ - [ ] By what user? I am currently root but flux is an option
+ - [ ] How we can print better verbose debugging output (possibly exposed by a variable)
+ - [ ] And have some solid evidence the node communication is successful (or is the job running that evidence?
  - [ ] I think if a pod dies the IP address might change, so eventually we want to test that (and may need more logic for re-updating /etc/hosts)
  - [x] debug pod containers not seeing config again (e.g., mounts not creating)
  - [ ] Should there be a min/max size for the MiniCluster CRD?

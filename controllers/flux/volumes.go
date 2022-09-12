@@ -59,7 +59,7 @@ func getVolumes(cluster *api.MiniCluster) []corev1.Volume {
 				// /etc/flux/config
 				Items: []corev1.KeyToPath{{
 					Key:  "hostfile",
-					Path: "brokers.toml",
+					Path: "broker.toml",
 				}},
 			},
 		},
@@ -82,13 +82,9 @@ func getVolumes(cluster *api.MiniCluster) []corev1.Volume {
 				LocalObjectReference: corev1.LocalObjectReference{
 					Name: cluster.Name + entrypointSuffix,
 				},
-				// /flux_operator/start.sh
 				// /flux_operator/wait.sh
+				// /flux_operator/update_hosts.sh
 				Items: []corev1.KeyToPath{{
-					Key:  "start-flux",
-					Path: "start.sh",
-					Mode: &makeExecutable,
-				}, {
 					Key:  "wait",
 					Path: "wait.sh",
 					Mode: &makeExecutable,
