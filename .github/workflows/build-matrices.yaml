@@ -1,6 +1,8 @@
 name: Container (Demo) Build Matrices
 
 on: 
+  # Enable for testing builds for a PR
+  pull_request: []
   push:
     branches:
       - main
