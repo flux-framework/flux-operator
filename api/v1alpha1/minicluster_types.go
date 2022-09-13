@@ -39,6 +39,10 @@ type MiniClusterSpec struct {
 	// +optional
 	WorkingDir string `json:"workingDir"`
 
+	// Run flux diagnostics on start instead of command
+	// +optional
+	Diagnostics bool `json:"diagnostics"`
+
 	// Allow the user to dictate pulling
 	// By default we pull if not present. Setting
 	// this to true will indicate to pull always

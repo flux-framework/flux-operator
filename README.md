@@ -38,7 +38,7 @@ And you can find the following:
  - The flux config is written to a volume at `/etc/flux/config` (created via a config map) as a brokers.toml file.
  - We use an [initContainer](https://kubernetes.io/docs/concepts/workloads/pods/init-containers/) with an Empty volume (shared between init and worker) to generate the curve certificates (`/mnt/curve/curve.cert`). The broker sees them via the definition of that path in the broker.toml in our config directory mentioned above. Currently ever container generates its own curve.cert so this needs to be updated to have just one.
  - Networking is a bit of a hack - we have a wrapper starting script that essentially waits until a file is populated with hostnames. While it's waiting, we are waiting for the pods to be created and allocated an ip address, and then we write the addresses to this update file (that will echo into `/etc/hosts`). When the Pod is re-created with the same ip address, the second time around the file is run to update the hosts, and then we submit the job.
-
+ - When the hosts are configured, the main rank (pod 0) does some final setup, and runs the job via the flux user. The others start flux with a sleep command.
 ## Quick Start
 
 Know how this stuff works? Then here you go!
@@ -90,7 +90,13 @@ And this is also:
 $ make log
 ```
 
-List running pods (each pod is part of a batch job)
+But the above gives you a (somewhat random?) pod. If you want to see a specific one do:
+
+```bash
+./script/log.sh flux-sample-0-b5rw6
+```
+
+E.g., rank 0 is the "main" one. List running pods (each pod is part of a batch job)
 
 ```bash
 $ make list
@@ -99,7 +105,7 @@ $ make list
 And shell into one with the helper script:
 
 ```bash
-./shell.sh flux-sample-0-b5rw6
+./script/shell.sh flux-sample-0-b5rw6
 ```
 
 ### Starting Fresh
@@ -204,7 +210,7 @@ It's waiting for the `/flux_operator/update_hosts.sh` script. When this is avail
 and the job setup will continue, first adding the found hosts to `/etc/hosts` and then (for the main node,
 which typically is `<name>-0`). When this happens, you'll see the host file cat to the screen:
 
-```bash
+```console
 Host updating script not available yet, waiting...
 # Kubernetes-managed hosts file.
 127.0.0.1       localhost
@@ -232,9 +238,25 @@ whole thing to come up and run. If `make log` doesn't show you the main node
 
 ```bash
 $ kubectl logs -n flux-operator flux-sample-0-zfbvm
+# or
+$ ./script/log.sh 
 ```
 
-Probably because I mis-configured something - I've never been a flux admin before! 
+What is happening now is that the main rank (0) finishes and the others sort of are waiting
+around:
+
+```console
+$ make list
+kubectl get -n flux-operator pods
+NAME                  READY   STATUS      RESTARTS   AGE
+flux-sample-0-wvs8w   0/1     Completed   0          11m
+flux-sample-1-9cz5c   1/1     Running     0          11m
+flux-sample-2-hbcrb   1/1     Running     0          11m
+flux-sample-3-lzv4s   1/1     Running     0          11m
+flux-sample-4-fzxgf   1/1     Running     0          11m
+flux-sample-5-9pnwf   1/1     Running     0          11m
+```
+I think we want to either use a different starting command, or have a cleanup in the reconciler. TBA!
 
 ## Making the operator
 

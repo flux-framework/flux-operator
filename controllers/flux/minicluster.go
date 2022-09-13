@@ -307,9 +307,8 @@ func generateWaitScript(cluster *api.MiniCluster) string {
 
 	// The first pod (0) should always generate the curve certificate
 	mainHost := fmt.Sprintf("%s-0", cluster.Name)
-	cores := generateRange(int(cluster.Spec.Size))
 	hosts := fmt.Sprintf("%s-[%s]", cluster.Name, generateRange(int(cluster.Spec.Size)))
-	waitScript := fmt.Sprintf(waitToStartTemplate, mainHost, hosts, cores)
+	waitScript := fmt.Sprintf(waitToStartTemplate, mainHost, hosts, cluster.Spec.Diagnostics)
 	return waitScript
 }
 
