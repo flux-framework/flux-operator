@@ -40,10 +40,11 @@ func (r *MiniClusterReconciler) newMiniClusterJob(cluster *api.MiniCluster) *bat
 
 		Spec: batchv1.JobSpec{
 
-			BackoffLimit:   &backoffLimit,
-			Completions:    &cluster.Spec.Size,
-			Parallelism:    &cluster.Spec.Size,
-			CompletionMode: &completionMode,
+			BackoffLimit:          &backoffLimit,
+			Completions:           &cluster.Spec.Size,
+			Parallelism:           &cluster.Spec.Size,
+			CompletionMode:        &completionMode,
+			ActiveDeadlineSeconds: &cluster.Spec.DeadlineSeconds,
 
 			// Note there is parameter to limit runtime
 			Template: corev1.PodTemplateSpec{

@@ -106,6 +106,9 @@ func (r *MiniClusterReconciler) Reconcile(ctx context.Context, req ctrl.Request)
 		return ctrl.Result{}, nil
 	}
 
+	// Show parameters provided
+	cluster.PrintDefaults()
+
 	// Get the current job status
 	status := jobctrl.GetCondition(&cluster)
 

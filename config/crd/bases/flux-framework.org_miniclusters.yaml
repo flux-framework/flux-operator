@@ -41,6 +41,12 @@ spec:
               command:
                 description: Single user executable to provide to flux start
                 type: string
+              deadlineSeconds:
+                default: 31500000
+                description: Should the job be limited to a particular number of seconds?
+                  Approximately one year. This cannot be zero or job won't start
+                format: int64
+                type: integer
               diagnostics:
                 description: Run flux diagnostics on start instead of command
                 type: boolean

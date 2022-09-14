@@ -17,3 +17,5 @@ spec:
   # Diagnostics runs flux commands for diagnostics, and a final sleep command
   # That makes it easy for you to shell into the pod to look around
   diagnostics: false
+  # Deadline in seconds, if not set there is no deadline
+  # deadlineSeconds: 100

@@ -9,9 +9,6 @@
 asFlux="sudo -u flux"
 
 # Broker Options: important!
-# quorum settings influence how the instance treats missing ranks
-#   by default all ranks must be online before work is run, but
-#   we want it to be OK to run when a few are down
 # The local-uri setting places the unix domain socket in rundir 
 #   if FLUX_URI is not set, tools know where to connect.
 brokerOptions="-Scron.directory=/etc/flux/system/cron.d \
@@ -21,9 +18,15 @@ brokerOptions="-Scron.directory=/etc/flux/system/cron.d \
   -Slocal-uri=local:///run/flux/local \
   -Slog-stderr-level=6 \
   -Slog-stderr-mode=local \
-  -Sbroker.quorum=0 \
-  -Sbroker.quorum-timeout=none \
   -Sbroker.exit-norestart=42"
+
+# quorum settings influence how the instance treats missing ranks
+#   by default all ranks must be online before work is run, but
+#   we want it to be OK to run when a few are down
+# These are currently removed because we want the main rank to
+# wait for all the others, and then they clean up nicely
+#  -Sbroker.quorum=0 \
+#  -Sbroker.quorum-timeout=none \
 
 # This should be added to keep running as a service
 #  -Sbroker.rc2_none \
