@@ -43,6 +43,12 @@ type MiniClusterSpec struct {
 	// +optional
 	Diagnostics bool `json:"diagnostics"`
 
+	// Should the job be limited to a particular number of seconds?
+	// Approximately one year. This cannot be zero or job won't start
+	// +kubebuilder:default=31500000
+	// +optional
+	DeadlineSeconds int64 `json:"deadlineSeconds"`
+
 	// Allow the user to dictate pulling
 	// By default we pull if not present. Setting
 	// this to true will indicate to pull always
@@ -78,9 +84,10 @@ type MiniCluster struct {
 }
 
 // SetDefaults ensures that empty settings are defined with defaults
-func (f *MiniCluster) SetDefaults() {
+func (f *MiniCluster) PrintDefaults() {
 	fmt.Println()
 	fmt.Printf("🤓 MiniCluster.Image %s\n", f.Spec.Image)
+	fmt.Printf("🤓 MiniCluster.DeadlineSeconds %d\n", f.Spec.DeadlineSeconds)
 	fmt.Printf("🤓 MiniCluster.Command %s\n", f.Spec.Command)
 	fmt.Printf("🤓 MiniCluster.Size %s\n", fmt.Sprint(f.Spec.Size))
 }

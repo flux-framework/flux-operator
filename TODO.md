@@ -2,17 +2,26 @@
 
 ### Design 3
 
- - [ ] IMPORTANT: I think we will want an event/watcher to shut down all jobs when the main command is done. Otherwise the others sometimes keep running.
- - [ ] can (and should) we use generics to reduce redudancy of code? (e.g., the `get<X>` functions) (@vsoch would like to do this)
- - [ ] what should be the proper start command for the main/worker nodes (this is important because it will determine when a job is complete)
+ - [ ] we need to test that N=1 case works as expected (not waiting for any workers) and 0 spits an error (for now it doesn't make sense)
+ - [ ] can (and should) we use generics to reduce redudancy of code? (e.g., the `get<X>` functions) (@vsoch would like to do this!)
  - [ ] I think if a pod dies the IP address might change, so eventually we want to test that (and may need more logic for re-updating /etc/hosts)
- - [ ] Should there be a min/max size for the MiniCluster CRD (probably 2 if we want to have main/worker)?
- - [ ] MiniCluster - how should we handle deletion / update?
- - [ ] Do we want to be able to launch additional tasks? (e.g., after the original job started)
+ - [ ] Events: deletion should clean up, and update should not be allowed (given rank 0 started)
  - [ ] Currently we have no representation of quota - we need to be able to set (and check) hard limits from the scheduler (or maybe we get that out of the box)?
  - [ ] klog can be changed to add V(2) to handle verbository from the command line, see https://pkg.go.dev/k8s.io/klog/v2
  - [ ] At some point we want more intelligent use of labels/selectors (I haven't really read about them yet)
  - [ ] There was one run (rare) when the update script didn't take (and was waiting forever) - should look into that. Hard to reproduce!
+ - [ ] We might eventually want a variable to control quorum expectation (e.g., rank 0 waiting or not)
+ - [ ] Eventually; nice pretty, branded user docs that describe creating CRD, and cases of sleep infinity vs command
+ - [ ] Look into slurm feature (salloc option) to just start (locate resource and keep it going?) (do we still need this?)
+ - [ ] Is there a way to scale "workers" without borking the main rank 0 running?
+
+#### Completed
+
+ - [x] Maximum time for job (seconds) set by CRD
+ - [x] Do we want to be able to launch additional tasks? (e.g., after the original job started) (for now, no, but this can be re-addressed if a case comes up)
+ - [x] Should there be a min/max size for the MiniCluster CRD (probably 2 if we want to have main/worker)? (right not just cannot be zero)
+ - [x] We will want an event/watcher to shut down all jobs when the main command is done. Otherwise the others sometimes keep running (currently we require all ranks to be ready and then they clean up)
+ - [x] what should be the proper start command for the main/worker nodes (this is important because it will determine when a job is complete) (rank 0 runs user command, workers just start)
  - [x] figure out where to put flux hostname / config - volume needs write
  - [x] Are `--cores` properly set (yes, not setting uses the default set by hwloc and that's resonable)
  - [x] debug nodes finding on another (see How it works in README.md)
