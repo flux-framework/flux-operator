@@ -62,7 +62,7 @@ type MiniClusterSpec struct {
 	// imagePullSecret will specify that secret
 	// in the pod spec.
 	// +optional
-	ImagePullSecrets []string `json:"imagePullSecrets"`
+	ImagePullSecret string `json:"imagePullSecret"`
 
 	// Single user executable to provide to flux start
 	// +optional

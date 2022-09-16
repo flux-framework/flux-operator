@@ -60,7 +60,7 @@ func (r *MiniClusterReconciler) newMiniClusterJob(cluster *api.MiniCluster) *bat
 					Volumes:          getVolumes(cluster),
 					Containers:       containers,
 					RestartPolicy:    corev1.RestartPolicyOnFailure,
-					ImagePullSecrets: getImagePullSecrets(cluster),
+					ImagePullSecrets: getImagePullSecret(cluster),
 				}},
 		},
 	}
@@ -96,14 +96,11 @@ func (r *MiniClusterReconciler) getMiniClusterContainers(cluster *api.MiniCluste
 }
 
 // Function to return list of objects references for
-// imagePullSecrets
-func getImagePullSecrets(cluster *api.MiniCluster) []corev1.LocalObjectReference {
-	var pullSecrets []corev1.LocalObjectReference
-	var pullSecret corev1.LocalObjectReference
-	for _, secretName := range cluster.Spec.ImagePullSecrets {
-		pullSecret = corev1.LocalObjectReference{Name: secretName}
-		pullSecrets = append(pullSecrets, pullSecret)
+// imagePullSecrets. Current Spec only allows for a
+// single secret to be used. 
+func getImagePullSecret(cluster *api.MiniCluster) []corev1.LocalObjectReference {
+	pullSecrets := []corev1.LocalObjectReference{
+		corev1.LocalObjectReference{Name: cluster.Spec.ImagePullSecret},
 	}
-
 	return pullSecrets
 }
