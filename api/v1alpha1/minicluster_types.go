@@ -56,6 +56,14 @@ type MiniClusterSpec struct {
 	// +optional
 	PullAlways bool `json:"pullAlways"`
 
+	// Allow the user to pull authenticated images
+	// By default no secret is selected. Setting
+	// this with the name of an already existing
+	// imagePullSecret will specify that secret
+	// in the pod spec.
+	// +optional
+	ImagePullSecrets []string `json:"imagePullSecrets"`
+
 	// Single user executable to provide to flux start
 	// +optional
 	Command string `json:"command"`

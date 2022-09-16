@@ -56,10 +56,11 @@ func (r *MiniClusterReconciler) newMiniClusterJob(cluster *api.MiniCluster) *bat
 					Labels: map[string]string{"name": cluster.Name, "namespace": cluster.Namespace, "job": cluster.Name},
 				},
 				Spec: corev1.PodSpec{
-					Subdomain:     cluster.Name,
-					Volumes:       getVolumes(cluster),
-					Containers:    containers,
-					RestartPolicy: corev1.RestartPolicyOnFailure,
+					Subdomain:        cluster.Name,
+					Volumes:          getVolumes(cluster),
+					Containers:       containers,
+					RestartPolicy:    corev1.RestartPolicyOnFailure,
+					ImagePullSecrets: getImagePullSecrets(cluster),
 				}},
 		},
 	}
@@ -92,4 +93,17 @@ func (r *MiniClusterReconciler) getMiniClusterContainers(cluster *api.MiniCluste
 		},
 	}
 	return containers
+}
+
+// Function to return list of objects references for
+// imagePullSecrets
+func getImagePullSecrets(cluster *api.MiniCluster) []corev1.LocalObjectReference {
+	var pullSecrets []corev1.LocalObjectReference
+	var pullSecret corev1.LocalObjectReference
+	for _, secretName := range cluster.Spec.ImagePullSecrets {
+		pullSecret = corev1.LocalObjectReference{Name: secretName}
+		pullSecrets = append(pullSecrets, pullSecret)
+	}
+
+	return pullSecrets
 }
