@@ -56,10 +56,11 @@ func (r *MiniClusterReconciler) newMiniClusterJob(cluster *api.MiniCluster) *bat
 					Labels: map[string]string{"name": cluster.Name, "namespace": cluster.Namespace, "job": cluster.Name},
 				},
 				Spec: corev1.PodSpec{
-					Subdomain:     cluster.Name,
-					Volumes:       getVolumes(cluster),
-					Containers:    containers,
-					RestartPolicy: corev1.RestartPolicyOnFailure,
+					Subdomain:        cluster.Name,
+					Volumes:          getVolumes(cluster),
+					Containers:       containers,
+					RestartPolicy:    corev1.RestartPolicyOnFailure,
+					ImagePullSecrets: getImagePullSecret(cluster),
 				}},
 		},
 	}
@@ -92,4 +93,14 @@ func (r *MiniClusterReconciler) getMiniClusterContainers(cluster *api.MiniCluste
 		},
 	}
 	return containers
+}
+
+// Function to return list of objects references for
+// imagePullSecrets. Current Spec only allows for a
+// single secret to be used. 
+func getImagePullSecret(cluster *api.MiniCluster) []corev1.LocalObjectReference {
+	pullSecrets := []corev1.LocalObjectReference{
+		corev1.LocalObjectReference{Name: cluster.Spec.ImagePullSecret},
+	}
+	return pullSecrets
 }

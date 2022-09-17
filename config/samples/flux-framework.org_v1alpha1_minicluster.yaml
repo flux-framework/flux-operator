@@ -19,3 +19,5 @@ spec:
   diagnostics: false
   # Deadline in seconds, if not set there is no deadline
   # deadlineSeconds: 100
+  # Name of an already created ImagePullSecret for the image specfied above
+  # imagePullSecret: flux-image-secret
