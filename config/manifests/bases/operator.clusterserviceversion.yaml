@@ -1,0 +1,50 @@
+apiVersion: operators.coreos.com/v1alpha1
+kind: ClusterServiceVersion
+metadata:
+  annotations:
+    alm-examples: '[]'
+    capabilities: Basic Install
+  name: operator.v0.0.0
+  namespace: placeholder
+spec:
+  apiservicedefinitions: {}
+  customresourcedefinitions: {}
+  description: The Flux Framework Operator to run a Flux MiniCluster
+  displayName: flux-operator
+  icon:
+  - base64data: ""
+    mediatype: ""
+  install:
+    spec:
+      deployments: null
+    strategy: ""
+  installModes:
+  - supported: false
+    type: OwnNamespace
+  - supported: false
+    type: SingleNamespace
+  - supported: false
+    type: MultiNamespace
+  - supported: true
+    type: AllNamespaces
+  keywords:
+  - flux
+  - manager
+  - batch
+  - jobs
+  - kubernetes
+  links:
+  - name: Operator
+    url: https://operator.domain
+  maintainers:
+  - email: vsoch@users.noreply.github.com
+    name: '@vsoch'
+  - email: zekemorton@users.noreply.github.com
+    name: '@zekemorton'
+  - email: milroy@users.noreply.github.com
+    name: '@milroy'
+  maturity: alpha
+  provider:
+    name: flux-framework
+    url: https://github.com/flux-framework/flux-operator
+  version: 0.0.0

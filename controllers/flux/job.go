@@ -97,7 +97,7 @@ func (r *MiniClusterReconciler) getMiniClusterContainers(cluster *api.MiniCluste
 
 // Function to return list of objects references for
 // imagePullSecrets. Current Spec only allows for a
-// single secret to be used. 
+// single secret to be used.
 func getImagePullSecret(cluster *api.MiniCluster) []corev1.LocalObjectReference {
 	pullSecrets := []corev1.LocalObjectReference{
 		corev1.LocalObjectReference{Name: cluster.Spec.ImagePullSecret},

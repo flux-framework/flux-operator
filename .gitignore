@@ -8,6 +8,7 @@
 bin
 testbin/*
 config/samples/secrets
+bundle_*
 
 # Test binary, build with `go test -c`
 *.test
