@@ -33,5 +33,5 @@ jobs:
     - name: Deploy Container
       if: (github.event_name != 'pull_request')
       run: |
-        make docker-deploy
+        make docker-push
         make bundle-push
