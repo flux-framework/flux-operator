@@ -108,6 +108,28 @@ And shell into one with the helper script:
 ./script/shell.sh flux-sample-0-b5rw6
 ```
 
+### Build and Deploy
+
+To build and deploy the container:
+
+```bash
+$ make docker-build
+$ make docker-deploy
+```
+```bash
+# operator lifecycle manager
+$ operator-sdk olm install
+$ make bundle
+$ make bundle-build
+$ make bundle-push
+```
+
+Haven't tried this one yet, not sure what a catalog is.
+```bash
+$ make catalog-build
+$ make catalog-push
+```
+
 ### Starting Fresh
 
 If you want to blow up your minikube and start fresh (pulling the container again too):
