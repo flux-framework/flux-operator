@@ -56,6 +56,14 @@ type MiniClusterSpec struct {
 	// +optional
 	PullAlways bool `json:"pullAlways"`
 
+	// localDeploy should be true for development, or deploying in the
+	// case that there isn't an actual kubernetes cluster (e.g., you
+	// are not using make deploy. It uses a persistent volume instead of
+	// a claim
+	// +kubebuilder:default=false
+	// +optional
+	LocalDeploy bool `json:"localDeploy"`
+
 	// Allow the user to pull authenticated images
 	// By default no secret is selected. Setting
 	// this with the name of an already existing

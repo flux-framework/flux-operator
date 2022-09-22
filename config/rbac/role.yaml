@@ -14,10 +14,26 @@ rules:
   - update
   - watch
 - apiGroups:
+  - ""
+  resources:
+  - events
+  - nodes
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
   - batch
   resources:
   - jobs
   verbs:
+  - create
+  - delete
+  - exec
   - get
   - list
   - patch
@@ -28,9 +44,16 @@ rules:
   resources:
   - jobs/status
   verbs:
+  - create
+  - delete
+  - exec
   - get
+  - list
+  - patch
+  - update
+  - watch
 - apiGroups:
-  - flux-framework.org
+  - ""
   resources:
   - ""
   verbs:
@@ -42,7 +65,20 @@ rules:
   - update
   - watch
 - apiGroups:
-  - flux-framework.org
+  - ""
+  resources:
+  - batch
+  verbs:
+  - create
+  - delete
+  - exec
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - ""
   resources:
   - configmaps
   verbs:
@@ -54,13 +90,117 @@ rules:
   - update
   - watch
 - apiGroups:
-  - flux-framework.org
+  - ""
+  resources:
+  - events
+  verbs:
+  - create
+  - patch
+- apiGroups:
+  - ""
   resources:
   - jobs
   verbs:
   - create
   - delete
   - exec
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - ""
+  resources:
+  - networks
+  verbs:
+  - create
+  - patch
+- apiGroups:
+  - ""
+  resources:
+  - persistentvolumeclaims
+  verbs:
+  - create
+  - delete
+  - exec
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - ""
+  resources:
+  - persistentvolumes
+  verbs:
+  - create
+  - delete
+  - exec
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - ""
+  resources:
+  - pods
+  verbs:
+  - create
+  - delete
+  - exec
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - ""
+  resources:
+  - secrets
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - ""
+  resources:
+  - statefulsets
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - flux-framework.org
+  resources:
+  - clusters
+  - clusters/status
+  verbs:
+  - get
+  - list
+  - watch
+- apiGroups:
+  - flux-framework.org
+  resources:
+  - machineclasses
+  - machinedeployments
+  - machinedeployments/status
+  - machines
+  - machines/status
+  - machinesets
+  - machinesets/status
+  verbs:
+  - create
+  - delete
   - get
   - list
   - patch
@@ -95,43 +235,6 @@ rules:
   - flux-framework.org
   resources:
   - miniclusters/status
-  verbs:
-  - create
-  - delete
-  - get
-  - list
-  - patch
-  - update
-  - watch
-- apiGroups:
-  - flux-framework.org
-  resources:
-  - pods
-  verbs:
-  - create
-  - delete
-  - exec
-  - get
-  - list
-  - patch
-  - update
-  - watch
-- apiGroups:
-  - flux-framework.org
-  resources:
-  - secrets
-  verbs:
-  - create
-  - delete
-  - get
-  - list
-  - patch
-  - update
-  - watch
-- apiGroups:
-  - flux-framework.org
-  resources:
-  - statefulsets
   verbs:
   - create
   - delete

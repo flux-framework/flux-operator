@@ -55,20 +55,31 @@ func NewMiniClusterReconciler(client client.Client, scheme *runtime.Scheme, rest
 	}
 }
 
+// RBAC rules to access cluster-api resources
+//+kubebuilder:rbac:groups=flux-framework.org,resources=clusters;clusters/status,verbs=get;list;watch
+//+kubebuilder:rbac:groups=flux-framework.org,resources=machines;machines/status;machinedeployments;machinedeployments/status;machinesets;machinesets/status;machineclasses,verbs=get;list;watch;create;update;patch;delete
+//+kubebuilder:rbac:groups=flux-framework.org,resources=clusters;clusters/status,verbs=get;list;watch
+//+kubebuilder:rbac:groups="",resources=nodes;events,verbs=get;list;watch;create;update;patch;delete
+
 //+kubebuilder:rbac:groups=flux-framework.org,resources=miniclusters,verbs=get;list;watch;create;update;patch;delete;exec
 //+kubebuilder:rbac:groups=flux-framework.org,resources=miniclusters/status,verbs=get;list;watch;create;update;patch;delete
 //+kubebuilder:rbac:groups=flux-framework.org,resources=miniclusters/finalizers,verbs=get;list;watch;create;update;patch;delete
 
-//+kubebuilder:rbac:groups=flux-framework.org,resources=secrets,verbs=get;list;watch;create;update;patch;delete
-//+kubebuilder:rbac:groups=flux-framework.org,resources=configmaps,verbs=get;list;watch;create;update;patch;delete
-//+kubebuilder:rbac:groups=flux-framework.org,resources=statefulsets,verbs=get;list;watch;create;update;patch;delete
-//+kubebuilder:rbac:groups=flux-framework.org,resources=pods,verbs=get;list;watch;create;update;patch;delete;exec
-//+kubebuilder:rbac:groups=flux-framework.org,resources=jobs,verbs=get;list;watch;create;update;patch;delete;exec
-//+kubebuilder:rbac:groups=flux-framework.org,resources="",verbs=get;list;watch;create;update;patch;delete
+//+kubebuilder:rbac:groups=core,resources=secrets,verbs=get;list;watch;create;update;patch;delete
+//+kubebuilder:rbac:groups=core,resources=configmaps,verbs=get;list;watch;create;update;patch;delete
+//+kubebuilder:rbac:groups=core,resources=statefulsets,verbs=get;list;watch;create;update;patch;delete
+//+kubebuilder:rbac:groups=core,resources=pods,verbs=get;list;watch;create;update;patch;delete;exec
+//+kubebuilder:rbac:groups=core,resources=persistentvolumes,verbs=get;list;watch;create;update;patch;delete;exec
+//+kubebuilder:rbac:groups=core,resources=persistentvolumeclaims,verbs=get;list;watch;create;update;patch;delete;exec
+//+kubebuilder:rbac:groups=core,resources=jobs,verbs=get;list;watch;create;update;patch;delete;exec
+//+kubebuilder:rbac:groups=core,resources="",verbs=get;list;watch;create;update;patch;delete
+//+kubebuilder:rbac:groups=core,resources=batch,verbs=get;list;watch;create;update;patch;delete;exec
+//+kubebuilder:rbac:groups=core,resources=events,verbs=create;patch
+//+kubebuilder:rbac:groups=core,resources=networks,verbs=create;patch
 
 //+kubebuilder:rbac:groups="",resources=events,verbs=create;watch;update
-//+kubebuilder:rbac:groups=batch,resources=jobs,verbs=get;list;watch;update;patch
-//+kubebuilder:rbac:groups=batch,resources=jobs/status,verbs=get
+//+kubebuilder:rbac:groups=batch,resources=jobs,verbs=get;list;watch;create;update;patch;delete;exec
+//+kubebuilder:rbac:groups=batch,resources=jobs/status,verbs=get;list;watch;create;update;patch;delete;exec
 
 // Reconcile is part of the main kubernetes reconciliation loop which aims to
 // move the current state of the cluster closer to the desired state.

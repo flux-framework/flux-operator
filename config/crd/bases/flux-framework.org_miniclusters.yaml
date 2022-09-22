@@ -59,6 +59,13 @@ spec:
                   no secret is selected. Setting this with the name of an already
                   existing imagePullSecret will specify that secret in the pod spec.
                 type: string
+              localDeploy:
+                default: false
+                description: localDeploy should be true for development, or deploying
+                  in the case that there isn't an actual kubernetes cluster (e.g.,
+                  you are not using make deploy. It uses a persistent volume instead
+                  of a claim
+                type: boolean
               pullAlways:
                 default: false
                 description: Allow the user to dictate pulling By default we pull
