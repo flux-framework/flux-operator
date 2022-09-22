@@ -39,6 +39,7 @@ And you can find the following:
  - We use an [initContainer](https://kubernetes.io/docs/concepts/workloads/pods/init-containers/) with an Empty volume (shared between init and worker) to generate the curve certificates (`/mnt/curve/curve.cert`). The broker sees them via the definition of that path in the broker.toml in our config directory mentioned above. Currently ever container generates its own curve.cert so this needs to be updated to have just one.
  - Networking is a bit of a hack - we have a wrapper starting script that essentially waits until a file is populated with hostnames. While it's waiting, we are waiting for the pods to be created and allocated an ip address, and then we write the addresses to this update file (that will echo into `/etc/hosts`). When the Pod is re-created with the same ip address, the second time around the file is run to update the hosts, and then we submit the job.
  - When the hosts are configured, the main rank (pod 0) does some final setup, and runs the job via the flux user. The others start flux with a sleep command.
+
 ## Quick Start
 
 Know how this stuff works? Then here you go!
@@ -47,7 +48,13 @@ Know how this stuff works? Then here you go!
 # Clone the source code
 $ git clone https://github.com/flux-framework/flux-operator
 $ cd flux-operator
+```
 
+### Local Development
+
+Ensure localDeploy is set to true in your CRD so you don't ask for a persistent volume claim!
+
+```
 # Start a minikube cluster
 $ minikube start
 
@@ -108,13 +115,124 @@ And shell into one with the helper script:
 ./script/shell.sh flux-sample-0-b5rw6
 ```
 
-### Build and Deploy
+### Production Deployment
 
-To build and deploy the container:
+## Deploy Operator 
+
+To deploy the flux operator, you'll need to start with the same clone:
+
+```bash
+$ git clone https://github.com/flux-framework/flux-operator
+$ cd flux-operator
+```
+
+A deploy will use the latest docker image [from the repository](https://github.com/orgs/flux-framework/packages?repo_name=flux-operator):
+
+```bash
+$ make deploy
+```
+```console
+...
+namespace/operator-system created
+customresourcedefinition.apiextensions.k8s.io/miniclusters.flux-framework.org unchanged
+serviceaccount/operator-controller-manager created
+role.rbac.authorization.k8s.io/operator-leader-election-role created
+clusterrole.rbac.authorization.k8s.io/operator-manager-role configured
+clusterrole.rbac.authorization.k8s.io/operator-metrics-reader unchanged
+clusterrole.rbac.authorization.k8s.io/operator-proxy-role unchanged
+rolebinding.rbac.authorization.k8s.io/operator-leader-election-rolebinding created
+clusterrolebinding.rbac.authorization.k8s.io/operator-manager-rolebinding unchanged
+clusterrolebinding.rbac.authorization.k8s.io/operator-proxy-rolebinding unchanged
+configmap/operator-manager-config created
+service/operator-controller-manager-metrics-service created
+deployment.apps/operator-controller-manager created
+```
+
+Ensure the `operator-system` namespace was created:
+
+```bash
+$ kubectl get namespace
+NAME              STATUS   AGE
+default           Active   12m
+kube-node-lease   Active   12m
+kube-public       Active   12m
+kube-system       Active   12m
+operator-system   Active   11s
+```
+```bash
+$ kubectl describe namespace operator-system
+Name:         operator-system
+Labels:       control-plane=controller-manager
+              kubernetes.io/metadata.name=operator-system
+Annotations:  <none>
+Status:       Active
+
+No resource quota.
+
+No LimitRange resource.
+```
+
+And you can find the name of the operator pod as follows:
+
+```bash
+$ kubectl get pod --all-namespaces -o wide
+```
+```console
+      <none>
+operator-system   operator-controller-manager-6c699b7b94-bbp5q   2/2     Running   0             80s   192.168.30.43    ip-192-168-28-166.ec2.internal   <none>           <none>
+```
+
+Make your namespace for the flux-operator:
+
+```bash
+$ kubectl create namespace flux-operator
+```
+
+Then apply your CRD (the localDeploy can be false for an actual cluster with persistent volume claims):
+
+```bash
+$ make apply
+# OR
+$ kubectl apply -f config/samples/flux-framework.org_v1alpha1_minicluster.yaml 
+```
+
+And now you can get logs for the manager:
+
+```bash
+$ kubectl logs -n operator-system operator-controller-manager-6c699b7b94-bbp5q
+```
+
+And then watch your jobs as before!
+
+```bash
+$ make list
+$ make apply
+```
+
+And don't forget to clean up! Leaving on resources by accident is expensive!
+
+## Clean up
+
+Make sure you clean everything up!
+
+```bash
+$ eksctl delete cluster -f eks-cluster-config.yaml
+```
+It might be better to add `--wait`, which will wait until all resources are cleaned up:
+
+```bash
+$ eksctl delete cluster -f eks-cluster-config.yaml --wait
+```
+Either way, it's good to check the web console too to ensure you didn't miss anything.
+
+
+### Build Images
+
+This happens in our Docker CI, however you can build (and deploy if you are an owner) them too!
 
 ```bash
 $ make docker-build
-$ make docker-deploy
+$ make docker-push
 ```
 ```bash
 # operator lifecycle manager
@@ -124,7 +242,8 @@ $ make bundle-build
 $ make bundle-push
 ```
 
-Haven't tried this one yet, not sure what a catalog is.
+And for the catalog:
+
 ```bash
 $ make catalog-build
 $ make catalog-push

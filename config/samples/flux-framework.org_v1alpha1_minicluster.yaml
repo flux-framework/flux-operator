@@ -4,6 +4,8 @@ metadata:
   name: flux-sample
   namespace: flux-operator
 spec:
+  # Set to true to use volume mounts instead of volume claims
+  # localDeploy: true
   # The container URI to pull (currently needs to be public)
   image: ghcr.io/flux-framework/demo-lammps-mpi:flux-sched-focal-v0.22.0
   # The main flux command to run - the job will exit after
@@ -13,7 +15,7 @@ spec:
   # Always pull the image (if you are updating the image between runs, set to true)!
   pullAlways: false
   # Number of pods to create for MiniCluster
-  size: 6
+  size: 4
   # Diagnostics runs flux commands for diagnostics, and a final sleep command
   # That makes it easy for you to shell into the pod to look around
   diagnostics: false

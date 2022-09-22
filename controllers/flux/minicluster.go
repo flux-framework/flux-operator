@@ -52,13 +52,20 @@ func (r *MiniClusterReconciler) ensureMiniCluster(ctx context.Context, cluster *
 		return result, err
 	}
 
-	// TODO the claim is used I think when the host supports provisioning.
-	// A local host (developer machine) does not, so for the meantime we use a persistent volume instead
-	// We might want a way to know when to switch between these two!
-	// A persistent volume claim with the certificate for nodes to share
-	_, result, err = r.getPersistentVolume(ctx, cluster, cluster.Name+curveVolumeSuffix)
-	if err != nil {
-		return result, err
+	// A local host (developer machine) does not support provisioning, so for the meantime we use a
+	// persistent volume instead
+	if cluster.Spec.LocalDeploy {
+		_, result, err = r.getPersistentVolume(ctx, cluster, cluster.Name+curveVolumeSuffix)
+		if err != nil {
+			return result, err
+		}
+
+		// Otherwise we can ask for a persistent volume claim
+	} else {
+		_, result, err = r.getPersistentVolumeClaim(ctx, cluster, cluster.Name+curveVolumeSuffix)
+		if err != nil {
+			return result, err
+		}
 	}
 
 	// Create the batch job that brings it all together!
@@ -76,7 +83,7 @@ func (r *MiniClusterReconciler) ensureMiniCluster(ctx context.Context, cluster *
 
 	// Continue reconciling until we have pod ips
 	if len(ips) != int(cluster.Spec.Size) {
-		return ctrl.Result{Requeue: true}, nil
+		return ctrl.Result{Requeue: true}, fmt.Errorf("IPs are not ready yet!")
 	}
 
 	// At this point we've created job pods that have a waiting entrypoint for the update_hosts.sh
@@ -121,7 +128,9 @@ func (r *MiniClusterReconciler) getMiniCluster(ctx context.Context, cluster *api
 	} else {
 		r.log.Info("🎉 Found existing MiniCluster Batch Job 🎉", "Namespace:", existing.Namespace, "Name:", existing.Name)
 	}
-	saveDebugYaml(existing, "batch-job.yaml")
+	if cluster.Spec.LocalDeploy {
+		saveDebugYaml(existing, "batch-job.yaml")
+	}
 	return existing, ctrl.Result{}, err
 }
 
@@ -215,7 +224,9 @@ func (r *MiniClusterReconciler) getPersistentVolumeClaim(ctx context.Context, cl
 	} else {
 		r.log.Info("🎉 Found existing MiniCluster Mounted Volume", "Type", configFullName, "Namespace", existing.Namespace, "Name", existing.Name)
 	}
-	saveDebugYaml(existing, configFullName+".yaml")
+	if cluster.Spec.LocalDeploy {
+		saveDebugYaml(existing, configFullName+".yaml")
+	}
 	return existing, ctrl.Result{}, err
 }
 
@@ -244,7 +255,9 @@ func (r *MiniClusterReconciler) getPersistentVolume(ctx context.Context, cluster
 	} else {
 		r.log.Info("🎉 Found existing MiniCluster Mounted Volume", "Type", configFullName, "Namespace", existing.Namespace, "Name", existing.Name)
 	}
-	saveDebugYaml(existing, configFullName+".yaml")
+	if cluster.Spec.LocalDeploy {
+		saveDebugYaml(existing, configFullName+".yaml")
+	}
 	return existing, ctrl.Result{}, err
 }
 
@@ -291,7 +304,9 @@ func (r *MiniClusterReconciler) getConfigMap(ctx context.Context, cluster *api.M
 	} else {
 		r.log.Info("🎉 Found existing MiniCluster ConfigMap", "Type", configName, "Namespace", existing.Namespace, "Name", existing.Name)
 	}
-	saveDebugYaml(existing, configName+".yaml")
+	if cluster.Spec.LocalDeploy {
+		saveDebugYaml(existing, configName+".yaml")
+	}
 	return existing, ctrl.Result{}, err
 }
 
@@ -344,7 +359,9 @@ func (r *MiniClusterReconciler) addDiscoveryHostsFile(ctx context.Context, clust
 			r.log.Error(err, "❌ Error Adding Discovery Hosts File", "Namespace", cmCopy.Namespace, "Name", (*cmCopy).Name)
 			return cmCopy, ctrl.Result{}, err
 		}
-		saveDebugYaml(cmCopy, configName+".yaml")
+		if cluster.Spec.LocalDeploy {
+			saveDebugYaml(cmCopy, configName+".yaml")
+		}
 		return cmCopy, ctrl.Result{Requeue: true}, nil
 	}
 	return cm, ctrl.Result{}, err
