@@ -49,7 +49,7 @@ func getVolumeMounts(cluster *api.MiniCluster) []corev1.VolumeMount {
 // getVolumes that are shared between MiniCluster and statefulset
 func getVolumes(cluster *api.MiniCluster) []corev1.Volume {
 	makeExecutable := int32(0777)
-	return []corev1.Volume{{
+	volumes := []corev1.Volume{{
 		Name: cluster.Name + fluxConfigSuffix,
 		VolumeSource: corev1.VolumeSource{
 			ConfigMap: &corev1.ConfigMapVolumeSource{
@@ -61,16 +61,6 @@ func getVolumes(cluster *api.MiniCluster) []corev1.Volume {
 					Key:  "hostfile",
 					Path: "broker.toml",
 				}},
-			},
-		},
-	}, {
-
-		// We use persistent volume (that can be shared by several containers)
-		// to run flux keygen and generate the /mnt/curve/curve.crt
-		Name: cluster.Name + curveVolumeSuffix,
-		VolumeSource: corev1.VolumeSource{
-			HostPath: &corev1.HostPathVolumeSource{
-				Path: path.Join("/tmp", cluster.Name+curveVolumeSuffix),
 			},
 		},
 	}, {
@@ -96,4 +86,34 @@ func getVolumes(cluster *api.MiniCluster) []corev1.Volume {
 			},
 		},
 	}}
+
+	// If we are using a localDeploy (volume on the host) vs. a cluster deploy
+	// (where we need a persistent volume claim)
+	if cluster.Spec.LocalDeploy {
+		localVolume := corev1.Volume{
+
+			// We use persistent volume (that can be shared by several containers)
+			// to run flux keygen and generate the /mnt/curve/curve.crt
+			Name: cluster.Name + curveVolumeSuffix,
+			VolumeSource: corev1.VolumeSource{
+				HostPath: &corev1.HostPathVolumeSource{
+					Path: path.Join("/tmp", cluster.Name+curveVolumeSuffix),
+				},
+			},
+		}
+		volumes = append(volumes, localVolume)
+
+	} else {
+		pvc := corev1.Volume{
+			Name: cluster.Name + curveVolumeSuffix,
+			VolumeSource: corev1.VolumeSource{
+				PersistentVolumeClaim: &corev1.PersistentVolumeClaimVolumeSource{
+					ClaimName: cluster.Name + curveVolumeSuffix,
+					ReadOnly:  false,
+				},
+			},
+		}
+		volumes = append(volumes, pvc)
+	}
+	return volumes
 }

@@ -53,15 +53,18 @@ func (r *MiniClusterReconciler) ensureMiniCluster(ctx context.Context, cluster *
 	}
 
 	// A local host (developer machine) does not support provisioning, so for the meantime we use a
-	// persistent volume instead
+	// persistent volume instead (running on same host)
 	if cluster.Spec.LocalDeploy {
+		r.log.Info("MiniCluster", "localDeploy", "true (persistent volume in /tmp)")
 		_, result, err = r.getPersistentVolume(ctx, cluster, cluster.Name+curveVolumeSuffix)
 		if err != nil {
 			return result, err
 		}
 
 		// Otherwise we can ask for a persistent volume claim
+		// (not running on the same host)
 	} else {
+		r.log.Info("MiniCluster", "localDeploy", "false (persistent volume claim)")
 		_, result, err = r.getPersistentVolumeClaim(ctx, cluster, cluster.Name+curveVolumeSuffix)
 		if err != nil {
 			return result, err
@@ -389,7 +392,7 @@ func (r *MiniClusterReconciler) createPersistentVolumeClaim(cluster *api.MiniClu
 		TypeMeta:   metav1.TypeMeta{},
 		ObjectMeta: metav1.ObjectMeta{Name: configName, Namespace: cluster.Namespace},
 		Spec: corev1.PersistentVolumeClaimSpec{
-			AccessModes: []corev1.PersistentVolumeAccessMode{corev1.ReadWriteMany},
+			AccessModes: []corev1.PersistentVolumeAccessMode{corev1.ReadWriteOnce},
 
 			// No idea how much to ask for here! I made it up.
 			Resources: corev1.ResourceRequirements{Requests: corev1.ResourceList{
