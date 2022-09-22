@@ -54,6 +54,14 @@ $ cd flux-operator
 
 Ensure localDeploy is set to true in your CRD so you don't ask for a persistent volume claim!
 
+```yaml
+spec:
+# Set to true to use volume mounts instead of volume claims
+  localDeploy: true
+```
+
+And then:
+
 ```
 # Start a minikube cluster
 $ minikube start
@@ -188,7 +196,16 @@ Make your namespace for the flux-operator:
 $ kubectl create namespace flux-operator
 ```
 
-Then apply your CRD (the localDeploy can be false for an actual cluster with persistent volume claims):
+Then apply your CRD - importantly, the localDeploy needs to be false. Basically, setting to true uses a local mount,
+which obviously won't work for different instances in the cloud!
+
+```yaml
+spec:
+# Set to true to use volume mounts instead of volume claims
+  localDeploy: false
+```
+
+This means we will use peristent volume claims instead. Then do:
 
 ```bash
 $ make apply

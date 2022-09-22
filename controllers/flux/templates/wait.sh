@@ -11,14 +11,15 @@ asFlux="sudo -u flux"
 # Broker Options: important!
 # The local-uri setting places the unix domain socket in rundir 
 #   if FLUX_URI is not set, tools know where to connect.
+#   -Slog-stderr-level= can be set to 7 for larger debug level
+#   or exposed as a variable
 brokerOptions="-Scron.directory=/etc/flux/system/cron.d \
   -Stbon.fanout=256 \
   -Srundir=/run/flux \
   -Sstatedir=${STATE_DIRECTORY:-/var/lib/flux} \
   -Slocal-uri=local:///run/flux/local \
   -Slog-stderr-level=6 \
-  -Slog-stderr-mode=local \
-  -Sbroker.exit-norestart=42"
+  -Slog-stderr-mode=local"
 
 # quorum settings influence how the instance treats missing ranks
 #   by default all ranks must be online before work is run, but
