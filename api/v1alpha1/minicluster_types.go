@@ -26,18 +26,14 @@ import (
 type MiniClusterSpec struct {
 	// Important: Run "make" and "make manifests" to regenerate code after modifying this file
 
-	// Container image must contain flux and flux-sched install
-	// +kubebuilder:default="fluxrm/flux-sched:focal"
-	Image string `json:"image"`
+	// Containers is one or more containers to be created in a pod.
+	// There should only be one container to run flux with runFlux
+	Containers []MiniClusterContainer `json:"containers"`
 
 	// Size (number of jobs to run)
 	// +kubebuilder:default=1
 	// +optional
 	Size int32 `json:"size"`
-
-	// Working directory to run command from
-	// +optional
-	WorkingDir string `json:"workingDir"`
 
 	// Run flux diagnostics on start instead of command
 	// +optional
@@ -49,13 +45,6 @@ type MiniClusterSpec struct {
 	// +optional
 	DeadlineSeconds int64 `json:"deadlineSeconds"`
 
-	// Allow the user to dictate pulling
-	// By default we pull if not present. Setting
-	// this to true will indicate to pull always
-	// +kubebuilder:default=false
-	// +optional
-	PullAlways bool `json:"pullAlways"`
-
 	// localDeploy should be true for development, or deploying in the
 	// case that there isn't an actual kubernetes cluster (e.g., you
 	// are not using make deploy. It uses a persistent volume instead of
@@ -63,6 +52,27 @@ type MiniClusterSpec struct {
 	// +kubebuilder:default=false
 	// +optional
 	LocalDeploy bool `json:"localDeploy"`
+}
+
+// MiniClusterStatus defines the observed state of Flux
+type MiniClusterStatus struct {
+
+	// The JobUid is set internally to associate to a miniCluster
+	JobId string `json:"jobid"`
+
+	// conditions hold the latest Flux Job and MiniCluster states
+	Conditions []metav1.Condition `json:"conditions,omitempty"`
+}
+
+type MiniClusterContainer struct {
+
+	// Container image must contain flux and flux-sched install
+	// +kubebuilder:default="fluxrm/flux-sched:focal"
+	Image string `json:"image"`
+
+	// Working directory to run command from
+	// +optional
+	WorkingDir string `json:"workingDir"`
 
 	// Allow the user to pull authenticated images
 	// By default no secret is selected. Setting
@@ -75,16 +85,18 @@ type MiniClusterSpec struct {
 	// Single user executable to provide to flux start
 	// +optional
 	Command string `json:"command"`
-}
 
-// MiniClusterStatus defines the observed state of Flux
-type MiniClusterStatus struct {
+	// Allow the user to dictate pulling
+	// By default we pull if not present. Setting
+	// this to true will indicate to pull always
+	// +kubebuilder:default=false
+	// +optional
+	PullAlways bool `json:"pullAlways"`
 
-	// The JobUid is set internally to associate to a miniCluster
-	JobId string `json:"jobid"`
-
-	// conditions hold the latest Flux Job and MiniCluster states
-	Conditions []metav1.Condition `json:"conditions,omitempty"`
+	// Main container to run flux (only should be one)
+	// +kubebuilder:default=true
+	// +optional
+	FluxRunner bool `json:"runFlux"`
 }
 
 //+kubebuilder:object:root=true
@@ -99,13 +111,31 @@ type MiniCluster struct {
 	Status MiniClusterStatus `json:"status,omitempty"`
 }
 
-// SetDefaults ensures that empty settings are defined with defaults
-func (f *MiniCluster) PrintDefaults() {
+// Validate ensures we have data that is needed, and sets defaults if needed
+func (f *MiniCluster) Validate() bool {
 	fmt.Println()
-	fmt.Printf("🤓 MiniCluster.Image %s\n", f.Spec.Image)
+
+	// Global (entire cluster) settings
 	fmt.Printf("🤓 MiniCluster.DeadlineSeconds %d\n", f.Spec.DeadlineSeconds)
-	fmt.Printf("🤓 MiniCluster.Command %s\n", f.Spec.Command)
 	fmt.Printf("🤓 MiniCluster.Size %s\n", fmt.Sprint(f.Spec.Size))
+
+	// We should have only one flux runner
+	valid := true
+	fluxRunners := 0
+
+	for i, container := range f.Spec.Containers {
+		name := fmt.Sprintf("MiniCluster.Container.%d", i)
+		fmt.Printf("🤓 %s.Image %s\n", name, container.Image)
+		fmt.Printf("🤓 %s.Command %s\n", name, container.Command)
+		fmt.Printf("🤓 %s.FluxRunner %t\n", name, container.FluxRunner)
+		if container.FluxRunner {
+			fluxRunners += 1
+		}
+	}
+	if fluxRunners != 1 {
+		valid = false
+	}
+	return valid
 }
 
 //+kubebuilder:object:root=true

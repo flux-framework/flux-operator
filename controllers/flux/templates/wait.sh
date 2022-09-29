@@ -149,8 +149,11 @@ else
         printf "\n🌀${asFlux} flux start -o --config /etc/flux/config ${brokerOptions} $@\n"
         ${asFlux} flux start -o --config /etc/flux/config ${brokerOptions} $@
     else
-        # Just run start on worker nodes
+        # Just run start on worker nodes, with some delay to let rank 0 start first
         printf "\n🌀${asFlux} flux start -o --config /etc/flux/config ${brokerOptions}\n"
+
+        # We have the sleep here to give the main rank some time to start first (and not miss the workers)
+        sleep 5
         ${asFlux} flux start -o --config /etc/flux/config ${brokerOptions}
     fi
 fi

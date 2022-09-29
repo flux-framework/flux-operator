@@ -397,7 +397,13 @@ whole thing to come up and run. If `make log` doesn't show you the main node
 ```bash
 $ kubectl logs -n flux-operator flux-sample-0-zfbvm
 # or
-$ ./script/log.sh 
+$ ./script/log.sh flux-sample-0-zfbvm
+```
+For a multi-container deployment, you'll also need to specify the container name, which
+will be your CRD name plus index of the container:
+
+```bash
+./script/log.sh flux-sample-0-gnmlj flux-sample-0
 ```
 
 What is happening now is that the main rank (0) finishes and the others sort of are waiting

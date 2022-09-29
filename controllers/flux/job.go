@@ -11,6 +11,8 @@ SPDX-License-Identifier: Apache-2.0
 package controllers
 
 import (
+	"fmt"
+
 	batchv1 "k8s.io/api/batch/v1"
 	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
@@ -60,7 +62,7 @@ func (r *MiniClusterReconciler) newMiniClusterJob(cluster *api.MiniCluster) *bat
 					Volumes:          getVolumes(cluster),
 					Containers:       containers,
 					RestartPolicy:    corev1.RestartPolicyOnFailure,
-					ImagePullSecrets: getImagePullSecret(cluster),
+					ImagePullSecrets: getImagePullSecrets(cluster),
 				}},
 		},
 	}
@@ -70,37 +72,50 @@ func (r *MiniClusterReconciler) newMiniClusterJob(cluster *api.MiniCluster) *bat
 
 func (r *MiniClusterReconciler) getMiniClusterContainers(cluster *api.MiniCluster) []corev1.Container {
 
-	// Allow the user to dictate pulling
-	pullPolicy := corev1.PullIfNotPresent
-	if (*cluster).Spec.PullAlways {
-		pullPolicy = corev1.PullAlways
-	}
-	// Create the initial "driver" container to start flux
-	containers := []corev1.Container{
-		{
-			// Call this the driver container, number 0
-			Name:            cluster.Name,
-			Image:           (*cluster).Spec.Image,
-			ImagePullPolicy: pullPolicy,
+	// Create the containers for the pod
+	containers := []corev1.Container{}
 
-			// This is a wrapper that is going to wait for the generation of update_hosts.sh
-			// Once it's there, we update /etc/hosts, and run the command to start flux.
-			Command:      []string{"/bin/bash", "/flux_operator/wait.sh", (*cluster).Spec.Command},
-			WorkingDir:   (*cluster).Spec.WorkingDir,
-			VolumeMounts: getVolumeMounts(cluster),
-			Stdin:        true,
-			TTY:          true,
-		},
+	for i, container := range cluster.Spec.Containers {
+
+		// Allow dictating pulling on the level of the container
+		pullPolicy := corev1.PullIfNotPresent
+		if container.PullAlways {
+			pullPolicy = corev1.PullAlways
+		}
+
+		// Is this our main flux runner?
+		command := []string{"/bin/bash", "-c", container.Command}
+
+		// This is a wrapper that is going to wait for the generation of update_hosts.sh
+		// Once it's there, we update /etc/hosts, and run the command to start flux.
+		if container.FluxRunner {
+			command = []string{"/bin/bash", "/flux_operator/wait.sh", container.Command}
+		}
+		newContainer := corev1.Container{
+
+			// Call this the driver container, number 0
+			Name:            fmt.Sprintf("%s-%d", cluster.Name, i),
+			Image:           container.Image,
+			ImagePullPolicy: pullPolicy,
+			Command:         command,
+			WorkingDir:      container.WorkingDir,
+			VolumeMounts:    getVolumeMounts(cluster),
+			Stdin:           true,
+			TTY:             true,
+		}
+		containers = append(containers, newContainer)
 	}
 	return containers
 }
 
-// Function to return list of objects references for
-// imagePullSecrets. Current Spec only allows for a
-// single secret to be used.
-func getImagePullSecret(cluster *api.MiniCluster) []corev1.LocalObjectReference {
-	pullSecrets := []corev1.LocalObjectReference{
-		corev1.LocalObjectReference{Name: cluster.Spec.ImagePullSecret},
+// getImagePullSecrets returns a list of secret object references for each container.
+func getImagePullSecrets(cluster *api.MiniCluster) []corev1.LocalObjectReference {
+	pullSecrets := []corev1.LocalObjectReference{}
+	for _, container := range cluster.Spec.Containers {
+		if container.ImagePullSecret != "" {
+			newSecret := corev1.LocalObjectReference{Name: container.ImagePullSecret}
+			pullSecrets = append(pullSecrets, newSecret)
+		}
 	}
 	return pullSecrets
 }

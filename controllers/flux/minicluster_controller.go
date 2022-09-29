@@ -25,7 +25,6 @@ import (
 	"k8s.io/apimachinery/pkg/api/errors"
 
 	api "flux-framework/flux-operator/api/v1alpha1"
-	jobctrl "flux-framework/flux-operator/pkg/job"
 )
 
 // This interface allows us to define a NotifyMiniClusterUpdate function
@@ -117,14 +116,12 @@ func (r *MiniClusterReconciler) Reconcile(ctx context.Context, req ctrl.Request)
 		return ctrl.Result{}, nil
 	}
 
-	// Show parameters provided
-	cluster.PrintDefaults()
-
-	// Get the current job status
-	status := jobctrl.GetCondition(&cluster)
-
-	// TODO how can we use Status (Conditions) here?
-	r.log.Info("🌀 Reconciling Mini Cluster", "Image: ", cluster.Spec.Image, "Command: ", cluster.Spec.Command, "Name:", cluster.Status.JobId, "Status:", status)
+	// Show parameters provided and validate one flux runner
+	if !cluster.Validate() {
+		r.log.Info("🌀 Your MiniCluster should have exactly one container with runFlux true. Canceling!")
+		return ctrl.Result{}, nil
+	}
+	r.log.Info("🌀 Reconciling Mini Cluster", "Containers: ", len(cluster.Spec.Containers))
 
 	// Ensure we have the minicluster (get or create!)
 	result, err := r.ensureMiniCluster(ctx, &cluster)

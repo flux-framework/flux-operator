@@ -134,11 +134,18 @@ clean:
 applyall:
 	bin/kustomize build config/samples | kubectl apply -f -
 
+# This applies the basic minicluster (and not extended examples)
 apply:
 	kubectl apply -f config/samples/flux-framework.org_v1alpha1_minicluster.yaml
 
+applymulti:
+	kubectl apply -f config/samples/flux-framework.org_v1alpha1_minicluster_multiple_containers.yaml
+
 # Clean, apply and run, and apply the job
 redo: clean apply run
+
+# Clean, apply and run multiple container example
+multi: clean applymulti run 
 
 log:
 	kubectl logs -n flux-operator job.batch/flux-sample
