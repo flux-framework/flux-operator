@@ -148,7 +148,7 @@ redo: clean apply run
 multi: clean applymulti run 
 
 log:
-	kubectl logs -n flux-operator job.batch/flux-sample
+	kubectl logs -n flux-operator job.batch/flux-sample $@
 
 ##@ Build
 

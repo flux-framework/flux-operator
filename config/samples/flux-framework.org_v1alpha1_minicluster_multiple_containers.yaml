@@ -1,0 +1,41 @@
+apiVersion: flux-framework.org/v1alpha1
+kind: MiniCluster
+metadata:
+  # We are using a consistent name here just to make debug during development easier
+  name: flux-sample
+  namespace: flux-operator
+spec:
+  # Set to true to use volume mounts instead of volume claims
+  localDeploy: true
+
+  # This is a list because a pod can support multiple containers
+  containers:
+      # The container URI to pull (currently needs to be public)
+    - image: vanessa/flux-demo:mpi
+      # The main flux command to run - the job will exit after
+      command: ". /etc/profile && mpirun --allow-run-as-root --mca orte_launch_agent /opt/view/bin/orted --mca plm_rsh_agent rsh -x PATH -np 2 --map-by socket lmp -v x 4 -v y 2 -v z 2 -in in.reaxc.hns -nocite"
+      # Always pull the image (if you are updating the image between runs, set to true)!
+      pullAlways: true
+      workdir: /root/lammps/HNS
+      postStartExec: "while ! bash -c \"</dev/tcp/localhost/22\" >/dev/null 2>&1; do sleep 0.1; done"
+
+    - image: vanessa/flux-demo:amg
+      command: /usr/sbin/sshd -De && sleep infinity
+      # Always pull the image (if you are updating the image between runs, set to true)!
+      pullAlways: false
+      # This defaults to true - this is the container we want to run flux in. This means
+      # that if you have more than one container, set the non-flux runners to false.
+      # For one container, you can leave this unset for the default. This will be
+      # validated in case you make a mistake :)
+      runFlux: false
+      postStartExec: "while ! bash -c \"</dev/tcp/localhost/22\" >/dev/null 2>&1; do sleep 0.1; done"
+
+  # Number of pods to create for MiniCluster
+  size: 4
+  # Diagnostics runs flux commands for diagnostics, and a final sleep command
+  # That makes it easy for you to shell into the pod to look around
+  diagnostics: false
+  # Deadline in seconds, if not set there is no deadline
+  # deadlineSeconds: 100
+  # Name of an already created ImagePullSecret for the image specfied above
+  # imagePullSecret: flux-image-secret

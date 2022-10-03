@@ -91,6 +91,18 @@ func (r *MiniClusterReconciler) getMiniClusterContainers(cluster *api.MiniCluste
 		if container.FluxRunner {
 			command = []string{"/bin/bash", "/flux_operator/wait.sh", container.Command}
 		}
+
+		// Do we have a postStartExec Lifecycle command?
+		lifecycle := corev1.Lifecycle{}
+		if container.LifeCyclePostStartExec != "" {
+			r.log.Info("🌀 MiniCluster", "LifeCycle.PostStartExec", container.LifeCyclePostStartExec)
+			lifecycle.PostStart = &corev1.LifecycleHandler{
+				Exec: &corev1.ExecAction{
+					Command: []string{container.LifeCyclePostStartExec},
+				},
+			}
+		}
+
 		newContainer := corev1.Container{
 
 			// Call this the driver container, number 0
@@ -102,6 +114,7 @@ func (r *MiniClusterReconciler) getMiniClusterContainers(cluster *api.MiniCluste
 			VolumeMounts:    getVolumeMounts(cluster),
 			Stdin:           true,
 			TTY:             true,
+			Lifecycle:       &lifecycle,
 		}
 		containers = append(containers, newContainer)
 	}

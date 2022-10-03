@@ -97,6 +97,9 @@ type MiniClusterContainer struct {
 	// +kubebuilder:default=true
 	// +optional
 	FluxRunner bool `json:"runFlux"`
+
+	// Lifecycle can handle post start commands, etc.
+	LifeCyclePostStartExec string `json:"postStartExec"`
 }
 
 //+kubebuilder:object:root=true
