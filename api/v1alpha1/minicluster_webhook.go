@@ -36,7 +36,7 @@ func (r *MiniCluster) SetupWebhookWithManager(mgr ctrl.Manager) error {
 
 // TODO(user): EDIT THIS FILE!  THIS IS SCAFFOLDING FOR YOU TO OWN!
 
-//+kubebuilder:webhook:path=/mutate-flux-framework-org-v1alpha1-minicluster,mutating=true,failurePolicy=fail,sideEffects=None,groups={},resources=miniclusters,verbs=create;update,versions=v1alpha1,name=mminicluster.kb.io,admissionReviewVersions=v1
+//+kubebuilder:webhook:path=/mutate-flux-framework-org-v1alpha1-minicluster,mutating=true,failurePolicy=fail,sideEffects=None,groups={flux-framework.org},resources=miniclusters,verbs=create;update,versions=v1alpha1,name=mminicluster.kb.io,admissionReviewVersions=v1
 
 var _ webhook.Defaulter = &MiniCluster{}
 
@@ -46,7 +46,7 @@ func (r *MiniCluster) Default() {
 }
 
 // TODO(user): change verbs to "verbs=create;update;delete" if you want to enable deletion validation.
-//+kubebuilder:webhook:path=/validate-flux-framework-org-v1alpha1-minicluster,mutating=false,failurePolicy=fail,sideEffects=None,groups={},resources=miniclusters,verbs=create;update,versions=v1alpha1,name=vminicluster.kb.io,admissionReviewVersions=v1
+//+kubebuilder:webhook:path=/validate-flux-framework-org-v1alpha1-minicluster,mutating=false,failurePolicy=fail,sideEffects=None,groups={flux-framework.org},resources=miniclusters,verbs=create;update,versions=v1alpha1,name=vminicluster.kb.io,admissionReviewVersions=v1
 
 var _ webhook.Validator = &MiniCluster{}
 
