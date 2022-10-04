@@ -57,6 +57,9 @@ spec:
                         of an already existing imagePullSecret will specify that secret
                         in the pod spec.
                       type: string
+                    postStartExec:
+                      description: Lifecycle can handle post start commands, etc.
+                      type: string
                     pullAlways:
                       default: false
                       description: Allow the user to dictate pulling By default we

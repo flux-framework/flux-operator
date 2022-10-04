@@ -99,6 +99,7 @@ type MiniClusterContainer struct {
 	FluxRunner bool `json:"runFlux"`
 
 	// Lifecycle can handle post start commands, etc.
+	// +optional
 	LifeCyclePostStartExec string `json:"postStartExec"`
 }
 
