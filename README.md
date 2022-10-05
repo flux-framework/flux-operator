@@ -1,6 +1,6 @@
 # Flux Operator
 
-![docs/09-07-2022/design-three-team.png](docs/09-07-2022/design-three-team.png)
+![docs/the-operator.jpg](docs/the-operator.jpg)
 
 🚧️ Under Construction! 🚧️
 
@@ -33,6 +33,8 @@ And you can find the following:
  - [Documentation](docs) is currently a place to document design, and eventually can be more user-facing docs.
 
 ## Design
+
+![docs/09-07-2022/design-three-team.png](docs/09-07-2022/design-three-team.png)
 
  - A **MiniCluster** is an [indexed job](https://kubernetes.io/docs/tasks/job/indexed-parallel-processing-static/) so we can create N copies of the "same" base containers (each with flux, and the connected workers in our cluster)
  - The flux config is written to a volume at `/etc/flux/config` (created via a config map) as a brokers.toml file.
