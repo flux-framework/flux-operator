@@ -64,7 +64,7 @@ spec:
 
 And then:
 
-```
+```console
 # Start a minikube cluster
 $ minikube start
 
@@ -87,14 +87,15 @@ There is also a courtesy function to clean, and apply the samples:
 ```bash
 $ make clean  # remove old flux-operator namespaced items
 $ make apply  # apply the setup and job config
-$ make run    # make the cluster (e.g.., setting up the batch job)
+$ make run    # make the cluster
 ```
 
-or run all three for easy development! The below command ensures to submit a job after the FluxSetup is applied so it won't be ignored (jobs submit before there is a cluster setup are ignored and require the user to re-submit).
+or run all three for easy development!
 
 ```bash
 $ make redo  # clean, apply, and run
 ```
+
 To see logs for the job, you'd do:
 
 ```bash
@@ -147,6 +148,48 @@ $ minikube service -n flux-operator flux-restful-service --url=true
 ```
 
 So let's use the port forward for now (for development) until we test this out more.
+
+
+### Submitting Jobs
+
+One your cluster is running, check the logs for the index 0 pod to ensure your API is running.
+That will also show you your `FLUX_USER` and `FLUX_TOKEN` that you can export to the environment.
+
+```bash
+# get the job pod identifers
+$ make list
+# use the -0 one to view logs
+bash script/log.sh flux-sample-0-x2j6z
+```
+```console
+🔑 Your Credentials! These will allow you to control your MiniCluster with flux-framework/flux-restful-api
+export FLUX_TOKEN=9c605129-3ddc-41e2-9a23-38f59fb8f8e0
+export FLUX_USER=flux
+
+🌀sudo -u flux flux start -o --config /etc/flux/config ...
+```
+
+Note that they appear slightly above the command, which isn't at the bottom of the log!
+Finally, you can use the [flux-framework/flux-restful-api](https://github.com/flux-framework/flux-restful-api)
+to submit a job (under development - will be pip installable client soon!)
+
+```python
+from flux_restful_client import FluxRestfulClient
+
+cli = FluxRestfulClient()
+
+# Define our jop
+command = "mpirun -x PATH -np 2 --map-by socket lmp -v x 2 -v y 2 -v z 2 -in in.reaxc.hns -nocite"
+
+# Submit the job to flux
+print(f"😴 Submitting job: {command}")
+res = cli.submit(command=command)
+print(json.dumps(res, indent=4))
+
+print("🍓 Getting job info...")
+res = cli.jobs(res["id"])
+print(json.dumps(res, indent=4))
+```
 
 ### Production Deployment
 

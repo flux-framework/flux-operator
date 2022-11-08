@@ -19,6 +19,7 @@ import (
 
 	jobctrl "flux-framework/flux-operator/pkg/job"
 
+	"github.com/google/uuid"
 	batchv1 "k8s.io/api/batch/v1"
 	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
@@ -328,10 +329,13 @@ func generateFluxConfig(cluster *api.MiniCluster) string {
 // generateWaitScript generates the main script to start everything up!
 func generateWaitScript(cluster *api.MiniCluster) string {
 
+	// Generate a token uuid
+	fluxToken := uuid.New()
+
 	// The first pod (0) should always generate the curve certificate
 	mainHost := fmt.Sprintf("%s-0", cluster.Name)
 	hosts := fmt.Sprintf("%s-[%s]", cluster.Name, generateRange(int(cluster.Spec.Size)))
-	waitScript := fmt.Sprintf(waitToStartTemplate, mainHost, hosts, cluster.Spec.Diagnostics)
+	waitScript := fmt.Sprintf(waitToStartTemplate, fluxToken.String(), mainHost, hosts, cluster.Spec.Diagnostics)
 	return waitScript
 }
 

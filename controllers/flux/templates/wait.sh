@@ -71,6 +71,9 @@ done
 # Show host updates
 cat /etc/hosts
 
+# uuid for flux token (auth)
+FLUX_TOKEN="%s"
+
 # Main host <name>-0
 mainHost="%s"
 
@@ -148,12 +151,22 @@ else
         startServer="uvicorn app.main:app --host=0.0.0.0 --port=5000"
         git clone --depth 1 https://github.com/flux-framework/flux-restful-api /flux-restful-api 
         cd /flux-restful-api
-        # TODO we will need to have a varible for python here?
-        python3 -m pip install -r requirements.txt
+        # Install python requirements, with preference for python3
+        python3 -m pip install -r requirements.txt || python -m pip install -r requirements.txt
+
+        # Generate a random flux token
+        FLUX_USER=flux 
+        FLUX_REQUIRE_AUTH=true
+        export FLUX_TOKEN FLUX_USER FLUX_REQUIRE_AUTH
+
+        printf "\n 🔑 Your Credentials! These will allow you to control your MiniCluster with flux-framework/flux-restful-api\n"
+        printf "export FLUX_TOKEN=${FLUX_TOKEN}\n"
+        printf "export FLUX_USER=${FLUX_USER}\n"
+
         # -o is an "option" for the broker
         # -S corresponds to a shortened --setattr=ATTR=VAL
         printf "\n🌀${asFlux} flux start -o --config /etc/flux/config ${brokerOptions} ${startServer}\n"
-        ${asFlux} flux start -o --config /etc/flux/config ${brokerOptions} ${startServer}
+        ${asFlux} -E flux start -o --config /etc/flux/config ${brokerOptions} ${startServer}
     else
         # Just run start on worker nodes, with some delay to let rank 0 start first
         printf "\n🌀${asFlux} flux start -o --config /etc/flux/config ${brokerOptions}\n"
