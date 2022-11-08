@@ -21,9 +21,7 @@ import (
 
 	batchv1 "k8s.io/api/batch/v1"
 	corev1 "k8s.io/api/core/v1"
-	networkv1 "k8s.io/api/networking/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-	"k8s.io/apimachinery/pkg/util/intstr"
 	ctrl "sigs.k8s.io/controller-runtime"
 	"sigs.k8s.io/controller-runtime/pkg/client"
 
@@ -32,10 +30,6 @@ import (
 	"k8s.io/apimachinery/pkg/types"
 
 	api "flux-framework/flux-operator/api/v1alpha1"
-)
-
-var (
-	serviceName = "flux-restful-service"
 )
 
 // This is a MiniCluster! A MiniCluster is associated with a running MiniCluster and include:
@@ -118,109 +112,6 @@ func (r *MiniClusterReconciler) ensureMiniCluster(ctx context.Context, cluster *
 
 	// And we re-queue so the Ready condition triggers next steps!
 	return ctrl.Result{Requeue: true}, nil
-}
-
-// exposeService will expose a service
-func (r *MiniClusterReconciler) exposeService(ctx context.Context, cluster *api.MiniCluster) (ctrl.Result, error) {
-
-	existing := &corev1.Service{}
-	err := r.Client.Get(ctx, types.NamespacedName{Name: serviceName, Namespace: cluster.Namespace}, existing)
-	if err != nil {
-		if errors.IsNotFound(err) {
-			_, err = r.createMiniClusterService(ctx, cluster)
-		}
-		return ctrl.Result{}, err
-	}
-
-	ingress := &networkv1.Ingress{}
-	err = r.Client.Get(ctx, types.NamespacedName{Name: serviceName, Namespace: cluster.Namespace}, ingress)
-	if err != nil {
-		if errors.IsNotFound(err) {
-			err = r.createMiniClusterIngress(ctx, cluster, existing)
-		}
-		return ctrl.Result{}, err
-	}
-	return ctrl.Result{}, err
-}
-
-// createMiniClusterService creates the service for the minicluster
-func (r *MiniClusterReconciler) createMiniClusterService(ctx context.Context, cluster *api.MiniCluster) (*corev1.Service, error) {
-
-	r.log.Info("Creating service with: ", serviceName, cluster.Namespace)
-	service := &corev1.Service{
-		ObjectMeta: metav1.ObjectMeta{Name: serviceName, Namespace: cluster.Namespace},
-		Spec: corev1.ServiceSpec{
-			Type: corev1.ServiceTypeNodePort,
-			Ports: []corev1.ServicePort{
-				{
-					Name:       serviceName,
-					Protocol:   corev1.ProtocolTCP,
-					Port:       5000,
-					TargetPort: intstr.FromInt(5000),
-				},
-			},
-			ExternalIPs: []string{"192.168.0.194"},
-		},
-	}
-	err := ctrl.SetControllerReference(cluster, service, r.Scheme)
-	if err != nil {
-		r.log.Error(err, "🔴 Create service", "Service", serviceName)
-		return service, err
-	}
-	err = r.Client.Create(ctx, service)
-	if err != nil {
-		r.log.Error(err, "🔴 Create service", "Service", serviceName)
-	}
-	return service, err
-}
-
-// createMiniClusterIngress exposes the service for the minicluster
-func (r *MiniClusterReconciler) createMiniClusterIngress(ctx context.Context, cluster *api.MiniCluster, service *corev1.Service) error {
-
-	pathType := networkv1.PathTypePrefix
-	ingressBackend := networkv1.IngressBackend{
-		Service: &networkv1.IngressServiceBackend{
-			Name: service.Name,
-			Port: networkv1.ServiceBackendPort{
-				Number: service.Spec.Ports[0].NodePort,
-			},
-		},
-	}
-	ingress := &networkv1.Ingress{
-		ObjectMeta: metav1.ObjectMeta{
-			Name:      service.Name,
-			Namespace: service.Namespace,
-		},
-		Spec: networkv1.IngressSpec{
-			DefaultBackend: &ingressBackend,
-			Rules: []networkv1.IngressRule{
-				{
-					IngressRuleValue: networkv1.IngressRuleValue{
-						HTTP: &networkv1.HTTPIngressRuleValue{
-							Paths: []networkv1.HTTPIngressPath{
-								{
-									PathType: &pathType,
-									Backend:  ingressBackend,
-									Path:     "/",
-								},
-							},
-						},
-					},
-				},
-			},
-		},
-	}
-	err := ctrl.SetControllerReference(cluster, ingress, r.Scheme)
-	if err != nil {
-		r.log.Error(err, "🔴 Create ingress", "Service", serviceName)
-		return err
-	}
-	err = r.Client.Create(ctx, ingress)
-	if err != nil {
-		r.log.Error(err, "🔴 Create ingress", "Service", serviceName)
-		return err
-	}
-	return nil
 }
 
 // getMiniCluster does an actual check if we have a batch job in the namespace

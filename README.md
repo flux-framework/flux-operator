@@ -124,6 +124,29 @@ And shell into one with the helper script:
 ```bash
 ./script/shell.sh flux-sample-0-b5rw6
 ```
+### Interacting with Services
+
+I'm fairly new to this, so this is a WIP! I found that (to start) the only reliable thing
+to work is a port forward:
+
+#### port-forward
+
+If we run as a ClusterIP, we can accomplish the same with a one off `kubectl port-forward`:
+
+```console
+kubectl port-forward -n flux-operator flux-sample-0-zdhkp 5000:5000
+Forwarding from 127.0.0.1:5000 -> 5000
+```
+This means you can open [http://localhost:5000](http://localhost:5000) to see the restful API (and interact with it there).
+
+Ideally we could make something persitent via ClusterIP -> Ingress but I haven't gotten this working yet.
+This is also supposed to work (and shows an IP but doesn't work beyond that).
+
+```console
+$ minikube service -n flux-operator flux-restful-service --url=true
+```
+
+So let's use the port forward for now (for development) until we test this out more.
 
 ### Production Deployment
 
