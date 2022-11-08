@@ -16,6 +16,7 @@ import (
 	"github.com/go-logr/logr"
 	batchv1 "k8s.io/api/batch/v1"
 	corev1 "k8s.io/api/core/v1"
+	networkv1 "k8s.io/api/networking/v1"
 
 	"k8s.io/apimachinery/pkg/runtime"
 	"k8s.io/client-go/rest"
@@ -145,8 +146,10 @@ func (r *MiniClusterReconciler) SetupWithManager(mgr ctrl.Manager) error {
 		// they return a boolean to indicate if we should reconcile given the event
 		// If we don't need these extra filters we can delete this line and events.go
 		WithEventFilter(r).
+		Owns(&networkv1.Ingress{}).
 		Owns(&batchv1.Job{}).
 		Owns(&corev1.Secret{}).
+		Owns(&corev1.Service{}).
 		Owns(&corev1.Pod{}).
 		Owns(&corev1.ConfigMap{}).
 		Owns(&batchv1.Job{}).

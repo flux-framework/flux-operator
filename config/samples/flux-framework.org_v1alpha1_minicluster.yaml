@@ -10,7 +10,7 @@ spec:
   # This is a list because a pod can support multiple containers
   containers:
     # The container URI to pull (currently needs to be public)
-    - image: ghcr.io/flux-framework/demo-lammps-mpi:flux-sched-focal-v0.22.0
+    - image: ghcr.io/rse-ops/ghcr.io/rse-ops/lammps-mpi:flux-sched-focal-v0.24.0
       # The main flux command to run - the job will exit after
       command: mpirun -x PATH -np 2 --map-by socket lmp -v x 2 -v y 2 -v z 2 -in in.reaxc.hns -nocite
       # You can set the working directory if your container WORKDIR is not correct.
