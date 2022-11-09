@@ -125,6 +125,7 @@ And shell into one with the helper script:
 ```bash
 ./script/shell.sh flux-sample-0-b5rw6
 ```
+
 ### Interacting with Services
 
 I'm fairly new to this, so this is a WIP! I found that (to start) the only reliable thing
@@ -170,13 +171,67 @@ export FLUX_USER=flux
 ```
 
 Note that they appear slightly above the command, which isn't at the bottom of the log!
-Finally, you can use the [flux-framework/flux-restful-api](https://github.com/flux-framework/flux-restful-api)
-to submit a job (under development - will be pip installable client soon!)
+Finally, you can use the [flux-framework/flux-restful-api](https://flux-framework.org/flux-restful-api/getting_started/user-guide.html#python)
+Python client to submit a job.
+
+```bash
+$ pip install flux-restful-client
+```
+And then (after you've started port forwarding) you can either submit on the command line:
+
+```bash
+$ flux-restful-cli submit mpirun -x PATH -np 2 --map-by socket lmp -v x 2 -v y 2 -v z 2 -in in.reaxc.hns -nocite
+```
+```console
+{
+    "Message": "Job submit.",
+    "id": 19099568570368
+}
+```
+And get info:
+
+```bash
+$ flux-restful-cli info 19099568570368
+```
+```console
+{
+    "job": {
+        "id": 19099568570368,
+        "userid": 1234,
+        "urgency": 16,
+        "priority": 16,
+        "t_submit": 1668016089.6785755,
+        "t_depend": 1668016089.6785755,
+        "t_run": 1668016089.7115972,
+        "t_cleanup": 1668016089.776318,
+        "t_inactive": 1668016089.7821443,
+        "state": 64,
+        "name": "mpirun",
+        "ntasks": 1,
+        "nnodes": 1,
+        "ranks": "3",
+        "nodelist": "flux-sample-3",
+        "success": false,
+        "exception_occurred": false,
+        "result": 2,
+        "expiration": 1668620889.0,
+        "annotations": {
+            "sched": {
+                "queue": "default"
+            }
+        },
+        "waitstatus": 256
+    }
+}
+```
+
+We will need a way to be able to stream logs, which we could do when launching the command directly (and we can only guess from here).
+Or from within Python:
 
 ```python
-from flux_restful_client import FluxRestfulClient
+from flux_restful_client.main import get_client
 
-cli = FluxRestfulClient()
+cli = get_client()
 
 # Define our jop
 command = "mpirun -x PATH -np 2 --map-by socket lmp -v x 2 -v y 2 -v z 2 -in in.reaxc.hns -nocite"
