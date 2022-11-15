@@ -8,7 +8,9 @@ jobs:
   generate-docs:
     runs-on: ubuntu-latest
     steps:
+
     - uses: actions/checkout@v3
+      if: (github.event_name != 'pull_request')
       with:
         ref: gh-pages
 
@@ -17,13 +19,13 @@ jobs:
 
     - name: Generate Docs
       run: |
-        export PATH="/usr/share/miniconda/bin:$PATH"
+        export PATH="/usr/share/miniconda/bin:$PATH"        
         root=$PWD
         source activate fluxdocs
-        root=$PWD
         cd docs
         pip install -r requirements.txt
         make html
+        ls
         mv $root/.git _build/html/.git
         rm -rf $root
         mv _build/html $root
