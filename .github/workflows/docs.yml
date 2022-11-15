@@ -1,5 +1,6 @@
 name: docs flux-operator
 on:
+  pull_request: []
   push:
     branches: [main]
 
@@ -11,11 +12,17 @@ jobs:
       with:
         ref: gh-pages
 
+    - name: Create conda environment
+      run: conda create --quiet -c conda-forge --name fluxdocs sphinx-material
+
     - name: Generate Docs
       run: |
+        export PATH="/usr/share/miniconda/bin:$PATH"
+        root=$PWD
+        source activate fluxdocs
         root=$PWD
         cd docs
-        python3 -m pip install -r requirements.txt
+        pip install -r requirements.txt
         make html
         mv $root/.git _build/html/.git
         rm -rf $root
@@ -25,6 +32,7 @@ jobs:
         ls
 
     - name: Deploy 🚀
+      if: (github.event_name != 'pull_request')
       uses: JamesIves/github-pages-deploy-action@ba1486788b0490a235422264426c45848eac35c6 # v4.4.1
       with:
         branch: gh-pages
