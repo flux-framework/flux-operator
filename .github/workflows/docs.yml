@@ -25,6 +25,7 @@ jobs:
         pip install -r requirements.txt
         make html
         ls
+        ls _build
         mv $root/.git _build/html/.git
         rm -rf $root
         mv _build/html $root
