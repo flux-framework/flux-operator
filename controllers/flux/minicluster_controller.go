@@ -16,6 +16,7 @@ import (
 	"github.com/go-logr/logr"
 	batchv1 "k8s.io/api/batch/v1"
 	corev1 "k8s.io/api/core/v1"
+	networkv1 "k8s.io/api/networking/v1"
 
 	"k8s.io/apimachinery/pkg/runtime"
 	"k8s.io/client-go/rest"
@@ -25,7 +26,6 @@ import (
 	"k8s.io/apimachinery/pkg/api/errors"
 
 	api "flux-framework/flux-operator/api/v1alpha1"
-	jobctrl "flux-framework/flux-operator/pkg/job"
 )
 
 // This interface allows us to define a NotifyMiniClusterUpdate function
@@ -117,14 +117,12 @@ func (r *MiniClusterReconciler) Reconcile(ctx context.Context, req ctrl.Request)
 		return ctrl.Result{}, nil
 	}
 
-	// Show parameters provided
-	cluster.PrintDefaults()
-
-	// Get the current job status
-	status := jobctrl.GetCondition(&cluster)
-
-	// TODO how can we use Status (Conditions) here?
-	r.log.Info("🌀 Reconciling Mini Cluster", "Image: ", cluster.Spec.Image, "Command: ", cluster.Spec.Command, "Name:", cluster.Status.JobId, "Status:", status)
+	// Show parameters provided and validate one flux runner
+	if !cluster.Validate() {
+		r.log.Info("🌀 Your MiniCluster should have exactly one container with runFlux true. Canceling!")
+		return ctrl.Result{}, nil
+	}
+	r.log.Info("🌀 Reconciling Mini Cluster", "Containers: ", len(cluster.Spec.Containers))
 
 	// Ensure we have the minicluster (get or create!)
 	result, err := r.ensureMiniCluster(ctx, &cluster)
@@ -148,8 +146,10 @@ func (r *MiniClusterReconciler) SetupWithManager(mgr ctrl.Manager) error {
 		// they return a boolean to indicate if we should reconcile given the event
 		// If we don't need these extra filters we can delete this line and events.go
 		WithEventFilter(r).
+		Owns(&networkv1.Ingress{}).
 		Owns(&batchv1.Job{}).
 		Owns(&corev1.Secret{}).
+		Owns(&corev1.Service{}).
 		Owns(&corev1.Pod{}).
 		Owns(&corev1.ConfigMap{}).
 		Owns(&batchv1.Job{}).

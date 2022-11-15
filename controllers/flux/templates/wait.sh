@@ -71,6 +71,9 @@ done
 # Show host updates
 cat /etc/hosts
 
+# uuid for flux token (auth)
+FLUX_TOKEN="%s"
+
 # Main host <name>-0
 mainHost="%s"
 
@@ -144,13 +147,46 @@ else
 
     # Start flux with the original entrypoint
     if [ $(hostname) == "${mainHost}" ]; then
-        # -o is an "option" for the broker
-        # -S corresponds to a shortened --setattr=ATTR=VAL
-        printf "\n🌀${asFlux} flux start -o --config /etc/flux/config ${brokerOptions} $@\n"
-        ${asFlux} flux start -o --config /etc/flux/config ${brokerOptions} $@
-    else
-        # Just run start on worker nodes
+
+        # No command - use default to start server
+        echo "Extra arguments are: $@"
+        if [ "$@" == "" ]; then
+
+            # Start restful API server
+            startServer="uvicorn app.main:app --host=0.0.0.0 --port=5000"
+            git clone --depth 1 https://github.com/flux-framework/flux-restful-api /flux-restful-api 
+            cd /flux-restful-api
+
+            # Install python requirements, with preference for python3
+            python3 -m pip install -r requirements.txt || python -m pip install -r requirements.txt
+
+            # Generate a random flux token
+            FLUX_USER=flux 
+            FLUX_REQUIRE_AUTH=true
+            export FLUX_TOKEN FLUX_USER FLUX_REQUIRE_AUTH
+
+            printf "\n 🔑 Your Credentials! These will allow you to control your MiniCluster with flux-framework/flux-restful-api\n"
+            printf "export FLUX_TOKEN=${FLUX_TOKEN}\n"
+            printf "export FLUX_USER=${FLUX_USER}\n"
+
+            # -o is an "option" for the broker
+            # -S corresponds to a shortened --setattr=ATTR=VAL
+            printf "\n🌀${asFlux} flux start -o --config /etc/flux/config ${brokerOptions} ${startServer}\n"
+            ${asFlux} -E flux start -o --config /etc/flux/config ${brokerOptions} ${startServer}
+
+        # Case 2: Fall back to provided command
+        else
+            printf "\n🌀${asFlux} flux start -o --config /etc/flux/config ${brokerOptions} $@\n"
+            ${asFlux} -E flux start -o --config /etc/flux/config ${brokerOptions} $@
+        fi
+    else 
+        printf "\n😪 Sleeping to give RESTful server time to start...\n"
+        sleep 15
+
+        # Just run start on worker nodes, with some delay to let rank 0 start first
         printf "\n🌀${asFlux} flux start -o --config /etc/flux/config ${brokerOptions}\n"
+
+        # We have the sleep here to give the main rank some time to start first (and not miss the workers)
         ${asFlux} flux start -o --config /etc/flux/config ${brokerOptions}
     fi
 fi

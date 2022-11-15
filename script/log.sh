@@ -1,3 +1,3 @@
 #!/bin/bash
 # Usage ./log.sh <podname>
-kubectl logs -n flux-operator ${1}
+kubectl logs -n flux-operator ${@}

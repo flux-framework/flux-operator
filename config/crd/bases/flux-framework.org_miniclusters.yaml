@@ -38,9 +38,47 @@ spec:
               MiniCluster corresponds to a Batch Job -> StatefulSet + ConfigMaps A
               "task" within that cluster is flux running something.
             properties:
-              command:
-                description: Single user executable to provide to flux start
-                type: string
+              containers:
+                description: Containers is one or more containers to be created in
+                  a pod. There should only be one container to run flux with runFlux
+                items:
+                  properties:
+                    command:
+                      description: 'Single user executable to provide to flux start
+                        IMPORTANT: This is left here, but not used in favor of exposing
+                        Flux via a Restful API. We Can remove this when that is finalized.'
+                      type: string
+                    image:
+                      default: fluxrm/flux-sched:focal
+                      description: Container image must contain flux and flux-sched
+                        install
+                      type: string
+                    imagePullSecret:
+                      description: Allow the user to pull authenticated images By
+                        default no secret is selected. Setting this with the name
+                        of an already existing imagePullSecret will specify that secret
+                        in the pod spec.
+                      type: string
+                    postStartExec:
+                      description: Lifecycle can handle post start commands, etc.
+                      type: string
+                    pullAlways:
+                      default: false
+                      description: Allow the user to dictate pulling By default we
+                        pull if not present. Setting this to true will indicate to
+                        pull always
+                      type: boolean
+                    runFlux:
+                      default: true
+                      description: Main container to run flux (only should be one)
+                      type: boolean
+                    workingDir:
+                      description: Working directory to run command from
+                      type: string
+                  required:
+                  - image
+                  type: object
+                type: array
               deadlineSeconds:
                 default: 31500000
                 description: Should the job be limited to a particular number of seconds?
@@ -50,15 +88,6 @@ spec:
               diagnostics:
                 description: Run flux diagnostics on start instead of command
                 type: boolean
-              image:
-                default: fluxrm/flux-sched:focal
-                description: Container image must contain flux and flux-sched install
-                type: string
-              imagePullSecret:
-                description: Allow the user to pull authenticated images By default
-                  no secret is selected. Setting this with the name of an already
-                  existing imagePullSecret will specify that secret in the pod spec.
-                type: string
               localDeploy:
                 default: false
                 description: localDeploy should be true for development, or deploying
@@ -66,21 +95,13 @@ spec:
                   you are not using make deploy. It uses a persistent volume instead
                   of a claim
                 type: boolean
-              pullAlways:
-                default: false
-                description: Allow the user to dictate pulling By default we pull
-                  if not present. Setting this to true will indicate to pull always
-                type: boolean
               size:
                 default: 1
                 description: Size (number of jobs to run)
                 format: int32
                 type: integer
-              workingDir:
-                description: Working directory to run command from
-                type: string
             required:
-            - image
+            - containers
             type: object
           status:
             description: MiniClusterStatus defines the observed state of Flux
