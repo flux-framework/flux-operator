@@ -23,6 +23,8 @@ spec:
       # Don't set a command unless you want to forgo running the restful server to submit
       # commands to! E.g., instead of starting the server, it will just run your job command.
       # command: lmp -v x 2 -v y 2 -v z 2 -in in.reaxc.hns -nocite
+      # Name of an already created ImagePullSecret for the image specfied above
+      # imagePullSecret: flux-image-secret
 
   # Number of pods to create for MiniCluster
   size: 4
@@ -31,5 +33,3 @@ spec:
   diagnostics: false
   # Deadline in seconds, if not set there is no deadline
   # deadlineSeconds: 100
-  # Name of an already created ImagePullSecret for the image specfied above
-  # imagePullSecret: flux-image-secret
