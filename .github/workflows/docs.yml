@@ -7,22 +7,33 @@ jobs:
   generate-docs:
     runs-on: ubuntu-latest
     steps:
+
     - uses: actions/checkout@v3
       with:
         ref: gh-pages
 
+    - name: Create conda environment
+      run: conda create --quiet -c conda-forge --name fluxdocs sphinx-material
+
     - name: Generate Docs
       run: |
+        export PATH="/usr/share/miniconda/bin:$PATH"        
         root=$PWD
+        source activate fluxdocs
         cd docs
-        python3 -m pip install -r requirements.txt
+        pip install -r requirements.txt
         make html
-        mv $root/.git _build/html/.git
-        rm -rf $root
-        mv _build/html $root
-        cd $root
-        touch .nojekyll
+        echo "ls"
         ls
+        echo "ls _build"
+        ls _build
+        mv $root/.git _build/html/.git
+        mv _build/html /tmp/site
+        rm -rf $root
+        cd /tmp/site
+        echo "ls /tmp/site"        
+        touch .nojekyll
+        ls .
 
     - name: Deploy 🚀
       uses: JamesIves/github-pages-deploy-action@ba1486788b0490a235422264426c45848eac35c6 # v4.4.1
