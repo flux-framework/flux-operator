@@ -2,6 +2,8 @@
 
 ### Design 3
 
+ - [ ] test better method from Aldo for networking
+ - [ ] we need pretty docs, now.
  - [ ] we need to test that N=1 case works as expected (not waiting for any workers) and 0 spits an error (for now it doesn't make sense)
  - [ ] can (and should) we use generics to reduce redudancy of code? (e.g., the `get<X>` functions) (@vsoch would like to do this!)
  - [ ] I think if a pod dies the IP address might change, so eventually we want to test that (and may need more logic for re-updating /etc/hosts)

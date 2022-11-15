@@ -19,9 +19,9 @@ import (
 
 	jobctrl "flux-framework/flux-operator/pkg/job"
 
+	"github.com/google/uuid"
 	batchv1 "k8s.io/api/batch/v1"
 	corev1 "k8s.io/api/core/v1"
-	v1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	ctrl "sigs.k8s.io/controller-runtime"
 	"sigs.k8s.io/controller-runtime/pkg/client"
@@ -86,13 +86,19 @@ func (r *MiniClusterReconciler) ensureMiniCluster(ctx context.Context, cluster *
 
 	// Continue reconciling until we have pod ips
 	if len(ips) != int(cluster.Spec.Size) {
-		return ctrl.Result{Requeue: true}, fmt.Errorf("IPs are not ready yet!")
+		return ctrl.Result{Requeue: true}, fmt.Errorf("IPs are not ready yet! Only found %d", len(ips))
 	}
 
 	// At this point we've created job pods that have a waiting entrypoint for the update_hosts.sh
 	// to exist. This is where we update the ConfigMap so it exists
 	// Yes, this is a hack. Better ideas appreciated!
 	_, result, err = r.addDiscoveryHostsFile(ctx, cluster)
+	if err != nil {
+		return result, err
+	}
+
+	// Expose pod index 0 service
+	result, err = r.exposeService(ctx, cluster)
 	if err != nil {
 		return result, err
 	}
@@ -323,10 +329,13 @@ func generateFluxConfig(cluster *api.MiniCluster) string {
 // generateWaitScript generates the main script to start everything up!
 func generateWaitScript(cluster *api.MiniCluster) string {
 
+	// Generate a token uuid
+	fluxToken := uuid.New()
+
 	// The first pod (0) should always generate the curve certificate
 	mainHost := fmt.Sprintf("%s-0", cluster.Name)
 	hosts := fmt.Sprintf("%s-[%s]", cluster.Name, generateRange(int(cluster.Spec.Size)))
-	waitScript := fmt.Sprintf(waitToStartTemplate, mainHost, hosts, cluster.Spec.Diagnostics)
+	waitScript := fmt.Sprintf(waitToStartTemplate, fluxToken.String(), mainHost, hosts, cluster.Spec.Diagnostics)
 	return waitScript
 }
 
@@ -414,7 +423,7 @@ func (r *MiniClusterReconciler) createPersistentVolume(cluster *api.MiniCluster,
 			Capacity: map[corev1.ResourceName]resource.Quantity{
 				corev1.ResourceStorage: *resource.NewQuantity(1024, resource.BinarySI),
 			},
-			PersistentVolumeSource: v1.PersistentVolumeSource{
+			PersistentVolumeSource: corev1.PersistentVolumeSource{
 				HostPath: &corev1.HostPathVolumeSource{
 					Path: path.Join("/tmp/", configName),
 				},

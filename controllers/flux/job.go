@@ -116,6 +116,17 @@ func (r *MiniClusterReconciler) getMiniClusterContainers(cluster *api.MiniCluste
 			TTY:             true,
 			Lifecycle:       &lifecycle,
 		}
+
+		// If it's the FluxRunner, expose port 5000 for the service
+		if container.FluxRunner {
+			newContainer.Ports = []corev1.ContainerPort{
+				{
+					ContainerPort: int32(servicePort),
+					Protocol:      "TCP",
+				},
+			}
+		}
+
 		containers = append(containers, newContainer)
 	}
 	return containers

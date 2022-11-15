@@ -10,9 +10,7 @@ spec:
   # This is a list because a pod can support multiple containers
   containers:
     # The container URI to pull (currently needs to be public)
-    - image: ghcr.io/flux-framework/demo-lammps-mpi:flux-sched-focal-v0.22.0
-      # The main flux command to run - the job will exit after
-      command: mpirun -x PATH -np 2 --map-by socket lmp -v x 2 -v y 2 -v z 2 -in in.reaxc.hns -nocite
+    - image: ghcr.io/rse-ops/lammps:flux-sched-focal-v0.24.0
       # You can set the working directory if your container WORKDIR is not correct.
       workingDir: /home/flux/examples/reaxff/HNS
       # Always pull the image (if you are updating the image between runs, set to true)!
@@ -22,6 +20,9 @@ spec:
       # For one container, you can leave this unset for the default. This will be
       # validated in case you make a mistake :)
       runFlux: true
+      # Don't set a command unless you want to forgo running the restful server to submit
+      # commands to! E.g., instead of starting the server, it will just run your job command.
+      # command: lmp -v x 2 -v y 2 -v z 2 -in in.reaxc.hns -nocite
 
   # Number of pods to create for MiniCluster
   size: 4

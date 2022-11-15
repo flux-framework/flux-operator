@@ -83,6 +83,9 @@ type MiniClusterContainer struct {
 	ImagePullSecret string `json:"imagePullSecret"`
 
 	// Single user executable to provide to flux start
+	// IMPORTANT: This is left here, but not used in
+	// favor of exposing Flux via a Restful API. We
+	// Can remove this when that is finalized.
 	// +optional
 	Command string `json:"command"`
 
