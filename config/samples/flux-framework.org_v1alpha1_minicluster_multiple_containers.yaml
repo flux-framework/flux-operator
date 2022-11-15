@@ -29,6 +29,8 @@ spec:
       # validated in case you make a mistake :)
       runFlux: false
       postStartExec: "while ! bash -c \"</dev/tcp/localhost/22\" >/dev/null 2>&1; do sleep 0.1; done"
+      # Name of an already created ImagePullSecret for the image specified above
+      # imagePullSecret: flux-image-secret
 
   # Number of pods to create for MiniCluster
   size: 4
@@ -37,5 +39,3 @@ spec:
   diagnostics: false
   # Deadline in seconds, if not set there is no deadline
   # deadlineSeconds: 100
-  # Name of an already created ImagePullSecret for the image specfied above
-  # imagePullSecret: flux-image-secret

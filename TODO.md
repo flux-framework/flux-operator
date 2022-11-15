@@ -3,7 +3,7 @@
 ### Design 3
 
  - [ ] test better method from Aldo for networking
- - [ ] we need pretty docs, now.
+ - [ ] allow to specify that the app restful server is installed, and don't install again
  - [ ] we need to test that N=1 case works as expected (not waiting for any workers) and 0 spits an error (for now it doesn't make sense)
  - [ ] can (and should) we use generics to reduce redudancy of code? (e.g., the `get<X>` functions) (@vsoch would like to do this!)
  - [ ] I think if a pod dies the IP address might change, so eventually we want to test that (and may need more logic for re-updating /etc/hosts)
@@ -19,6 +19,9 @@
 
 #### Completed
 
+ - [x] docs need spell checking!
+ - [x] Convert markdown docs into pretty, organized, rendered web-docs
+ - [x] Remove automated builds from here in favor of https://github.com/rse-ops/flux-hpc
  - [x] Maximum time for job (seconds) set by CRD
  - [x] Do we want to be able to launch additional tasks? (e.g., after the original job started) (for now, no, but this can be re-addressed if a case comes up)
  - [x] Should there be a min/max size for the MiniCluster CRD (probably 2 if we want to have main/worker)? (right not just cannot be zero)
