@@ -23,15 +23,23 @@ jobs:
         cd docs
         pip install -r requirements.txt
         make html
+        echo
         echo "ls"
         ls
+        echo
         echo "ls _build"
         ls _build
         mv $root/.git _build/html/.git
         mv _build/html /tmp/site
+        echo
+        echo "ls /tmp/site"        
+        ls /tmp/site
+        touch .nojekyll
         rm -rf $root
         mv /tmp/site $root
+        cd ${root}
         echo "ls $root"        
+        ls .
         touch .nojekyll
         git add .nojekyll || echo "Already added"
         git add .
