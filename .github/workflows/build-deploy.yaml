@@ -1,4 +1,4 @@
-name: Docker and Bundle Build
+name: build flux-operator
 
 on:
   pull_request: []
