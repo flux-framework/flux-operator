@@ -1,0 +1,1215 @@
+<!DOCTYPE html>
+<html lang="en">
+ <head>
+  <meta charset="utf-8"/>
+  <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+  <meta content="Docutils 0.19: https://docutils.sourceforge.io/" name="generator"/>
+  <meta content="width=device-width,initial-scale=1" name="viewport"/>
+  <meta content="ie=edge" http-equiv="x-ua-compatible"/>
+  <meta content="Copy to clipboard" name="lang:clipboard.copy"/>
+  <meta content="Copied to clipboard" name="lang:clipboard.copied"/>
+  <meta content="en" name="lang:search.language"/>
+  <meta content="True" name="lang:search.pipeline.stopwords"/>
+  <meta content="True" name="lang:search.pipeline.trimmer"/>
+  <meta content="No matching documents" name="lang:search.result.none"/>
+  <meta content="1 matching document" name="lang:search.result.one"/>
+  <meta content="# matching documents" name="lang:search.result.other"/>
+  <meta content="[\s\-]+" name="lang:search.tokenizer"/>
+  <link crossorigin="" href="https://fonts.gstatic.com/" rel="preconnect"/>
+  <link href="https://fonts.googleapis.com/css?family=Roboto+Mono:400,500,700|Roboto:300,400,400i,700&amp;display=fallback" rel="stylesheet"/>
+  <style>
+   body,
+      input {
+        font-family: "Roboto", "Helvetica Neue", Helvetica, Arial, sans-serif
+      }
+
+      code,
+      kbd,
+      pre {
+        font-family: "Roboto Mono", "Courier New", Courier, monospace
+      }
+  </style>
+  <link href="../_static/stylesheets/application.css" rel="stylesheet"/>
+  <link href="../_static/stylesheets/application-palette.css" rel="stylesheet"/>
+  <link href="../_static/stylesheets/application-fixes.css" rel="stylesheet"/>
+  <link href="../_static/fonts/material-icons.css" rel="stylesheet"/>
+  <meta content="#262626" name="theme-color"/>
+  <script src="../_static/javascripts/modernizr.js">
+  </script>
+  <link href="../_static/images/flux-operator.jpg" rel="apple-touch-icon"/>
+  <title>
+   User Guide — Flux Operator
+  </title>
+  <link href="../_static/pygments.css" rel="stylesheet" type="text/css"/>
+  <link href="../_static/material.css" rel="stylesheet" type="text/css"/>
+  <link href="../_static/copybutton.css" rel="stylesheet" type="text/css"/>
+  <link href="../_static/css/rtd_sphinx_search.min.css" rel="stylesheet" type="text/css"/>
+  <link href="../_static/custom.css" rel="stylesheet" type="text/css"/>
+  <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js">
+  </script>
+  <script src="../_static/jquery.js">
+  </script>
+  <script src="../_static/underscore.js">
+  </script>
+  <script src="../_static/_sphinx_javascript_frameworks_compat.js">
+  </script>
+  <script src="../_static/doctools.js">
+  </script>
+  <script src="../_static/sphinx_highlight.js">
+  </script>
+  <script src="../_static/clipboard.min.js">
+  </script>
+  <script src="../_static/copybutton.js">
+  </script>
+  <script src="../_static/js/rtd_sphinx_search.min.js">
+  </script>
+  <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js">
+  </script>
+  <link href="../_static/favicon.ico" rel="shortcut icon"/>
+  <link href="../genindex.html" rel="index" title="Index"/>
+  <link href="../search.html" rel="search" title="Search"/>
+  <link href="custom-resource-definition.html" rel="next" title="Mini Cluster"/>
+  <link href="index.html" rel="prev" title="User Guide"/>
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
+  <!-- Social: Facebook / Open Graph -->
+  <title>
+   Flux RESTful API in Python
+  </title>
+  <link href="https://flux-framework.github.io/flux-restful-api/" rel="canonical"/>
+  <meta content="website" property="og:type"/>
+  <meta content="https://flux-framework.github.io/flux-restful-api/" property="og:url"/>
+  <meta content="Flux RESTful API" property="og:title"/>
+  <meta content="https://raw.githubusercontent.com/flux-framework/flux-restful-api/main/docs/images/logo.png" property="og:image"/>
+  <meta content="Flux RESTful API in Python" property="og:description"/>
+  <meta content="Flux RESTful API" property="og:site_name"/>
+  <meta content="en_US" property="og:locale"/>
+  <!-- Social: Twitter -->
+  <meta content="summary" name="twitter:card"/>
+  <meta content="@FluxFramework" name="twitter:site"/>
+  <meta content="Flux Framework" name="twitter:title"/>
+  <meta content="Flux RESTFul API in Python" name="twitter:description"/>
+  <meta content="https://raw.githubusercontent.com/flux-framework/flux-restful-api/main/docs/images/logo.png" name="twitter:image"/>
+  <!-- Social: Google+ / Schema.org  -->
+  <meta content="Flux RESTful API" itemprop="name"/>
+  <meta content="Flux RESTFul API in Python" itemprop="description"/>
+  <meta content="https://raw.githubusercontent.com/flux-framework/flux-restful-api/main/docs/images/logo.png" itemprop="image"/>
+  <script type="application/ld+json">
+   {"@type":"WebSite","headline":"Flux RESTful API","url":"https://flux-framework.github.io/flux-restful-api","description":"Flux RESTful API in Python","name":"Flux RESTful API","@context":"https://schema.org"}
+  </script>
+  <style>
+   .material-symbols-outlined {
+  font-variation-settings:
+  'FILL' 0,
+  'wght' 400,
+  'GRAD' 0,
+  'opsz' 48
+}
+.sphx-glr-script-out .highlight pre {
+  background-color: #def0ff !important;
+}
+  </style>
+  <link href="../_static/images/flux-operator.jpg" rel="apple-touch-icon"/>
+ </head>
+ <body data-md-color-accent="blue" data-md-color-primary="blue" dir="ltr">
+  <svg class="md-svg">
+   <defs data-children-count="0">
+    <svg height="448" id="__github" viewbox="0 0 416 448" width="416" xmlns="http://www.w3.org/2000/svg">
+     <path d="M160 304q0 10-3.125 20.5t-10.75 19T128 352t-18.125-8.5-10.75-19T96 304t3.125-20.5 10.75-19T128 256t18.125 8.5 10.75 19T160 304zm160 0q0 10-3.125 20.5t-10.75 19T288 352t-18.125-8.5-10.75-19T256 304t3.125-20.5 10.75-19T288 256t18.125 8.5 10.75 19T320 304zm40 0q0-30-17.25-51T296 232q-10.25 0-48.75 5.25Q229.5 240 208 240t-39.25-2.75Q130.75 232 120 232q-29.5 0-46.75 21T56 304q0 22 8 38.375t20.25 25.75 30.5 15 35 7.375 37.25 1.75h42q20.5 0 37.25-1.75t35-7.375 30.5-15 20.25-25.75T360 304zm56-44q0 51.75-15.25 82.75-9.5 19.25-26.375 33.25t-35.25 21.5-42.5 11.875-42.875 5.5T212 416q-19.5 0-35.5-.75t-36.875-3.125-38.125-7.5-34.25-12.875T37 371.5t-21.5-28.75Q0 312 0 260q0-59.25 34-99-6.75-20.5-6.75-42.5 0-29 12.75-54.5 27 0 47.5 9.875t47.25 30.875Q171.5 96 212 96q37 0 70 8 26.25-20.5 46.75-30.25T376 64q12.75 25.5 12.75 54.5 0 21.75-6.75 42 34 40 34 99.5z" fill="currentColor">
+     </path>
+    </svg>
+   </defs>
+  </svg>
+  <input class="md-toggle" data-md-toggle="drawer" id="__drawer" type="checkbox"/>
+  <input class="md-toggle" data-md-toggle="search" id="__search" type="checkbox"/>
+  <label class="md-overlay" data-md-component="overlay" for="__drawer">
+  </label>
+  <a class="md-skip" href="#getting_started/user-guide" tabindex="1">
+   Skip to content
+  </a>
+  <header class="md-header" data-md-component="header">
+   <nav class="md-header-nav md-grid">
+    <div class="md-flex navheader">
+     <div class="md-flex__cell md-flex__cell--shrink">
+      <a class="md-header-nav__button md-logo" href="../index.html" title="Flux Operator">
+       <span class="material-symbols-outlined">
+        cycle
+       </span>
+      </a>
+     </div>
+     <div class="md-flex__cell md-flex__cell--shrink">
+      <label class="md-icon md-icon--menu md-header-nav__button" for="__drawer">
+      </label>
+     </div>
+     <div class="md-flex__cell md-flex__cell--stretch">
+      <div class="md-flex__ellipsis md-header-nav__title" data-md-component="title">
+       <span class="md-header-nav__topic" style="width: 1046px;margin-left: -20px;">
+        Flux Operator
+       </span>
+       <span class="md-header-nav__topic">
+        User Guide
+       </span>
+      </div>
+     </div>
+     <div class="md-flex__cell md-flex__cell--shrink">
+      <label class="md-icon md-icon--search md-header-nav__button" for="__search">
+      </label>
+      <div class="md-search" data-md-component="search" role="dialog">
+       <label class="md-search__overlay" for="__search">
+       </label>
+       <div class="md-search__inner" role="search">
+        <form action="../search.html" class="md-search__form" method="get" name="search">
+         <input autocapitalize="off" autocomplete="off" class="md-search__input" data-md-component="query" data-md-state="active" name="q" placeholder="Search" spellcheck="false" type="text"/>
+         <label class="md-icon md-search__icon" for="__search">
+         </label>
+         <button class="md-icon md-search__icon" data-md-component="reset" tabindex="-1" type="reset">
+          
+         </button>
+        </form>
+        <div class="md-search__output">
+         <div class="md-search__scrollwrap" data-md-scrollfix="">
+          <div class="md-search-result" data-md-component="result">
+           <div class="md-search-result__meta">
+            Type to start searching
+           </div>
+           <ol class="md-search-result__list">
+           </ol>
+          </div>
+         </div>
+        </div>
+       </div>
+      </div>
+     </div>
+     <div class="md-flex__cell md-flex__cell--shrink">
+      <div class="md-header-nav__source">
+       <a class="md-source" data-md-source="github" href="https://github.com/flux-framework/flux-operator/" title="Go to repository">
+        <div class="md-source__icon">
+         <!--<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 24 24" width="28" height="28">
+        <use xlink:href="#__github" width="24" height="24"></use>
+      </svg>-->
+         <!-- updated to match riverml.xml site-->
+         <svg viewbox="0 0 448 512" xmlns="http://www.w3.org/2000/svg">
+          <path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81z" fill="#ffffff">
+          </path>
+         </svg>
+        </div>
+        <div class="md-source__repository">
+         Flux Operator
+        </div>
+       </a>
+      </div>
+     </div>
+    </div>
+   </nav>
+  </header>
+  <div class="md-container">
+   <nav class="md-tabs" data-md-component="tabs">
+    <div class="md-tabs__inner md-grid">
+     <ul class="md-tabs__list">
+      <li class="md-tabs__item">
+       <a class="md-tabs__link" href="https://flux-framework.org/">
+        Flux Framework
+       </a>
+      </li>
+      <li class="md-tabs__item">
+       <a class="md-tabs__link" href="https://github.com/flux-framework">
+        Flux Framework on GitHub
+       </a>
+      </li>
+      <li class="md-tabs__item">
+       <a class="md-tabs__link" href="https://github.com/flux-framework/flux-operator">
+        Flux Operator on GitHub
+       </a>
+      </li>
+      <li class="md-tabs__item">
+       <a class="md-tabs__link" href="index.html">
+        User Guide
+       </a>
+      </li>
+     </ul>
+    </div>
+   </nav>
+   <main class="md-main">
+    <div class="md-main__inner md-grid" data-md-component="container">
+     <div class="md-sidebar md-sidebar--primary" data-md-component="navigation">
+      <div class="md-sidebar__scrollwrap">
+       <div class="md-sidebar__inner">
+        <nav class="md-nav md-nav--primary" data-md-level="0">
+         <label class="md-nav__title md-nav__title--site" for="__drawer">
+          <a class="md-nav__button md-logo" href="../index.html" title="Flux Operator">
+           <i class="md-icon">
+            cycle
+           </i>
+          </a>
+          <a href="../index.html" title="Flux Operator">
+           Flux Operator
+          </a>
+         </label>
+         <div class="md-nav__source">
+          <a class="md-source" data-md-source="github" href="https://github.com/flux-framework/flux-operator/" title="Go to repository">
+           <div class="md-source__icon">
+            <!--<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 24 24" width="28" height="28">
+        <use xlink:href="#__github" width="24" height="24"></use>
+      </svg>-->
+            <!-- updated to match riverml.xml site-->
+            <svg viewbox="0 0 448 512" xmlns="http://www.w3.org/2000/svg">
+             <path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81z" fill="#ffffff">
+             </path>
+            </svg>
+           </div>
+           <div class="md-source__repository">
+            Flux Operator
+           </div>
+          </a>
+         </div>
+         <ul class="md-nav__list">
+          <li class="md-nav__item">
+           <span class="md-nav__link caption">
+            <span class="caption-text">
+             Getting Started
+            </span>
+           </span>
+          </li>
+          <li class="md-nav__item">
+           <a class="md-nav__link" href="index.html">
+            User Guide
+           </a>
+           <ul class="md-nav__list">
+            <li class="md-nav__item">
+             <input class="md-toggle md-nav__toggle" data-md-toggle="toc" id="__toc" type="checkbox"/>
+             <label class="md-nav__link md-nav__link--active" for="__toc">
+              User Guide
+             </label>
+             <a class="md-nav__link md-nav__link--active" href="#">
+              User Guide
+             </a>
+             <nav class="md-nav md-nav--secondary">
+              <label class="md-nav__title" for="__toc">
+               Contents
+              </label>
+              <ul class="md-nav__list" data-md-scrollfix="">
+               <li class="md-nav__item">
+                <a class="md-nav__link" href="#getting-started-user-guide--page-root">
+                 User Guide
+                </a>
+                <nav class="md-nav">
+                 <ul class="md-nav__list">
+                  <li class="md-nav__item">
+                   <a class="md-nav__link" href="#installing-the-operator">
+                    1. Installing the Operator
+                   </a>
+                   <nav class="md-nav">
+                    <ul class="md-nav__list">
+                     <li class="md-nav__item">
+                      <a class="md-nav__link" href="#local-or-development">
+                       Local or Development
+                      </a>
+                     </li>
+                     <li class="md-nav__item">
+                      <a class="md-nav__link" href="#production">
+                       Production
+                      </a>
+                     </li>
+                    </ul>
+                   </nav>
+                  </li>
+                  <li class="md-nav__item">
+                   <a class="md-nav__link" href="#submitting-jobs">
+                    2. Submitting Jobs
+                   </a>
+                   <nav class="md-nav">
+                    <ul class="md-nav__list">
+                     <li class="md-nav__item">
+                      <a class="md-nav__link" href="#user-interface">
+                       User Interface
+                      </a>
+                     </li>
+                     <li class="md-nav__item">
+                      <a class="md-nav__link" href="#restful">
+                       RESTful
+                      </a>
+                     </li>
+                    </ul>
+                   </nav>
+                  </li>
+                 </ul>
+                </nav>
+               </li>
+               <li class="md-nav__item">
+                <a class="md-nav__extra_link" href="../_sources/getting_started/user-guide.md.txt">
+                 Show Source
+                </a>
+               </li>
+              </ul>
+             </nav>
+            </li>
+            <li class="md-nav__item">
+             <a class="md-nav__link" href="custom-resource-definition.html">
+              Mini Cluster
+             </a>
+            </li>
+           </ul>
+          </li>
+          <li class="md-nav__item">
+           <a class="md-nav__link" href="../development/index.html">
+            Development
+           </a>
+          </li>
+          <li class="md-nav__item">
+           <span class="md-nav__link caption">
+            <span class="caption-text">
+             About
+            </span>
+           </span>
+          </li>
+          <li class="md-nav__item">
+           <a class="md-nav__link" href="../contributing.html">
+            Contributing
+           </a>
+          </li>
+          <li class="md-nav__item">
+           <a class="md-nav__link" href="../about/license.html">
+            License
+           </a>
+          </li>
+         </ul>
+        </nav>
+       </div>
+      </div>
+     </div>
+     <div class="md-sidebar md-sidebar--secondary" data-md-component="toc">
+      <div class="md-sidebar__scrollwrap">
+       <div class="md-sidebar__inner">
+        <nav class="md-nav md-nav--secondary">
+         <label class="md-nav__title" for="__toc">
+          Contents
+         </label>
+         <ul class="md-nav__list" data-md-scrollfix="">
+          <li class="md-nav__item">
+           <a class="md-nav__link" href="#getting-started-user-guide--page-root">
+            User Guide
+           </a>
+           <nav class="md-nav">
+            <ul class="md-nav__list">
+             <li class="md-nav__item">
+              <a class="md-nav__link" href="#installing-the-operator">
+               1. Installing the Operator
+              </a>
+              <nav class="md-nav">
+               <ul class="md-nav__list">
+                <li class="md-nav__item">
+                 <a class="md-nav__link" href="#local-or-development">
+                  Local or Development
+                 </a>
+                </li>
+                <li class="md-nav__item">
+                 <a class="md-nav__link" href="#production">
+                  Production
+                 </a>
+                </li>
+               </ul>
+              </nav>
+             </li>
+             <li class="md-nav__item">
+              <a class="md-nav__link" href="#submitting-jobs">
+               2. Submitting Jobs
+              </a>
+              <nav class="md-nav">
+               <ul class="md-nav__list">
+                <li class="md-nav__item">
+                 <a class="md-nav__link" href="#user-interface">
+                  User Interface
+                 </a>
+                </li>
+                <li class="md-nav__item">
+                 <a class="md-nav__link" href="#restful">
+                  RESTful
+                 </a>
+                </li>
+               </ul>
+              </nav>
+             </li>
+            </ul>
+           </nav>
+          </li>
+          <li class="md-nav__item">
+           <a class="md-nav__extra_link" href="../_sources/getting_started/user-guide.md.txt">
+            Show Source
+           </a>
+          </li>
+          <li class="md-nav__item" id="searchbox">
+          </li>
+         </ul>
+        </nav>
+       </div>
+      </div>
+     </div>
+     <div class="md-content">
+      <article class="md-content__inner md-typeset" role="main">
+       <section id="user-guide">
+        <h1 id="getting-started-user-guide--page-root">
+         User Guide
+         <a class="headerlink" href="#getting-started-user-guide--page-root" title="Permalink to this heading">
+          ¶
+         </a>
+        </h1>
+        <p>
+         Welcome to the Flux Operator user guide! If you come here, we are assuming you have a cluster
+with the Flux Operator installed and are interested to submit your own
+         <a class="reference internal" href="custom-resource-definition.html">
+          <span class="doc std std-doc">
+           custom resource
+          </span>
+         </a>
+         to create a MiniCluster, or that someone has already done it for you. If you are a developer wanting to work
+on new functionality or features for the Flux Operator, see our
+         <a class="reference internal" href="../development/index.html">
+          <span class="doc std std-doc">
+           Developer Guides
+          </span>
+         </a>
+         instead.
+        </p>
+        <section id="installing-the-operator">
+         <h2 id="installing-the-operator">
+          1. Installing the Operator
+          <a class="headerlink" href="#installing-the-operator" title="Permalink to this heading">
+           ¶
+          </a>
+         </h2>
+         <p>
+          If you are trying this out on your own, here is a quick start to getting the operator installed on MiniKube (or similar).
+This assumes some experience with Kubernetes (or applying yaml configs) and using MiniKube or similar.
+More advanced users can try out the
+          <span class="xref myst">
+           Production
+          </span>
+          install detailed below.
+         </p>
+         <section id="local-or-development">
+          <h3 id="local-or-development">
+           Local or Development
+           <a class="headerlink" href="#local-or-development" title="Permalink to this heading">
+            ¶
+           </a>
+          </h3>
+          <p>
+           You’ll first want to clone the codebase.
+          </p>
+          <div class="highlight-bash notranslate">
+           <div class="highlight">
+            <pre><span></span>$ git clone https://github.com/flux-framework/flux-operator
+$ <span class="nb">cd</span> flux-operator
+</pre>
+           </div>
+          </div>
+          <p>
+           And then start a cluster with minikube:
+          </p>
+          <div class="highlight-bash notranslate">
+           <div class="highlight">
+            <pre><span></span>$ minikube start
+</pre>
+           </div>
+          </div>
+          <p>
+           And make a flux operator namespace
+          </p>
+          <div class="highlight-bash notranslate">
+           <div class="highlight">
+            <pre><span></span>$ kubectl create namespace flux-operator
+namespace/flux-operator created
+</pre>
+           </div>
+          </div>
+          <p>
+           You can set this namespace to be the default (if you don’t want to enter
+           <code class="docutils literal notranslate">
+            <span class="pre">
+             -n
+            </span>
+            <span class="pre">
+             flux-operator
+            </span>
+           </code>
+           for future commands:
+          </p>
+          <div class="highlight-bash notranslate">
+           <div class="highlight">
+            <pre><span></span>$ kubectl config set-context --current --namespace<span class="o">=</span>flux-operator
+</pre>
+           </div>
+          </div>
+          <p>
+           If you haven’t ever installed minkube, you can see
+           <a class="reference external" href="https://minikube.sigs.k8s.io/docs/start/">
+            install instructions here
+           </a>
+           .
+And then officially build the operator,
+          </p>
+          <div class="highlight-bash notranslate">
+           <div class="highlight">
+            <pre><span></span>$ make
+</pre>
+           </div>
+          </div>
+          <p>
+           (optionally) to make your manifests:
+          </p>
+          <div class="highlight-bash notranslate">
+           <div class="highlight">
+            <pre><span></span>$ make manifests
+</pre>
+           </div>
+          </div>
+          <p>
+           And install. Note that this places an executable
+           <code class="docutils literal notranslate">
+            <span class="pre">
+             bin/kustomize
+            </span>
+           </code>
+           that you’ll need to delete first if you make install again.
+          </p>
+          <div class="highlight-bash notranslate">
+           <div class="highlight">
+            <pre><span></span>$ make install
+</pre>
+           </div>
+          </div>
+          <p>
+           At this point, you can kubectl apply your custom resource definition to define your MiniCluster to your cluster to
+either run a job or start a Flux Mini Cluster.
+          </p>
+          <div class="highlight-bash notranslate">
+           <div class="highlight">
+            <pre><span></span>$ kubectl apply -f config/samples/flux-framework.org_v1alpha1_minicluster.yaml 
+</pre>
+           </div>
+          </div>
+          <p>
+           When you are all done, cleanup with
+           <code class="docutils literal notranslate">
+            <span class="pre">
+             kubectl
+            </span>
+            <span class="pre">
+             delete
+            </span>
+           </code>
+           commands and/or!
+          </p>
+          <div class="highlight-bash notranslate">
+           <div class="highlight">
+            <pre><span></span>$ make clean
+</pre>
+           </div>
+          </div>
+          <p>
+           And to stop MiniKube.
+          </p>
+          <div class="highlight-bash notranslate">
+           <div class="highlight">
+            <pre><span></span>$ minikube stop
+</pre>
+           </div>
+          </div>
+         </section>
+         <section id="production">
+          <h3 id="production">
+           Production
+           <a class="headerlink" href="#production" title="Permalink to this heading">
+            ¶
+           </a>
+          </h3>
+          <p>
+           To deploy the Flux Operator, you’ll need to start with the same clone:
+          </p>
+          <div class="highlight-bash notranslate">
+           <div class="highlight">
+            <pre><span></span>$ git clone https://github.com/flux-framework/flux-operator
+$ <span class="nb">cd</span> flux-operator
+</pre>
+           </div>
+          </div>
+          <p>
+           A deploy will use the latest docker image
+           <a class="reference external" href="https://github.com/orgs/flux-framework/packages?repo_name=flux-operator">
+            from the repository
+           </a>
+           :
+          </p>
+          <div class="highlight-bash notranslate">
+           <div class="highlight">
+            <pre><span></span>$ make deploy
+</pre>
+           </div>
+          </div>
+          <div class="highlight-console notranslate">
+           <div class="highlight">
+            <pre><span></span><span class="go">...</span>
+<span class="go">namespace/operator-system created</span>
+<span class="go">customresourcedefinition.apiextensions.k8s.io/miniclusters.flux-framework.org unchanged</span>
+<span class="go">serviceaccount/operator-controller-manager created</span>
+<span class="go">role.rbac.authorization.k8s.io/operator-leader-election-role created</span>
+<span class="go">clusterrole.rbac.authorization.k8s.io/operator-manager-role configured</span>
+<span class="go">clusterrole.rbac.authorization.k8s.io/operator-metrics-reader unchanged</span>
+<span class="go">clusterrole.rbac.authorization.k8s.io/operator-proxy-role unchanged</span>
+<span class="go">rolebinding.rbac.authorization.k8s.io/operator-leader-election-rolebinding created</span>
+<span class="go">clusterrolebinding.rbac.authorization.k8s.io/operator-manager-rolebinding unchanged</span>
+<span class="go">clusterrolebinding.rbac.authorization.k8s.io/operator-proxy-rolebinding unchanged</span>
+<span class="go">configmap/operator-manager-config created</span>
+<span class="go">service/operator-controller-manager-metrics-service created</span>
+<span class="go">deployment.apps/operator-controller-manager created</span>
+</pre>
+           </div>
+          </div>
+          <p>
+           Ensure the
+           <code class="docutils literal notranslate">
+            <span class="pre">
+             operator-system
+            </span>
+           </code>
+           namespace was created:
+          </p>
+          <div class="highlight-bash notranslate">
+           <div class="highlight">
+            <pre><span></span>$ kubectl get namespace
+</pre>
+           </div>
+          </div>
+          <div class="highlight-console notranslate">
+           <div class="highlight">
+            <pre><span></span><span class="go">NAME              STATUS   AGE</span>
+<span class="go">default           Active   12m</span>
+<span class="go">kube-node-lease   Active   12m</span>
+<span class="go">kube-public       Active   12m</span>
+<span class="go">kube-system       Active   12m</span>
+<span class="go">operator-system   Active   11s</span>
+</pre>
+           </div>
+          </div>
+          <div class="highlight-bash notranslate">
+           <div class="highlight">
+            <pre><span></span>$ kubectl describe namespace operator-system
+</pre>
+           </div>
+          </div>
+          <div class="highlight-console notranslate">
+           <div class="highlight">
+            <pre><span></span><span class="go">Name:         operator-system</span>
+<span class="go">Labels:       control-plane=controller-manager</span>
+<span class="go">              kubernetes.io/metadata.name=operator-system</span>
+<span class="go">Annotations:  &lt;none&gt;</span>
+<span class="go">Status:       Active</span>
+
+<span class="go">No resource quota.</span>
+
+<span class="go">No LimitRange resource.</span>
+</pre>
+           </div>
+          </div>
+          <p>
+           And you can find the name of the operator pod as follows:
+          </p>
+          <div class="highlight-bash notranslate">
+           <div class="highlight">
+            <pre><span></span>$ kubectl get pod --all-namespaces -o wide
+</pre>
+           </div>
+          </div>
+          <div class="highlight-console notranslate">
+           <div class="highlight">
+            <pre><span></span><span class="go">      &lt;none&gt;</span>
+<span class="go">operator-system   operator-controller-manager-6c699b7b94-bbp5q   2/2     Running   0             80s   192.168.30.43    ip-192-168-28-166.ec2.internal   &lt;none&gt;           &lt;none&gt;</span>
+</pre>
+           </div>
+          </div>
+          <p>
+           Make your namespace for the flux-operator:
+          </p>
+          <div class="highlight-bash notranslate">
+           <div class="highlight">
+            <pre><span></span>$ kubectl create namespace flux-operator
+</pre>
+           </div>
+          </div>
+          <p>
+           Then apply your CRD - importantly, the localDeploy needs to be false. Basically, setting to true uses a local mount,
+which obviously won’t work for different instances in the cloud!
+          </p>
+          <div class="highlight-yaml notranslate">
+           <div class="highlight">
+            <pre><span></span><span class="nt">spec</span><span class="p">:</span><span class="w"></span>
+<span class="c1"># Set to true to use volume mounts instead of volume claims</span><span class="w"></span>
+<span class="w">  </span><span class="nt">localDeploy</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span><span class="w"></span>
+</pre>
+           </div>
+          </div>
+          <p>
+           This means we will use persistent volume claims instead. Then do:
+          </p>
+          <div class="highlight-bash notranslate">
+           <div class="highlight">
+            <pre><span></span>$ make apply
+<span class="c1"># OR</span>
+$ kubectl apply -f config/samples/flux-framework.org_v1alpha1_minicluster.yaml 
+</pre>
+           </div>
+          </div>
+          <p>
+           And now you can get logs for the manager:
+          </p>
+          <div class="highlight-bash notranslate">
+           <div class="highlight">
+            <pre><span></span>$ kubectl logs -n operator-system operator-controller-manager-6c699b7b94-bbp5q
+</pre>
+           </div>
+          </div>
+          <p>
+           And then watch your jobs as before!
+          </p>
+          <div class="highlight-bash notranslate">
+           <div class="highlight">
+            <pre><span></span>$ make list
+$ make apply
+</pre>
+           </div>
+          </div>
+          <p>
+           And don’t forget to clean up! Leaving on resources by accident is expensive!
+Here is an example running on AWS:
+          </p>
+          <div class="highlight-bash notranslate">
+           <div class="highlight">
+            <pre><span></span>$ eksctl delete cluster -f eks-cluster-config.yaml
+</pre>
+           </div>
+          </div>
+          <p>
+           It might be better to add
+           <code class="docutils literal notranslate">
+            <span class="pre">
+             --wait
+            </span>
+           </code>
+           , which will wait until all resources are cleaned up:
+          </p>
+          <div class="highlight-bash notranslate">
+           <div class="highlight">
+            <pre><span></span>$ eksctl delete cluster -f eks-cluster-config.yaml --wait
+</pre>
+           </div>
+          </div>
+          <p>
+           Either way, it’s good to check the web console too to ensure you didn’t miss anything.
+To see how to build images, see our
+           <a class="reference internal" href="../development/developer-guide.html">
+            <span class="doc std std-doc">
+             Developer Guides
+            </span>
+           </a>
+           .
+          </p>
+         </section>
+        </section>
+        <section id="submitting-jobs">
+         <h2 id="submitting-jobs">
+          2. Submitting Jobs
+          <a class="headerlink" href="#submitting-jobs" title="Permalink to this heading">
+           ¶
+          </a>
+         </h2>
+         <p>
+          Given a running MiniCluster that exposes a RESTful API, you have several modes for interaction:
+         </p>
+         <ol class="arabic simple">
+          <li>
+           <p>
+            Submit jobs in the user interface (basic)
+           </p>
+          </li>
+          <li>
+           <p>
+            Submit jobs from the command line or within Python (custom)
+           </p>
+          </li>
+          <li>
+           <p>
+            Submit jobs interacting with Flux via ssh-ing to the pod (advanced)
+           </p>
+          </li>
+         </ol>
+         <p>
+          We provide
+          <a class="reference external" href="https://github.com/flux-framework/flux-restful-api/tree/main/clients">
+           clients
+          </a>
+          to interact with
+a running server, and each will be briefly shown below. The Python client is also included in our
+          <a class="reference external" href="https://flux-framework.org/flux-restful-api/auto_examples/index.html">
+           Tutorials
+          </a>
+          .
+         </p>
+         <section id="user-interface">
+          <h3 id="user-interface">
+           User Interface
+           <a class="headerlink" href="#user-interface" title="Permalink to this heading">
+            ¶
+           </a>
+          </h3>
+          <p>
+           After your MiniCluster is created with a RESTFul API, the easiest thing to do is open the user interface to
+           <a class="reference external" href="http://127.0.0.1:5000">
+            http://127.0.0.1:5000
+           </a>
+           Don’t forget you’ll need to do some kind of port forwarding:
+          </p>
+          <div class="highlight-console notranslate">
+           <div class="highlight">
+            <pre><span></span><span class="go">kubectl port-forward -n flux-operator flux-sample-0-zdhkp 5000:5000</span>
+<span class="go">Forwarding from 127.0.0.1:5000 -&gt; 5000</span>
+</pre>
+           </div>
+          </div>
+          <p>
+           After port forwarding in a terminal and then submitting in the job UI (you will need to login with the flux user and token presented in the terminal). Here is the example command to try
+for the basic tutorial here:
+          </p>
+          <div class="highlight-console notranslate">
+           <div class="highlight">
+            <pre><span></span><span class="go">lmp -v x 2 -v y 2 -v z 2 -in in.reaxc.hns -nocite</span>
+</pre>
+           </div>
+          </div>
+          <p>
+           And the workdir needs to be:
+          </p>
+          <div class="highlight-console notranslate">
+           <div class="highlight">
+            <pre><span></span><span class="go">/home/flux/examples/reaxff/HNS</span>
+</pre>
+           </div>
+          </div>
+          <p>
+           And that’s it for the example! You can also try using the
+           <a class="reference external" href="https://flux-framework.org/flux-restful-api/getting_started/user-guide.html">
+            RESTFul API Clients
+           </a>
+           to submit instead
+(discussed next). Note that there is currently no way for the RESTful client to ask to destroy the cluster - you’ll
+still need to use kubectl to do that.
+          </p>
+         </section>
+         <section id="restful">
+          <h3 id="restful">
+           RESTful
+           <a class="headerlink" href="#restful" title="Permalink to this heading">
+            ¶
+           </a>
+          </h3>
+          <p>
+           Once your cluster is running, check the logs for the index 0 pod to ensure your API is running.
+That will also show you your
+           <code class="docutils literal notranslate">
+            <span class="pre">
+             FLUX_USER
+            </span>
+           </code>
+           and
+           <code class="docutils literal notranslate">
+            <span class="pre">
+             FLUX_TOKEN
+            </span>
+           </code>
+           that you can export to the environment.
+          </p>
+          <div class="highlight-bash notranslate">
+           <div class="highlight">
+            <pre><span></span><span class="c1"># get the job pod identifiers</span>
+$ make list
+<span class="c1"># use the -0 one to view logs</span>
+bash script/log.sh flux-sample-0-x2j6z
+</pre>
+           </div>
+          </div>
+          <div class="highlight-console notranslate">
+           <div class="highlight">
+            <pre><span></span><span class="go">🔑 Your Credentials! These will allow you to control your MiniCluster with flux-framework/flux-restful-api</span>
+<span class="go">export FLUX_TOKEN=9c605129-3ddc-41e2-9a23-38f59fb8f8e0</span>
+<span class="go">export FLUX_USER=flux</span>
+
+<span class="go">🌀sudo -u flux flux start -o --config /etc/flux/config ...</span>
+</pre>
+           </div>
+          </div>
+          <p>
+           Note that they appear slightly above the command, which isn’t at the bottom of the log!
+Finally, you can use the
+           <a class="reference external" href="https://flux-framework.org/flux-restful-api/getting_started/user-guide.html#python">
+            flux-framework/flux-restful-api
+           </a>
+           Python client to submit a job.
+          </p>
+          <div class="highlight-bash notranslate">
+           <div class="highlight">
+            <pre><span></span>$ pip install flux-restful-client
+</pre>
+           </div>
+          </div>
+          <p>
+           And then (after you’ve started port forwarding) you can either submit on the command line:
+          </p>
+          <div class="highlight-bash notranslate">
+           <div class="highlight">
+            <pre><span></span>$ flux-restful-cli submit lmp -v x <span class="m">2</span> -v y <span class="m">2</span> -v z <span class="m">2</span> -in <span class="k">in</span>.reaxc.hns -nocite
+</pre>
+           </div>
+          </div>
+          <div class="highlight-console notranslate">
+           <div class="highlight">
+            <pre><span></span><span class="go">{</span>
+<span class="go">    "Message": "Job submit.",</span>
+<span class="go">    "id": 19099568570368</span>
+<span class="go">}</span>
+</pre>
+           </div>
+          </div>
+          <p>
+           And get info:
+          </p>
+          <div class="highlight-bash notranslate">
+           <div class="highlight">
+            <pre><span></span>$ flux-restful-cli info <span class="m">19099568570368</span>
+</pre>
+           </div>
+          </div>
+          <div class="highlight-console notranslate">
+           <div class="highlight">
+            <pre><span></span><span class="go">{</span>
+<span class="go">    "id": 2324869152768,</span>
+<span class="go">    "userid": 1234,</span>
+<span class="go">    "urgency": 16,</span>
+<span class="go">    "priority": 16,</span>
+<span class="go">    "t_submit": 1668475082.8024156,</span>
+<span class="go">    "t_depend": 1668475082.8024156,</span>
+<span class="go">    "t_run": 1668475082.8159652,</span>
+<span class="go">    "state": "RUN",</span>
+<span class="go">    "name": "lmp",</span>
+<span class="go">    "ntasks": 1,</span>
+<span class="go">    "nnodes": 1,</span>
+<span class="go">    "ranks": "3",</span>
+<span class="go">    "nodelist": "flux-sample-3",</span>
+<span class="go">    "expiration": 1669079882.0,</span>
+<span class="go">    "annotations": {</span>
+<span class="go">        "sched": {</span>
+<span class="go">            "queue": "default"</span>
+<span class="go">        }</span>
+<span class="go">    },</span>
+<span class="go">    "result": "",</span>
+<span class="go">    "returncode": "",</span>
+<span class="go">    "runtime": 16.86149311065674,</span>
+<span class="go">    "waitstatus": "",</span>
+<span class="go">    "exception": {</span>
+<span class="go">        "occurred": "",</span>
+<span class="go">        "severity": "",</span>
+<span class="go">        "type": "",</span>
+<span class="go">        "note": ""</span>
+<span class="go">    },</span>
+<span class="go">    "duration": ""</span>
+<span class="go">}</span>
+</pre>
+           </div>
+          </div>
+          <p>
+           Or get the output log!
+          </p>
+          <div class="highlight-bash notranslate">
+           <div class="highlight">
+            <pre><span></span>$ flux-restful-cli logs <span class="m">2324869152768</span>
+LAMMPS <span class="o">(</span><span class="m">29</span> Sep <span class="m">2021</span> - Update <span class="m">2</span><span class="o">)</span>
+OMP_NUM_THREADS environment is not set. Defaulting to <span class="m">1</span> thread. <span class="o">(</span>src/comm.cpp:98<span class="o">)</span>
+using <span class="m">1</span> OpenMP thread<span class="o">(</span>s<span class="o">)</span> per MPI task
+Reading data file ...
+triclinic <span class="nv">box</span> <span class="o">=</span> <span class="o">(</span><span class="m">0</span>.0000000 <span class="m">0</span>.0000000 <span class="m">0</span>.0000000<span class="o">)</span> to <span class="o">(</span><span class="m">22</span>.326000 <span class="m">11</span>.141200 <span class="m">13</span>.778966<span class="o">)</span> with tilt <span class="o">(</span><span class="m">0</span>.0000000 -5.0260300 <span class="m">0</span>.0000000<span class="o">)</span>
+<span class="m">1</span> by <span class="m">1</span> by <span class="m">1</span> MPI processor grid
+reading atoms ...
+<span class="m">304</span> atoms
+reading velocities ...
+<span class="m">304</span> velocities
+read_data <span class="nv">CPU</span> <span class="o">=</span> <span class="m">0</span>.005 seconds
+Replicating atoms ...
+triclinic <span class="nv">box</span> <span class="o">=</span> <span class="o">(</span><span class="m">0</span>.0000000 <span class="m">0</span>.0000000 <span class="m">0</span>.0000000<span class="o">)</span> to <span class="o">(</span><span class="m">44</span>.652000 <span class="m">22</span>.282400 <span class="m">27</span>.557932<span class="o">)</span> with tilt <span class="o">(</span><span class="m">0</span>.0000000 -10.052060 <span class="m">0</span>.0000000<span class="o">)</span>
+<span class="m">1</span> by <span class="m">1</span> by <span class="m">1</span> MPI processor grid
+bounding box <span class="nv">image</span> <span class="o">=</span> <span class="o">(</span><span class="m">0</span> -1 -1<span class="o">)</span> to <span class="o">(</span><span class="m">0</span> <span class="m">1</span> <span class="m">1</span><span class="o">)</span>
+bounding box extra <span class="nv">memory</span> <span class="o">=</span> <span class="m">0</span>.03 MB
+average <span class="c1"># of replicas added to proc = 8.00 out of 8 (100.00%)</span>
+<span class="m">2432</span> atoms
+replicate <span class="nv">CPU</span> <span class="o">=</span> <span class="m">0</span>.001 seconds
+Neighbor list info ...
+update every <span class="m">20</span> steps, delay <span class="m">0</span> steps, check no
+max neighbors/atom: <span class="m">2000</span>, page size: <span class="m">100000</span>
+master list distance <span class="nv">cutoff</span> <span class="o">=</span> <span class="m">11</span>
+ghost atom <span class="nv">cutoff</span> <span class="o">=</span> <span class="m">11</span>
+<span class="nv">binsize</span> <span class="o">=</span> <span class="m">5</span>.5, <span class="nv">bins</span> <span class="o">=</span> <span class="m">10</span> <span class="m">5</span> <span class="m">6</span>
+<span class="m">2</span> neighbor lists, perpetual/occasional/extra <span class="o">=</span> <span class="m">2</span> <span class="m">0</span> <span class="m">0</span>
+<span class="o">(</span><span class="m">1</span><span class="o">)</span> pair reax/c, perpetual
+attributes: half, newton off, ghost
+pair build: half/bin/newtoff/ghost
+stencil: full/ghost/bin/3d
+bin: standard
+<span class="o">(</span><span class="m">2</span><span class="o">)</span> fix qeq/reax, perpetual, copy from <span class="o">(</span><span class="m">1</span><span class="o">)</span>
+attributes: half, newton off, ghost
+pair build: copy
+stencil: none
+bin: none
+Setting up Verlet run ...
+Unit style    : real
+Current step  : <span class="m">0</span>
+Time step     : <span class="m">0</span>.1
+Per MPI rank memory allocation <span class="o">(</span>min/avg/max<span class="o">)</span> <span class="o">=</span> <span class="m">215</span>.0 <span class="p">|</span> <span class="m">215</span>.0 <span class="p">|</span> <span class="m">215</span>.0 Mbytes
+Step Temp PotEng Press E_vdwl E_coul Volume
+<span class="m">0</span>          <span class="m">300</span>   -113.27833    <span class="m">437</span>.52122   -111.57687   -1.7014647    <span class="m">27418</span>.867
+<span class="m">10</span>    <span class="m">299</span>.38517   -113.27631    <span class="m">1439</span>.2857   -111.57492   -1.7013813    <span class="m">27418</span>.867
+<span class="m">20</span>    <span class="m">300</span>.27107   -113.27884    <span class="m">3764</span>.3739   -111.57762   -1.7012246    <span class="m">27418</span>.867
+<span class="m">30</span>    <span class="m">302</span>.21063   -113.28428    <span class="m">7007</span>.6914   -111.58335   -1.7009363    <span class="m">27418</span>.867
+<span class="m">40</span>    <span class="m">303</span>.52265   -113.28799      <span class="m">9844</span>.84   -111.58747   -1.7005186    <span class="m">27418</span>.867
+<span class="m">50</span>    <span class="m">301</span>.87059   -113.28324    <span class="m">9663</span>.0443   -111.58318   -1.7000524    <span class="m">27418</span>.867
+<span class="m">60</span>    <span class="m">296</span>.67807   -113.26777    <span class="m">7273</span>.7928   -111.56815   -1.6996137    <span class="m">27418</span>.867
+<span class="m">70</span>    <span class="m">292</span>.19999   -113.25435    <span class="m">5533</span>.6428   -111.55514   -1.6992157    <span class="m">27418</span>.867
+<span class="m">80</span>    <span class="m">293</span>.58677   -113.25831    <span class="m">5993</span>.4151   -111.55946   -1.6988533    <span class="m">27418</span>.867
+<span class="m">90</span>    <span class="m">300</span>.62636   -113.27925    <span class="m">7202</span>.8651   -111.58069   -1.6985591    <span class="m">27418</span>.867
+<span class="m">100</span>    <span class="m">305</span>.38276   -113.29357    <span class="m">10085</span>.748   -111.59518   -1.6983875    <span class="m">27418</span>.867
+Loop <span class="nb">time</span> of <span class="m">20</span>.1295 on <span class="m">1</span> procs <span class="k">for</span> <span class="m">100</span> steps with <span class="m">2432</span> atoms
+
+Performance: <span class="m">0</span>.043 ns/day, <span class="m">559</span>.152 hours/ns, <span class="m">4</span>.968 timesteps/s
+<span class="m">99</span>.6% CPU use with <span class="m">1</span> MPI tasks x <span class="m">1</span> OpenMP threads
+
+MPI task timing breakdown:
+Section <span class="p">|</span>  min <span class="nb">time</span>  <span class="p">|</span>  avg <span class="nb">time</span>  <span class="p">|</span>  max <span class="nb">time</span>  <span class="p">|</span>%varavg<span class="p">|</span> %total
+---------------------------------------------------------------
+Pair    <span class="p">|</span> <span class="m">14</span>.914     <span class="p">|</span> <span class="m">14</span>.914     <span class="p">|</span> <span class="m">14</span>.914     <span class="p">|</span>   <span class="m">0</span>.0 <span class="p">|</span> <span class="m">74</span>.09
+Neigh   <span class="p">|</span> <span class="m">0</span>.39663    <span class="p">|</span> <span class="m">0</span>.39663    <span class="p">|</span> <span class="m">0</span>.39663    <span class="p">|</span>   <span class="m">0</span>.0 <span class="p">|</span>  <span class="m">1</span>.97
+Comm    <span class="p">|</span> <span class="m">0</span>.0068084  <span class="p">|</span> <span class="m">0</span>.0068084  <span class="p">|</span> <span class="m">0</span>.0068084  <span class="p">|</span>   <span class="m">0</span>.0 <span class="p">|</span>  <span class="m">0</span>.03
+Output  <span class="p">|</span> <span class="m">0</span>.00025632 <span class="p">|</span> <span class="m">0</span>.00025632 <span class="p">|</span> <span class="m">0</span>.00025632 <span class="p">|</span>   <span class="m">0</span>.0 <span class="p">|</span>  <span class="m">0</span>.00
+Modify  <span class="p">|</span> <span class="m">4</span>.8104     <span class="p">|</span> <span class="m">4</span>.8104     <span class="p">|</span> <span class="m">4</span>.8104     <span class="p">|</span>   <span class="m">0</span>.0 <span class="p">|</span> <span class="m">23</span>.90
+Other   <span class="p">|</span>            <span class="p">|</span> <span class="m">0</span>.001154   <span class="p">|</span>            <span class="p">|</span>       <span class="p">|</span>  <span class="m">0</span>.01
+
+Nlocal:        <span class="m">2432</span>.00 ave        <span class="m">2432</span> max        <span class="m">2432</span> min
+Histogram: <span class="m">1</span> <span class="m">0</span> <span class="m">0</span> <span class="m">0</span> <span class="m">0</span> <span class="m">0</span> <span class="m">0</span> <span class="m">0</span> <span class="m">0</span> <span class="m">0</span>
+Nghost:        <span class="m">10685</span>.0 ave       <span class="m">10685</span> max       <span class="m">10685</span> min
+Histogram: <span class="m">1</span> <span class="m">0</span> <span class="m">0</span> <span class="m">0</span> <span class="m">0</span> <span class="m">0</span> <span class="m">0</span> <span class="m">0</span> <span class="m">0</span> <span class="m">0</span>
+Neighs:        <span class="m">823958</span>.0 ave      <span class="m">823958</span> max      <span class="m">823958</span> min
+Histogram: <span class="m">1</span> <span class="m">0</span> <span class="m">0</span> <span class="m">0</span> <span class="m">0</span> <span class="m">0</span> <span class="m">0</span> <span class="m">0</span> <span class="m">0</span> <span class="m">0</span>
+
+Total <span class="c1"># of neighbors = 823958</span>
+Ave neighs/atom <span class="o">=</span> <span class="m">338</span>.79852
+Neighbor list <span class="nv">builds</span> <span class="o">=</span> <span class="m">5</span>
+Dangerous builds not checked
+Total wall time: <span class="m">0</span>:00:20
+</pre>
+           </div>
+          </div>
+          <p>
+           Or do the same from within Python:
+          </p>
+          <div class="highlight-python notranslate">
+           <div class="highlight">
+            <pre><span></span><span class="kn">from</span> <span class="nn">flux_restful_client.main</span> <span class="kn">import</span> <span class="n">get_client</span>
+
+<span class="n">cli</span> <span class="o">=</span> <span class="n">get_client</span><span class="p">()</span>
+
+<span class="c1"># Define our jop</span>
+<span class="n">command</span> <span class="o">=</span> <span class="s2">"lmp -v x 2 -v y 2 -v z 2 -in in.reaxc.hns -nocite"</span>
+
+<span class="c1"># Submit the job to flux</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"😴 Submitting job: </span><span class="si">{</span><span class="n">command</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+<span class="n">res</span> <span class="o">=</span> <span class="n">cli</span><span class="o">.</span><span class="n">submit</span><span class="p">(</span><span class="n">command</span><span class="o">=</span><span class="n">command</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">res</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="mi">4</span><span class="p">))</span>
+
+<span class="c1"># Get job information</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"🍓 Getting job info..."</span><span class="p">)</span>
+<span class="n">jobid</span> <span class="o">=</span> <span class="n">res</span><span class="p">[</span><span class="s1">'id'</span><span class="p">]</span>
+<span class="n">res</span> <span class="o">=</span> <span class="n">cli</span><span class="o">.</span><span class="n">jobs</span><span class="p">(</span><span class="n">jobid</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">res</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="mi">4</span><span class="p">))</span>
+
+<span class="c1"># Get job output log</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"🍕 Getting job output..."</span><span class="p">)</span>
+<span class="n">res</span> <span class="o">=</span> <span class="n">cli</span><span class="o">.</span><span class="n">output</span><span class="p">(</span><span class="n">jobid</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">res</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="mi">4</span><span class="p">))</span>
+</pre>
+           </div>
+          </div>
+         </section>
+        </section>
+       </section>
+      </article>
+     </div>
+    </div>
+   </main>
+  </div>
+  <footer class="md-footer">
+   <div class="md-footer-nav">
+    <nav class="md-footer-nav__inner md-grid">
+     <a class="md-flex md-footer-nav__link md-footer-nav__link--prev" href="index.html" rel="prev" title="User Guide">
+      <div class="md-flex__cell md-flex__cell--shrink">
+       <i class="md-icon md-icon--arrow-back md-footer-nav__button">
+       </i>
+      </div>
+      <div class="md-flex__cell md-flex__cell--stretch md-footer-nav__title">
+       <span class="md-flex__ellipsis">
+        <span class="md-footer-nav__direction">
+         Previous
+        </span>
+        User Guide
+       </span>
+      </div>
+     </a>
+     <a class="md-flex md-footer-nav__link md-footer-nav__link--next" href="custom-resource-definition.html" rel="next" title="Mini Cluster">
+      <div class="md-flex__cell md-flex__cell--stretch md-footer-nav__title">
+       <span class="md-flex__ellipsis">
+        <span class="md-footer-nav__direction">
+         Next
+        </span>
+        Mini Cluster
+       </span>
+      </div>
+      <div class="md-flex__cell md-flex__cell--shrink">
+       <i class="md-icon md-icon--arrow-forward md-footer-nav__button">
+       </i>
+      </div>
+     </a>
+    </nav>
+   </div>
+   <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+     <div class="md-footer-copyright">
+      <div class="md-footer-copyright__highlight">
+       © Copyright 2022, Flux Developers.
+      </div>
+      Last updated on
+              Nov 15, 2022.
+      <br/>
+      Created using
+      <a href="http://www.sphinx-doc.org/">
+       Sphinx
+      </a>
+      5.3.0.
+             and
+      <a href="https://github.com/bashtage/sphinx-material/">
+       Material for
+              Sphinx
+      </a>
+     </div>
+    </div>
+   </div>
+  </footer>
+  <script src="../_static/javascripts/application.js">
+  </script>
+  <script>
+   app.initialize({version: "1.0.4", url: {base: ".."}})
+  </script>
+ </body>
+</html>
