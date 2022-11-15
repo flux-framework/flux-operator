@@ -119,7 +119,7 @@ html_theme_options = {
     # red, pink, purple, deep-purple, indigo, blue, light-blue, cyan, teal, green, light-green, lime, yellow, amber, orange, and deep-orange.
     "color_accent": "blue",
     "touch_icon": "images/flux-operator.jpg",
-    "theme_color": "#036291",
+    "theme_color": "#262626",
     "master_doc": False,
     "nav_links": [
         {

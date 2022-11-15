@@ -2,7 +2,6 @@
 
 ### Design 3
 
- - [ ] docs need spell checking!
  - [ ] test better method from Aldo for networking
  - [ ] allow to specify that the app restful server is installed, and don't install again
  - [ ] we need to test that N=1 case works as expected (not waiting for any workers) and 0 spits an error (for now it doesn't make sense)
@@ -20,8 +19,9 @@
 
 #### Completed
 
+ - [x] docs need spell checking!
  - [x] Convert markdown docs into pretty, organized, rendered web-docs
- - [x] Remove automated builds from here in favor of [https://github.com/rse-ops/flux-hpc](https://github.com/rse-ops/flux-hpc)
+ - [x] Remove automated builds from here in favor of https://github.com/rse-ops/flux-hpc
  - [x] Maximum time for job (seconds) set by CRD
  - [x] Do we want to be able to launch additional tasks? (e.g., after the original job started) (for now, no, but this can be re-addressed if a case comes up)
  - [x] Should there be a min/max size for the MiniCluster CRD (probably 2 if we want to have main/worker)? (right not just cannot be zero)

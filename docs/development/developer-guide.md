@@ -116,7 +116,7 @@ Forwarding from 127.0.0.1:5000 -> 5000
 ```
 This means you can open [http://localhost:5000](http://localhost:5000) to see the restful API (and interact with it there).
 
-Ideally we could make something persitent via ClusterIP -> Ingress but I haven't gotten this working yet.
+Ideally we could make something persistent via ClusterIP -> Ingress but I haven't gotten this working yet.
 This is also supposed to work (and shows an IP but doesn't work beyond that).
 
 ```console

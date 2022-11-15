@@ -1,0 +1,22 @@
+name: test flux-operator
+
+on:
+  # This should run on a push to any branch except main, gh-pages, and binoc
+  push:
+    branches-ignore:
+    - main
+    - gh-pages
+
+jobs:
+  formatting:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Setup black linter
+      run: conda create --quiet --name black pyflakes
+
+    - name: Check Spelling
+      uses: crate-ci/typos@7ad296c72fa8265059cc03d1eda562fbdfcd6df2 # v1.9.0
+      with:
+        files: ./docs/*/*.md ./docs/*.md ./README.md ./config/samples

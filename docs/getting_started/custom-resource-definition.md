@@ -97,7 +97,7 @@ For each container, the follow variables are available (nested under `containers
 #### image
 
 This is the only required attribute! You *must* provide a container base that has Flux.
-The requirments of your container are defined in the README of the [flux-hpc](https://github.com/rse-ops/flux-hpc/)
+The requirements of your container are defined in the README of the [flux-hpc](https://github.com/rse-ops/flux-hpc/)
 repository. Generally speaking, you need to have Flux executables, Flux Python bindings,
 and your own executables on the path, and should be started with root with a flux user.
 If you use the [fluxrm/flux-sched](https://hub.docker.com/r/fluxrm/flux-sched) 
@@ -122,14 +122,14 @@ If your container has a pull secret, define it as `imagePullSecret`. If it's pub
 you don't need this. But we do hope you are able to practice open science and share your containers!
 
 ```yaml
-    # Name of an already created ImagePullSecret for the image specfied above
+    # Name of an already created ImagePullSecret for the image specified above
     imagePullSecret: flux-image-secret
 ```
 
 #### workingDir
 
 The container likely has a set working directory, and if you are running the RESTful API service (meaning
-you start without a command, as shown above) this will likely be the application folder. If you are lauching
+you start without a command, as shown above) this will likely be the application folder. If you are launching
 a job directly with flux start and require a particular working directory, set it here!
 
 ```yaml
@@ -155,7 +155,7 @@ For development, it can be helpful to request that an image is re-pulled. Contro
 If you are running multiple containers in a pod, this boolean indicates the one that should
 be running Flux (and the rest are providing services).
 This defaults to true, so if you have one container, you largely don't need to worry about this.
-However, if you set this to true for *two* container (not allowed currently) you will get an eror message.
+However, if you set this to true for *two* container (not allowed currently) you will get an error message.
 
 ```yaml
     # This defaults to true - this is the container we want to run flux in. This means

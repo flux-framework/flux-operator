@@ -7,18 +7,20 @@ on new functionality or features for the Flux Operator, see our [Developer Guide
 
 ## 1. Installing the Operator
 
+If you are trying this out on your own, here is a quick start to getting the operator installed on MiniKube (or similar).
+This assumes some experience with Kubernetes (or applying yaml configs) and using MiniKube or similar.
+More advanced users can try out the [Production](#production) install detailed below.
+
 ### Local or Development
 
-If you are trying this out on your own, here is a quick start to getting the operator installed on MiniKube (or similar).
-
-If you aren't starting from scratch, then you can use the code here to see how things work!
+You'll first want to clone the codebase.
 
 ```bash
 $ git clone https://github.com/flux-framework/flux-operator
 $ cd flux-operator
 ```
 
-First, start a cluster with minikube:
+And then start a cluster with minikube:
 
 ```bash
 $ minikube start
@@ -48,7 +50,8 @@ $ make
 ```bash
 $ make manifests
 ```
-And install. Note that this places an executable [bin/kustomize](bin/kustomize) that you'll need to delete first if you make install again.
+
+And install. Note that this places an executable `bin/kustomize` that you'll need to delete first if you make install again.
 
 ```bash
 $ make install
@@ -75,7 +78,7 @@ $ minikube stop
 
 ### Production
 
-To deploy the flux operator, you'll need to start with the same clone:
+To deploy the Flux Operator, you'll need to start with the same clone:
 
 ```bash
 $ git clone https://github.com/flux-framework/flux-operator
@@ -108,6 +111,8 @@ Ensure the `operator-system` namespace was created:
 
 ```bash
 $ kubectl get namespace
+```
+```console
 NAME              STATUS   AGE
 default           Active   12m
 kube-node-lease   Active   12m
@@ -117,6 +122,8 @@ operator-system   Active   11s
 ```
 ```bash
 $ kubectl describe namespace operator-system
+```
+```console
 Name:         operator-system
 Labels:       control-plane=controller-manager
               kubernetes.io/metadata.name=operator-system
@@ -153,7 +160,7 @@ spec:
   localDeploy: false
 ```
 
-This means we will use peristent volume claims instead. Then do:
+This means we will use persistent volume claims instead. Then do:
 
 ```bash
 $ make apply
@@ -211,16 +218,16 @@ Don't forget you'll need to do some kind of port forwarding:
 kubectl port-forward -n flux-operator flux-sample-0-zdhkp 5000:5000
 Forwarding from 127.0.0.1:5000 -> 5000
 ```
-After port fowarding in a terminal and then submitting in the job UI (you will need to login with the flux user and token presented in the terminal). Here is the example command to try
+After port forwarding in a terminal and then submitting in the job UI (you will need to login with the flux user and token presented in the terminal). Here is the example command to try
 for the basic tutorial here:
 
-```bash
-$ lmp -v x 2 -v y 2 -v z 2 -in in.reaxc.hns -nocite
+```console
+lmp -v x 2 -v y 2 -v z 2 -in in.reaxc.hns -nocite
 ```
 
 And the workdir needs to be:
 
-```bash
+```console
 /home/flux/examples/reaxff/HNS
 ```
 
@@ -234,7 +241,7 @@ Once your cluster is running, check the logs for the index 0 pod to ensure your 
 That will also show you your `FLUX_USER` and `FLUX_TOKEN` that you can export to the environment.
 
 ```bash
-# get the job pod identifers
+# get the job pod identifiers
 $ make list
 # use the -0 one to view logs
 bash script/log.sh flux-sample-0-x2j6z

@@ -1,12 +1,10 @@
 # User Guide
 
-The Flux RESTFUl API is a FastAPI application that makes it easy to
-interact with a single user Flux cluster via a RESTFul endpoint.
-While we currently provide an example client in the [examples](https://github.com/flux-framework/flux-restful-api/tree/main/examples)
-folder, we will soon add other client implementations for your choosing.
-This documentation includes a developer guide, and user guide
+The Flux Operator is a Kubernetes Cluster [Operator](https://kubernetes.io/docs/concepts/extend-kubernetes/operator/) 
+that you can install to your cluster to create and control [Flux Framework](https://flux-framework.org/) "Mini Clusters"
+to launch jobs to. This documentation includes a developer guide, and user guide
 for client interactions. If you have
-any questions or issues, please [let us know](https://github.com/flux-framework/flux-restful-api/issues)
+any questions or issues, please [let us know](https://github.com/flux-framework/flux-operator/issues)
 
 ```{toctree}
 :maxdepth: 3
