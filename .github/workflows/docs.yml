@@ -24,14 +24,17 @@ jobs:
         cd docs
         pip install -r requirements.txt
         make html
+        echo "ls"
         ls
+        echo "ls _build"
         ls _build
         mv $root/.git _build/html/.git
+        mv _build/html /tmp/site
         rm -rf $root
-        mv _build/html $root
-        cd $root
+        cd /tmp/site
+        echo "ls /tmp/site"        
         touch .nojekyll
-        ls
+        ls .
 
     - name: Deploy 🚀
       if: (github.event_name != 'pull_request')
