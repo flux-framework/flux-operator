@@ -30,9 +30,11 @@ jobs:
         mv $root/.git _build/html/.git
         mv _build/html /tmp/site
         rm -rf $root
-        cd /tmp/site
-        echo "ls /tmp/site"        
+        mv /tmp/site $root
+        echo "ls $root"        
         touch .nojekyll
+        git add .nojekyll || echo "Already added"
+        git add .
         ls .
 
     - name: Deploy 🚀
