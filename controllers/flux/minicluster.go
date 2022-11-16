@@ -33,6 +33,10 @@ import (
 	api "flux-framework/flux-operator/api/v1alpha1"
 )
 
+var (
+	hostfileName = "hostfile"
+)
+
 // This is a MiniCluster! A MiniCluster is associated with a running MiniCluster and include:
 // 1. An indexed job with some number of pods
 // 2. Config maps for secrets and other things.
@@ -51,7 +55,6 @@ func (r *MiniClusterReconciler) ensureMiniCluster(ctx context.Context, cluster *
 	if err != nil {
 		return result, err
 	}
-
 	// A local host (developer machine) does not support provisioning, so for the meantime we use a
 	// persistent volume instead (running on same host)
 	if cluster.Spec.LocalDeploy {
@@ -74,25 +77,6 @@ func (r *MiniClusterReconciler) ensureMiniCluster(ctx context.Context, cluster *
 	// Create the batch job that brings it all together!
 	// A batchv1.Job can hold a spec for containers that use the configs we just made
 	_, result, err = r.getMiniCluster(ctx, cluster)
-	if err != nil {
-		return result, err
-	}
-
-	// Reconcile until pods ips are ready
-	// In the pods, it's waiting to see the update_hosts.sh file to be written.
-	// We can do this because ips are written on the first creation and don't change
-	ips := r.getMiniClusterIPS(ctx, cluster)
-	r.log.Info("MiniCluster", "ips", ips)
-
-	// Continue reconciling until we have pod ips
-	if len(ips) != int(cluster.Spec.Size) {
-		return ctrl.Result{Requeue: true}, fmt.Errorf("IPs are not ready yet! Only found %d", len(ips))
-	}
-
-	// At this point we've created job pods that have a waiting entrypoint for the update_hosts.sh
-	// to exist. This is where we update the ConfigMap so it exists
-	// Yes, this is a hack. Better ideas appreciated!
-	_, result, err = r.addDiscoveryHostsFile(ctx, cluster)
 	if err != nil {
 		return result, err
 	}
@@ -143,6 +127,7 @@ func (r *MiniClusterReconciler) getMiniCluster(ctx context.Context, cluster *api
 	return existing, ctrl.Result{}, err
 }
 
+// getMiniClusterIPS was used when we needed to write /etc/hosts and is no longer used
 func (r *MiniClusterReconciler) getMiniClusterIPS(ctx context.Context, cluster *api.MiniCluster) map[string]string {
 
 	ips := map[string]string{}
@@ -179,33 +164,6 @@ func (r *MiniClusterReconciler) getMiniClusterPods(ctx context.Context, cluster 
 		return podList.Items[i].Name < podList.Items[j].Name
 	})
 	return podList
-}
-
-// discoverHosts generates a file that the pod can use to discover hosts.
-// We assume the pods are sorted by name for a consistent output!
-func (r *MiniClusterReconciler) generateDiscoverHostsFile(cluster *api.MiniCluster, pods *corev1.PodList, ips map[string]string) string {
-	content := "#!/bin/sh"
-
-	// NOTE: host will is duplicated, if that makes things wonky.
-	for _, pod := range pods.Items {
-
-		// flux-sample-N-xxxx -> flux-sample-N
-		hostname := strings.Join(strings.SplitN(pod.Name, "-", 4)[0:3], "-")
-		ip_address := ips[pod.Name]
-		fqdn := fmt.Sprintf("%s-%s.%s.svc.cluster.local", hostname, cluster.Name, cluster.Namespace)
-		if ip_address == "" {
-			continue
-		}
-		content = fmt.Sprintf("%s\necho %s 	%s	%s >> /etc/hosts", content, ip_address, fqdn, hostname)
-	}
-
-	// Add one more newline for better readability
-	content += "\n"
-
-	// This is wrapping the entrypoint, so the last command needs to take args and start flux
-	// The last set of arguments from the call should be the container entrypoint
-	r.log.Info("🌀 MiniCluster Discover Hosts", "/flux_operator/update_hosts.sh", content)
-	return content
 }
 
 // getPersistentVolume creates the PVC claim for the curve certificate (to be written once)
@@ -285,7 +243,7 @@ func (r *MiniClusterReconciler) getConfigMap(ctx context.Context, cluster *api.M
 
 			// check if its broker.toml (the flux config)
 			if configName == "flux-config" {
-				data["hostfile"] = generateFluxConfig(cluster)
+				data[hostfileName] = generateFluxConfig(cluster)
 			}
 
 			// Initial "empty" set of start/wait scripts until we have host ips
@@ -293,9 +251,6 @@ func (r *MiniClusterReconciler) getConfigMap(ctx context.Context, cluster *api.M
 
 				// The main logic for generating the Curve certificate, start commands, is here
 				data["wait"] = generateWaitScript(cluster)
-
-				// This will be updated after initial creation and we have host ips!
-				data["update-hosts"] = ""
 			}
 			dep := r.createConfigMap(cluster, configFullName, data)
 			r.log.Info("✨ Creating MiniCluster ConfigMap ✨", "Type", configName, "Namespace", dep.Namespace, "Name", dep.Name)
@@ -321,8 +276,11 @@ func (r *MiniClusterReconciler) getConfigMap(ctx context.Context, cluster *api.M
 
 // generateFluxConfig creates the broker.toml file used to boostrap flux
 func generateFluxConfig(cluster *api.MiniCluster) string {
+
+	// Prepare suffix of fully qualified domain name
+	fqdn := fmt.Sprintf("%s.%s.svc.cluster.local", serviceName, cluster.Namespace)
 	hosts := fmt.Sprintf("[%s]", generateRange(int(cluster.Spec.Size)))
-	fluxConfig := fmt.Sprintf(brokerConfigTemplate, cluster.Name, hosts)
+	fluxConfig := fmt.Sprintf(brokerConfigTemplate, fqdn, cluster.Name, hosts)
 	return fluxConfig
 }
 
@@ -348,35 +306,6 @@ func generateRange(size int) string {
 		rangeString = fmt.Sprintf("0-%d", size-1)
 	}
 	return rangeString
-}
-
-// getHostfileConfig gets an existing configmap, if it's done
-func (r *MiniClusterReconciler) addDiscoveryHostsFile(ctx context.Context, cluster *api.MiniCluster) (*corev1.ConfigMap, ctrl.Result, error) {
-
-	configName := cluster.Name + entrypointSuffix
-	cm := &corev1.ConfigMap{}
-	err := r.Client.Get(ctx, types.NamespacedName{Name: configName, Namespace: cluster.Namespace}, cm)
-
-	// This is a bit redundant, but probably ok
-	pods := r.getMiniClusterPods(ctx, cluster)
-	ips := r.getMiniClusterIPS(ctx, cluster)
-
-	// To update it we need to have found it
-	if err == nil {
-
-		cmCopy := cm.DeepCopy()
-		cmCopy.Data["update-hosts"] = r.generateDiscoverHostsFile(cluster, pods, ips)
-		err = r.Client.Update(ctx, cmCopy)
-		if err != nil {
-			r.log.Error(err, "❌ Error Adding Discovery Hosts File", "Namespace", cmCopy.Namespace, "Name", (*cmCopy).Name)
-			return cmCopy, ctrl.Result{}, err
-		}
-		if cluster.Spec.LocalDeploy {
-			saveDebugYaml(cmCopy, configName+".yaml")
-		}
-		return cmCopy, ctrl.Result{Requeue: true}, nil
-	}
-	return cm, ctrl.Result{}, err
 }
 
 // createConfigMap generates a config map with some kind of data

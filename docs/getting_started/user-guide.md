@@ -209,36 +209,12 @@ Given a running MiniCluster that exposes a RESTful API, you have several modes f
 We provide [clients](https://github.com/flux-framework/flux-restful-api/tree/main/clients) to interact with
 a running server, and each will be briefly shown below. The Python client is also included in our [Tutorials](https://flux-framework.org/flux-restful-api/auto_examples/index.html).
 
-### User Interface
+### Credentials
 
-After your MiniCluster is created with a RESTFul API, the easiest thing to do is open the user interface to [http://127.0.0.1:5000](http://127.0.0.1:5000)
-Don't forget you'll need to do some kind of port forwarding:
-
-```console
-kubectl port-forward -n flux-operator flux-sample-0-zdhkp 5000:5000
-Forwarding from 127.0.0.1:5000 -> 5000
-```
-After port forwarding in a terminal and then submitting in the job UI (you will need to login with the flux user and token presented in the terminal). Here is the example command to try
-for the basic tutorial here:
-
-```console
-lmp -v x 2 -v y 2 -v z 2 -in in.reaxc.hns -nocite
-```
-
-And the workdir needs to be:
-
-```console
-/home/flux/examples/reaxff/HNS
-```
-
-And that's it for the example! You can also try using the [RESTFul API Clients](https://flux-framework.org/flux-restful-api/getting_started/user-guide.html) to submit instead
-(discussed next). Note that there is currently no way for the RESTful client to ask to destroy the cluster - you'll
-still need to use kubectl to do that.
-
-### RESTful
-
-Once your cluster is running, check the logs for the index 0 pod to ensure your API is running.
-That will also show you your `FLUX_USER` and `FLUX_TOKEN` that you can export to the environment.
+Whether you use a command line client, a language SDK, or the web interface - you need your credentials!
+The credentials are printed in the log of the index-0. These are the `FLUX_USER` and `FLUX_TOKEN` 
+environment variables. A client requires exported them to the environment, and the web interface requires
+copy paste into a form. 
 
 ```bash
 # get the job pod identifiers
@@ -255,7 +231,69 @@ export FLUX_USER=flux
 ```
 
 Note that they appear slightly above the command, which isn't at the bottom of the log!
-Finally, you can use the [flux-framework/flux-restful-api](https://flux-framework.org/flux-restful-api/getting_started/user-guide.html#python)
+
+### User Interface
+
+To see the user interface, you'll first need to do some kind of port forwarding:
+
+```console
+kubectl port-forward -n flux-operator flux-sample-0-zdhkp 5000:5000
+Forwarding from 127.0.0.1:5000 -> 5000
+```
+
+This should be exposed at [http://127.0.0.1:5000](http://127.0.0.1:5000). It's not terribly informative, so
+we won't show the main portal here! 🤭
+
+After your MiniCluster is created with a RESTFul API, the easiest thing to do is open the user interface to [http://127.0.0.1:5000](http://127.0.0.1:5000)
+After port forwarding in a terminal and then submitting in the job UI (you will need to login with the flux user and token presented in the terminal). Here is the example command to try
+for the basic tutorial here:
+
+```console
+lmp -v x 2 -v y 2 -v z 2 -in in.reaxc.hns -nocite
+```
+
+And the workdir for this default example needs to be:
+
+```console
+/home/flux/examples/reaxff/HNS
+```
+![img/submit.png](img/submit.png)
+
+After submit, you can view the job in the jobs table:
+
+![img/jobs-table.png](img/jobs-table.png)
+
+And click the identifier to see logs (currently blocking so will wait until it's done, soon won't be!)
+
+![img/job-info.png](img/job-info.png)
+
+And that's it for the example! You can further explore the exposed API in the web interface:
+
+![img/api.png](img/api.png)
+
+And you can also try using the [RESTFul API Clients](https://flux-framework.org/flux-restful-api/getting_started/user-guide.html) to submit instead
+(discussed next). Note that there is currently no way for the RESTful client to ask to destroy the cluster - you'll
+still need to use kubectl to do that.
+
+### RESTful
+
+Remember that before starting you'll need to export your `FLUX_USER` and `FLUX_TOKEN` to the environment:
+
+```bash
+# get the job pod identifiers
+$ make list
+# use the -0 one to view logs
+bash script/log.sh flux-sample-0-x2j6z
+```
+```console
+🔑 Your Credentials! These will allow you to control your MiniCluster with flux-framework/flux-restful-api
+export FLUX_TOKEN=9c605129-3ddc-41e2-9a23-38f59fb8f8e0
+export FLUX_USER=flux
+
+🌀sudo -u flux flux start -o --config /etc/flux/config ...
+```
+
+Next, you can use the [flux-framework/flux-restful-api](https://flux-framework.org/flux-restful-api/getting_started/user-guide.html#python)
 Python client to submit a job.
 
 ```bash

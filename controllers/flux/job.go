@@ -31,6 +31,7 @@ func (r *MiniClusterReconciler) newMiniClusterJob(cluster *api.MiniCluster) *bat
 	// Number of retries before marking as failed
 	backoffLimit := int32(100)
 	completionMode := batchv1.IndexedCompletion
+	setAsFQDN := false
 
 	job := &batchv1.Job{
 		ObjectMeta: metav1.ObjectMeta{
@@ -55,14 +56,16 @@ func (r *MiniClusterReconciler) newMiniClusterJob(cluster *api.MiniCluster) *bat
 					Namespace: cluster.Namespace,
 
 					// Job is used as selector for service
-					Labels: map[string]string{"name": cluster.Name, "namespace": cluster.Namespace, "job": cluster.Name},
+					Labels: map[string]string{"name": cluster.Name, "namespace": cluster.Namespace, "job": serviceName},
 				},
 				Spec: corev1.PodSpec{
-					Subdomain:        cluster.Name,
-					Volumes:          getVolumes(cluster),
-					Containers:       containers,
-					RestartPolicy:    corev1.RestartPolicyOnFailure,
-					ImagePullSecrets: getImagePullSecrets(cluster),
+					// matches the service
+					Subdomain:         serviceName,
+					SetHostnameAsFQDN: &setAsFQDN,
+					Volumes:           getVolumes(cluster),
+					Containers:        containers,
+					RestartPolicy:     corev1.RestartPolicyOnFailure,
+					ImagePullSecrets:  getImagePullSecrets(cluster),
 				}},
 		},
 	}
