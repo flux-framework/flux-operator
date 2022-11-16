@@ -53,24 +53,6 @@ mkdir -p ${STATE_DIR}
 # Cron directory
 mkdir -p /etc/flux/system/cron.d
 
-# We determine the update_hosts.sh is ready when it has content
-count_lines() {
-	lines=$(cat /flux_operator/update_hosts.sh | wc -l)
-	echo $lines
-}
-
-while [ $(count_lines) -lt 2 ];
-do
-    echo "Host updating script not available yet, waiting..."
-    sleep 5s
-done             
-
-# Run to discover hosts
-/bin/sh /flux_operator/update_hosts.sh
-
-# Show host updates
-cat /etc/hosts
-
 # uuid for flux token (auth)
 FLUX_TOKEN="%s"
 

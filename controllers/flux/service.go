@@ -26,13 +26,14 @@ import (
 )
 
 var (
-	serviceName = "flux-restful-service"
+	serviceName = "flux-service"
 	servicePort = 5000
 )
 
 // exposeService will expose a service
 func (r *MiniClusterReconciler) exposeService(ctx context.Context, cluster *api.MiniCluster) (ctrl.Result, error) {
 
+	// This service is for the restful API
 	existing := &corev1.Service{}
 	err := r.Client.Get(ctx, types.NamespacedName{Name: serviceName, Namespace: cluster.Namespace}, existing)
 	if err != nil {
@@ -69,7 +70,11 @@ func (r *MiniClusterReconciler) createMiniClusterService(ctx context.Context, cl
 					TargetPort: intstr.FromInt(servicePort),
 				},
 			},
-			ExternalIPs: []string{"192.168.0.194"},
+			// Important: if you define an ExternalIPs here, minikube service
+			// is likely to not work, but port forward will.
+			Selector: map[string]string{
+				"job": serviceName,
+			},
 		},
 	}
 	err := ctrl.SetControllerReference(cluster, service, r.Scheme)
