@@ -32,7 +32,7 @@ jobs:
         ls _build/html
         mv $root/.git _build/html/.git
         rm -rf $root
-        mv /tmp/operator/_build/html $root
+        mv /tmp/operator/docs/_build/html $root
         cd ${root}
         echo "ls $root"        
         ls .
