@@ -20,23 +20,19 @@ jobs:
         export PATH="/usr/share/miniconda/bin:$PATH"        
         root=$PWD
         source activate fluxdocs
-        cd docs
+        git clone https://github.com/flux-framework/flux-operator /tmp/operator
+        cd /tmp/operator/docs
         pip install -r requirements.txt
         make html
         echo
         echo "ls"
         ls
         echo
-        echo "ls _build"
-        ls _build
+        echo "ls _build/html"
+        ls _build/html
         mv $root/.git _build/html/.git
-        mv _build/html /tmp/site
-        echo
-        echo "ls /tmp/site"        
-        ls /tmp/site
-        touch .nojekyll
         rm -rf $root
-        mv /tmp/site $root
+        mv /tmp/operator/_build/html $root
         cd ${root}
         echo "ls $root"        
         ls .
