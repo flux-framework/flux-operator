@@ -319,6 +319,11 @@
                    <nav class="md-nav">
                     <ul class="md-nav__list">
                      <li class="md-nav__item">
+                      <a class="md-nav__link" href="#credentials">
+                       Credentials
+                      </a>
+                     </li>
+                     <li class="md-nav__item">
                       <a class="md-nav__link" href="#user-interface">
                        User Interface
                       </a>
@@ -415,6 +420,11 @@
               </a>
               <nav class="md-nav">
                <ul class="md-nav__list">
+                <li class="md-nav__item">
+                 <a class="md-nav__link" href="#credentials">
+                  Credentials
+                 </a>
+                </li>
                 <li class="md-nav__item">
                  <a class="md-nav__link" href="#user-interface">
                   User Interface
@@ -853,66 +863,16 @@ a running server, and each will be briefly shown below. The Python client is als
           </a>
           .
          </p>
-         <section id="user-interface">
-          <h3 id="user-interface">
-           User Interface
-           <a class="headerlink" href="#user-interface" title="Permalink to this heading">
+         <section id="credentials">
+          <h3 id="credentials">
+           Credentials
+           <a class="headerlink" href="#credentials" title="Permalink to this heading">
             ¶
            </a>
           </h3>
           <p>
-           After your MiniCluster is created with a RESTFul API, the easiest thing to do is open the user interface to
-           <a class="reference external" href="http://127.0.0.1:5000">
-            http://127.0.0.1:5000
-           </a>
-           Don’t forget you’ll need to do some kind of port forwarding:
-          </p>
-          <div class="highlight-console notranslate">
-           <div class="highlight">
-            <pre><span></span><span class="go">kubectl port-forward -n flux-operator flux-sample-0-zdhkp 5000:5000</span>
-<span class="go">Forwarding from 127.0.0.1:5000 -&gt; 5000</span>
-</pre>
-           </div>
-          </div>
-          <p>
-           After port forwarding in a terminal and then submitting in the job UI (you will need to login with the flux user and token presented in the terminal). Here is the example command to try
-for the basic tutorial here:
-          </p>
-          <div class="highlight-console notranslate">
-           <div class="highlight">
-            <pre><span></span><span class="go">lmp -v x 2 -v y 2 -v z 2 -in in.reaxc.hns -nocite</span>
-</pre>
-           </div>
-          </div>
-          <p>
-           And the workdir needs to be:
-          </p>
-          <div class="highlight-console notranslate">
-           <div class="highlight">
-            <pre><span></span><span class="go">/home/flux/examples/reaxff/HNS</span>
-</pre>
-           </div>
-          </div>
-          <p>
-           And that’s it for the example! You can also try using the
-           <a class="reference external" href="https://flux-framework.org/flux-restful-api/getting_started/user-guide.html">
-            RESTFul API Clients
-           </a>
-           to submit instead
-(discussed next). Note that there is currently no way for the RESTful client to ask to destroy the cluster - you’ll
-still need to use kubectl to do that.
-          </p>
-         </section>
-         <section id="restful">
-          <h3 id="restful">
-           RESTful
-           <a class="headerlink" href="#restful" title="Permalink to this heading">
-            ¶
-           </a>
-          </h3>
-          <p>
-           Once your cluster is running, check the logs for the index 0 pod to ensure your API is running.
-That will also show you your
+           Whether you use a command line client, a language SDK, or the web interface - you need your credentials!
+The credentials are printed in the log of the index-0. These are the
            <code class="docutils literal notranslate">
             <span class="pre">
              FLUX_USER
@@ -924,7 +884,8 @@ That will also show you your
              FLUX_TOKEN
             </span>
            </code>
-           that you can export to the environment.
+           environment variables. A client requires exported them to the environment, and the web interface requires
+copy paste into a form.
           </p>
           <div class="highlight-bash notranslate">
            <div class="highlight">
@@ -947,7 +908,130 @@ bash script/log.sh flux-sample-0-x2j6z
           </div>
           <p>
            Note that they appear slightly above the command, which isn’t at the bottom of the log!
-Finally, you can use the
+          </p>
+         </section>
+         <section id="user-interface">
+          <h3 id="user-interface">
+           User Interface
+           <a class="headerlink" href="#user-interface" title="Permalink to this heading">
+            ¶
+           </a>
+          </h3>
+          <p>
+           To see the user interface, you’ll first need to do some kind of port forwarding:
+          </p>
+          <div class="highlight-console notranslate">
+           <div class="highlight">
+            <pre><span></span><span class="go">kubectl port-forward -n flux-operator flux-sample-0-zdhkp 5000:5000</span>
+<span class="go">Forwarding from 127.0.0.1:5000 -&gt; 5000</span>
+</pre>
+           </div>
+          </div>
+          <p>
+           This should be exposed at
+           <a class="reference external" href="http://127.0.0.1:5000">
+            http://127.0.0.1:5000
+           </a>
+           . It’s not terribly informative, so
+we won’t show the main portal here! 🤭
+          </p>
+          <p>
+           After your MiniCluster is created with a RESTFul API, the easiest thing to do is open the user interface to
+           <a class="reference external" href="http://127.0.0.1:5000">
+            http://127.0.0.1:5000
+           </a>
+           After port forwarding in a terminal and then submitting in the job UI (you will need to login with the flux user and token presented in the terminal). Here is the example command to try
+for the basic tutorial here:
+          </p>
+          <div class="highlight-console notranslate">
+           <div class="highlight">
+            <pre><span></span><span class="go">lmp -v x 2 -v y 2 -v z 2 -in in.reaxc.hns -nocite</span>
+</pre>
+           </div>
+          </div>
+          <p>
+           And the workdir for this default example needs to be:
+          </p>
+          <div class="highlight-console notranslate">
+           <div class="highlight">
+            <pre><span></span><span class="go">/home/flux/examples/reaxff/HNS</span>
+</pre>
+           </div>
+          </div>
+          <p>
+           <img alt="img/submit.png" src="../_images/submit.png"/>
+          </p>
+          <p>
+           After submit, you can view the job in the jobs table:
+          </p>
+          <p>
+           <img alt="img/jobs-table.png" src="../_images/jobs-table.png"/>
+          </p>
+          <p>
+           And click the identifier to see logs (currently blocking so will wait until it’s done, soon won’t be!)
+          </p>
+          <p>
+           <img alt="img/job-info.png" src="../_images/job-info.png"/>
+          </p>
+          <p>
+           And that’s it for the example! You can further explore the exposed API in the web interface:
+          </p>
+          <p>
+           <img alt="img/api.png" src="../_images/api.png"/>
+          </p>
+          <p>
+           And you can also try using the
+           <a class="reference external" href="https://flux-framework.org/flux-restful-api/getting_started/user-guide.html">
+            RESTFul API Clients
+           </a>
+           to submit instead
+(discussed next). Note that there is currently no way for the RESTful client to ask to destroy the cluster - you’ll
+still need to use kubectl to do that.
+          </p>
+         </section>
+         <section id="restful">
+          <h3 id="restful">
+           RESTful
+           <a class="headerlink" href="#restful" title="Permalink to this heading">
+            ¶
+           </a>
+          </h3>
+          <p>
+           Remember that before starting you’ll need to export your
+           <code class="docutils literal notranslate">
+            <span class="pre">
+             FLUX_USER
+            </span>
+           </code>
+           and
+           <code class="docutils literal notranslate">
+            <span class="pre">
+             FLUX_TOKEN
+            </span>
+           </code>
+           to the environment:
+          </p>
+          <div class="highlight-bash notranslate">
+           <div class="highlight">
+            <pre><span></span><span class="c1"># get the job pod identifiers</span>
+$ make list
+<span class="c1"># use the -0 one to view logs</span>
+bash script/log.sh flux-sample-0-x2j6z
+</pre>
+           </div>
+          </div>
+          <div class="highlight-console notranslate">
+           <div class="highlight">
+            <pre><span></span><span class="go">🔑 Your Credentials! These will allow you to control your MiniCluster with flux-framework/flux-restful-api</span>
+<span class="go">export FLUX_TOKEN=9c605129-3ddc-41e2-9a23-38f59fb8f8e0</span>
+<span class="go">export FLUX_USER=flux</span>
+
+<span class="go">🌀sudo -u flux flux start -o --config /etc/flux/config ...</span>
+</pre>
+           </div>
+          </div>
+          <p>
+           Next, you can use the
            <a class="reference external" href="https://flux-framework.org/flux-restful-api/getting_started/user-guide.html#python">
             flux-framework/flux-restful-api
            </a>
@@ -1190,7 +1274,7 @@ Total wall time: <span class="m">0</span>:00:20
        © Copyright 2022, Flux Developers.
       </div>
       Last updated on
-              Nov 15, 2022.
+              Nov 16, 2022.
       <br/>
       Created using
       <a href="http://www.sphinx-doc.org/">

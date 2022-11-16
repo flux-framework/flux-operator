@@ -9,8 +9,17 @@ To work on this operator you should:
 
  - Have a recent version of Go installed (1.18.1)
  - Have minikube installed
-  
-You'll also want to clone the repository.
+
+**Important** For minikube, make sure to enable [DNS plugins](https://minikube.sigs.k8s.io/docs/handbook/addons/ingress-dns/).
+
+```bash
+$ minikube addons enable ingress
+$ minikube addons enable ingress-dns
+```
+
+The basic Flux networking (pods seeing one another) won't work if your cluster does not support DNS.
+You also won't be able to expose the service with minikube service if you don't do the above (but port-forward would technically work)
+You'll then also want to clone the repository.
 
 ```bash
 # Clone the source code
@@ -33,7 +42,11 @@ $ minikube start
 # Make a flux operator namespace
 $ kubectl create namespace flux-operator
 namespace/flux-operator created
+```
 
+Here is how to build and install the operator:
+
+```
 # Build the operator
 $ make
 
@@ -46,7 +59,24 @@ $ make install
 
 #### 2. Configs
 
-There is also a courtesy function to clean, and apply the samples:
+The job configs - custom resource definitions or "CRD" can be found in [config/samples](https://github.com/flux-framework/flux-operator/tree/main/config/samples).
+Before launching any jobs, making sure `localDeploy` is set to true in your CRD so you don't ask for a persistent volume claim!
+
+```yaml
+spec:
+# Set to true to use volume mounts instead of volume claims
+  localDeploy: true
+```
+
+The default is set to true (so a local volume in `/tmp` is used) but this won't work on an actual cloud Kubernetes cluster,
+and vice versa - the volume claim won't work locally. When you are sure this is good,
+here is how to "launch" the Mini Cluster (or if providing a command, an ephemeral job):
+
+```bash
+$ kubectl apply -f config/samples/flux-framework.org_v1alpha1_minicluster.yaml
+```
+
+there is a courtesy function to clean, and apply the samples:
 
 ```bash
 $ make clean  # remove old flux-operator namespaced items
@@ -65,17 +95,6 @@ To see logs for the job, you'd do:
 ```bash
 $ kubectl logs -n flux-operator job.batch/flux-sample
 ```
-
-Ensure localDeploy is set to true in your CRD so you don't ask for a persistent volume claim!
-
-```yaml
-spec:
-# Set to true to use volume mounts instead of volume claims
-  localDeploy: true
-```
-
-And then:
-
 
 And this is also:
 
@@ -103,8 +122,7 @@ And shell into one with the helper script:
 
 ### Interacting with Services
 
-I'm fairly new to this, so this is a WIP! I found that (to start) the only reliable thing
-to work is a port forward:
+Currently, the most reliable thing to do is port forward:
 
 #### port-forward
 
@@ -114,16 +132,18 @@ If we run as a ClusterIP, we can accomplish the same with a one off `kubectl por
 kubectl port-forward -n flux-operator flux-sample-0-zdhkp 5000:5000
 Forwarding from 127.0.0.1:5000 -> 5000
 ```
+
 This means you can open [http://localhost:5000](http://localhost:5000) to see the restful API (and interact with it there).
 
-Ideally we could make something persistent via ClusterIP -> Ingress but I haven't gotten this working yet.
-This is also supposed to work (and shows an IP but doesn't work beyond that).
+If you want to use a minikube service, this seems to work, but is spotty - I think because
+minikube is expecting the service to be available from any pod (it is only running from index 0).
+If you want to try this:
 
 ```console
 $ minikube service -n flux-operator flux-restful-service --url=true
 ```
 
-So let's use the port forward for now (for development) until we test this out more.
+But for now I'm developing with port forward.
 
 
 ## Build Images

@@ -540,7 +540,26 @@ environment.
           </li>
          </ul>
          <p>
-          You’ll also want to clone the repository.
+          <strong>
+           Important
+          </strong>
+          For minikube, make sure to enable
+          <a class="reference external" href="https://minikube.sigs.k8s.io/docs/handbook/addons/ingress-dns/">
+           DNS plugins
+          </a>
+          .
+         </p>
+         <div class="highlight-bash notranslate">
+          <div class="highlight">
+           <pre><span></span>$ minikube addons <span class="nb">enable</span> ingress
+$ minikube addons <span class="nb">enable</span> ingress-dns
+</pre>
+          </div>
+         </div>
+         <p>
+          The basic Flux networking (pods seeing one another) won’t work if your cluster does not support DNS.
+You also won’t be able to expose the service with minikube service if you don’t do the above (but port-forward would technically work)
+You’ll then also want to clone the repository.
          </p>
          <div class="highlight-bash notranslate">
           <div class="highlight">
@@ -578,15 +597,22 @@ $ <span class="nb">cd</span> flux-operator
 <span class="gp"># </span>Make a flux operator namespace
 <span class="gp">$ </span>kubectl create namespace flux-operator
 <span class="go">namespace/flux-operator created</span>
+</pre>
+            </div>
+           </div>
+           <p>
+            Here is how to build and install the operator:
+           </p>
+           <div class="highlight-default notranslate">
+            <div class="highlight">
+             <pre><span></span># Build the operator
+$ make
 
-<span class="gp"># </span>Build the operator
-<span class="gp">$ </span>make
+# How to make your manifests
+$ make manifests
 
-<span class="gp"># </span>How to make your manifests
-<span class="gp">$ </span>make manifests
-
-<span class="gp"># </span>And install. This places an executable <span class="s2">"bin/kustomize"</span>
-<span class="gp">$ </span>make install
+# And install. This places an executable "bin/kustomize"
+$ make install
 </pre>
             </div>
            </div>
@@ -599,7 +625,46 @@ $ <span class="nb">cd</span> flux-operator
             </a>
            </h4>
            <p>
-            There is also a courtesy function to clean, and apply the samples:
+            The job configs - custom resource definitions or “CRD” can be found in
+            <a class="reference external" href="https://github.com/flux-framework/flux-operator/tree/main/config/samples">
+             config/samples
+            </a>
+            .
+Before launching any jobs, making sure
+            <code class="docutils literal notranslate">
+             <span class="pre">
+              localDeploy
+             </span>
+            </code>
+            is set to true in your CRD so you don’t ask for a persistent volume claim!
+           </p>
+           <div class="highlight-yaml notranslate">
+            <div class="highlight">
+             <pre><span></span><span class="nt">spec</span><span class="p">:</span><span class="w"></span>
+<span class="c1"># Set to true to use volume mounts instead of volume claims</span><span class="w"></span>
+<span class="w">  </span><span class="nt">localDeploy</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span><span class="w"></span>
+</pre>
+            </div>
+           </div>
+           <p>
+            The default is set to true (so a local volume in
+            <code class="docutils literal notranslate">
+             <span class="pre">
+              /tmp
+             </span>
+            </code>
+            is used) but this won’t work on an actual cloud Kubernetes cluster,
+and vice versa - the volume claim won’t work locally. When you are sure this is good,
+here is how to “launch” the Mini Cluster (or if providing a command, an ephemeral job):
+           </p>
+           <div class="highlight-bash notranslate">
+            <div class="highlight">
+             <pre><span></span>$ kubectl apply -f config/samples/flux-framework.org_v1alpha1_minicluster.yaml
+</pre>
+            </div>
+           </div>
+           <p>
+            there is a courtesy function to clean, and apply the samples:
            </p>
            <div class="highlight-bash notranslate">
             <div class="highlight">
@@ -627,20 +692,6 @@ $ make run    <span class="c1"># make the cluster</span>
 </pre>
             </div>
            </div>
-           <p>
-            Ensure localDeploy is set to true in your CRD so you don’t ask for a persistent volume claim!
-           </p>
-           <div class="highlight-yaml notranslate">
-            <div class="highlight">
-             <pre><span></span><span class="nt">spec</span><span class="p">:</span><span class="w"></span>
-<span class="c1"># Set to true to use volume mounts instead of volume claims</span><span class="w"></span>
-<span class="w">  </span><span class="nt">localDeploy</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span><span class="w"></span>
-</pre>
-            </div>
-           </div>
-           <p>
-            And then:
-           </p>
            <p>
             And this is also:
            </p>
@@ -687,8 +738,7 @@ $ make run    <span class="c1"># make the cluster</span>
            </a>
           </h3>
           <p>
-           I’m fairly new to this, so this is a WIP! I found that (to start) the only reliable thing
-to work is a port forward:
+           Currently, the most reliable thing to do is port forward:
           </p>
           <section id="port-forward">
            <h4 id="port-forward">
@@ -724,8 +774,9 @@ to work is a port forward:
             to see the restful API (and interact with it there).
            </p>
            <p>
-            Ideally we could make something persistent via ClusterIP -&gt; Ingress but I haven’t gotten this working yet.
-This is also supposed to work (and shows an IP but doesn’t work beyond that).
+            If you want to use a minikube service, this seems to work, but is spotty - I think because
+minikube is expecting the service to be available from any pod (it is only running from index 0).
+If you want to try this:
            </p>
            <div class="highlight-console notranslate">
             <div class="highlight">
@@ -734,7 +785,7 @@ This is also supposed to work (and shows an IP but doesn’t work beyond that).
             </div>
            </div>
            <p>
-            So let’s use the port forward for now (for development) until we test this out more.
+            But for now I’m developing with port forward.
            </p>
           </section>
          </section>
@@ -930,7 +981,7 @@ server to preview:
        © Copyright 2022, Flux Developers.
       </div>
       Last updated on
-              Nov 15, 2022.
+              Nov 16, 2022.
       <br/>
       Created using
       <a href="http://www.sphinx-doc.org/">
