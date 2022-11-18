@@ -2,13 +2,16 @@
 
 ## Active Design
 
-![09-07-2022/design-three-team.png](09-07-2022/design-three-team.png)
+![09-16-2022/design-three-team.png](09-16-2022/design-three-team.png)
 
- - A **MiniCluster** is an [indexed job](https://kubernetes.io/docs/tasks/job/indexed-parallel-processing-static/) so we can create N copies of the "same" base containers (each with flux, and the connected workers in our cluster)
+ - [See the Design](09-16-2022/index.md)
+
+ - A **MiniCluster** is an [indexed job](https://kubernetes.io/docs/tasks/job/indexed-parallel-processing-static/) so we can create N copies of the "same" base containers (each with Flux, and the connected workers in our cluster)
  - The flux config is written to a volume at `/etc/flux/config` (created via a config map) as a brokers.toml file.
- - We use an [initContainer](https://kubernetes.io/docs/concepts/workloads/pods/init-containers/) with an Empty volume (shared between init and worker) to generate the curve certificates (`/mnt/curve/curve.cert`). The broker sees them via the definition of that path in the broker.toml in our config directory mentioned above. Currently ever container generates its own curve.cert so this needs to be updated to have just one.
- - Networking is a bit of a hack - we have a wrapper starting script that essentially waits until a file is populated with hostnames. While it's waiting, we are waiting for the pods to be created and allocated an ip address, and then we write the addresses to this update file (that will echo into `/etc/hosts`). When the Pod is re-created with the same ip address, the second time around the file is run to update the hosts, and then we submit the job.
- - When the hosts are configured, the main rank (pod 0) does some final setup, and runs the job via the flux user. The others start flux with a sleep command.
+ - The startup script "wait.sh" handles writing the curve certificate (`/mnt/curve/curve.cert`) and generating and sharing a munge key in the same location. 
+ - Networking of the pods works by way of exposing a service that includes the Pod subdomain. We add fully qualified domain names to the pods so that the `hostname` command matches the full name, and Flux is given the full names in its broker.toml.
+ - The main pod either runs `flux start` with a web service (creating a persistent "Mini Cluster" or `flux start` with a specific command (if provided in the CRD) in which case the command runs, and the jobs finish and the cluster goes away.
+
 
 ## Early Designs
 
