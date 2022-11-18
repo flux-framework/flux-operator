@@ -495,9 +495,18 @@
           </a>
          </h2>
          <p>
-          <img alt="09-07-2022/design-three-team.png" src="../_images/design-three-team.png"/>
+          <img alt="09-16-2022/design-three-team.png" src="../_images/design-three-team1.png"/>
          </p>
          <ul class="simple">
+          <li>
+           <p>
+            <a class="reference internal" href="09-16-2022/index.html">
+             <span class="doc std std-doc">
+              See the Design
+             </span>
+            </a>
+           </p>
+          </li>
           <li>
            <p>
             A
@@ -508,7 +517,7 @@
             <a class="reference external" href="https://kubernetes.io/docs/tasks/job/indexed-parallel-processing-static/">
              indexed job
             </a>
-            so we can create N copies of the “same” base containers (each with flux, and the connected workers in our cluster)
+            so we can create N copies of the “same” base containers (each with Flux, and the connected workers in our cluster)
            </p>
           </li>
           <li>
@@ -524,33 +533,47 @@
           </li>
           <li>
            <p>
-            We use an
-            <a class="reference external" href="https://kubernetes.io/docs/concepts/workloads/pods/init-containers/">
-             initContainer
-            </a>
-            with an Empty volume (shared between init and worker) to generate the curve certificates (
+            The startup script “wait.sh” handles writing the curve certificate (
             <code class="docutils literal notranslate">
              <span class="pre">
               /mnt/curve/curve.cert
              </span>
             </code>
-            ). The broker sees them via the definition of that path in the broker.toml in our config directory mentioned above. Currently ever container generates its own curve.cert so this needs to be updated to have just one.
+            ) and generating and sharing a munge key in the same location.
            </p>
           </li>
           <li>
            <p>
-            Networking is a bit of a hack - we have a wrapper starting script that essentially waits until a file is populated with hostnames. While it’s waiting, we are waiting for the pods to be created and allocated an ip address, and then we write the addresses to this update file (that will echo into
+            Networking of the pods works by way of exposing a service that includes the Pod subdomain. We add fully qualified domain names to the pods so that the
             <code class="docutils literal notranslate">
              <span class="pre">
-              /etc/hosts
+              hostname
              </span>
             </code>
-            ). When the Pod is re-created with the same ip address, the second time around the file is run to update the hosts, and then we submit the job.
+            command matches the full name, and Flux is given the full names in its broker.toml.
            </p>
           </li>
           <li>
            <p>
-            When the hosts are configured, the main rank (pod 0) does some final setup, and runs the job via the flux user. The others start flux with a sleep command.
+            The main pod either runs
+            <code class="docutils literal notranslate">
+             <span class="pre">
+              flux
+             </span>
+             <span class="pre">
+              start
+             </span>
+            </code>
+            with a web service (creating a persistent “Mini Cluster” or
+            <code class="docutils literal notranslate">
+             <span class="pre">
+              flux
+             </span>
+             <span class="pre">
+              start
+             </span>
+            </code>
+            with a specific command (if provided in the CRD) in which case the command runs, and the jobs finish and the cluster goes away.
            </p>
           </li>
          </ul>
@@ -786,7 +809,7 @@ and needed to keep this state elsewhere.
        © Copyright 2022, Flux Developers.
       </div>
       Last updated on
-              Nov 16, 2022.
+              Nov 18, 2022.
       <br/>
       Created using
       <a href="http://www.sphinx-doc.org/">
