@@ -8,7 +8,7 @@ The Flux Operator is a Kubernetes Cluster [Operator](https://kubernetes.io/docs/
 that you can install to your cluster to create and control [Flux Framework](https://flux-framework.org/) "Mini Clusters"
 to launch jobs to. With the Flux Operator you can:
 
-1. Create an empemeral Mini Cluster to run one job
+1. Create an ephemeral Mini Cluster to run one job
 2. Create a persistent Mini Cluster to submit jobs to via user interface, command line, or language SDK.
 3. View logs and job information via the same interfaces!
 
