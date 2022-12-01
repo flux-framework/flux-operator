@@ -70,10 +70,10 @@ And then come back and view your nodes.
 ```console
 $ kubectl get nodes
 NAME                             STATUS   ROLES    AGE     VERSION
-ip-192-168-28-166.ec2.internal   Ready    <none>   4m58s   v1.22.12-eks-ba74326
-ip-192-168-4-145.ec2.internal    Ready    <none>   4m27s   v1.22.12-eks-ba74326
-ip-192-168-49-92.ec2.internal    Ready    <none>   5m3s    v1.22.12-eks-ba74326
-ip-192-168-79-92.ec2.internal    Ready    <none>   4m57s   v1.22.12-eks-ba74326
+ip-192-168-28-166.ec2.internal   Ready    <none>   4m58s   v1.22.12-eks-be74326
+ip-192-168-4-145.ec2.internal    Ready    <none>   4m27s   v1.22.12-eks-be74326
+ip-192-168-49-92.ec2.internal    Ready    <none>   5m3s    v1.22.12-eks-be74326
+ip-192-168-79-92.ec2.internal    Ready    <none>   4m57s   v1.22.12-eks-be74326
 ```
 
 ## Deploy Operator 
