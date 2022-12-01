@@ -7,6 +7,7 @@ any questions, please [let us know](https://github.com/flux-framework/flux-opera
 ```{toctree}
 :maxdepth: 3
 developer-guide
+aws
 creation
 designs
 ```
