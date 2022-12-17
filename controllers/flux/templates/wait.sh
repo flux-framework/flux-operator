@@ -83,7 +83,16 @@ printf "\n🐸 Diagnostics: ${diagnostics}\n"
 # Flux option flags
 option_flags="%s"
 if [ "${option_flags}" != "" ]; then
-    export FLUX_OPTION_FLAGS=${option_flags}
+    # Make sure we don't get rid of any already defined flags
+    existing_flags="${FLUX_OPTION_FLAGS:-}"
+
+    # provide them first so they are replaced by new ones here
+    if [ "${existing_flags}" != "" ]; then
+        export FLUX_OPTION_FLAGS="${existing_flags} ${option_flags}"
+    else 
+        export FLUX_OPTION_FLAGS="${option_flags}"
+    fi
+    printf "\n🚩️ Flux Option Flags ${FLUX_OPTION_FLAGS}\n"
 fi
 
 mkdir -p /etc/flux/imp/conf.d/

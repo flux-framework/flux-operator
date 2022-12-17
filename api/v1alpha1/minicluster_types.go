@@ -135,6 +135,12 @@ func (f *MiniCluster) Validate() bool {
 	valid := true
 	fluxRunners := 0
 
+	// If we only have one container, assume we want to run flux with it
+	// This makes it easier for the user to not require the flag
+	if len(f.Spec.Containers) == 1 {
+		f.Spec.Containers[0].FluxRunner = true
+	}
+
 	for i, container := range f.Spec.Containers {
 		name := fmt.Sprintf("MiniCluster.Container.%d", i)
 		fmt.Printf("🤓 %s.Image %s\n", name, container.Image)
