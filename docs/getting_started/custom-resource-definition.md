@@ -80,6 +80,32 @@ likely want to set this to True.
   localDeploy: true
 ``` 
 
+#### fluxOptionFlags
+
+Often when you run flux, you need to provide an option flag. E.g.,:
+
+```bash
+$ flux mini submit -ompi=openmpi@5
+```
+
+While these can be provided in the user interface of the Flux RESTFul API,
+depending on your container image you might want to set some flags as default.
+You can do this by setting this particular config parameter, and you should
+set the flags just as you would to the command, starting with `-o`:
+
+```yaml
+	# optional - if needed, default option flags for the server (e.g., -ompi=openmpi@5)
+	fluxOptionFlags: "-ompi=openmpi@5" 
+```
+
+Note that if you run with the user interface, setting a flag in the interface
+that is defined for the server will override it here. These options are
+currently defined for your entire cluster and cannot be provided to specific containers.
+Also remember that your base container can equally provide these flags (and you
+could equally override them, but if they are set and you don't define them here
+they should not be touched).
+
+
 ### containers
 
 Early on we identified that a job could include more than one container, where there might be a primary container

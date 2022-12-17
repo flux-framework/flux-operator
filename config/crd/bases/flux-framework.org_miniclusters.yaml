@@ -88,6 +88,11 @@ spec:
               diagnostics:
                 description: Run flux diagnostics on start instead of command
                 type: boolean
+              fluxOptionFlags:
+                description: Flux option flags, usually provided with -o optional
+                  - if needed, default option flags for the server These can also
+                  be set in the user interface to override here.
+                type: string
               localDeploy:
                 default: false
                 description: localDeploy should be true for development, or deploying
@@ -102,6 +107,7 @@ spec:
                 type: integer
             required:
             - containers
+            - fluxOptionFlags
             type: object
           status:
             description: MiniClusterStatus defines the observed state of Flux

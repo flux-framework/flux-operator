@@ -25,6 +25,9 @@ spec:
       # command: lmp -v x 2 -v y 2 -v z 2 -in in.reaxc.hns -nocite
       # Name of an already created ImagePullSecret for the image specified above
       # imagePullSecret: flux-image-secret
+      # optional - if needed, default option flags for the server (e.g., -ompi=openmpi@5)
+      # these can also be set in the user interface to override here.
+      # fluxOptionFlags: "-ompi=openmpi@5" 
 
   # Number of pods to create for MiniCluster
   size: 4

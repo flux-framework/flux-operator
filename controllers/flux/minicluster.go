@@ -280,7 +280,7 @@ func generateFluxConfig(cluster *api.MiniCluster) string {
 	// Prepare suffix of fully qualified domain name
 	fqdn := fmt.Sprintf("%s.%s.svc.cluster.local", serviceName, cluster.Namespace)
 	hosts := fmt.Sprintf("[%s]", generateRange(int(cluster.Spec.Size)))
-	fluxConfig := fmt.Sprintf(brokerConfigTemplate, fqdn, cluster.Name, hosts)
+	fluxConfig := fmt.Sprintf(brokerConfigTemplate, fqdn, cluster.Name, hosts, cluster.Spec.FluxOptionFlags)
 	return fluxConfig
 }
 

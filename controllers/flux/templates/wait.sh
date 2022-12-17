@@ -80,6 +80,12 @@ cat /etc/flux/system/R
 diagnostics="%t"
 printf "\n🐸 Diagnostics: ${diagnostics}\n"
 
+# Flux option flags
+option_flags="%s"
+if [ "${option_flags}" != "" ]; then
+    export FLUX_OPTION_FLAGS=${option_flags}
+fi
+
 mkdir -p /etc/flux/imp/conf.d/
 cat <<EOT >> /etc/flux/imp/conf.d/imp.toml
 [exec]

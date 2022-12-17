@@ -30,6 +30,11 @@ type MiniClusterSpec struct {
 	// There should only be one container to run flux with runFlux
 	Containers []MiniClusterContainer `json:"containers"`
 
+	// Flux option flags, usually provided with -o
+	// optional - if needed, default option flags for the server
+	// These can also be set in the user interface to override here.
+	FluxOptionFlags string `json:"fluxOptionFlags"`
+
 	// Size (number of jobs to run)
 	// +kubebuilder:default=1
 	// +optional
