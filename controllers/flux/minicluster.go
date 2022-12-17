@@ -280,7 +280,7 @@ func generateFluxConfig(cluster *api.MiniCluster) string {
 	// Prepare suffix of fully qualified domain name
 	fqdn := fmt.Sprintf("%s.%s.svc.cluster.local", serviceName, cluster.Namespace)
 	hosts := fmt.Sprintf("[%s]", generateRange(int(cluster.Spec.Size)))
-	fluxConfig := fmt.Sprintf(brokerConfigTemplate, fqdn, cluster.Name, hosts, cluster.Spec.FluxOptionFlags)
+	fluxConfig := fmt.Sprintf(brokerConfigTemplate, fqdn, cluster.Name, hosts)
 	return fluxConfig
 }
 
@@ -293,7 +293,7 @@ func generateWaitScript(cluster *api.MiniCluster) string {
 	// The first pod (0) should always generate the curve certificate
 	mainHost := fmt.Sprintf("%s-0", cluster.Name)
 	hosts := fmt.Sprintf("%s-[%s]", cluster.Name, generateRange(int(cluster.Spec.Size)))
-	waitScript := fmt.Sprintf(waitToStartTemplate, fluxToken.String(), mainHost, hosts, cluster.Spec.Diagnostics)
+	waitScript := fmt.Sprintf(waitToStartTemplate, fluxToken.String(), mainHost, hosts, cluster.Spec.Diagnostics, cluster.Spec.DeepCopy().FluxOptionFlags)
 	return waitScript
 }
 

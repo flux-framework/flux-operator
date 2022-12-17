@@ -1,0 +1,24 @@
+apiVersion: flux-framework.org/v1alpha1
+kind: MiniCluster
+metadata:
+  name: flux-sample
+  namespace: flux-operator
+spec:
+  # Set to true to use volume mounts instead of volume claims
+  localDeploy: true
+
+  # Number of pods to create for MiniCluster
+  size: 4
+
+  # Option Flags for Flux
+  fluxOptionFlags: "-ompi=openmpi@5" 
+
+  # This is a list because a pod can support multiple containers
+  containers:
+    # The container URI to pull (currently needs to be public)
+    - image: ghcr.io/rse-ops/osu-microbench:app-latest
+
+      # While these aren't set, these are the workdir and command for a benchmark
+      # /opt/osu-benchmark/build.openmpi/libexec/osu-micro-benchmarks/mpi/one-sided
+      # flux mini run -ompi=openmpi@5 -n 2 ./osu_get_latency
+      # in the user interface: ./osu_get_latency with number tasks == 2

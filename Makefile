@@ -136,7 +136,7 @@ applyall:
 
 # This applies the basic minicluster (and not extended examples)
 apply:
-	kubectl apply -f config/samples/flux-framework.org_v1alpha1_minicluster.yaml
+	kubectl apply -f config/samples/minicluster-osu-benchmarks.yaml
 
 applymulti:
 	kubectl apply -f config/samples/flux-framework.org_v1alpha1_minicluster_multiple_containers.yaml

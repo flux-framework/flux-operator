@@ -5,9 +5,6 @@
 # update_hosts.sh has been populated. This means the pod usually
 # needs to be updated with the config map that has ips!
 
-# Always run flux commands (and the broker) as flux user
-asFlux="sudo -u flux"
-
 # Broker Options: important!
 # The local-uri setting places the unix domain socket in rundir 
 #   if FLUX_URI is not set, tools know where to connect.
@@ -34,12 +31,12 @@ brokerOptions="-Scron.directory=/etc/flux/system/cron.d \
 
 # Run diagnostics instead of a command
 run_diagnostics() {
-    printf "\n🐸 ${asFlux} flux start -o --config /etc/flux/config ${brokerOptions} flux overlay status\n"
-    ${asFlux} flux start -o --config /etc/flux/config ${brokerOptions} flux overlay status
-    printf "\n🐸 ${asFlux} flux start -o --config /etc/flux/config ${brokerOptions} flux lsattr -v\n"
-    ${asFlux} flux start -o --config /etc/flux/config ${brokerOptions} flux lsattr -v
-    printf "\n🐸 ${asFlux} flux start -o --config /etc/flux/config ${brokerOptions} flux dmesg\n"
-    ${asFlux} flux start -o --config /etc/flux/config ${brokerOptions} flux dmesg
+    printf "\n🐸 ${SUDO} runuser -l flux -c \"flux start -o --config /etc/flux/config ${brokerOptions} flux overlay status\"\n"
+    ${SUDO} runuser -l flux -c "flux start -o --config /etc/flux/config ${brokerOptions} flux overlay status"
+    printf "\n🐸 ${SUDO} runuser -l flux -c \"flux start -o --config /etc/flux/config ${brokerOptions} flux lsattr -v\"\n"
+    ${SUDO} runuser -l flux -c "flux start -o --config /etc/flux/config ${brokerOptions} flux lsattr -v"
+    printf "\n🐸 ${SUDO} runuser -l flux -c \"flux start -o --config /etc/flux/config ${brokerOptions} flux dmesg\"\n"
+    ${SUDO} runuser -l flux -c "flux start -o --config /etc/flux/config ${brokerOptions} flux dmesg"
     printf "\n💤 sleep infinity\n"
     sleep infinity
 }
@@ -71,6 +68,10 @@ ls ${workdir}
 # Configure resources
 mkdir -p /etc/flux/system
 
+# Determine if we need SUDO
+# Always run flux commands (and the broker) as flux user
+sudo -v && export SUDO=sudo || export SUDO=""
+
 # --cores=IDS Assign cores with IDS to each rank in R, so we  assign 1-N to 0
 flux R encode --hosts=%s > /etc/flux/system/R
 printf "\n📦 Resources\n"
@@ -92,7 +93,7 @@ if [ "${option_flags}" != "" ]; then
     else 
         export FLUX_OPTION_FLAGS="${option_flags}"
     fi
-    printf "\n🚩️ Flux Option Flags ${FLUX_OPTION_FLAGS}\n"
+    echo "🚩️ Flux Option Flags defined"
 fi
 
 mkdir -p /etc/flux/imp/conf.d/
@@ -105,8 +106,11 @@ EOT
 printf "\n🦊 Independent Minister of Privilege\n"
 cat /etc/flux/imp/conf.d/imp.toml
 
+printf "\n🐸 Broker Configuration\n"
+cat /etc/flux/config/broker.toml 
+
 # Add a flux user (required)
-useradd -u 1234 flux || printf "flux user already exists\n"
+adduser --uid 1234 --disabled-password --gecos "" flux  || printf "flux user already exists\n"
 
 # Generate curve certificate (only need one shared)
 if [ $(hostname) == "${mainHost}" ]; then
@@ -168,22 +172,22 @@ else
 
             # -o is an "option" for the broker
             # -S corresponds to a shortened --setattr=ATTR=VAL
-            printf "\n🌀${asFlux} flux start -o --config /etc/flux/config ${brokerOptions} ${startServer}\n"
-            ${asFlux} -E flux start -o --config /etc/flux/config ${brokerOptions} ${startServer}
+            printf "\n🌀${SUDO} runuser -l flux -c \"flux start -o --config /etc/flux/config ${brokerOptions} ${startServer}\"\n"
+            ${SUDO} runuser -l flux -c "flux start -o --config /etc/flux/config ${brokerOptions} ${startServer}"
 
-        # Case 2: Fall back to provided command
+      # Case 2: Fall back to provided command
         else
-            printf "\n🌀${asFlux} flux start -o --config /etc/flux/config ${brokerOptions} $@\n"
-            ${asFlux} -E flux start -o --config /etc/flux/config ${brokerOptions} $@
+            printf "\n🌀${SUDO} runuser -l flux -c \"flux start -o --config /etc/flux/config ${brokerOptions} $@\"\n"
+            ${SUDO} runuser -l flux -c "flux start -o --config /etc/flux/config ${brokerOptions} $@"
         fi
     else 
         printf "\n😪 Sleeping to give RESTful server time to start...\n"
         sleep 15
 
         # Just run start on worker nodes, with some delay to let rank 0 start first
-        printf "\n🌀${asFlux} flux start -o --config /etc/flux/config ${brokerOptions}\n"
+        printf "\n🌀${SUDO} runuser -l flux -c \"flux start -o --config /etc/flux/config ${brokerOptions}\"\n"
 
         # We have the sleep here to give the main rank some time to start first (and not miss the workers)
-        ${asFlux} flux start -o --config /etc/flux/config ${brokerOptions}
+        ${SUDO} runuser -l flux -c "flux start -o --config /etc/flux/config ${brokerOptions}"
     fi
 fi
