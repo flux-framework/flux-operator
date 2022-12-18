@@ -11,11 +11,13 @@ SPDX-License-Identifier: Apache-2.0
 package controllers
 
 import (
+	"bytes"
 	"context"
 	"fmt"
 	"path"
 	"sort"
 	"strings"
+	"text/template"
 
 	jobctrl "flux-framework/flux-operator/pkg/job"
 
@@ -250,7 +252,18 @@ func (r *MiniClusterReconciler) getConfigMap(ctx context.Context, cluster *api.M
 			if configName == "entrypoint" {
 
 				// The main logic for generating the Curve certificate, start commands, is here
-				data["wait"] = generateWaitScript(cluster)
+				// We create a custom script for each container that warrants one,
+				// meaning a Flux Runner.
+				for i, container := range cluster.Spec.Containers {
+					if container.FluxRunner {
+						waitScriptID := fmt.Sprintf("wait-%d", i)
+						waitScript, err := generateWaitScript(cluster, i)
+						if err != nil {
+							return existing, ctrl.Result{}, err
+						}
+						data[waitScriptID] = waitScript
+					}
+				}
 			}
 			dep := r.createConfigMap(cluster, configFullName, data)
 			r.log.Info("✨ Creating MiniCluster ConfigMap ✨", "Type", configName, "Namespace", dep.Namespace, "Name", dep.Name)
@@ -285,16 +298,34 @@ func generateFluxConfig(cluster *api.MiniCluster) string {
 }
 
 // generateWaitScript generates the main script to start everything up!
-func generateWaitScript(cluster *api.MiniCluster) string {
-
-	// Generate a token uuid
-	fluxToken := uuid.New()
+func generateWaitScript(cluster *api.MiniCluster, containerIndex int) (string, error) {
 
 	// The first pod (0) should always generate the curve certificate
+	container := cluster.Spec.Containers[containerIndex]
 	mainHost := fmt.Sprintf("%s-0", cluster.Name)
 	hosts := fmt.Sprintf("%s-[%s]", cluster.Name, generateRange(int(cluster.Spec.Size)))
-	waitScript := fmt.Sprintf(waitToStartTemplate, fluxToken.String(), mainHost, hosts, cluster.Spec.Diagnostics, cluster.Spec.DeepCopy().FluxOptionFlags)
-	return waitScript
+
+	// The token uuid is the same across images
+	wt := WaitTemplate{
+		FluxToken:         uuid.New().String(),
+		MainHost:          mainHost,
+		Hosts:             hosts,
+		Diagnostics:       cluster.Spec.Diagnostics,
+		FluxOptionFlags:   container.FluxOptionFlags,
+		PreCommand:        container.PreCommand,
+		FluxRestfulBranch: cluster.Spec.FluxRestful.Branch,
+		ClusterSize:       cluster.Spec.Size}
+	t, err := template.New("wait-sh").Parse(waitToStartTemplate)
+	if err != nil {
+		return "", err
+	}
+
+	var output bytes.Buffer
+	if err := t.Execute(&output, wt); err != nil {
+		return "", err
+	}
+
+	return output.String(), nil
 }
 
 // generateRange is a shared function to generate a range string

@@ -92,7 +92,10 @@ func (r *MiniClusterReconciler) getMiniClusterContainers(cluster *api.MiniCluste
 		// This is a wrapper that is going to wait for the generation of update_hosts.sh
 		// Once it's there, we update /etc/hosts, and run the command to start flux.
 		if container.FluxRunner {
-			command = []string{"/bin/bash", "/flux_operator/wait.sh", container.Command}
+
+			// wait.sh path corresponds to container identifier
+			waitScript := fmt.Sprintf("/flux_operator/wait-%d.sh", i)
+			command = []string{"/bin/bash", waitScript, container.Command}
 		}
 
 		// Do we have a postStartExec Lifecycle command?

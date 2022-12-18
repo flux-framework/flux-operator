@@ -48,6 +48,12 @@ spec:
                         IMPORTANT: This is left here, but not used in favor of exposing
                         Flux via a Restful API. We Can remove this when that is finalized.'
                       type: string
+                    fluxOptionFlags:
+                      description: Flux option flags, usually provided with -o optional
+                        - if needed, default option flags for the server These can
+                        also be set in the user interface to override here. This is
+                        only valid for a FluxRunner
+                      type: string
                     image:
                       default: fluxrm/flux-sched:focal
                       description: Container image must contain flux and flux-sched
@@ -61,6 +67,12 @@ spec:
                       type: string
                     postStartExec:
                       description: Lifecycle can handle post start commands, etc.
+                      type: string
+                    preCommand:
+                      description: Special command to run at beginning of script,
+                        directly after asFlux is defined as sudo -u flux -E (so you
+                        can change that if desired.) This is only valid if FluxRunner
+                        is set (that writes a wait.sh script)
                       type: string
                     pullAlways:
                       default: false
@@ -88,11 +100,15 @@ spec:
               diagnostics:
                 description: Run flux diagnostics on start instead of command
                 type: boolean
-              fluxOptionFlags:
-                description: Flux option flags, usually provided with -o optional
-                  - if needed, default option flags for the server These can also
-                  be set in the user interface to override here.
-                type: string
+              fluxRestful:
+                description: Customization to Flux Restful API There should only be
+                  one container to run flux with runFlux
+                properties:
+                  branch:
+                    default: main
+                    description: Branch to clone Flux Restful API from
+                    type: string
+                type: object
               localDeploy:
                 default: false
                 description: localDeploy should be true for development, or deploying
@@ -107,7 +123,6 @@ spec:
                 type: integer
             required:
             - containers
-            - fluxOptionFlags
             type: object
           status:
             description: MiniClusterStatus defines the observed state of Flux

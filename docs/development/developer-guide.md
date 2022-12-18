@@ -59,8 +59,11 @@ $ make install
 
 #### 2. Configs
 
-The job configs - custom resource definitions or "CRD" can be found in [config/samples](https://github.com/flux-framework/flux-operator/tree/main/config/samples).
-Before launching any jobs, making sure `localDeploy` is set to true in your CRD so you don't ask for a persistent volume claim!
+##### Default Config
+
+Our "default" job config, or custom resource definition "CRD" can be found in [config/samples](https://github.com/flux-framework/flux-operator/tree/main/config/samples).
+We will walk through how to deploy this one, and then any of the ones in our examples gallery.
+First, before launching any jobs, making sure `localDeploy` is set to true in your CRD so you don't ask for a persistent volume claim!
 
 ```yaml
 spec:
@@ -70,7 +73,8 @@ spec:
 
 The default is set to true (so a local volume in `/tmp` is used) but this won't work on an actual cloud Kubernetes cluster,
 and vice versa - the volume claim won't work locally. When you are sure this is good,
-here is how to "launch" the Mini Cluster (or if providing a command, an ephemeral job):
+and you've built and installed the operator, here is how to "launch"
+the Mini Cluster (or if providing a command, an ephemeral job):
 
 ```bash
 $ kubectl apply -f config/samples/flux-framework.org_v1alpha1_minicluster.yaml
@@ -118,6 +122,67 @@ And shell into one with the helper script:
 
 ```bash
 ./script/shell.sh flux-sample-0-b5rw6
+```
+
+##### Example Configs
+
+We provide an extended gallery of configs for:
+
+ - [Flux Restful Examples](https://github.com/flux-framework/flux-operator/tree/main/examples/flux-restful) that deploy a web interface to submit jobs to.
+ - [Headless Examples](https://github.com/flux-framework/flux-operator/tree/main/examples/tests) that run commands directly, ideal for testing.
+
+Generally these sets of configs are the same (e.g., same container bases and other options) and only vary in providing a command entrypoint (for the headless)
+or not (for the Flux Restful). To make it easy to clean up your cluster and apply a named config, you have two options:
+
+###### Flux Restful 
+
+We call this the main set of "examples." To clean up Minikube, apply a named config, and run the example via a Mini Cluster, first match the name of the yaml
+file to a variable name. E.g., for the following files, the names would be:
+
+```console
+$ tree examples/flux-restful/
+├── minicluster-conveyorlc.yaml       (- name=conveyorlc
+├── minicluster-lammps.yaml           (- name=lammps
+└── minicluster-osu-benchmarks.yaml   (- name=osu-benchmarks
+```
+
+This, to run the full example for conveyorlc:
+
+```bash
+$ make name=conveyorlc redo_example 
+```
+
+Be careful running this on a production cluster, as it will delete all Kubernetes objects in the namespace.
+If you just want to just apply the new job and run the cluster, do:
+
+```bash
+$ make name=conveyorlc example
+$ make run
+```
+
+###### Headless Tests
+
+Our headless tests are modified examples intended to be run without the web interface.
+The naming convention is the same as above, except we are concerned with files
+in the examples test folder:
+
+```console
+$ tree examples/tests/
+examples/tests/
+└── minicluster-hello-world.yaml   (- name=hello-world
+```
+
+Thus, to run the full example for conveyorlc:
+
+```bash
+$ make name=hello-world redo_test 
+```
+
+If you just want to just apply the new job without a cleanup, do:
+
+```bash
+$ make name=hello-world applytest
+$ make run
 ```
 
 ### Interacting with Services
@@ -177,20 +242,71 @@ example containers [here](https://github.com/rse-ops/flux-hpc) and general guide
 Generally we recommend using the flux-sched base image 
 so that install locations and users are consistent. This assumes that:
 
+ - we are currently starting focus on supporting debian bases
+ - if you created the flux user, it has uid 1000
+ - sudo is available in the container (apt-get install -y sudo)
  - `/etc/flux` is used for configuration and general setup
  - `/usr/libexec/flux` has executables like flux-imp, flux-shell
- - flux-core / flux-sched with flux-security should be installed.
- - If you haven't created a flux user, one will be created for you (with a common user id 1234)
+ - flux-core / flux-sched with flux-security should be installed and ready to go.
+ - If you haven't created a flux user, one will be created for you (with a common user id 1000)
  - Any executables that the flux user needs for your job should be on the path (if launching command directly)
  - The container (for now) should start with user root, and we run commands on behalf of flux.
  - You don't need to install the flux-restful-api (it will be installed by the operator)
+ - munge should be install, and a key generated at `/etc/munge/munge.key`
   
-If you intend to use the [Flux RESTful API](https://github.com/flux-framework/flux-restful-api)
+
+This is taken from the [flux-sched](https://github.com/flux-framework/flux-sched/blob/master/src/test/docker/focal/Dockerfile)
+base image. If you intend to use the [Flux RESTful API](https://github.com/flux-framework/flux-restful-api)
 to interact with your cluster, ensure that flux (python bindings) are on the path, along with
 either python or python3 (depending on which you used to install Flux).
 If/when needed we can lift some of these constraints, but for now they are 
 reasonable.
 
+## Testing
+
+Testing is underway! From a high level, we want three kinds of testing:
+
+ - Unit tests, which will be more traditional `*_test.go` files alongside others in the repository (not done yet)
+ - End to end "e2e" tests, also within Go, to test an entire submission of a job, also within Go. (not done yet)
+ - Integration testing, likely some within Go and some external to it. (in progress)
+
+
+### Integration
+
+For the integration testing outside of Go, I'd like to have a way to bring up a kind cluster
+in GitHub actions, submit a workflow, wait for it to run and finish, and then get the output
+via the Jobs API. Here is a small example of what the testing workflow looks like
+after the minicluster is created.
+
+```bash
+# Clean up any old cluster assets
+make clean
+
+# Build and install (deploy) the operator
+make docker-build
+make deploy
+
+# Create the flux-operator namespace
+kubectl create namespace flux-operator
+
+# Apply a named job (e.g., minicluster-<job>.yaml in examples/tests)
+make name=hello-world applytest
+
+# run the operator (in actions we run in subprocess and then kill with pid)
+make run &
+pid=$!
+echo "PID for running cluster is ${pid}"
+
+# Get pods for all namespaces (you'd see system operator and flux-operator)
+kubectl get pod --all-namespaces
+
+# TODO how to run tests?
+kubectl logs -n flux-operator flux-sample-0-f7thx
+```
+
+The tests above are headless, meaning they submit commands directly, and that way
+we don't need to do it in the UI and can programmatically determine if they were successful.
+Note that we are looking at [kuttl](https://kuttl.dev/docs/kuttl-test-harness.html#writing-your-first-test).
 
 ## Documentation
 

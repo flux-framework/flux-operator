@@ -12,6 +12,7 @@ package controllers
 
 import (
 	api "flux-framework/flux-operator/api/v1alpha1"
+	"fmt"
 	"path"
 
 	corev1 "k8s.io/api/core/v1"
@@ -48,7 +49,21 @@ func getVolumeMounts(cluster *api.MiniCluster) []corev1.VolumeMount {
 
 // getVolumes that are shared between MiniCluster and statefulset
 func getVolumes(cluster *api.MiniCluster) []corev1.Volume {
+
+	// Runner start scripts
 	makeExecutable := int32(0777)
+	runnerStartScripts := []corev1.KeyToPath{}
+
+	// Prepare a custom "wait.sh" for each container based on index
+	for i, container := range cluster.Spec.Containers {
+
+		// For now, only Flux runners get the custom wait.sh script
+		if container.FluxRunner {
+			startScript := corev1.KeyToPath{Key: fmt.Sprintf("wait-%d", i), Path: fmt.Sprintf("wait-%d.sh", i), Mode: &makeExecutable}
+			runnerStartScripts = append(runnerStartScripts, startScript)
+		}
+	}
+
 	volumes := []corev1.Volume{{
 		Name: cluster.Name + fluxConfigSuffix,
 		VolumeSource: corev1.VolumeSource{
@@ -72,12 +87,8 @@ func getVolumes(cluster *api.MiniCluster) []corev1.Volume {
 				LocalObjectReference: corev1.LocalObjectReference{
 					Name: cluster.Name + entrypointSuffix,
 				},
-				// /flux_operator/wait.sh
-				Items: []corev1.KeyToPath{{
-					Key:  "wait",
-					Path: "wait.sh",
-					Mode: &makeExecutable,
-				}},
+				// /flux_operator/wait-<index>.sh
+				Items: runnerStartScripts,
 			},
 		},
 	}}

@@ -1,7 +1,7 @@
 name: test flux-operator
 
 on:
-  # This should run on a push to any branch except main, gh-pages, and binoc
+  pull_request: []
   push:
     branches-ignore:
     - main
@@ -9,6 +9,7 @@ on:
 
 jobs:
   formatting:
+    name: Formatting
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v3
@@ -20,3 +21,90 @@ jobs:
       uses: crate-ci/typos@7ad296c72fa8265059cc03d1eda562fbdfcd6df2 # v1.9.0
       with:
         files: ./docs/*/*.md ./docs/*.md ./README.md ./config/samples ./docs/*.md
+
+  unit-tests:
+    name: Unit Tests
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+    - name: Setup Go
+      uses: actions/setup-go@v3
+      with:
+        go-version: ^1.18
+    - name: fmt check
+      run: make fmt
+
+    - name: Build
+      run: make
+
+    # These aren't written yet)
+    - name: Run Unit tests
+      run: make test
+
+  test-jobs:
+    name: Full testing of Jobs
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        test: [["ghcr.io/flux-framework/flux-restful-api:latest", "hello-world", 60]]
+        
+    steps:
+    - name: Clone the code
+      uses: actions/checkout@v3
+
+    - name: Setup Go
+      uses: actions/setup-go@v3
+      with:
+        go-version: ^1.18
+
+    - name: Install Krew
+      run: |
+        wget https://github.com/kubernetes-sigs/krew/releases/download/v0.4.3/krew-linux_amd64.tar.gz && \
+        tar -xzvf krew-linux_amd64.tar.gz
+        ./krew-linux_amd64 install krew
+        echo $HOME/.krew/bin >> $GITHUB_PATH
+                
+    - name: Start minikube
+      uses: medyagh/setup-minikube@697f2b7aaed5f70bf2a94ee21a4ec3dde7b12f92 # v0.0.9
+
+    - name: Create the namespace
+      run: kubectl create namespace flux-operator
+
+    - name: Build and Install Operator
+      env:
+        container: ${{ matrix.test[0] }}
+      run: |
+        export SHELL=/bin/bash
+        eval $(minikube -p minikube docker-env)
+        minikube ssh docker pull ${container}
+        make 
+        make install
+
+    - name: Run Hello World Test
+      env:
+        name: ${{ matrix.test[1] }}
+        jobtime: ${{ matrix.test[2] }}
+      run: |
+        make run &
+        pid=$!
+        echo "PID for running cluster is ${pid}"
+        kubectl apply -f examples/tests/${name}/minicluster-${name}.yaml
+        sleep 10
+        make list
+        /bin/bash examples/tests/${name}/test.sh
+        #pods=$(kubectl get -n flux-operator  pod --output=jsonpath={.items..metadata.name}); 
+        #pod="${pods%% *}"
+        #kubectl port-forward -n flux-operator ${pod} 5000:5000 &
+        #portpid=$!
+        echo $pid $portpid        
+        sleep ${jobtime}
+        kill ${pid} || echo "Already dead"
+        #kill ${portpid} || echo "Already dead"
+
+ #   - name: Test service URLs
+ #     run: |
+ #       minikube service list
+ #       minikube service example --url
+ #       echo "------------------opening the service------------------"
+ #       curl $(minikube service example --url)        

@@ -30,10 +30,10 @@ type MiniClusterSpec struct {
 	// There should only be one container to run flux with runFlux
 	Containers []MiniClusterContainer `json:"containers"`
 
-	// Flux option flags, usually provided with -o
-	// optional - if needed, default option flags for the server
-	// These can also be set in the user interface to override here.
-	FluxOptionFlags string `json:"fluxOptionFlags"`
+	// Customization to Flux Restful API
+	// There should only be one container to run flux with runFlux
+	// +optional
+	FluxRestful FluxRestful `json:"fluxRestful"`
 
 	// Size (number of jobs to run)
 	// +kubebuilder:default=1
@@ -67,6 +67,14 @@ type MiniClusterStatus struct {
 
 	// conditions hold the latest Flux Job and MiniCluster states
 	Conditions []metav1.Condition `json:"conditions,omitempty"`
+}
+
+type FluxRestful struct {
+
+	// Branch to clone Flux Restful API from
+	// +kubebuilder:default="main"
+	// +optional
+	Branch string `json:"branch"`
 }
 
 type MiniClusterContainer struct {
@@ -105,6 +113,19 @@ type MiniClusterContainer struct {
 	// +kubebuilder:default=true
 	// +optional
 	FluxRunner bool `json:"runFlux"`
+
+	// Flux option flags, usually provided with -o
+	// optional - if needed, default option flags for the server
+	// These can also be set in the user interface to override here.
+	// This is only valid for a FluxRunner
+	// +optional
+	FluxOptionFlags string `json:"fluxOptionFlags"`
+
+	// Special command to run at beginning of script, directly after asFlux
+	// is defined as sudo -u flux -E (so you can change that if desired.)
+	// This is only valid if FluxRunner is set (that writes a wait.sh script)
+	// +optional
+	PreCommand string `json:"preCommand"`
 
 	// Lifecycle can handle post start commands, etc.
 	// +optional

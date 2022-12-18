@@ -80,36 +80,12 @@ likely want to set this to True.
   localDeploy: true
 ``` 
 
-#### fluxOptionFlags
-
-Often when you run flux, you need to provide an option flag. E.g.,:
-
-```bash
-$ flux mini submit -ompi=openmpi@5
-```
-
-While these can be provided in the user interface of the Flux RESTFul API,
-depending on your container image you might want to set some flags as default.
-You can do this by setting this particular config parameter, and you should
-set the flags just as you would to the command, starting with `-o`:
-
-```yaml
-	# optional - if needed, default option flags for the server (e.g., -ompi=openmpi@5)
-	fluxOptionFlags: "-ompi=openmpi@5" 
-```
-
-Note that if you run with the user interface, setting a flag in the interface
-that is defined for the server will override it here. These options are
-currently defined for your entire cluster and cannot be provided to specific containers.
-Also remember that your base container can equally provide these flags (and you
-could equally override them, but if they are set and you don't define them here
-they should not be touched).
-
-
 ### containers
 
 Early on we identified that a job could include more than one container, where there might be a primary container
-running Flux, and others that provide services. 
+running Flux, and others that provide services. Note that currently we only allow one container to be a FluxRunner,
+however we anticipate this could change (and allow for specifying custom logic for a flux runner entrypoint, a script
+called "wait.sh") on the level of the container.
 
 ```yaml
   containers:
@@ -189,4 +165,63 @@ However, if you set this to true for *two* container (not allowed currently) you
     # For one container, you can leave this unset for the default. This will be
     # validated in case you make a mistake :)
     runFlux: true
+```
+
+#### fluxOptionFlags
+
+Often when you run flux, you need to provide an option flag. E.g.,:
+
+```bash
+$ flux mini submit -ompi=openmpi@5
+```
+
+While these can be provided in the user interface of the Flux RESTFul API,
+depending on your container image you might want to set some flags as default.
+You can do this by setting this particular config parameter, and you should
+set the flags just as you would to the command, starting with `-o`:
+
+```yaml
+	# optional - if needed, default option flags for the server (e.g., -ompi=openmpi@5)
+	fluxOptionFlags: "-ompi=openmpi@5" 
+```
+
+Note that if you run with the user interface, setting a flag in the interface
+that is defined for the server will override it here. These options are
+currently defined for your entire cluster and cannot be provided to specific containers.
+Also remember that your base container can equally provide these flags (and you
+could equally override them, but if they are set and you don't define them here
+they should not be touched).
+
+#### preCommand
+
+It might be that you want some custom logic at the beginning of your script.
+E.g., perhaps you need to source an environment of interest! To support this we allow
+for a string (multiple lines possible) of custom logic to do that. Remember
+that since this is written into a flux runner wait.sh, this will only be
+used for a Flux runner script. If you need custom logic in a service container
+that is not a flux runner, you should write it into your own entrypoint.
+
+```yaml
+  # The pipe preserves line breaks
+  preCommand: |
+    ### Heading
+
+    * Bullet
+    * Points
+```
+
+### fluxRestful
+
+The "fluxRestful" section has a few parameters to dictate the installation of the
+[Flux Restful API](https://github.com/flux-framework/flux-restful-api), which provides
+a user interface to submit jobs.
+
+#### branch
+
+The branch parameter controls if you want to clone a custom branch (e.g., for testing).
+It defaults to main.
+
+```yaml
+  fluxRestful:
+    branch: feature-branch
 ```
