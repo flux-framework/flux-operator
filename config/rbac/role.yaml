@@ -170,6 +170,18 @@ rules:
 - apiGroups:
   - ""
   resources:
+  - services
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - ""
+  resources:
   - statefulsets
   verbs:
   - create
@@ -235,6 +247,18 @@ rules:
   - flux-framework.org
   resources:
   - miniclusters/status
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - networking.k8s.io
+  resources:
+  - ingresses
   verbs:
   - create
   - delete

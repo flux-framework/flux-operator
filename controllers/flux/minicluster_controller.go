@@ -76,6 +76,8 @@ func NewMiniClusterReconciler(client client.Client, scheme *runtime.Scheme, rest
 //+kubebuilder:rbac:groups=core,resources=batch,verbs=get;list;watch;create;update;patch;delete;exec
 //+kubebuilder:rbac:groups=core,resources=events,verbs=create;patch
 //+kubebuilder:rbac:groups=core,resources=networks,verbs=create;patch
+//+kubebuilder:rbac:groups=core,resources="services",verbs=get;list;watch;create;update;patch;delete
+//+kubebuilder:rbac:groups=networking.k8s.io,resources="ingresses",verbs=get;list;watch;create;update;patch;delete
 
 //+kubebuilder:rbac:groups="",resources=events,verbs=create;watch;update
 //+kubebuilder:rbac:groups=batch,resources=jobs,verbs=get;list;watch;create;update;patch;delete;exec
