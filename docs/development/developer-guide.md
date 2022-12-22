@@ -129,7 +129,7 @@ And shell into one with the helper script:
 We provide an extended gallery of configs for:
 
  - [Flux Restful Examples](https://github.com/flux-framework/flux-operator/tree/main/examples/flux-restful) that deploy a web interface to submit jobs to.
- - [Headless Examples](https://github.com/flux-framework/flux-operator/tree/main/examples/tests) that run commands directly, ideal for testing.
+ - [Headless Test Examples](https://github.com/flux-framework/flux-operator/tree/main/examples/tests) that run commands directly, ideal for testing.
 
 Generally these sets of configs are the same (e.g., same container bases and other options) and only vary in providing a command entrypoint (for the headless)
 or not (for the Flux Restful). To make it easy to clean up your cluster and apply a named config, you have two options:
@@ -169,10 +169,15 @@ in the examples test folder:
 ```console
 $ tree examples/tests/
 examples/tests/
-└── minicluster-hello-world.yaml   (- name=hello-world
+├── hello-world
+│   ├── minicluster-hello-world.yaml   (- name=hello-world
+│   └── test.sh
+└── lammps
+    ├── minicluster-lammps.yaml        (- name=lammps
+    └── test.sh
 ```
 
-Thus, to run the full example for conveyorlc:
+Thus, to run the full example for hello-world:
 
 ```bash
 $ make name=hello-world redo_test 
@@ -184,6 +189,21 @@ If you just want to just apply the new job without a cleanup, do:
 $ make name=hello-world applytest
 $ make run
 ```
+
+Note that there is a default sleep of ~20 seconds for all jobs (so the worker nodes start after the broker)
+so they will not run instantly. You can list pods to get an id, and then view logs:
+
+```bash
+$ make list
+$ bash script/log.sh <pod>
+```
+
+Also note that these headless tests have `test: true` in the config,
+meaning you will only see output with the command above from what you actually ran.
+We do this because we test them in CI, and we don't want the other verbose output
+to get in the way! If you want to disable this quiet mode, just comment out
+this parameter in the configuration.
+
 
 ### Interacting with Services
 
@@ -270,43 +290,33 @@ Testing is underway! From a high level, we want three kinds of testing:
  - End to end "e2e" tests, also within Go, to test an entire submission of a job, also within Go. (not done yet)
  - Integration testing, likely some within Go and some external to it. (in progress)
 
-
 ### Integration
 
-For the integration testing outside of Go, I'd like to have a way to bring up a kind cluster
-in GitHub actions, submit a workflow, wait for it to run and finish, and then get the output
-via the Jobs API. Here is a small example of what the testing workflow looks like
-after the minicluster is created.
+For the integration testing outside of Go, we currently have basic tests written that allow the following:
+
+1. Write a custom resource definition (CRD) for a named mini cluster under `examples/tests/${name}` as `minicluster-${name}.yaml`.
+2. The CRD should set `test:true` and include a command to run, and a container to do it.
+3. Add your test name, container, and estimated running time to `.github/workflows/main.yaml`
+
+To run the test (and you can also do this locally) we use the `script/test.sh` and provide a name and the estimated
+job time, just like in actions. The below example runs the "hello-world" test and gives it 30 seconds to finish.
 
 ```bash
-# Clean up any old cluster assets
-make clean
-
-# Build and install (deploy) the operator
-make docker-build
-make deploy
-
-# Create the flux-operator namespace
-kubectl create namespace flux-operator
-
-# Apply a named job (e.g., minicluster-<job>.yaml in examples/tests)
-make name=hello-world applytest
-
-# run the operator (in actions we run in subprocess and then kill with pid)
-make run &
-pid=$!
-echo "PID for running cluster is ${pid}"
-
-# Get pods for all namespaces (you'd see system operator and flux-operator)
-kubectl get pod --all-namespaces
-
-# TODO how to run tests?
-kubectl logs -n flux-operator flux-sample-0-f7thx
+./bin/bash script/test.sh hello-world 30
 ```
+```console
+```
+
+Note that since the job sleeps for 20, you should set your jobtime to be greater than that (a suggested minimum is 30).
+Finally, note that for big containers it's suggested to pull them first, e.g.,:
+
+```bash
+$ minikube ssh docker pull ghcr.io/rse-ops/lammps:flux-sched-focal-v0.24.0
+```
+
 
 The tests above are headless, meaning they submit commands directly, and that way
 we don't need to do it in the UI and can programmatically determine if they were successful.
-Note that we are looking at [kuttl](https://kuttl.dev/docs/kuttl-test-harness.html#writing-your-first-test).
 
 ## Documentation
 

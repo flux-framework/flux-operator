@@ -143,7 +143,7 @@ applyui:
 	kubectl apply -f examples/flux-restful/minicluster-$(name).yaml
 
 applytest:
-	kubectl apply -f examples/tests/minicluster-$(name).yaml
+	kubectl apply -f examples/tests/${name}/minicluster-$(name).yaml
 
 example:
 	kubectl apply -f examples/flux-restful/minicluster-$(name).yaml 

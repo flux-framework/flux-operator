@@ -78,4 +78,4 @@ jobs:
       env:
         name: ${{ matrix.test[0] }}
         jobtime: ${{ matrix.test[2] }}
-      run: /bin/bash ./scripts/test.sh ${name} ${jobtime}
+      run: /bin/bash ./script/test.sh ${name} ${jobtime}
