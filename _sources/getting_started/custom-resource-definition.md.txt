@@ -47,6 +47,16 @@ the set of containers that you describe.
   size: 4
 ```
 
+### test
+
+Test mode turns off all verbose output (yes, the emojis too) so only the output of 
+your job will be printed to the console. This way, you can retrieve the job lob
+and then determine if the test was successful based on this output.
+
+```yaml
+  test: true
+```
+
 ### diagnostics
 
 Flux has a command that makes it easy to run diagnostics on a cluster, and we expose a boolean that makes it possible
@@ -80,10 +90,24 @@ likely want to set this to True.
   localDeploy: true
 ``` 
 
+### sleeptime
+
+We do a "hard coded" approach of using sleep time to ensure the worker nodes start after the main broker,
+and that way they can be registered. Sometimes if you add more custom logic to the start
+of the container this can throw off the start sequence, so while this approach isn't perfect,
+we allow you to customize this sleep time if desired.
+
+```yaml
+  # seconds
+  sleeptime: 60
+```
+
 ### containers
 
 Early on we identified that a job could include more than one container, where there might be a primary container
-running Flux, and others that provide services. 
+running Flux, and others that provide services. Note that currently we only allow one container to be a FluxRunner,
+however we anticipate this could change (and allow for specifying custom logic for a flux runner entrypoint, a script
+called "wait.sh") on the level of the container.
 
 ```yaml
   containers:
@@ -163,4 +187,63 @@ However, if you set this to true for *two* container (not allowed currently) you
     # For one container, you can leave this unset for the default. This will be
     # validated in case you make a mistake :)
     runFlux: true
+```
+
+#### fluxOptionFlags
+
+Often when you run flux, you need to provide an option flag. E.g.,:
+
+```bash
+$ flux mini submit -ompi=openmpi@5
+```
+
+While these can be provided in the user interface of the Flux RESTFul API,
+depending on your container image you might want to set some flags as default.
+You can do this by setting this particular config parameter, and you should
+set the flags just as you would to the command, starting with `-o`:
+
+```yaml
+	# optional - if needed, default option flags for the server (e.g., -ompi=openmpi@5)
+	fluxOptionFlags: "-ompi=openmpi@5" 
+```
+
+Note that if you run with the user interface, setting a flag in the interface
+that is defined for the server will override it here. These options are
+currently defined for your entire cluster and cannot be provided to specific containers.
+Also remember that your base container can equally provide these flags (and you
+could equally override them, but if they are set and you don't define them here
+they should not be touched).
+
+#### preCommand
+
+It might be that you want some custom logic at the beginning of your script.
+E.g., perhaps you need to source an environment of interest! To support this we allow
+for a string (multiple lines possible) of custom logic to do that. Remember
+that since this is written into a flux runner wait.sh, this will only be
+used for a Flux runner script. If you need custom logic in a service container
+that is not a flux runner, you should write it into your own entrypoint.
+
+```yaml
+  # The pipe preserves line breaks
+  preCommand: |
+    ### Heading
+
+    * Bullet
+    * Points
+```
+
+### fluxRestful
+
+The "fluxRestful" section has a few parameters to dictate the installation of the
+[Flux Restful API](https://github.com/flux-framework/flux-restful-api), which provides
+a user interface to submit jobs.
+
+#### branch
+
+The branch parameter controls if you want to clone a custom branch (e.g., for testing).
+It defaults to main.
+
+```yaml
+  fluxRestful:
+    branch: feature-branch
 ```

@@ -319,6 +319,34 @@
                          <a class="md-nav__link" href="#configs">
                           2. Configs
                          </a>
+                         <nav class="md-nav">
+                          <ul class="md-nav__list">
+                           <li class="md-nav__item">
+                            <a class="md-nav__link" href="#default-config">
+                             Default Config
+                            </a>
+                           </li>
+                           <li class="md-nav__item">
+                            <a class="md-nav__link" href="#example-configs">
+                             Example Configs
+                            </a>
+                            <nav class="md-nav">
+                             <ul class="md-nav__list">
+                              <li class="md-nav__item">
+                               <a class="md-nav__link" href="#flux-restful">
+                                Flux Restful
+                               </a>
+                              </li>
+                              <li class="md-nav__item">
+                               <a class="md-nav__link" href="#headless-tests">
+                                Headless Tests
+                               </a>
+                              </li>
+                             </ul>
+                            </nav>
+                           </li>
+                          </ul>
+                         </nav>
                         </li>
                        </ul>
                       </nav>
@@ -344,6 +372,25 @@
                    <a class="md-nav__link" href="#build-images">
                     Build Images
                    </a>
+                  </li>
+                  <li class="md-nav__item">
+                   <a class="md-nav__link" href="#container-requirements">
+                    Container Requirements
+                   </a>
+                  </li>
+                  <li class="md-nav__item">
+                   <a class="md-nav__link" href="#testing">
+                    Testing
+                   </a>
+                   <nav class="md-nav">
+                    <ul class="md-nav__list">
+                     <li class="md-nav__item">
+                      <a class="md-nav__link" href="#integration">
+                       Integration
+                      </a>
+                     </li>
+                    </ul>
+                   </nav>
                   </li>
                   <li class="md-nav__item">
                    <a class="md-nav__link" href="#documentation">
@@ -449,6 +496,34 @@
                     <a class="md-nav__link" href="#configs">
                      2. Configs
                     </a>
+                    <nav class="md-nav">
+                     <ul class="md-nav__list">
+                      <li class="md-nav__item">
+                       <a class="md-nav__link" href="#default-config">
+                        Default Config
+                       </a>
+                      </li>
+                      <li class="md-nav__item">
+                       <a class="md-nav__link" href="#example-configs">
+                        Example Configs
+                       </a>
+                       <nav class="md-nav">
+                        <ul class="md-nav__list">
+                         <li class="md-nav__item">
+                          <a class="md-nav__link" href="#flux-restful">
+                           Flux Restful
+                          </a>
+                         </li>
+                         <li class="md-nav__item">
+                          <a class="md-nav__link" href="#headless-tests">
+                           Headless Tests
+                          </a>
+                         </li>
+                        </ul>
+                       </nav>
+                      </li>
+                     </ul>
+                    </nav>
                    </li>
                   </ul>
                  </nav>
@@ -474,6 +549,25 @@
               <a class="md-nav__link" href="#build-images">
                Build Images
               </a>
+             </li>
+             <li class="md-nav__item">
+              <a class="md-nav__link" href="#container-requirements">
+               Container Requirements
+              </a>
+             </li>
+             <li class="md-nav__item">
+              <a class="md-nav__link" href="#testing">
+               Testing
+              </a>
+              <nav class="md-nav">
+               <ul class="md-nav__list">
+                <li class="md-nav__item">
+                 <a class="md-nav__link" href="#integration">
+                  Integration
+                 </a>
+                </li>
+               </ul>
+              </nav>
              </li>
              <li class="md-nav__item">
               <a class="md-nav__link" href="#documentation">
@@ -629,110 +723,266 @@ $ make install
              ¶
             </a>
            </h4>
-           <p>
-            The job configs - custom resource definitions or “CRD” can be found in
-            <a class="reference external" href="https://github.com/flux-framework/flux-operator/tree/main/config/samples">
-             config/samples
-            </a>
-            .
-Before launching any jobs, making sure
-            <code class="docutils literal notranslate">
-             <span class="pre">
-              localDeploy
-             </span>
-            </code>
-            is set to true in your CRD so you don’t ask for a persistent volume claim!
-           </p>
-           <div class="highlight-yaml notranslate">
-            <div class="highlight">
-             <pre><span></span><span class="nt">spec</span><span class="p">:</span><span class="w"></span>
+           <section id="default-config">
+            <h5 id="default-config">
+             Default Config
+             <a class="headerlink" href="#default-config" title="Permalink to this heading">
+              ¶
+             </a>
+            </h5>
+            <p>
+             Our “default” job config, or custom resource definition “CRD” can be found in
+             <a class="reference external" href="https://github.com/flux-framework/flux-operator/tree/main/config/samples">
+              config/samples
+             </a>
+             .
+We will walk through how to deploy this one, and then any of the ones in our examples gallery.
+First, before launching any jobs, making sure
+             <code class="docutils literal notranslate">
+              <span class="pre">
+               localDeploy
+              </span>
+             </code>
+             is set to true in your CRD so you don’t ask for a persistent volume claim!
+            </p>
+            <div class="highlight-yaml notranslate">
+             <div class="highlight">
+              <pre><span></span><span class="nt">spec</span><span class="p">:</span><span class="w"></span>
 <span class="c1"># Set to true to use volume mounts instead of volume claims</span><span class="w"></span>
 <span class="w">  </span><span class="nt">localDeploy</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span><span class="w"></span>
 </pre>
+             </div>
             </div>
-           </div>
-           <p>
-            The default is set to true (so a local volume in
-            <code class="docutils literal notranslate">
-             <span class="pre">
-              /tmp
-             </span>
-            </code>
-            is used) but this won’t work on an actual cloud Kubernetes cluster,
+            <p>
+             The default is set to true (so a local volume in
+             <code class="docutils literal notranslate">
+              <span class="pre">
+               /tmp
+              </span>
+             </code>
+             is used) but this won’t work on an actual cloud Kubernetes cluster,
 and vice versa - the volume claim won’t work locally. When you are sure this is good,
-here is how to “launch” the Mini Cluster (or if providing a command, an ephemeral job):
-           </p>
-           <div class="highlight-bash notranslate">
-            <div class="highlight">
-             <pre><span></span>$ kubectl apply -f config/samples/flux-framework.org_v1alpha1_minicluster.yaml
+and you’ve built and installed the operator, here is how to “launch”
+the Mini Cluster (or if providing a command, an ephemeral job):
+            </p>
+            <div class="highlight-bash notranslate">
+             <div class="highlight">
+              <pre><span></span>$ kubectl apply -f config/samples/flux-framework.org_v1alpha1_minicluster.yaml
 </pre>
+             </div>
             </div>
-           </div>
-           <p>
-            there is a courtesy function to clean, and apply the samples:
-           </p>
-           <div class="highlight-bash notranslate">
-            <div class="highlight">
-             <pre><span></span>$ make clean  <span class="c1"># remove old flux-operator namespaced items</span>
+            <p>
+             there is a courtesy function to clean, and apply the samples:
+            </p>
+            <div class="highlight-bash notranslate">
+             <div class="highlight">
+              <pre><span></span>$ make clean  <span class="c1"># remove old flux-operator namespaced items</span>
 $ make apply  <span class="c1"># apply the setup and job config</span>
 $ make run    <span class="c1"># make the cluster</span>
 </pre>
+             </div>
             </div>
-           </div>
-           <p>
-            or run all three for easy development!
-           </p>
-           <div class="highlight-bash notranslate">
-            <div class="highlight">
-             <pre><span></span>$ make redo  <span class="c1"># clean, apply, and run</span>
+            <p>
+             or run all three for easy development!
+            </p>
+            <div class="highlight-bash notranslate">
+             <div class="highlight">
+              <pre><span></span>$ make redo  <span class="c1"># clean, apply, and run</span>
 </pre>
+             </div>
             </div>
-           </div>
-           <p>
-            To see logs for the job, you’d do:
-           </p>
-           <div class="highlight-bash notranslate">
-            <div class="highlight">
-             <pre><span></span>$ kubectl logs -n flux-operator job.batch/flux-sample
+            <p>
+             To see logs for the job, you’d do:
+            </p>
+            <div class="highlight-bash notranslate">
+             <div class="highlight">
+              <pre><span></span>$ kubectl logs -n flux-operator job.batch/flux-sample
 </pre>
+             </div>
             </div>
-           </div>
-           <p>
-            And this is also:
-           </p>
-           <div class="highlight-bash notranslate">
-            <div class="highlight">
-             <pre><span></span>$ make log
+            <p>
+             And this is also:
+            </p>
+            <div class="highlight-bash notranslate">
+             <div class="highlight">
+              <pre><span></span>$ make log
 </pre>
+             </div>
             </div>
-           </div>
-           <p>
-            But the above gives you a (somewhat random?) pod. If you want to see a specific one do:
-           </p>
-           <div class="highlight-bash notranslate">
-            <div class="highlight">
-             <pre><span></span>./script/log.sh flux-sample-0-b5rw6
+            <p>
+             But the above gives you a (somewhat random?) pod. If you want to see a specific one do:
+            </p>
+            <div class="highlight-bash notranslate">
+             <div class="highlight">
+              <pre><span></span>./script/log.sh flux-sample-0-b5rw6
 </pre>
+             </div>
             </div>
-           </div>
-           <p>
-            E.g., rank 0 is the “main” one. List running pods (each pod is part of a batch job)
-           </p>
-           <div class="highlight-bash notranslate">
-            <div class="highlight">
-             <pre><span></span>$ make list
+            <p>
+             E.g., rank 0 is the “main” one. List running pods (each pod is part of a batch job)
+            </p>
+            <div class="highlight-bash notranslate">
+             <div class="highlight">
+              <pre><span></span>$ make list
 </pre>
+             </div>
             </div>
-           </div>
-           <p>
-            And shell into one with the helper script:
-           </p>
-           <div class="highlight-bash notranslate">
-            <div class="highlight">
-             <pre><span></span>./script/shell.sh flux-sample-0-b5rw6
+            <p>
+             And shell into one with the helper script:
+            </p>
+            <div class="highlight-bash notranslate">
+             <div class="highlight">
+              <pre><span></span>./script/shell.sh flux-sample-0-b5rw6
 </pre>
+             </div>
             </div>
-           </div>
+           </section>
+           <section id="example-configs">
+            <h5 id="example-configs">
+             Example Configs
+             <a class="headerlink" href="#example-configs" title="Permalink to this heading">
+              ¶
+             </a>
+            </h5>
+            <p>
+             We provide an extended gallery of configs for:
+            </p>
+            <ul class="simple">
+             <li>
+              <p>
+               <a class="reference external" href="https://github.com/flux-framework/flux-operator/tree/main/examples/flux-restful">
+                Flux Restful Examples
+               </a>
+               that deploy a web interface to submit jobs to.
+              </p>
+             </li>
+             <li>
+              <p>
+               <a class="reference external" href="https://github.com/flux-framework/flux-operator/tree/main/examples/tests">
+                Headless Test Examples
+               </a>
+               that run commands directly, ideal for testing.
+              </p>
+             </li>
+            </ul>
+            <p>
+             Generally these sets of configs are the same (e.g., same container bases and other options) and only vary in providing a command entrypoint (for the headless)
+or not (for the Flux Restful). To make it easy to clean up your cluster and apply a named config, you have two options:
+            </p>
+            <section id="flux-restful">
+             <h6 id="flux-restful">
+              Flux Restful
+              <a class="headerlink" href="#flux-restful" title="Permalink to this heading">
+               ¶
+              </a>
+             </h6>
+             <p>
+              We call this the main set of “examples.” To clean up Minikube, apply a named config, and run the example via a Mini Cluster, first match the name of the yaml
+file to a variable name. E.g., for the following files, the names would be:
+             </p>
+             <div class="highlight-console notranslate">
+              <div class="highlight">
+               <pre><span></span><span class="gp">$ </span>tree examples/flux-restful/
+<span class="go">├── minicluster-conveyorlc.yaml       (- name=conveyorlc</span>
+<span class="go">├── minicluster-lammps.yaml           (- name=lammps</span>
+<span class="go">└── minicluster-osu-benchmarks.yaml   (- name=osu-benchmarks</span>
+</pre>
+              </div>
+             </div>
+             <p>
+              This, to run the full example for conveyorlc:
+             </p>
+             <div class="highlight-bash notranslate">
+              <div class="highlight">
+               <pre><span></span>$ make <span class="nv">name</span><span class="o">=</span>conveyorlc redo_example 
+</pre>
+              </div>
+             </div>
+             <p>
+              Be careful running this on a production cluster, as it will delete all Kubernetes objects in the namespace.
+If you just want to just apply the new job and run the cluster, do:
+             </p>
+             <div class="highlight-bash notranslate">
+              <div class="highlight">
+               <pre><span></span>$ make <span class="nv">name</span><span class="o">=</span>conveyorlc example
+$ make run
+</pre>
+              </div>
+             </div>
+            </section>
+            <section id="headless-tests">
+             <h6 id="headless-tests">
+              Headless Tests
+              <a class="headerlink" href="#headless-tests" title="Permalink to this heading">
+               ¶
+              </a>
+             </h6>
+             <p>
+              Our headless tests are modified examples intended to be run without the web interface.
+The naming convention is the same as above, except we are concerned with files
+in the examples test folder:
+             </p>
+             <div class="highlight-console notranslate">
+              <div class="highlight">
+               <pre><span></span><span class="gp">$ </span>tree examples/tests/
+<span class="go">examples/tests/</span>
+<span class="go">├── hello-world</span>
+<span class="go">│   ├── minicluster-hello-world.yaml   (- name=hello-world</span>
+<span class="go">│   └── test.sh</span>
+<span class="go">└── lammps</span>
+<span class="go">    ├── minicluster-lammps.yaml        (- name=lammps</span>
+<span class="go">    └── test.sh</span>
+</pre>
+              </div>
+             </div>
+             <p>
+              Thus, to run the full example for hello-world:
+             </p>
+             <div class="highlight-bash notranslate">
+              <div class="highlight">
+               <pre><span></span>$ make <span class="nv">name</span><span class="o">=</span>hello-world redo_test 
+</pre>
+              </div>
+             </div>
+             <p>
+              If you just want to just apply the new job without a cleanup, do:
+             </p>
+             <div class="highlight-bash notranslate">
+              <div class="highlight">
+               <pre><span></span>$ make <span class="nv">name</span><span class="o">=</span>hello-world applytest
+$ make run
+</pre>
+              </div>
+             </div>
+             <p>
+              Note that there is a default sleep of ~20 seconds for all jobs (so the worker nodes start after the broker)
+so they will not run instantly. You can list pods to get an id, and then view logs:
+             </p>
+             <div class="highlight-bash notranslate">
+              <div class="highlight">
+               <pre><span></span>$ make list
+$ bash script/log.sh &lt;pod&gt;
+</pre>
+              </div>
+             </div>
+             <p>
+              Also note that these headless tests have
+              <code class="docutils literal notranslate">
+               <span class="pre">
+                test:
+               </span>
+               <span class="pre">
+                true
+               </span>
+              </code>
+              in the config,
+meaning you will only see output with the command above from what you actually ran.
+We do this because we test them in CI, and we don’t want the other verbose output
+to get in the way! If you want to disable this quiet mode, just comment out
+this parameter in the configuration.
+             </p>
+            </section>
+           </section>
           </section>
          </section>
          <section id="interacting-with-services">
@@ -833,6 +1083,265 @@ $ make catalog-push
 </pre>
           </div>
          </div>
+        </section>
+        <section id="container-requirements">
+         <h2 id="container-requirements">
+          Container Requirements
+          <a class="headerlink" href="#container-requirements" title="Permalink to this heading">
+           ¶
+          </a>
+         </h2>
+         <p>
+          If you are looking to build a container to use with the Flux Operator, we have a set of
+example containers
+          <a class="reference external" href="https://github.com/rse-ops/flux-hpc">
+           here
+          </a>
+          and general guidelines are below.
+Generally we recommend using the flux-sched base image
+so that install locations and users are consistent. This assumes that:
+         </p>
+         <ul class="simple">
+          <li>
+           <p>
+            we are currently starting focus on supporting debian bases
+           </p>
+          </li>
+          <li>
+           <p>
+            if you created the flux user, it has uid 1000
+           </p>
+          </li>
+          <li>
+           <p>
+            sudo is available in the container (apt-get install -y sudo)
+           </p>
+          </li>
+          <li>
+           <p>
+            <code class="docutils literal notranslate">
+             <span class="pre">
+              /etc/flux
+             </span>
+            </code>
+            is used for configuration and general setup
+           </p>
+          </li>
+          <li>
+           <p>
+            <code class="docutils literal notranslate">
+             <span class="pre">
+              /usr/libexec/flux
+             </span>
+            </code>
+            has executables like flux-imp, flux-shell
+           </p>
+          </li>
+          <li>
+           <p>
+            flux-core / flux-sched with flux-security should be installed and ready to go.
+           </p>
+          </li>
+          <li>
+           <p>
+            If you haven’t created a flux user, one will be created for you (with a common user id 1000)
+           </p>
+          </li>
+          <li>
+           <p>
+            Any executables that the flux user needs for your job should be on the path (if launching command directly)
+           </p>
+          </li>
+          <li>
+           <p>
+            The container (for now) should start with user root, and we run commands on behalf of flux.
+           </p>
+          </li>
+          <li>
+           <p>
+            You don’t need to install the flux-restful-api (it will be installed by the operator)
+           </p>
+          </li>
+          <li>
+           <p>
+            munge should be install, and a key generated at
+            <code class="docutils literal notranslate">
+             <span class="pre">
+              /etc/munge/munge.key
+             </span>
+            </code>
+           </p>
+          </li>
+         </ul>
+         <p>
+          This is taken from the
+          <a class="reference external" href="https://github.com/flux-framework/flux-sched/blob/master/src/test/docker/focal/Dockerfile">
+           flux-sched
+          </a>
+          base image. If you intend to use the
+          <a class="reference external" href="https://github.com/flux-framework/flux-restful-api">
+           Flux RESTful API
+          </a>
+          to interact with your cluster, ensure that flux (python bindings) are on the path, along with
+either python or python3 (depending on which you used to install Flux).
+If/when needed we can lift some of these constraints, but for now they are
+reasonable.
+         </p>
+        </section>
+        <section id="testing">
+         <h2 id="testing">
+          Testing
+          <a class="headerlink" href="#testing" title="Permalink to this heading">
+           ¶
+          </a>
+         </h2>
+         <p>
+          Testing is underway! From a high level, we want three kinds of testing:
+         </p>
+         <ul class="simple">
+          <li>
+           <p>
+            Unit tests, which will be more traditional
+            <code class="docutils literal notranslate">
+             <span class="pre">
+              *_test.go
+             </span>
+            </code>
+            files alongside others in the repository (not done yet)
+           </p>
+          </li>
+          <li>
+           <p>
+            End to end “e2e” tests, also within Go, to test an entire submission of a job, also within Go. (not done yet)
+           </p>
+          </li>
+          <li>
+           <p>
+            Integration testing, likely some within Go and some external to it. (in progress)
+           </p>
+          </li>
+         </ul>
+         <section id="integration">
+          <h3 id="integration">
+           Integration
+           <a class="headerlink" href="#integration" title="Permalink to this heading">
+            ¶
+           </a>
+          </h3>
+          <p>
+           For the integration testing outside of Go, we currently have basic tests written that allow the following:
+          </p>
+          <ol class="arabic simple">
+           <li>
+            <p>
+             Write a custom resource definition (CRD) for a named mini cluster under
+             <code class="docutils literal notranslate">
+              <span class="pre">
+               examples/tests/${name}
+              </span>
+             </code>
+             as
+             <code class="docutils literal notranslate">
+              <span class="pre">
+               minicluster-${name}.yaml
+              </span>
+             </code>
+             .
+            </p>
+           </li>
+           <li>
+            <p>
+             The CRD should set
+             <code class="docutils literal notranslate">
+              <span class="pre">
+               test:true
+              </span>
+             </code>
+             and include a command to run, and a container to do it.
+            </p>
+           </li>
+           <li>
+            <p>
+             Add your test name, container, and estimated running time to
+             <code class="docutils literal notranslate">
+              <span class="pre">
+               .github/workflows/main.yaml
+              </span>
+             </code>
+            </p>
+           </li>
+           <li>
+            <p>
+             If your tests require a working directory, it must be set in the CRD for the headless test.
+            </p>
+           </li>
+           <li>
+            <p>
+             If a test is deterministic, add a
+             <code class="docutils literal notranslate">
+              <span class="pre">
+               test.out
+              </span>
+             </code>
+             to the output folder that we can validate results for.
+            </p>
+           </li>
+           <li>
+            <p>
+             We will validate output (if provided) and that containers exit with 0.
+            </p>
+           </li>
+          </ol>
+          <p>
+           To run the test (and you can also do this locally) we use the
+           <code class="docutils literal notranslate">
+            <span class="pre">
+             script/test.sh
+            </span>
+           </code>
+           and provide a name and the estimated
+job time, just like in actions. The below example runs the “hello-world” test and gives it 30 seconds to finish.
+          </p>
+          <div class="highlight-bash notranslate">
+           <div class="highlight">
+            <pre><span></span>./bin/bash script/test.sh hello-world <span class="m">10</span>
+</pre>
+           </div>
+          </div>
+          <div class="highlight-console notranslate">
+           <div class="highlight">
+            <pre><span></span><span class="go">...</span>
+<span class="go">NAME                  READY   STATUS    RESTARTS   AGE</span>
+<span class="go">flux-sample-0-ng8c5   1/1     Running   0          3s</span>
+<span class="go">flux-sample-1-nxqj9   1/1     Running   0          3s</span>
+<span class="go">flux-sample-2-vv7jr   1/1     Running   0          3s</span>
+<span class="go">flux-sample-3-kh2br   1/1     Running   0          3s</span>
+<span class="go">Pods: flux-sample-0-ng8c5 flux-sample-1-nxqj9 flux-sample-2-vv7jr flux-sample-3-kh2br</span>
+<span class="go">Pod: flux-sample-0-ng8c5</span>
+<span class="go">Actual:</span>
+<span class="go">hello world</span>
+<span class="go">Expected:</span>
+<span class="go">hello world</span>
+</pre>
+           </div>
+          </div>
+          <p>
+           What you don’t see in the above is that we also use kubectl to ensure that the exit code for all containers
+(typically 4) is 0. Also note that the “sleep” time doesn’t have to be exact, it’s technically not necessary because we are waiting
+for the output to finish coming (and the job to stop). I added it to provide a courtesy message to the user and developer.
+Finally, note that for big containers it’s suggested to pull them first, e.g.,:
+          </p>
+          <div class="highlight-bash notranslate">
+           <div class="highlight">
+            <pre><span></span>$ minikube ssh docker pull ghcr.io/rse-ops/lammps:flux-sched-focal-v0.24.0
+</pre>
+           </div>
+          </div>
+          <p>
+           The tests above are headless, meaning they submit commands directly, and that way
+we don’t need to do it in the UI and can programmatically determine if they were successful.
+          </p>
+         </section>
         </section>
         <section id="documentation">
          <h2 id="documentation">
@@ -986,7 +1495,7 @@ server to preview:
        © Copyright 2022, Flux Developers.
       </div>
       Last updated on
-              Dec 20, 2022.
+              Dec 22, 2022.
       <br/>
       Created using
       <a href="http://www.sphinx-doc.org/">

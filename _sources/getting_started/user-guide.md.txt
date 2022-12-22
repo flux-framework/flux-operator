@@ -64,6 +64,8 @@ either run a job or start a Flux Mini Cluster.
 $ kubectl apply -f config/samples/flux-framework.org_v1alpha1_minicluster.yaml 
 ```
 
+Note that we have other examples (using the web interface in [examples/flux-restful](https://github.com/flux-framework/flux-operator/tree/main/examples/flux-restful) 
+and headless examples for testing in [examples/tests](https://github.com/flux-framework/flux-operator/tree/main/examples/tests)).
 When you are all done, cleanup with `kubectl delete` commands and/or!
 
 ```bash
@@ -164,7 +166,7 @@ This means we will use persistent volume claims instead. Then do:
 
 ```bash
 $ make apply
-# OR
+# same as
 $ kubectl apply -f config/samples/flux-framework.org_v1alpha1_minicluster.yaml 
 ```
 

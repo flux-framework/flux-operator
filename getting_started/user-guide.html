@@ -598,7 +598,16 @@ either run a job or start a Flux Mini Cluster.
            </div>
           </div>
           <p>
-           When you are all done, cleanup with
+           Note that we have other examples (using the web interface in
+           <a class="reference external" href="https://github.com/flux-framework/flux-operator/tree/main/examples/flux-restful">
+            examples/flux-restful
+           </a>
+           and headless examples for testing in
+           <a class="reference external" href="https://github.com/flux-framework/flux-operator/tree/main/examples/tests">
+            examples/tests
+           </a>
+           ).
+When you are all done, cleanup with
            <code class="docutils literal notranslate">
             <span class="pre">
              kubectl
@@ -763,7 +772,7 @@ which obviously won’t work for different instances in the cloud!
           <div class="highlight-bash notranslate">
            <div class="highlight">
             <pre><span></span>$ make apply
-<span class="c1"># OR</span>
+<span class="c1"># same as</span>
 $ kubectl apply -f config/samples/flux-framework.org_v1alpha1_minicluster.yaml 
 </pre>
            </div>
@@ -1274,7 +1283,7 @@ Total wall time: <span class="m">0</span>:00:20
        © Copyright 2022, Flux Developers.
       </div>
       Last updated on
-              Dec 20, 2022.
+              Dec 22, 2022.
       <br/>
       Created using
       <a href="http://www.sphinx-doc.org/">

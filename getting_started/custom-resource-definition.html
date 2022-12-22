@@ -320,6 +320,11 @@
                       </a>
                      </li>
                      <li class="md-nav__item">
+                      <a class="md-nav__link" href="#test">
+                       test
+                      </a>
+                     </li>
+                     <li class="md-nav__item">
                       <a class="md-nav__link" href="#diagnostics">
                        diagnostics
                       </a>
@@ -332,6 +337,11 @@
                      <li class="md-nav__item">
                       <a class="md-nav__link" href="#localdeploy">
                        localDeploy
+                      </a>
+                     </li>
+                     <li class="md-nav__item">
+                      <a class="md-nav__link" href="#sleeptime">
+                       sleeptime
                       </a>
                      </li>
                      <li class="md-nav__item">
@@ -368,6 +378,30 @@
                         <li class="md-nav__item">
                          <a class="md-nav__link" href="#runflux">
                           runFlux
+                         </a>
+                        </li>
+                        <li class="md-nav__item">
+                         <a class="md-nav__link" href="#fluxoptionflags">
+                          fluxOptionFlags
+                         </a>
+                        </li>
+                        <li class="md-nav__item">
+                         <a class="md-nav__link" href="#precommand">
+                          preCommand
+                         </a>
+                        </li>
+                       </ul>
+                      </nav>
+                     </li>
+                     <li class="md-nav__item">
+                      <a class="md-nav__link" href="#fluxrestful">
+                       fluxRestful
+                      </a>
+                      <nav class="md-nav">
+                       <ul class="md-nav__list">
+                        <li class="md-nav__item">
+                         <a class="md-nav__link" href="#branch">
+                          branch
                          </a>
                         </li>
                        </ul>
@@ -452,6 +486,11 @@
                  </a>
                 </li>
                 <li class="md-nav__item">
+                 <a class="md-nav__link" href="#test">
+                  test
+                 </a>
+                </li>
+                <li class="md-nav__item">
                  <a class="md-nav__link" href="#diagnostics">
                   diagnostics
                  </a>
@@ -464,6 +503,11 @@
                 <li class="md-nav__item">
                  <a class="md-nav__link" href="#localdeploy">
                   localDeploy
+                 </a>
+                </li>
+                <li class="md-nav__item">
+                 <a class="md-nav__link" href="#sleeptime">
+                  sleeptime
                  </a>
                 </li>
                 <li class="md-nav__item">
@@ -500,6 +544,30 @@
                    <li class="md-nav__item">
                     <a class="md-nav__link" href="#runflux">
                      runFlux
+                    </a>
+                   </li>
+                   <li class="md-nav__item">
+                    <a class="md-nav__link" href="#fluxoptionflags">
+                     fluxOptionFlags
+                    </a>
+                   </li>
+                   <li class="md-nav__item">
+                    <a class="md-nav__link" href="#precommand">
+                     preCommand
+                    </a>
+                   </li>
+                  </ul>
+                 </nav>
+                </li>
+                <li class="md-nav__item">
+                 <a class="md-nav__link" href="#fluxrestful">
+                  fluxRestful
+                 </a>
+                 <nav class="md-nav">
+                  <ul class="md-nav__list">
+                   <li class="md-nav__item">
+                    <a class="md-nav__link" href="#branch">
+                     branch
                     </a>
                    </li>
                   </ul>
@@ -644,6 +712,25 @@ the set of containers that you describe.
            </div>
           </div>
          </section>
+         <section id="test">
+          <h3 id="test">
+           test
+           <a class="headerlink" href="#test" title="Permalink to this heading">
+            ¶
+           </a>
+          </h3>
+          <p>
+           Test mode turns off all verbose output (yes, the emojis too) so only the output of
+your job will be printed to the console. This way, you can retrieve the job lob
+and then determine if the test was successful based on this output.
+          </p>
+          <div class="highlight-yaml notranslate">
+           <div class="highlight">
+            <pre><span></span><span class="w">  </span><span class="nt">test</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span><span class="w"></span>
+</pre>
+           </div>
+          </div>
+         </section>
          <section id="diagnostics">
           <h3 id="diagnostics">
            diagnostics
@@ -704,6 +791,27 @@ likely want to set this to True.
            </div>
           </div>
          </section>
+         <section id="sleeptime">
+          <h3 id="sleeptime">
+           sleeptime
+           <a class="headerlink" href="#sleeptime" title="Permalink to this heading">
+            ¶
+           </a>
+          </h3>
+          <p>
+           We do a “hard coded” approach of using sleep time to ensure the worker nodes start after the main broker,
+and that way they can be registered. Sometimes if you add more custom logic to the start
+of the container this can throw off the start sequence, so while this approach isn’t perfect,
+we allow you to customize this sleep time if desired.
+          </p>
+          <div class="highlight-yaml notranslate">
+           <div class="highlight">
+            <pre><span></span><span class="w">  </span><span class="c1"># seconds</span><span class="w"></span>
+<span class="w">  </span><span class="nt">sleeptime</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">60</span><span class="w"></span>
+</pre>
+           </div>
+          </div>
+         </section>
          <section id="containers">
           <h3 id="containers">
            containers
@@ -713,7 +821,9 @@ likely want to set this to True.
           </h3>
           <p>
            Early on we identified that a job could include more than one container, where there might be a primary container
-running Flux, and others that provide services.
+running Flux, and others that provide services. Note that currently we only allow one container to be a FluxRunner,
+however we anticipate this could change (and allow for specifying custom logic for a flux runner entrypoint, a script
+called “wait.sh”) on the level of the container.
           </p>
           <div class="highlight-yaml notranslate">
            <div class="highlight">
@@ -892,6 +1002,112 @@ However, if you set this to true for
             </div>
            </div>
           </section>
+          <section id="fluxoptionflags">
+           <h4 id="fluxoptionflags">
+            fluxOptionFlags
+            <a class="headerlink" href="#fluxoptionflags" title="Permalink to this heading">
+             ¶
+            </a>
+           </h4>
+           <p>
+            Often when you run flux, you need to provide an option flag. E.g.,:
+           </p>
+           <div class="highlight-bash notranslate">
+            <div class="highlight">
+             <pre><span></span>$ flux mini submit -ompi<span class="o">=</span>openmpi@5
+</pre>
+            </div>
+           </div>
+           <p>
+            While these can be provided in the user interface of the Flux RESTFul API,
+depending on your container image you might want to set some flags as default.
+You can do this by setting this particular config parameter, and you should
+set the flags just as you would to the command, starting with
+            <code class="docutils literal notranslate">
+             <span class="pre">
+              -o
+             </span>
+            </code>
+            :
+           </p>
+           <div class="highlight-yaml notranslate">
+            <div class="highlight">
+             <pre><span></span>	# optional - if needed, default option flags for the server (e.g., -ompi=openmpi@5)
+	fluxOptionFlags: "-ompi=openmpi@5" 
+</pre>
+            </div>
+           </div>
+           <p>
+            Note that if you run with the user interface, setting a flag in the interface
+that is defined for the server will override it here. These options are
+currently defined for your entire cluster and cannot be provided to specific containers.
+Also remember that your base container can equally provide these flags (and you
+could equally override them, but if they are set and you don’t define them here
+they should not be touched).
+           </p>
+          </section>
+          <section id="precommand">
+           <h4 id="precommand">
+            preCommand
+            <a class="headerlink" href="#precommand" title="Permalink to this heading">
+             ¶
+            </a>
+           </h4>
+           <p>
+            It might be that you want some custom logic at the beginning of your script.
+E.g., perhaps you need to source an environment of interest! To support this we allow
+for a string (multiple lines possible) of custom logic to do that. Remember
+that since this is written into a flux runner wait.sh, this will only be
+used for a Flux runner script. If you need custom logic in a service container
+that is not a flux runner, you should write it into your own entrypoint.
+           </p>
+           <div class="highlight-yaml notranslate">
+            <div class="highlight">
+             <pre><span></span><span class="w">  </span><span class="c1"># The pipe preserves line breaks</span><span class="w"></span>
+<span class="w">  </span><span class="nt">preCommand</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">|</span><span class="w"></span>
+<span class="w">    </span><span class="no">### Heading</span><span class="w"></span>
+
+<span class="w">    </span><span class="no">* Bullet</span><span class="w"></span>
+<span class="w">    </span><span class="no">* Points</span><span class="w"></span>
+</pre>
+            </div>
+           </div>
+          </section>
+         </section>
+         <section id="fluxrestful">
+          <h3 id="fluxrestful">
+           fluxRestful
+           <a class="headerlink" href="#fluxrestful" title="Permalink to this heading">
+            ¶
+           </a>
+          </h3>
+          <p>
+           The “fluxRestful” section has a few parameters to dictate the installation of the
+           <a class="reference external" href="https://github.com/flux-framework/flux-restful-api">
+            Flux Restful API
+           </a>
+           , which provides
+a user interface to submit jobs.
+          </p>
+          <section id="branch">
+           <h4 id="branch">
+            branch
+            <a class="headerlink" href="#branch" title="Permalink to this heading">
+             ¶
+            </a>
+           </h4>
+           <p>
+            The branch parameter controls if you want to clone a custom branch (e.g., for testing).
+It defaults to main.
+           </p>
+           <div class="highlight-yaml notranslate">
+            <div class="highlight">
+             <pre><span></span><span class="w">  </span><span class="nt">fluxRestful</span><span class="p">:</span><span class="w"></span>
+<span class="w">    </span><span class="nt">branch</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">feature-branch</span><span class="w"></span>
+</pre>
+            </div>
+           </div>
+          </section>
          </section>
         </section>
        </section>
@@ -940,7 +1156,7 @@ However, if you set this to true for
        © Copyright 2022, Flux Developers.
       </div>
       Last updated on
-              Dec 20, 2022.
+              Dec 22, 2022.
       <br/>
       Created using
       <a href="http://www.sphinx-doc.org/">
