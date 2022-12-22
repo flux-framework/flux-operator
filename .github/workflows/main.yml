@@ -35,7 +35,8 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: |
         make 
-        make install
+        make manifests
+        make kustomize
 
     # Cache the operator build because it can use up GITHUB API
     - name: Cache compiler operator binary
