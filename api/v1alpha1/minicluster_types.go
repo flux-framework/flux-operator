@@ -30,6 +30,11 @@ type MiniClusterSpec struct {
 	// There should only be one container to run flux with runFlux
 	Containers []MiniClusterContainer `json:"containers"`
 
+	// Test mode silences all output so the job only shows the test running
+	// +kubebuilder:default=false
+	// +optional
+	TestMode bool `json:"test"`
+
 	// Customization to Flux Restful API
 	// There should only be one container to run flux with runFlux
 	// +optional

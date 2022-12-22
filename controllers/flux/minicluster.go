@@ -314,7 +314,8 @@ func generateWaitScript(cluster *api.MiniCluster, containerIndex int) (string, e
 		FluxOptionFlags:   container.FluxOptionFlags,
 		PreCommand:        container.PreCommand,
 		FluxRestfulBranch: cluster.Spec.FluxRestful.Branch,
-		ClusterSize:       cluster.Spec.Size}
+		ClusterSize:       cluster.Spec.Size,
+		TestMode:          cluster.Spec.TestMode}
 	t, err := template.New("wait-sh").Parse(waitToStartTemplate)
 	if err != nil {
 		return "", err

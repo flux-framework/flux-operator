@@ -30,4 +30,5 @@ type WaitTemplate struct {
 	PreCommand        string // Custom commands, looked up by container identifier
 	FluxRestfulBranch string // branch to clone Flux Restful from, defaults to main
 	ClusterSize       int32  // number of nodes in mini cluster, should be size
+	TestMode          bool   // Don't print additional output
 }

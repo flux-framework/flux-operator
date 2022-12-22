@@ -121,6 +121,11 @@ spec:
                 description: Size (number of jobs to run)
                 format: int32
                 type: integer
+              test:
+                default: false
+                description: Test mode silences all output so the job only shows the
+                  test running
+                type: boolean
             required:
             - containers
             type: object

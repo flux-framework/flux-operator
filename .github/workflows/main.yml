@@ -42,7 +42,6 @@ jobs:
       run: make test
 
   test-jobs:
-    name: Full testing of Jobs
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
@@ -92,10 +91,10 @@ jobs:
         kubectl apply -f examples/tests/${name}/minicluster-${name}.yaml
         make list
         sleep ${jobtime}
-        /bin/bash examples/tests/${name}/test.sh
-        retval=$?
-        if [[ ${retval} != "0" ]]; then
+        /bin/bash examples/tests/${name}/test.sh ${name} || (
             echo "Tests for ${name} were not successful"
             cat ${name}-log.txt
-        fi
+            kill ${pid} || echo "Already dead"
+            exit 1;
+        )
         kill ${pid} || echo "Already dead"
