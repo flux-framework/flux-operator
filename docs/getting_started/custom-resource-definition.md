@@ -47,6 +47,16 @@ the set of containers that you describe.
   size: 4
 ```
 
+### test
+
+Test mode turns off all verbose output (yes, the emojis too) so only the output of 
+your job will be printed to the console. This way, you can retrieve the job lob
+and then determine if the test was successful based on this output.
+
+```yaml
+  test: true
+```
+
 ### diagnostics
 
 Flux has a command that makes it easy to run diagnostics on a cluster, and we expose a boolean that makes it possible

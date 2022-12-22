@@ -46,7 +46,8 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        test: [["ghcr.io/flux-framework/flux-restful-api:latest", "hello-world", 10]]
+        test: [["hello-world", "ghcr.io/flux-framework/flux-restful-api:latest", 10],
+               ["lammps", "ghcr.io/rse-ops/lammps:flux-sched-focal-v0.24.0", 120]]
         
     steps:
     - name: Clone the code
@@ -56,13 +57,6 @@ jobs:
       uses: actions/setup-go@v3
       with:
         go-version: ^1.18
-
-    - name: Install Krew
-      run: |
-        wget https://github.com/kubernetes-sigs/krew/releases/download/v0.4.3/krew-linux_amd64.tar.gz && \
-        tar -xzvf krew-linux_amd64.tar.gz
-        ./krew-linux_amd64 install krew
-        echo $HOME/.krew/bin >> $GITHUB_PATH
                 
     - name: Start minikube
       uses: medyagh/setup-minikube@697f2b7aaed5f70bf2a94ee21a4ec3dde7b12f92 # v0.0.9
@@ -72,7 +66,7 @@ jobs:
 
     - name: Build and Install Operator
       env:
-        container: ${{ matrix.test[0] }}
+        container: ${{ matrix.test[1] }}
       run: |
         export SHELL=/bin/bash
         eval $(minikube -p minikube docker-env)
@@ -82,19 +76,6 @@ jobs:
 
     - name: Run Hello World Test
       env:
-        name: ${{ matrix.test[1] }}
+        name: ${{ matrix.test[0] }}
         jobtime: ${{ matrix.test[2] }}
-      run: |
-        make run > ${name}-log.txt &
-        pid=$!
-        echo "PID for running cluster is ${pid}"
-        kubectl apply -f examples/tests/${name}/minicluster-${name}.yaml
-        make list
-        sleep ${jobtime}
-        /bin/bash examples/tests/${name}/test.sh ${name} || (
-            echo "Tests for ${name} were not successful"
-            cat ${name}-log.txt
-            kill ${pid} || echo "Already dead"
-            exit 1;
-        )
-        kill ${pid} || echo "Already dead"
+      run: /bin/bash ./scripts/test.sh ${name} ${jobtime}
