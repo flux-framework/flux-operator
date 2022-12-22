@@ -39,11 +39,11 @@ jobs:
         make kustomize
 
     # Cache the operator build because it can use up GITHUB API
-    - name: Cache compiler operator binary
+    - name: Cache Dependencies
       uses: actions/cache@v3
       with:
-        path: ./bin
-        key: bin
+        path: ./vendor
+        key: vendor
 
     # These aren't written yet)
     - name: Run Unit tests
@@ -74,11 +74,11 @@ jobs:
     - name: Create the namespace
       run: kubectl create namespace flux-operator
 
-    - name: Install Cached Operator
+    - name: Add Cached Dependencies
       uses: actions/cache@v3
       with:
-        path: ./bin
-        key: bin
+        path: ./vendor
+        key: vendor
 
     - name: Pull Docker Containers to MiniKube
       env:
