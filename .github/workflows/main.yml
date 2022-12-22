@@ -72,6 +72,12 @@ jobs:
     - name: Create the namespace
       run: kubectl create namespace flux-operator
 
+    - name: Install Cached Operator
+      uses: actions/cache@v3
+      with:
+        path: ./bin
+        key: bin
+
     - name: Pull Docker Containers to MiniKube
       env:
         container: ${{ matrix.test[1] }}
@@ -80,12 +86,8 @@ jobs:
         export SHELL=/bin/bash
         eval $(minikube -p minikube docker-env)
         minikube ssh docker pull ${container}
-
-    - name: Install Cached Operator
-      uses: actions/cache@v3
-      with:
-        path: ./bin
-        key: bin
+        make
+        make install
 
     - name: Test ${{ matrix.test[0] }}
       env:
