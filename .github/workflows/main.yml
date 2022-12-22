@@ -47,7 +47,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        test: [["ghcr.io/flux-framework/flux-restful-api:latest", "hello-world", 60]]
+        test: [["ghcr.io/flux-framework/flux-restful-api:latest", "hello-world", 10]]
         
     steps:
     - name: Clone the code
@@ -86,25 +86,16 @@ jobs:
         name: ${{ matrix.test[1] }}
         jobtime: ${{ matrix.test[2] }}
       run: |
-        make run &
+        make run > ${name}-log.txt &
         pid=$!
         echo "PID for running cluster is ${pid}"
         kubectl apply -f examples/tests/${name}/minicluster-${name}.yaml
-        sleep 10
         make list
-        /bin/bash examples/tests/${name}/test.sh
-        #pods=$(kubectl get -n flux-operator  pod --output=jsonpath={.items..metadata.name}); 
-        #pod="${pods%% *}"
-        #kubectl port-forward -n flux-operator ${pod} 5000:5000 &
-        #portpid=$!
-        echo $pid $portpid        
         sleep ${jobtime}
+        /bin/bash examples/tests/${name}/test.sh
+        retval=$?
+        if [[ ${retval} != "0" ]]; then
+            echo "Tests for ${name} were not successful"
+            cat ${name}-log.txt
+        fi
         kill ${pid} || echo "Already dead"
-        #kill ${portpid} || echo "Already dead"
-
- #   - name: Test service URLs
- #     run: |
- #       minikube service list
- #       minikube service example --url
- #       echo "------------------opening the service------------------"
- #       curl $(minikube service example --url)        
