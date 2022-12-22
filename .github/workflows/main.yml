@@ -30,8 +30,19 @@ jobs:
     - name: fmt check
       run: make fmt
 
-    - name: Build
-      run: make
+    - name: Build and Install Operator
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      run: |
+        make 
+        make install
+
+    # Cache the operator build because it can use up GITHUB API
+    - name: Cache compiler operator binary
+      uses: actions/cache@v3
+      with:
+        path: ./bin
+        key: bin
 
     # These aren't written yet)
     - name: Run Unit tests
@@ -61,7 +72,7 @@ jobs:
     - name: Create the namespace
       run: kubectl create namespace flux-operator
 
-    - name: Build and Install Operator
+    - name: Pull Docker Containers to MiniKube
       env:
         container: ${{ matrix.test[1] }}
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -69,8 +80,12 @@ jobs:
         export SHELL=/bin/bash
         eval $(minikube -p minikube docker-env)
         minikube ssh docker pull ${container}
-        make 
-        make install
+
+    - name: Install Cached Operator
+      uses: actions/cache@v3
+      with:
+        path: ./bin
+        key: bin
 
     - name: Test ${{ matrix.test[0] }}
       env:
