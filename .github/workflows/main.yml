@@ -68,6 +68,7 @@ jobs:
     - name: Build and Install Operator
       env:
         container: ${{ matrix.test[1] }}
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: |
         export SHELL=/bin/bash
         eval $(minikube -p minikube docker-env)

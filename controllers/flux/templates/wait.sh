@@ -166,7 +166,7 @@ else
 
             # Start restful API server
             startServer="uvicorn app.main:app --host=0.0.0.0 --port=5000"
-            git clone -b {{.FluxRestfulBranch }} --depth 1 https://github.com/flux-framework/flux-restful-api /flux-restful-api >> /dev/null
+            git clone -b {{or .FluxRestfulBranch "main"}} --depth 1 https://github.com/flux-framework/flux-restful-api /flux-restful-api >> /dev/null
             cd /flux-restful-api
 
             # Install python requirements, with preference for python3
