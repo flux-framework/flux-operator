@@ -38,16 +38,16 @@ jobs:
         make manifests
         make kustomize
 
+    # These aren't written yet)
+    - name: Run Unit tests
+      run: make test
+
     # Cache the operator build because it can use up GITHUB API
     - name: Cache Dependencies
       uses: actions/cache@v3
       with:
         path: ./vendor
         key: vendor
-
-    # These aren't written yet)
-    - name: Run Unit tests
-      run: make test
 
   test-jobs:
     needs: [unit-tests]
