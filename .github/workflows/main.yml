@@ -1,14 +1,11 @@
 name: test flux-operator
 
 on:
-  # This should run on a push to any branch except main, gh-pages, and binoc
-  push:
-    branches-ignore:
-    - main
-    - gh-pages
+  pull_request: []
 
 jobs:
   formatting:
+    name: Formatting
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v3
@@ -20,3 +17,91 @@ jobs:
       uses: crate-ci/typos@7ad296c72fa8265059cc03d1eda562fbdfcd6df2 # v1.9.0
       with:
         files: ./docs/*/*.md ./docs/*.md ./README.md ./config/samples ./docs/*.md
+
+  unit-tests:
+    name: Unit Tests
+    runs-on: ubuntu-latest
+    outputs:
+      go-mod: ${{ steps.go-cache-paths.outputs.go-mod }}
+      go-build: ${{ steps.go-cache-paths.outputs.go-build }}
+
+    steps:
+    - uses: actions/checkout@v3
+    - name: Setup Go
+      uses: actions/setup-go@v3
+      with:
+        go-version: ^1.18
+    - name: fmt check
+      run: make fmt
+
+    - id: go-cache-paths
+      run: |
+        echo go-build=$(go env GOCACHE) >> $GITHUB_OUTPUT
+        echo go-mod=$(go env GOMODCACHE) >> $GITHUB_OUTPUT
+
+    - name: Build and Install Operator
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      run: |
+        make 
+        make manifests
+        make kustomize
+
+    # These aren't written yet)
+    - name: Run Unit tests
+      run: make test
+
+    # Cache the operator build because it can use up GITHUB API
+    - name: Cache Dependencies
+      uses: actions/cache@v3
+      with:
+        path: ${{ steps.go-cache-paths.outputs.go-mod }}
+        key: ${{ runner.os }}-go-mod-${{ hashFiles('**/go.sum') }}
+        
+  test-jobs:
+    needs: [unit-tests]
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        test: [["hello-world", "ghcr.io/flux-framework/flux-restful-api:latest", 10],
+               ["lammps", "ghcr.io/rse-ops/lammps:flux-sched-focal-v0.24.0", 15],
+               ["pokemon", "ghcr.io/rse-ops/pokemon:app-latest", 10]]
+        
+    steps:
+    - name: Clone the code
+      uses: actions/checkout@v3
+
+    - name: Setup Go
+      uses: actions/setup-go@v3
+      with:
+        go-version: ^1.18
+                
+    - name: Start minikube
+      uses: medyagh/setup-minikube@697f2b7aaed5f70bf2a94ee21a4ec3dde7b12f92 # v0.0.9
+
+    - name: Create the namespace
+      run: kubectl create namespace flux-operator
+
+    - name: Add Cached Dependencies
+      uses: actions/cache@v3
+      with:
+        path: ${{ needs.unit-tests.outputs.go-mod }}
+        key: ${{ runner.os }}-go-mod-${{ hashFiles('**/go.sum') }}
+
+    - name: Pull Docker Containers to MiniKube
+      env:
+        container: ${{ matrix.test[1] }}
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      run: |
+        export SHELL=/bin/bash
+        eval $(minikube -p minikube docker-env)
+        minikube ssh docker pull ${container}
+        make
+        make install
+
+    - name: Test ${{ matrix.test[0] }}
+      env:
+        name: ${{ matrix.test[0] }}
+        jobtime: ${{ matrix.test[2] }}
+      run: /bin/bash ./script/test.sh ${name} ${jobtime}

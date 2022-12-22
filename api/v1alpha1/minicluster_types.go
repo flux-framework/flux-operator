@@ -30,6 +30,22 @@ type MiniClusterSpec struct {
 	// There should only be one container to run flux with runFlux
 	Containers []MiniClusterContainer `json:"containers"`
 
+	// Test mode silences all output so the job only shows the test running
+	// +kubebuilder:default=false
+	// +optional
+	TestMode bool `json:"test"`
+
+	// Customize sleep time if job takes longer to setup
+	// This isn't ideal, but we have to control order that workers start
+	// +kubebuilder:default=-1
+	// +optional
+	SleepTime int `json:"sleeptime"`
+
+	// Customization to Flux Restful API
+	// There should only be one container to run flux with runFlux
+	// +optional
+	FluxRestful FluxRestful `json:"fluxRestful"`
+
 	// Size (number of jobs to run)
 	// +kubebuilder:default=1
 	// +optional
@@ -62,6 +78,14 @@ type MiniClusterStatus struct {
 
 	// conditions hold the latest Flux Job and MiniCluster states
 	Conditions []metav1.Condition `json:"conditions,omitempty"`
+}
+
+type FluxRestful struct {
+
+	// Branch to clone Flux Restful API from
+	// +kubebuilder:default="main"
+	// +optional
+	Branch string `json:"branch"`
 }
 
 type MiniClusterContainer struct {
@@ -101,6 +125,19 @@ type MiniClusterContainer struct {
 	// +optional
 	FluxRunner bool `json:"runFlux"`
 
+	// Flux option flags, usually provided with -o
+	// optional - if needed, default option flags for the server
+	// These can also be set in the user interface to override here.
+	// This is only valid for a FluxRunner
+	// +optional
+	FluxOptionFlags string `json:"fluxOptionFlags"`
+
+	// Special command to run at beginning of script, directly after asFlux
+	// is defined as sudo -u flux -E (so you can change that if desired.)
+	// This is only valid if FluxRunner is set (that writes a wait.sh script)
+	// +optional
+	PreCommand string `json:"preCommand"`
+
 	// Lifecycle can handle post start commands, etc.
 	// +optional
 	LifeCyclePostStartExec string `json:"postStartExec"`
@@ -129,6 +166,12 @@ func (f *MiniCluster) Validate() bool {
 	// We should have only one flux runner
 	valid := true
 	fluxRunners := 0
+
+	// If we only have one container, assume we want to run flux with it
+	// This makes it easier for the user to not require the flag
+	if len(f.Spec.Containers) == 1 {
+		f.Spec.Containers[0].FluxRunner = true
+	}
 
 	for i, container := range f.Spec.Containers {
 		name := fmt.Sprintf("MiniCluster.Container.%d", i)

@@ -29,6 +29,8 @@ And the following external resources might be useful:
 
  - [Flux HPC Examples](https://github.com/rse-ops/flux-hpc) containers and CRD for the operator to run Flux with HPC workloads (under development)
 
+**Note** this project is actively under development, and you can expect change and improvements!
+We apologize for bugs you run into, and hope you tell us soon so we can work on resolving them.
 
 #### License
 

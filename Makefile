@@ -30,10 +30,14 @@ BUNDLE_METADATA_OPTS ?= $(BUNDLE_CHANNELS) $(BUNDLE_DEFAULT_CHANNEL)
 # For example, running 'make bundle-build bundle-push catalog-build catalog-push' will build and push both
 # flux-framework.org/operator-bundle:$VERSION and flux-framework.org/operator-catalog:$VERSION.
 IMAGE_TAG_BASE ?= ghcr.io/flux-framework/flux-operator
+KIND_VERSION=v0.11.1
+# This kubectl version supports -k for kustomization, taken from mpi
+KUBECTL_VERSION=v1.21.4
 
 # BUNDLE_IMG defines the image:tag used for the bundle.
 # You can use it as an arg. (E.g make bundle-build BUNDLE_IMG=<some-registry>/<project-name-bundle>:<tag>)
 BUNDLE_IMG ?= $(IMAGE_TAG_BASE)-bundle:v$(VERSION)
+IMG_BUILDER=docker
 
 # BUNDLE_GEN_FLAGS are the flags passed to the operator-sdk generate bundle command
 BUNDLE_GEN_FLAGS ?= -q --overwrite --version $(VERSION) $(BUNDLE_METADATA_OPTS)
@@ -131,24 +135,55 @@ clean:
 	kubectl delete -n flux-operator MiniCluster --all
 	rm -rf yaml/*.yaml
 
-applyall:
-	bin/kustomize build config/samples | kubectl apply -f -
-
 # This applies the basic minicluster (and not extended examples)
 apply:
-	kubectl apply -f config/samples/flux-framework.org_v1alpha1_minicluster.yaml
+	kubectl apply -f examples/flux-restful/minicluster-lammps.yaml
 
-applymulti:
-	kubectl apply -f config/samples/flux-framework.org_v1alpha1_minicluster_multiple_containers.yaml
+applyui:
+	kubectl apply -f examples/flux-restful/minicluster-$(name).yaml
+
+applytest:
+	kubectl apply -f examples/tests/${name}/minicluster-$(name).yaml
+
+example:
+	kubectl apply -f examples/flux-restful/minicluster-$(name).yaml 
 
 # Clean, apply and run, and apply the job
 redo: clean apply run
-
-# Clean, apply and run multiple container example
-multi: clean applymulti run 
+redo_example: clean example run
+redo_test: clean applytest run
 
 log:
 	kubectl logs -n flux-operator job.batch/flux-sample $@
+
+##@ Test
+# NOTE these are not fully developed yet
+
+bin/kubectl:
+	mkdir -p bin
+	curl -L -o bin/kubectl https://dl.k8s.io/release/${KUBECTL_VERSION}/bin/linux/amd64/kubectl
+	chmod +x bin/kubectl
+
+.PHONY: test_e2e
+test_e2e: export TEST_FLUX_OPERATOR_IMAGE = ${IMAGE_TAG_BASE}:latest
+test_e2e: bin/kubectl kind images dev_manifest
+	go test -tags e2e ./tests/e2e/...
+
+.PHONY: dev_manifest
+dev_manifest:
+	# Use `~` instead of `/` because image name might contain `/`.
+	sed -e "s~%IMAGE_NAME%~${IMAGE_TAG_BASE}~g" -e "s~%IMAGE_TAG%~${VERSION}~g" config/manifests/overlays/dev/kustomization.yaml.template > config/manifests/overlays/dev/kustomization.yaml
+
+.PHONY: kind
+kind:
+	go install sigs.k8s.io/kind@${KIND_VERSION}
+
+
+# TODO add build arg for version
+.PHONY: images
+images:
+	@echo "VERSION: ${VERSION}"
+	${IMG_BUILDER} build -t ${IMAGE_TAG_BASE}:local .
 
 ##@ Build
 
