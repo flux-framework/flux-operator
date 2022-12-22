@@ -47,7 +47,7 @@ jobs:
       fail-fast: false
       matrix:
         test: [["hello-world", "ghcr.io/flux-framework/flux-restful-api:latest", 10],
-               ["lammps", "ghcr.io/rse-ops/lammps:flux-sched-focal-v0.24.0", 120]]
+               ["lammps", "ghcr.io/rse-ops/lammps:flux-sched-focal-v0.24.0", 15]]
         
     steps:
     - name: Clone the code

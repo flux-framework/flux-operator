@@ -88,7 +88,6 @@ cat /etc/flux/system/R{{ end }}
 diagnostics="{{ .Diagnostics}}"
 {{ if not .TestMode }}printf "\n🐸 Diagnostics: ${diagnostics}\n"{{ end }}
 
-
 # Flux option flags
 option_flags="{{ .FluxOptionFlags}}"
 if [ "${option_flags}" != "" ]; then
@@ -197,8 +196,13 @@ else
     else 
         printf "\n😪 Sleeping to give RESTful server time to start...\n"
 
-        # TODO make this a variable
-        sleep 20
+        # If we don't have a command, sleep less time (no need to wait)
+        # We can give this to user control if needed
+        if [ "$@" == "" ]; then
+            sleep 30
+        else 
+            sleep 5
+        fi
 
         # Just run start on worker nodes, with some delay to let rank 0 start first
         printf "\n🌀${asFlux} flux start -o --config /etc/flux/config ${brokerOptions}\n"

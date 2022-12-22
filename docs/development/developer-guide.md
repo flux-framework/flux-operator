@@ -297,26 +297,40 @@ For the integration testing outside of Go, we currently have basic tests written
 1. Write a custom resource definition (CRD) for a named mini cluster under `examples/tests/${name}` as `minicluster-${name}.yaml`.
 2. The CRD should set `test:true` and include a command to run, and a container to do it.
 3. Add your test name, container, and estimated running time to `.github/workflows/main.yaml`
+4. If a test is deterministic, add a `test.out` to the output folder that we can validate results for.
+5. We will validate output (if provided) and that containers exit with 0.
 
 To run the test (and you can also do this locally) we use the `script/test.sh` and provide a name and the estimated
 job time, just like in actions. The below example runs the "hello-world" test and gives it 30 seconds to finish.
 
 ```bash
-./bin/bash script/test.sh hello-world 30
+./bin/bash script/test.sh hello-world 10
 ```
 ```console
+...
+NAME                  READY   STATUS    RESTARTS   AGE
+flux-sample-0-ng8c5   1/1     Running   0          3s
+flux-sample-1-nxqj9   1/1     Running   0          3s
+flux-sample-2-vv7jr   1/1     Running   0          3s
+flux-sample-3-kh2br   1/1     Running   0          3s
+Pods: flux-sample-0-ng8c5 flux-sample-1-nxqj9 flux-sample-2-vv7jr flux-sample-3-kh2br
+Pod: flux-sample-0-ng8c5
+Actual:
+hello world
+Expected:
+hello world
 ```
-
-Note that since the job sleeps for 20, you should set your jobtime to be greater than that (a suggested minimum is 30).
+What you don't see in the above is that we also use kubectl to ensure that the exit code for all containers
+(typically 4) is 0. Also note that the "sleep" time doesn't have to be exact, it's technically not necessary because we are waiting
+for the output to finish coming (and the job to stop). I added it to provide a courtesy message to the user and developer.
 Finally, note that for big containers it's suggested to pull them first, e.g.,:
 
 ```bash
 $ minikube ssh docker pull ghcr.io/rse-ops/lammps:flux-sched-focal-v0.24.0
 ```
-
-
 The tests above are headless, meaning they submit commands directly, and that way
 we don't need to do it in the UI and can programmatically determine if they were successful.
+
 
 ## Documentation
 

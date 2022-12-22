@@ -14,8 +14,8 @@ echo "   Name: ${name}"
 echo "Jobtime: ${jobtime}"
 
 # Output and error files
-out="./examples/tests/${name}/${name}-log.out"
-err="./examples/tests/${name}/${name}-log.err"
+out="${ROOT}/examples/tests/${name}/${name}-log.out"
+err="${ROOT}/examples/tests/${name}/${name}-log.err"
 
 # Quick helper script to run a test
 make clean >> /dev/null
@@ -23,12 +23,10 @@ make run > ${out} 2> ${err} &
 pid=$!
 echo "PID for running cluster is ${pid}"
 kubectl apply -f examples/tests/${name}/minicluster-${name}.yaml
-make list
+echo "Sleeping for ${jobtime} seconds to allow job to complete 😴️."
 sleep ${jobtime}
-/bin/bash examples/tests/${name}/test.sh ${name} || (
+/bin/bash ${HERE}/check-output.sh ${name} || (
     echo "Tests for ${name} were not successful"
-    cat ${out}
-    cat ${err}
     kill ${pid} || echo "I am already dead 😭️"
     kill $(lsof -t -i:8080) || true
     exit 1;
