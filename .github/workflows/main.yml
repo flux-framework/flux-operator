@@ -47,7 +47,8 @@ jobs:
       fail-fast: false
       matrix:
         test: [["hello-world", "ghcr.io/flux-framework/flux-restful-api:latest", 10],
-               ["lammps", "ghcr.io/rse-ops/lammps:flux-sched-focal-v0.24.0", 15]]
+               ["lammps", "ghcr.io/rse-ops/lammps:flux-sched-focal-v0.24.0", 15],
+               ["pokemon", "ghcr.io/rse-ops/pokemon:app-latest", 10]]
         
     steps:
     - name: Clone the code
@@ -74,7 +75,7 @@ jobs:
         make 
         make install
 
-    - name: Run Hello World Test
+    - name: Test ${{ matrix.test[0] }}
       env:
         name: ${{ matrix.test[0] }}
         jobtime: ${{ matrix.test[2] }}

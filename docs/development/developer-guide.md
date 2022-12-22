@@ -297,8 +297,9 @@ For the integration testing outside of Go, we currently have basic tests written
 1. Write a custom resource definition (CRD) for a named mini cluster under `examples/tests/${name}` as `minicluster-${name}.yaml`.
 2. The CRD should set `test:true` and include a command to run, and a container to do it.
 3. Add your test name, container, and estimated running time to `.github/workflows/main.yaml`
-4. If a test is deterministic, add a `test.out` to the output folder that we can validate results for.
-5. We will validate output (if provided) and that containers exit with 0.
+4. If your tests require a working directory, it must be set in the CRD for the headless test.
+5. If a test is deterministic, add a `test.out` to the output folder that we can validate results for.
+6. We will validate output (if provided) and that containers exit with 0.
 
 To run the test (and you can also do this locally) we use the `script/test.sh` and provide a name and the estimated
 job time, just like in actions. The below example runs the "hello-world" test and gives it 30 seconds to finish.

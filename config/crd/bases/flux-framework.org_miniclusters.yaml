@@ -121,6 +121,11 @@ spec:
                 description: Size (number of jobs to run)
                 format: int32
                 type: integer
+              sleeptime:
+                default: -1
+                description: Customize sleep time if job takes longer to setup This
+                  isn't ideal, but we have to control order that workers start
+                type: integer
               test:
                 default: false
                 description: Test mode silences all output so the job only shows the

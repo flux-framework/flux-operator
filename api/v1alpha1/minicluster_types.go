@@ -35,6 +35,12 @@ type MiniClusterSpec struct {
 	// +optional
 	TestMode bool `json:"test"`
 
+	// Customize sleep time if job takes longer to setup
+	// This isn't ideal, but we have to control order that workers start
+	// +kubebuilder:default=-1
+	// +optional
+	SleepTime int `json:"sleeptime"`
+
 	// Customization to Flux Restful API
 	// There should only be one container to run flux with runFlux
 	// +optional

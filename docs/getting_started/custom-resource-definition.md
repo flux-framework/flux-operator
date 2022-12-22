@@ -90,6 +90,18 @@ likely want to set this to True.
   localDeploy: true
 ``` 
 
+### sleeptime
+
+We do a "hard coded" approach of using sleep time to ensure the worker nodes start after the main broker,
+and that way they can be registered. Sometimes if you add more custom logic to the start
+of the container this can throw off the start sequence, so while this approach isn't perfect,
+we allow you to customize this sleep time if desired.
+
+```yaml
+  # seconds
+  sleeptime: 60
+```
+
 ### containers
 
 Early on we identified that a job could include more than one container, where there might be a primary container

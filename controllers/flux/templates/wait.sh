@@ -198,11 +198,11 @@ else
 
         # If we don't have a command, sleep less time (no need to wait)
         # We can give this to user control if needed
-        if [ "$@" == "" ]; then
+        {{ if ne .SleepTime -1 }}sleep {{.SleepTime}}{{ else }}if [ "$@" == "" ]; then
             sleep 30
         else 
             sleep 5
-        fi
+        fi{{ end }}
 
         # Just run start on worker nodes, with some delay to let rank 0 start first
         printf "\n🌀${asFlux} flux start -o --config /etc/flux/config ${brokerOptions}\n"

@@ -28,6 +28,8 @@ sleep ${jobtime}
 /bin/bash ${HERE}/check-output.sh ${name} || (
     echo "Tests for ${name} were not successful"
     kill ${pid} || echo "I am already dead 😭️"
+    echo "$out"
+    echo "$err"
     kill $(lsof -t -i:8080) || true
     exit 1;
 )
