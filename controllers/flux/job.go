@@ -86,8 +86,9 @@ func (r *MiniClusterReconciler) getMiniClusterContainers(cluster *api.MiniCluste
 			pullPolicy = corev1.PullAlways
 		}
 
-		// Is this our main flux runner?
-		command := []string{"/bin/bash", "-c", container.Command}
+		// Fluxrunner will use the namespace name
+		containerName := container.Name
+		command := []string{}
 
 		// This is a wrapper that is going to wait for the generation of update_hosts.sh
 		// Once it's there, we update /etc/hosts, and run the command to start flux.
@@ -96,6 +97,7 @@ func (r *MiniClusterReconciler) getMiniClusterContainers(cluster *api.MiniCluste
 			// wait.sh path corresponds to container identifier
 			waitScript := fmt.Sprintf("/flux_operator/wait-%d.sh", i)
 			command = []string{"/bin/bash", waitScript, container.Command}
+			containerName = fmt.Sprintf("%s-%d", cluster.Name, i)
 		}
 
 		// Do we have a postStartExec Lifecycle command?
@@ -109,30 +111,69 @@ func (r *MiniClusterReconciler) getMiniClusterContainers(cluster *api.MiniCluste
 			}
 		}
 
+		// Get volume mounts, add on container specific ones
+		mounts := getVolumeMounts(cluster)
+		for volumeName, volume := range container.Volumes {
+			newVolume := corev1.VolumeMount{
+				Name:      volumeName,
+				MountPath: volume.Path,
+				ReadOnly:  volume.ReadOnly,
+			}
+			mounts = append(mounts, newVolume)
+		}
+
 		newContainer := corev1.Container{
 
 			// Call this the driver container, number 0
-			Name:            fmt.Sprintf("%s-%d", cluster.Name, i),
+			Name:            containerName,
 			Image:           container.Image,
 			ImagePullPolicy: pullPolicy,
-			Command:         command,
 			WorkingDir:      container.WorkingDir,
-			VolumeMounts:    getVolumeMounts(cluster),
+			VolumeMounts:    mounts,
 			Stdin:           true,
 			TTY:             true,
 			Lifecycle:       &lifecycle,
 		}
 
-		// If it's the FluxRunner, expose port 5000 for the service
-		if container.FluxRunner {
-			newContainer.Ports = []corev1.ContainerPort{
-				{
-					ContainerPort: int32(servicePort),
-					Protocol:      "TCP",
-				},
-			}
+		// Only add command if we actually have one
+		if len(command) > 0 {
+			newContainer.Command = command
 		}
 
+		ports := []corev1.ContainerPort{}
+		envars := []corev1.EnvVar{}
+
+		// If it's the FluxRunner, expose port 5000 for the service
+		if container.FluxRunner {
+			newPort := corev1.ContainerPort{
+				ContainerPort: int32(servicePort),
+				Protocol:      "TCP",
+			}
+			ports = append(ports, newPort)
+		}
+
+		// For now we will take ports and have container port == exposed port
+		for _, port := range container.Ports {
+			newPort := corev1.ContainerPort{
+				ContainerPort: int32(port),
+				Protocol:      "TCP",
+			}
+			ports = append(ports, newPort)
+		}
+
+		// Add environment variables
+		for key, value := range container.Envars {
+			newEnvar := corev1.EnvVar{
+				Name:  key,
+				Value: value,
+			}
+			envars = append(envars, newEnvar)
+		}
+
+		newContainer.Ports = ports
+		newContainer.Env = envars
+
+		r.log.Info("🌀 Container", "Ports", container.Ports)
 		containers = append(containers, newContainer)
 	}
 	return containers

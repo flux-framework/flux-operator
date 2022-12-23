@@ -124,6 +124,14 @@ And shell into one with the helper script:
 ./script/shell.sh flux-sample-0-b5rw6
 ```
 
+Note that if you are running more than one container, you need a custom command for shell:
+
+```bash
+$ kubectl exec --stdin --tty -n flux-operator flux-sample-0-vsnvz -c flux-sample-1 -- /bin/bash
+```
+
+Where the first is the name of the pod, and `-c` references the container.
+
 ##### Example Configs
 
 We provide an extended gallery of configs for:

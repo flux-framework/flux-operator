@@ -1,0 +1,16 @@
+     STATE NNODES   NCORES    NGPUS NODELIST
+      free      0        0        0 
+ allocated      4        4        0 flux-sample-[0-3]
+      down      0        0        0 
+     STATE NNODES   NCORES    NGPUS NODELIST
+      free      0        0        0 
+ allocated      4        4        0 flux-sample-[0-3]
+      down      0        0        0 
+     STATE NNODES   NCORES    NGPUS NODELIST
+      free      0        0        0 
+ allocated      4        4        0 flux-sample-[0-3]
+      down      0        0        0 
+     STATE NNODES   NCORES    NGPUS NODELIST
+      free      0        0        0 
+ allocated      4        4        0 flux-sample-[0-3]
+      down      0        0        0 

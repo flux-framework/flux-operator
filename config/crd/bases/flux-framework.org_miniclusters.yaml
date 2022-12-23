@@ -48,6 +48,11 @@ spec:
                         IMPORTANT: This is left here, but not used in favor of exposing
                         Flux via a Restful API. We Can remove this when that is finalized.'
                       type: string
+                    environment:
+                      additionalProperties:
+                        type: string
+                      description: Key/value pairs for the environment
+                      type: object
                     fluxOptionFlags:
                       description: Flux option flags, usually provided with -o optional
                         - if needed, default option flags for the server These can
@@ -65,6 +70,16 @@ spec:
                         of an already existing imagePullSecret will specify that secret
                         in the pod spec.
                       type: string
+                    name:
+                      description: Container name is only required for non flux runners
+                      type: string
+                    ports:
+                      description: Ports to be exposed to other containers in the
+                        cluster We take a single list of integers and map to the same
+                      items:
+                        format: int32
+                        type: integer
+                      type: array
                     postStartExec:
                       description: Lifecycle can handle post start commands, etc.
                       type: string
@@ -81,9 +96,25 @@ spec:
                         pull always
                       type: boolean
                     runFlux:
-                      default: true
                       description: Main container to run flux (only should be one)
                       type: boolean
+                    volumes:
+                      additionalProperties:
+                        description: A Container volume must reference one defined
+                          for the MiniCluster The path here is in the container
+                        properties:
+                          path:
+                            type: string
+                          readOnly:
+                            default: true
+                            type: boolean
+                        required:
+                        - path
+                        - readOnly
+                        type: object
+                      description: Volumes that can be mounted (must be defined in
+                        volumes)
+                      type: object
                     workingDir:
                       description: Working directory to run command from
                       type: string
@@ -121,16 +152,23 @@ spec:
                 description: Size (number of jobs to run)
                 format: int32
                 type: integer
-              sleeptime:
-                default: -1
-                description: Customize sleep time if job takes longer to setup This
-                  isn't ideal, but we have to control order that workers start
-                type: integer
               test:
                 default: false
                 description: Test mode silences all output so the job only shows the
                   test running
                 type: boolean
+              volumes:
+                additionalProperties:
+                  description: Mini Cluster local volumes available to mount (these
+                    are on the host)
+                  properties:
+                    path:
+                      type: string
+                  required:
+                  - path
+                  type: object
+                description: Volumes on the host (named) accessible to containers
+                type: object
             required:
             - containers
             type: object

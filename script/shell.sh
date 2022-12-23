@@ -1,3 +1,3 @@
 #!/bin/bash
 # Usage ./shell.sh <podname>
-kubectl exec --stdin --tty -n flux-operator ${1} -- /bin/bash
+kubectl exec --stdin --tty -n flux-operator ${@} -- /bin/bash

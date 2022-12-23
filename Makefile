@@ -125,14 +125,14 @@ reset:
 
 .PHONY: clean
 clean:
-	kubectl delete -n flux-operator svc --all
-	kubectl delete -n flux-operator secret --all
-	kubectl delete -n flux-operator cm --all
-	kubectl delete -n flux-operator pvc --all
-	kubectl delete -n flux-operator pv --all
-	kubectl delete -n flux-operator pods --all
-	kubectl delete -n flux-operator jobs --all
-	kubectl delete -n flux-operator MiniCluster --all
+	kubectl delete -n flux-operator svc --all --grace-period=0 --force
+	kubectl delete -n flux-operator secret --all --grace-period=0 --force
+	kubectl delete -n flux-operator cm --all --grace-period=0 --force
+	kubectl delete -n flux-operator pvc --all --grace-period=0 --force
+	kubectl delete -n flux-operator pv --all --grace-period=0 --force
+	kubectl delete -n flux-operator pods --all --grace-period=0 --force
+	kubectl delete -n flux-operator jobs --all --grace-period=0 --force
+	kubectl delete -n flux-operator MiniCluster --all --grace-period=0 --force
 	rm -rf yaml/*.yaml
 
 # This applies the basic minicluster (and not extended examples)
