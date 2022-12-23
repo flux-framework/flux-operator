@@ -313,10 +313,12 @@ func generateWaitScript(cluster *api.MiniCluster, containerIndex int) (string, e
 		Diagnostics:       cluster.Spec.Diagnostics,
 		FluxOptionFlags:   container.FluxOptionFlags,
 		PreCommand:        container.PreCommand,
-		FluxRestfulBranch: cluster.Spec.FluxRestful.Branch,
 		ClusterSize:       cluster.Spec.Size,
 		TestMode:          cluster.Spec.TestMode,
-		Size:              cluster.Spec.Size}
+		Size:              cluster.Spec.Size,
+		FluxRestfulPort:   cluster.Spec.FluxRestful.Port,
+		FluxRestfulBranch: cluster.Spec.FluxRestful.Branch,
+	}
 	t, err := template.New("wait-sh").Parse(waitToStartTemplate)
 	if err != nil {
 		return "", err

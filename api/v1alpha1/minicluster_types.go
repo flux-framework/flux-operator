@@ -84,6 +84,11 @@ type FluxRestful struct {
 	// +kubebuilder:default="main"
 	// +optional
 	Branch string `json:"branch"`
+
+	// Port to run Flux Restful Server On
+	// +kubebuilder:default=5000
+	// +optional
+	Port int32 `json:"port"`
 }
 
 // Mini Cluster local volumes available to mount (these are on the host)

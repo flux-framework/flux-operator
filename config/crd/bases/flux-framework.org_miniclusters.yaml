@@ -138,6 +138,11 @@ spec:
                     default: main
                     description: Branch to clone Flux Restful API from
                     type: string
+                  port:
+                    default: 5000
+                    description: Port to run Flux Restful Server On
+                    format: int32
+                    type: integer
                 type: object
               localDeploy:
                 default: false

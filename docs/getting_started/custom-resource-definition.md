@@ -294,3 +294,14 @@ It defaults to main.
   fluxRestful:
     branch: feature-branch
 ```
+
+#### port
+
+The port parameter controls the port you want to run the FluxRestful server on,
+within the cluster. Remember that you can always forward this to something else!
+It defaults to 5000.
+
+```yaml
+  fluxRestful:
+    port: 5000
+```

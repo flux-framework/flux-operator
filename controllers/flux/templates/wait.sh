@@ -165,7 +165,7 @@ else
         if [ "$@" == "" ]; then
 
             # Start restful API server
-            startServer="uvicorn app.main:app --host=0.0.0.0 --port=5000"
+            startServer="uvicorn app.main:app --host=0.0.0.0 --port={{or .FluxRestfulPort 5000}}"
             git clone -b {{or .FluxRestfulBranch "main"}} --depth 1 https://github.com/flux-framework/flux-restful-api /flux-restful-api >> /dev/null
             cd /flux-restful-api
 
@@ -186,7 +186,8 @@ else
             # -o is an "option" for the broker
             # -S corresponds to a shortened --setattr=ATTR=VAL
             printf "\n🌀${asFlux} flux start -o --config /etc/flux/config ${brokerOptions} flux mini run {{if .Size }}-n {{.Size}}{{ end }} ${startServer}\n"{{ end }}
-            ${asFlux} flux start -o --config /etc/flux/config ${brokerOptions} flux mini run {{if .Size }}-n {{.Size}}{{ end }} ${startServer}
+            #${asFlux} flux start -o --config /etc/flux/config ${brokerOptions} flux mini run {{if .Size }}-n {{.Size}}{{ end }} ${startServer}
+            ${asFlux} flux start -o --config /etc/flux/config ${brokerOptions} ${startServer}
 
         # Case 2: Fall back to provided command
         else
