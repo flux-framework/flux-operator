@@ -104,7 +104,7 @@ volumes:
 ```
 
 By default they will be read only unless you set `readOnly` to false.
-Since we haven't implemented this for a cloud resouce yet, this currently just works
+Since we haven't implemented this for a cloud resource yet, this currently just works
 with localDeploy is set to true, and we can adjust this when we test in a cloud.
 
 ### containers

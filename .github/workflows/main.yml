@@ -97,6 +97,7 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: |
         export SHELL=/bin/bash
+        echo $GITHUB_TOKEN | gh auth login --scopes repo --with-token
         eval $(minikube -p minikube docker-env)
         minikube ssh docker pull ${container}
         make
