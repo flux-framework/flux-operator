@@ -97,6 +97,7 @@ type ContainerVolume struct {
 	Path string `json:"path"`
 
 	// +kubebuilder:default=true
+	// +optional
 	ReadOnly bool `json:"readOnly"`
 }
 

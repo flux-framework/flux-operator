@@ -110,7 +110,6 @@ spec:
                             type: boolean
                         required:
                         - path
-                        - readOnly
                         type: object
                       description: Volumes that can be mounted (must be defined in
                         volumes)

@@ -185,7 +185,12 @@ examples/tests/
     └── test.sh
 ```
 
-Thus, to run the full example for hello-world:
+Thus, to run the full example for hello-world you can do:
+
+```bash
+$ bash script/test.sh hello-world
+```
+or (for a less scripted run):
 
 ```bash
 $ make name=hello-world redo_test 
@@ -339,7 +344,35 @@ $ minikube ssh docker pull ghcr.io/rse-ops/lammps:flux-sched-focal-v0.24.0
 ```
 The tests above are headless, meaning they submit commands directly, and that way
 we don't need to do it in the UI and can programmatically determine if they were successful.
+Finally, note that if you have commands that you need to run before or after the tests,
+you can add a `pre-run.sh` or `post-run.sh` in the directory. As an example, because minikube
+is run inside of a VM, if you are using a host volume mount, it won't actually show up on your host!
+This is because it's inside the VM. This you might want to move files there before the test, e.g.,:
 
+```bash
+#!/bin/bash
+
+HERE=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
+
+echo "Copying local volume to /tmp/data-volumes in minikube"
+
+# We don't care if this works or not - mkdir -p seems to bork
+minikube ssh -- mkdir -p /tmp/data-volumes
+minikube cp ${HERE}/data/pancakes.txt /tmp/data-volumes/pancakes.txt
+minikube ssh ls /tmp/data-volumes
+```
+
+and then clean up after
+
+```bash
+#!/bin/bash
+
+echo "Cleaning up /tmp/data-volumes in minikube"
+minikube ssh -- sudo rm -rf /tmp/data-volumes
+```
+
+This would be the same for anytime you use minikube and want to create a local volume. It's not actually on your host,
+but rather in the VM. For an example test that does this, see the `examples/tests/volumes` example.
 
 ## Documentation
 

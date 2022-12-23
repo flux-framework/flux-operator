@@ -15,8 +15,8 @@ pod="${pods%% *}"
 echo "Pod: ${pod}"
 
 # Prepare actual and tested comparison
-expected=${TEST_DIR}/test.out
-actual=${TEST_DIR}/${NAME}-test.out
+expected=${TEST_DIR}/test.out.correct
+actual=${TEST_DIR}/test.out
 kubectl logs -n ${NAMESPACE} ${pod} -f > ${actual} 2>&1
 
 echo "Actual:"
