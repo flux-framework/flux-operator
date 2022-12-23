@@ -1,11 +1,8 @@
 # TODO
 
-- add test with local volumes
-- rebuild container without adding data
 - diagnostics should be on the level of the container
-- add conveyorlc test
-- finish osu-benchmarks test
-- test interface with conveyorlc
+- add conveyorlc test (with new container)
+- interface still needs debugging for 2+ processes
 
 ### Design 3
 
