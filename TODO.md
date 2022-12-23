@@ -1,11 +1,8 @@
 # TODO
 
-- diagnostics should be on the level of the container
-- add conveyorlc test (with new container)
-- interface still needs debugging for 2+ processes
-
 ### Design 3
 
+ - [ ] interface still needs debugging for 2+ processes
  - [ ] can (and should) we use generics to reduce redudancy of code? (e.g., the `get<X>` functions) (@vsoch would like to do this!)
  - [ ] I think if a pod dies the IP address might change, so eventually we want to test that (and may need more logic for re-updating /etc/hosts)
  - [ ] Events: deletion should clean up, and update should not be allowed (given rank 0 started)
@@ -18,6 +15,7 @@
 
 #### Completed
 
+ - [x] diagnostics should be on the level of the container
  - [x] the spec needs to support a local volume
  - [x] Eventually; nice pretty, branded user docs that describe creating CRD, and cases of sleep infinity vs command
  - [x] test better method from Aldo for networking

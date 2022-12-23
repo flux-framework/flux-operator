@@ -13,10 +13,6 @@ spec:
   # Disable verbose output
   test: true
 
-  # Diagnostics runs flux commands for diagnostics, and a final sleep command
-  # That makes it easy for you to shell into the pod to look around
-  diagnostics: false
-
   # This is a list because a pod can support multiple containers
   containers:
     # The container URI to pull (currently needs to be public)
