@@ -227,14 +227,18 @@ environment:
    RABBITMQ_DEFAULT_PASS: aharabbit
 ```
 
-environment:
-        RABBITMQ_DEFAULT_USER: aha
-        RABBITMQ_DEFAULT_PASS: aharabbit
-      ports:
-       - 15672
-       - 5671
-       - 5672
+#### ports
 
+The same goes for ports! Since we are implementing fairly simple use cases, for now ports
+are provided as a single list of numbers, and the ideas is that the containerPort will
+be assigned this number (and you can forward to your host however you like):
+
+```yaml
+ports:
+  - 15672
+  - 5671
+  - 5672
+```
 
 #### fluxOptionFlags
 
