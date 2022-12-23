@@ -12,7 +12,6 @@ spec:
 
   # suppress all output except for test run
   test: true
-  sleeptime: 30
 
   # This is a list because a pod can support multiple containers
   containers:
