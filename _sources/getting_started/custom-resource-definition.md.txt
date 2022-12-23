@@ -90,17 +90,22 @@ likely want to set this to True.
   localDeploy: true
 ``` 
 
-### sleeptime
+### volumes
 
-We do a "hard coded" approach of using sleep time to ensure the worker nodes start after the main broker,
-and that way they can be registered. Sometimes if you add more custom logic to the start
-of the container this can throw off the start sequence, so while this approach isn't perfect,
-we allow you to customize this sleep time if desired.
+Volumes can be defined on the level of the MiniCluster that are then used by containers.
+These volumes are local host volumes, and should be named (the key for the section)
+with a path:
 
 ```yaml
-  # seconds
-  sleeptime: 60
+volumes:
+  myvolume:
+    path: /full/path/to/volume
+    readOnly: false
 ```
+
+By default they will be read only unless you set `readOnly` to false.
+Since we haven't implemented this for a cloud resource yet, this currently just works
+with localDeploy is set to true, and we can adjust this when we test in a cloud.
 
 ### containers
 
@@ -117,6 +122,15 @@ called "wait.sh") on the level of the container.
 ```
 
 For each container, the follow variables are available (nested under `containers` as a list, as shown above).
+
+
+#### name
+
+For all containers that aren't flux runners, a name is required. Validation will check that it is defined.
+
+```yaml
+name: rabbit
+```
 
 #### image
 
@@ -139,6 +153,20 @@ Providing (or not providing) a command is going to dictate the behavior of your 
     # commands to! E.g., instead of starting the server, it will just run your job command.
     command: lmp -v x 2 -v y 2 -v z 2 -in in.reaxc.hns -nocite
 ```
+
+### volumes
+
+Volumes that are defined on the level of the MiniCluster (named) can be mounted into containers.
+As an example, here is how we specify the volume `myvolume` to be mounted to the container at `/data`.
+
+```yaml
+volumes:
+  myvolume:
+    path: /data
+```
+
+The `myvolume` key must be defined in the MiniCluster set of volumes, and this is checked.
+
 
 #### imagePullSecret
 
@@ -187,6 +215,29 @@ However, if you set this to true for *two* container (not allowed currently) you
     # For one container, you can leave this unset for the default. This will be
     # validated in case you make a mistake :)
     runFlux: true
+```
+
+#### environment
+
+If you have environment variables to add, you can use an environment section with key value pairs:
+
+```yaml
+environment:
+   RABBITMQ_DEFAULT_USER: aha
+   RABBITMQ_DEFAULT_PASS: aharabbit
+```
+
+#### ports
+
+The same goes for ports! Since we are implementing fairly simple use cases, for now ports
+are provided as a single list of numbers, and the ideas is that the containerPort will
+be assigned this number (and you can forward to your host however you like):
+
+```yaml
+ports:
+  - 15672
+  - 5671
+  - 5672
 ```
 
 #### fluxOptionFlags
@@ -246,4 +297,15 @@ It defaults to main.
 ```yaml
   fluxRestful:
     branch: feature-branch
+```
+
+#### port
+
+The port parameter controls the port you want to run the FluxRestful server on,
+within the cluster. Remember that you can always forward this to something else!
+It defaults to 5000.
+
+```yaml
+  fluxRestful:
+    port: 5000
 ```

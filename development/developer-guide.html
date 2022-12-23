@@ -836,6 +836,24 @@ $ make run    <span class="c1"># make the cluster</span>
 </pre>
              </div>
             </div>
+            <p>
+             Note that if you are running more than one container, you need a custom command for shell:
+            </p>
+            <div class="highlight-bash notranslate">
+             <div class="highlight">
+              <pre><span></span>$ kubectl <span class="nb">exec</span> --stdin --tty -n flux-operator flux-sample-0-vsnvz -c flux-sample-1 -- /bin/bash
+</pre>
+             </div>
+            </div>
+            <p>
+             Where the first is the name of the pod, and
+             <code class="docutils literal notranslate">
+              <span class="pre">
+               -c
+              </span>
+             </code>
+             references the container.
+            </p>
            </section>
            <section id="example-configs">
             <h5 id="example-configs">
@@ -936,7 +954,16 @@ in the examples test folder:
               </div>
              </div>
              <p>
-              Thus, to run the full example for hello-world:
+              Thus, to run the full example for hello-world you can do:
+             </p>
+             <div class="highlight-bash notranslate">
+              <div class="highlight">
+               <pre><span></span>$ bash script/test.sh hello-world
+</pre>
+              </div>
+             </div>
+             <p>
+              or (for a less scripted run):
              </p>
              <div class="highlight-bash notranslate">
               <div class="highlight">
@@ -1340,6 +1367,59 @@ Finally, note that for big containers it’s suggested to pull them first, e.g.,
           <p>
            The tests above are headless, meaning they submit commands directly, and that way
 we don’t need to do it in the UI and can programmatically determine if they were successful.
+Finally, note that if you have commands that you need to run before or after the tests,
+you can add a
+           <code class="docutils literal notranslate">
+            <span class="pre">
+             pre-run.sh
+            </span>
+           </code>
+           or
+           <code class="docutils literal notranslate">
+            <span class="pre">
+             post-run.sh
+            </span>
+           </code>
+           in the directory. As an example, because minikube
+is run inside of a VM, if you are using a host volume mount, it won’t actually show up on your host!
+This is because it’s inside the VM. This you might want to move files there before the test, e.g.,:
+          </p>
+          <div class="highlight-bash notranslate">
+           <div class="highlight">
+            <pre><span></span><span class="ch">#!/bin/bash</span>
+
+<span class="nv">HERE</span><span class="o">=</span><span class="k">$(</span> <span class="nb">cd</span> -- <span class="s2">"</span><span class="k">$(</span> dirname -- <span class="s2">"</span><span class="si">${</span><span class="nv">BASH_SOURCE</span><span class="p">[0]</span><span class="si">}</span><span class="s2">"</span> <span class="k">)</span><span class="s2">"</span> <span class="p">&amp;</span>&gt; /dev/null <span class="o">&amp;&amp;</span> <span class="nb">pwd</span> <span class="k">)</span>
+
+<span class="nb">echo</span> <span class="s2">"Copying local volume to /tmp/data-volumes in minikube"</span>
+
+<span class="c1"># We don't care if this works or not - mkdir -p seems to bork</span>
+minikube ssh -- mkdir -p /tmp/data-volumes
+minikube cp <span class="si">${</span><span class="nv">HERE</span><span class="si">}</span>/data/pancakes.txt /tmp/data-volumes/pancakes.txt
+minikube ssh ls /tmp/data-volumes
+</pre>
+           </div>
+          </div>
+          <p>
+           and then clean up after
+          </p>
+          <div class="highlight-bash notranslate">
+           <div class="highlight">
+            <pre><span></span><span class="ch">#!/bin/bash</span>
+
+<span class="nb">echo</span> <span class="s2">"Cleaning up /tmp/data-volumes in minikube"</span>
+minikube ssh -- sudo rm -rf /tmp/data-volumes
+</pre>
+           </div>
+          </div>
+          <p>
+           This would be the same for anytime you use minikube and want to create a local volume. It’s not actually on your host,
+but rather in the VM. For an example test that does this, see the
+           <code class="docutils literal notranslate">
+            <span class="pre">
+             examples/tests/volumes
+            </span>
+           </code>
+           example.
           </p>
          </section>
         </section>
@@ -1495,7 +1575,7 @@ server to preview:
        © Copyright 2022, Flux Developers.
       </div>
       Last updated on
-              Dec 22, 2022.
+              Dec 23, 2022.
       <br/>
       Created using
       <a href="http://www.sphinx-doc.org/">
