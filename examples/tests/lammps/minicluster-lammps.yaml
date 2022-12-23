@@ -8,7 +8,7 @@ spec:
   localDeploy: true
 
   # Number of pods to create for MiniCluster
-  size: 4
+  size: 2
 
   # Disable verbose output
   test: true

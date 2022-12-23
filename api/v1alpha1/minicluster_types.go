@@ -30,16 +30,14 @@ type MiniClusterSpec struct {
 	// There should only be one container to run flux with runFlux
 	Containers []MiniClusterContainer `json:"containers"`
 
+	// Volumes on the host (named) accessible to containers
+	// +optional
+	Volumes map[string]MiniClusterVolume `json:"volumes"`
+
 	// Test mode silences all output so the job only shows the test running
 	// +kubebuilder:default=false
 	// +optional
 	TestMode bool `json:"test"`
-
-	// Customize sleep time if job takes longer to setup
-	// This isn't ideal, but we have to control order that workers start
-	// +kubebuilder:default=-1
-	// +optional
-	SleepTime int `json:"sleeptime"`
 
 	// Customization to Flux Restful API
 	// There should only be one container to run flux with runFlux
@@ -86,6 +84,26 @@ type FluxRestful struct {
 	// +kubebuilder:default="main"
 	// +optional
 	Branch string `json:"branch"`
+
+	// Port to run Flux Restful Server On
+	// +kubebuilder:default=5000
+	// +optional
+	Port int32 `json:"port"`
+}
+
+// Mini Cluster local volumes available to mount (these are on the host)
+type MiniClusterVolume struct {
+	Path string `json:"path"`
+}
+
+// A Container volume must reference one defined for the MiniCluster
+// The path here is in the container
+type ContainerVolume struct {
+	Path string `json:"path"`
+
+	// +kubebuilder:default=true
+	// +optional
+	ReadOnly bool `json:"readOnly"`
 }
 
 type MiniClusterContainer struct {
@@ -94,9 +112,22 @@ type MiniClusterContainer struct {
 	// +kubebuilder:default="fluxrm/flux-sched:focal"
 	Image string `json:"image"`
 
+	// Container name is only required for non flux runners
+	// +optional
+	Name string `json:"name"`
+
 	// Working directory to run command from
 	// +optional
 	WorkingDir string `json:"workingDir"`
+
+	// Ports to be exposed to other containers in the cluster
+	// We take a single list of integers and map to the same
+	// +optional
+	Ports []int32 `json:"ports"`
+
+	// Key/value pairs for the environment
+	// +optional
+	Envars map[string]string `json:"environment"`
 
 	// Allow the user to pull authenticated images
 	// By default no secret is selected. Setting
@@ -121,9 +152,12 @@ type MiniClusterContainer struct {
 	PullAlways bool `json:"pullAlways"`
 
 	// Main container to run flux (only should be one)
-	// +kubebuilder:default=true
 	// +optional
 	FluxRunner bool `json:"runFlux"`
+
+	// Volumes that can be mounted (must be defined in volumes)
+	// +optional
+	Volumes map[string]ContainerVolume `json:"volumes"`
 
 	// Flux option flags, usually provided with -o
 	// optional - if needed, default option flags for the server
@@ -178,8 +212,33 @@ func (f *MiniCluster) Validate() bool {
 		fmt.Printf("🤓 %s.Image %s\n", name, container.Image)
 		fmt.Printf("🤓 %s.Command %s\n", name, container.Command)
 		fmt.Printf("🤓 %s.FluxRunner %t\n", name, container.FluxRunner)
+
+		// Count the FluxRunners
 		if container.FluxRunner {
 			fluxRunners += 1
+
+			// Non flux-runners are required to have a name
+		} else {
+			if container.Name == "" {
+				fmt.Printf("😥️ %s is missing a name\n", name)
+				return false
+			}
+		}
+
+		// If we have volumes defined, they must be provided in the global
+		// volumes for the MiniCluster CRD.
+		for key, _ := range container.Volumes {
+
+			// Currently volumes are only supported for local host paths
+			if !f.Spec.LocalDeploy {
+				fmt.Printf("😥️ %s defines a named volume %s, and currently volumes are only available for localDeploy: true\n", name, key)
+				return false
+			}
+			_, found := f.Spec.Volumes[key]
+			if !found {
+				fmt.Printf("😥️ %s defines a named volume %s but it is not defined for the MiniCluster\n", name, key)
+				return false
+			}
 		}
 	}
 	if fluxRunners != 1 {

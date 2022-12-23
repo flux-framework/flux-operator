@@ -21,9 +21,6 @@ jobs:
   unit-tests:
     name: Unit Tests
     runs-on: ubuntu-latest
-    outputs:
-      go-mod: ${{ steps.go-cache-paths.outputs.go-mod }}
-      go-build: ${{ steps.go-cache-paths.outputs.go-build }}
 
     steps:
     - uses: actions/checkout@v3
@@ -33,11 +30,6 @@ jobs:
         go-version: ^1.18
     - name: fmt check
       run: make fmt
-
-    - id: go-cache-paths
-      run: |
-        echo go-build=$(go env GOCACHE) >> $GITHUB_OUTPUT
-        echo go-mod=$(go env GOMODCACHE) >> $GITHUB_OUTPUT
 
     - name: Build and Install Operator
       env:
@@ -50,13 +42,6 @@ jobs:
     # These aren't written yet)
     - name: Run Unit tests
       run: make test
-
-    # Cache the operator build because it can use up GITHUB API
-    - name: Cache Dependencies
-      uses: actions/cache@v3
-      with:
-        path: ${{ steps.go-cache-paths.outputs.go-mod }}
-        key: ${{ runner.os }}-go-mod-${{ hashFiles('**/go.sum') }}
         
   test-jobs:
     needs: [unit-tests]
@@ -64,9 +49,12 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        test: [["hello-world", "ghcr.io/flux-framework/flux-restful-api:latest", 10],
-               ["lammps", "ghcr.io/rse-ops/lammps:flux-sched-focal-v0.24.0", 15],
-               ["pokemon", "ghcr.io/rse-ops/pokemon:app-latest", 10]]
+        test: [["hello-world", "ghcr.io/flux-framework/flux-restful-api:latest", 20],
+               ["lammps", "ghcr.io/rse-ops/lammps:flux-sched-focal-v0.24.0", 20],
+               ["pokemon", "ghcr.io/rse-ops/pokemon:app-latest", 20],
+               ["osu-benchmarks", "ghcr.io/rse-ops/osu-microbench:app-latest", 20],               
+               ["flux-resource-list", "ghcr.io/flux-framework/flux-restful-api:latest", 20],
+               ["volumes", "ghcr.io/flux-framework/flux-restful-api:latest", 20]]
         
     steps:
     - name: Clone the code
@@ -82,12 +70,6 @@ jobs:
 
     - name: Create the namespace
       run: kubectl create namespace flux-operator
-
-    - name: Add Cached Dependencies
-      uses: actions/cache@v3
-      with:
-        path: ${{ needs.unit-tests.outputs.go-mod }}
-        key: ${{ runner.os }}-go-mod-${{ hashFiles('**/go.sum') }}
 
     - name: Pull Docker Containers to MiniKube
       env:

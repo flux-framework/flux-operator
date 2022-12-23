@@ -165,7 +165,7 @@ else
         if [ "$@" == "" ]; then
 
             # Start restful API server
-            startServer="uvicorn app.main:app --host=0.0.0.0 --port=5000"
+            startServer="uvicorn app.main:app --host=0.0.0.0 --port={{or .FluxRestfulPort 5000}}"
             git clone -b {{or .FluxRestfulBranch "main"}} --depth 1 https://github.com/flux-framework/flux-restful-api /flux-restful-api >> /dev/null
             cd /flux-restful-api
 
@@ -191,23 +191,19 @@ else
         # Case 2: Fall back to provided command
         else
 {{ if not .TestMode }}            printf "\n🌀${asFlux} flux start -o --config /etc/flux/config ${brokerOptions} $@\n"{{ end }}
-            ${asFlux} flux start -o --config /etc/flux/config ${brokerOptions} $@
+            ${asFlux} flux start -o --config /etc/flux/config ${brokerOptions} flux mini run {{if .Size }}-n {{.Size}}{{ end }} {{ if .FluxOptionFlags }}{{ .FluxOptionFlags}}{{ end }} $@
         fi
     else 
         printf "\n😪 Sleeping to give RESTful server time to start...\n"
-
-        # If we don't have a command, sleep less time (no need to wait)
-        # We can give this to user control if needed
-        {{ if ne .SleepTime -1 }}sleep {{.SleepTime}}{{ else }}if [ "$@" == "" ]; then
-            sleep 30
-        else 
-            sleep 5
-        fi{{ end }}
 
         # Just run start on worker nodes, with some delay to let rank 0 start first
         printf "\n🌀${asFlux} flux start -o --config /etc/flux/config ${brokerOptions}\n"
 
         # We have the sleep here to give the main rank some time to start first (and not miss the workers)
-        ${asFlux} flux start -o --config /etc/flux/config ${brokerOptions}
+        while true
+        do
+            ${asFlux} flux start -o --config /etc/flux/config ${brokerOptions}
+            sleep 5
+        done
     fi
 fi

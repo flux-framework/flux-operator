@@ -22,6 +22,9 @@ make clean >> /dev/null
 make run > ${out} 2> ${err} &
 pid=$!
 echo "PID for running cluster is ${pid}"
+
+# If there is a pre-run script
+/bin/bash examples/tests/${name}/pre-run.sh || true
 kubectl apply -f examples/tests/${name}/minicluster-${name}.yaml
 echo "Sleeping for ${jobtime} seconds to allow job to complete 😴️."
 sleep ${jobtime}
@@ -31,7 +34,9 @@ sleep ${jobtime}
     echo "$out"
     echo "$err"
     kill $(lsof -t -i:8080) || true
+    /bin/bash examples/tests/${name}/post-run.sh || true
     exit 1;
 )
 kill ${pid} || true
 kill $(lsof -t -i:8080) || true
+/bin/bash examples/tests/${name}/post-run.sh || true

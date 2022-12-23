@@ -1,24 +1,28 @@
 # TODO
 
+- diagnostics should be on the level of the container
+- add conveyorlc test (with new container)
+- interface still needs debugging for 2+ processes
+
 ### Design 3
 
- - [ ] test better method from Aldo for networking
- - [ ] allow to specify that the app restful server is installed, and don't install again
- - [ ] we need to test that N=1 case works as expected (not waiting for any workers) and 0 spits an error (for now it doesn't make sense)
  - [ ] can (and should) we use generics to reduce redudancy of code? (e.g., the `get<X>` functions) (@vsoch would like to do this!)
  - [ ] I think if a pod dies the IP address might change, so eventually we want to test that (and may need more logic for re-updating /etc/hosts)
  - [ ] Events: deletion should clean up, and update should not be allowed (given rank 0 started)
  - [ ] Currently we have no representation of quota - we need to be able to set (and check) hard limits from the scheduler (or maybe we get that out of the box)?
  - [ ] klog can be changed to add V(2) to handle verbository from the command line, see https://pkg.go.dev/k8s.io/klog/v2
  - [ ] At some point we want more intelligent use of labels/selectors (I haven't really read about them yet)
- - [ ] There was one run (rare) when the update script didn't take (and was waiting forever) - should look into that. Hard to reproduce!
  - [ ] We might eventually want a variable to control quorum expectation (e.g., rank 0 waiting or not)
- - [ ] Eventually; nice pretty, branded user docs that describe creating CRD, and cases of sleep infinity vs command
  - [ ] Look into slurm feature (salloc option) to just start (locate resource and keep it going?) (do we still need this?)
  - [ ] Is there a way to scale "workers" without borking the main rank 0 running?
 
 #### Completed
 
+ - [x] the spec needs to support a local volume
+ - [x] Eventually; nice pretty, branded user docs that describe creating CRD, and cases of sleep infinity vs command
+ - [x] test better method from Aldo for networking
+ - [x] allow to specify that the app restful server is installed, and don't install again
+ - [x] we need to test that N=1 case works as expected (not waiting for any workers) and 0 spits an error (for now it doesn't make sense)
  - [x] docs need spell checking!
  - [x] Convert markdown docs into pretty, organized, rendered web-docs
  - [x] Remove automated builds from here in favor of https://github.com/rse-ops/flux-hpc

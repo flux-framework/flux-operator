@@ -24,12 +24,13 @@ var waitToStartTemplate string
 type WaitTemplate struct {
 	FluxToken         string // Token to log into the UI, should be consistent across containers
 	MainHost          string // Main host identifier
+	FluxOptionFlags   string // Option flags
 	Hosts             string // List of hosts
 	Diagnostics       bool   // Run diagnostics instead of job?
-	FluxOptionFlags   string // Option flags
 	PreCommand        string // Custom commands, looked up by container identifier
 	FluxRestfulBranch string // branch to clone Flux Restful from, defaults to main
+	FluxRestfulPort   int32  // port to run flux restful on
 	ClusterSize       int32  // number of nodes in mini cluster, should be size
 	TestMode          bool   // Don't print additional output
-	SleepTime         int
+	Size              int32
 }

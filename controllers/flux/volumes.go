@@ -109,6 +109,26 @@ func getVolumes(cluster *api.MiniCluster) []corev1.Volume {
 		}
 		volumes = append(volumes, localVolume)
 
+		directoryType := corev1.HostPathDirectoryOrCreate
+
+		// Add local volumes available to containers
+		for volumeName, volume := range cluster.Spec.Volumes {
+
+			localVolume = corev1.Volume{
+
+				// We use persistent volume (that can be shared by several containers)
+				// to run flux keygen and generate the /mnt/curve/curve.crt
+				Name: volumeName,
+				VolumeSource: corev1.VolumeSource{
+					HostPath: &corev1.HostPathVolumeSource{
+						Path: volume.Path,
+						Type: &directoryType,
+					},
+				},
+			}
+			volumes = append(volumes, localVolume)
+		}
+
 	} else {
 		pvc := corev1.Volume{
 			Name: cluster.Name + curveVolumeSuffix,
