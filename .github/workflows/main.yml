@@ -69,6 +69,7 @@ jobs:
                ["pokemon", "ghcr.io/rse-ops/pokemon:app-latest", 20],
                ["osu-benchmarks", "ghcr.io/rse-ops/osu-microbench:app-latest", 20],               
                ["flux-resource-list", "ghcr.io/flux-framework/flux-restful-api:latest", 20]]
+               ["volumes", "ghcr.io/flux-framework/flux-restful-api:latest", 20]]
         
     steps:
     - name: Clone the code
