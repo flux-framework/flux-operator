@@ -185,8 +185,7 @@ else
 
             # -o is an "option" for the broker
             # -S corresponds to a shortened --setattr=ATTR=VAL
-            printf "\n🌀${asFlux} flux start -o --config /etc/flux/config ${brokerOptions} flux mini run {{if .Size }}-n {{.Size}}{{ end }} ${startServer}\n"{{ end }}
-            #${asFlux} flux start -o --config /etc/flux/config ${brokerOptions} flux mini run {{if .Size }}-n {{.Size}}{{ end }} ${startServer}
+            printf "\n🌀${asFlux} flux start -o --config /etc/flux/config ${brokerOptions} ${startServer}\n"{{ end }}
             ${asFlux} flux start -o --config /etc/flux/config ${brokerOptions} ${startServer}
 
         # Case 2: Fall back to provided command
