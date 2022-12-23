@@ -57,17 +57,6 @@ and then determine if the test was successful based on this output.
   test: true
 ```
 
-### diagnostics
-
-Flux has a command that makes it easy to run diagnostics on a cluster, and we expose a boolean that makes it possible
-to run that (instead of your job or starting the server). To enable this, set this boolean to true. By default, it is false.
-
-```yaml
-  # Diagnostics runs flux commands for diagnostics, and a final sleep command
-  # That makes it easy for you to shell into the pod to look around
-  diagnostics: false
-```
-
 ### deadline
 
 This is the maximum running time for your job. If you leave unset, it is essentially infinite.
@@ -282,6 +271,20 @@ that is not a flux runner, you should write it into your own entrypoint.
     * Bullet
     * Points
 ```
+
+#### diagnostics
+
+Flux has a command that makes it easy to run diagnostics on a cluster, and we expose a boolean that makes it possible
+to run that (instead of your job or starting the server). Since you might only want this for a specific container,
+we provide this argument on the level of the container. To enable this, set this boolean to true. By default, it is false.
+
+```yaml
+  # Diagnostics runs flux commands for diagnostics, and a final sleep command
+  # That makes it easy for you to shell into the pod to look around
+  diagnostics: false
+```
+
+
 
 ### fluxRestful
 
