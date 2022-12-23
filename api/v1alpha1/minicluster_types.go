@@ -49,10 +49,6 @@ type MiniClusterSpec struct {
 	// +optional
 	Size int32 `json:"size"`
 
-	// Run flux diagnostics on start instead of command
-	// +optional
-	Diagnostics bool `json:"diagnostics"`
-
 	// Should the job be limited to a particular number of seconds?
 	// Approximately one year. This cannot be zero or job won't start
 	// +kubebuilder:default=31500000
@@ -119,6 +115,10 @@ type MiniClusterContainer struct {
 	// Working directory to run command from
 	// +optional
 	WorkingDir string `json:"workingDir"`
+
+	// Run flux diagnostics on start instead of command
+	// +optional
+	Diagnostics bool `json:"diagnostics"`
 
 	// Ports to be exposed to other containers in the cluster
 	// We take a single list of integers and map to the same

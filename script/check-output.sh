@@ -17,7 +17,9 @@ echo "Pod: ${pod}"
 # Prepare actual and tested comparison
 expected=${TEST_DIR}/test.out.correct
 actual=${TEST_DIR}/test.out
-kubectl logs -n ${NAMESPACE} ${pod} -f > ${actual} 2>&1
+
+# Fallback to assuming more than one container (and wanting to see flux)
+kubectl logs -n ${NAMESPACE} ${pod} -f > ${actual} 2>&1 || kubectl logs -n ${NAMESPACE} ${pod} flux-sample-1 -f > ${actual} 2>&1
 
 echo "Actual:"
 cat ${actual}

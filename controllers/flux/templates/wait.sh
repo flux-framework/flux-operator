@@ -194,8 +194,6 @@ else
             ${asFlux} flux start -o --config /etc/flux/config ${brokerOptions} flux mini run {{if .Size }}-n {{.Size}}{{ end }} {{ if .FluxOptionFlags }}{{ .FluxOptionFlags}}{{ end }} $@
         fi
     else 
-        printf "\n😪 Sleeping to give RESTful server time to start...\n"
-
         # Just run start on worker nodes, with some delay to let rank 0 start first
         printf "\n🌀${asFlux} flux start -o --config /etc/flux/config ${brokerOptions}\n"
 
@@ -203,7 +201,7 @@ else
         while true
         do
             ${asFlux} flux start -o --config /etc/flux/config ${brokerOptions}
-            sleep 5
+            sleep 15
         done
     fi
 fi

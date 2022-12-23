@@ -310,7 +310,7 @@ func generateWaitScript(cluster *api.MiniCluster, containerIndex int) (string, e
 		FluxToken:         uuid.New().String(),
 		MainHost:          mainHost,
 		Hosts:             hosts,
-		Diagnostics:       cluster.Spec.Diagnostics,
+		Diagnostics:       container.Diagnostics,
 		FluxOptionFlags:   container.FluxOptionFlags,
 		PreCommand:        container.PreCommand,
 		ClusterSize:       cluster.Spec.Size,
