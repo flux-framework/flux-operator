@@ -10,14 +10,14 @@ spec:
   # Number of pods to create for MiniCluster
   size: 4
 
-  # Diagnostics runs flux commands for diagnostics, and a final sleep command
-  # That makes it easy for you to shell into the pod to look around
-  diagnostics: false
-
   # This is a list because a pod can support multiple containers
   containers:
     # The container URI to pull (currently needs to be public)
     - image: ghcr.io/rse-ops/lammps:flux-sched-focal-v0.24.0
+
+      # Diagnostics runs flux commands for diagnostics, and a final sleep command
+      # That makes it easy for you to shell into the pod to look around
+      diagnostics: false
 
       # You can set the working directory if your container WORKDIR is not correct.
       # workingDir: /home/flux/examples/reaxff/HNS

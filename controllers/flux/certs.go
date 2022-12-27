@@ -26,11 +26,9 @@ import (
 	"bytes"
 	"context"
 	"fmt"
-	"io"
 	"text/template"
 
 	corev1 "k8s.io/api/core/v1"
-	"k8s.io/client-go/kubernetes"
 	ctrl "sigs.k8s.io/controller-runtime"
 
 	"k8s.io/apimachinery/pkg/api/errors"
@@ -75,45 +73,11 @@ func (r *MiniClusterReconciler) getCurveCert(ctx context.Context, cluster *api.M
 		existing = pod
 	}
 	// If we get here, try to get the log output with the curve.cert
-	curveCert, err := r.getPodLogs(existing)
+	curveCert, err := r.getPodLogs(ctx, existing)
 	if curveCert != "" {
 		fmt.Printf("🌵 Generated Curve Certificate\n%s\n", curveCert)
 	}
 	return curveCert, err
-}
-
-// getPodLogs gets the pod logs (with the curve cert)
-func (r *MiniClusterReconciler) getPodLogs(pod *corev1.Pod) (string, error) {
-
-	// creates the clientset
-	clientset, err := kubernetes.NewForConfig(r.RESTConfig)
-	if err != nil {
-		return "", err
-	}
-
-	// Keep developer user informed what is going on.
-	r.log.Info("Config Generator Pod", "Name", pod.Name)
-	r.log.Info("Config Generator Pod", "Container", pod.Spec.Containers[0].Name)
-
-	opts := corev1.PodLogOptions{
-		Container: pod.Spec.Containers[0].Name,
-	}
-
-	// This will fail (and need to reconcile) while container is creating, etc.
-	req := clientset.CoreV1().Pods(pod.Namespace).GetLogs(pod.Name, &opts)
-	podLogs, err := req.Stream(context.TODO())
-	if err != nil {
-		return "", err
-	}
-	defer podLogs.Close()
-
-	buf := new(bytes.Buffer)
-	_, err = io.Copy(buf, podLogs)
-	if err != nil {
-		return "", err
-	}
-	logs := buf.String()
-	return logs, err
 }
 
 // generateCertGeneratorEntrypoint creates the entrypoint to create the curve.cert

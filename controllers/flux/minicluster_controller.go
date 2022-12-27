@@ -137,7 +137,7 @@ func (r *MiniClusterReconciler) Reconcile(ctx context.Context, req ctrl.Request)
 	// What else do we want to do?
 	r.log.Info("🌀 Mini Cluster is Ready!")
 	r.log.Info("🌀 Wait for all pods to be running and previously running to be terminated.")
-	return ctrl.Result{}, nil
+	return result, nil
 }
 
 // SetupWithManager sets up the controller with the Manager.
