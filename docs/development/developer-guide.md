@@ -289,20 +289,16 @@ so that install locations and users are consistent. This assumes that:
   
 For the last point, since all Flux running containers should have the same munge key
 in that location, we simply use it. The pipeline will fail if the key is missing from any
-Flux runner container. 
+Flux runner container.  For the curve.cert that we need to secure the cluster, we will
+be running your flux runner container before the indexed job is launched, generating
+the certificate, and then mapping it into the job pods via another config map.
+Note that we considered generating this natively in Gom, however the underlying library to do this 
+generation that is [available in Go](https://pkg.go.dev/github.com/zeromq/goczmq#section-readme)
+requires system libraries, and thus would be annoying to add as a dependency.
 
-The underlying library to do this generation is [available in Go](https://pkg.go.dev/github.com/zeromq/goczmq#section-readme)
-however it requires system libraries, and thus would be dangerous to add as a dependency. If you don't
-provide your own munge certificate in your CRD a default will be used (ideal for testing) however for production
-workloads you should absolutely generate a new one as follows, and using your same container with flux:
-
-```bash
-$ mkdir -p /tmp/curve
-$ docker run -it -v /tmp/curve:/tmp/curve fluxrm/flux-sched:focal sudo flux keygen /tmp/curve/curve.cert
-```
-
-This is taken from the [flux-sched](https://github.com/flux-framework/flux-sched/blob/master/src/test/docker/focal/Dockerfile)
-base image. If you intend to use the [Flux RESTful API](https://github.com/flux-framework/flux-restful-api)
+These criteria are taken from the [flux-sched](https://github.com/flux-framework/flux-sched/blob/master/src/test/docker/focal/Dockerfile)
+base image, and we strongly suggest you use this for your base container to make development
+easier! If you intend to use the [Flux RESTful API](https://github.com/flux-framework/flux-restful-api)
 to interact with your cluster, ensure that flux (python bindings) are on the path, along with
 either python or python3 (depending on which you used to install Flux).
 If/when needed we can lift some of these constraints, but for now they are 
