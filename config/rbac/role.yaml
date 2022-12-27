@@ -71,7 +71,6 @@ rules:
   verbs:
   - create
   - delete
-  - exec
   - get
   - list
   - patch
@@ -103,7 +102,6 @@ rules:
   verbs:
   - create
   - delete
-  - exec
   - get
   - list
   - patch
@@ -123,7 +121,6 @@ rules:
   verbs:
   - create
   - delete
-  - exec
   - get
   - list
   - patch
@@ -136,7 +133,6 @@ rules:
   verbs:
   - create
   - delete
-  - exec
   - get
   - list
   - patch
@@ -149,7 +145,18 @@ rules:
   verbs:
   - create
   - delete
-  - exec
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - ""
+  resources:
+  - pods/log
+  verbs:
+  - create
+  - delete
   - get
   - list
   - patch
@@ -225,7 +232,6 @@ rules:
   verbs:
   - create
   - delete
-  - exec
   - get
   - list
   - patch

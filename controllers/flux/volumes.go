@@ -40,7 +40,7 @@ func getVolumeMounts(cluster *api.MiniCluster) []corev1.VolumeMount {
 		{
 			Name:      cluster.Name + entrypointSuffix,
 			MountPath: "/flux_operator/",
-			ReadOnly:  false,
+			ReadOnly:  true,
 		},
 	}
 }
@@ -115,9 +115,6 @@ func getVolumes(cluster *api.MiniCluster) []corev1.Volume {
 		// Add local volumes available to containers
 		for volumeName, volume := range cluster.Spec.Volumes {
 			localVolume := corev1.Volume{
-
-				// We use persistent volume (that can be shared by several containers)
-				// to run flux keygen and generate the /mnt/curve/curve.crt
 				Name: volumeName,
 				VolumeSource: corev1.VolumeSource{
 					HostPath: &corev1.HostPathVolumeSource{
