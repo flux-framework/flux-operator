@@ -131,9 +131,6 @@ func (r *MiniClusterReconciler) getMiniCluster(ctx context.Context, cluster *api
 	} else {
 		r.log.Info("🎉 Found existing MiniCluster Batch Job 🎉", "Namespace:", existing.Namespace, "Name:", existing.Name)
 	}
-	if cluster.Spec.LocalDeploy {
-		saveDebugYaml(existing, "batch-job.yaml")
-	}
 	return existing, ctrl.Result{}, err
 }
 
@@ -162,9 +159,6 @@ func (r *MiniClusterReconciler) getPersistentVolumeClaim(ctx context.Context, cl
 	} else {
 		r.log.Info("🎉 Found existing MiniCluster Mounted Volume", "Type", configFullName, "Namespace", existing.Namespace, "Name", existing.Name)
 	}
-	if cluster.Spec.LocalDeploy {
-		saveDebugYaml(existing, configFullName+".yaml")
-	}
 	return existing, ctrl.Result{}, err
 }
 
@@ -192,9 +186,6 @@ func (r *MiniClusterReconciler) getPersistentVolume(ctx context.Context, cluster
 		}
 	} else {
 		r.log.Info("🎉 Found existing MiniCluster Mounted Volume", "Type", configFullName, "Namespace", existing.Namespace, "Name", existing.Name)
-	}
-	if cluster.Spec.LocalDeploy {
-		saveDebugYaml(existing, configFullName+".yaml")
 	}
 	return existing, ctrl.Result{}, err
 }
@@ -259,9 +250,6 @@ func (r *MiniClusterReconciler) getConfigMap(ctx context.Context, cluster *api.M
 		}
 	} else {
 		r.log.Info("🎉 Found existing MiniCluster ConfigMap", "Type", configName, "Namespace", existing.Namespace, "Name", existing.Name)
-	}
-	if cluster.Spec.LocalDeploy {
-		saveDebugYaml(existing, configName+".yaml")
 	}
 	return existing, ctrl.Result{}, err
 }
