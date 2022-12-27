@@ -287,6 +287,19 @@ so that install locations and users are consistent. This assumes that:
  - You don't need to install the flux-restful-api (it will be installed by the operator)
  - munge should be install, and a key generated at `/etc/munge/munge.key`
   
+For the last point, since all Flux running containers should have the same munge key
+in that location, we simply use it. The pipeline will fail if the key is missing from any
+Flux runner container. 
+
+The underlying library to do this generation is [available in Go](https://pkg.go.dev/github.com/zeromq/goczmq#section-readme)
+however it requires system libraries, and thus would be dangerous to add as a dependency. If you don't
+provide your own munge certificate in your CRD a default will be used (ideal for testing) however for production
+workloads you should absolutely generate a new one as follows, and using your same container with flux:
+
+```bash
+$ mkdir -p /tmp/curve
+$ docker run -it -v /tmp/curve:/tmp/curve fluxrm/flux-sched:focal sudo flux keygen /tmp/curve/curve.cert
+```
 
 This is taken from the [flux-sched](https://github.com/flux-framework/flux-sched/blob/master/src/test/docker/focal/Dockerfile)
 base image. If you intend to use the [Flux RESTful API](https://github.com/flux-framework/flux-restful-api)

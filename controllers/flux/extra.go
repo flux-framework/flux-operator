@@ -6,10 +6,13 @@ package controllers
 import (
 	"context"
 	"os"
+	"sort"
+	"strings"
 
 	corev1 "k8s.io/api/core/v1"
 	"k8s.io/apimachinery/pkg/runtime"
 	"k8s.io/client-go/tools/remotecommand"
+	"sigs.k8s.io/controller-runtime/pkg/client"
 
 	api "flux-framework/flux-operator/api/v1alpha1"
 )
@@ -55,4 +58,43 @@ func (r *MiniClusterReconciler) podExec(pod corev1.Pod, ctx context.Context, clu
 	})
 	r.log.Info("🌀 PodExec", "Container", pod.Spec.Containers[0].Name)
 	return err
+}
+
+// getMiniClusterIPS was used when we needed to write /etc/hosts and is no longer used
+func (r *MiniClusterReconciler) getMiniClusterIPS(ctx context.Context, cluster *api.MiniCluster) map[string]string {
+
+	ips := map[string]string{}
+	for _, pod := range r.getMiniClusterPods(ctx, cluster).Items {
+		// Skip init pods
+		if strings.Contains(pod.Name, "init") {
+			continue
+		}
+
+		// The pod isn't ready!
+		if pod.Status.PodIP == "" {
+			continue
+		}
+		ips[pod.Name] = pod.Status.PodIP
+	}
+	return ips
+}
+
+// getMiniClusterPods returns a sorted (by name) podlist in the MiniCluster
+func (r *MiniClusterReconciler) getMiniClusterPods(ctx context.Context, cluster *api.MiniCluster) *corev1.PodList {
+
+	podList := &corev1.PodList{}
+	opts := []client.ListOption{
+		client.InNamespace(cluster.Namespace),
+	}
+	err := r.Client.List(ctx, podList, opts...)
+	if err != nil {
+		r.log.Error(err, "🌀 Error listing MiniCluster pods", "Name:", podList)
+		return podList
+	}
+
+	// Ensure they are consistently sorted by name
+	sort.Slice(podList.Items, func(i, j int) bool {
+		return podList.Items[i].Name < podList.Items[j].Name
+	})
+	return podList
 }

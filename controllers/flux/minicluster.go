@@ -15,8 +15,6 @@ import (
 	"context"
 	"fmt"
 	"path"
-	"sort"
-	"strings"
 	"text/template"
 
 	jobctrl "flux-framework/flux-operator/pkg/job"
@@ -26,7 +24,6 @@ import (
 	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	ctrl "sigs.k8s.io/controller-runtime"
-	"sigs.k8s.io/controller-runtime/pkg/client"
 
 	"k8s.io/apimachinery/pkg/api/errors"
 	"k8s.io/apimachinery/pkg/api/resource"
@@ -36,7 +33,10 @@ import (
 )
 
 var (
-	hostfileName = "hostfile"
+	hostfileName      = "hostfile"
+	certGeneratorName = "cert-generate"
+	curveCertKey      = "curve-cert"
+	curveCert         = ""
 )
 
 // This is a MiniCluster! A MiniCluster is associated with a running MiniCluster and include:
@@ -57,6 +57,7 @@ func (r *MiniClusterReconciler) ensureMiniCluster(ctx context.Context, cluster *
 	if err != nil {
 		return result, err
 	}
+
 	// A local host (developer machine) does not support provisioning, so for the meantime we use a
 	// persistent volume instead (running on same host)
 	if cluster.Spec.LocalDeploy {
@@ -74,6 +75,13 @@ func (r *MiniClusterReconciler) ensureMiniCluster(ctx context.Context, cluster *
 		if err != nil {
 			return result, err
 		}
+	}
+
+	// Generate the curve certificate config map. This creates a container to get
+	// the curve certificate from
+	_, result, err = r.getConfigMap(ctx, cluster, "cert", cluster.Name+curveVolumeSuffix)
+	if err != nil {
+		return result, err
 	}
 
 	// Create the batch job that brings it all together!
@@ -127,45 +135,6 @@ func (r *MiniClusterReconciler) getMiniCluster(ctx context.Context, cluster *api
 		saveDebugYaml(existing, "batch-job.yaml")
 	}
 	return existing, ctrl.Result{}, err
-}
-
-// getMiniClusterIPS was used when we needed to write /etc/hosts and is no longer used
-func (r *MiniClusterReconciler) getMiniClusterIPS(ctx context.Context, cluster *api.MiniCluster) map[string]string {
-
-	ips := map[string]string{}
-	for _, pod := range r.getMiniClusterPods(ctx, cluster).Items {
-		// Skip init pods
-		if strings.Contains(pod.Name, "init") {
-			continue
-		}
-
-		// The pod isn't ready!
-		if pod.Status.PodIP == "" {
-			continue
-		}
-		ips[pod.Name] = pod.Status.PodIP
-	}
-	return ips
-}
-
-// getMiniClusterPods returns a sorted (by name) podlist in the MiniCluster
-func (r *MiniClusterReconciler) getMiniClusterPods(ctx context.Context, cluster *api.MiniCluster) *corev1.PodList {
-
-	podList := &corev1.PodList{}
-	opts := []client.ListOption{
-		client.InNamespace(cluster.Namespace),
-	}
-	err := r.Client.List(ctx, podList, opts...)
-	if err != nil {
-		r.log.Error(err, "🌀 Error listing MiniCluster pods", "Name:", podList)
-		return podList
-	}
-
-	// Ensure they are consistently sorted by name
-	sort.Slice(podList.Items, func(i, j int) bool {
-		return podList.Items[i].Name < podList.Items[j].Name
-	})
-	return podList
 }
 
 // getPersistentVolume creates the PVC claim for the curve certificate (to be written once)
@@ -246,10 +215,20 @@ func (r *MiniClusterReconciler) getConfigMap(ctx context.Context, cluster *api.M
 			// check if its broker.toml (the flux config)
 			if configName == "flux-config" {
 				data[hostfileName] = generateFluxConfig(cluster)
-			}
 
-			// Initial "empty" set of start/wait scripts until we have host ips
-			if configName == "entrypoint" {
+			} else if configName == "cert" {
+
+				// So we don't require read write many, we use an emphemeral pod to generate
+				// the curve certificate. We don't care about this pod, we just want the cert!
+				if curveCert == "" {
+					curveCert, err := r.getCurveCert(ctx, cluster)
+					if err != nil || curveCert == "" {
+						return existing, ctrl.Result{Requeue: true}, err
+					}
+					data[curveCertKey] = curveCert
+				}
+
+			} else if configName == "entrypoint" {
 
 				// The main logic for generating the Curve certificate, start commands, is here
 				// We create a custom script for each container that warrants one,

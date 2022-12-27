@@ -13,7 +13,6 @@ package controllers
 import (
 	api "flux-framework/flux-operator/api/v1alpha1"
 	"fmt"
-	"path"
 
 	corev1 "k8s.io/api/core/v1"
 )
@@ -31,14 +30,13 @@ func getVolumeMounts(cluster *api.MiniCluster) []corev1.VolumeMount {
 		{
 			Name:      cluster.Name + curveVolumeSuffix,
 			MountPath: "/mnt/curve/",
+			ReadOnly:  true,
 		},
 		{
 			Name:      cluster.Name + fluxConfigSuffix,
 			MountPath: "/etc/flux/config",
 			ReadOnly:  true,
 		},
-
-		// Entrypoint that helps to discover hosts, added after creation
 		{
 			Name:      cluster.Name + entrypointSuffix,
 			MountPath: "/flux_operator/",
@@ -91,30 +89,32 @@ func getVolumes(cluster *api.MiniCluster) []corev1.Volume {
 				Items: runnerStartScripts,
 			},
 		},
+	}, {
+		Name: cluster.Name + curveVolumeSuffix,
+		VolumeSource: corev1.VolumeSource{
+			ConfigMap: &corev1.ConfigMapVolumeSource{
+
+				// Namespace based on the cluster
+				LocalObjectReference: corev1.LocalObjectReference{
+					Name: cluster.Name + curveVolumeSuffix,
+				},
+				// /mnt/curve/curve.cert
+				Items: []corev1.KeyToPath{{
+					Key:  curveCertKey,
+					Path: "curve.cert",
+				}},
+			},
+		},
 	}}
 
 	// If we are using a localDeploy (volume on the host) vs. a cluster deploy
 	// (where we need a persistent volume claim)
 	if cluster.Spec.LocalDeploy {
-		localVolume := corev1.Volume{
-
-			// We use persistent volume (that can be shared by several containers)
-			// to run flux keygen and generate the /mnt/curve/curve.crt
-			Name: cluster.Name + curveVolumeSuffix,
-			VolumeSource: corev1.VolumeSource{
-				HostPath: &corev1.HostPathVolumeSource{
-					Path: path.Join("/tmp", cluster.Name+curveVolumeSuffix),
-				},
-			},
-		}
-		volumes = append(volumes, localVolume)
-
 		directoryType := corev1.HostPathDirectoryOrCreate
 
 		// Add local volumes available to containers
 		for volumeName, volume := range cluster.Spec.Volumes {
-
-			localVolume = corev1.Volume{
+			localVolume := corev1.Volume{
 
 				// We use persistent volume (that can be shared by several containers)
 				// to run flux keygen and generate the /mnt/curve/curve.crt
@@ -128,18 +128,6 @@ func getVolumes(cluster *api.MiniCluster) []corev1.Volume {
 			}
 			volumes = append(volumes, localVolume)
 		}
-
-	} else {
-		pvc := corev1.Volume{
-			Name: cluster.Name + curveVolumeSuffix,
-			VolumeSource: corev1.VolumeSource{
-				PersistentVolumeClaim: &corev1.PersistentVolumeClaimVolumeSource{
-					ClaimName: cluster.Name + curveVolumeSuffix,
-					ReadOnly:  false,
-				},
-			},
-		}
-		volumes = append(volumes, pvc)
 	}
 	return volumes
 }
