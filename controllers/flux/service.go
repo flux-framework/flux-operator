@@ -14,7 +14,6 @@ import (
 	"context"
 
 	corev1 "k8s.io/api/core/v1"
-	networkv1 "k8s.io/api/networking/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	ctrl "sigs.k8s.io/controller-runtime"
 
@@ -41,15 +40,6 @@ func (r *MiniClusterReconciler) exposeServices(ctx context.Context, cluster *api
 		}
 		return ctrl.Result{}, err
 	}
-
-	//	ingress := &networkv1.Ingress{}
-	//	err = r.Client.Get(ctx, types.NamespacedName{Name: restfulServiceName, Namespace: cluster.Namespace}, ingress)
-	//	if err != nil {
-	//		if errors.IsNotFound(err) {
-	//			err = r.createMiniClusterIngress(ctx, cluster, existing)
-	//		}
-	//		return ctrl.Result{}, err
-	//	}
 	return ctrl.Result{}, err
 }
 
@@ -76,53 +66,4 @@ func (r *MiniClusterReconciler) createMiniClusterService(ctx context.Context, cl
 		r.log.Error(err, "🔴 Create service", "Service", restfulServiceName)
 	}
 	return service, err
-}
-
-// createMiniClusterIngress exposes the service for the minicluster
-func (r *MiniClusterReconciler) createMiniClusterIngress(ctx context.Context, cluster *api.MiniCluster, service *corev1.Service) error {
-
-	pathType := networkv1.PathTypePrefix
-	ingressBackend := networkv1.IngressBackend{
-		Service: &networkv1.IngressServiceBackend{
-			Name: service.Name,
-			Port: networkv1.ServiceBackendPort{
-				Number: service.Spec.Ports[0].NodePort,
-			},
-		},
-	}
-	ingress := &networkv1.Ingress{
-		ObjectMeta: metav1.ObjectMeta{
-			Name:      service.Name,
-			Namespace: service.Namespace,
-		},
-		Spec: networkv1.IngressSpec{
-			DefaultBackend: &ingressBackend,
-			Rules: []networkv1.IngressRule{
-				{
-					IngressRuleValue: networkv1.IngressRuleValue{
-						HTTP: &networkv1.HTTPIngressRuleValue{
-							Paths: []networkv1.HTTPIngressPath{
-								{
-									PathType: &pathType,
-									Backend:  ingressBackend,
-									Path:     "/",
-								},
-							},
-						},
-					},
-				},
-			},
-		},
-	}
-	err := ctrl.SetControllerReference(cluster, ingress, r.Scheme)
-	if err != nil {
-		r.log.Error(err, "🔴 Create ingress", "Service", restfulServiceName)
-		return err
-	}
-	err = r.Client.Create(ctx, ingress)
-	if err != nil {
-		r.log.Error(err, "🔴 Create ingress", "Service", restfulServiceName)
-		return err
-	}
-	return nil
 }

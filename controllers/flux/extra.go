@@ -2,6 +2,10 @@ package controllers
 
 // This file has extra (not used) functions that might be useful
 // (and I didn't want to delete just yet)!
+// - pod exec commands
+// - mini cluster ingress
+// - pod listing, and ips
+// - persistent volume claims
 
 import (
 	"bytes"
@@ -283,4 +287,53 @@ func (r *MiniClusterReconciler) createPersistentVolume(cluster *api.MiniCluster,
 	}
 	ctrl.SetControllerReference(cluster, volume, r.Scheme)
 	return volume
+}
+
+// createMiniClusterIngress exposes the service for the minicluster
+func (r *MiniClusterReconciler) createMiniClusterIngress(ctx context.Context, cluster *api.MiniCluster, service *corev1.Service) error {
+
+	pathType := networkv1.PathTypePrefix
+	ingressBackend := networkv1.IngressBackend{
+		Service: &networkv1.IngressServiceBackend{
+			Name: service.Name,
+			Port: networkv1.ServiceBackendPort{
+				Number: service.Spec.Ports[0].NodePort,
+			},
+		},
+	}
+	ingress := &networkv1.Ingress{
+		ObjectMeta: metav1.ObjectMeta{
+			Name:      service.Name,
+			Namespace: service.Namespace,
+		},
+		Spec: networkv1.IngressSpec{
+			DefaultBackend: &ingressBackend,
+			Rules: []networkv1.IngressRule{
+				{
+					IngressRuleValue: networkv1.IngressRuleValue{
+						HTTP: &networkv1.HTTPIngressRuleValue{
+							Paths: []networkv1.HTTPIngressPath{
+								{
+									PathType: &pathType,
+									Backend:  ingressBackend,
+									Path:     "/",
+								},
+							},
+						},
+					},
+				},
+			},
+		},
+	}
+	err := ctrl.SetControllerReference(cluster, ingress, r.Scheme)
+	if err != nil {
+		r.log.Error(err, "🔴 Create ingress", "Service", restfulServiceName)
+		return err
+	}
+	err = r.Client.Create(ctx, ingress)
+	if err != nil {
+		r.log.Error(err, "🔴 Create ingress", "Service", restfulServiceName)
+		return err
+	}
+	return nil
 }

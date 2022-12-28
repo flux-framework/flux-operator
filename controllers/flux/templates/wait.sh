@@ -51,21 +51,6 @@ run_diagnostics() {
     sleep infinity
 }
 
-# Mark the node as ready
-mark_ready() {
-   echo "Lets go" > /etc/flux/ready    
-}
-
-# Wait for an indication of being ready
-wait_ready() {
-    while [ ! -f /etc/flux/ready ]
-    do
-        {{ if not .TestMode }}printf "\n😪 Sleeping 15s until /etc/flux/ready appears."{{ end }}
-        sleep 15
-    done
-    rm /etc/flux/ready
-}
-
 # The statedir similarly should exist and have plenty of available space.
 # If there are differences in containers / volumes this could eventually be
 # exposed as STATEDIR variable

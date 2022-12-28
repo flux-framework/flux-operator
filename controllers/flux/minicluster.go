@@ -76,12 +76,6 @@ func (r *MiniClusterReconciler) ensureMiniCluster(ctx context.Context, cluster *
 		return result, err
 	}
 
-	// Tell the worker nodes the broker is ready (and to connect)
-	/*_, err = r.brokerIsReady(ctx, cluster)
-	if err != nil {
-		return ctrl.Result{RequeueAfter: 0}, err
-	}*/
-
 	// If we get here, update the status to be ready
 	status := jobctrl.GetCondition(cluster)
 	if status != jobctrl.ConditionJobReady {
