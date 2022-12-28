@@ -49,12 +49,12 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        test: [["hello-world", "ghcr.io/flux-framework/flux-restful-api:latest", 20],
-               ["lammps", "ghcr.io/rse-ops/lammps:flux-sched-focal-v0.24.0", 20],
-               ["pokemon", "ghcr.io/rse-ops/pokemon:app-latest", 20],
-               ["osu-benchmarks", "ghcr.io/rse-ops/osu-microbench:app-latest", 20],               
-               ["flux-resource-list", "ghcr.io/flux-framework/flux-restful-api:latest", 20],
-               ["volumes", "ghcr.io/flux-framework/flux-restful-api:latest", 20]]
+        test: [["hello-world", "ghcr.io/flux-framework/flux-restful-api:latest", 30],
+               ["lammps", "ghcr.io/rse-ops/lammps:flux-sched-focal-v0.24.0", 30],
+               ["pokemon", "ghcr.io/rse-ops/pokemon:app-latest", 30],
+               ["osu-benchmarks", "ghcr.io/rse-ops/osu-microbench:app-latest", 30],               
+               ["flux-resource-list", "ghcr.io/flux-framework/flux-restful-api:latest", 30],
+               ["volumes", "ghcr.io/flux-framework/flux-restful-api:latest", 30]]
         
     steps:
     - name: Clone the code

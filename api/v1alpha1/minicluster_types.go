@@ -166,6 +166,11 @@ type MiniClusterContainer struct {
 	// +optional
 	FluxOptionFlags string `json:"fluxOptionFlags"`
 
+	// Log level to use for flux logging (only in non TestMode)
+	// +kubebuilder:default=6
+	// +optional
+	FluxLogLevel int32 `json:"fluxLogLevel"`
+
 	// Special command to run at beginning of script, directly after asFlux
 	// is defined as sudo -u flux -E (so you can change that if desired.)
 	// This is only valid if FluxRunner is set (that writes a wait.sh script)

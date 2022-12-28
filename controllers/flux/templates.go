@@ -20,6 +20,9 @@ var brokerConfigTemplate string
 //go:embed templates/wait.sh
 var waitToStartTemplate string
 
+//go:embed templates/cert-generate.sh
+var generateCertTemplate string
+
 // WaitTemplate populates wait.sh
 type WaitTemplate struct {
 	FluxToken         string // Token to log into the UI, should be consistent across containers
@@ -33,4 +36,10 @@ type WaitTemplate struct {
 	ClusterSize       int32  // number of nodes in mini cluster, should be size
 	TestMode          bool   // Don't print additional output
 	Size              int32
+	FluxLogLevel      int32
+}
+
+// CertTemplate populates cert-generate.sh
+type CertTemplate struct {
+	PreCommand string
 }

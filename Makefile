@@ -133,7 +133,6 @@ clean:
 	kubectl delete -n flux-operator pods --all --grace-period=0 --force
 	kubectl delete -n flux-operator jobs --all --grace-period=0 --force
 	kubectl delete -n flux-operator MiniCluster --all --grace-period=0 --force
-	rm -rf yaml/*.yaml
 
 # This applies the basic minicluster (and not extended examples)
 apply:

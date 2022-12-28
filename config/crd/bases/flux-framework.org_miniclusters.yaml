@@ -48,11 +48,20 @@ spec:
                         IMPORTANT: This is left here, but not used in favor of exposing
                         Flux via a Restful API. We Can remove this when that is finalized.'
                       type: string
+                    diagnostics:
+                      description: Run flux diagnostics on start instead of command
+                      type: boolean
                     environment:
                       additionalProperties:
                         type: string
                       description: Key/value pairs for the environment
                       type: object
+                    fluxLogLevel:
+                      default: 6
+                      description: Log level to use for flux logging (only in non
+                        TestMode)
+                      format: int32
+                      type: integer
                     fluxOptionFlags:
                       description: Flux option flags, usually provided with -o optional
                         - if needed, default option flags for the server These can
@@ -127,9 +136,6 @@ spec:
                   Approximately one year. This cannot be zero or job won't start
                 format: int64
                 type: integer
-              diagnostics:
-                description: Run flux diagnostics on start instead of command
-                type: boolean
               fluxRestful:
                 description: Customization to Flux Restful API There should only be
                   one container to run flux with runFlux

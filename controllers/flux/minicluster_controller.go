@@ -61,19 +61,21 @@ func NewMiniClusterReconciler(client client.Client, scheme *runtime.Scheme, rest
 //+kubebuilder:rbac:groups=flux-framework.org,resources=clusters;clusters/status,verbs=get;list;watch
 //+kubebuilder:rbac:groups="",resources=nodes;events,verbs=get;list;watch;create;update;patch;delete
 
-//+kubebuilder:rbac:groups=flux-framework.org,resources=miniclusters,verbs=get;list;watch;create;update;patch;delete;exec
+//+kubebuilder:rbac:groups=flux-framework.org,resources=miniclusters,verbs=get;list;watch;create;update;patch;delete
 //+kubebuilder:rbac:groups=flux-framework.org,resources=miniclusters/status,verbs=get;list;watch;create;update;patch;delete
 //+kubebuilder:rbac:groups=flux-framework.org,resources=miniclusters/finalizers,verbs=get;list;watch;create;update;patch;delete
 
 //+kubebuilder:rbac:groups=core,resources=secrets,verbs=get;list;watch;create;update;patch;delete
 //+kubebuilder:rbac:groups=core,resources=configmaps,verbs=get;list;watch;create;update;patch;delete
 //+kubebuilder:rbac:groups=core,resources=statefulsets,verbs=get;list;watch;create;update;patch;delete
-//+kubebuilder:rbac:groups=core,resources=pods,verbs=get;list;watch;create;update;patch;delete;exec
-//+kubebuilder:rbac:groups=core,resources=persistentvolumes,verbs=get;list;watch;create;update;patch;delete;exec
-//+kubebuilder:rbac:groups=core,resources=persistentvolumeclaims,verbs=get;list;watch;create;update;patch;delete;exec
-//+kubebuilder:rbac:groups=core,resources=jobs,verbs=get;list;watch;create;update;patch;delete;exec
+//+kubebuilder:rbac:groups=core,resources=pods/log,verbs=get;list;watch;create;update;patch;delete
+//+kubebuilder:rbac:groups=core,resources=pods/exec,verbs=get;list;watch;create;update;patch;delete
+//+kubebuilder:rbac:groups=core,resources=pods,verbs=get;list;watch;create;update;patch;delete
+//+kubebuilder:rbac:groups=core,resources=persistentvolumes,verbs=get;list;watch;create;update;patch;delete
+//+kubebuilder:rbac:groups=core,resources=persistentvolumeclaims,verbs=get;list;watch;create;update;patch;delete
+//+kubebuilder:rbac:groups=core,resources=jobs,verbs=get;list;watch;create;update;patch;delete
 //+kubebuilder:rbac:groups=core,resources="",verbs=get;list;watch;create;update;patch;delete
-//+kubebuilder:rbac:groups=core,resources=batch,verbs=get;list;watch;create;update;patch;delete;exec
+//+kubebuilder:rbac:groups=core,resources=batch,verbs=get;list;watch;create;update;patch;delete
 //+kubebuilder:rbac:groups=core,resources=events,verbs=create;patch
 //+kubebuilder:rbac:groups=core,resources=networks,verbs=create;patch
 //+kubebuilder:rbac:groups=core,resources="services",verbs=get;list;watch;create;update;patch;delete
@@ -136,7 +138,7 @@ func (r *MiniClusterReconciler) Reconcile(ctx context.Context, req ctrl.Request)
 	// What else do we want to do?
 	r.log.Info("🌀 Mini Cluster is Ready!")
 	r.log.Info("🌀 Wait for all pods to be running and previously running to be terminated.")
-	return ctrl.Result{}, nil
+	return result, nil
 }
 
 // SetupWithManager sets up the controller with the Manager.

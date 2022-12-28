@@ -11,7 +11,7 @@ allow-root-owner = true
 path = "/etc/flux/system/R"
 
 [bootstrap]
-curve_cert = "/mnt/curve/curve.cert"
+curve_cert = "/etc/curve/curve.cert"
 default_port = 8050
 default_bind = "tcp://eth0:%%p"
 default_connect = "tcp://%%h.%s:%%p"
