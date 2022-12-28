@@ -5,6 +5,17 @@ so it works really well on Google Cloud, and it's super fun to use the Flux Oper
 guide will walk you through the basics. We will be deploying a simple [lammps](https://www.lammps.org/) workflow as
 shown below.
 
+
+## Lammps on Google Kubernetes Engine
+
+In this short experiment we will run the Flux Operator on Google Cloud, at
+at a fairly small size intended for development. 
+
+### Custom Resource Definition
+
+The Custom Resource Definition (CRD) defines our Mini Cluster, and is what we hand to the flux
+operator to create it.  Here is the CRD for a small lammps run.
+
 ```yaml
 apiVersion: flux-framework.org/v1alpha1
 kind: MiniCluster
@@ -35,11 +46,6 @@ spec:
 ```
 
 You can save the above file as `minicluster-lammps.yaml` to get started.
-
-## Lammps on Google Kubernetes Engine
-
-In this short experiment we will run the Flux Operator on Google Cloud, at
-at a fairly small size intended for development. 
 
 ### Install
 
