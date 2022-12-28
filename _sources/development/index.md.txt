@@ -11,11 +11,3 @@ designs
 debugging
 creation
 ```
-
-### Deployment
-
-```{toctree}
-:maxdepth: 3
-aws
-google
-```
