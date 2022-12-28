@@ -92,7 +92,7 @@ func main() {
 	// https://github.com/kubernetes-sigs/kueue/blob/f6d5c9ec0c9af0dddef6e40c9f1556398aa7ef12/main.go#L103-L112 ?
 
 	// Create a RESTful client for the MiniCluster controller. We need this to actually
-	// exec a command to a pod in the job, which might be useful?
+	// interact with pods in the cluster!
 	gvk := schema.GroupVersionKind{
 		Group:   "",
 		Version: "v1",

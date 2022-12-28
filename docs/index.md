@@ -30,6 +30,12 @@ development/index.md
 ```
 
 ```{toctree}
+:caption: Deployment
+:maxdepth: 1
+deployment/index.md
+```
+
+```{toctree}
 :caption: About
 :maxdepth: 1
 contributing.md
