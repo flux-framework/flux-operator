@@ -56,6 +56,12 @@ spec:
                         type: string
                       description: Key/value pairs for the environment
                       type: object
+                    fluxLogLevel:
+                      default: 6
+                      description: Log level to use for flux logging (only in non
+                        TestMode)
+                      format: int32
+                      type: integer
                     fluxOptionFlags:
                       description: Flux option flags, usually provided with -o optional
                         - if needed, default option flags for the server These can

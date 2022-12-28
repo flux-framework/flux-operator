@@ -16,7 +16,6 @@ import (
 	corev1 "k8s.io/api/core/v1"
 	networkv1 "k8s.io/api/networking/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-	"k8s.io/apimachinery/pkg/util/intstr"
 	ctrl "sigs.k8s.io/controller-runtime"
 
 	"k8s.io/apimachinery/pkg/api/errors"
@@ -26,16 +25,16 @@ import (
 )
 
 var (
-	serviceName = "flux-service"
-	servicePort = 5000
+	restfulServiceName = "flux-service"
+	servicePort        = 5000
 )
 
-// exposeService will expose a service
-func (r *MiniClusterReconciler) exposeService(ctx context.Context, cluster *api.MiniCluster) (ctrl.Result, error) {
+// exposeService will expose services - one for the port 5000 forward, and the other for job networking (headless)
+func (r *MiniClusterReconciler) exposeServices(ctx context.Context, cluster *api.MiniCluster) (ctrl.Result, error) {
 
 	// This service is for the restful API
 	existing := &corev1.Service{}
-	err := r.Client.Get(ctx, types.NamespacedName{Name: serviceName, Namespace: cluster.Namespace}, existing)
+	err := r.Client.Get(ctx, types.NamespacedName{Name: restfulServiceName, Namespace: cluster.Namespace}, existing)
 	if err != nil {
 		if errors.IsNotFound(err) {
 			_, err = r.createMiniClusterService(ctx, cluster)
@@ -43,48 +42,38 @@ func (r *MiniClusterReconciler) exposeService(ctx context.Context, cluster *api.
 		return ctrl.Result{}, err
 	}
 
-	ingress := &networkv1.Ingress{}
-	err = r.Client.Get(ctx, types.NamespacedName{Name: serviceName, Namespace: cluster.Namespace}, ingress)
-	if err != nil {
-		if errors.IsNotFound(err) {
-			err = r.createMiniClusterIngress(ctx, cluster, existing)
-		}
-		return ctrl.Result{}, err
-	}
+	//	ingress := &networkv1.Ingress{}
+	//	err = r.Client.Get(ctx, types.NamespacedName{Name: restfulServiceName, Namespace: cluster.Namespace}, ingress)
+	//	if err != nil {
+	//		if errors.IsNotFound(err) {
+	//			err = r.createMiniClusterIngress(ctx, cluster, existing)
+	//		}
+	//		return ctrl.Result{}, err
+	//	}
 	return ctrl.Result{}, err
 }
 
 // createMiniClusterService creates the service for the minicluster
 func (r *MiniClusterReconciler) createMiniClusterService(ctx context.Context, cluster *api.MiniCluster) (*corev1.Service, error) {
 
-	r.log.Info("Creating service with: ", serviceName, cluster.Namespace)
+	r.log.Info("Creating service with: ", restfulServiceName, cluster.Namespace)
 	service := &corev1.Service{
-		ObjectMeta: metav1.ObjectMeta{Name: serviceName, Namespace: cluster.Namespace},
+		ObjectMeta: metav1.ObjectMeta{Name: restfulServiceName, Namespace: cluster.Namespace},
 		Spec: corev1.ServiceSpec{
-			Type: corev1.ServiceTypeNodePort,
-			Ports: []corev1.ServicePort{
-				{
-					Name:       serviceName,
-					Protocol:   corev1.ProtocolTCP,
-					Port:       int32(servicePort),
-					TargetPort: intstr.FromInt(servicePort),
-				},
-			},
-			// Important: if you define an ExternalIPs here, minikube service
-			// is likely to not work, but port forward will.
+			ClusterIP: "None",
 			Selector: map[string]string{
-				"job": serviceName,
+				"job-name": cluster.Name,
 			},
 		},
 	}
 	err := ctrl.SetControllerReference(cluster, service, r.Scheme)
 	if err != nil {
-		r.log.Error(err, "🔴 Create service", "Service", serviceName)
+		r.log.Error(err, "🔴 Create service", "Service", restfulServiceName)
 		return service, err
 	}
 	err = r.Client.Create(ctx, service)
 	if err != nil {
-		r.log.Error(err, "🔴 Create service", "Service", serviceName)
+		r.log.Error(err, "🔴 Create service", "Service", restfulServiceName)
 	}
 	return service, err
 }
@@ -127,12 +116,12 @@ func (r *MiniClusterReconciler) createMiniClusterIngress(ctx context.Context, cl
 	}
 	err := ctrl.SetControllerReference(cluster, ingress, r.Scheme)
 	if err != nil {
-		r.log.Error(err, "🔴 Create ingress", "Service", serviceName)
+		r.log.Error(err, "🔴 Create ingress", "Service", restfulServiceName)
 		return err
 	}
 	err = r.Client.Create(ctx, ingress)
 	if err != nil {
-		r.log.Error(err, "🔴 Create ingress", "Service", serviceName)
+		r.log.Error(err, "🔴 Create ingress", "Service", restfulServiceName)
 		return err
 	}
 	return nil

@@ -54,13 +54,11 @@ func (r *MiniClusterReconciler) newMiniClusterJob(cluster *api.MiniCluster) *bat
 				ObjectMeta: metav1.ObjectMeta{
 					Name:      cluster.Name,
 					Namespace: cluster.Namespace,
-
-					// Job is used as selector for service
-					Labels: map[string]string{"name": cluster.Name, "namespace": cluster.Namespace, "job": serviceName},
+					Labels:    map[string]string{"namespace": cluster.Namespace},
 				},
 				Spec: corev1.PodSpec{
 					// matches the service
-					Subdomain:         serviceName,
+					Subdomain:         restfulServiceName,
 					SetHostnameAsFQDN: &setAsFQDN,
 					Volumes:           getVolumes(cluster),
 					Containers:        containers,

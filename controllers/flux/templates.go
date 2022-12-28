@@ -36,6 +36,7 @@ type WaitTemplate struct {
 	ClusterSize       int32  // number of nodes in mini cluster, should be size
 	TestMode          bool   // Don't print additional output
 	Size              int32
+	FluxLogLevel      int32
 }
 
 // CertTemplate populates cert-generate.sh

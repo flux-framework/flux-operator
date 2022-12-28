@@ -17,7 +17,8 @@ $ minikube addons enable ingress
 $ minikube addons enable ingress-dns
 ```
 
-The basic Flux networking (pods seeing one another) won't work if your cluster does not support DNS.
+Note that for production clusters (e.g., [GKE](https://cloud.google.com/kubernetes-engine/docs/concepts/ingress)) I believe this
+addon is enabled by default. The basic Flux networking (pods seeing one another) won't work if your cluster does not support DNS.
 You also won't be able to expose the service with minikube service if you don't do the above (but port-forward would technically work)
 You'll then also want to clone the repository.
 

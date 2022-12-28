@@ -71,18 +71,16 @@ func (r *MiniClusterReconciler) ensureMiniCluster(ctx context.Context, cluster *
 	}
 
 	// Expose pod index 0 service
-	result, err = r.exposeService(ctx, cluster)
+	result, err = r.exposeServices(ctx, cluster)
 	if err != nil {
 		return result, err
 	}
 
 	// Tell the worker nodes the broker is ready (and to connect)
-	_, err = r.brokerIsReady(ctx, cluster)
+	/*_, err = r.brokerIsReady(ctx, cluster)
 	if err != nil {
-		r.log.Info("Broker", "State", "Not ready")
 		return ctrl.Result{RequeueAfter: 0}, err
-	}
-	r.log.Info("Broker", "State", "Ready")
+	}*/
 
 	// If we get here, update the status to be ready
 	status := jobctrl.GetCondition(cluster)
@@ -189,13 +187,14 @@ func (r *MiniClusterReconciler) getConfigMap(ctx context.Context, cluster *api.M
 func generateFluxConfig(cluster *api.MiniCluster) string {
 
 	// Prepare suffix of fully qualified domain name
-	fqdn := fmt.Sprintf("%s.%s.svc.cluster.local", serviceName, cluster.Namespace)
+	fqdn := fmt.Sprintf("%s.%s.svc.cluster.local", restfulServiceName, cluster.Namespace)
 	hosts := fmt.Sprintf("[%s]", generateRange(int(cluster.Spec.Size)))
 	fluxConfig := fmt.Sprintf(brokerConfigTemplate, fqdn, cluster.Name, hosts)
 	return fluxConfig
 }
 
 // generateWaitScript generates the main script to start everything up!
+// TODO try removing the extra wait logic and just sleep/retry
 func generateWaitScript(cluster *api.MiniCluster, containerIndex int) (string, error) {
 
 	// The first pod (0) should always generate the curve certificate
@@ -210,6 +209,7 @@ func generateWaitScript(cluster *api.MiniCluster, containerIndex int) (string, e
 		Hosts:             hosts,
 		Diagnostics:       container.Diagnostics,
 		FluxOptionFlags:   container.FluxOptionFlags,
+		FluxLogLevel:      container.FluxLogLevel,
 		PreCommand:        container.PreCommand,
 		ClusterSize:       cluster.Spec.Size,
 		TestMode:          cluster.Spec.TestMode,

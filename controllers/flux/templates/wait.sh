@@ -25,7 +25,7 @@ brokerOptions="-Scron.directory=/etc/flux/system/cron.d \
   -Srundir=/run/flux \
   -Sstatedir=${STATE_DIRECTORY:-/var/lib/flux} \
   -Slocal-uri=local:///run/flux/local \
-{{ if not .TestMode }}  -Slog-stderr-level=6 {{ else }} -Slog-stderr-level=0 {{ end }} \
+{{ if not .TestMode }}  -Slog-stderr-level={{or .FluxLogLevel 6}} {{ else }} -Slog-stderr-level=0 {{ end }} \
   -Slog-stderr-mode=local"
 
 # quorum settings influence how the instance treats missing ranks
@@ -139,7 +139,7 @@ sudo adduser --disabled-password --uid 1000 --gecos "" flux > /dev/null 2>&1 || 
 mkdir -p /run/flux /etc/curve
 
 # Show generated curve certificate - the munge.key should already be equivalent (and exist)
-cat /mnt/curve/curve.cert
+{{ if not .TestMode }}cat /mnt/curve/curve.cert{{ end }}
 cp /mnt/curve/curve.cert /etc/curve/curve.cert
 
 # Remove group and other reead
@@ -188,20 +188,23 @@ else
 
             # -o is an "option" for the broker
             # -S corresponds to a shortened --setattr=ATTR=VAL
-            mark_ready
             printf "\n🌀${asFlux} flux start -o --config /etc/flux/config ${brokerOptions} ${startServer}\n"{{ end }}
             ${asFlux} flux start -o --config /etc/flux/config ${brokerOptions} ${startServer}
 
         # Case 2: Fall back to provided command
         else
-            mark_ready
-{{ if not .TestMode }}            printf "\n🌀${asFlux} flux start -o --config /etc/flux/config ${brokerOptions} $@\n"{{ end }}
+{{ if not .TestMode }}            
+            printf "\n🌀${asFlux} flux start -o --config /etc/flux/config ${brokerOptions} $@\n"{{ end }}
             ${asFlux} flux start -o --config /etc/flux/config ${brokerOptions} flux mini run {{if .Size }}-n {{.Size}}{{ end }} {{ if .FluxOptionFlags }}{{ .FluxOptionFlags}}{{ end }} $@
         fi
     else
         # Sleep until the broker is ready
-        wait_ready
         printf "\n🌀${asFlux} flux start -o --config /etc/flux/config ${brokerOptions}\n"
-        ${asFlux} flux start -o --config /etc/flux/config ${brokerOptions}
+        while true
+        do
+            ${asFlux} flux start -o --config /etc/flux/config ${brokerOptions}
+            {{ if not .TestMode }}printf "\n😪 Sleeping 15s until broker is ready..."{{ end }}
+            sleep 15
+        done
     fi
 fi
