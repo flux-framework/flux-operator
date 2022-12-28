@@ -17,7 +17,8 @@ $ minikube addons enable ingress
 $ minikube addons enable ingress-dns
 ```
 
-The basic Flux networking (pods seeing one another) won't work if your cluster does not support DNS.
+Note that for production clusters (e.g., [GKE](https://cloud.google.com/kubernetes-engine/docs/concepts/ingress)) I believe this
+addon is enabled by default. The basic Flux networking (pods seeing one another) won't work if your cluster does not support DNS.
 You also won't be able to expose the service with minikube service if you don't do the above (but port-forward would technically work)
 You'll then also want to clone the repository.
 
@@ -287,9 +288,18 @@ so that install locations and users are consistent. This assumes that:
  - You don't need to install the flux-restful-api (it will be installed by the operator)
  - munge should be install, and a key generated at `/etc/munge/munge.key`
   
+For the last point, since all Flux running containers should have the same munge key
+in that location, we simply use it. The pipeline will fail if the key is missing from any
+Flux runner container.  For the curve.cert that we need to secure the cluster, we will
+be running your flux runner container before the indexed job is launched, generating
+the certificate, and then mapping it into the job pods via another config map.
+Note that we considered generating this natively in Gom, however the underlying library to do this 
+generation that is [available in Go](https://pkg.go.dev/github.com/zeromq/goczmq#section-readme)
+requires system libraries, and thus would be annoying to add as a dependency.
 
-This is taken from the [flux-sched](https://github.com/flux-framework/flux-sched/blob/master/src/test/docker/focal/Dockerfile)
-base image. If you intend to use the [Flux RESTful API](https://github.com/flux-framework/flux-restful-api)
+These criteria are taken from the [flux-sched](https://github.com/flux-framework/flux-sched/blob/master/src/test/docker/focal/Dockerfile)
+base image, and we strongly suggest you use this for your base container to make development
+easier! If you intend to use the [Flux RESTful API](https://github.com/flux-framework/flux-restful-api)
 to interact with your cluster, ensure that flux (python bindings) are on the path, along with
 either python or python3 (depending on which you used to install Flux).
 If/when needed we can lift some of these constraints, but for now they are 

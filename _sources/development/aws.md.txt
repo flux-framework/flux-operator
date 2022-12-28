@@ -1,4 +1,4 @@
-# Flux Operator on EKS
+# Amazon Web Services EKS
 
 This small tutorial wall walk through how to run the Flux Operator (from a development
 standpoint) on AWS. 

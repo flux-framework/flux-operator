@@ -254,6 +254,15 @@ Also remember that your base container can equally provide these flags (and you
 could equally override them, but if they are set and you don't define them here
 they should not be touched).
 
+#### fluxLogLevel
+
+The log level to provide to flux, given that test mode is not on.
+
+```yaml
+	fluxLogLevel: 7 
+```
+
+
 #### preCommand
 
 It might be that you want some custom logic at the beginning of your script.

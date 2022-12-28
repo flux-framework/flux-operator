@@ -278,7 +278,24 @@
             Development
            </a>
            <nav class="md-nav md-nav--secondary">
+            <label class="md-nav__title" for="__toc">
+             Contents
+            </label>
             <ul class="md-nav__list" data-md-scrollfix="">
+             <li class="md-nav__item">
+              <a class="md-nav__link" href="#development-index--page-root">
+               Development
+              </a>
+              <nav class="md-nav">
+               <ul class="md-nav__list">
+                <li class="md-nav__item">
+                 <a class="md-nav__link" href="#deployment">
+                  Deployment
+                 </a>
+                </li>
+               </ul>
+              </nav>
+             </li>
              <li class="md-nav__item">
               <a class="md-nav__extra_link" href="../_sources/development/index.md.txt">
                Show Source
@@ -293,8 +310,13 @@
              </a>
             </li>
             <li class="md-nav__item">
-             <a class="md-nav__link" href="aws.html">
-              Flux Operator on EKS
+             <a class="md-nav__link" href="designs.html">
+              Designs
+             </a>
+            </li>
+            <li class="md-nav__item">
+             <a class="md-nav__link" href="debugging.html">
+              Debugging
              </a>
             </li>
             <li class="md-nav__item">
@@ -303,8 +325,8 @@
              </a>
             </li>
             <li class="md-nav__item">
-             <a class="md-nav__link" href="designs.html">
-              Designs
+             <a class="md-nav__link" href="#deployment">
+              Deployment
              </a>
             </li>
            </ul>
@@ -335,7 +357,24 @@
       <div class="md-sidebar__scrollwrap">
        <div class="md-sidebar__inner">
         <nav class="md-nav md-nav--secondary">
+         <label class="md-nav__title" for="__toc">
+          Contents
+         </label>
          <ul class="md-nav__list" data-md-scrollfix="">
+          <li class="md-nav__item">
+           <a class="md-nav__link" href="#development-index--page-root">
+            Development
+           </a>
+           <nav class="md-nav">
+            <ul class="md-nav__list">
+             <li class="md-nav__item">
+              <a class="md-nav__link" href="#deployment">
+               Deployment
+              </a>
+             </li>
+            </ul>
+           </nav>
+          </li>
           <li class="md-nav__item">
            <a class="md-nav__extra_link" href="../_sources/development/index.md.txt">
             Show Source
@@ -431,65 +470,6 @@ any questions, please
            </ul>
           </li>
           <li class="toctree-l1">
-           <a class="reference internal" href="aws.html">
-            Flux Operator on EKS
-           </a>
-           <ul>
-            <li class="toctree-l2">
-             <a class="reference internal" href="aws.html#install">
-              Install
-             </a>
-            </li>
-            <li class="toctree-l2">
-             <a class="reference internal" href="aws.html#setup-ssh">
-              Setup SSH
-             </a>
-            </li>
-            <li class="toctree-l2">
-             <a class="reference internal" href="aws.html#create-cluster">
-              Create Cluster
-             </a>
-            </li>
-            <li class="toctree-l2">
-             <a class="reference internal" href="aws.html#deploy-operator">
-              Deploy Operator
-             </a>
-            </li>
-            <li class="toctree-l2">
-             <a class="reference internal" href="aws.html#clean-up">
-              Clean up
-             </a>
-            </li>
-           </ul>
-          </li>
-          <li class="toctree-l1">
-           <a class="reference internal" href="creation.html">
-            Operator Creation
-           </a>
-           <ul>
-            <li class="toctree-l2">
-             <a class="reference internal" href="creation.html#installation">
-              1. Installation
-             </a>
-            </li>
-            <li class="toctree-l2">
-             <a class="reference internal" href="creation.html#start-a-development-cluster">
-              2. Start A Development Cluster
-             </a>
-            </li>
-            <li class="toctree-l2">
-             <a class="reference internal" href="creation.html#local-workspace">
-              3. Local Workspace
-             </a>
-            </li>
-            <li class="toctree-l2">
-             <a class="reference internal" href="creation.html#create-controller">
-              4. Create Controller
-             </a>
-            </li>
-           </ul>
-          </li>
-          <li class="toctree-l1">
            <a class="reference internal" href="designs.html">
             Designs
            </a>
@@ -545,8 +525,199 @@ any questions, please
             </li>
            </ul>
           </li>
+          <li class="toctree-l1">
+           <a class="reference internal" href="debugging.html">
+            Debugging
+           </a>
+           <ul>
+            <li class="toctree-l2">
+             <a class="reference internal" href="debugging.html#errors">
+              Errors
+             </a>
+             <ul>
+              <li class="toctree-l3">
+               <a class="reference internal" href="debugging.html#pull-errors">
+                Pull Errors
+               </a>
+              </li>
+              <li class="toctree-l3">
+               <a class="reference internal" href="debugging.html#service-already-on-port-8080">
+                Service Already on Port 8080
+               </a>
+              </li>
+              <li class="toctree-l3">
+               <a class="reference internal" href="debugging.html#crd-should-be-installed">
+                CRD should be installed
+               </a>
+              </li>
+              <li class="toctree-l3">
+               <a class="reference internal" href="debugging.html#configs-not-taking">
+                Configs not taking
+               </a>
+              </li>
+              <li class="toctree-l3">
+               <a class="reference internal" href="debugging.html#fields-not-showing-up">
+                Fields not showing up
+               </a>
+              </li>
+              <li class="toctree-l3">
+               <a class="reference internal" href="debugging.html#yaml">
+                Yaml
+               </a>
+              </li>
+             </ul>
+            </li>
+            <li class="toctree-l2">
+             <a class="reference internal" href="debugging.html#troubleshooting">
+              Troubleshooting
+             </a>
+            </li>
+           </ul>
+          </li>
+          <li class="toctree-l1">
+           <a class="reference internal" href="creation.html">
+            Operator Creation
+           </a>
+           <ul>
+            <li class="toctree-l2">
+             <a class="reference internal" href="creation.html#installation">
+              1. Installation
+             </a>
+            </li>
+            <li class="toctree-l2">
+             <a class="reference internal" href="creation.html#start-a-development-cluster">
+              2. Start A Development Cluster
+             </a>
+            </li>
+            <li class="toctree-l2">
+             <a class="reference internal" href="creation.html#local-workspace">
+              3. Local Workspace
+             </a>
+            </li>
+            <li class="toctree-l2">
+             <a class="reference internal" href="creation.html#create-controller">
+              4. Create Controller
+             </a>
+            </li>
+           </ul>
+          </li>
          </ul>
         </div>
+        <section id="deployment">
+         <h2 id="deployment">
+          Deployment
+          <a class="headerlink" href="#deployment" title="Permalink to this heading">
+           ¶
+          </a>
+         </h2>
+         <div class="toctree-wrapper compound">
+          <ul>
+           <li class="toctree-l1">
+            <a class="reference internal" href="aws.html">
+             Amazon Web Services EKS
+            </a>
+            <ul>
+             <li class="toctree-l2">
+              <a class="reference internal" href="aws.html#install">
+               Install
+              </a>
+             </li>
+             <li class="toctree-l2">
+              <a class="reference internal" href="aws.html#setup-ssh">
+               Setup SSH
+              </a>
+             </li>
+             <li class="toctree-l2">
+              <a class="reference internal" href="aws.html#create-cluster">
+               Create Cluster
+              </a>
+             </li>
+             <li class="toctree-l2">
+              <a class="reference internal" href="aws.html#deploy-operator">
+               Deploy Operator
+              </a>
+             </li>
+             <li class="toctree-l2">
+              <a class="reference internal" href="aws.html#clean-up">
+               Clean up
+              </a>
+             </li>
+            </ul>
+           </li>
+           <li class="toctree-l1">
+            <a class="reference internal" href="google.html">
+             Google Cloud
+            </a>
+            <ul>
+             <li class="toctree-l2">
+              <a class="reference internal" href="google.html#lammps-on-google-kubernetes-engine">
+               Lammps on Google Kubernetes Engine
+              </a>
+              <ul>
+               <li class="toctree-l3">
+                <a class="reference internal" href="google.html#custom-resource-definition">
+                 Custom Resource Definition
+                </a>
+               </li>
+               <li class="toctree-l3">
+                <a class="reference internal" href="google.html#install">
+                 Install
+                </a>
+               </li>
+               <li class="toctree-l3">
+                <a class="reference internal" href="google.html#create-cluster">
+                 Create Cluster
+                </a>
+               </li>
+               <li class="toctree-l3">
+                <a class="reference internal" href="google.html#get-credentials">
+                 Get Credentials
+                </a>
+               </li>
+               <li class="toctree-l3">
+                <a class="reference internal" href="google.html#deploy-operator">
+                 Deploy Operator
+                </a>
+               </li>
+               <li class="toctree-l3">
+                <a class="reference internal" href="google.html#create-flux-operator-namespace">
+                 Create Flux Operator namespace
+                </a>
+               </li>
+               <li class="toctree-l3">
+                <a class="reference internal" href="google.html#create-the-lammps-job">
+                 Create the Lammps Job
+                </a>
+               </li>
+               <li class="toctree-l3">
+                <a class="reference internal" href="google.html#clean-up">
+                 Clean up
+                </a>
+               </li>
+              </ul>
+             </li>
+             <li class="toctree-l2">
+              <a class="reference internal" href="google.html#customization-and-debugging">
+               Customization and Debugging
+              </a>
+              <ul>
+               <li class="toctree-l3">
+                <a class="reference internal" href="google.html#firewall">
+                 Firewall
+                </a>
+               </li>
+               <li class="toctree-l3">
+                <a class="reference internal" href="google.html#use-a-different-flux-operator-container">
+                 Use a Different Flux Operator Container
+                </a>
+               </li>
+              </ul>
+             </li>
+            </ul>
+           </li>
+          </ul>
+         </div>
+        </section>
        </section>
       </article>
      </div>
@@ -593,7 +764,7 @@ any questions, please
        © Copyright 2022, Flux Developers.
       </div>
       Last updated on
-              Dec 23, 2022.
+              Dec 28, 2022.
       <br/>
       Created using
       <a href="http://www.sphinx-doc.org/">

@@ -68,8 +68,8 @@
   <link href="../_static/favicon.ico" rel="shortcut icon"/>
   <link href="../genindex.html" rel="index" title="Index"/>
   <link href="../search.html" rel="search" title="Search"/>
-  <link href="../contributing.html" rel="next" title="Contributing"/>
-  <link href="creation.html" rel="prev" title="Operator Creation"/>
+  <link href="debugging.html" rel="next" title="Debugging"/>
+  <link href="developer-guide.html" rel="prev" title="Developer Guide"/>
   <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
   <!-- Social: Facebook / Open Graph -->
   <title>
@@ -285,16 +285,6 @@
              </a>
             </li>
             <li class="md-nav__item">
-             <a class="md-nav__link" href="aws.html">
-              Flux Operator on EKS
-             </a>
-            </li>
-            <li class="md-nav__item">
-             <a class="md-nav__link" href="creation.html">
-              Operator Creation
-             </a>
-            </li>
-            <li class="md-nav__item">
              <input class="md-toggle md-nav__toggle" data-md-toggle="toc" id="__toc" type="checkbox"/>
              <label class="md-nav__link md-nav__link--active" for="__toc">
               Designs
@@ -376,6 +366,21 @@
                </li>
               </ul>
              </nav>
+            </li>
+            <li class="md-nav__item">
+             <a class="md-nav__link" href="debugging.html">
+              Debugging
+             </a>
+            </li>
+            <li class="md-nav__item">
+             <a class="md-nav__link" href="creation.html">
+              Operator Creation
+             </a>
+            </li>
+            <li class="md-nav__item">
+             <a class="md-nav__link" href="index.html#deployment">
+              Deployment
+             </a>
             </li>
            </ul>
           </li>
@@ -538,13 +543,42 @@
           </li>
           <li>
            <p>
-            The startup script “wait.sh” handles writing the curve certificate (
+            The startup script “wait-X.sh” handles setting up Flux and checking that the container meets all requirements.
+           </p>
+           <ul>
+            <li>
+             <p>
+              If a command is provided, we give it to Flux directly (suggested), otherwise we start a Flux RestFul server to interact with
+             </p>
+            </li>
+            <li>
+             <p>
+              The container for the flux runner is expected to already have a munge.key in
+              <code class="docutils literal notranslate">
+               <span class="pre">
+                /etc/munge/munge.key
+               </span>
+              </code>
+              . This will be the same across pods generated given generation from the same container.
+             </p>
+            </li>
+           </ul>
+          </li>
+          <li>
+           <p>
+            To generate the curve certificate (
             <code class="docutils literal notranslate">
              <span class="pre">
-              /mnt/curve/curve.cert
+              /etc/curve/curve.cert
              </span>
             </code>
-            ) and generating and sharing a munge key in the same location.
+            ) we use the flux runner container in a one-off pod to run
+            <code class="docutils literal notranslate">
+             <span class="pre">
+              flux-keygen
+             </span>
+            </code>
+            and retrieve the output in the log. We then write this curve.cert as a Config Map to the indexed job pods. We do this beceause generating it natively in Go would require other libraries on the host for ZeroMQ.
            </p>
           </li>
           <li>
@@ -582,6 +616,10 @@
            </p>
           </li>
          </ul>
+         <p>
+          We do not yet have a solution for shared read/write many “RWX” on a cloud cluster. The FluxRestfulAPI also does not
+work (yet) for multiple processes - to run early experiments we are providing commands directly.
+         </p>
         </section>
         <section id="early-designs">
          <h2 id="early-designs">
@@ -777,7 +815,7 @@ and needed to keep this state elsewhere.
   <footer class="md-footer">
    <div class="md-footer-nav">
     <nav class="md-footer-nav__inner md-grid">
-     <a class="md-flex md-footer-nav__link md-footer-nav__link--prev" href="creation.html" rel="prev" title="Operator Creation">
+     <a class="md-flex md-footer-nav__link md-footer-nav__link--prev" href="developer-guide.html" rel="prev" title="Developer Guide">
       <div class="md-flex__cell md-flex__cell--shrink">
        <i class="md-icon md-icon--arrow-back md-footer-nav__button">
        </i>
@@ -787,17 +825,17 @@ and needed to keep this state elsewhere.
         <span class="md-footer-nav__direction">
          Previous
         </span>
-        Operator Creation
+        Developer Guide
        </span>
       </div>
      </a>
-     <a class="md-flex md-footer-nav__link md-footer-nav__link--next" href="../contributing.html" rel="next" title="Contributing">
+     <a class="md-flex md-footer-nav__link md-footer-nav__link--next" href="debugging.html" rel="next" title="Debugging">
       <div class="md-flex__cell md-flex__cell--stretch md-footer-nav__title">
        <span class="md-flex__ellipsis">
         <span class="md-footer-nav__direction">
          Next
         </span>
-        Contributing
+        Debugging
        </span>
       </div>
       <div class="md-flex__cell md-flex__cell--shrink">
@@ -814,7 +852,7 @@ and needed to keep this state elsewhere.
        © Copyright 2022, Flux Developers.
       </div>
       Last updated on
-              Dec 23, 2022.
+              Dec 28, 2022.
       <br/>
       Created using
       <a href="http://www.sphinx-doc.org/">

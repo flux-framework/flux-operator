@@ -405,6 +405,11 @@
                          </a>
                         </li>
                         <li class="md-nav__item">
+                         <a class="md-nav__link" href="#fluxloglevel">
+                          fluxLogLevel
+                         </a>
+                        </li>
+                        <li class="md-nav__item">
                          <a class="md-nav__link" href="#precommand">
                           preCommand
                          </a>
@@ -597,6 +602,11 @@
                    <li class="md-nav__item">
                     <a class="md-nav__link" href="#fluxoptionflags">
                      fluxOptionFlags
+                    </a>
+                   </li>
+                   <li class="md-nav__item">
+                    <a class="md-nav__link" href="#fluxloglevel">
+                     fluxLogLevel
                     </a>
                    </li>
                    <li class="md-nav__item">
@@ -1195,6 +1205,23 @@ could equally override them, but if they are set and you don’t define them her
 they should not be touched).
            </p>
           </section>
+          <section id="fluxloglevel">
+           <h4 id="fluxloglevel">
+            fluxLogLevel
+            <a class="headerlink" href="#fluxloglevel" title="Permalink to this heading">
+             ¶
+            </a>
+           </h4>
+           <p>
+            The log level to provide to flux, given that test mode is not on.
+           </p>
+           <div class="highlight-yaml notranslate">
+            <div class="highlight">
+             <pre><span></span>	fluxLogLevel: 7 
+</pre>
+            </div>
+           </div>
+          </section>
           <section id="precommand">
            <h4 id="precommand">
             preCommand
@@ -1346,7 +1373,7 @@ It defaults to 5000.
        © Copyright 2022, Flux Developers.
       </div>
       Last updated on
-              Dec 23, 2022.
+              Dec 28, 2022.
       <br/>
       Created using
       <a href="http://www.sphinx-doc.org/">

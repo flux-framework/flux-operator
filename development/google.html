@@ -1,0 +1,1144 @@
+<!DOCTYPE html>
+<html lang="en">
+ <head>
+  <meta charset="utf-8"/>
+  <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+  <meta content="Docutils 0.19: https://docutils.sourceforge.io/" name="generator"/>
+  <meta content="width=device-width,initial-scale=1" name="viewport"/>
+  <meta content="ie=edge" http-equiv="x-ua-compatible"/>
+  <meta content="Copy to clipboard" name="lang:clipboard.copy"/>
+  <meta content="Copied to clipboard" name="lang:clipboard.copied"/>
+  <meta content="en" name="lang:search.language"/>
+  <meta content="True" name="lang:search.pipeline.stopwords"/>
+  <meta content="True" name="lang:search.pipeline.trimmer"/>
+  <meta content="No matching documents" name="lang:search.result.none"/>
+  <meta content="1 matching document" name="lang:search.result.one"/>
+  <meta content="# matching documents" name="lang:search.result.other"/>
+  <meta content="[\s\-]+" name="lang:search.tokenizer"/>
+  <link crossorigin="" href="https://fonts.gstatic.com/" rel="preconnect"/>
+  <link href="https://fonts.googleapis.com/css?family=Roboto+Mono:400,500,700|Roboto:300,400,400i,700&amp;display=fallback" rel="stylesheet"/>
+  <style>
+   body,
+      input {
+        font-family: "Roboto", "Helvetica Neue", Helvetica, Arial, sans-serif
+      }
+
+      code,
+      kbd,
+      pre {
+        font-family: "Roboto Mono", "Courier New", Courier, monospace
+      }
+  </style>
+  <link href="../_static/stylesheets/application.css" rel="stylesheet"/>
+  <link href="../_static/stylesheets/application-palette.css" rel="stylesheet"/>
+  <link href="../_static/stylesheets/application-fixes.css" rel="stylesheet"/>
+  <link href="../_static/fonts/material-icons.css" rel="stylesheet"/>
+  <meta content="#262626" name="theme-color"/>
+  <script src="../_static/javascripts/modernizr.js">
+  </script>
+  <link href="../_static/images/flux-operator.jpg" rel="apple-touch-icon"/>
+  <title>
+   Google Cloud — Flux Operator
+  </title>
+  <link href="../_static/pygments.css" rel="stylesheet" type="text/css"/>
+  <link href="../_static/material.css" rel="stylesheet" type="text/css"/>
+  <link href="../_static/copybutton.css" rel="stylesheet" type="text/css"/>
+  <link href="../_static/css/rtd_sphinx_search.min.css" rel="stylesheet" type="text/css"/>
+  <link href="../_static/custom.css" rel="stylesheet" type="text/css"/>
+  <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js">
+  </script>
+  <script src="../_static/jquery.js">
+  </script>
+  <script src="../_static/underscore.js">
+  </script>
+  <script src="../_static/_sphinx_javascript_frameworks_compat.js">
+  </script>
+  <script src="../_static/doctools.js">
+  </script>
+  <script src="../_static/sphinx_highlight.js">
+  </script>
+  <script src="../_static/clipboard.min.js">
+  </script>
+  <script src="../_static/copybutton.js">
+  </script>
+  <script src="../_static/js/rtd_sphinx_search.min.js">
+  </script>
+  <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js">
+  </script>
+  <link href="../_static/favicon.ico" rel="shortcut icon"/>
+  <link href="../genindex.html" rel="index" title="Index"/>
+  <link href="../search.html" rel="search" title="Search"/>
+  <link href="../contributing.html" rel="next" title="Contributing"/>
+  <link href="aws.html" rel="prev" title="Amazon Web Services EKS"/>
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
+  <!-- Social: Facebook / Open Graph -->
+  <title>
+   Flux RESTful API in Python
+  </title>
+  <link href="https://flux-framework.github.io/flux-restful-api/" rel="canonical"/>
+  <meta content="website" property="og:type"/>
+  <meta content="https://flux-framework.github.io/flux-restful-api/" property="og:url"/>
+  <meta content="Flux RESTful API" property="og:title"/>
+  <meta content="https://raw.githubusercontent.com/flux-framework/flux-restful-api/main/docs/images/logo.png" property="og:image"/>
+  <meta content="Flux RESTful API in Python" property="og:description"/>
+  <meta content="Flux RESTful API" property="og:site_name"/>
+  <meta content="en_US" property="og:locale"/>
+  <!-- Social: Twitter -->
+  <meta content="summary" name="twitter:card"/>
+  <meta content="@FluxFramework" name="twitter:site"/>
+  <meta content="Flux Framework" name="twitter:title"/>
+  <meta content="Flux RESTFul API in Python" name="twitter:description"/>
+  <meta content="https://raw.githubusercontent.com/flux-framework/flux-restful-api/main/docs/images/logo.png" name="twitter:image"/>
+  <!-- Social: Google+ / Schema.org  -->
+  <meta content="Flux RESTful API" itemprop="name"/>
+  <meta content="Flux RESTFul API in Python" itemprop="description"/>
+  <meta content="https://raw.githubusercontent.com/flux-framework/flux-restful-api/main/docs/images/logo.png" itemprop="image"/>
+  <script type="application/ld+json">
+   {"@type":"WebSite","headline":"Flux RESTful API","url":"https://flux-framework.github.io/flux-restful-api","description":"Flux RESTful API in Python","name":"Flux RESTful API","@context":"https://schema.org"}
+  </script>
+  <style>
+   .material-symbols-outlined {
+  font-variation-settings:
+  'FILL' 0,
+  'wght' 400,
+  'GRAD' 0,
+  'opsz' 48
+}
+.sphx-glr-script-out .highlight pre {
+  background-color: #def0ff !important;
+}
+  </style>
+  <link href="../_static/images/flux-operator.jpg" rel="apple-touch-icon"/>
+ </head>
+ <body data-md-color-accent="blue" data-md-color-primary="blue" dir="ltr">
+  <svg class="md-svg">
+   <defs data-children-count="0">
+    <svg height="448" id="__github" viewbox="0 0 416 448" width="416" xmlns="http://www.w3.org/2000/svg">
+     <path d="M160 304q0 10-3.125 20.5t-10.75 19T128 352t-18.125-8.5-10.75-19T96 304t3.125-20.5 10.75-19T128 256t18.125 8.5 10.75 19T160 304zm160 0q0 10-3.125 20.5t-10.75 19T288 352t-18.125-8.5-10.75-19T256 304t3.125-20.5 10.75-19T288 256t18.125 8.5 10.75 19T320 304zm40 0q0-30-17.25-51T296 232q-10.25 0-48.75 5.25Q229.5 240 208 240t-39.25-2.75Q130.75 232 120 232q-29.5 0-46.75 21T56 304q0 22 8 38.375t20.25 25.75 30.5 15 35 7.375 37.25 1.75h42q20.5 0 37.25-1.75t35-7.375 30.5-15 20.25-25.75T360 304zm56-44q0 51.75-15.25 82.75-9.5 19.25-26.375 33.25t-35.25 21.5-42.5 11.875-42.875 5.5T212 416q-19.5 0-35.5-.75t-36.875-3.125-38.125-7.5-34.25-12.875T37 371.5t-21.5-28.75Q0 312 0 260q0-59.25 34-99-6.75-20.5-6.75-42.5 0-29 12.75-54.5 27 0 47.5 9.875t47.25 30.875Q171.5 96 212 96q37 0 70 8 26.25-20.5 46.75-30.25T376 64q12.75 25.5 12.75 54.5 0 21.75-6.75 42 34 40 34 99.5z" fill="currentColor">
+     </path>
+    </svg>
+   </defs>
+  </svg>
+  <input class="md-toggle" data-md-toggle="drawer" id="__drawer" type="checkbox"/>
+  <input class="md-toggle" data-md-toggle="search" id="__search" type="checkbox"/>
+  <label class="md-overlay" data-md-component="overlay" for="__drawer">
+  </label>
+  <a class="md-skip" href="#development/google" tabindex="1">
+   Skip to content
+  </a>
+  <header class="md-header" data-md-component="header">
+   <nav class="md-header-nav md-grid">
+    <div class="md-flex navheader">
+     <div class="md-flex__cell md-flex__cell--shrink">
+      <a class="md-header-nav__button md-logo" href="../index.html" title="Flux Operator">
+       <span class="material-symbols-outlined">
+        cycle
+       </span>
+      </a>
+     </div>
+     <div class="md-flex__cell md-flex__cell--shrink">
+      <label class="md-icon md-icon--menu md-header-nav__button" for="__drawer">
+      </label>
+     </div>
+     <div class="md-flex__cell md-flex__cell--stretch">
+      <div class="md-flex__ellipsis md-header-nav__title" data-md-component="title">
+       <span class="md-header-nav__topic" style="width: 1046px;margin-left: -20px;">
+        Flux Operator
+       </span>
+       <span class="md-header-nav__topic">
+        Google Cloud
+       </span>
+      </div>
+     </div>
+     <div class="md-flex__cell md-flex__cell--shrink">
+      <label class="md-icon md-icon--search md-header-nav__button" for="__search">
+      </label>
+      <div class="md-search" data-md-component="search" role="dialog">
+       <label class="md-search__overlay" for="__search">
+       </label>
+       <div class="md-search__inner" role="search">
+        <form action="../search.html" class="md-search__form" method="get" name="search">
+         <input autocapitalize="off" autocomplete="off" class="md-search__input" data-md-component="query" data-md-state="active" name="q" placeholder="Search" spellcheck="false" type="text"/>
+         <label class="md-icon md-search__icon" for="__search">
+         </label>
+         <button class="md-icon md-search__icon" data-md-component="reset" tabindex="-1" type="reset">
+          
+         </button>
+        </form>
+        <div class="md-search__output">
+         <div class="md-search__scrollwrap" data-md-scrollfix="">
+          <div class="md-search-result" data-md-component="result">
+           <div class="md-search-result__meta">
+            Type to start searching
+           </div>
+           <ol class="md-search-result__list">
+           </ol>
+          </div>
+         </div>
+        </div>
+       </div>
+      </div>
+     </div>
+     <div class="md-flex__cell md-flex__cell--shrink">
+      <div class="md-header-nav__source">
+       <a class="md-source" data-md-source="github" href="https://github.com/flux-framework/flux-operator/" title="Go to repository">
+        <div class="md-source__icon">
+         <!--<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 24 24" width="28" height="28">
+        <use xlink:href="#__github" width="24" height="24"></use>
+      </svg>-->
+         <!-- updated to match riverml.xml site-->
+         <svg viewbox="0 0 448 512" xmlns="http://www.w3.org/2000/svg">
+          <path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81z" fill="#ffffff">
+          </path>
+         </svg>
+        </div>
+        <div class="md-source__repository">
+         Flux Operator
+        </div>
+       </a>
+      </div>
+     </div>
+    </div>
+   </nav>
+  </header>
+  <div class="md-container">
+   <nav class="md-tabs" data-md-component="tabs">
+    <div class="md-tabs__inner md-grid">
+     <ul class="md-tabs__list">
+      <li class="md-tabs__item">
+       <a class="md-tabs__link" href="https://flux-framework.org/">
+        Flux Framework
+       </a>
+      </li>
+      <li class="md-tabs__item">
+       <a class="md-tabs__link" href="https://github.com/flux-framework">
+        Flux Framework on GitHub
+       </a>
+      </li>
+      <li class="md-tabs__item">
+       <a class="md-tabs__link" href="https://github.com/flux-framework/flux-operator">
+        Flux Operator on GitHub
+       </a>
+      </li>
+      <li class="md-tabs__item">
+       <a class="md-tabs__link" href="index.html">
+        Development
+       </a>
+      </li>
+     </ul>
+    </div>
+   </nav>
+   <main class="md-main">
+    <div class="md-main__inner md-grid" data-md-component="container">
+     <div class="md-sidebar md-sidebar--primary" data-md-component="navigation">
+      <div class="md-sidebar__scrollwrap">
+       <div class="md-sidebar__inner">
+        <nav class="md-nav md-nav--primary" data-md-level="0">
+         <label class="md-nav__title md-nav__title--site" for="__drawer">
+          <a class="md-nav__button md-logo" href="../index.html" title="Flux Operator">
+           <i class="md-icon">
+            cycle
+           </i>
+          </a>
+          <a href="../index.html" title="Flux Operator">
+           Flux Operator
+          </a>
+         </label>
+         <div class="md-nav__source">
+          <a class="md-source" data-md-source="github" href="https://github.com/flux-framework/flux-operator/" title="Go to repository">
+           <div class="md-source__icon">
+            <!--<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 24 24" width="28" height="28">
+        <use xlink:href="#__github" width="24" height="24"></use>
+      </svg>-->
+            <!-- updated to match riverml.xml site-->
+            <svg viewbox="0 0 448 512" xmlns="http://www.w3.org/2000/svg">
+             <path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81z" fill="#ffffff">
+             </path>
+            </svg>
+           </div>
+           <div class="md-source__repository">
+            Flux Operator
+           </div>
+          </a>
+         </div>
+         <ul class="md-nav__list">
+          <li class="md-nav__item">
+           <span class="md-nav__link caption">
+            <span class="caption-text">
+             Getting Started
+            </span>
+           </span>
+          </li>
+          <li class="md-nav__item">
+           <a class="md-nav__link" href="../getting_started/index.html">
+            User Guide
+           </a>
+          </li>
+          <li class="md-nav__item">
+           <a class="md-nav__link" href="index.html">
+            Development
+           </a>
+           <ul class="md-nav__list">
+            <li class="md-nav__item">
+             <a class="md-nav__link" href="developer-guide.html">
+              Developer Guide
+             </a>
+            </li>
+            <li class="md-nav__item">
+             <a class="md-nav__link" href="designs.html">
+              Designs
+             </a>
+            </li>
+            <li class="md-nav__item">
+             <a class="md-nav__link" href="debugging.html">
+              Debugging
+             </a>
+            </li>
+            <li class="md-nav__item">
+             <a class="md-nav__link" href="creation.html">
+              Operator Creation
+             </a>
+            </li>
+            <li class="md-nav__item">
+             <a class="md-nav__link" href="index.html#deployment">
+              Deployment
+             </a>
+            </li>
+           </ul>
+          </li>
+          <li class="md-nav__item">
+           <span class="md-nav__link caption">
+            <span class="caption-text">
+             About
+            </span>
+           </span>
+          </li>
+          <li class="md-nav__item">
+           <a class="md-nav__link" href="../contributing.html">
+            Contributing
+           </a>
+          </li>
+          <li class="md-nav__item">
+           <a class="md-nav__link" href="../about/license.html">
+            License
+           </a>
+          </li>
+         </ul>
+        </nav>
+       </div>
+      </div>
+     </div>
+     <div class="md-sidebar md-sidebar--secondary" data-md-component="toc">
+      <div class="md-sidebar__scrollwrap">
+       <div class="md-sidebar__inner">
+        <nav class="md-nav md-nav--secondary">
+         <label class="md-nav__title" for="__toc">
+          Contents
+         </label>
+         <ul class="md-nav__list" data-md-scrollfix="">
+          <li class="md-nav__item">
+           <a class="md-nav__link" href="#development-google--page-root">
+            Google Cloud
+           </a>
+           <nav class="md-nav">
+            <ul class="md-nav__list">
+             <li class="md-nav__item">
+              <a class="md-nav__link" href="#lammps-on-google-kubernetes-engine">
+               Lammps on Google Kubernetes Engine
+              </a>
+              <nav class="md-nav">
+               <ul class="md-nav__list">
+                <li class="md-nav__item">
+                 <a class="md-nav__link" href="#custom-resource-definition">
+                  Custom Resource Definition
+                 </a>
+                </li>
+                <li class="md-nav__item">
+                 <a class="md-nav__link" href="#install">
+                  Install
+                 </a>
+                </li>
+                <li class="md-nav__item">
+                 <a class="md-nav__link" href="#create-cluster">
+                  Create Cluster
+                 </a>
+                </li>
+                <li class="md-nav__item">
+                 <a class="md-nav__link" href="#get-credentials">
+                  Get Credentials
+                 </a>
+                </li>
+                <li class="md-nav__item">
+                 <a class="md-nav__link" href="#deploy-operator">
+                  Deploy Operator
+                 </a>
+                </li>
+                <li class="md-nav__item">
+                 <a class="md-nav__link" href="#create-flux-operator-namespace">
+                  Create Flux Operator namespace
+                 </a>
+                </li>
+                <li class="md-nav__item">
+                 <a class="md-nav__link" href="#create-the-lammps-job">
+                  Create the Lammps Job
+                 </a>
+                </li>
+                <li class="md-nav__item">
+                 <a class="md-nav__link" href="#clean-up">
+                  Clean up
+                 </a>
+                </li>
+               </ul>
+              </nav>
+             </li>
+             <li class="md-nav__item">
+              <a class="md-nav__link" href="#customization-and-debugging">
+               Customization and Debugging
+              </a>
+              <nav class="md-nav">
+               <ul class="md-nav__list">
+                <li class="md-nav__item">
+                 <a class="md-nav__link" href="#firewall">
+                  Firewall
+                 </a>
+                </li>
+                <li class="md-nav__item">
+                 <a class="md-nav__link" href="#use-a-different-flux-operator-container">
+                  Use a Different Flux Operator Container
+                 </a>
+                </li>
+               </ul>
+              </nav>
+             </li>
+            </ul>
+           </nav>
+          </li>
+          <li class="md-nav__item">
+           <a class="md-nav__extra_link" href="../_sources/development/google.md.txt">
+            Show Source
+           </a>
+          </li>
+          <li class="md-nav__item" id="searchbox">
+          </li>
+         </ul>
+        </nav>
+       </div>
+      </div>
+     </div>
+     <div class="md-content">
+      <article class="md-content__inner md-typeset" role="main">
+       <section id="google-cloud">
+        <h1 id="development-google--page-root">
+         Google Cloud
+         <a class="headerlink" href="#development-google--page-root" title="Permalink to this heading">
+          ¶
+         </a>
+        </h1>
+        <p>
+         On Google Cloud, “GKE” refers to Google Kubernetes Engine. Kubernetes was originally a Google project,
+so it works really well on Google Cloud, and it’s super fun to use the Flux Operator there! This
+guide will walk you through the basics. We will be deploying a simple
+         <a class="reference external" href="https://www.lammps.org/">
+          lammps
+         </a>
+         workflow as
+shown below.
+        </p>
+        <section id="lammps-on-google-kubernetes-engine">
+         <h2 id="lammps-on-google-kubernetes-engine">
+          Lammps on Google Kubernetes Engine
+          <a class="headerlink" href="#lammps-on-google-kubernetes-engine" title="Permalink to this heading">
+           ¶
+          </a>
+         </h2>
+         <p>
+          In this short experiment we will run the Flux Operator on Google Cloud, at
+at a fairly small size intended for development.
+         </p>
+         <section id="custom-resource-definition">
+          <h3 id="custom-resource-definition">
+           Custom Resource Definition
+           <a class="headerlink" href="#custom-resource-definition" title="Permalink to this heading">
+            ¶
+           </a>
+          </h3>
+          <p>
+           The Custom Resource Definition (CRD) defines our Mini Cluster, and is what we hand to the flux
+operator to create it.  Here is the CRD for a small lammps run.
+          </p>
+          <div class="highlight-yaml notranslate">
+           <div class="highlight">
+            <pre><span></span><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">flux-framework.org/v1alpha1</span><span class="w"></span>
+<span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">MiniCluster</span><span class="w"></span>
+<span class="nt">metadata</span><span class="p">:</span><span class="w"></span>
+<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">flux-sample</span><span class="w"></span>
+<span class="w">  </span><span class="nt">namespace</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">flux-operator</span><span class="w"></span>
+<span class="nt">spec</span><span class="p">:</span><span class="w"></span>
+<span class="w">  </span><span class="c1"># localDeploy needs to be false</span><span class="w"></span>
+<span class="w">  </span><span class="nt">localDeploy</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span><span class="w"></span>
+
+<span class="w">  </span><span class="c1"># Number of pods to create for MiniCluster</span><span class="w"></span>
+<span class="w">  </span><span class="nt">size</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">4</span><span class="w"></span>
+
+<span class="w">  </span><span class="c1"># Disable verbose output</span><span class="w"></span>
+<span class="w">  </span><span class="nt">test</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span><span class="w"></span>
+
+<span class="w">  </span><span class="c1"># This is a list because a pod can support multiple containers</span><span class="w"></span>
+<span class="w">  </span><span class="nt">containers</span><span class="p">:</span><span class="w"></span>
+<span class="w">    </span><span class="c1"># The container URI to pull (currently needs to be public)</span><span class="w"></span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">image</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ghcr.io/rse-ops/lammps:flux-sched-focal-v0.24.0</span><span class="w"></span>
+
+<span class="w">      </span><span class="c1"># You can set the working directory if your container WORKDIR is not correct.</span><span class="w"></span>
+<span class="w">      </span><span class="nt">workingDir</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">/home/flux/examples/reaxff/HNS</span><span class="w"></span>
+<span class="w">      </span><span class="nt">command</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">lmp -v x 2 -v y 2 -v z 2 -in in.reaxc.hns -nocite</span><span class="w"></span>
+
+<span class="w">      </span><span class="c1"># This only matters if test is false</span><span class="w"></span>
+<span class="w">      </span><span class="nt">fluxLogLevel</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">7</span><span class="w"></span>
+</pre>
+           </div>
+          </div>
+          <p>
+           You can save the above file as
+           <code class="docutils literal notranslate">
+            <span class="pre">
+             minicluster-lammps.yaml
+            </span>
+           </code>
+           to get started.
+          </p>
+         </section>
+         <section id="install">
+          <h3 id="install">
+           Install
+           <a class="headerlink" href="#install" title="Permalink to this heading">
+            ¶
+           </a>
+          </h3>
+          <p>
+           You should first
+           <a class="reference external" href="https://cloud.google.com/sdk/docs/quickstarts">
+            install gcloud
+           </a>
+           and ensure you are logged in and have kubectl installed:
+          </p>
+          <div class="highlight-bash notranslate">
+           <div class="highlight">
+            <pre><span></span>$ gcloud auth login
+</pre>
+           </div>
+          </div>
+          <p>
+           Depending on your install, you can either install kubectl with gcloud:
+          </p>
+          <div class="highlight-bash notranslate">
+           <div class="highlight">
+            <pre><span></span>$ gcloud components install kubectl
+</pre>
+           </div>
+          </div>
+          <p>
+           or just
+           <a class="reference external" href="https://kubernetes.io/docs/tasks/tools/">
+            on your own
+           </a>
+           . I already
+had it installed so I was good to go.
+          </p>
+         </section>
+         <section id="create-cluster">
+          <h3 id="create-cluster">
+           Create Cluster
+           <a class="headerlink" href="#create-cluster" title="Permalink to this heading">
+            ¶
+           </a>
+          </h3>
+          <p>
+           Now let’s use gcloud to create a cluster, and we are purposefully going to choose
+a very small node type to test. Note that I choose us-central1-a because it tends
+to be cheaper (and closer to me). First, here is our project for easy access:
+          </p>
+          <div class="highlight-bash notranslate">
+           <div class="highlight">
+            <pre><span></span><span class="nv">GOOGLE_PROJECT</span><span class="o">=</span>myproject
+</pre>
+           </div>
+          </div>
+          <p>
+           Replace the above with your project name, of course!
+          </p>
+          <div class="highlight-bash notranslate">
+           <div class="highlight">
+            <pre><span></span>$ gcloud container clusters create lammps-cluster --project <span class="nv">$GOOGLE_PROJECT</span> <span class="se">\</span>
+    --zone us-central1-a --cluster-version <span class="m">1</span>.23 --machine-type n1-standard-1 <span class="se">\</span>
+    --num-nodes<span class="o">=</span><span class="m">4</span> --enable-network-policy --tags<span class="o">=</span>lammps-cluster --enable-intra-node-visibility
+</pre>
+           </div>
+          </div>
+          <p>
+           Note that not all of the flags above might be necessary - I did a lot of testing to get
+this working and didn’t go back and try removing things after the fact!
+If you want to use cloud dns instead (after
+           <a class="reference external" href="https://console.cloud.google.com/apis/library/dns.googleapis.com">
+            enabling it
+           </a>
+           )
+          </p>
+          <div class="highlight-bash notranslate">
+           <div class="highlight">
+            <pre><span></span>$ gcloud beta container clusters create lammps-cluster --project <span class="nv">$GOOGLE_PROJECT</span> <span class="se">\</span>
+    --zone us-central1-a --cluster-version <span class="m">1</span>.23 --machine-type n1-standard-1 <span class="se">\</span>
+    --num-nodes<span class="o">=</span><span class="m">4</span> --enable-network-policy --tags<span class="o">=</span>lammps-cluster --enable-intra-node-visibility <span class="se">\</span>
+    --cluster-dns<span class="o">=</span>clouddns <span class="se">\</span>
+    --cluster-dns-scope<span class="o">=</span>cluster
+</pre>
+           </div>
+          </div>
+          <p>
+           In your Google cloud interface, you should be able to see the cluster! Note
+this might take a few minutes.
+          </p>
+          <p>
+           <img alt="img/cluster.png" src="../_images/cluster.png"/>
+          </p>
+          <p>
+           I also chose a tiny size (nodes and instances) anticipating having it up longer to figure things out.
+          </p>
+         </section>
+         <section id="get-credentials">
+          <h3 id="get-credentials">
+           Get Credentials
+           <a class="headerlink" href="#get-credentials" title="Permalink to this heading">
+            ¶
+           </a>
+          </h3>
+          <p>
+           Next we need to ensure that we can issue commands to our cluster with kubectl.
+To get credentials, in the view shown above, select the cluster and click “connect.”
+Doing so will show you the correct statement to run to configure command-line access,
+which probably looks something like this:
+          </p>
+          <div class="highlight-bash notranslate">
+           <div class="highlight">
+            <pre><span></span>$ gcloud container clusters get-credentials lammps-cluster --zone us-central1-a --project <span class="nv">$GOOGLE_PROJECT</span>
+</pre>
+           </div>
+          </div>
+          <div class="highlight-console notranslate">
+           <div class="highlight">
+            <pre><span></span><span class="go">Fetching cluster endpoint and auth data.</span>
+<span class="go">kubeconfig entry generated for lammps-cluster.</span>
+</pre>
+           </div>
+          </div>
+          <p>
+           Finally, use
+           <a class="reference external" href="https://cloud.google.com/iam">
+            cloud IAM
+           </a>
+           to ensure you can create roles, etc.
+          </p>
+          <div class="highlight-bash notranslate">
+           <div class="highlight">
+            <pre><span></span>$ kubectl create clusterrolebinding cluster-admin-binding --clusterrole cluster-admin --user <span class="k">$(</span>gcloud config get-value core/account<span class="k">)</span>
+</pre>
+           </div>
+          </div>
+          <div class="highlight-console notranslate">
+           <div class="highlight">
+            <pre><span></span><span class="go">clusterrolebinding.rbac.authorization.k8s.io/cluster-admin-binding created</span>
+</pre>
+           </div>
+          </div>
+          <p>
+           At this point you should be able to get your nodes:
+          </p>
+          <div class="highlight-bash notranslate">
+           <div class="highlight">
+            <pre><span></span>$ kubectl get nodes
+</pre>
+           </div>
+          </div>
+          <div class="highlight-console notranslate">
+           <div class="highlight">
+            <pre><span></span><span class="go">NAME                                            STATUS   ROLES    AGE     VERSION</span>
+<span class="go">gke-lammps-cluster-default-pool-f103d9d8-379m   Ready    &lt;none&gt;   3m41s   v1.23.14-gke.1800</span>
+<span class="go">gke-lammps-cluster-default-pool-f103d9d8-3wf9   Ready    &lt;none&gt;   3m42s   v1.23.14-gke.1800</span>
+<span class="go">gke-lammps-cluster-default-pool-f103d9d8-c174   Ready    &lt;none&gt;   3m42s   v1.23.14-gke.1800</span>
+<span class="go">gke-lammps-cluster-default-pool-f103d9d8-zz1q   Ready    &lt;none&gt;   3m42s   v1.23.14-gke.1800</span>
+</pre>
+           </div>
+          </div>
+         </section>
+         <section id="deploy-operator">
+          <h3 id="deploy-operator">
+           Deploy Operator
+           <a class="headerlink" href="#deploy-operator" title="Permalink to this heading">
+            ¶
+           </a>
+          </h3>
+          <p>
+           To deploy the Flux Operator, here is how to do it directly from the codebase.
+Note that this is how I develop / test (with a development branch checked out!)
+          </p>
+          <div class="highlight-bash notranslate">
+           <div class="highlight">
+            <pre><span></span>$ git clone https://github.com/flux-framework/flux-operator
+$ <span class="nb">cd</span> flux-operator
+</pre>
+           </div>
+          </div>
+          <p>
+           A deploy will use the latest docker image
+           <a class="reference external" href="https://github.com/orgs/flux-framework/packages?repo_name=flux-operator">
+            from the repository
+           </a>
+           .
+          </p>
+          <div class="highlight-bash notranslate">
+           <div class="highlight">
+            <pre><span></span>$ make deploy
+</pre>
+           </div>
+          </div>
+          <div class="highlight-console notranslate">
+           <div class="highlight">
+            <pre><span></span><span class="go">...</span>
+<span class="go">clusterrole.rbac.authorization.k8s.io/operator-manager-role created</span>
+<span class="go">clusterrole.rbac.authorization.k8s.io/operator-metrics-reader created</span>
+<span class="go">clusterrole.rbac.authorization.k8s.io/operator-proxy-role created</span>
+<span class="go">rolebinding.rbac.authorization.k8s.io/operator-leader-election-rolebinding created</span>
+<span class="go">clusterrolebinding.rbac.authorization.k8s.io/operator-manager-rolebinding created</span>
+<span class="go">clusterrolebinding.rbac.authorization.k8s.io/operator-proxy-rolebinding created</span>
+<span class="go">configmap/operator-manager-config created</span>
+<span class="go">service/operator-controller-manager-metrics-service created</span>
+<span class="go">deployment.apps/operator-controller-manager created</span>
+</pre>
+           </div>
+          </div>
+          <p>
+           Ensure the
+           <code class="docutils literal notranslate">
+            <span class="pre">
+             operator-system
+            </span>
+           </code>
+           namespace was created:
+          </p>
+          <div class="highlight-bash notranslate">
+           <div class="highlight">
+            <pre><span></span>$ kubectl get namespace
+NAME              STATUS   AGE
+default           Active   6m39s
+kube-node-lease   Active   6m42s
+kube-public       Active   6m42s
+kube-system       Active   6m42s
+operator-system   Active   39s
+</pre>
+           </div>
+          </div>
+          <div class="highlight-bash notranslate">
+           <div class="highlight">
+            <pre><span></span>$ kubectl describe namespace operator-system
+Name:         operator-system
+Labels:       control-plane<span class="o">=</span>controller-manager
+              kubernetes.io/metadata.name<span class="o">=</span>operator-system
+Annotations:  &lt;none&gt;
+Status:       Active
+
+Resource Quotas
+  Name:                              gke-resource-quotas
+  Resource                           Used  Hard
+  --------                           ---   ---
+  count/ingresses.extensions         <span class="m">0</span>     <span class="m">100</span>
+  count/ingresses.networking.k8s.io  <span class="m">0</span>     <span class="m">100</span>
+  count/jobs.batch                   <span class="m">0</span>     5k
+  pods                               <span class="m">1</span>     <span class="m">1500</span>
+  services                           <span class="m">1</span>     <span class="m">500</span>
+
+No LimitRange resource.
+</pre>
+           </div>
+          </div>
+          <p>
+           And you can find the name of the operator pod as follows:
+          </p>
+          <div class="highlight-bash notranslate">
+           <div class="highlight">
+            <pre><span></span>$ kubectl get pod --all-namespaces
+</pre>
+           </div>
+          </div>
+          <div class="highlight-console notranslate">
+           <div class="highlight">
+            <pre><span></span><span class="go">      &lt;none&gt;</span>
+<span class="go">operator-system   operator-controller-manager-56b5bcf9fd-m8wg4               2/2     Running   0          73s</span>
+</pre>
+           </div>
+          </div>
+         </section>
+         <section id="create-flux-operator-namespace">
+          <h3 id="create-flux-operator-namespace">
+           Create Flux Operator namespace
+           <a class="headerlink" href="#create-flux-operator-namespace" title="Permalink to this heading">
+            ¶
+           </a>
+          </h3>
+          <p>
+           Make your namespace for the flux-operator custom resource definition (CRD), which is the yaml file above that generates the MiniCluster:
+          </p>
+          <div class="highlight-bash notranslate">
+           <div class="highlight">
+            <pre><span></span>$ kubectl create namespace flux-operator
+</pre>
+           </div>
+          </div>
+         </section>
+         <section id="create-the-lammps-job">
+          <h3 id="create-the-lammps-job">
+           Create the Lammps Job
+           <a class="headerlink" href="#create-the-lammps-job" title="Permalink to this heading">
+            ¶
+           </a>
+          </h3>
+          <p>
+           Now let’s apply the custom resource definition to create the lammps mini cluster!
+The file we generated above should be in your present working directory.
+Importantly, we have set
+           <code class="docutils literal notranslate">
+            <span class="pre">
+             localDeploy
+            </span>
+           </code>
+           to false because we need to create volume
+claims and not local host mounts for shared resources.
+          </p>
+          <div class="highlight-bash notranslate">
+           <div class="highlight">
+            <pre><span></span>$ kubectl apply -f minicluster-lammps.yaml 
+</pre>
+           </div>
+          </div>
+          <p>
+           There are different ways to see logs for pods. First, see pods running and state.
+You probably want to wait until the state changes from
+           <code class="docutils literal notranslate">
+            <span class="pre">
+             ContainersCreating
+            </span>
+           </code>
+           to
+           <code class="docutils literal notranslate">
+            <span class="pre">
+             Running
+            </span>
+           </code>
+           because this is where we are pulling the chonker containers.
+          </p>
+          <div class="highlight-bash notranslate">
+           <div class="highlight">
+            <pre><span></span>$ kubectl get -n flux-operator pods
+</pre>
+           </div>
+          </div>
+          <p>
+           If you need to debug (or see general output for a pod about creation) you can do:
+          </p>
+          <div class="highlight-bash notranslate">
+           <div class="highlight">
+            <pre><span></span>$ kubectl -n flux-operator describe pods flux-sample-0-742bm
+</pre>
+           </div>
+          </div>
+          <p>
+           And finally, the most meaty piece of metadata is the log for the pod,
+where the Flux Operator will be setting things up and starting flux.
+          </p>
+          <div class="highlight-default notranslate">
+           <div class="highlight">
+            <pre><span></span># Add the -f to keep it hanging
+$ kubectl -n flux-operator logs flux-sample-0-742bm -f
+</pre>
+           </div>
+          </div>
+          <p>
+           To shell into a pod to look around (noting where important flux stuff is)
+          </p>
+          <div class="highlight-bash notranslate">
+           <div class="highlight">
+            <pre><span></span>$ kubectl <span class="nb">exec</span> --stdin --tty -n flux-operator flux-sample-0-742bm -- /bin/bash
+</pre>
+           </div>
+          </div>
+          <div class="highlight-console notranslate">
+           <div class="highlight">
+            <pre><span></span><span class="go">ls /mnt/curve</span>
+<span class="go">ls /etc/flux</span>
+<span class="go">ls /etc/flux/config</span>
+</pre>
+           </div>
+          </div>
+          <p>
+           To get logs for the operator itself:
+          </p>
+          <div class="highlight-bash notranslate">
+           <div class="highlight">
+            <pre><span></span>$ kubectl logs -n operator-system operator-controller-manager-56b5bcf9fd-j2g75
+</pre>
+           </div>
+          </div>
+          <p>
+           If you need to run in verbose (non-test) mode, set test to false in the
+           <span class="xref myst">
+            minicluster-lammps.yaml
+           </span>
+           .
+And make sure to clean up first:
+          </p>
+          <div class="highlight-bash notranslate">
+           <div class="highlight">
+            <pre><span></span>$ kubectl delete -f minicluster-lammps.yaml
+</pre>
+           </div>
+          </div>
+          <p>
+           and wait until the pods are gone:
+          </p>
+          <div class="highlight-bash notranslate">
+           <div class="highlight">
+            <pre><span></span>$ kubectl get -n flux-operator pods
+No resources found <span class="k">in</span> flux-operator namespace.
+</pre>
+           </div>
+          </div>
+          <p>
+           Observations about comparing this to MiniKube (local):
+          </p>
+          <ul class="simple">
+           <li>
+            <p>
+             The containers that are large actually pull!
+            </p>
+           </li>
+           <li>
+            <p>
+             The startup times of the different pods vary quite a bit.
+            </p>
+           </li>
+           <li>
+            <p>
+             A few config maps aren’t found or timed out mount for up to 3-4 minutes, then it runs.
+            </p>
+           </li>
+           <li>
+            <p>
+             Sometimes it also runs quickly!
+            </p>
+           </li>
+          </ul>
+          <p>
+           If you want to run the same workflow again, use
+           <code class="docutils literal notranslate">
+            <span class="pre">
+             kubectl
+            </span>
+            <span class="pre">
+             delete
+            </span>
+            <span class="pre">
+             -f
+            </span>
+           </code>
+           with the file
+and apply it again. I wound up running with test set to true, and then saving the logs:
+          </p>
+          <div class="highlight-bash notranslate">
+           <div class="highlight">
+            <pre><span></span>$ kubectl -n flux-operator logs flux-sample-0-qc5z2 &gt; laamps.out
+</pre>
+           </div>
+          </div>
+          <p>
+           For fun, here is the first successful run of Lammps using the Flux Operator on GCP
+ever!
+          </p>
+          <p>
+           <img alt="img/lammps.png" src="../_images/lammps.png"/>
+          </p>
+         </section>
+         <section id="clean-up">
+          <h3 id="clean-up">
+           Clean up
+           <a class="headerlink" href="#clean-up" title="Permalink to this heading">
+            ¶
+           </a>
+          </h3>
+          <p>
+           Make sure you clean everything up! You can delete the lammps deploy first:
+          </p>
+          <div class="highlight-bash notranslate">
+           <div class="highlight">
+            <pre><span></span>$ kubectl delete -f minicluster-lammps.yaml
+</pre>
+           </div>
+          </div>
+          <p>
+           And then undeploy the operator (this is again at the root of the operator repository clone)
+          </p>
+          <div class="highlight-bash notranslate">
+           <div class="highlight">
+            <pre><span></span>$ make undeploy
+</pre>
+           </div>
+          </div>
+          <p>
+           And then to delete the cluster with gcloud:
+          </p>
+          <div class="highlight-bash notranslate">
+           <div class="highlight">
+            <pre><span></span>$ gcloud container clusters delete --zone us-central1-a lammps-cluster
+</pre>
+           </div>
+          </div>
+          <p>
+           I like to check in the cloud console to ensure that it was actually deleted.
+          </p>
+         </section>
+        </section>
+        <section id="customization-and-debugging">
+         <h2 id="customization-and-debugging">
+          Customization and Debugging
+          <a class="headerlink" href="#customization-and-debugging" title="Permalink to this heading">
+           ¶
+          </a>
+         </h2>
+         <section id="firewall">
+          <h3 id="firewall">
+           Firewall
+           <a class="headerlink" href="#firewall" title="Permalink to this heading">
+            ¶
+           </a>
+          </h3>
+          <p>
+           When I first created my cluster, the nodes could not see one another. I added a few
+flags for networking, and looked at firewalls as follows:
+          </p>
+          <div class="highlight-bash notranslate">
+           <div class="highlight">
+            <pre><span></span>$ gcloud container clusters describe lammps-cluster --zone us-central1-a <span class="p">|</span> grep clusterIpv4Cidr
+</pre>
+           </div>
+          </div>
+          <p>
+           I didn’t ultimately change anything, but I found this useful.
+          </p>
+         </section>
+         <section id="use-a-different-flux-operator-container">
+          <h3 id="use-a-different-flux-operator-container">
+           Use a Different Flux Operator Container
+           <a class="headerlink" href="#use-a-different-flux-operator-container" title="Permalink to this heading">
+            ¶
+           </a>
+          </h3>
+          <p>
+           If you own the operator, you can build and push first to develop:
+          </p>
+          <div class="highlight-bash notranslate">
+           <div class="highlight">
+            <pre><span></span>$ make docker-build
+$ make docker-push
+</pre>
+           </div>
+          </div>
+          <p>
+           Otherwise you’ll need to set the IMG variable to your own container (that you’ve built and pushed). E.g, in the Makefile:
+          </p>
+          <div class="highlight-bash notranslate">
+           <div class="highlight">
+            <pre><span></span><span class="c1"># Image URL to use all building/pushing image targets</span>
+IMG ?<span class="o">=</span> ghcr.io/flux-framework/flux-operator
+</pre>
+           </div>
+          </div>
+          <p>
+           and your command:
+          </p>
+          <div class="highlight-bash notranslate">
+           <div class="highlight">
+            <pre><span></span>make <span class="nv">IMG</span><span class="o">=</span>mycontainer/flux-operator
+</pre>
+           </div>
+          </div>
+          <p>
+           That’s it! Have fun!
+          </p>
+         </section>
+        </section>
+       </section>
+      </article>
+     </div>
+    </div>
+   </main>
+  </div>
+  <footer class="md-footer">
+   <div class="md-footer-nav">
+    <nav class="md-footer-nav__inner md-grid">
+     <a class="md-flex md-footer-nav__link md-footer-nav__link--prev" href="aws.html" rel="prev" title="Amazon Web Services EKS">
+      <div class="md-flex__cell md-flex__cell--shrink">
+       <i class="md-icon md-icon--arrow-back md-footer-nav__button">
+       </i>
+      </div>
+      <div class="md-flex__cell md-flex__cell--stretch md-footer-nav__title">
+       <span class="md-flex__ellipsis">
+        <span class="md-footer-nav__direction">
+         Previous
+        </span>
+        Amazon Web Services EKS
+       </span>
+      </div>
+     </a>
+     <a class="md-flex md-footer-nav__link md-footer-nav__link--next" href="../contributing.html" rel="next" title="Contributing">
+      <div class="md-flex__cell md-flex__cell--stretch md-footer-nav__title">
+       <span class="md-flex__ellipsis">
+        <span class="md-footer-nav__direction">
+         Next
+        </span>
+        Contributing
+       </span>
+      </div>
+      <div class="md-flex__cell md-flex__cell--shrink">
+       <i class="md-icon md-icon--arrow-forward md-footer-nav__button">
+       </i>
+      </div>
+     </a>
+    </nav>
+   </div>
+   <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+     <div class="md-footer-copyright">
+      <div class="md-footer-copyright__highlight">
+       © Copyright 2022, Flux Developers.
+      </div>
+      Last updated on
+              Dec 28, 2022.
+      <br/>
+      Created using
+      <a href="http://www.sphinx-doc.org/">
+       Sphinx
+      </a>
+      5.3.0.
+             and
+      <a href="https://github.com/bashtage/sphinx-material/">
+       Material for
+              Sphinx
+      </a>
+     </div>
+    </div>
+   </div>
+  </footer>
+  <script src="../_static/javascripts/application.js">
+  </script>
+  <script>
+   app.initialize({version: "1.0.4", url: {base: ".."}})
+  </script>
+ </body>
+</html>
