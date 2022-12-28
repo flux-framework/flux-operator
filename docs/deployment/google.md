@@ -291,7 +291,7 @@ If you want to run the same workflow again, use `kubectl delete -f` with the fil
 and apply it again. I wound up running with test set to true, and then saving the logs:
 
 ```bash
-$ kubectl -n flux-operator logs flux-sample-0-qc5z2 > laamps.out
+$ kubectl -n flux-operator logs flux-sample-0-qc5z2 > lammps.out
 ```
 
 For fun, here is the first successful run of Lammps using the Flux Operator on GCP
