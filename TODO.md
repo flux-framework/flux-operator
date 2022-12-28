@@ -1,6 +1,5 @@
 # TODO
 
- - [ ] make deployments own section of docs
  - [ ] try webhooks again
 
 ### Design 3
@@ -15,6 +14,7 @@
 
 #### Completed
 
+ - [x] make deployments own section of docs
  - [x] interface still needs debugging for 2+ processes
  - [x] diagnostics should be on the level of the container
  - [x] the spec needs to support a local volume
