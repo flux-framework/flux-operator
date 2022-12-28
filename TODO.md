@@ -1,6 +1,5 @@
 # TODO
 
- - [ ] interface still needs debugging for 2+ processes
  - [ ] make deployments own section of docs
  - [ ] try webhooks again
 
@@ -16,6 +15,7 @@
 
 #### Completed
 
+ - [x] interface still needs debugging for 2+ processes
  - [x] diagnostics should be on the level of the container
  - [x] the spec needs to support a local volume
  - [x] Eventually; nice pretty, branded user docs that describe creating CRD, and cases of sleep infinity vs command

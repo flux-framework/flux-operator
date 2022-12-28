@@ -1,4 +1,4 @@
-ke markupsafe==2.0.1
+markupsafe==2.0.1
 sphinx_material
 numpy>=1.16
 pandas
