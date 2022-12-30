@@ -374,6 +374,11 @@
                    </a>
                   </li>
                   <li class="md-nav__item">
+                   <a class="md-nav__link" href="#build-operator-yaml">
+                    Build Operator Yaml
+                   </a>
+                  </li>
+                  <li class="md-nav__item">
                    <a class="md-nav__link" href="#container-requirements">
                     Container Requirements
                    </a>
@@ -560,6 +565,11 @@
              <li class="md-nav__item">
               <a class="md-nav__link" href="#build-images">
                Build Images
+              </a>
+             </li>
+             <li class="md-nav__item">
+              <a class="md-nav__link" href="#build-operator-yaml">
+               Build Operator Yaml
               </a>
              </li>
              <li class="md-nav__item">
@@ -1128,6 +1138,42 @@ $ make catalog-push
           </div>
          </div>
         </section>
+        <section id="build-operator-yaml">
+         <h2 id="build-operator-yaml">
+          Build Operator Yaml
+          <a class="headerlink" href="#build-operator-yaml" title="Permalink to this heading">
+           ¶
+          </a>
+         </h2>
+         <p>
+          To generate the CRD to install to a cluster, we’ve added a
+          <code class="docutils literal notranslate">
+           <span class="pre">
+            make
+           </span>
+           <span class="pre">
+            build-config
+           </span>
+          </code>
+          command:
+         </p>
+         <div class="highlight-bash notranslate">
+          <div class="highlight">
+           <pre><span></span>$ make build-config
+</pre>
+          </div>
+         </div>
+         <p>
+          That will generate a yaml to install the operator (with default container image) to a
+cluster in
+          <code class="docutils literal notranslate">
+           <span class="pre">
+            examples/dist
+           </span>
+          </code>
+          .
+         </p>
+        </section>
         <section id="container-requirements">
          <h2 id="container-requirements">
           Container Requirements
@@ -1606,7 +1652,7 @@ server to preview:
        © Copyright 2022, Flux Developers.
       </div>
       Last updated on
-              Dec 28, 2022.
+              Dec 30, 2022.
       <br/>
       Created using
       <a href="http://www.sphinx-doc.org/">
