@@ -269,6 +269,17 @@ $ make catalog-build
 $ make catalog-push
 ```
 
+## Build Operator Yaml
+
+To generate the CRD to install to a cluster, we've added a `make build-config` command:
+
+```bash
+$ make build-config
+```
+
+That will generate a yaml to install the operator (with default container image) to a
+cluster in `examples/dist`.
+
 ## Container Requirements
 
 If you are looking to build a container to use with the Flux Operator, we have a set of
