@@ -178,12 +178,10 @@ in the examples test folder:
 ```console
 $ tree examples/tests/
 examples/tests/
-├── hello-world
-│   ├── minicluster-hello-world.yaml   (- name=hello-world
-│   └── test.sh
-└── lammps
-    ├── minicluster-lammps.yaml        (- name=lammps
-    └── test.sh
+├── hello-world           (- name=hello-world
+│   └── minicluster.yaml
+└── lammps                (- name=lammps
+    └── minicluster.yaml
 ```
 
 Thus, to run the full example for hello-world you can do:
@@ -309,12 +307,17 @@ generation that is [available in Go](https://pkg.go.dev/github.com/zeromq/goczmq
 requires system libraries, and thus would be annoying to add as a dependency.
 
 These criteria are taken from the [flux-sched](https://github.com/flux-framework/flux-sched/blob/master/src/test/docker/focal/Dockerfile)
-base image, and we strongly suggest you use this for your base container to make development
-easier! If you intend to use the [Flux RESTful API](https://github.com/flux-framework/flux-restful-api)
+base image [availble on Docker hub](https://hub.docker.com/r/fluxrm/flux-sched) as `fluxrm/flux-sched:focal`, 
+and we strongly suggest you use this for your base container to make development easier! 
+If you intend to use the [Flux RESTful API](https://github.com/flux-framework/flux-restful-api)
 to interact with your cluster, ensure that flux (python bindings) are on the path, along with
 either python or python3 (depending on which you used to install Flux).
 If/when needed we can lift some of these constraints, but for now they are 
-reasonable.
+reasonable. If you use this image, you should have python3 and pip3 available to you,
+and the active user is `fluxuser`. This means if you want to add content, either you'll
+need to change the user to `root` in a build (and back to `fluxuser` at the end), use sudo, or
+install to `/home/fluxuser`.
+
 
 ## Testing
 
@@ -328,7 +331,7 @@ Testing is underway! From a high level, we want three kinds of testing:
 
 For the integration testing outside of Go, we currently have basic tests written that allow the following:
 
-1. Write a custom resource definition (CRD) for a named mini cluster under `examples/tests/${name}` as `minicluster-${name}.yaml`.
+1. Write a custom resource definition (CRD) for a named mini cluster under `examples/tests/${name}` as `minicluster.yaml`.
 2. The CRD should set `test:true` and include a command to run, and a container to do it.
 3. Add your test name, container, and estimated running time to `.github/workflows/main.yaml`
 4. If your tests require a working directory, it must be set in the CRD for the headless test.
