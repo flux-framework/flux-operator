@@ -86,7 +86,7 @@ and then continue to read how to check that everything worked.
 
 #### Quick Deploy
 
-This works best for production Kubernetes clusters, and comes down to donwloading the latest yaml config, and applying it.
+This works best for production Kubernetes clusters, and comes down to downloading the latest yaml config, and applying it.
 
 ```bash
 wget https://raw.githubusercontent.com/flux-framework/flux-operator/main/examples/dist/flux-operator.yaml

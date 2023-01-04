@@ -307,7 +307,7 @@ generation that is [available in Go](https://pkg.go.dev/github.com/zeromq/goczmq
 requires system libraries, and thus would be annoying to add as a dependency.
 
 These criteria are taken from the [flux-sched](https://github.com/flux-framework/flux-sched/blob/master/src/test/docker/focal/Dockerfile)
-base image [availble on Docker hub](https://hub.docker.com/r/fluxrm/flux-sched) as `fluxrm/flux-sched:focal`, 
+base image [available on Docker hub](https://hub.docker.com/r/fluxrm/flux-sched) as `fluxrm/flux-sched:focal`, 
 and we strongly suggest you use this for your base container to make development easier! 
 If you intend to use the [Flux RESTful API](https://github.com/flux-framework/flux-restful-api)
 to interact with your cluster, ensure that flux (python bindings) are on the path, along with
