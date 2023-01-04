@@ -22,23 +22,23 @@ import (
 )
 
 // newMiniCluster is used to create the MiniCluster Job
-func (r *MiniClusterReconciler) newMiniClusterJob(cluster *api.MiniCluster) *batchv1.Job {
-
-	// We need to create the number of containers (and names) that the user requests
-	// Before the stateful set was doing this for us, but for a batch job it's manaul
-	containers := r.getMiniClusterContainers(cluster)
+func (r *MiniClusterReconciler) newMiniClusterJob(cluster *api.MiniCluster) (*batchv1.Job, error) {
 
 	// Number of retries before marking as failed
 	backoffLimit := int32(100)
 	completionMode := batchv1.IndexedCompletion
 	setAsFQDN := false
 
+	// Do we have additional pod labels?
+	podLabels := cluster.Spec.PodLabels
+	podLabels["namespace"] = cluster.Namespace
+
+	// This is an indexed-job
 	job := &batchv1.Job{
 		ObjectMeta: metav1.ObjectMeta{
-
-			// In the example from Dan this was "indexed-job"
 			Name:      cluster.Name,
 			Namespace: cluster.Namespace,
+			Labels:    cluster.Spec.JobLabels,
 		},
 
 		Spec: batchv1.JobSpec{
@@ -54,24 +54,28 @@ func (r *MiniClusterReconciler) newMiniClusterJob(cluster *api.MiniCluster) *bat
 				ObjectMeta: metav1.ObjectMeta{
 					Name:      cluster.Name,
 					Namespace: cluster.Namespace,
-					Labels:    map[string]string{"namespace": cluster.Namespace},
+					Labels:    podLabels,
 				},
 				Spec: corev1.PodSpec{
 					// matches the service
 					Subdomain:         restfulServiceName,
 					SetHostnameAsFQDN: &setAsFQDN,
 					Volumes:           getVolumes(cluster),
-					Containers:        containers,
 					RestartPolicy:     corev1.RestartPolicyOnFailure,
 					ImagePullSecrets:  getImagePullSecrets(cluster),
 				}},
 		},
 	}
+
+	// We need to create the number of containers (and names) that the user requests
+	// Before the stateful set was doing this for us, but for a batch job it's manaul
+	containers, err := r.getMiniClusterContainers(cluster)
+	job.Spec.Template.Spec.Containers = containers
 	ctrl.SetControllerReference(cluster, job, r.Scheme)
-	return job
+	return job, err
 }
 
-func (r *MiniClusterReconciler) getMiniClusterContainers(cluster *api.MiniCluster) []corev1.Container {
+func (r *MiniClusterReconciler) getMiniClusterContainers(cluster *api.MiniCluster) ([]corev1.Container, error) {
 
 	// Create the containers for the pod
 	containers := []corev1.Container{}
@@ -120,6 +124,11 @@ func (r *MiniClusterReconciler) getMiniClusterContainers(cluster *api.MiniCluste
 			mounts = append(mounts, newVolume)
 		}
 
+		// Prepare container resources
+		resources, err := getContainerResources(cluster, &container)
+		if err != nil {
+			return containers, err
+		}
 		newContainer := corev1.Container{
 
 			// Call this the driver container, number 0
@@ -131,6 +140,7 @@ func (r *MiniClusterReconciler) getMiniClusterContainers(cluster *api.MiniCluste
 			Stdin:           true,
 			TTY:             true,
 			Lifecycle:       &lifecycle,
+			Resources:       resources,
 		}
 
 		// Only add command if we actually have one
@@ -174,7 +184,7 @@ func (r *MiniClusterReconciler) getMiniClusterContainers(cluster *api.MiniCluste
 		r.log.Info("🌀 Container", "Ports", container.Ports)
 		containers = append(containers, newContainer)
 	}
-	return containers
+	return containers, nil
 }
 
 // getImagePullSecrets returns a list of secret object references for each container.

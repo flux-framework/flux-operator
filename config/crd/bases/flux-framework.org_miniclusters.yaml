@@ -104,6 +104,14 @@ spec:
                         pull if not present. Setting this to true will indicate to
                         pull always
                       type: boolean
+                    resources:
+                      description: Resources include limits and requests
+                      properties:
+                        limits:
+                          x-kubernetes-preserve-unknown-fields: true
+                        requests:
+                          x-kubernetes-preserve-unknown-fields: true
+                      type: object
                     runFlux:
                       description: Main container to run flux (only should be one)
                       type: boolean
@@ -150,6 +158,11 @@ spec:
                     format: int32
                     type: integer
                 type: object
+              jobLabels:
+                additionalProperties:
+                  type: string
+                description: Labels for the job
+                type: object
               localDeploy:
                 default: false
                 description: localDeploy should be true for development, or deploying
@@ -157,6 +170,11 @@ spec:
                   you are not using make deploy. It uses a persistent volume instead
                   of a claim
                 type: boolean
+              podLabels:
+                additionalProperties:
+                  type: string
+                description: Labels for each pod
+                type: object
               size:
                 default: 1
                 description: Size (number of jobs to run)

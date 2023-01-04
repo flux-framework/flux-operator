@@ -94,7 +94,11 @@ func (r *MiniClusterReconciler) getMiniCluster(ctx context.Context, cluster *api
 	err := r.Client.Get(ctx, types.NamespacedName{Name: cluster.Name, Namespace: cluster.Namespace}, existing)
 	if err != nil {
 		if errors.IsNotFound(err) {
-			job := r.newMiniClusterJob(cluster)
+			job, err := r.newMiniClusterJob(cluster)
+			if err != nil {
+				r.log.Error(err, " Failed to create new MiniCluster Batch Job", "Namespace:", job.Namespace, "Name:", job.Name)
+				return job, ctrl.Result{}, err
+			}
 			r.log.Info("✨ Creating a new MiniCluster Batch Job ✨", "Namespace:", job.Namespace, "Name:", job.Name)
 			err = r.Client.Create(ctx, job)
 			if err != nil {
