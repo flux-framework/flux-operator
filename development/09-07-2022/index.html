@@ -456,10 +456,10 @@ in the job. Typically the first bit of time you’ll be waiting:
          </p>
          <div class="highlight-bash notranslate">
           <div class="highlight">
-           <pre><span></span>$ make log
-kubectl logs -n flux-operator job.batch/flux-sample
-Found <span class="m">6</span> pods, using pod/flux-sample-0-njnnd
-Host updating script not available yet, waiting...
+           <pre><span></span>$<span class="w"> </span>make<span class="w"> </span>log
+kubectl<span class="w"> </span>logs<span class="w"> </span>-n<span class="w"> </span>flux-operator<span class="w"> </span>job.batch/flux-sample
+Found<span class="w"> </span><span class="m">6</span><span class="w"> </span>pods,<span class="w"> </span>using<span class="w"> </span>pod/flux-sample-0-njnnd
+Host<span class="w"> </span>updating<span class="w"> </span>script<span class="w"> </span>not<span class="w"> </span>available<span class="w"> </span>yet,<span class="w"> </span>waiting...
 </pre>
           </div>
          </div>
@@ -489,7 +489,7 @@ which typically is
          <div class="highlight-console notranslate">
           <div class="highlight">
            <pre><span></span><span class="go">Host updating script not available yet, waiting...</span>
-<span class="gp"># </span>Kubernetes-managed hosts file.
+<span class="gp"># </span>Kubernetes-managed<span class="w"> </span>hosts<span class="w"> </span>file.
 <span class="go">127.0.0.1       localhost</span>
 <span class="go">::1     localhost ip6-localhost ip6-loopback</span>
 <span class="go">fe00::0 ip6-localnet</span>
@@ -539,9 +539,9 @@ whole thing to come up and run. If
          </p>
          <div class="highlight-bash notranslate">
           <div class="highlight">
-           <pre><span></span>$ kubectl logs -n flux-operator flux-sample-0-zfbvm
+           <pre><span></span>$<span class="w"> </span>kubectl<span class="w"> </span>logs<span class="w"> </span>-n<span class="w"> </span>flux-operator<span class="w"> </span>flux-sample-0-zfbvm
 <span class="c1"># or</span>
-$ ./script/log.sh flux-sample-0-zfbvm
+$<span class="w"> </span>./script/log.sh<span class="w"> </span>flux-sample-0-zfbvm
 </pre>
           </div>
          </div>
@@ -551,7 +551,7 @@ will be your CRD name plus index of the container:
          </p>
          <div class="highlight-bash notranslate">
           <div class="highlight">
-           <pre><span></span>./script/log.sh flux-sample-0-gnmlj flux-sample-0
+           <pre><span></span>./script/log.sh<span class="w"> </span>flux-sample-0-gnmlj<span class="w"> </span>flux-sample-0
 </pre>
           </div>
          </div>
@@ -560,7 +560,7 @@ will be your CRD name plus index of the container:
          </p>
          <div class="highlight-console notranslate">
           <div class="highlight">
-           <pre><span></span><span class="gp">$ </span>make list
+           <pre><span></span><span class="gp">$ </span>make<span class="w"> </span>list
 <span class="go">kubectl get -n flux-operator pods</span>
 <span class="go">NAME                  READY   STATUS      RESTARTS   AGE</span>
 <span class="go">flux-sample-0-wvs8w   0/1     Completed   0          11m</span>
@@ -595,7 +595,7 @@ or a persistent Mini Cluster.
        © Copyright 2022, Flux Developers.
       </div>
       Last updated on
-              Dec 30, 2022.
+              Jan 04, 2023.
       <br/>
       Created using
       <a href="http://www.sphinx-doc.org/">

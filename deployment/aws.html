@@ -459,9 +459,9 @@ with credentials or similar in your environment). E.g.,:
          </p>
          <div class="highlight-bash notranslate">
           <div class="highlight">
-           <pre><span></span><span class="nb">export</span> <span class="nv">AWS_ACCESS_KEY_ID</span><span class="o">=</span>xxxxxxxxxxxxxxxxxxx
-<span class="nb">export</span> <span class="nv">AWS_SECRET_ACCESS_KEY</span><span class="o">=</span>xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
-<span class="nb">export</span> <span class="nv">AWS_SESSION_TOKEN</span><span class="o">=</span>xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+           <pre><span></span><span class="nb">export</span><span class="w"> </span><span class="nv">AWS_ACCESS_KEY_ID</span><span class="o">=</span>xxxxxxxxxxxxxxxxxxx
+<span class="nb">export</span><span class="w"> </span><span class="nv">AWS_SECRET_ACCESS_KEY</span><span class="o">=</span>xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+<span class="nb">export</span><span class="w"> </span><span class="nv">AWS_SESSION_TOKEN</span><span class="o">=</span>xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 </pre>
           </div>
          </div>
@@ -519,24 +519,24 @@ generated.
          </p>
          <div class="highlight-yaml notranslate">
           <div class="highlight">
-           <pre><span></span><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">eksctl.io/v1alpha5</span><span class="w"></span>
-<span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ClusterConfig</span><span class="w"></span>
+           <pre><span></span><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">eksctl.io/v1alpha5</span>
+<span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ClusterConfig</span>
 
-<span class="nt">metadata</span><span class="p">:</span><span class="w"></span>
-<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">flux-operator</span><span class="w"></span>
-<span class="w">  </span><span class="nt">region</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">us-east-1</span><span class="w"></span>
-<span class="w">  </span><span class="nt">version</span><span class="p">:</span><span class="w"> </span><span class="s">"1.22"</span><span class="w"></span>
+<span class="nt">metadata</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">flux-operator</span>
+<span class="w">  </span><span class="nt">region</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">us-east-1</span>
+<span class="w">  </span><span class="nt">version</span><span class="p">:</span><span class="w"> </span><span class="s">"1.22"</span>
 
-<span class="nt">availabilityZones</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">"us-east-1a"</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">"us-east-1b"</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">"us-east-1d"</span><span class="p p-Indicator">]</span><span class="w"></span>
-<span class="nt">managedNodeGroups</span><span class="p">:</span><span class="w"></span>
-<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">workers</span><span class="w"></span>
-<span class="w">    </span><span class="nt">instanceType</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">c5.xlarge</span><span class="w"></span>
-<span class="w">    </span><span class="nt">minSize</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">4</span><span class="w"></span>
-<span class="w">    </span><span class="nt">maxSize</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">4</span><span class="w"></span>
-<span class="w">    </span><span class="nt">labels</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">{</span><span class="w"> </span><span class="s">"fluxoperator"</span><span class="p p-Indicator">:</span><span class="w"> </span><span class="s">"true"</span><span class="w"> </span><span class="p p-Indicator">}</span><span class="w"></span>
-<span class="w">    </span><span class="nt">ssh</span><span class="p">:</span><span class="w"></span>
-<span class="w">      </span><span class="nt">allow</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span><span class="w"></span>
-<span class="w">      </span><span class="nt">publicKeyPath</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">~/.ssh/id_eks.pub</span><span class="w"></span>
+<span class="nt">availabilityZones</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">"us-east-1a"</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">"us-east-1b"</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">"us-east-1d"</span><span class="p p-Indicator">]</span>
+<span class="nt">managedNodeGroups</span><span class="p">:</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">workers</span>
+<span class="w">    </span><span class="nt">instanceType</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">c5.xlarge</span>
+<span class="w">    </span><span class="nt">minSize</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">4</span>
+<span class="w">    </span><span class="nt">maxSize</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">4</span>
+<span class="w">    </span><span class="nt">labels</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">{</span><span class="w"> </span><span class="s">"fluxoperator"</span><span class="p p-Indicator">:</span><span class="w"> </span><span class="s">"true"</span><span class="w"> </span><span class="p p-Indicator">}</span>
+<span class="w">    </span><span class="nt">ssh</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">allow</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+<span class="w">      </span><span class="nt">publicKeyPath</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">~/.ssh/id_eks.pub</span>
 </pre>
           </div>
          </div>
@@ -551,7 +551,7 @@ generated.
          </p>
          <div class="highlight-bash notranslate">
           <div class="highlight">
-           <pre><span></span>$ eksctl create cluster -f eks-cluster-config.yaml
+           <pre><span></span>$<span class="w"> </span>eksctl<span class="w"> </span>create<span class="w"> </span>cluster<span class="w"> </span>-f<span class="w"> </span>eks-cluster-config.yaml
 </pre>
           </div>
          </div>
@@ -561,7 +561,7 @@ And then come back and view your nodes.
          </p>
          <div class="highlight-console notranslate">
           <div class="highlight">
-           <pre><span></span><span class="gp">$ </span>kubectl get nodes
+           <pre><span></span><span class="gp">$ </span>kubectl<span class="w"> </span>get<span class="w"> </span>nodes
 <span class="go">NAME                             STATUS   ROLES    AGE     VERSION</span>
 <span class="go">ip-192-168-28-166.ec2.internal   Ready    &lt;none&gt;   4m58s   v1.22.12-eks-be74326</span>
 <span class="go">ip-192-168-4-145.ec2.internal    Ready    &lt;none&gt;   4m27s   v1.22.12-eks-be74326</span>
@@ -583,8 +583,8 @@ And then come back and view your nodes.
          </p>
          <div class="highlight-bash notranslate">
           <div class="highlight">
-           <pre><span></span>$ git clone https://github.com/flux-framework/flux-operator
-$ <span class="nb">cd</span> flux-operator
+           <pre><span></span>$<span class="w"> </span>git<span class="w"> </span>clone<span class="w"> </span>https://github.com/flux-framework/flux-operator
+$<span class="w"> </span><span class="nb">cd</span><span class="w"> </span>flux-operator
 </pre>
           </div>
          </div>
@@ -597,7 +597,7 @@ $ <span class="nb">cd</span> flux-operator
          </p>
          <div class="highlight-bash notranslate">
           <div class="highlight">
-           <pre><span></span>$ make deploy
+           <pre><span></span>$<span class="w"> </span>make<span class="w"> </span>deploy
 </pre>
           </div>
          </div>
@@ -631,28 +631,28 @@ $ <span class="nb">cd</span> flux-operator
          </p>
          <div class="highlight-bash notranslate">
           <div class="highlight">
-           <pre><span></span>$ kubectl get namespace
-NAME              STATUS   AGE
-default           Active   12m
-kube-node-lease   Active   12m
-kube-public       Active   12m
-kube-system       Active   12m
-operator-system   Active   11s
+           <pre><span></span>$<span class="w"> </span>kubectl<span class="w"> </span>get<span class="w"> </span>namespace
+NAME<span class="w">              </span>STATUS<span class="w">   </span>AGE
+default<span class="w">           </span>Active<span class="w">   </span>12m
+kube-node-lease<span class="w">   </span>Active<span class="w">   </span>12m
+kube-public<span class="w">       </span>Active<span class="w">   </span>12m
+kube-system<span class="w">       </span>Active<span class="w">   </span>12m
+operator-system<span class="w">   </span>Active<span class="w">   </span>11s
 </pre>
           </div>
          </div>
          <div class="highlight-bash notranslate">
           <div class="highlight">
-           <pre><span></span>$ kubectl describe namespace operator-system
-Name:         operator-system
-Labels:       control-plane<span class="o">=</span>controller-manager
-              kubernetes.io/metadata.name<span class="o">=</span>operator-system
-Annotations:  &lt;none&gt;
-Status:       Active
+           <pre><span></span>$<span class="w"> </span>kubectl<span class="w"> </span>describe<span class="w"> </span>namespace<span class="w"> </span>operator-system
+Name:<span class="w">         </span>operator-system
+Labels:<span class="w">       </span>control-plane<span class="o">=</span>controller-manager
+<span class="w">              </span>kubernetes.io/metadata.name<span class="o">=</span>operator-system
+Annotations:<span class="w">  </span>&lt;none&gt;
+Status:<span class="w">       </span>Active
 
-No resource quota.
+No<span class="w"> </span>resource<span class="w"> </span>quota.
 
-No LimitRange resource.
+No<span class="w"> </span>LimitRange<span class="w"> </span>resource.
 </pre>
           </div>
          </div>
@@ -661,7 +661,7 @@ No LimitRange resource.
          </p>
          <div class="highlight-bash notranslate">
           <div class="highlight">
-           <pre><span></span>$ kubectl get pod --all-namespaces
+           <pre><span></span>$<span class="w"> </span>kubectl<span class="w"> </span>get<span class="w"> </span>pod<span class="w"> </span>--all-namespaces
 </pre>
           </div>
          </div>
@@ -677,7 +677,7 @@ No LimitRange resource.
          </p>
          <div class="highlight-bash notranslate">
           <div class="highlight">
-           <pre><span></span>$ kubectl create namespace flux-operator
+           <pre><span></span>$<span class="w"> </span>kubectl<span class="w"> </span>create<span class="w"> </span>namespace<span class="w"> </span>flux-operator
 </pre>
           </div>
          </div>
@@ -686,9 +686,9 @@ No LimitRange resource.
          </p>
          <div class="highlight-bash notranslate">
           <div class="highlight">
-           <pre><span></span>$ make apply
+           <pre><span></span>$<span class="w"> </span>make<span class="w"> </span>apply
 <span class="c1"># OR</span>
-$ kubectl apply -f config/samples/flux-framework.org_v1alpha1_minicluster.yaml 
+$<span class="w"> </span>kubectl<span class="w"> </span>apply<span class="w"> </span>-f<span class="w"> </span>config/samples/flux-framework.org_v1alpha1_minicluster.yaml<span class="w"> </span>
 </pre>
           </div>
          </div>
@@ -697,7 +697,7 @@ $ kubectl apply -f config/samples/flux-framework.org_v1alpha1_minicluster.yaml
          </p>
          <div class="highlight-bash notranslate">
           <div class="highlight">
-           <pre><span></span>$ kubectl logs -n operator-system operator-controller-manager-6c699b7b94-bbp5q
+           <pre><span></span>$<span class="w"> </span>kubectl<span class="w"> </span>logs<span class="w"> </span>-n<span class="w"> </span>operator-system<span class="w"> </span>operator-controller-manager-6c699b7b94-bbp5q
 </pre>
           </div>
          </div>
@@ -713,7 +713,7 @@ will reconcile until they are. You can add
          </p>
          <div class="highlight-bash notranslate">
           <div class="highlight">
-           <pre><span></span>$ kubectl logs -n operator-system operator-controller-manager-6c699b7b94-bbp5q -f
+           <pre><span></span>$<span class="w"> </span>kubectl<span class="w"> </span>logs<span class="w"> </span>-n<span class="w"> </span>operator-system<span class="w"> </span>operator-controller-manager-6c699b7b94-bbp5q<span class="w"> </span>-f
 </pre>
           </div>
          </div>
@@ -723,13 +723,13 @@ the indexed job (which choosing one pod randomly to show):
          </p>
          <div class="highlight-bash notranslate">
           <div class="highlight">
-           <pre><span></span>$ make list
-kubectl get -n flux-operator pods
-NAME                  READY   STATUS    RESTARTS   AGE
-flux-sample-0-zfmzc   <span class="m">1</span>/1     Running   <span class="m">0</span>          2m11s
-flux-sample-1-p2hh5   <span class="m">1</span>/1     Running   <span class="m">0</span>          2m11s
-flux-sample-2-zs4h6   <span class="m">1</span>/1     Running   <span class="m">0</span>          2m11s
-flux-sample-3-prtn9   <span class="m">1</span>/1     Running   <span class="m">0</span>          2m11s
+           <pre><span></span>$<span class="w"> </span>make<span class="w"> </span>list
+kubectl<span class="w"> </span>get<span class="w"> </span>-n<span class="w"> </span>flux-operator<span class="w"> </span>pods
+NAME<span class="w">                  </span>READY<span class="w">   </span>STATUS<span class="w">    </span>RESTARTS<span class="w">   </span>AGE
+flux-sample-0-zfmzc<span class="w">   </span><span class="m">1</span>/1<span class="w">     </span>Running<span class="w">   </span><span class="m">0</span><span class="w">          </span>2m11s
+flux-sample-1-p2hh5<span class="w">   </span><span class="m">1</span>/1<span class="w">     </span>Running<span class="w">   </span><span class="m">0</span><span class="w">          </span>2m11s
+flux-sample-2-zs4h6<span class="w">   </span><span class="m">1</span>/1<span class="w">     </span>Running<span class="w">   </span><span class="m">0</span><span class="w">          </span>2m11s
+flux-sample-3-prtn9<span class="w">   </span><span class="m">1</span>/1<span class="w">     </span>Running<span class="w">   </span><span class="m">0</span><span class="w">          </span>2m11s
 </pre>
           </div>
          </div>
@@ -757,7 +757,7 @@ A Python client is
          </p>
          <div class="highlight-bash notranslate">
           <div class="highlight">
-           <pre><span></span>$ make undeploy
+           <pre><span></span>$<span class="w"> </span>make<span class="w"> </span>undeploy
 </pre>
           </div>
          </div>
@@ -766,7 +766,7 @@ A Python client is
          </p>
          <div class="highlight-bash notranslate">
           <div class="highlight">
-           <pre><span></span>$ eksctl delete cluster -f eks-cluster-config.yaml
+           <pre><span></span>$<span class="w"> </span>eksctl<span class="w"> </span>delete<span class="w"> </span>cluster<span class="w"> </span>-f<span class="w"> </span>eks-cluster-config.yaml
 </pre>
           </div>
          </div>
@@ -781,7 +781,7 @@ A Python client is
          </p>
          <div class="highlight-bash notranslate">
           <div class="highlight">
-           <pre><span></span>$ eksctl delete cluster -f eks-cluster-config.yaml --wait
+           <pre><span></span>$<span class="w"> </span>eksctl<span class="w"> </span>delete<span class="w"> </span>cluster<span class="w"> </span>-f<span class="w"> </span>eks-cluster-config.yaml<span class="w"> </span>--wait
 </pre>
           </div>
          </div>
@@ -835,7 +835,7 @@ A Python client is
        © Copyright 2022, Flux Developers.
       </div>
       Last updated on
-              Dec 30, 2022.
+              Jan 04, 2023.
       <br/>
       Created using
       <a href="http://www.sphinx-doc.org/">

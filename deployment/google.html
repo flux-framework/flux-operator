@@ -558,32 +558,32 @@ operator to create it.  Here is the CRD for a small lammps run.
           </p>
           <div class="highlight-yaml notranslate">
            <div class="highlight">
-            <pre><span></span><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">flux-framework.org/v1alpha1</span><span class="w"></span>
-<span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">MiniCluster</span><span class="w"></span>
-<span class="nt">metadata</span><span class="p">:</span><span class="w"></span>
-<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">flux-sample</span><span class="w"></span>
-<span class="w">  </span><span class="nt">namespace</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">flux-operator</span><span class="w"></span>
-<span class="nt">spec</span><span class="p">:</span><span class="w"></span>
-<span class="w">  </span><span class="c1"># localDeploy needs to be false</span><span class="w"></span>
-<span class="w">  </span><span class="nt">localDeploy</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span><span class="w"></span>
+            <pre><span></span><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">flux-framework.org/v1alpha1</span>
+<span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">MiniCluster</span>
+<span class="nt">metadata</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">flux-sample</span>
+<span class="w">  </span><span class="nt">namespace</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">flux-operator</span>
+<span class="nt">spec</span><span class="p">:</span>
+<span class="w">  </span><span class="c1"># localDeploy needs to be false</span>
+<span class="w">  </span><span class="nt">localDeploy</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
 
-<span class="w">  </span><span class="c1"># Number of pods to create for MiniCluster</span><span class="w"></span>
-<span class="w">  </span><span class="nt">size</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">4</span><span class="w"></span>
+<span class="w">  </span><span class="c1"># Number of pods to create for MiniCluster</span>
+<span class="w">  </span><span class="nt">size</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">4</span>
 
-<span class="w">  </span><span class="c1"># Disable verbose output</span><span class="w"></span>
-<span class="w">  </span><span class="nt">test</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span><span class="w"></span>
+<span class="w">  </span><span class="c1"># Disable verbose output</span>
+<span class="w">  </span><span class="nt">test</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
 
-<span class="w">  </span><span class="c1"># This is a list because a pod can support multiple containers</span><span class="w"></span>
-<span class="w">  </span><span class="nt">containers</span><span class="p">:</span><span class="w"></span>
-<span class="w">    </span><span class="c1"># The container URI to pull (currently needs to be public)</span><span class="w"></span>
-<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">image</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ghcr.io/rse-ops/lammps:flux-sched-focal-v0.24.0</span><span class="w"></span>
+<span class="w">  </span><span class="c1"># This is a list because a pod can support multiple containers</span>
+<span class="w">  </span><span class="nt">containers</span><span class="p">:</span>
+<span class="w">    </span><span class="c1"># The container URI to pull (currently needs to be public)</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">image</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ghcr.io/rse-ops/lammps:flux-sched-focal-v0.24.0</span>
 
-<span class="w">      </span><span class="c1"># You can set the working directory if your container WORKDIR is not correct.</span><span class="w"></span>
-<span class="w">      </span><span class="nt">workingDir</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">/home/flux/examples/reaxff/HNS</span><span class="w"></span>
-<span class="w">      </span><span class="nt">command</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">lmp -v x 2 -v y 2 -v z 2 -in in.reaxc.hns -nocite</span><span class="w"></span>
+<span class="w">      </span><span class="c1"># You can set the working directory if your container WORKDIR is not correct.</span>
+<span class="w">      </span><span class="nt">workingDir</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">/home/flux/examples/reaxff/HNS</span>
+<span class="w">      </span><span class="nt">command</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">lmp -v x 2 -v y 2 -v z 2 -in in.reaxc.hns -nocite</span>
 
-<span class="w">      </span><span class="c1"># This only matters if test is false</span><span class="w"></span>
-<span class="w">      </span><span class="nt">fluxLogLevel</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">7</span><span class="w"></span>
+<span class="w">      </span><span class="c1"># This only matters if test is false</span>
+<span class="w">      </span><span class="nt">fluxLogLevel</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">7</span>
 </pre>
            </div>
           </div>
@@ -613,7 +613,7 @@ operator to create it.  Here is the CRD for a small lammps run.
           </p>
           <div class="highlight-bash notranslate">
            <div class="highlight">
-            <pre><span></span>$ gcloud auth login
+            <pre><span></span>$<span class="w"> </span>gcloud<span class="w"> </span>auth<span class="w"> </span>login
 </pre>
            </div>
           </div>
@@ -622,7 +622,7 @@ operator to create it.  Here is the CRD for a small lammps run.
           </p>
           <div class="highlight-bash notranslate">
            <div class="highlight">
-            <pre><span></span>$ gcloud components install kubectl
+            <pre><span></span>$<span class="w"> </span>gcloud<span class="w"> </span>components<span class="w"> </span>install<span class="w"> </span>kubectl
 </pre>
            </div>
           </div>
@@ -658,9 +658,9 @@ to be cheaper (and closer to me). First, here is our project for easy access:
           </p>
           <div class="highlight-bash notranslate">
            <div class="highlight">
-            <pre><span></span>$ gcloud container clusters create lammps-cluster --project <span class="nv">$GOOGLE_PROJECT</span> <span class="se">\</span>
-    --zone us-central1-a --cluster-version <span class="m">1</span>.23 --machine-type n1-standard-1 <span class="se">\</span>
-    --num-nodes<span class="o">=</span><span class="m">4</span> --enable-network-policy --tags<span class="o">=</span>lammps-cluster --enable-intra-node-visibility
+            <pre><span></span>$<span class="w"> </span>gcloud<span class="w"> </span>container<span class="w"> </span>clusters<span class="w"> </span>create<span class="w"> </span>lammps-cluster<span class="w"> </span>--project<span class="w"> </span><span class="nv">$GOOGLE_PROJECT</span><span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--zone<span class="w"> </span>us-central1-a<span class="w"> </span>--cluster-version<span class="w"> </span><span class="m">1</span>.23<span class="w"> </span>--machine-type<span class="w"> </span>n1-standard-1<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--num-nodes<span class="o">=</span><span class="m">4</span><span class="w"> </span>--enable-network-policy<span class="w"> </span>--tags<span class="o">=</span>lammps-cluster<span class="w"> </span>--enable-intra-node-visibility
 </pre>
            </div>
           </div>
@@ -675,11 +675,11 @@ If you want to use cloud dns instead (after
           </p>
           <div class="highlight-bash notranslate">
            <div class="highlight">
-            <pre><span></span>$ gcloud beta container clusters create lammps-cluster --project <span class="nv">$GOOGLE_PROJECT</span> <span class="se">\</span>
-    --zone us-central1-a --cluster-version <span class="m">1</span>.23 --machine-type n1-standard-1 <span class="se">\</span>
-    --num-nodes<span class="o">=</span><span class="m">4</span> --enable-network-policy --tags<span class="o">=</span>lammps-cluster --enable-intra-node-visibility <span class="se">\</span>
-    --cluster-dns<span class="o">=</span>clouddns <span class="se">\</span>
-    --cluster-dns-scope<span class="o">=</span>cluster
+            <pre><span></span>$<span class="w"> </span>gcloud<span class="w"> </span>beta<span class="w"> </span>container<span class="w"> </span>clusters<span class="w"> </span>create<span class="w"> </span>lammps-cluster<span class="w"> </span>--project<span class="w"> </span><span class="nv">$GOOGLE_PROJECT</span><span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--zone<span class="w"> </span>us-central1-a<span class="w"> </span>--cluster-version<span class="w"> </span><span class="m">1</span>.23<span class="w"> </span>--machine-type<span class="w"> </span>n1-standard-1<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--num-nodes<span class="o">=</span><span class="m">4</span><span class="w"> </span>--enable-network-policy<span class="w"> </span>--tags<span class="o">=</span>lammps-cluster<span class="w"> </span>--enable-intra-node-visibility<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--cluster-dns<span class="o">=</span>clouddns<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--cluster-dns-scope<span class="o">=</span>cluster
 </pre>
            </div>
           </div>
@@ -709,7 +709,7 @@ which probably looks something like this:
           </p>
           <div class="highlight-bash notranslate">
            <div class="highlight">
-            <pre><span></span>$ gcloud container clusters get-credentials lammps-cluster --zone us-central1-a --project <span class="nv">$GOOGLE_PROJECT</span>
+            <pre><span></span>$<span class="w"> </span>gcloud<span class="w"> </span>container<span class="w"> </span>clusters<span class="w"> </span>get-credentials<span class="w"> </span>lammps-cluster<span class="w"> </span>--zone<span class="w"> </span>us-central1-a<span class="w"> </span>--project<span class="w"> </span><span class="nv">$GOOGLE_PROJECT</span>
 </pre>
            </div>
           </div>
@@ -729,7 +729,7 @@ which probably looks something like this:
           </p>
           <div class="highlight-bash notranslate">
            <div class="highlight">
-            <pre><span></span>$ kubectl create clusterrolebinding cluster-admin-binding --clusterrole cluster-admin --user <span class="k">$(</span>gcloud config get-value core/account<span class="k">)</span>
+            <pre><span></span>$<span class="w"> </span>kubectl<span class="w"> </span>create<span class="w"> </span>clusterrolebinding<span class="w"> </span>cluster-admin-binding<span class="w"> </span>--clusterrole<span class="w"> </span>cluster-admin<span class="w"> </span>--user<span class="w"> </span><span class="k">$(</span>gcloud<span class="w"> </span>config<span class="w"> </span>get-value<span class="w"> </span>core/account<span class="k">)</span>
 </pre>
            </div>
           </div>
@@ -744,7 +744,7 @@ which probably looks something like this:
           </p>
           <div class="highlight-bash notranslate">
            <div class="highlight">
-            <pre><span></span>$ kubectl get nodes
+            <pre><span></span>$<span class="w"> </span>kubectl<span class="w"> </span>get<span class="w"> </span>nodes
 </pre>
            </div>
           </div>
@@ -772,8 +772,8 @@ Note that this is how I develop / test (with a development branch checked out!)
           </p>
           <div class="highlight-bash notranslate">
            <div class="highlight">
-            <pre><span></span>$ git clone https://github.com/flux-framework/flux-operator
-$ <span class="nb">cd</span> flux-operator
+            <pre><span></span>$<span class="w"> </span>git<span class="w"> </span>clone<span class="w"> </span>https://github.com/flux-framework/flux-operator
+$<span class="w"> </span><span class="nb">cd</span><span class="w"> </span>flux-operator
 </pre>
            </div>
           </div>
@@ -786,7 +786,7 @@ $ <span class="nb">cd</span> flux-operator
           </p>
           <div class="highlight-bash notranslate">
            <div class="highlight">
-            <pre><span></span>$ make deploy
+            <pre><span></span>$<span class="w"> </span>make<span class="w"> </span>deploy
 </pre>
            </div>
           </div>
@@ -816,36 +816,36 @@ $ <span class="nb">cd</span> flux-operator
           </p>
           <div class="highlight-bash notranslate">
            <div class="highlight">
-            <pre><span></span>$ kubectl get namespace
-NAME              STATUS   AGE
-default           Active   6m39s
-kube-node-lease   Active   6m42s
-kube-public       Active   6m42s
-kube-system       Active   6m42s
-operator-system   Active   39s
+            <pre><span></span>$<span class="w"> </span>kubectl<span class="w"> </span>get<span class="w"> </span>namespace
+NAME<span class="w">              </span>STATUS<span class="w">   </span>AGE
+default<span class="w">           </span>Active<span class="w">   </span>6m39s
+kube-node-lease<span class="w">   </span>Active<span class="w">   </span>6m42s
+kube-public<span class="w">       </span>Active<span class="w">   </span>6m42s
+kube-system<span class="w">       </span>Active<span class="w">   </span>6m42s
+operator-system<span class="w">   </span>Active<span class="w">   </span>39s
 </pre>
            </div>
           </div>
           <div class="highlight-bash notranslate">
            <div class="highlight">
-            <pre><span></span>$ kubectl describe namespace operator-system
-Name:         operator-system
-Labels:       control-plane<span class="o">=</span>controller-manager
-              kubernetes.io/metadata.name<span class="o">=</span>operator-system
-Annotations:  &lt;none&gt;
-Status:       Active
+            <pre><span></span>$<span class="w"> </span>kubectl<span class="w"> </span>describe<span class="w"> </span>namespace<span class="w"> </span>operator-system
+Name:<span class="w">         </span>operator-system
+Labels:<span class="w">       </span>control-plane<span class="o">=</span>controller-manager
+<span class="w">              </span>kubernetes.io/metadata.name<span class="o">=</span>operator-system
+Annotations:<span class="w">  </span>&lt;none&gt;
+Status:<span class="w">       </span>Active
 
-Resource Quotas
-  Name:                              gke-resource-quotas
-  Resource                           Used  Hard
-  --------                           ---   ---
-  count/ingresses.extensions         <span class="m">0</span>     <span class="m">100</span>
-  count/ingresses.networking.k8s.io  <span class="m">0</span>     <span class="m">100</span>
-  count/jobs.batch                   <span class="m">0</span>     5k
-  pods                               <span class="m">1</span>     <span class="m">1500</span>
-  services                           <span class="m">1</span>     <span class="m">500</span>
+Resource<span class="w"> </span>Quotas
+<span class="w">  </span>Name:<span class="w">                              </span>gke-resource-quotas
+<span class="w">  </span>Resource<span class="w">                           </span>Used<span class="w">  </span>Hard
+<span class="w">  </span>--------<span class="w">                           </span>---<span class="w">   </span>---
+<span class="w">  </span>count/ingresses.extensions<span class="w">         </span><span class="m">0</span><span class="w">     </span><span class="m">100</span>
+<span class="w">  </span>count/ingresses.networking.k8s.io<span class="w">  </span><span class="m">0</span><span class="w">     </span><span class="m">100</span>
+<span class="w">  </span>count/jobs.batch<span class="w">                   </span><span class="m">0</span><span class="w">     </span>5k
+<span class="w">  </span>pods<span class="w">                               </span><span class="m">1</span><span class="w">     </span><span class="m">1500</span>
+<span class="w">  </span>services<span class="w">                           </span><span class="m">1</span><span class="w">     </span><span class="m">500</span>
 
-No LimitRange resource.
+No<span class="w"> </span>LimitRange<span class="w"> </span>resource.
 </pre>
            </div>
           </div>
@@ -854,7 +854,7 @@ No LimitRange resource.
           </p>
           <div class="highlight-bash notranslate">
            <div class="highlight">
-            <pre><span></span>$ kubectl get pod --all-namespaces
+            <pre><span></span>$<span class="w"> </span>kubectl<span class="w"> </span>get<span class="w"> </span>pod<span class="w"> </span>--all-namespaces
 </pre>
            </div>
           </div>
@@ -878,7 +878,7 @@ No LimitRange resource.
           </p>
           <div class="highlight-bash notranslate">
            <div class="highlight">
-            <pre><span></span>$ kubectl create namespace flux-operator
+            <pre><span></span>$<span class="w"> </span>kubectl<span class="w"> </span>create<span class="w"> </span>namespace<span class="w"> </span>flux-operator
 </pre>
            </div>
           </div>
@@ -904,7 +904,7 @@ claims and not local host mounts for shared resources.
           </p>
           <div class="highlight-bash notranslate">
            <div class="highlight">
-            <pre><span></span>$ kubectl apply -f minicluster-lammps.yaml 
+            <pre><span></span>$<span class="w"> </span>kubectl<span class="w"> </span>apply<span class="w"> </span>-f<span class="w"> </span>minicluster-lammps.yaml<span class="w"> </span>
 </pre>
            </div>
           </div>
@@ -926,7 +926,7 @@ You probably want to wait until the state changes from
           </p>
           <div class="highlight-bash notranslate">
            <div class="highlight">
-            <pre><span></span>$ kubectl get -n flux-operator pods
+            <pre><span></span>$<span class="w"> </span>kubectl<span class="w"> </span>get<span class="w"> </span>-n<span class="w"> </span>flux-operator<span class="w"> </span>pods
 </pre>
            </div>
           </div>
@@ -935,7 +935,7 @@ You probably want to wait until the state changes from
           </p>
           <div class="highlight-bash notranslate">
            <div class="highlight">
-            <pre><span></span>$ kubectl -n flux-operator describe pods flux-sample-0-742bm
+            <pre><span></span>$<span class="w"> </span>kubectl<span class="w"> </span>-n<span class="w"> </span>flux-operator<span class="w"> </span>describe<span class="w"> </span>pods<span class="w"> </span>flux-sample-0-742bm
 </pre>
            </div>
           </div>
@@ -955,7 +955,7 @@ $ kubectl -n flux-operator logs flux-sample-0-742bm -f
           </p>
           <div class="highlight-bash notranslate">
            <div class="highlight">
-            <pre><span></span>$ kubectl <span class="nb">exec</span> --stdin --tty -n flux-operator flux-sample-0-742bm -- /bin/bash
+            <pre><span></span>$<span class="w"> </span>kubectl<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>--stdin<span class="w"> </span>--tty<span class="w"> </span>-n<span class="w"> </span>flux-operator<span class="w"> </span>flux-sample-0-742bm<span class="w"> </span>--<span class="w"> </span>/bin/bash
 </pre>
            </div>
           </div>
@@ -972,7 +972,7 @@ $ kubectl -n flux-operator logs flux-sample-0-742bm -f
           </p>
           <div class="highlight-bash notranslate">
            <div class="highlight">
-            <pre><span></span>$ kubectl logs -n operator-system operator-controller-manager-56b5bcf9fd-j2g75
+            <pre><span></span>$<span class="w"> </span>kubectl<span class="w"> </span>logs<span class="w"> </span>-n<span class="w"> </span>operator-system<span class="w"> </span>operator-controller-manager-56b5bcf9fd-j2g75
 </pre>
            </div>
           </div>
@@ -986,7 +986,7 @@ And make sure to clean up first:
           </p>
           <div class="highlight-bash notranslate">
            <div class="highlight">
-            <pre><span></span>$ kubectl delete -f minicluster-lammps.yaml
+            <pre><span></span>$<span class="w"> </span>kubectl<span class="w"> </span>delete<span class="w"> </span>-f<span class="w"> </span>minicluster-lammps.yaml
 </pre>
            </div>
           </div>
@@ -995,8 +995,8 @@ And make sure to clean up first:
           </p>
           <div class="highlight-bash notranslate">
            <div class="highlight">
-            <pre><span></span>$ kubectl get -n flux-operator pods
-No resources found <span class="k">in</span> flux-operator namespace.
+            <pre><span></span>$<span class="w"> </span>kubectl<span class="w"> </span>get<span class="w"> </span>-n<span class="w"> </span>flux-operator<span class="w"> </span>pods
+No<span class="w"> </span>resources<span class="w"> </span>found<span class="w"> </span><span class="k">in</span><span class="w"> </span>flux-operator<span class="w"> </span>namespace.
 </pre>
            </div>
           </div>
@@ -1043,7 +1043,7 @@ and apply it again. I wound up running with test set to true, and then saving th
           </p>
           <div class="highlight-bash notranslate">
            <div class="highlight">
-            <pre><span></span>$ kubectl -n flux-operator logs flux-sample-0-qc5z2 &gt; lammps.out
+            <pre><span></span>$<span class="w"> </span>kubectl<span class="w"> </span>-n<span class="w"> </span>flux-operator<span class="w"> </span>logs<span class="w"> </span>flux-sample-0-qc5z2<span class="w"> </span>&gt;<span class="w"> </span>lammps.out
 </pre>
            </div>
           </div>
@@ -1067,7 +1067,7 @@ ever!
           </p>
           <div class="highlight-bash notranslate">
            <div class="highlight">
-            <pre><span></span>$ kubectl delete -f minicluster-lammps.yaml
+            <pre><span></span>$<span class="w"> </span>kubectl<span class="w"> </span>delete<span class="w"> </span>-f<span class="w"> </span>minicluster-lammps.yaml
 </pre>
            </div>
           </div>
@@ -1076,7 +1076,7 @@ ever!
           </p>
           <div class="highlight-bash notranslate">
            <div class="highlight">
-            <pre><span></span>$ make undeploy
+            <pre><span></span>$<span class="w"> </span>make<span class="w"> </span>undeploy
 </pre>
            </div>
           </div>
@@ -1085,7 +1085,7 @@ ever!
           </p>
           <div class="highlight-bash notranslate">
            <div class="highlight">
-            <pre><span></span>$ gcloud container clusters delete --zone us-central1-a lammps-cluster
+            <pre><span></span>$<span class="w"> </span>gcloud<span class="w"> </span>container<span class="w"> </span>clusters<span class="w"> </span>delete<span class="w"> </span>--zone<span class="w"> </span>us-central1-a<span class="w"> </span>lammps-cluster
 </pre>
            </div>
           </div>
@@ -1114,7 +1114,7 @@ flags for networking, and looked at firewalls as follows:
           </p>
           <div class="highlight-bash notranslate">
            <div class="highlight">
-            <pre><span></span>$ gcloud container clusters describe lammps-cluster --zone us-central1-a <span class="p">|</span> grep clusterIpv4Cidr
+            <pre><span></span>$<span class="w"> </span>gcloud<span class="w"> </span>container<span class="w"> </span>clusters<span class="w"> </span>describe<span class="w"> </span>lammps-cluster<span class="w"> </span>--zone<span class="w"> </span>us-central1-a<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>clusterIpv4Cidr
 </pre>
            </div>
           </div>
@@ -1134,8 +1134,8 @@ flags for networking, and looked at firewalls as follows:
           </p>
           <div class="highlight-bash notranslate">
            <div class="highlight">
-            <pre><span></span>$ make docker-build
-$ make docker-push
+            <pre><span></span>$<span class="w"> </span>make<span class="w"> </span>docker-build
+$<span class="w"> </span>make<span class="w"> </span>docker-push
 </pre>
            </div>
           </div>
@@ -1145,7 +1145,7 @@ $ make docker-push
           <div class="highlight-bash notranslate">
            <div class="highlight">
             <pre><span></span><span class="c1"># Image URL to use all building/pushing image targets</span>
-IMG ?<span class="o">=</span> ghcr.io/flux-framework/flux-operator
+IMG<span class="w"> </span>?<span class="o">=</span><span class="w"> </span>ghcr.io/flux-framework/flux-operator
 </pre>
            </div>
           </div>
@@ -1154,7 +1154,7 @@ IMG ?<span class="o">=</span> ghcr.io/flux-framework/flux-operator
           </p>
           <div class="highlight-bash notranslate">
            <div class="highlight">
-            <pre><span></span>make <span class="nv">IMG</span><span class="o">=</span>mycontainer/flux-operator
+            <pre><span></span>make<span class="w"> </span><span class="nv">IMG</span><span class="o">=</span>mycontainer/flux-operator
 </pre>
            </div>
           </div>
@@ -1209,7 +1209,7 @@ IMG ?<span class="o">=</span> ghcr.io/flux-framework/flux-operator
        © Copyright 2022, Flux Developers.
       </div>
       Last updated on
-              Dec 30, 2022.
+              Jan 04, 2023.
       <br/>
       Created using
       <a href="http://www.sphinx-doc.org/">

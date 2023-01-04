@@ -68,7 +68,7 @@
   <link href="../_static/favicon.ico" rel="shortcut icon"/>
   <link href="../genindex.html" rel="index" title="Index"/>
   <link href="../search.html" rel="search" title="Search"/>
-  <link href="custom-resource-definition.html" rel="next" title="Mini Cluster"/>
+  <link href="jobs.html" rel="next" title="Jobs"/>
   <link href="index.html" rel="prev" title="User Guide"/>
   <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
   <!-- Social: Facebook / Open Graph -->
@@ -308,33 +308,43 @@
                       <a class="md-nav__link" href="#production">
                        Production
                       </a>
+                      <nav class="md-nav">
+                       <ul class="md-nav__list">
+                        <li class="md-nav__item">
+                         <a class="md-nav__link" href="#quick-deploy">
+                          Quick Deploy
+                         </a>
+                        </li>
+                        <li class="md-nav__item">
+                         <a class="md-nav__link" href="#repository-deploy">
+                          Repository Deploy
+                         </a>
+                        </li>
+                        <li class="md-nav__item">
+                         <a class="md-nav__link" href="#tool-deploy">
+                          Tool Deploy
+                         </a>
+                        </li>
+                       </ul>
+                      </nav>
                      </li>
                     </ul>
                    </nav>
                   </li>
                   <li class="md-nav__item">
-                   <a class="md-nav__link" href="#submitting-jobs">
-                    2. Submitting Jobs
+                   <a class="md-nav__link" href="#check-that-everything-worked">
+                    2. Check that everything worked
                    </a>
-                   <nav class="md-nav">
-                    <ul class="md-nav__list">
-                     <li class="md-nav__item">
-                      <a class="md-nav__link" href="#credentials">
-                       Credentials
-                      </a>
-                     </li>
-                     <li class="md-nav__item">
-                      <a class="md-nav__link" href="#user-interface">
-                       User Interface
-                      </a>
-                     </li>
-                     <li class="md-nav__item">
-                      <a class="md-nav__link" href="#restful">
-                       RESTful
-                      </a>
-                     </li>
-                    </ul>
-                   </nav>
+                  </li>
+                  <li class="md-nav__item">
+                   <a class="md-nav__link" href="#create-a-namespace">
+                    3. Create a namespace
+                   </a>
+                  </li>
+                  <li class="md-nav__item">
+                   <a class="md-nav__link" href="#apply-your-custom-resource-definition">
+                    4. Apply your custom resource definition
+                   </a>
                   </li>
                  </ul>
                 </nav>
@@ -346,6 +356,11 @@
                </li>
               </ul>
              </nav>
+            </li>
+            <li class="md-nav__item">
+             <a class="md-nav__link" href="jobs.html">
+              Jobs
+             </a>
             </li>
             <li class="md-nav__item">
              <a class="md-nav__link" href="custom-resource-definition.html">
@@ -422,33 +437,43 @@
                  <a class="md-nav__link" href="#production">
                   Production
                  </a>
+                 <nav class="md-nav">
+                  <ul class="md-nav__list">
+                   <li class="md-nav__item">
+                    <a class="md-nav__link" href="#quick-deploy">
+                     Quick Deploy
+                    </a>
+                   </li>
+                   <li class="md-nav__item">
+                    <a class="md-nav__link" href="#repository-deploy">
+                     Repository Deploy
+                    </a>
+                   </li>
+                   <li class="md-nav__item">
+                    <a class="md-nav__link" href="#tool-deploy">
+                     Tool Deploy
+                    </a>
+                   </li>
+                  </ul>
+                 </nav>
                 </li>
                </ul>
               </nav>
              </li>
              <li class="md-nav__item">
-              <a class="md-nav__link" href="#submitting-jobs">
-               2. Submitting Jobs
+              <a class="md-nav__link" href="#check-that-everything-worked">
+               2. Check that everything worked
               </a>
-              <nav class="md-nav">
-               <ul class="md-nav__list">
-                <li class="md-nav__item">
-                 <a class="md-nav__link" href="#credentials">
-                  Credentials
-                 </a>
-                </li>
-                <li class="md-nav__item">
-                 <a class="md-nav__link" href="#user-interface">
-                  User Interface
-                 </a>
-                </li>
-                <li class="md-nav__item">
-                 <a class="md-nav__link" href="#restful">
-                  RESTful
-                 </a>
-                </li>
-               </ul>
-              </nav>
+             </li>
+             <li class="md-nav__item">
+              <a class="md-nav__link" href="#create-a-namespace">
+               3. Create a namespace
+              </a>
+             </li>
+             <li class="md-nav__item">
+              <a class="md-nav__link" href="#apply-your-custom-resource-definition">
+               4. Apply your custom resource definition
+              </a>
              </li>
             </ul>
            </nav>
@@ -515,12 +540,13 @@ More advanced users can try out the
            </a>
           </h3>
           <p>
-           You’ll first want to clone the codebase.
+           This setup is intended if you want to clone the codebase and use the same tools that we use
+to develop! You’ll first want to clone the codebase.
           </p>
           <div class="highlight-bash notranslate">
            <div class="highlight">
-            <pre><span></span>$ git clone https://github.com/flux-framework/flux-operator
-$ <span class="nb">cd</span> flux-operator
+            <pre><span></span>$<span class="w"> </span>git<span class="w"> </span>clone<span class="w"> </span>https://github.com/flux-framework/flux-operator
+$<span class="w"> </span><span class="nb">cd</span><span class="w"> </span>flux-operator
 </pre>
            </div>
           </div>
@@ -529,7 +555,7 @@ $ <span class="nb">cd</span> flux-operator
           </p>
           <div class="highlight-bash notranslate">
            <div class="highlight">
-            <pre><span></span>$ minikube start
+            <pre><span></span>$<span class="w"> </span>minikube<span class="w"> </span>start
 </pre>
            </div>
           </div>
@@ -538,8 +564,8 @@ $ <span class="nb">cd</span> flux-operator
           </p>
           <div class="highlight-bash notranslate">
            <div class="highlight">
-            <pre><span></span>$ kubectl create namespace flux-operator
-namespace/flux-operator created
+            <pre><span></span>$<span class="w"> </span>kubectl<span class="w"> </span>create<span class="w"> </span>namespace<span class="w"> </span>flux-operator
+namespace/flux-operator<span class="w"> </span>created
 </pre>
            </div>
           </div>
@@ -557,7 +583,7 @@ namespace/flux-operator created
           </p>
           <div class="highlight-bash notranslate">
            <div class="highlight">
-            <pre><span></span>$ kubectl config set-context --current --namespace<span class="o">=</span>flux-operator
+            <pre><span></span>$<span class="w"> </span>kubectl<span class="w"> </span>config<span class="w"> </span>set-context<span class="w"> </span>--current<span class="w"> </span>--namespace<span class="o">=</span>flux-operator
 </pre>
            </div>
           </div>
@@ -571,7 +597,7 @@ And then officially build the operator,
           </p>
           <div class="highlight-bash notranslate">
            <div class="highlight">
-            <pre><span></span>$ make
+            <pre><span></span>$<span class="w"> </span>make
 </pre>
            </div>
           </div>
@@ -580,7 +606,7 @@ And then officially build the operator,
           </p>
           <div class="highlight-bash notranslate">
            <div class="highlight">
-            <pre><span></span>$ make manifests
+            <pre><span></span>$<span class="w"> </span>make<span class="w"> </span>manifests
 </pre>
            </div>
           </div>
@@ -595,7 +621,7 @@ And then officially build the operator,
           </p>
           <div class="highlight-bash notranslate">
            <div class="highlight">
-            <pre><span></span>$ make install
+            <pre><span></span>$<span class="w"> </span>make<span class="w"> </span>install
 </pre>
            </div>
           </div>
@@ -605,7 +631,7 @@ either run a job or start a Flux Mini Cluster.
           </p>
           <div class="highlight-bash notranslate">
            <div class="highlight">
-            <pre><span></span>$ kubectl apply -f config/samples/flux-framework.org_v1alpha1_minicluster.yaml 
+            <pre><span></span>$<span class="w"> </span>kubectl<span class="w"> </span>apply<span class="w"> </span>-f<span class="w"> </span>config/samples/flux-framework.org_v1alpha1_minicluster.yaml<span class="w"> </span>
 </pre>
            </div>
           </div>
@@ -632,7 +658,7 @@ When you are all done, cleanup with
           </p>
           <div class="highlight-bash notranslate">
            <div class="highlight">
-            <pre><span></span>$ make clean
+            <pre><span></span>$<span class="w"> </span>make<span class="w"> </span>clean
 </pre>
            </div>
           </div>
@@ -641,7 +667,7 @@ When you are all done, cleanup with
           </p>
           <div class="highlight-bash notranslate">
            <div class="highlight">
-            <pre><span></span>$ minikube stop
+            <pre><span></span>$<span class="w"> </span>minikube<span class="w"> </span>stop
 </pre>
            </div>
           </div>
@@ -654,31 +680,72 @@ When you are all done, cleanup with
            </a>
           </h3>
           <p>
-           To deploy the Flux Operator, you’ll need to start with the same clone:
+           To deploy the Flux Operator, you have a few options! Choose “quick,” “repository,” or “tool” deploy below,
+and then continue to read how to check that everything worked.
           </p>
-          <div class="highlight-bash notranslate">
-           <div class="highlight">
-            <pre><span></span>$ git clone https://github.com/flux-framework/flux-operator
-$ <span class="nb">cd</span> flux-operator
+          <section id="quick-deploy">
+           <h4 id="quick-deploy">
+            Quick Deploy
+            <a class="headerlink" href="#quick-deploy" title="Permalink to this heading">
+             ¶
+            </a>
+           </h4>
+           <p>
+            This works best for production Kubernetes clusters, and comes down to downloading the latest yaml config, and applying it.
+           </p>
+           <div class="highlight-bash notranslate">
+            <div class="highlight">
+             <pre><span></span>wget<span class="w"> </span>https://raw.githubusercontent.com/flux-framework/flux-operator/main/examples/dist/flux-operator.yaml
+kubectl<span class="w"> </span>apply<span class="w"> </span>-f<span class="w"> </span>flux-operator.yaml
 </pre>
+            </div>
            </div>
-          </div>
-          <p>
-           A deploy will use the latest docker image
-           <a class="reference external" href="https://github.com/orgs/flux-framework/packages?repo_name=flux-operator">
-            from the repository
-           </a>
-           :
-          </p>
-          <div class="highlight-bash notranslate">
-           <div class="highlight">
-            <pre><span></span>$ make deploy
+           <p>
+            Note that from the repository, this config is generated with:
+           </p>
+           <div class="highlight-bash notranslate">
+            <div class="highlight">
+             <pre><span></span>$<span class="w"> </span>make<span class="w"> </span>build-config
 </pre>
+            </div>
            </div>
-          </div>
-          <div class="highlight-console notranslate">
-           <div class="highlight">
-            <pre><span></span><span class="go">...</span>
+           <p>
+            and then saved to the main branch where you retrieve it from.
+           </p>
+          </section>
+          <section id="repository-deploy">
+           <h4 id="repository-deploy">
+            Repository Deploy
+            <a class="headerlink" href="#repository-deploy" title="Permalink to this heading">
+             ¶
+            </a>
+           </h4>
+           <p>
+            If you want to possibly develop and then deploy what you are working on, you can start with a clone:
+           </p>
+           <div class="highlight-bash notranslate">
+            <div class="highlight">
+             <pre><span></span>$<span class="w"> </span>git<span class="w"> </span>clone<span class="w"> </span>https://github.com/flux-framework/flux-operator
+$<span class="w"> </span><span class="nb">cd</span><span class="w"> </span>flux-operator
+</pre>
+            </div>
+           </div>
+           <p>
+            A deploy will use the latest docker image
+            <a class="reference external" href="https://github.com/orgs/flux-framework/packages?repo_name=flux-operator">
+             from the repository
+            </a>
+            :
+           </p>
+           <div class="highlight-bash notranslate">
+            <div class="highlight">
+             <pre><span></span>$<span class="w"> </span>make<span class="w"> </span>deploy
+</pre>
+            </div>
+           </div>
+           <div class="highlight-console notranslate">
+            <div class="highlight">
+             <pre><span></span><span class="go">...</span>
 <span class="go">namespace/operator-system created</span>
 <span class="go">customresourcedefinition.apiextensions.k8s.io/miniclusters.flux-framework.org unchanged</span>
 <span class="go">serviceaccount/operator-controller-manager created</span>
@@ -693,43 +760,78 @@ $ <span class="nb">cd</span> flux-operator
 <span class="go">service/operator-controller-manager-metrics-service created</span>
 <span class="go">deployment.apps/operator-controller-manager created</span>
 </pre>
+            </div>
            </div>
-          </div>
-          <p>
-           Ensure the
-           <code class="docutils literal notranslate">
-            <span class="pre">
-             operator-system
-            </span>
-           </code>
-           namespace was created:
-          </p>
-          <div class="highlight-bash notranslate">
-           <div class="highlight">
-            <pre><span></span>$ kubectl get namespace
+          </section>
+          <section id="tool-deploy">
+           <h4 id="tool-deploy">
+            Tool Deploy
+            <a class="headerlink" href="#tool-deploy" title="Permalink to this heading">
+             ¶
+            </a>
+           </h4>
+           <p>
+            We maintain a tool
+            <a class="reference external" href="https://github.com/converged-computing/flux-cloud">
+             Flux Cloud
+            </a>
+            that is able to bring up clusters, install the operator,
+and optionally run experiments and bring them down. We currently support a handful of clouds
+(AWS and Google) and if you find yourself wanting a way to easily generate and save results
+for experiments, this might be the way to go. If you have a cloud or environment you
+want to deploy to that isn’t supported, please
+            <a class="reference external" href="https://github.com/converged-computing/flux-cloud/issues">
+             let us know
+            </a>
+            .
+           </p>
+          </section>
+         </section>
+        </section>
+        <section id="check-that-everything-worked">
+         <h2 id="check-that-everything-worked">
+          2. Check that everything worked
+          <a class="headerlink" href="#check-that-everything-worked" title="Permalink to this heading">
+           ¶
+          </a>
+         </h2>
+         <p>
+          Regardless of what you chose above, from this point on (after the operator is installed)
+there are some checks that you can do to see that everything worked.
+First, ensure the
+          <code class="docutils literal notranslate">
+           <span class="pre">
+            operator-system
+           </span>
+          </code>
+          namespace was created:
+         </p>
+         <div class="highlight-bash notranslate">
+          <div class="highlight">
+           <pre><span></span>$<span class="w"> </span>kubectl<span class="w"> </span>get<span class="w"> </span>namespace
 </pre>
-           </div>
           </div>
-          <div class="highlight-console notranslate">
-           <div class="highlight">
-            <pre><span></span><span class="go">NAME              STATUS   AGE</span>
+         </div>
+         <div class="highlight-console notranslate">
+          <div class="highlight">
+           <pre><span></span><span class="go">NAME              STATUS   AGE</span>
 <span class="go">default           Active   12m</span>
 <span class="go">kube-node-lease   Active   12m</span>
 <span class="go">kube-public       Active   12m</span>
 <span class="go">kube-system       Active   12m</span>
 <span class="go">operator-system   Active   11s</span>
 </pre>
-           </div>
           </div>
-          <div class="highlight-bash notranslate">
-           <div class="highlight">
-            <pre><span></span>$ kubectl describe namespace operator-system
+         </div>
+         <div class="highlight-bash notranslate">
+          <div class="highlight">
+           <pre><span></span>$<span class="w"> </span>kubectl<span class="w"> </span>describe<span class="w"> </span>namespace<span class="w"> </span>operator-system
 </pre>
-           </div>
           </div>
-          <div class="highlight-console notranslate">
-           <div class="highlight">
-            <pre><span></span><span class="go">Name:         operator-system</span>
+         </div>
+         <div class="highlight-console notranslate">
+          <div class="highlight">
+           <pre><span></span><span class="go">Name:         operator-system</span>
 <span class="go">Labels:       control-plane=controller-manager</span>
 <span class="go">              kubernetes.io/metadata.name=operator-system</span>
 <span class="go">Annotations:  &lt;none&gt;</span>
@@ -739,515 +841,121 @@ $ <span class="nb">cd</span> flux-operator
 
 <span class="go">No LimitRange resource.</span>
 </pre>
-           </div>
           </div>
-          <p>
-           And you can find the name of the operator pod as follows:
-          </p>
-          <div class="highlight-bash notranslate">
-           <div class="highlight">
-            <pre><span></span>$ kubectl get pod --all-namespaces -o wide
+         </div>
+         <p>
+          You can find the name of the operator pod as follows:
+         </p>
+         <div class="highlight-bash notranslate">
+          <div class="highlight">
+           <pre><span></span>$<span class="w"> </span>kubectl<span class="w"> </span>get<span class="w"> </span>pod<span class="w"> </span>--all-namespaces<span class="w"> </span>-o<span class="w"> </span>wide
 </pre>
-           </div>
           </div>
-          <div class="highlight-console notranslate">
-           <div class="highlight">
-            <pre><span></span><span class="go">      &lt;none&gt;</span>
+         </div>
+         <div class="highlight-console notranslate">
+          <div class="highlight">
+           <pre><span></span><span class="go">      &lt;none&gt;</span>
 <span class="go">operator-system   operator-controller-manager-6c699b7b94-bbp5q   2/2     Running   0             80s   192.168.30.43    ip-192-168-28-166.ec2.internal   &lt;none&gt;           &lt;none&gt;</span>
 </pre>
-           </div>
           </div>
-          <p>
-           Make your namespace for the flux-operator:
-          </p>
-          <div class="highlight-bash notranslate">
-           <div class="highlight">
-            <pre><span></span>$ kubectl create namespace flux-operator
-</pre>
-           </div>
-          </div>
-          <p>
-           Then apply your CRD - importantly, the localDeploy needs to be false. Basically, setting to true uses a local mount,
-which obviously won’t work for different instances in the cloud!
-          </p>
-          <div class="highlight-yaml notranslate">
-           <div class="highlight">
-            <pre><span></span><span class="nt">spec</span><span class="p">:</span><span class="w"></span>
-<span class="c1"># Set to true to use volume mounts instead of volume claims</span><span class="w"></span>
-<span class="w">  </span><span class="nt">localDeploy</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span><span class="w"></span>
-</pre>
-           </div>
-          </div>
-          <p>
-           This means we will use persistent volume claims instead. Then do:
-          </p>
-          <div class="highlight-bash notranslate">
-           <div class="highlight">
-            <pre><span></span>$ make apply
-<span class="c1"># same as</span>
-$ kubectl apply -f config/samples/flux-framework.org_v1alpha1_minicluster.yaml 
-</pre>
-           </div>
-          </div>
-          <p>
-           And now you can get logs for the manager:
-          </p>
-          <div class="highlight-bash notranslate">
-           <div class="highlight">
-            <pre><span></span>$ kubectl logs -n operator-system operator-controller-manager-6c699b7b94-bbp5q
-</pre>
-           </div>
-          </div>
-          <p>
-           And then watch your jobs as before!
-          </p>
-          <div class="highlight-bash notranslate">
-           <div class="highlight">
-            <pre><span></span>$ make list
-$ make apply
-</pre>
-           </div>
-          </div>
-          <p>
-           And don’t forget to clean up! Leaving on resources by accident is expensive!
-Here is an example running on AWS:
-          </p>
-          <div class="highlight-bash notranslate">
-           <div class="highlight">
-            <pre><span></span>$ eksctl delete cluster -f eks-cluster-config.yaml
-</pre>
-           </div>
-          </div>
-          <p>
-           It might be better to add
-           <code class="docutils literal notranslate">
-            <span class="pre">
-             --wait
-            </span>
-           </code>
-           , which will wait until all resources are cleaned up:
-          </p>
-          <div class="highlight-bash notranslate">
-           <div class="highlight">
-            <pre><span></span>$ eksctl delete cluster -f eks-cluster-config.yaml --wait
-</pre>
-           </div>
-          </div>
-          <p>
-           Either way, it’s good to check the web console too to ensure you didn’t miss anything.
-To see how to build images, see our
-           <a class="reference internal" href="../development/developer-guide.html">
-            <span class="doc std std-doc">
-             Developer Guides
-            </span>
-           </a>
-           .
-          </p>
-         </section>
+         </div>
         </section>
-        <section id="submitting-jobs">
-         <h2 id="submitting-jobs">
-          2. Submitting Jobs
-          <a class="headerlink" href="#submitting-jobs" title="Permalink to this heading">
+        <section id="create-a-namespace">
+         <h2 id="create-a-namespace">
+          3. Create a namespace
+          <a class="headerlink" href="#create-a-namespace" title="Permalink to this heading">
            ¶
           </a>
          </h2>
          <p>
-          Given a running MiniCluster that exposes a RESTful API, you have several modes for interaction:
+          You’ll likely Make your namespace for the flux-operator:
          </p>
-         <ol class="arabic simple">
-          <li>
-           <p>
-            Submit jobs in the user interface (basic)
-           </p>
-          </li>
-          <li>
-           <p>
-            Submit jobs from the command line or within Python (custom)
-           </p>
-          </li>
-          <li>
-           <p>
-            Submit jobs interacting with Flux via ssh-ing to the pod (advanced)
-           </p>
-          </li>
-         </ol>
-         <p>
-          We provide
-          <a class="reference external" href="https://github.com/flux-framework/flux-restful-api/tree/main/clients">
-           clients
+         <div class="highlight-bash notranslate">
+          <div class="highlight">
+           <pre><span></span>$<span class="w"> </span>kubectl<span class="w"> </span>create<span class="w"> </span>namespace<span class="w"> </span>flux-operator
+</pre>
+          </div>
+         </div>
+        </section>
+        <section id="apply-your-custom-resource-definition">
+         <h2 id="apply-your-custom-resource-definition">
+          4. Apply your custom resource definition
+          <a class="headerlink" href="#apply-your-custom-resource-definition" title="Permalink to this heading">
+           ¶
           </a>
-          to interact with
-a running server, and each will be briefly shown below. The Python client is also included in our
-          <a class="reference external" href="https://flux-framework.org/flux-restful-api/auto_examples/index.html">
-           Tutorials
+         </h2>
+         <p>
+          Then apply your custom resource definition or CRD - importantly, the localDeploy needs to be false if you are using a production cluster.
+Basically, setting to true uses a local mount, which obviously won’t work for different instances in the cloud!
+         </p>
+         <div class="highlight-yaml notranslate">
+          <div class="highlight">
+           <pre><span></span><span class="nt">spec</span><span class="p">:</span>
+<span class="c1"># Set to true to use volume mounts instead of volume claims</span>
+<span class="w">  </span><span class="nt">localDeploy</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
+</pre>
+          </div>
+         </div>
+         <p>
+          Also ensure that your custom resource definition matches the namespace you just created.
+Note that we don’t have yet a production solution for a shared filesystem, but @vsoch is going to test this soon. Then apply your CRD. You can use
+the default
+          <a class="reference external" href="https://github.com/flux-framework/flux-operator/blob/main/config/samples/flux-framework.org_v1alpha1_minicluster.yaml">
+           testing one from the repository
+          </a>
+          or any in our
+          <a class="reference external" href="https://github.com/flux-framework/flux-operator/tree/main/examples">
+           examples
+          </a>
+          folder. Here is using the default we provide:
+         </p>
+         <div class="highlight-bash notranslate">
+          <div class="highlight">
+           <pre><span></span>$<span class="w"> </span>wget<span class="w"> </span>https://raw.githubusercontent.com/flux-framework/flux-operator/main/config/samples/flux-framework.org_v1alpha1_minicluster.yaml
+$<span class="w"> </span>kubectl<span class="w"> </span>apply<span class="w"> </span>-f<span class="w"> </span>flux-framework.org_v1alpha1_minicluster.yaml<span class="w"> </span>
+</pre>
+          </div>
+         </div>
+         <p>
+          Please
+          <a class="reference external" href="https://github.com/flux-framework/flux-operator">
+           let us know
+          </a>
+          if you would like an example type added - we have plans for many more
+but are prioritizing them as we see them needed. And now you can get logs for the manager:
+         </p>
+         <div class="highlight-bash notranslate">
+          <div class="highlight">
+           <pre><span></span>$<span class="w"> </span>kubectl<span class="w"> </span>logs<span class="w"> </span>-n<span class="w"> </span>operator-system<span class="w"> </span>operator-controller-manager-6c699b7b94-bbp5q
+</pre>
+          </div>
+         </div>
+         <p>
+          And then watch your jobs!
+         </p>
+         <div class="highlight-bash notranslate">
+          <div class="highlight">
+           <pre><span></span>$<span class="w"> </span>kubectl<span class="w"> </span>get<span class="w"> </span>-n<span class="w"> </span>flux-operator<span class="w"> </span>pods
+</pre>
+          </div>
+         </div>
+         <p>
+          And don’t forget to clean up! Leaving on resources by accident is expensive! This command
+will vary depending on the cloud you are using. Either way, it’s good to check the web console too to ensure you didn’t miss anything.
+Next, you might be interested in
+          <a class="reference internal" href="jobs.html">
+           <span class="doc std std-doc">
+            ways to submit jobs
+           </span>
+          </a>
+          or how to build images in our
+          <a class="reference internal" href="../development/developer-guide.html">
+           <span class="doc std std-doc">
+            Developer Guides
+           </span>
           </a>
           .
          </p>
-         <section id="credentials">
-          <h3 id="credentials">
-           Credentials
-           <a class="headerlink" href="#credentials" title="Permalink to this heading">
-            ¶
-           </a>
-          </h3>
-          <p>
-           Whether you use a command line client, a language SDK, or the web interface - you need your credentials!
-The credentials are printed in the log of the index-0. These are the
-           <code class="docutils literal notranslate">
-            <span class="pre">
-             FLUX_USER
-            </span>
-           </code>
-           and
-           <code class="docutils literal notranslate">
-            <span class="pre">
-             FLUX_TOKEN
-            </span>
-           </code>
-           environment variables. A client requires exported them to the environment, and the web interface requires
-copy paste into a form.
-          </p>
-          <div class="highlight-bash notranslate">
-           <div class="highlight">
-            <pre><span></span><span class="c1"># get the job pod identifiers</span>
-$ make list
-<span class="c1"># use the -0 one to view logs</span>
-bash script/log.sh flux-sample-0-x2j6z
-</pre>
-           </div>
-          </div>
-          <div class="highlight-console notranslate">
-           <div class="highlight">
-            <pre><span></span><span class="go">🔑 Your Credentials! These will allow you to control your MiniCluster with flux-framework/flux-restful-api</span>
-<span class="go">export FLUX_TOKEN=9c605129-3ddc-41e2-9a23-38f59fb8f8e0</span>
-<span class="go">export FLUX_USER=flux</span>
-
-<span class="go">🌀sudo -u flux flux start -o --config /etc/flux/config ...</span>
-</pre>
-           </div>
-          </div>
-          <p>
-           Note that they appear slightly above the command, which isn’t at the bottom of the log!
-          </p>
-         </section>
-         <section id="user-interface">
-          <h3 id="user-interface">
-           User Interface
-           <a class="headerlink" href="#user-interface" title="Permalink to this heading">
-            ¶
-           </a>
-          </h3>
-          <p>
-           To see the user interface, you’ll first need to do some kind of port forwarding:
-          </p>
-          <div class="highlight-console notranslate">
-           <div class="highlight">
-            <pre><span></span><span class="go">kubectl port-forward -n flux-operator flux-sample-0-zdhkp 5000:5000</span>
-<span class="go">Forwarding from 127.0.0.1:5000 -&gt; 5000</span>
-</pre>
-           </div>
-          </div>
-          <p>
-           This should be exposed at
-           <a class="reference external" href="http://127.0.0.1:5000">
-            http://127.0.0.1:5000
-           </a>
-           . It’s not terribly informative, so
-we won’t show the main portal here! 🤭
-          </p>
-          <p>
-           After your MiniCluster is created with a RESTFul API, the easiest thing to do is open the user interface to
-           <a class="reference external" href="http://127.0.0.1:5000">
-            http://127.0.0.1:5000
-           </a>
-           After port forwarding in a terminal and then submitting in the job UI (you will need to login with the flux user and token presented in the terminal). Here is the example command to try
-for the basic tutorial here:
-          </p>
-          <div class="highlight-console notranslate">
-           <div class="highlight">
-            <pre><span></span><span class="go">lmp -v x 2 -v y 2 -v z 2 -in in.reaxc.hns -nocite</span>
-</pre>
-           </div>
-          </div>
-          <p>
-           And the workdir for this default example needs to be:
-          </p>
-          <div class="highlight-console notranslate">
-           <div class="highlight">
-            <pre><span></span><span class="go">/home/flux/examples/reaxff/HNS</span>
-</pre>
-           </div>
-          </div>
-          <p>
-           <img alt="img/submit.png" src="../_images/submit.png"/>
-          </p>
-          <p>
-           After submit, you can view the job in the jobs table:
-          </p>
-          <p>
-           <img alt="img/jobs-table.png" src="../_images/jobs-table.png"/>
-          </p>
-          <p>
-           And click the identifier to see logs (currently blocking so will wait until it’s done, soon won’t be!)
-          </p>
-          <p>
-           <img alt="img/job-info.png" src="../_images/job-info.png"/>
-          </p>
-          <p>
-           And that’s it for the example! You can further explore the exposed API in the web interface:
-          </p>
-          <p>
-           <img alt="img/api.png" src="../_images/api.png"/>
-          </p>
-          <p>
-           And you can also try using the
-           <a class="reference external" href="https://flux-framework.org/flux-restful-api/getting_started/user-guide.html">
-            RESTFul API Clients
-           </a>
-           to submit instead
-(discussed next). Note that there is currently no way for the RESTful client to ask to destroy the cluster - you’ll
-still need to use kubectl to do that.
-          </p>
-         </section>
-         <section id="restful">
-          <h3 id="restful">
-           RESTful
-           <a class="headerlink" href="#restful" title="Permalink to this heading">
-            ¶
-           </a>
-          </h3>
-          <p>
-           Remember that before starting you’ll need to export your
-           <code class="docutils literal notranslate">
-            <span class="pre">
-             FLUX_USER
-            </span>
-           </code>
-           and
-           <code class="docutils literal notranslate">
-            <span class="pre">
-             FLUX_TOKEN
-            </span>
-           </code>
-           to the environment:
-          </p>
-          <div class="highlight-bash notranslate">
-           <div class="highlight">
-            <pre><span></span><span class="c1"># get the job pod identifiers</span>
-$ make list
-<span class="c1"># use the -0 one to view logs</span>
-bash script/log.sh flux-sample-0-x2j6z
-</pre>
-           </div>
-          </div>
-          <div class="highlight-console notranslate">
-           <div class="highlight">
-            <pre><span></span><span class="go">🔑 Your Credentials! These will allow you to control your MiniCluster with flux-framework/flux-restful-api</span>
-<span class="go">export FLUX_TOKEN=9c605129-3ddc-41e2-9a23-38f59fb8f8e0</span>
-<span class="go">export FLUX_USER=flux</span>
-
-<span class="go">🌀sudo -u flux flux start -o --config /etc/flux/config ...</span>
-</pre>
-           </div>
-          </div>
-          <p>
-           Next, you can use the
-           <a class="reference external" href="https://flux-framework.org/flux-restful-api/getting_started/user-guide.html#python">
-            flux-framework/flux-restful-api
-           </a>
-           Python client to submit a job.
-          </p>
-          <div class="highlight-bash notranslate">
-           <div class="highlight">
-            <pre><span></span>$ pip install flux-restful-client
-</pre>
-           </div>
-          </div>
-          <p>
-           And then (after you’ve started port forwarding) you can either submit on the command line:
-          </p>
-          <div class="highlight-bash notranslate">
-           <div class="highlight">
-            <pre><span></span>$ flux-restful-cli submit lmp -v x <span class="m">2</span> -v y <span class="m">2</span> -v z <span class="m">2</span> -in <span class="k">in</span>.reaxc.hns -nocite
-</pre>
-           </div>
-          </div>
-          <div class="highlight-console notranslate">
-           <div class="highlight">
-            <pre><span></span><span class="go">{</span>
-<span class="go">    "Message": "Job submit.",</span>
-<span class="go">    "id": 19099568570368</span>
-<span class="go">}</span>
-</pre>
-           </div>
-          </div>
-          <p>
-           And get info:
-          </p>
-          <div class="highlight-bash notranslate">
-           <div class="highlight">
-            <pre><span></span>$ flux-restful-cli info <span class="m">19099568570368</span>
-</pre>
-           </div>
-          </div>
-          <div class="highlight-console notranslate">
-           <div class="highlight">
-            <pre><span></span><span class="go">{</span>
-<span class="go">    "id": 2324869152768,</span>
-<span class="go">    "userid": 1234,</span>
-<span class="go">    "urgency": 16,</span>
-<span class="go">    "priority": 16,</span>
-<span class="go">    "t_submit": 1668475082.8024156,</span>
-<span class="go">    "t_depend": 1668475082.8024156,</span>
-<span class="go">    "t_run": 1668475082.8159652,</span>
-<span class="go">    "state": "RUN",</span>
-<span class="go">    "name": "lmp",</span>
-<span class="go">    "ntasks": 1,</span>
-<span class="go">    "nnodes": 1,</span>
-<span class="go">    "ranks": "3",</span>
-<span class="go">    "nodelist": "flux-sample-3",</span>
-<span class="go">    "expiration": 1669079882.0,</span>
-<span class="go">    "annotations": {</span>
-<span class="go">        "sched": {</span>
-<span class="go">            "queue": "default"</span>
-<span class="go">        }</span>
-<span class="go">    },</span>
-<span class="go">    "result": "",</span>
-<span class="go">    "returncode": "",</span>
-<span class="go">    "runtime": 16.86149311065674,</span>
-<span class="go">    "waitstatus": "",</span>
-<span class="go">    "exception": {</span>
-<span class="go">        "occurred": "",</span>
-<span class="go">        "severity": "",</span>
-<span class="go">        "type": "",</span>
-<span class="go">        "note": ""</span>
-<span class="go">    },</span>
-<span class="go">    "duration": ""</span>
-<span class="go">}</span>
-</pre>
-           </div>
-          </div>
-          <p>
-           Or get the output log!
-          </p>
-          <div class="highlight-bash notranslate">
-           <div class="highlight">
-            <pre><span></span>$ flux-restful-cli logs <span class="m">2324869152768</span>
-LAMMPS <span class="o">(</span><span class="m">29</span> Sep <span class="m">2021</span> - Update <span class="m">2</span><span class="o">)</span>
-OMP_NUM_THREADS environment is not set. Defaulting to <span class="m">1</span> thread. <span class="o">(</span>src/comm.cpp:98<span class="o">)</span>
-using <span class="m">1</span> OpenMP thread<span class="o">(</span>s<span class="o">)</span> per MPI task
-Reading data file ...
-triclinic <span class="nv">box</span> <span class="o">=</span> <span class="o">(</span><span class="m">0</span>.0000000 <span class="m">0</span>.0000000 <span class="m">0</span>.0000000<span class="o">)</span> to <span class="o">(</span><span class="m">22</span>.326000 <span class="m">11</span>.141200 <span class="m">13</span>.778966<span class="o">)</span> with tilt <span class="o">(</span><span class="m">0</span>.0000000 -5.0260300 <span class="m">0</span>.0000000<span class="o">)</span>
-<span class="m">1</span> by <span class="m">1</span> by <span class="m">1</span> MPI processor grid
-reading atoms ...
-<span class="m">304</span> atoms
-reading velocities ...
-<span class="m">304</span> velocities
-read_data <span class="nv">CPU</span> <span class="o">=</span> <span class="m">0</span>.005 seconds
-Replicating atoms ...
-triclinic <span class="nv">box</span> <span class="o">=</span> <span class="o">(</span><span class="m">0</span>.0000000 <span class="m">0</span>.0000000 <span class="m">0</span>.0000000<span class="o">)</span> to <span class="o">(</span><span class="m">44</span>.652000 <span class="m">22</span>.282400 <span class="m">27</span>.557932<span class="o">)</span> with tilt <span class="o">(</span><span class="m">0</span>.0000000 -10.052060 <span class="m">0</span>.0000000<span class="o">)</span>
-<span class="m">1</span> by <span class="m">1</span> by <span class="m">1</span> MPI processor grid
-bounding box <span class="nv">image</span> <span class="o">=</span> <span class="o">(</span><span class="m">0</span> -1 -1<span class="o">)</span> to <span class="o">(</span><span class="m">0</span> <span class="m">1</span> <span class="m">1</span><span class="o">)</span>
-bounding box extra <span class="nv">memory</span> <span class="o">=</span> <span class="m">0</span>.03 MB
-average <span class="c1"># of replicas added to proc = 8.00 out of 8 (100.00%)</span>
-<span class="m">2432</span> atoms
-replicate <span class="nv">CPU</span> <span class="o">=</span> <span class="m">0</span>.001 seconds
-Neighbor list info ...
-update every <span class="m">20</span> steps, delay <span class="m">0</span> steps, check no
-max neighbors/atom: <span class="m">2000</span>, page size: <span class="m">100000</span>
-master list distance <span class="nv">cutoff</span> <span class="o">=</span> <span class="m">11</span>
-ghost atom <span class="nv">cutoff</span> <span class="o">=</span> <span class="m">11</span>
-<span class="nv">binsize</span> <span class="o">=</span> <span class="m">5</span>.5, <span class="nv">bins</span> <span class="o">=</span> <span class="m">10</span> <span class="m">5</span> <span class="m">6</span>
-<span class="m">2</span> neighbor lists, perpetual/occasional/extra <span class="o">=</span> <span class="m">2</span> <span class="m">0</span> <span class="m">0</span>
-<span class="o">(</span><span class="m">1</span><span class="o">)</span> pair reax/c, perpetual
-attributes: half, newton off, ghost
-pair build: half/bin/newtoff/ghost
-stencil: full/ghost/bin/3d
-bin: standard
-<span class="o">(</span><span class="m">2</span><span class="o">)</span> fix qeq/reax, perpetual, copy from <span class="o">(</span><span class="m">1</span><span class="o">)</span>
-attributes: half, newton off, ghost
-pair build: copy
-stencil: none
-bin: none
-Setting up Verlet run ...
-Unit style    : real
-Current step  : <span class="m">0</span>
-Time step     : <span class="m">0</span>.1
-Per MPI rank memory allocation <span class="o">(</span>min/avg/max<span class="o">)</span> <span class="o">=</span> <span class="m">215</span>.0 <span class="p">|</span> <span class="m">215</span>.0 <span class="p">|</span> <span class="m">215</span>.0 Mbytes
-Step Temp PotEng Press E_vdwl E_coul Volume
-<span class="m">0</span>          <span class="m">300</span>   -113.27833    <span class="m">437</span>.52122   -111.57687   -1.7014647    <span class="m">27418</span>.867
-<span class="m">10</span>    <span class="m">299</span>.38517   -113.27631    <span class="m">1439</span>.2857   -111.57492   -1.7013813    <span class="m">27418</span>.867
-<span class="m">20</span>    <span class="m">300</span>.27107   -113.27884    <span class="m">3764</span>.3739   -111.57762   -1.7012246    <span class="m">27418</span>.867
-<span class="m">30</span>    <span class="m">302</span>.21063   -113.28428    <span class="m">7007</span>.6914   -111.58335   -1.7009363    <span class="m">27418</span>.867
-<span class="m">40</span>    <span class="m">303</span>.52265   -113.28799      <span class="m">9844</span>.84   -111.58747   -1.7005186    <span class="m">27418</span>.867
-<span class="m">50</span>    <span class="m">301</span>.87059   -113.28324    <span class="m">9663</span>.0443   -111.58318   -1.7000524    <span class="m">27418</span>.867
-<span class="m">60</span>    <span class="m">296</span>.67807   -113.26777    <span class="m">7273</span>.7928   -111.56815   -1.6996137    <span class="m">27418</span>.867
-<span class="m">70</span>    <span class="m">292</span>.19999   -113.25435    <span class="m">5533</span>.6428   -111.55514   -1.6992157    <span class="m">27418</span>.867
-<span class="m">80</span>    <span class="m">293</span>.58677   -113.25831    <span class="m">5993</span>.4151   -111.55946   -1.6988533    <span class="m">27418</span>.867
-<span class="m">90</span>    <span class="m">300</span>.62636   -113.27925    <span class="m">7202</span>.8651   -111.58069   -1.6985591    <span class="m">27418</span>.867
-<span class="m">100</span>    <span class="m">305</span>.38276   -113.29357    <span class="m">10085</span>.748   -111.59518   -1.6983875    <span class="m">27418</span>.867
-Loop <span class="nb">time</span> of <span class="m">20</span>.1295 on <span class="m">1</span> procs <span class="k">for</span> <span class="m">100</span> steps with <span class="m">2432</span> atoms
-
-Performance: <span class="m">0</span>.043 ns/day, <span class="m">559</span>.152 hours/ns, <span class="m">4</span>.968 timesteps/s
-<span class="m">99</span>.6% CPU use with <span class="m">1</span> MPI tasks x <span class="m">1</span> OpenMP threads
-
-MPI task timing breakdown:
-Section <span class="p">|</span>  min <span class="nb">time</span>  <span class="p">|</span>  avg <span class="nb">time</span>  <span class="p">|</span>  max <span class="nb">time</span>  <span class="p">|</span>%varavg<span class="p">|</span> %total
----------------------------------------------------------------
-Pair    <span class="p">|</span> <span class="m">14</span>.914     <span class="p">|</span> <span class="m">14</span>.914     <span class="p">|</span> <span class="m">14</span>.914     <span class="p">|</span>   <span class="m">0</span>.0 <span class="p">|</span> <span class="m">74</span>.09
-Neigh   <span class="p">|</span> <span class="m">0</span>.39663    <span class="p">|</span> <span class="m">0</span>.39663    <span class="p">|</span> <span class="m">0</span>.39663    <span class="p">|</span>   <span class="m">0</span>.0 <span class="p">|</span>  <span class="m">1</span>.97
-Comm    <span class="p">|</span> <span class="m">0</span>.0068084  <span class="p">|</span> <span class="m">0</span>.0068084  <span class="p">|</span> <span class="m">0</span>.0068084  <span class="p">|</span>   <span class="m">0</span>.0 <span class="p">|</span>  <span class="m">0</span>.03
-Output  <span class="p">|</span> <span class="m">0</span>.00025632 <span class="p">|</span> <span class="m">0</span>.00025632 <span class="p">|</span> <span class="m">0</span>.00025632 <span class="p">|</span>   <span class="m">0</span>.0 <span class="p">|</span>  <span class="m">0</span>.00
-Modify  <span class="p">|</span> <span class="m">4</span>.8104     <span class="p">|</span> <span class="m">4</span>.8104     <span class="p">|</span> <span class="m">4</span>.8104     <span class="p">|</span>   <span class="m">0</span>.0 <span class="p">|</span> <span class="m">23</span>.90
-Other   <span class="p">|</span>            <span class="p">|</span> <span class="m">0</span>.001154   <span class="p">|</span>            <span class="p">|</span>       <span class="p">|</span>  <span class="m">0</span>.01
-
-Nlocal:        <span class="m">2432</span>.00 ave        <span class="m">2432</span> max        <span class="m">2432</span> min
-Histogram: <span class="m">1</span> <span class="m">0</span> <span class="m">0</span> <span class="m">0</span> <span class="m">0</span> <span class="m">0</span> <span class="m">0</span> <span class="m">0</span> <span class="m">0</span> <span class="m">0</span>
-Nghost:        <span class="m">10685</span>.0 ave       <span class="m">10685</span> max       <span class="m">10685</span> min
-Histogram: <span class="m">1</span> <span class="m">0</span> <span class="m">0</span> <span class="m">0</span> <span class="m">0</span> <span class="m">0</span> <span class="m">0</span> <span class="m">0</span> <span class="m">0</span> <span class="m">0</span>
-Neighs:        <span class="m">823958</span>.0 ave      <span class="m">823958</span> max      <span class="m">823958</span> min
-Histogram: <span class="m">1</span> <span class="m">0</span> <span class="m">0</span> <span class="m">0</span> <span class="m">0</span> <span class="m">0</span> <span class="m">0</span> <span class="m">0</span> <span class="m">0</span> <span class="m">0</span>
-
-Total <span class="c1"># of neighbors = 823958</span>
-Ave neighs/atom <span class="o">=</span> <span class="m">338</span>.79852
-Neighbor list <span class="nv">builds</span> <span class="o">=</span> <span class="m">5</span>
-Dangerous builds not checked
-Total wall time: <span class="m">0</span>:00:20
-</pre>
-           </div>
-          </div>
-          <p>
-           Or do the same from within Python:
-          </p>
-          <div class="highlight-python notranslate">
-           <div class="highlight">
-            <pre><span></span><span class="kn">from</span> <span class="nn">flux_restful_client.main</span> <span class="kn">import</span> <span class="n">get_client</span>
-
-<span class="n">cli</span> <span class="o">=</span> <span class="n">get_client</span><span class="p">()</span>
-
-<span class="c1"># Define our jop</span>
-<span class="n">command</span> <span class="o">=</span> <span class="s2">"lmp -v x 2 -v y 2 -v z 2 -in in.reaxc.hns -nocite"</span>
-
-<span class="c1"># Submit the job to flux</span>
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"😴 Submitting job: </span><span class="si">{</span><span class="n">command</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
-<span class="n">res</span> <span class="o">=</span> <span class="n">cli</span><span class="o">.</span><span class="n">submit</span><span class="p">(</span><span class="n">command</span><span class="o">=</span><span class="n">command</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">res</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="mi">4</span><span class="p">))</span>
-
-<span class="c1"># Get job information</span>
-<span class="nb">print</span><span class="p">(</span><span class="s2">"🍓 Getting job info..."</span><span class="p">)</span>
-<span class="n">jobid</span> <span class="o">=</span> <span class="n">res</span><span class="p">[</span><span class="s1">'id'</span><span class="p">]</span>
-<span class="n">res</span> <span class="o">=</span> <span class="n">cli</span><span class="o">.</span><span class="n">jobs</span><span class="p">(</span><span class="n">jobid</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">res</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="mi">4</span><span class="p">))</span>
-
-<span class="c1"># Get job output log</span>
-<span class="nb">print</span><span class="p">(</span><span class="s2">"🍕 Getting job output..."</span><span class="p">)</span>
-<span class="n">res</span> <span class="o">=</span> <span class="n">cli</span><span class="o">.</span><span class="n">output</span><span class="p">(</span><span class="n">jobid</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">res</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="mi">4</span><span class="p">))</span>
-</pre>
-           </div>
-          </div>
-         </section>
         </section>
        </section>
       </article>
@@ -1272,13 +980,13 @@ Total wall time: <span class="m">0</span>:00:20
        </span>
       </div>
      </a>
-     <a class="md-flex md-footer-nav__link md-footer-nav__link--next" href="custom-resource-definition.html" rel="next" title="Mini Cluster">
+     <a class="md-flex md-footer-nav__link md-footer-nav__link--next" href="jobs.html" rel="next" title="Jobs">
       <div class="md-flex__cell md-flex__cell--stretch md-footer-nav__title">
        <span class="md-flex__ellipsis">
         <span class="md-footer-nav__direction">
          Next
         </span>
-        Mini Cluster
+        Jobs
        </span>
       </div>
       <div class="md-flex__cell md-flex__cell--shrink">
@@ -1295,7 +1003,7 @@ Total wall time: <span class="m">0</span>:00:20
        © Copyright 2022, Flux Developers.
       </div>
       Last updated on
-              Dec 30, 2022.
+              Jan 04, 2023.
       <br/>
       Created using
       <a href="http://www.sphinx-doc.org/">

@@ -518,7 +518,7 @@
           </p>
           <div class="highlight-bash notranslate">
            <div class="highlight">
-            <pre><span></span>$ minikube ssh docker pull ghcr.io/rse-ops/lammps:flux-sched-focal-v0.24.0
+            <pre><span></span>$<span class="w"> </span>minikube<span class="w"> </span>ssh<span class="w"> </span>docker<span class="w"> </span>pull<span class="w"> </span>ghcr.io/rse-ops/lammps:flux-sched-focal-v0.24.0
 </pre>
            </div>
           </div>
@@ -535,7 +535,7 @@
           </p>
           <div class="highlight-bash notranslate">
            <div class="highlight">
-            <pre><span></span>$ <span class="nb">kill</span> <span class="k">$(</span>lsof -t -i:8080<span class="k">)</span>
+            <pre><span></span>$<span class="w"> </span><span class="nb">kill</span><span class="w"> </span><span class="k">$(</span>lsof<span class="w"> </span>-t<span class="w"> </span>-i:8080<span class="k">)</span>
 </pre>
            </div>
           </div>
@@ -552,7 +552,7 @@
           </p>
           <div class="highlight-bash notranslate">
            <div class="highlight">
-            <pre><span></span><span class="m">1</span>.6605195805812113e+09	ERROR	controller-runtime.source	<span class="k">if</span> kind is a CRD, it should be installed before calling Start	<span class="o">{</span><span class="s2">"kind"</span>: <span class="s2">"Flux.flux-framework.org"</span>, <span class="s2">"error"</span>: <span class="s2">"no matches for kind \"Flux\" in version \"flux-framework.org/v1alpha1\""</span><span class="o">}</span>
+            <pre><span></span><span class="m">1</span>.6605195805812113e+09<span class="w">	</span>ERROR<span class="w">	</span>controller-runtime.source<span class="w">	</span><span class="k">if</span><span class="w"> </span>kind<span class="w"> </span>is<span class="w"> </span>a<span class="w"> </span>CRD,<span class="w"> </span>it<span class="w"> </span>should<span class="w"> </span>be<span class="w"> </span>installed<span class="w"> </span>before<span class="w"> </span>calling<span class="w"> </span>Start<span class="w">	</span><span class="o">{</span><span class="s2">"kind"</span>:<span class="w"> </span><span class="s2">"Flux.flux-framework.org"</span>,<span class="w"> </span><span class="s2">"error"</span>:<span class="w"> </span><span class="s2">"no matches for kind \"Flux\" in version \"flux-framework.org/v1alpha1\""</span><span class="o">}</span>
 </pre>
            </div>
           </div>
@@ -561,8 +561,8 @@
           </p>
           <div class="highlight-bash notranslate">
            <div class="highlight">
-            <pre><span></span>$ rm bin/kustomize
-$ make install
+            <pre><span></span>$<span class="w"> </span>rm<span class="w"> </span>bin/kustomize
+$<span class="w"> </span>make<span class="w"> </span>install
 </pre>
            </div>
           </div>
@@ -580,7 +580,7 @@ effect:
           </p>
           <div class="highlight-bash notranslate">
            <div class="highlight">
-            <pre><span></span>$ bin/kustomize build config/samples <span class="p">|</span> kubectl apply -f -
+            <pre><span></span>$<span class="w"> </span>bin/kustomize<span class="w"> </span>build<span class="w"> </span>config/samples<span class="w"> </span><span class="p">|</span><span class="w"> </span>kubectl<span class="w"> </span>apply<span class="w"> </span>-f<span class="w"> </span>-
 </pre>
            </div>
           </div>
@@ -603,7 +603,7 @@ effect:
           </p>
           <div class="highlight-go notranslate">
            <div class="highlight">
-            <pre><span></span><span class="p">(</span><span class="o">*</span><span class="nx">instance</span><span class="p">).</span><span class="nx">Spec</span><span class="p">.</span><span class="nx">Field</span><span class="w"></span>
+            <pre><span></span><span class="p">(</span><span class="o">*</span><span class="nx">instance</span><span class="p">).</span><span class="nx">Spec</span><span class="p">.</span><span class="nx">Field</span>
 </pre>
            </div>
           </div>
@@ -630,7 +630,7 @@ effect:
           <div class="highlight-bash notranslate">
            <div class="highlight">
             <pre><span></span><span class="c1"># Why didn't my statefulset create?</span>
-kubectl describe -n flux-operator statefulset
+kubectl<span class="w"> </span>describe<span class="w"> </span>-n<span class="w"> </span>flux-operator<span class="w"> </span>statefulset
 </pre>
            </div>
           </div>
@@ -648,7 +648,7 @@ kubectl describe -n flux-operator statefulset
          </p>
          <div class="highlight-bash notranslate">
           <div class="highlight">
-           <pre><span></span>$ kubectl --namespace flux-operator get pods
+           <pre><span></span>$<span class="w"> </span>kubectl<span class="w"> </span>--namespace<span class="w"> </span>flux-operator<span class="w"> </span>get<span class="w"> </span>pods
 </pre>
           </div>
          </div>
@@ -657,7 +657,7 @@ kubectl describe -n flux-operator statefulset
          </p>
          <div class="highlight-bash notranslate">
           <div class="highlight">
-           <pre><span></span>$ kubectl describe -n flux-operator pods
+           <pre><span></span>$<span class="w"> </span>kubectl<span class="w"> </span>describe<span class="w"> </span>-n<span class="w"> </span>flux-operator<span class="w"> </span>pods
 </pre>
           </div>
          </div>
@@ -666,14 +666,14 @@ kubectl describe -n flux-operator statefulset
          </p>
          <div class="highlight-bash notranslate">
           <div class="highlight">
-           <pre><span></span>$ kubectl delete pod --all
+           <pre><span></span>$<span class="w"> </span>kubectl<span class="w"> </span>delete<span class="w"> </span>pod<span class="w"> </span>--all
 
 <span class="c1"># Service shorthand</span>
-$ kubectl delete svc --all
-$ kubectl delete statefulset --all
+$<span class="w"> </span>kubectl<span class="w"> </span>delete<span class="w"> </span>svc<span class="w"> </span>--all
+$<span class="w"> </span>kubectl<span class="w"> </span>delete<span class="w"> </span>statefulset<span class="w"> </span>--all
 
 <span class="c1"># ConfigMap shorthand</span>
-$ kubectl delete cm --all
+$<span class="w"> </span>kubectl<span class="w"> </span>delete<span class="w"> </span>cm<span class="w"> </span>--all
 </pre>
           </div>
          </div>
@@ -734,7 +734,7 @@ combinations that might be useful.
        © Copyright 2022, Flux Developers.
       </div>
       Last updated on
-              Dec 30, 2022.
+              Jan 04, 2023.
       <br/>
       Created using
       <a href="http://www.sphinx-doc.org/">

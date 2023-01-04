@@ -672,8 +672,8 @@ environment.
          </p>
          <div class="highlight-bash notranslate">
           <div class="highlight">
-           <pre><span></span>$ minikube addons <span class="nb">enable</span> ingress
-$ minikube addons <span class="nb">enable</span> ingress-dns
+           <pre><span></span>$<span class="w"> </span>minikube<span class="w"> </span>addons<span class="w"> </span><span class="nb">enable</span><span class="w"> </span>ingress
+$<span class="w"> </span>minikube<span class="w"> </span>addons<span class="w"> </span><span class="nb">enable</span><span class="w"> </span>ingress-dns
 </pre>
           </div>
          </div>
@@ -690,8 +690,8 @@ You’ll then also want to clone the repository.
          <div class="highlight-bash notranslate">
           <div class="highlight">
            <pre><span></span><span class="c1"># Clone the source code</span>
-$ git clone https://github.com/flux-framework/flux-operator
-$ <span class="nb">cd</span> flux-operator
+$<span class="w"> </span>git<span class="w"> </span>clone<span class="w"> </span>https://github.com/flux-framework/flux-operator
+$<span class="w"> </span><span class="nb">cd</span><span class="w"> </span>flux-operator
 </pre>
           </div>
          </div>
@@ -717,11 +717,11 @@ $ <span class="nb">cd</span> flux-operator
            </p>
            <div class="highlight-console notranslate">
             <div class="highlight">
-             <pre><span></span><span class="gp"># </span>Start a minikube cluster
-<span class="gp">$ </span>minikube start
+             <pre><span></span><span class="gp"># </span>Start<span class="w"> </span>a<span class="w"> </span>minikube<span class="w"> </span>cluster
+<span class="gp">$ </span>minikube<span class="w"> </span>start
 
-<span class="gp"># </span>Make a flux operator namespace
-<span class="gp">$ </span>kubectl create namespace flux-operator
+<span class="gp"># </span>Make<span class="w"> </span>a<span class="w"> </span>flux<span class="w"> </span>operator<span class="w"> </span>namespace
+<span class="gp">$ </span>kubectl<span class="w"> </span>create<span class="w"> </span>namespace<span class="w"> </span>flux-operator
 <span class="go">namespace/flux-operator created</span>
 </pre>
             </div>
@@ -774,9 +774,9 @@ First, before launching any jobs, making sure
             </p>
             <div class="highlight-yaml notranslate">
              <div class="highlight">
-              <pre><span></span><span class="nt">spec</span><span class="p">:</span><span class="w"></span>
-<span class="c1"># Set to true to use volume mounts instead of volume claims</span><span class="w"></span>
-<span class="w">  </span><span class="nt">localDeploy</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span><span class="w"></span>
+              <pre><span></span><span class="nt">spec</span><span class="p">:</span>
+<span class="c1"># Set to true to use volume mounts instead of volume claims</span>
+<span class="w">  </span><span class="nt">localDeploy</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
 </pre>
              </div>
             </div>
@@ -794,7 +794,7 @@ the Mini Cluster (or if providing a command, an ephemeral job):
             </p>
             <div class="highlight-bash notranslate">
              <div class="highlight">
-              <pre><span></span>$ kubectl apply -f config/samples/flux-framework.org_v1alpha1_minicluster.yaml
+              <pre><span></span>$<span class="w"> </span>kubectl<span class="w"> </span>apply<span class="w"> </span>-f<span class="w"> </span>config/samples/flux-framework.org_v1alpha1_minicluster.yaml
 </pre>
              </div>
             </div>
@@ -803,9 +803,9 @@ the Mini Cluster (or if providing a command, an ephemeral job):
             </p>
             <div class="highlight-bash notranslate">
              <div class="highlight">
-              <pre><span></span>$ make clean  <span class="c1"># remove old flux-operator namespaced items</span>
-$ make apply  <span class="c1"># apply the setup and job config</span>
-$ make run    <span class="c1"># make the cluster</span>
+              <pre><span></span>$<span class="w"> </span>make<span class="w"> </span>clean<span class="w">  </span><span class="c1"># remove old flux-operator namespaced items</span>
+$<span class="w"> </span>make<span class="w"> </span>apply<span class="w">  </span><span class="c1"># apply the setup and job config</span>
+$<span class="w"> </span>make<span class="w"> </span>run<span class="w">    </span><span class="c1"># make the cluster</span>
 </pre>
              </div>
             </div>
@@ -814,7 +814,7 @@ $ make run    <span class="c1"># make the cluster</span>
             </p>
             <div class="highlight-bash notranslate">
              <div class="highlight">
-              <pre><span></span>$ make redo  <span class="c1"># clean, apply, and run</span>
+              <pre><span></span>$<span class="w"> </span>make<span class="w"> </span>redo<span class="w">  </span><span class="c1"># clean, apply, and run</span>
 </pre>
              </div>
             </div>
@@ -823,7 +823,7 @@ $ make run    <span class="c1"># make the cluster</span>
             </p>
             <div class="highlight-bash notranslate">
              <div class="highlight">
-              <pre><span></span>$ kubectl logs -n flux-operator job.batch/flux-sample
+              <pre><span></span>$<span class="w"> </span>kubectl<span class="w"> </span>logs<span class="w"> </span>-n<span class="w"> </span>flux-operator<span class="w"> </span>job.batch/flux-sample
 </pre>
              </div>
             </div>
@@ -832,7 +832,7 @@ $ make run    <span class="c1"># make the cluster</span>
             </p>
             <div class="highlight-bash notranslate">
              <div class="highlight">
-              <pre><span></span>$ make log
+              <pre><span></span>$<span class="w"> </span>make<span class="w"> </span>log
 </pre>
              </div>
             </div>
@@ -841,7 +841,7 @@ $ make run    <span class="c1"># make the cluster</span>
             </p>
             <div class="highlight-bash notranslate">
              <div class="highlight">
-              <pre><span></span>./script/log.sh flux-sample-0-b5rw6
+              <pre><span></span>./script/log.sh<span class="w"> </span>flux-sample-0-b5rw6
 </pre>
              </div>
             </div>
@@ -850,7 +850,7 @@ $ make run    <span class="c1"># make the cluster</span>
             </p>
             <div class="highlight-bash notranslate">
              <div class="highlight">
-              <pre><span></span>$ make list
+              <pre><span></span>$<span class="w"> </span>make<span class="w"> </span>list
 </pre>
              </div>
             </div>
@@ -859,7 +859,7 @@ $ make run    <span class="c1"># make the cluster</span>
             </p>
             <div class="highlight-bash notranslate">
              <div class="highlight">
-              <pre><span></span>./script/shell.sh flux-sample-0-b5rw6
+              <pre><span></span>./script/shell.sh<span class="w"> </span>flux-sample-0-b5rw6
 </pre>
              </div>
             </div>
@@ -868,7 +868,7 @@ $ make run    <span class="c1"># make the cluster</span>
             </p>
             <div class="highlight-bash notranslate">
              <div class="highlight">
-              <pre><span></span>$ kubectl <span class="nb">exec</span> --stdin --tty -n flux-operator flux-sample-0-vsnvz -c flux-sample-1 -- /bin/bash
+              <pre><span></span>$<span class="w"> </span>kubectl<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>--stdin<span class="w"> </span>--tty<span class="w"> </span>-n<span class="w"> </span>flux-operator<span class="w"> </span>flux-sample-0-vsnvz<span class="w"> </span>-c<span class="w"> </span>flux-sample-1<span class="w"> </span>--<span class="w"> </span>/bin/bash
 </pre>
              </div>
             </div>
@@ -927,7 +927,7 @@ file to a variable name. E.g., for the following files, the names would be:
              </p>
              <div class="highlight-console notranslate">
               <div class="highlight">
-               <pre><span></span><span class="gp">$ </span>tree examples/flux-restful/
+               <pre><span></span><span class="gp">$ </span>tree<span class="w"> </span>examples/flux-restful/
 <span class="go">├── minicluster-conveyorlc.yaml       (- name=conveyorlc</span>
 <span class="go">├── minicluster-lammps.yaml           (- name=lammps</span>
 <span class="go">└── minicluster-osu-benchmarks.yaml   (- name=osu-benchmarks</span>
@@ -939,7 +939,7 @@ file to a variable name. E.g., for the following files, the names would be:
              </p>
              <div class="highlight-bash notranslate">
               <div class="highlight">
-               <pre><span></span>$ make <span class="nv">name</span><span class="o">=</span>conveyorlc redo_example 
+               <pre><span></span>$<span class="w"> </span>make<span class="w"> </span><span class="nv">name</span><span class="o">=</span>conveyorlc<span class="w"> </span>redo_example<span class="w"> </span>
 </pre>
               </div>
              </div>
@@ -949,8 +949,8 @@ If you just want to just apply the new job and run the cluster, do:
              </p>
              <div class="highlight-bash notranslate">
               <div class="highlight">
-               <pre><span></span>$ make <span class="nv">name</span><span class="o">=</span>conveyorlc example
-$ make run
+               <pre><span></span>$<span class="w"> </span>make<span class="w"> </span><span class="nv">name</span><span class="o">=</span>conveyorlc<span class="w"> </span>example
+$<span class="w"> </span>make<span class="w"> </span>run
 </pre>
               </div>
              </div>
@@ -969,14 +969,12 @@ in the examples test folder:
              </p>
              <div class="highlight-console notranslate">
               <div class="highlight">
-               <pre><span></span><span class="gp">$ </span>tree examples/tests/
+               <pre><span></span><span class="gp">$ </span>tree<span class="w"> </span>examples/tests/
 <span class="go">examples/tests/</span>
-<span class="go">├── hello-world</span>
-<span class="go">│   ├── minicluster-hello-world.yaml   (- name=hello-world</span>
-<span class="go">│   └── test.sh</span>
-<span class="go">└── lammps</span>
-<span class="go">    ├── minicluster-lammps.yaml        (- name=lammps</span>
-<span class="go">    └── test.sh</span>
+<span class="go">├── hello-world           (- name=hello-world</span>
+<span class="go">│   └── minicluster.yaml</span>
+<span class="go">└── lammps                (- name=lammps</span>
+<span class="go">    └── minicluster.yaml</span>
 </pre>
               </div>
              </div>
@@ -985,7 +983,7 @@ in the examples test folder:
              </p>
              <div class="highlight-bash notranslate">
               <div class="highlight">
-               <pre><span></span>$ bash script/test.sh hello-world
+               <pre><span></span>$<span class="w"> </span>bash<span class="w"> </span>script/test.sh<span class="w"> </span>hello-world
 </pre>
               </div>
              </div>
@@ -994,7 +992,7 @@ in the examples test folder:
              </p>
              <div class="highlight-bash notranslate">
               <div class="highlight">
-               <pre><span></span>$ make <span class="nv">name</span><span class="o">=</span>hello-world redo_test 
+               <pre><span></span>$<span class="w"> </span>make<span class="w"> </span><span class="nv">name</span><span class="o">=</span>hello-world<span class="w"> </span>redo_test<span class="w"> </span>
 </pre>
               </div>
              </div>
@@ -1003,8 +1001,8 @@ in the examples test folder:
              </p>
              <div class="highlight-bash notranslate">
               <div class="highlight">
-               <pre><span></span>$ make <span class="nv">name</span><span class="o">=</span>hello-world applytest
-$ make run
+               <pre><span></span>$<span class="w"> </span>make<span class="w"> </span><span class="nv">name</span><span class="o">=</span>hello-world<span class="w"> </span>applytest
+$<span class="w"> </span>make<span class="w"> </span>run
 </pre>
               </div>
              </div>
@@ -1014,8 +1012,8 @@ so they will not run instantly. You can list pods to get an id, and then view lo
              </p>
              <div class="highlight-bash notranslate">
               <div class="highlight">
-               <pre><span></span>$ make list
-$ bash script/log.sh &lt;pod&gt;
+               <pre><span></span>$<span class="w"> </span>make<span class="w"> </span>list
+$<span class="w"> </span>bash<span class="w"> </span>script/log.sh<span class="w"> </span>&lt;pod&gt;
 </pre>
               </div>
              </div>
@@ -1089,7 +1087,7 @@ If you want to try this:
            </p>
            <div class="highlight-console notranslate">
             <div class="highlight">
-             <pre><span></span><span class="gp">$ </span>minikube service -n flux-operator flux-restful-service --url<span class="o">=</span><span class="nb">true</span>
+             <pre><span></span><span class="gp">$ </span>minikube<span class="w"> </span>service<span class="w"> </span>-n<span class="w"> </span>flux-operator<span class="w"> </span>flux-restful-service<span class="w"> </span>--url<span class="o">=</span><span class="nb">true</span>
 </pre>
             </div>
            </div>
@@ -1112,18 +1110,18 @@ This happens in our Docker CI, however you can build (and deploy if you are an o
          </p>
          <div class="highlight-bash notranslate">
           <div class="highlight">
-           <pre><span></span>$ make docker-build
-$ make docker-push
+           <pre><span></span>$<span class="w"> </span>make<span class="w"> </span>docker-build
+$<span class="w"> </span>make<span class="w"> </span>docker-push
 </pre>
           </div>
          </div>
          <div class="highlight-bash notranslate">
           <div class="highlight">
            <pre><span></span><span class="c1"># operator lifecycle manager</span>
-$ operator-sdk olm install
-$ make bundle
-$ make bundle-build
-$ make bundle-push
+$<span class="w"> </span>operator-sdk<span class="w"> </span>olm<span class="w"> </span>install
+$<span class="w"> </span>make<span class="w"> </span>bundle
+$<span class="w"> </span>make<span class="w"> </span>bundle-build
+$<span class="w"> </span>make<span class="w"> </span>bundle-push
 </pre>
           </div>
          </div>
@@ -1132,8 +1130,8 @@ $ make bundle-push
          </p>
          <div class="highlight-bash notranslate">
           <div class="highlight">
-           <pre><span></span>$ make catalog-build
-$ make catalog-push
+           <pre><span></span>$<span class="w"> </span>make<span class="w"> </span>catalog-build
+$<span class="w"> </span>make<span class="w"> </span>catalog-push
 </pre>
           </div>
          </div>
@@ -1159,7 +1157,7 @@ $ make catalog-push
          </p>
          <div class="highlight-bash notranslate">
           <div class="highlight">
-           <pre><span></span>$ make build-config
+           <pre><span></span>$<span class="w"> </span>make<span class="w"> </span>build-config
 </pre>
           </div>
          </div>
@@ -1281,15 +1279,53 @@ generation that is
           <a class="reference external" href="https://github.com/flux-framework/flux-sched/blob/master/src/test/docker/focal/Dockerfile">
            flux-sched
           </a>
-          base image, and we strongly suggest you use this for your base container to make development
-easier! If you intend to use the
+          base image
+          <a class="reference external" href="https://hub.docker.com/r/fluxrm/flux-sched">
+           available on Docker hub
+          </a>
+          as
+          <code class="docutils literal notranslate">
+           <span class="pre">
+            fluxrm/flux-sched:focal
+           </span>
+          </code>
+          ,
+and we strongly suggest you use this for your base container to make development easier!
+If you intend to use the
           <a class="reference external" href="https://github.com/flux-framework/flux-restful-api">
            Flux RESTful API
           </a>
           to interact with your cluster, ensure that flux (python bindings) are on the path, along with
 either python or python3 (depending on which you used to install Flux).
 If/when needed we can lift some of these constraints, but for now they are
-reasonable.
+reasonable. If you use this image, you should have python3 and pip3 available to you,
+and the active user is
+          <code class="docutils literal notranslate">
+           <span class="pre">
+            fluxuser
+           </span>
+          </code>
+          . This means if you want to add content, either you’ll
+need to change the user to
+          <code class="docutils literal notranslate">
+           <span class="pre">
+            root
+           </span>
+          </code>
+          in a build (and back to
+          <code class="docutils literal notranslate">
+           <span class="pre">
+            fluxuser
+           </span>
+          </code>
+          at the end), use sudo, or
+install to
+          <code class="docutils literal notranslate">
+           <span class="pre">
+            /home/fluxuser
+           </span>
+          </code>
+          .
          </p>
         </section>
         <section id="testing">
@@ -1347,7 +1383,7 @@ reasonable.
              as
              <code class="docutils literal notranslate">
               <span class="pre">
-               minicluster-${name}.yaml
+               minicluster.yaml
               </span>
              </code>
              .
@@ -1408,7 +1444,7 @@ job time, just like in actions. The below example runs the “hello-world” tes
           </p>
           <div class="highlight-bash notranslate">
            <div class="highlight">
-            <pre><span></span>./bin/bash script/test.sh hello-world <span class="m">10</span>
+            <pre><span></span>./bin/bash<span class="w"> </span>script/test.sh<span class="w"> </span>hello-world<span class="w"> </span><span class="m">10</span>
 </pre>
            </div>
           </div>
@@ -1437,7 +1473,7 @@ Finally, note that for big containers it’s suggested to pull them first, e.g.,
           </p>
           <div class="highlight-bash notranslate">
            <div class="highlight">
-            <pre><span></span>$ minikube ssh docker pull ghcr.io/rse-ops/lammps:flux-sched-focal-v0.24.0
+            <pre><span></span>$<span class="w"> </span>minikube<span class="w"> </span>ssh<span class="w"> </span>docker<span class="w"> </span>pull<span class="w"> </span>ghcr.io/rse-ops/lammps:flux-sched-focal-v0.24.0
 </pre>
            </div>
           </div>
@@ -1465,14 +1501,14 @@ This is because it’s inside the VM. This you might want to move files there be
            <div class="highlight">
             <pre><span></span><span class="ch">#!/bin/bash</span>
 
-<span class="nv">HERE</span><span class="o">=</span><span class="k">$(</span> <span class="nb">cd</span> -- <span class="s2">"</span><span class="k">$(</span> dirname -- <span class="s2">"</span><span class="si">${</span><span class="nv">BASH_SOURCE</span><span class="p">[0]</span><span class="si">}</span><span class="s2">"</span> <span class="k">)</span><span class="s2">"</span> <span class="p">&amp;</span>&gt; /dev/null <span class="o">&amp;&amp;</span> <span class="nb">pwd</span> <span class="k">)</span>
+<span class="nv">HERE</span><span class="o">=</span><span class="k">$(</span><span class="w"> </span><span class="nb">cd</span><span class="w"> </span>--<span class="w"> </span><span class="s2">"</span><span class="k">$(</span><span class="w"> </span>dirname<span class="w"> </span>--<span class="w"> </span><span class="s2">"</span><span class="si">${</span><span class="nv">BASH_SOURCE</span><span class="p">[0]</span><span class="si">}</span><span class="s2">"</span><span class="w"> </span><span class="k">)</span><span class="s2">"</span><span class="w"> </span><span class="p">&amp;</span>&gt;<span class="w"> </span>/dev/null<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="nb">pwd</span><span class="w"> </span><span class="k">)</span>
 
-<span class="nb">echo</span> <span class="s2">"Copying local volume to /tmp/data-volumes in minikube"</span>
+<span class="nb">echo</span><span class="w"> </span><span class="s2">"Copying local volume to /tmp/data-volumes in minikube"</span>
 
 <span class="c1"># We don't care if this works or not - mkdir -p seems to bork</span>
-minikube ssh -- mkdir -p /tmp/data-volumes
-minikube cp <span class="si">${</span><span class="nv">HERE</span><span class="si">}</span>/data/pancakes.txt /tmp/data-volumes/pancakes.txt
-minikube ssh ls /tmp/data-volumes
+minikube<span class="w"> </span>ssh<span class="w"> </span>--<span class="w"> </span>mkdir<span class="w"> </span>-p<span class="w"> </span>/tmp/data-volumes
+minikube<span class="w"> </span>cp<span class="w"> </span><span class="si">${</span><span class="nv">HERE</span><span class="si">}</span>/data/pancakes.txt<span class="w"> </span>/tmp/data-volumes/pancakes.txt
+minikube<span class="w"> </span>ssh<span class="w"> </span>ls<span class="w"> </span>/tmp/data-volumes
 </pre>
            </div>
           </div>
@@ -1483,8 +1519,8 @@ minikube ssh ls /tmp/data-volumes
            <div class="highlight">
             <pre><span></span><span class="ch">#!/bin/bash</span>
 
-<span class="nb">echo</span> <span class="s2">"Cleaning up /tmp/data-volumes in minikube"</span>
-minikube ssh -- sudo rm -rf /tmp/data-volumes
+<span class="nb">echo</span><span class="w"> </span><span class="s2">"Cleaning up /tmp/data-volumes in minikube"</span>
+minikube<span class="w"> </span>ssh<span class="w"> </span>--<span class="w"> </span>sudo<span class="w"> </span>rm<span class="w"> </span>-rf<span class="w"> </span>/tmp/data-volumes
 </pre>
            </div>
           </div>
@@ -1545,9 +1581,9 @@ create a virtual environment:
           </p>
           <div class="highlight-bash notranslate">
            <div class="highlight">
-            <pre><span></span>$ <span class="nb">cd</span> docs
-$ python -m venv env 
-$ <span class="nb">source</span> env/bin/activate
+            <pre><span></span>$<span class="w"> </span><span class="nb">cd</span><span class="w"> </span>docs
+$<span class="w"> </span>python<span class="w"> </span>-m<span class="w"> </span>venv<span class="w"> </span>env<span class="w"> </span>
+$<span class="w"> </span><span class="nb">source</span><span class="w"> </span>env/bin/activate
 </pre>
            </div>
           </div>
@@ -1556,10 +1592,10 @@ $ <span class="nb">source</span> env/bin/activate
           </p>
           <div class="highlight-console notranslate">
            <div class="highlight">
-            <pre><span></span><span class="gp">$ </span>pip install -r requirements.txt
+            <pre><span></span><span class="gp">$ </span>pip<span class="w"> </span>install<span class="w"> </span>-r<span class="w"> </span>requirements.txt
 
-<span class="gp"># </span>Build the docs into _build/html
-<span class="gp">$ </span>make html
+<span class="gp"># </span>Build<span class="w"> </span>the<span class="w"> </span>docs<span class="w"> </span>into<span class="w"> </span>_build/html
+<span class="gp">$ </span>make<span class="w"> </span>html
 </pre>
            </div>
           </div>
@@ -1592,7 +1628,7 @@ server to preview:
           </p>
           <div class="highlight-console notranslate">
            <div class="highlight">
-            <pre><span></span><span class="gp">$ </span>python -m http.server <span class="m">9999</span>
+            <pre><span></span><span class="gp">$ </span>python<span class="w"> </span>-m<span class="w"> </span>http.server<span class="w"> </span><span class="m">9999</span>
 </pre>
            </div>
           </div>
@@ -1652,7 +1688,7 @@ server to preview:
        © Copyright 2022, Flux Developers.
       </div>
       Last updated on
-              Dec 30, 2022.
+              Jan 04, 2023.
       <br/>
       Created using
       <a href="http://www.sphinx-doc.org/">
