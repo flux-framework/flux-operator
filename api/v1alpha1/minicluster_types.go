@@ -14,6 +14,7 @@ import (
 	"fmt"
 
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
 )
 
 // EDIT THIS FILE!  THIS IS SCAFFOLDING FOR YOU TO OWN!
@@ -29,6 +30,14 @@ type MiniClusterSpec struct {
 	// Containers is one or more containers to be created in a pod.
 	// There should only be one container to run flux with runFlux
 	Containers []MiniClusterContainer `json:"containers"`
+
+	// Labels for the job
+	// +optional
+	JobLabels map[string]string `json:"jobLabels"`
+
+	// Labels for each pod
+	// +optional
+	PodLabels map[string]string `json:"podLabels"`
 
 	// Volumes on the host (named) accessible to containers
 	// +optional
@@ -180,7 +189,29 @@ type MiniClusterContainer struct {
 	// Lifecycle can handle post start commands, etc.
 	// +optional
 	LifeCyclePostStartExec string `json:"postStartExec"`
+
+	// Resources include limits and requests
+	// +optional
+	Resources ContainerResources `json:"resources"`
 }
+
+// ContainerResources include limits and requests
+type ContainerResources struct {
+
+	// +kubebuilder:pruning:PreserveUnknownFields
+	// +kubebuilder:validation:Schemaless
+	// +optional
+	Limits ContainerResource `json:"limits"`
+
+	// +kubebuilder:pruning:PreserveUnknownFields
+	// +kubebuilder:validation:Schemaless
+	// +optional
+	Requests ContainerResource `json:"requests"`
+}
+
+// +kubebuilder:pruning:PreserveUnknownFields
+// +kubebuilder:validation:Schemaless
+type ContainerResource unstructured.Unstructured
 
 //+kubebuilder:object:root=true
 //+kubebuilder:subresource:status
@@ -192,6 +223,15 @@ type MiniCluster struct {
 
 	Spec   MiniClusterSpec   `json:"spec,omitempty"`
 	Status MiniClusterStatus `json:"status,omitempty"`
+}
+
+// controller-gen cannot handle the interface{} type of an aliased Unstructured, thus we write our own DeepCopyInto function.
+func (in *ContainerResource) DeepCopyInto(out *ContainerResource) {
+	if out != nil {
+		casted := unstructured.Unstructured(*in)
+		deepCopy := casted.DeepCopy()
+		out.Object = deepCopy.Object
+	}
 }
 
 // Validate ensures we have data that is needed, and sets defaults if needed
@@ -210,6 +250,14 @@ func (f *MiniCluster) Validate() bool {
 	// This makes it easier for the user to not require the flag
 	if len(f.Spec.Containers) == 1 {
 		f.Spec.Containers[0].FluxRunner = true
+	}
+
+	// If pod and job labels aren't defined, create label set
+	if f.Spec.PodLabels == nil {
+		f.Spec.PodLabels = map[string]string{}
+	}
+	if f.Spec.JobLabels == nil {
+		f.Spec.JobLabels = map[string]string{}
 	}
 
 	for i, container := range f.Spec.Containers {
