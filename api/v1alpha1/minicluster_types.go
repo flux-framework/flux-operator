@@ -1,5 +1,5 @@
 /*
-Copyright 2022 Lawrence Livermore National Security, LLC
+Copyright 2022-2023 Lawrence Livermore National Security, LLC
  (c.f. AUTHORS, NOTICE.LLNS, COPYING)
 
 This is part of the Flux resource manager framework.
@@ -225,7 +225,7 @@ type MiniCluster struct {
 	Status MiniClusterStatus `json:"status,omitempty"`
 }
 
-// controller-gen cannot handle the interface{} type of an aliased Unstructured, thus we write our own DeepCopyInto function.
+// controller-gen cannot handle the interface{} type of an aliased Unstructured
 func (in *ContainerResource) DeepCopyInto(out *ContainerResource) {
 	if out != nil {
 		casted := unstructured.Unstructured(*in)

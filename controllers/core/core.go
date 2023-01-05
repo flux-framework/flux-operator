@@ -1,5 +1,5 @@
 /*
-Copyright 2022 Lawrence Livermore National Security, LLC
+Copyright 2022-2023 Lawrence Livermore National Security, LLC
  (c.f. AUTHORS, NOTICE.LLNS, COPYING)
 
 This is part of the Flux resource manager framework.
@@ -12,6 +12,8 @@ package core
 
 import (
 	controllers "flux-framework/flux-operator/controllers/flux"
+
+	api "flux-framework/flux-operator/api/v1alpha1"
 
 	"k8s.io/client-go/rest"
 	ctrl "sigs.k8s.io/controller-runtime"
@@ -34,5 +36,13 @@ func SetupControllers(mgr ctrl.Manager, restClient rest.Interface) (string, erro
 		setupLog.Error(err, "unable to create controller", "controller", "MiniCluster")
 		return "MiniCluster", err
 	}
+
+	setupLog.Info("🌈 Success controller created", "controller", "MiniCluster")
+
+	if err := (&api.MiniCluster{}).SetupWebhookWithManager(mgr); err != nil {
+		setupLog.Error(err, "unable to create webhook", "webhook", "MiniCluster")
+		return "MiniCluster", err
+	}
+	setupLog.Info("🌈 Success webhook manager created", "webhook", "MiniCluster")
 	return "", nil
 }

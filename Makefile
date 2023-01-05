@@ -147,6 +147,14 @@ applytest:
 example:
 	kubectl apply -f examples/flux-restful/minicluster-$(name).yaml 
 
+CERTSDIR=/tmp/k8s-webhook-server/serving-certs
+.PHONY: generate-certs
+generate-certs: ## Generates the certs required to run webhooks locally
+	mkdir -p $(CERTSDIR)
+	cd $(CERTSDIR) && \
+		openssl genrsa 2048 > tls.key && \
+		openssl req -new -x509 -nodes -sha256 -days 365 -key tls.key -out tls.crt -subj "/C=XX"
+
 # Clean, apply and run, and apply the job
 redo: clean apply run
 redo_example: clean example run
