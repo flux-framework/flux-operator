@@ -325,6 +325,16 @@
                       </a>
                      </li>
                      <li class="md-nav__item">
+                      <a class="md-nav__link" href="#joblabels">
+                       jobLabels
+                      </a>
+                     </li>
+                     <li class="md-nav__item">
+                      <a class="md-nav__link" href="#podlabels">
+                       podLabels
+                      </a>
+                     </li>
+                     <li class="md-nav__item">
                       <a class="md-nav__link" href="#test">
                        test
                       </a>
@@ -369,8 +379,8 @@
                       </nav>
                      </li>
                      <li class="md-nav__item">
-                      <a class="md-nav__link" href="#id1">
-                       volumes
+                      <a class="md-nav__link" href="#resources">
+                       resources
                       </a>
                       <nav class="md-nav">
                        <ul class="md-nav__list">
@@ -426,6 +436,11 @@
                         </li>
                        </ul>
                       </nav>
+                     </li>
+                     <li class="md-nav__item">
+                      <a class="md-nav__link" href="#id1">
+                       volumes
+                      </a>
                      </li>
                      <li class="md-nav__item">
                       <a class="md-nav__link" href="#fluxrestful">
@@ -537,6 +552,16 @@
                  </a>
                 </li>
                 <li class="md-nav__item">
+                 <a class="md-nav__link" href="#joblabels">
+                  jobLabels
+                 </a>
+                </li>
+                <li class="md-nav__item">
+                 <a class="md-nav__link" href="#podlabels">
+                  podLabels
+                 </a>
+                </li>
+                <li class="md-nav__item">
                  <a class="md-nav__link" href="#test">
                   test
                  </a>
@@ -581,8 +606,8 @@
                  </nav>
                 </li>
                 <li class="md-nav__item">
-                 <a class="md-nav__link" href="#id1">
-                  volumes
+                 <a class="md-nav__link" href="#resources">
+                  resources
                  </a>
                  <nav class="md-nav">
                   <ul class="md-nav__list">
@@ -638,6 +663,11 @@
                    </li>
                   </ul>
                  </nav>
+                </li>
+                <li class="md-nav__item">
+                 <a class="md-nav__link" href="#id1">
+                  volumes
+                 </a>
                 </li>
                 <li class="md-nav__item">
                  <a class="md-nav__link" href="#fluxrestful">
@@ -796,6 +826,47 @@ the set of containers that you describe.
 </pre>
            </div>
           </div>
+         </section>
+         <section id="joblabels">
+          <h3 id="joblabels">
+           jobLabels
+           <a class="headerlink" href="#joblabels" title="Permalink to this heading">
+            ¶
+           </a>
+          </h3>
+          <p>
+           To add custom labels for your job, add a set of key value pairs (strings) to a “jobLabels” section:
+          </p>
+          <div class="highlight-yaml notranslate">
+           <div class="highlight">
+            <pre><span></span><span class="w">  </span><span class="nt">jobLabels</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">job-attribute-a</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">dinosaur-a</span>
+<span class="w">    </span><span class="nt">job-attribute-b</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">dinosaur-b</span>
+</pre>
+           </div>
+          </div>
+         </section>
+         <section id="podlabels">
+          <h3 id="podlabels">
+           podLabels
+           <a class="headerlink" href="#podlabels" title="Permalink to this heading">
+            ¶
+           </a>
+          </h3>
+          <p>
+           To add custom labels for your pods (in the indexed job), add a set of key value pairs (strings) to a “podLabels” section:
+          </p>
+          <div class="highlight-yaml notranslate">
+           <div class="highlight">
+            <pre><span></span><span class="w">  </span><span class="nt">pobLabels</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">pod-attribute-a</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">dinosaur-a</span>
+<span class="w">    </span><span class="nt">pod-attribute-b</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">dinosaur-b</span>
+</pre>
+           </div>
+          </div>
+          <p>
+           Note that the “namespace” variable is controlled by the operator here, and would be over-ridden if you defined it here.
+          </p>
          </section>
          <section id="test">
           <h3 id="test">
@@ -995,45 +1066,60 @@ If you use the
            </div>
           </section>
          </section>
-         <section id="id1">
-          <h3 id="id1">
-           volumes
-           <a class="headerlink" href="#id1" title="Permalink to this heading">
+         <section id="resources">
+          <h3 id="resources">
+           resources
+           <a class="headerlink" href="#resources" title="Permalink to this heading">
             ¶
            </a>
           </h3>
           <p>
-           Volumes that are defined on the level of the MiniCluster (named) can be mounted into containers.
-As an example, here is how we specify the volume
-           <code class="docutils literal notranslate">
-            <span class="pre">
-             myvolume
-            </span>
-           </code>
-           to be mounted to the container at
-           <code class="docutils literal notranslate">
-            <span class="pre">
-             /data
-            </span>
-           </code>
-           .
+           Resources can include limits and requests. Known keys include “memory” and “cpu” (should be provided in some
+string format that can be parsed) and all others are considered some kind of quantity request.
           </p>
           <div class="highlight-yaml notranslate">
            <div class="highlight">
-            <pre><span></span><span class="nt">volumes</span><span class="p">:</span>
-<span class="w">  </span><span class="nt">myvolume</span><span class="p">:</span>
-<span class="w">    </span><span class="nt">path</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">/data</span>
+            <pre><span></span><span class="nt">resources</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">limits</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">memory</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">500M</span>
+<span class="w">    </span><span class="nt">cpu</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">4</span>
 </pre>
            </div>
           </div>
           <p>
-           The
-           <code class="docutils literal notranslate">
-            <span class="pre">
-             myvolume
-            </span>
-           </code>
-           key must be defined in the MiniCluster set of volumes, and this is checked.
+           If you wanted to, for example, request a GPU, that might look like:
+          </p>
+          <div class="highlight-yaml notranslate">
+           <div class="highlight">
+            <pre><span></span><span class="nt">resources</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">limits</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">gpu-vendor.example/example-gpu</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1</span>
+</pre>
+           </div>
+          </div>
+          <p>
+           Or for a particulat type of networking fabric:
+          </p>
+          <div class="highlight-yaml notranslate">
+           <div class="highlight">
+            <pre><span></span><span class="nt">resources</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">limits</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">vpc.amazonaws.com/efa</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1</span>
+</pre>
+           </div>
+          </div>
+          <p>
+           Both limits and resources are flexible to accept a string or an integer value, and you’ll get an error if you
+provide something else. If you need something else,
+           <a class="reference external" href="https://github.com/flux-framework/flux-operator/issues">
+            let us know
+           </a>
+           .
+If you are requesting GPU,
+           <a class="reference external" href="https://kubernetes.io/docs/tasks/manage-gpus/scheduling-gpus/">
+            this documentation
+           </a>
+           is helpful.
           </p>
           <section id="imagepullsecret">
            <h4 id="imagepullsecret">
@@ -1288,6 +1374,47 @@ we provide this argument on the level of the container. To enable this, set this
            </div>
           </section>
          </section>
+         <section id="id1">
+          <h3 id="id1">
+           volumes
+           <a class="headerlink" href="#id1" title="Permalink to this heading">
+            ¶
+           </a>
+          </h3>
+          <p>
+           Volumes that are defined on the level of the MiniCluster (named) can be mounted into containers.
+As an example, here is how we specify the volume
+           <code class="docutils literal notranslate">
+            <span class="pre">
+             myvolume
+            </span>
+           </code>
+           to be mounted to the container at
+           <code class="docutils literal notranslate">
+            <span class="pre">
+             /data
+            </span>
+           </code>
+           .
+          </p>
+          <div class="highlight-yaml notranslate">
+           <div class="highlight">
+            <pre><span></span><span class="nt">volumes</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">myvolume</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">path</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">/data</span>
+</pre>
+           </div>
+          </div>
+          <p>
+           The
+           <code class="docutils literal notranslate">
+            <span class="pre">
+             myvolume
+            </span>
+           </code>
+           key must be defined in the MiniCluster set of volumes, and this is checked.
+          </p>
+         </section>
          <section id="fluxrestful">
           <h3 id="fluxrestful">
            fluxRestful
@@ -1390,7 +1517,7 @@ It defaults to 5000.
        © Copyright 2022, Flux Developers.
       </div>
       Last updated on
-              Jan 04, 2023.
+              Jan 05, 2023.
       <br/>
       Created using
       <a href="http://www.sphinx-doc.org/">

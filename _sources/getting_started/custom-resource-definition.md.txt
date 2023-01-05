@@ -47,6 +47,28 @@ the set of containers that you describe.
   size: 4
 ```
 
+### jobLabels
+
+To add custom labels for your job, add a set of key value pairs (strings) to a "jobLabels" section:
+
+```yaml
+  jobLabels:
+    job-attribute-a: dinosaur-a
+    job-attribute-b: dinosaur-b
+```
+
+### podLabels
+
+To add custom labels for your pods (in the indexed job), add a set of key value pairs (strings) to a "podLabels" section:
+
+```yaml
+  pobLabels:
+    pod-attribute-a: dinosaur-a
+    pod-attribute-b: dinosaur-b
+```
+
+Note that the "namespace" variable is controlled by the operator here, and would be over-ridden if you defined it here.
+
 ### test
 
 Test mode turns off all verbose output (yes, the emojis too) so only the output of 
@@ -143,19 +165,36 @@ Providing (or not providing) a command is going to dictate the behavior of your 
     command: lmp -v x 2 -v y 2 -v z 2 -in in.reaxc.hns -nocite
 ```
 
-### volumes
+### resources
 
-Volumes that are defined on the level of the MiniCluster (named) can be mounted into containers.
-As an example, here is how we specify the volume `myvolume` to be mounted to the container at `/data`.
+Resources can include limits and requests. Known keys include "memory" and "cpu" (should be provided in some
+string format that can be parsed) and all others are considered some kind of quantity request. 
 
 ```yaml
-volumes:
-  myvolume:
-    path: /data
+resources:
+  limits:
+    memory: 500M
+    cpu: 4
+```
+If you wanted to, for example, request a GPU, that might look like:
+
+```yaml
+resources:
+  limits:
+    gpu-vendor.example/example-gpu: 1
 ```
 
-The `myvolume` key must be defined in the MiniCluster set of volumes, and this is checked.
+Or for a particulat type of networking fabric:
 
+```yaml
+resources:
+  limits:
+    vpc.amazonaws.com/efa: 1
+```
+
+Both limits and resources are flexible to accept a string or an integer value, and you'll get an error if you
+provide something else. If you need something else, [let us know](https://github.com/flux-framework/flux-operator/issues).
+If you are requesting GPU, [this documentation](https://kubernetes.io/docs/tasks/manage-gpus/scheduling-gpus/) is helpful.
 
 #### imagePullSecret
 
@@ -293,6 +332,18 @@ we provide this argument on the level of the container. To enable this, set this
   diagnostics: false
 ```
 
+### volumes
+
+Volumes that are defined on the level of the MiniCluster (named) can be mounted into containers.
+As an example, here is how we specify the volume `myvolume` to be mounted to the container at `/data`.
+
+```yaml
+volumes:
+  myvolume:
+    path: /data
+```
+
+The `myvolume` key must be defined in the MiniCluster set of volumes, and this is checked.
 
 
 ### fluxRestful
