@@ -12,15 +12,11 @@ resources:
     namespaced: true
   controller: true
   domain: flux-framework.org
-  kind: Flux
+  kind: MiniCluster
   path: flux-framework/flux-operator/api/v1alpha1
   version: v1alpha1
-- api:
-    crdVersion: v1
-    namespaced: true
-  controller: true
-  domain: flux-framework.org
-  kind: FluxSetup
-  path: flux-framework/flux-operator/api/v1alpha1
-  version: v1alpha1
+  webhooks:
+    defaulting: true
+    validation: true
+    webhookVersion: v1
 version: "3"
