@@ -1,4 +1,4 @@
-# Design 3
+# Design 3.1
 
 This design is a simple design based around a single custom resource definition
 

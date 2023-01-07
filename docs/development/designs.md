@@ -2,21 +2,11 @@
 
 ## Active Design
 
-![09-16-2022/design-three-team.png](09-16-2022/design-three-team.png)
+> 3.3
 
- - [See the Design](09-16-2022/index.md)
+![01-06-2023/the-operator-3.3.png](01-06-2023/the-operator-3.3.png)
 
- - A **MiniCluster** is an [indexed job](https://kubernetes.io/docs/tasks/job/indexed-parallel-processing-static/) so we can create N copies of the "same" base containers (each with Flux, and the connected workers in our cluster)
- - The flux config is written to a volume at `/etc/flux/config` (created via a config map) as a brokers.toml file.
- - The startup script "wait-X.sh" handles setting up Flux and checking that the container meets all requirements. 
-   - If a command is provided, we give it to Flux directly (suggested), otherwise we start a Flux RestFul server to interact with
-   - The container for the flux runner is expected to already have a munge.key in `/etc/munge/munge.key`. This will be the same across pods generated given generation from the same container.
- - To generate the curve certificate (`/etc/curve/curve.cert`) we use the flux runner container in a one-off pod to run `flux-keygen` and retrieve the output in the log. We then write this curve.cert as a Config Map to the indexed job pods. We do this beceause generating it natively in Go would require other libraries on the host for ZeroMQ. 
- - Networking of the pods works by way of exposing a service that includes the Pod subdomain. We add fully qualified domain names to the pods so that the `hostname` command matches the full name, and Flux is given the full names in its broker.toml.
- - The main pod either runs `flux start` with a web service (creating a persistent "Mini Cluster" or `flux start` with a specific command (if provided in the CRD) in which case the command runs, and the jobs finish and the cluster goes away.
-
-We do not yet have a solution for shared read/write many "RWX" on a cloud cluster. The FluxRestfulAPI also does not
-work (yet) for multiple processes - to run early experiments we are providing commands directly. 
+ - [See the Design](01-06-2023/index.md)
 
 ## Early Designs
 
@@ -25,12 +15,17 @@ to take, and this is what we did in the first days of the Flux Operator.  The fi
 is what we decided to focus on, and the others are described (and illustrated) in detail at their respective
 links. This is a review of various early designs we've thought about, presented in reverse order (newest to latest).
 
-### Design 3
+### Design 3.2
+
+This design extends and improves the Mini Cluster to better handle networking.
+
+ - [See the Design](09-16-2022/index.md)
+
+### Design 3.1
 
 This design is a simple design based around a single custom resource definition
 
  - [See the Design](09-07-2022/index.md)
-
 
 ### Design 2.2
 
