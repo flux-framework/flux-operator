@@ -38,7 +38,7 @@
   </script>
   <link href="../../_static/images/flux-operator.jpg" rel="apple-touch-icon"/>
   <title>
-   Design 3 — Flux Operator
+   Design 3.2 — Flux Operator
   </title>
   <link href="../../_static/pygments.css" rel="stylesheet" type="text/css"/>
   <link href="../../_static/material.css" rel="stylesheet" type="text/css"/>
@@ -144,7 +144,7 @@
         Flux Operator
        </span>
        <span class="md-header-nav__topic">
-        Design 3
+        Design 3.2
        </span>
       </div>
      </div>
@@ -316,7 +316,7 @@
          <ul class="md-nav__list" data-md-scrollfix="">
           <li class="md-nav__item">
            <a class="md-nav__link" href="#development-09-16-2022-index--page-root">
-            Design 3
+            Design 3.2
            </a>
            <nav class="md-nav">
             <ul class="md-nav__list">
@@ -342,9 +342,9 @@
      </div>
      <div class="md-content">
       <article class="md-content__inner md-typeset" role="main">
-       <section id="design-3">
+       <section id="design-3-2">
         <h1 id="development-09-16-2022-index--page-root">
-         Design 3
+         Design 3.2
          <a class="headerlink" href="#development-09-16-2022-index--page-root" title="Permalink to this heading">
           ¶
          </a>
@@ -386,13 +386,42 @@
           </li>
           <li>
            <p>
-            The startup script “wait.sh” handles writing the curve certificate (
+            The startup script “wait-X.sh” handles setting up Flux and checking that the container meets all requirements.
+           </p>
+           <ul>
+            <li>
+             <p>
+              If a command is provided, we give it to Flux directly (suggested), otherwise we start a Flux RestFul server to interact with
+             </p>
+            </li>
+            <li>
+             <p>
+              The container for the flux runner is expected to already have a munge.key in
+              <code class="docutils literal notranslate">
+               <span class="pre">
+                /etc/munge/munge.key
+               </span>
+              </code>
+              . This will be the same across pods generated given generation from the same container.
+             </p>
+            </li>
+           </ul>
+          </li>
+          <li>
+           <p>
+            To generate the curve certificate (
             <code class="docutils literal notranslate">
              <span class="pre">
-              /mnt/curve/curve.cert
+              /etc/curve/curve.cert
              </span>
             </code>
-            ) and generating and sharing a munge key in the same location.
+            ) we use the flux runner container in a one-off pod to run
+            <code class="docutils literal notranslate">
+             <span class="pre">
+              flux-keygen
+             </span>
+            </code>
+            and retrieve the output in the log. We then write this curve.cert as a Config Map to the indexed job pods. We do this beceause generating it natively in Go would require other libraries on the host for ZeroMQ.
            </p>
           </li>
           <li>
@@ -496,7 +525,7 @@
        © Copyright 2022, Flux Developers.
       </div>
       Last updated on
-              Jan 05, 2023.
+              Jan 07, 2023.
       <br/>
       Created using
       <a href="http://www.sphinx-doc.org/">

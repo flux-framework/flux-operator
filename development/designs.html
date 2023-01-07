@@ -315,8 +315,13 @@
                    <nav class="md-nav">
                     <ul class="md-nav__list">
                      <li class="md-nav__item">
-                      <a class="md-nav__link" href="#design-3">
-                       Design 3
+                      <a class="md-nav__link" href="#design-3-2">
+                       Design 3.2
+                      </a>
+                     </li>
+                     <li class="md-nav__item">
+                      <a class="md-nav__link" href="#design-3-1">
+                       Design 3.1
                       </a>
                      </li>
                      <li class="md-nav__item">
@@ -439,8 +444,13 @@
               <nav class="md-nav">
                <ul class="md-nav__list">
                 <li class="md-nav__item">
-                 <a class="md-nav__link" href="#design-3">
-                  Design 3
+                 <a class="md-nav__link" href="#design-3-2">
+                  Design 3.2
+                 </a>
+                </li>
+                <li class="md-nav__item">
+                 <a class="md-nav__link" href="#design-3-1">
+                  Design 3.1
                  </a>
                 </li>
                 <li class="md-nav__item">
@@ -511,122 +521,27 @@
            ¶
           </a>
          </h2>
+         <blockquote>
+          <div>
+           <p>
+            3.3
+           </p>
+          </div>
+         </blockquote>
          <p>
-          <img alt="09-16-2022/design-three-team.png" src="../_images/design-three-team1.png"/>
+          <img alt="01-06-2023/the-operator-3.3.png" src="../_images/the-operator-3.3.png"/>
          </p>
          <ul class="simple">
           <li>
            <p>
-            <a class="reference internal" href="09-16-2022/index.html">
+            <a class="reference internal" href="01-06-2023/index.html">
              <span class="doc std std-doc">
               See the Design
              </span>
             </a>
            </p>
           </li>
-          <li>
-           <p>
-            A
-            <strong>
-             MiniCluster
-            </strong>
-            is an
-            <a class="reference external" href="https://kubernetes.io/docs/tasks/job/indexed-parallel-processing-static/">
-             indexed job
-            </a>
-            so we can create N copies of the “same” base containers (each with Flux, and the connected workers in our cluster)
-           </p>
-          </li>
-          <li>
-           <p>
-            The flux config is written to a volume at
-            <code class="docutils literal notranslate">
-             <span class="pre">
-              /etc/flux/config
-             </span>
-            </code>
-            (created via a config map) as a brokers.toml file.
-           </p>
-          </li>
-          <li>
-           <p>
-            The startup script “wait-X.sh” handles setting up Flux and checking that the container meets all requirements.
-           </p>
-           <ul>
-            <li>
-             <p>
-              If a command is provided, we give it to Flux directly (suggested), otherwise we start a Flux RestFul server to interact with
-             </p>
-            </li>
-            <li>
-             <p>
-              The container for the flux runner is expected to already have a munge.key in
-              <code class="docutils literal notranslate">
-               <span class="pre">
-                /etc/munge/munge.key
-               </span>
-              </code>
-              . This will be the same across pods generated given generation from the same container.
-             </p>
-            </li>
-           </ul>
-          </li>
-          <li>
-           <p>
-            To generate the curve certificate (
-            <code class="docutils literal notranslate">
-             <span class="pre">
-              /etc/curve/curve.cert
-             </span>
-            </code>
-            ) we use the flux runner container in a one-off pod to run
-            <code class="docutils literal notranslate">
-             <span class="pre">
-              flux-keygen
-             </span>
-            </code>
-            and retrieve the output in the log. We then write this curve.cert as a Config Map to the indexed job pods. We do this beceause generating it natively in Go would require other libraries on the host for ZeroMQ.
-           </p>
-          </li>
-          <li>
-           <p>
-            Networking of the pods works by way of exposing a service that includes the Pod subdomain. We add fully qualified domain names to the pods so that the
-            <code class="docutils literal notranslate">
-             <span class="pre">
-              hostname
-             </span>
-            </code>
-            command matches the full name, and Flux is given the full names in its broker.toml.
-           </p>
-          </li>
-          <li>
-           <p>
-            The main pod either runs
-            <code class="docutils literal notranslate">
-             <span class="pre">
-              flux
-             </span>
-             <span class="pre">
-              start
-             </span>
-            </code>
-            with a web service (creating a persistent “Mini Cluster” or
-            <code class="docutils literal notranslate">
-             <span class="pre">
-              flux
-             </span>
-             <span class="pre">
-              start
-             </span>
-            </code>
-            with a specific command (if provided in the CRD) in which case the command runs, and the jobs finish and the cluster goes away.
-           </p>
-          </li>
          </ul>
-         <p>
-          We do not yet have a solution for shared read/write many “RWX” on a cloud cluster. The FluxRestfulAPI also does not
-work (yet) for multiple processes - to run early experiments we are providing commands directly.
-         </p>
         </section>
         <section id="early-designs">
          <h2 id="early-designs">
@@ -641,10 +556,32 @@ to take, and this is what we did in the first days of the Flux Operator.  The fi
 is what we decided to focus on, and the others are described (and illustrated) in detail at their respective
 links. This is a review of various early designs we’ve thought about, presented in reverse order (newest to latest).
          </p>
-         <section id="design-3">
-          <h3 id="design-3">
-           Design 3
-           <a class="headerlink" href="#design-3" title="Permalink to this heading">
+         <section id="design-3-2">
+          <h3 id="design-3-2">
+           Design 3.2
+           <a class="headerlink" href="#design-3-2" title="Permalink to this heading">
+            ¶
+           </a>
+          </h3>
+          <p>
+           This design extends and improves the Mini Cluster to better handle networking.
+          </p>
+          <ul class="simple">
+           <li>
+            <p>
+             <a class="reference internal" href="09-16-2022/index.html">
+              <span class="doc std std-doc">
+               See the Design
+              </span>
+             </a>
+            </p>
+           </li>
+          </ul>
+         </section>
+         <section id="design-3-1">
+          <h3 id="design-3-1">
+           Design 3.1
+           <a class="headerlink" href="#design-3-1" title="Permalink to this heading">
             ¶
            </a>
           </h3>
@@ -859,7 +796,7 @@ and needed to keep this state elsewhere.
        © Copyright 2022, Flux Developers.
       </div>
       Last updated on
-              Jan 05, 2023.
+              Jan 07, 2023.
       <br/>
       Created using
       <a href="http://www.sphinx-doc.org/">
