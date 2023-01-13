@@ -1,6 +1,6 @@
 # The Flux Operator
 
-<img style="width:50%" alt="images/coming-soon.png" src="_images/coming-soon.png">
+<img style="width:50%" alt="Coming Soon" src="_static/images/coming-soon.png">
 
 
 Welcome to the Flux Operator Documentation!
