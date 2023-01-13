@@ -8,7 +8,8 @@ spec:
   localDeploy: true
 
   # Number of pods to create for MiniCluster
-  size: 2
+  size: 4
+  tasks: 2
 
   # Disable verbose output
   test: true
@@ -17,6 +18,7 @@ spec:
   containers:
     # The container URI to pull (currently needs to be public)
     - image: ghcr.io/rse-ops/lammps:flux-sched-focal-v0.24.0
+      cores: 2
 
       # You can set the working directory if your container WORKDIR is not correct.
       workingDir: /home/flux/examples/reaxff/HNS

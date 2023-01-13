@@ -16,7 +16,7 @@ import sys
 sys.path.insert(0, os.path.abspath(os.path.dirname(os.path.abspath("."))))
 from distutils.version import LooseVersion  # noqa
 
-import sphinx_material  # noqa
+import sphinx_immaterial  # noqa
 from recommonmark.transform import AutoStructify  # noqa
 
 FORCE_CLASSIC = os.environ.get("SPHINX_MATERIAL_FORCE_CLASSIC", False)
@@ -31,7 +31,7 @@ copyright = "2022, Flux Developers"
 author = "@vsoch"
 
 # The full version, including alpha/beta/rc tags
-release = LooseVersion(sphinx_material.__version__).vstring
+release = "v1alpha"
 
 # -- General configuration ---------------------------------------------------
 
@@ -48,12 +48,17 @@ extensions = [
     "sphinx.ext.todo",
     "sphinx.ext.mathjax",
     "sphinx.ext.viewcode",
+    "sphinx_immaterial.theme_result",
+    "sphinx_immaterial.kbd_keys",
+    "sphinx_immaterial.apidoc.format_signatures",
+    "sphinx_immaterial.apidoc.json.domain",
+    "sphinx_immaterial.apidoc.python.apigen",
+    "sphinx_immaterial.graphviz",
     "nbsphinx",
     "sphinx_markdown_tables",
     "sphinx_copybutton",
     "sphinx_search.extension",
 ]
-
 
 autosummary_generate = True
 autoclass_content = "class"
@@ -94,69 +99,102 @@ html_sidebars = {
 # Allows us to add to the default template
 templates_path = ["_templates"]
 
-extensions.append("sphinx_material")
-html_theme_path = sphinx_material.html_theme_path()
-html_context = sphinx_material.get_html_context()
-html_theme = "sphinx_material"
+
+extensions.append("sphinx_immaterial")
+# html_theme_path = sphinx_immaterial.html_theme_path()
+# html_context = sphinx_immaterial.get_html_context()
 html_css_files = ["custom.css"]
+
+extensions.append("sphinx_immaterial")
+html_theme = "sphinx_immaterial"
 
 # Custom sphinx material variables
 theme_logo_icon = "images/the-operator.jpg"
 
+# material theme options (see theme.conf for more information)
 html_theme_options = {
-    "base_url": "http://flux-framework.github.io/flux-operator/",
+    "icon": {
+        "repo": "fontawesome/brands/github",
+        "edit": "material/file-edit-outline",
+    },
     "repo_url": "https://github.com/flux-framework/flux-operator/",
-    "repo_name": "Flux Operator",
-    "html_minify": False,
-    "html_prettify": True,
-    "css_minify": False,
-    # https://fonts.google.com/icons?icon.query=cycle
-    "logo_icon": "cycle",
+    "repo_name": "Flux Operator", 
     "repo_type": "github",
-    "globaltoc_depth": 2,
-    # red, pink, purple, deep-purple, indigo, blue, light-blue, cyan, teal, green, light-green, lime, yellow, amber, orange, deep-orange, brown, grey, blue-grey, and white.
-    "color_primary": "blue",
-    # red, pink, purple, deep-purple, indigo, blue, light-blue, cyan, teal, green, light-green, lime, yellow, amber, orange, and deep-orange.
-    "color_accent": "blue",
-    "touch_icon": "images/flux-operator.jpg",
-    "theme_color": "#262626",
-    "master_doc": False,
-    "nav_links": [
+    "edit_uri": "blob/main/docs",
+    "globaltoc_collapse": True,
+    "features": [
+        "navigation.expand",
+        "navigation.tabs",
+        "toc.integrate",
+        "navigation.sections",
+        "navigation.instant",
+        "header.autohide",
+        "navigation.top",
+        "navigation.tracking",
+        "search.highlight",
+        "search.share",
+        "toc.follow",
+        "toc.sticky",
+        "content.tabs.link",
+        "announce.dismiss",
+    ],
+    "palette": [
         {
-            "href": "https://flux-framework.org/",
-            "internal": False,
-            "title": "Flux Framework",
+            "media": "(prefers-color-scheme: light)",
+            "scheme": "default",
+            "primary": "blue",
+            "accent": "light-blue",
+            "toggle": {
+                "icon": "material/lightbulb-outline",
+                "name": "Switch to dark mode",
+            },
         },
         {
-            "href": "https://github.com/flux-framework",
-            "internal": False,
-            "title": "Flux Framework on GitHub",
-        },
-        {
-            "href": "https://github.com/flux-framework/flux-operator",
-            "internal": False,
-            "title": "Flux Operator on GitHub",
+            "media": "(prefers-color-scheme: dark)",
+            "scheme": "slate",
+            "primary": "blue",
+            "accent": "light-blue",
+            "toggle": {
+                "icon": "material/lightbulb",
+                "name": "Switch to light mode",
+            },
         },
     ],
-    "heroes": {
-        "index": "Flux Operator",
-        "customization": "Flux Operator",
-    },
-    # Include the version dropdown top right? (e.g., if we use readthedocs)
+    # BEGIN: version_dropdown
     "version_dropdown": False,
-    # Format of this is dict with [label,path]
-    # Since we are rendering on gh-pages without readthedocs, we don't
-    # have versions
-    # "version_json": "_static/versions.json",
-    # "version_info": {
-    #    "Release": "https://online-ml.github.io/viz/",
-    #    "Development": "https://online-ml.github.io/viz/devel/",
-    #    "Release (rel)": "/viz/",
-    #    "Development (rel)": "/viz/devel/",
-    # },
-    # Do NOT strip these classes from tables!
-    "table_classes": ["plain"],
+    "version_info": [
+        {
+            "version": "https://sphinx-immaterial.rtfd.io",
+            "title": "ReadTheDocs",
+            "aliases": [],
+        },
+        {
+            "version": "https://jbms.github.io/sphinx-immaterial",
+            "title": "Github Pages",
+            "aliases": [],
+        },
+    ],
+    # END: version_dropdown
+    "toc_title_is_page_title": True,
+    # BEGIN: social icons
+    "social": [
+        {
+            "icon": "fontawesome/brands/github",
+            "link": "https://github.com/flux-framework/flux-operator",
+            "name": "Flux Operator on GitHub",
+        },
+        {
+            "icon": "material/chart-donut-variant",
+            "link": "https://flux-framework.org/",
+            "name": "Flux Framework",
+        },
+    ],
+    # END: social icons
 }
+
+todo_include_todos = True
+sphinx_immaterial_icon_path = html_static_path
+sphinx_immaterial_bundle_source_maps = True
 
 if FORCE_CLASSIC:
     print("!!!!!!!!! Forcing classic !!!!!!!!!!!")

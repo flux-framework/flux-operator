@@ -35,6 +35,8 @@ type WaitTemplate struct {
 	FluxRestfulPort   int32  // port to run flux restful on
 	ClusterSize       int32  // number of nodes in mini cluster, should be size
 	TestMode          bool   // Don't print additional output
+	Cores             int32
+	Tasks             int32
 	Size              int32
 	FluxLogLevel      int32
 }

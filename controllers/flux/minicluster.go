@@ -200,6 +200,11 @@ func generateWaitScript(cluster *api.MiniCluster, containerIndex int) (string, e
 	mainHost := fmt.Sprintf("%s-0", cluster.Name)
 	hosts := fmt.Sprintf("%s-[%s]", cluster.Name, generateRange(int(cluster.Spec.Size)))
 
+	// Only derive cores if > 1
+	var cores int32
+	if container.Cores > 1 {
+		cores = container.Cores - 1
+	}
 	// The token uuid is the same across images
 	wt := WaitTemplate{
 		FluxToken:         uuid.New().String(),
@@ -212,6 +217,8 @@ func generateWaitScript(cluster *api.MiniCluster, containerIndex int) (string, e
 		ClusterSize:       cluster.Spec.Size,
 		TestMode:          cluster.Spec.TestMode,
 		Size:              cluster.Spec.Size,
+		Tasks:             cluster.Spec.Tasks,
+		Cores:             cores,
 		FluxRestfulPort:   cluster.Spec.FluxRestful.Port,
 		FluxRestfulBranch: cluster.Spec.FluxRestful.Branch,
 	}

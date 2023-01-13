@@ -53,10 +53,15 @@ type MiniClusterSpec struct {
 	// +optional
 	FluxRestful FluxRestful `json:"fluxRestful"`
 
-	// Size (number of jobs to run)
+	// Size (number of job pods to run, size of minicluster in pods)
 	// +kubebuilder:default=1
 	// +optional
 	Size int32 `json:"size"`
+
+	// Total number of CPUs being run across entire cluster
+	// +kubebuilder:default=1
+	// +optional
+	Tasks int32 `json:"tasks"`
 
 	// Should the job be limited to a particular number of seconds?
 	// Approximately one year. This cannot be zero or job won't start
@@ -120,6 +125,10 @@ type MiniClusterContainer struct {
 	// Container name is only required for non flux runners
 	// +optional
 	Name string `json:"name"`
+
+	// Cores the container should use
+	// +optional
+	Cores int32 `json:"cores"`
 
 	// Working directory to run command from
 	// +optional

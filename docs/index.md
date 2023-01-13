@@ -1,6 +1,7 @@
 # The Flux Operator
 
-![Flux Operator Logo](development/the-operator.jpg)
+<img style="width:50%" alt="images/coming-soon.png" src="_images/coming-soon.png">
+
 
 Welcome to the Flux Operator Documentation!
 
@@ -24,20 +25,33 @@ Would you like to request a feature or contribute?
 
 ```{toctree}
 :caption: Getting Started
-:maxdepth: 1
+:maxdepth: 3
 getting_started/index.md
 development/index.md
 ```
 
 ```{toctree}
 :caption: Deployment
-:maxdepth: 1
+:maxdepth: 3
 deployment/index.md
 ```
 
 ```{toctree}
 :caption: About
-:maxdepth: 1
+:maxdepth: 3
 contributing.md
 about/license
 ```
+
+<script>
+// This is a small hack to populate empty sidebar with an image!
+document.addEventListener('DOMContentLoaded', function () {
+    var currentNode = document.querySelector('.md-sidebar__scrollwrap');
+    currentNode.outerHTML =
+	'<div class="md-sidebar__scrollwrap">' +
+		'<img style="width:100%" src="_static/images/flux-operator.png"/>' +
+		
+	'</div>';
+}, false);
+
+</script>
