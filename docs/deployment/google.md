@@ -140,19 +140,8 @@ gke-lammps-cluster-default-pool-f103d9d8-zz1q   Ready    <none>   3m42s   v1.23.
 
 ### Deploy Operator 
 
-To deploy the Flux Operator, here is how to do it directly from the codebase.
-Note that this is how I develop / test (with a development branch checked out!)
+To deploy the Flux Operator, [choose one of the options here](https://flux-framework.org/flux-operator/getting_started/user-guide.html#production-install) to deploy the operator. Whether you apply a yaml file, use [flux-cloud](https://converged-computing.github.io/flux-cloud) or clone the repository and `make deploy` you will see the operator install to the `operator-system` namespace.
 
-```bash
-$ git clone https://github.com/flux-framework/flux-operator
-$ cd flux-operator
-```
-
-A deploy will use the latest docker image [from the repository](https://github.com/orgs/flux-framework/packages?repo_name=flux-operator).
-
-```bash
-$ make deploy
-```
 ```console
 ...
 clusterrole.rbac.authorization.k8s.io/operator-manager-role created
