@@ -184,7 +184,7 @@ html_theme_options = {
             "name": "Flux Operator on GitHub",
         },
         {
-            "icon": "fontawesome/brands/python",
+            "icon": "material/chart-donut-variant",
             "link": "https://flux-framework.org/",
             "name": "Flux Framework",
         },
