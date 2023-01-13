@@ -212,6 +212,8 @@ func generateWaitScript(cluster *api.MiniCluster, containerIndex int) (string, e
 		ClusterSize:       cluster.Spec.Size,
 		TestMode:          cluster.Spec.TestMode,
 		Size:              cluster.Spec.Size,
+		Tasks:             cluster.Spec.Tasks,
+		Cores:             container.Cores - 1,
 		FluxRestfulPort:   cluster.Spec.FluxRestful.Port,
 		FluxRestfulBranch: cluster.Spec.FluxRestful.Branch,
 	}

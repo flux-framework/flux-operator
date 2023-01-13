@@ -54,6 +54,11 @@ spec:
                         IMPORTANT: This is left here, but not used in favor of exposing
                         Flux via a Restful API. We Can remove this when that is finalized.'
                       type: string
+                    cores:
+                      default: 1
+                      description: Cores the container should use
+                      format: int32
+                      type: integer
                     diagnostics:
                       description: Run flux diagnostics on start instead of command
                       type: boolean
@@ -183,7 +188,13 @@ spec:
                 type: object
               size:
                 default: 1
-                description: Size (number of jobs to run)
+                description: Size (number of job pods to run, size of minicluster
+                  in pods)
+                format: int32
+                type: integer
+              tasks:
+                default: 1
+                description: Total number of CPUs being run across entire cluster
                 format: int32
                 type: integer
               test:

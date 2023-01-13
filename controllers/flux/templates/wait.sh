@@ -80,7 +80,7 @@ ls ${workdir}{{ end }}
 mkdir -p /etc/flux/system
 
 # --cores=IDS Assign cores with IDS to each rank in R, so we  assign 1-N to 0
-flux R encode --hosts={{ .Hosts}} > /etc/flux/system/R
+flux R encode --hosts={{ .Hosts}} --cores=0-{{.Cores}} > /etc/flux/system/R
 {{ if not .TestMode }}printf "\n📦 Resources\n"
 cat /etc/flux/system/R{{ end }}
 
@@ -179,8 +179,8 @@ else
         # Case 2: Fall back to provided command
         else
 {{ if not .TestMode }}            
-            printf "\n🌀${asFlux} flux start -o --config /etc/flux/config ${brokerOptions} $@\n"{{ end }}
-            ${asFlux} flux start -o --config /etc/flux/config ${brokerOptions} flux mini run {{if .Size }}-n {{.Size}}{{ end }} {{ if .FluxOptionFlags }}{{ .FluxOptionFlags}}{{ end }} $@
+            printf "\n🌀${asFlux} flux start -o --config /etc/flux/config ${brokerOptions} flux mini run -n {{.Tasks}} {{ if .FluxOptionFlags }}{{ .FluxOptionFlags}}{{ end }} $@\n"{{ end }}
+            ${asFlux} flux start -o --config /etc/flux/config ${brokerOptions} flux mini run -n {{.Tasks}} {{ if .FluxOptionFlags }}{{ .FluxOptionFlags}}{{ end }} $@
         fi
     else
         # Sleep until the broker is ready

@@ -1,5 +1,5 @@
 markupsafe==2.0.1
-sphinx_material
+sphinx_immaterial
 numpy>=1.16
 pandas
 matplotlib
@@ -13,3 +13,4 @@ sphinx_markdown_tables
 sphinx-copybutton
 readthedocs-sphinx-search
 myst-parser
+pymdown-extensions
