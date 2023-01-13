@@ -270,7 +270,7 @@
 
 
   <li class="md-tabs__item">
-    <a href="../contributing.html" class="md-tabs__link">
+    <a href="../about/index.html" class="md-tabs__link">
       <span class="md-ellipsis">About</span>
     </a>
   </li>
@@ -422,26 +422,18 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#installing-the-operator" class="md-nav__link">
-    <span title="/getting_started/user-guide.md#installing-the-operator (reference label)" class="md-ellipsis">1.<wbr> Installing the Operator</span>
-  </a>
-  
-    <nav class="md-nav" aria-label="1. Installing the Operator">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#local-or-development" class="md-nav__link">
-    <span title="/getting_started/user-guide.md#local-or-development (reference label)" class="md-ellipsis">Local or Development</span>
+  <a href="#local-install" class="md-nav__link">
+    <span title="/getting_started/user-guide.md#local-install (reference label)" class="md-ellipsis">Local Install</span>
   </a>
   
 </li>
-        
-          <li class="md-nav__item">
-  <a href="#production" class="md-nav__link">
-    <span title="/getting_started/user-guide.md#production (reference label)" class="md-ellipsis">Production</span>
+      
+        <li class="md-nav__item">
+  <a href="#production-install" class="md-nav__link">
+    <span title="/getting_started/user-guide.md#production-install (reference label)" class="md-ellipsis">Production Install</span>
   </a>
   
-    <nav class="md-nav" aria-label="Production">
+    <nav class="md-nav" aria-label="Production Install">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
@@ -469,30 +461,38 @@
     </nav>
   
 </li>
+      
+        <li class="md-nav__item">
+  <a href="#next-steps" class="md-nav__link">
+    <span title="/getting_started/user-guide.md#next-steps (reference label)" class="md-ellipsis">Next Steps</span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Next Steps">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#verify-install" class="md-nav__link">
+    <span title="/getting_started/user-guide.md#verify-install (reference label)" class="md-ellipsis">1.<wbr> Verify Install</span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#create-namespace" class="md-nav__link">
+    <span title="/getting_started/user-guide.md#create-namespace (reference label)" class="md-ellipsis">2.<wbr> Create Namespace</span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#apply-your-custom-resource-definition" class="md-nav__link">
+    <span title="/getting_started/user-guide.md#apply-your-custom-resource-definition (reference label)" class="md-ellipsis">3.<wbr> Apply your custom resource definition</span>
+  </a>
+  
+</li>
         
       </ul>
     </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#check-that-everything-worked" class="md-nav__link">
-    <span title="/getting_started/user-guide.md#check-that-everything-worked (reference label)" class="md-ellipsis">2.<wbr> Check that everything worked</span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#create-a-namespace" class="md-nav__link">
-    <span title="/getting_started/user-guide.md#create-a-namespace (reference label)" class="md-ellipsis">3.<wbr> Create a namespace</span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#apply-your-custom-resource-definition" class="md-nav__link">
-    <span title="/getting_started/user-guide.md#apply-your-custom-resource-definition (reference label)" class="md-ellipsis">4.<wbr> Apply your custom resource definition</span>
-  </a>
   
 </li>
       
@@ -648,23 +648,8 @@
   
   
     <li class="md-nav__item">
-      <a href="../contributing.html" class="md-nav__link">
-        <span title="/contributing.md (reference label)" class="md-ellipsis">Contributing</span>
-      </a>
-    </li>
-  
-
-            
-          
-            
-              
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../about/license.html" class="md-nav__link">
-        <span title="/about/license.md (reference label)" class="md-ellipsis">License</span>
+      <a href="../about/index.html" class="md-nav__link">
+        <span title="/about/index.md (reference label)" class="md-ellipsis">About the Flux Operator</span>
       </a>
     </li>
   
@@ -702,11 +687,11 @@
 with the Flux Operator installed and are interested to submit your own <a class="reference internal" href="custom-resource-definition.html"><span class="doc std std-doc">custom resource</span></a>
 to create a MiniCluster, or that someone has already done it for you. If you are a developer wanting to work
 on new functionality or features for the Flux Operator, see our <a class="reference internal" href="../development/index.html"><span class="doc std std-doc">Developer Guides</span></a> instead.</p>
-<h2 id="installing-the-operator">1. Installing the Operator<a class="headerlink" href="#installing-the-operator" title="Permalink to this heading">¶</a></h2>
-<p>If you are trying this out on your own, here is a quick start to getting the operator installed on MiniKube (or similar).
+<h2 id="local-install">Local Install<a class="headerlink" href="#local-install" title="Permalink to this heading">¶</a></h2>
+<p>If you are trying this out on your own, here is a quick start to getting the operator installed on MiniKube (or similar),
+and installing directly from the repository (with the development use case in mind).
 This assumes some experience with Kubernetes (or applying yaml configs) and using MiniKube or similar.
 More advanced users can try out the <span class="xref myst">Production</span> install detailed below.</p>
-<h3 id="local-or-development">Local or Development<a class="headerlink" href="#local-or-development" title="Permalink to this heading">¶</a></h3>
 <p>This setup is intended if you want to clone the codebase and use the same tools that we use
 to develop! You’ll first want to clone the codebase.</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span>git<span class="w"> </span>clone<span class="w"> </span>https://github.com/flux-framework/flux-operator
@@ -754,10 +739,10 @@ When you are all done, cleanup with <code class="docutils literal notranslate"><
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span>minikube<span class="w"> </span>stop
 </code></pre></div>
 </div>
-<h3 id="production">Production<a class="headerlink" href="#production" title="Permalink to this heading">¶</a></h3>
+<h2 id="production-install">Production Install<a class="headerlink" href="#production-install" title="Permalink to this heading">¶</a></h2>
 <p>To deploy the Flux Operator, you have a few options! Choose “quick,” “repository,” or “tool” deploy below,
 and then continue to read how to check that everything worked.</p>
-<h4 id="quick-deploy">Quick Deploy<a class="headerlink" href="#quick-deploy" title="Permalink to this heading">¶</a></h4>
+<h3 id="quick-deploy">Quick Deploy<a class="headerlink" href="#quick-deploy" title="Permalink to this heading">¶</a></h3>
 <p>This works best for production Kubernetes clusters, and comes down to downloading the latest yaml config, and applying it.</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>wget<span class="w"> </span>https://raw.githubusercontent.com/flux-framework/flux-operator/main/examples/dist/flux-operator.yaml
 kubectl<span class="w"> </span>apply<span class="w"> </span>-f<span class="w"> </span>flux-operator.yaml
@@ -768,7 +753,7 @@ kubectl<span class="w"> </span>apply<span class="w"> </span>-f<span class="w"> <
 </code></pre></div>
 </div>
 <p>and then saved to the main branch where you retrieve it from.</p>
-<h4 id="repository-deploy">Repository Deploy<a class="headerlink" href="#repository-deploy" title="Permalink to this heading">¶</a></h4>
+<h3 id="repository-deploy">Repository Deploy<a class="headerlink" href="#repository-deploy" title="Permalink to this heading">¶</a></h3>
 <p>If you want to possibly develop and then deploy what you are working on, you can start with a clone:</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span>git<span class="w"> </span>clone<span class="w"> </span>https://github.com/flux-framework/flux-operator
 $<span class="w"> </span><span class="nb">cd</span><span class="w"> </span>flux-operator
@@ -794,13 +779,15 @@ $<span class="w"> </span><span class="nb">cd</span><span class="w"> </span>flux-
 <span class="go">deployment.apps/operator-controller-manager created</span>
 </code></pre></div>
 </div>
-<h4 id="tool-deploy">Tool Deploy<a class="headerlink" href="#tool-deploy" title="Permalink to this heading">¶</a></h4>
+<h3 id="tool-deploy">Tool Deploy<a class="headerlink" href="#tool-deploy" title="Permalink to this heading">¶</a></h3>
 <p>We maintain a tool <a class="reference external" href="https://github.com/converged-computing/flux-cloud">Flux Cloud</a> that is able to bring up clusters, install the operator,
 and optionally run experiments and bring them down. We currently support a handful of clouds
 (AWS and Google) and if you find yourself wanting a way to easily generate and save results
 for experiments, this might be the way to go. If you have a cloud or environment you
 want to deploy to that isn’t supported, please <a class="reference external" href="https://github.com/converged-computing/flux-cloud/issues">let us know</a>.</p>
-<h2 id="check-that-everything-worked">2. Check that everything worked<a class="headerlink" href="#check-that-everything-worked" title="Permalink to this heading">¶</a></h2>
+<h2 id="next-steps">Next Steps<a class="headerlink" href="#next-steps" title="Permalink to this heading">¶</a></h2>
+<p>For next steps, you might do the following:</p>
+<h3 id="verify-install">1. Verify Install<a class="headerlink" href="#verify-install" title="Permalink to this heading">¶</a></h3>
 <p>Regardless of what you chose above, from this point on (after the operator is installed)
 there are some checks that you can do to see that everything worked.
 First, ensure the <code class="docutils literal notranslate"><span class="pre">operator-system</span></code> namespace was created:</p>
@@ -837,12 +824,12 @@ First, ensure the <code class="docutils literal notranslate"><span class="pre">o
 <span class="go">operator-system   operator-controller-manager-6c699b7b94-bbp5q   2/2     Running   0             80s   192.168.30.43    ip-192-168-28-166.ec2.internal   &lt;none&gt;           &lt;none&gt;</span>
 </code></pre></div>
 </div>
-<h2 id="create-a-namespace">3. Create a namespace<a class="headerlink" href="#create-a-namespace" title="Permalink to this heading">¶</a></h2>
+<h3 id="create-namespace">2. Create Namespace<a class="headerlink" href="#create-namespace" title="Permalink to this heading">¶</a></h3>
 <p>You’ll likely Make your namespace for the flux-operator:</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span>kubectl<span class="w"> </span>create<span class="w"> </span>namespace<span class="w"> </span>flux-operator
 </code></pre></div>
 </div>
-<h2 id="apply-your-custom-resource-definition">4. Apply your custom resource definition<a class="headerlink" href="#apply-your-custom-resource-definition" title="Permalink to this heading">¶</a></h2>
+<h3 id="apply-your-custom-resource-definition">3. Apply your custom resource definition<a class="headerlink" href="#apply-your-custom-resource-definition" title="Permalink to this heading">¶</a></h3>
 <p>Then apply your custom resource definition or CRD - importantly, the localDeploy needs to be false if you are using a production cluster.
 Basically, setting to true uses a local mount, which obviously won’t work for different instances in the cloud!</p>
 <div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><code><span class="nt">spec</span><span class="p">:</span>

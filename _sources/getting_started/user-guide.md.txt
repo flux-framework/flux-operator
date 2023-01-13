@@ -5,13 +5,12 @@ with the Flux Operator installed and are interested to submit your own [custom r
 to create a MiniCluster, or that someone has already done it for you. If you are a developer wanting to work
 on new functionality or features for the Flux Operator, see our [Developer Guides](../development/index.md) instead.
 
-## 1. Installing the Operator
+## Local Install
 
-If you are trying this out on your own, here is a quick start to getting the operator installed on MiniKube (or similar).
+If you are trying this out on your own, here is a quick start to getting the operator installed on MiniKube (or similar),
+and installing directly from the repository (with the development use case in mind).
 This assumes some experience with Kubernetes (or applying yaml configs) and using MiniKube or similar.
 More advanced users can try out the [Production](#production) install detailed below.
-
-### Local or Development
 
 This setup is intended if you want to clone the codebase and use the same tools that we use
 to develop! You'll first want to clone the codebase.
@@ -79,12 +78,12 @@ And to stop MiniKube.
 $ minikube stop
 ```
 
-### Production
+## Production Install
 
 To deploy the Flux Operator, you have a few options! Choose "quick," "repository," or "tool" deploy below,
 and then continue to read how to check that everything worked.
 
-#### Quick Deploy
+### Quick Deploy
 
 This works best for production Kubernetes clusters, and comes down to downloading the latest yaml config, and applying it.
 
@@ -101,7 +100,7 @@ $ make build-config
 
 and then saved to the main branch where you retrieve it from.
 
-#### Repository Deploy
+### Repository Deploy
 
 If you want to possibly develop and then deploy what you are working on, you can start with a clone:
 
@@ -132,7 +131,7 @@ service/operator-controller-manager-metrics-service created
 deployment.apps/operator-controller-manager created
 ```
 
-#### Tool Deploy
+### Tool Deploy
 
 We maintain a tool [Flux Cloud](https://github.com/converged-computing/flux-cloud) that is able to bring up clusters, install the operator,
 and optionally run experiments and bring them down. We currently support a handful of clouds
@@ -140,7 +139,11 @@ and optionally run experiments and bring them down. We currently support a handf
 for experiments, this might be the way to go. If you have a cloud or environment you
 want to deploy to that isn't supported, please [let us know](https://github.com/converged-computing/flux-cloud/issues).
 
-## 2. Check that everything worked
+## Next Steps
+
+For next steps, you might do the following:
+
+### 1. Verify Install
 
 Regardless of what you chose above, from this point on (after the operator is installed)
 there are some checks that you can do to see that everything worked.
@@ -182,7 +185,7 @@ $ kubectl get pod --all-namespaces -o wide
 operator-system   operator-controller-manager-6c699b7b94-bbp5q   2/2     Running   0             80s   192.168.30.43    ip-192-168-28-166.ec2.internal   <none>           <none>
 ```
 
-## 3. Create a namespace
+### 2. Create Namespace
 
 You'll likely Make your namespace for the flux-operator:
 
@@ -190,7 +193,7 @@ You'll likely Make your namespace for the flux-operator:
 $ kubectl create namespace flux-operator
 ```
 
-## 4. Apply your custom resource definition
+### 3. Apply your custom resource definition
 
 Then apply your custom resource definition or CRD - importantly, the localDeploy needs to be false if you are using a production cluster. 
 Basically, setting to true uses a local mount, which obviously won't work for different instances in the cloud! 

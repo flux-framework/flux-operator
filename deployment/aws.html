@@ -270,7 +270,7 @@
 
 
   <li class="md-tabs__item">
-    <a href="../contributing.html" class="md-tabs__link">
+    <a href="../about/index.html" class="md-tabs__link">
       <span class="md-ellipsis">About</span>
     </a>
   </li>
@@ -593,23 +593,8 @@
   
   
     <li class="md-nav__item">
-      <a href="../contributing.html" class="md-nav__link">
-        <span title="/contributing.md (reference label)" class="md-ellipsis">Contributing</span>
-      </a>
-    </li>
-  
-
-            
-          
-            
-              
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../about/license.html" class="md-nav__link">
-        <span title="/about/license.md (reference label)" class="md-ellipsis">License</span>
+      <a href="../about/index.html" class="md-nav__link">
+        <span title="/about/index.md (reference label)" class="md-ellipsis">About the Flux Operator</span>
       </a>
     </li>
   
@@ -704,15 +689,7 @@ And then come back and view your nodes.</p>
 </code></pre></div>
 </div>
 <h2 id="deploy-operator">Deploy Operator<a class="headerlink" href="#deploy-operator" title="Permalink to this heading">¶</a></h2>
-<p>To deploy the Flux Operator, first here is how to do it directly from the codebase:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span>git<span class="w"> </span>clone<span class="w"> </span>https://github.com/flux-framework/flux-operator
-$<span class="w"> </span><span class="nb">cd</span><span class="w"> </span>flux-operator
-</code></pre></div>
-</div>
-<p>A deploy will use the latest docker image <a class="reference external" href="https://github.com/orgs/flux-framework/packages?repo_name=flux-operator">from the repository</a>:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span>make<span class="w"> </span>deploy
-</code></pre></div>
-</div>
+<p>To deploy the Flux Operator, <a class="reference external" href="https://flux-framework.org/flux-operator/getting_started/user-guide.html#production-install">choose one of the options here</a> to deploy the operator. Whether you apply a yaml file, use <a class="reference external" href="https://converged-computing.github.io/flux-cloud">flux-cloud</a> or clone the repository and <code class="docutils literal notranslate"><span class="pre">make</span> <span class="pre">deploy</span></code> you will see the operator install to the <code class="docutils literal notranslate"><span class="pre">operator-system</span></code> namespace.</p>
 <div class="highlight-console notranslate"><div class="highlight"><pre><span></span><code><span class="go">...</span>
 <span class="go">namespace/operator-system created</span>
 <span class="go">customresourcedefinition.apiextensions.k8s.io/miniclusters.flux-framework.org unchanged</span>
