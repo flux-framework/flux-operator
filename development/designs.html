@@ -1,103 +1,83 @@
-<!DOCTYPE html>
-<html lang="en">
- <head>
-  <meta charset="utf-8"/>
-  <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-  <meta content="Docutils 0.19: https://docutils.sourceforge.io/" name="generator"/>
-  <meta content="width=device-width,initial-scale=1" name="viewport"/>
-  <meta content="ie=edge" http-equiv="x-ua-compatible"/>
-  <meta content="Copy to clipboard" name="lang:clipboard.copy"/>
-  <meta content="Copied to clipboard" name="lang:clipboard.copied"/>
-  <meta content="en" name="lang:search.language"/>
-  <meta content="True" name="lang:search.pipeline.stopwords"/>
-  <meta content="True" name="lang:search.pipeline.trimmer"/>
-  <meta content="No matching documents" name="lang:search.result.none"/>
-  <meta content="1 matching document" name="lang:search.result.one"/>
-  <meta content="# matching documents" name="lang:search.result.other"/>
-  <meta content="[\s\-]+" name="lang:search.tokenizer"/>
-  <link crossorigin="" href="https://fonts.gstatic.com/" rel="preconnect"/>
-  <link href="https://fonts.googleapis.com/css?family=Roboto+Mono:400,500,700|Roboto:300,400,400i,700&amp;display=fallback" rel="stylesheet"/>
-  <style>
-   body,
-      input {
-        font-family: "Roboto", "Helvetica Neue", Helvetica, Arial, sans-serif
-      }
 
-      code,
-      kbd,
-      pre {
-        font-family: "Roboto Mono", "Courier New", Courier, monospace
-      }
-  </style>
-  <link href="../_static/stylesheets/application.css" rel="stylesheet"/>
-  <link href="../_static/stylesheets/application-palette.css" rel="stylesheet"/>
-  <link href="../_static/stylesheets/application-fixes.css" rel="stylesheet"/>
-  <link href="../_static/fonts/material-icons.css" rel="stylesheet"/>
-  <meta content="#262626" name="theme-color"/>
-  <script src="../_static/javascripts/modernizr.js">
-  </script>
-  <link href="../_static/images/flux-operator.jpg" rel="apple-touch-icon"/>
-  <title>
-   Designs — Flux Operator
-  </title>
-  <link href="../_static/pygments.css" rel="stylesheet" type="text/css"/>
-  <link href="../_static/material.css" rel="stylesheet" type="text/css"/>
-  <link href="../_static/copybutton.css" rel="stylesheet" type="text/css"/>
-  <link href="../_static/css/rtd_sphinx_search.min.css" rel="stylesheet" type="text/css"/>
-  <link href="../_static/custom.css" rel="stylesheet" type="text/css"/>
-  <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js">
-  </script>
-  <script src="../_static/jquery.js">
-  </script>
-  <script src="../_static/underscore.js">
-  </script>
-  <script src="../_static/_sphinx_javascript_frameworks_compat.js">
-  </script>
-  <script src="../_static/doctools.js">
-  </script>
-  <script src="../_static/sphinx_highlight.js">
-  </script>
-  <script src="../_static/clipboard.min.js">
-  </script>
-  <script src="../_static/copybutton.js">
-  </script>
-  <script src="../_static/js/rtd_sphinx_search.min.js">
-  </script>
-  <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js">
-  </script>
-  <link href="../_static/favicon.ico" rel="shortcut icon"/>
-  <link href="../genindex.html" rel="index" title="Index"/>
-  <link href="../search.html" rel="search" title="Search"/>
-  <link href="debugging.html" rel="next" title="Debugging"/>
-  <link href="developer-guide.html" rel="prev" title="Developer Guide"/>
-  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
-  <!-- Social: Facebook / Open Graph -->
-  <title>
-   Flux Operator
-  </title>
-  <link href="https://flux-framework.github.io/flux-operator/" rel="canonical"/>
-  <meta content="website" property="og:type"/>
-  <meta content="https://flux-framework.github.io/flux-operator/" property="og:url"/>
-  <meta content="Flux Operator" property="og:title"/>
-  <meta content="https://raw.githubusercontent.com/flux-framework/flux-operator/main/docs/images/flux-operator.png" property="og:image"/>
-  <meta content="Flux Operator " property="og:description"/>
-  <meta content="Flux Operator" property="og:site_name"/>
-  <meta content="en_US" property="og:locale"/>
-  <!-- Social: Twitter -->
-  <meta content="summary" name="twitter:card"/>
-  <meta content="@FluxFramework" name="twitter:site"/>
-  <meta content="Flux Framework" name="twitter:title"/>
-  <meta content="Flux Operator " name="twitter:description"/>
-  <meta content="https://raw.githubusercontent.com/flux-framework/flux-operator/main/docs/images/flux-operator.png" name="twitter:image"/>
-  <!-- Social: Google+ / Schema.org  -->
-  <meta content="Flux Operator" itemprop="name"/>
-  <meta content="Flux Operator " itemprop="description"/>
-  <meta content="https://raw.githubusercontent.com/flux-framework/flux-operator/main/docs/images/flux-operator.png" itemprop="image"/>
-  <script type="application/ld+json">
-   {"@type":"WebSite","headline":"Flux Operator","url":"https://flux-framework.github.io/flux-operator","description":"The Flux Operator creates Flux MiniClusters on Kubernetes ","name":"Flux Operator","@context":"https://schema.org"}
-  </script>
-  <style>
-   .material-symbols-outlined {
+
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+      <link rel="icon" href="../_static/favicon.ico">
+    
+    
+      
+        <title>Designs - Flux Operator</title>
+      
+    
+    
+      
+        
+        
+      
+      
+
+    
+    
+    
+      
+        
+        
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+        <link rel="stylesheet" type="text/css" href="../_static/copybutton.css" />
+        <link rel="stylesheet" type="text/css" href="../_static/css/rtd_sphinx_search.min.css" />
+        <link rel="stylesheet" type="text/css" href="../_static/google_fonts.css" />
+        <link rel="stylesheet" type="text/css" href="../_static/stylesheets/sphinx_immaterial_theme.7e770c658028b1997.min.css" />
+        <link rel="stylesheet" type="text/css" href="../_static/custom.css" />
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+    
+
+
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
+
+<!-- Social: Facebook / Open Graph -->
+<title>Flux Operator </title>
+<link rel="canonical" href="https://flux-framework.github.io/flux-operator/"/>
+<meta property="og:type" content="website">
+
+<meta property="og:url" content="https://flux-framework.github.io/flux-operator/">
+<meta property="og:title" content="Flux Operator">
+<meta property="og:image" content="https://raw.githubusercontent.com/flux-framework/flux-operator/main/docs/images/flux-operator.png">
+<meta property="og:description" content="Flux Operator ">
+<meta property="og:site_name" content="Flux Operator">
+<meta property="og:locale" content="en_US">
+
+<!-- Social: Twitter -->
+<meta name="twitter:card" content="summary">
+<meta name="twitter:site" content="@FluxFramework">
+<meta name="twitter:title" content="Flux Framework">
+<meta name="twitter:description" content="Flux Operator ">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/flux-framework/flux-operator/main/docs/images/flux-operator.png">
+
+<!-- Social: Google+ / Schema.org  -->
+<meta itemprop="name" content="Flux Operator">
+<meta itemprop="description" content="Flux Operator ">
+<meta itemprop="image" content="https://raw.githubusercontent.com/flux-framework/flux-operator/main/docs/images/flux-operator.png">
+<script type="application/ld+json">
+  {"@type":"WebSite","headline":"Flux Operator","url":"https://flux-framework.github.io/flux-operator","description":"The Flux Operator creates Flux MiniClusters on Kubernetes ","name":"Flux Operator","@context":"https://schema.org"}
+</script>
+
+<style>
+.material-symbols-outlined {
   font-variation-settings:
   'FILL' 0,
   'wght' 400,
@@ -108,714 +88,819 @@
   background-color: #def0ff !important;
 }
   </style>
-  <link href="../_static/images/flux-operator.jpg" rel="apple-touch-icon"/>
- </head>
- <body data-md-color-accent="blue" data-md-color-primary="blue" dir="ltr">
-  <svg class="md-svg">
-   <defs data-children-count="0">
-    <svg height="448" id="__github" viewbox="0 0 416 448" width="416" xmlns="http://www.w3.org/2000/svg">
-     <path d="M160 304q0 10-3.125 20.5t-10.75 19T128 352t-18.125-8.5-10.75-19T96 304t3.125-20.5 10.75-19T128 256t18.125 8.5 10.75 19T160 304zm160 0q0 10-3.125 20.5t-10.75 19T288 352t-18.125-8.5-10.75-19T256 304t3.125-20.5 10.75-19T288 256t18.125 8.5 10.75 19T320 304zm40 0q0-30-17.25-51T296 232q-10.25 0-48.75 5.25Q229.5 240 208 240t-39.25-2.75Q130.75 232 120 232q-29.5 0-46.75 21T56 304q0 22 8 38.375t20.25 25.75 30.5 15 35 7.375 37.25 1.75h42q20.5 0 37.25-1.75t35-7.375 30.5-15 20.25-25.75T360 304zm56-44q0 51.75-15.25 82.75-9.5 19.25-26.375 33.25t-35.25 21.5-42.5 11.875-42.875 5.5T212 416q-19.5 0-35.5-.75t-36.875-3.125-38.125-7.5-34.25-12.875T37 371.5t-21.5-28.75Q0 312 0 260q0-59.25 34-99-6.75-20.5-6.75-42.5 0-29 12.75-54.5 27 0 47.5 9.875t47.25 30.875Q171.5 96 212 96q37 0 70 8 26.25-20.5 46.75-30.25T376 64q12.75 25.5 12.75 54.5 0 21.75-6.75 42 34 40 34 99.5z" fill="currentColor">
-     </path>
-    </svg>
-   </defs>
-  </svg>
-  <input class="md-toggle" data-md-toggle="drawer" id="__drawer" type="checkbox"/>
-  <input class="md-toggle" data-md-toggle="search" id="__search" type="checkbox"/>
-  <label class="md-overlay" data-md-component="overlay" for="__drawer">
-  </label>
-  <a class="md-skip" href="#development/designs" tabindex="1">
-   Skip to content
-  </a>
-  <header class="md-header" data-md-component="header">
-   <nav class="md-header-nav md-grid">
-    <div class="md-flex navheader">
-     <div class="md-flex__cell md-flex__cell--shrink">
-      <a class="md-header-nav__button md-logo" href="../index.html" title="Flux Operator">
-       <span class="material-symbols-outlined">
-        cycle
-       </span>
-      </a>
-     </div>
-     <div class="md-flex__cell md-flex__cell--shrink">
-      <label class="md-icon md-icon--menu md-header-nav__button" for="__drawer">
-      </label>
-     </div>
-     <div class="md-flex__cell md-flex__cell--stretch">
-      <div class="md-flex__ellipsis md-header-nav__title" data-md-component="title">
-       <span class="md-header-nav__topic" style="width: 1046px;margin-left: -20px;">
-        Flux Operator
-       </span>
-       <span class="md-header-nav__topic">
-        Designs
-       </span>
+
+
+
+
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="blue" data-md-color-accent="light-blue">
+  
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&"object"==typeof palette.color)for(var key of Object.keys(palette.color))document.body.setAttribute("data-md-color-"+key,palette.color[key])</script>
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../index.html" title="Flux Operator" class="md-header__button md-logo" aria-label="Flux Operator" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54Z"/></svg>
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2Z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Flux Operator
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Designs
+            
+          </span>
+        </div>
       </div>
-     </div>
-     <div class="md-flex__cell md-flex__cell--shrink">
-      <label class="md-icon md-icon--search md-header-nav__button" for="__search">
+    </div>
+    
+      <form class="md-header__option" data-md-component="palette">
+        
+          
+          
+          <input class="md-option" data-md-color-media="(prefers-color-scheme: light)" data-md-color-scheme="default" data-md-color-primary="blue" data-md-color-accent="light-blue"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_1">
+          
+            <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_2" hidden>
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 2a7 7 0 0 1 7 7c0 2.38-1.19 4.47-3 5.74V17a1 1 0 0 1-1 1H9a1 1 0 0 1-1-1v-2.26C6.19 13.47 5 11.38 5 9a7 7 0 0 1 7-7M9 21v-1h6v1a1 1 0 0 1-1 1h-4a1 1 0 0 1-1-1m3-17a5 5 0 0 0-5 5c0 2.05 1.23 3.81 3 4.58V16h4v-2.42c1.77-.77 3-2.53 3-4.58a5 5 0 0 0-5-5Z"/></svg>
+            </label>
+          
+        
+          
+          
+          <input class="md-option" data-md-color-media="(prefers-color-scheme: dark)" data-md-color-scheme="slate" data-md-color-primary="blue" data-md-color-accent="light-blue"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_2">
+          
+            <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_1" hidden>
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 2a7 7 0 0 0-7 7c0 2.38 1.19 4.47 3 5.74V17a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1v-2.26c1.81-1.27 3-3.36 3-5.74a7 7 0 0 0-7-7M9 21a1 1 0 0 0 1 1h4a1 1 0 0 0 1-1v-1H9v1Z"/></svg>
+            </label>
+          
+        
+      </form>
+    
+    
+    
+      <label class="md-header__button md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
       </label>
       <div class="md-search" data-md-component="search" role="dialog">
-       <label class="md-search__overlay" for="__search">
-       </label>
-       <div class="md-search__inner" role="search">
-        <form action="../search.html" class="md-search__form" method="get" name="search">
-         <input autocapitalize="off" autocomplete="off" class="md-search__input" data-md-component="query" data-md-state="active" name="q" placeholder="Search" spellcheck="false" type="text"/>
-         <label class="md-icon md-search__icon" for="__search">
-         </label>
-         <button class="md-icon md-search__icon" data-md-component="reset" tabindex="-1" type="reset">
-          
-         </button>
-        </form>
-        <div class="md-search__output">
-         <div class="md-search__scrollwrap" data-md-scrollfix="">
-          <div class="md-search-result" data-md-component="result">
-           <div class="md-search-result__meta">
-            Type to start searching
-           </div>
-           <ol class="md-search-result__list">
-           </ol>
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+          <a href="javascript:void(0)" class="md-search__icon md-icon" title="Share" aria-label="Share" data-clipboard data-clipboard-text="" data-md-component="search-share" tabindex="-1">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7 0-.24-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9a3 3 0 0 0-3 3 3 3 0 0 0 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.15c-.05.21-.08.43-.08.66 0 1.61 1.31 2.91 2.92 2.91 1.61 0 2.92-1.3 2.92-2.91A2.92 2.92 0 0 0 18 16.08Z"/></svg>
+          </a>
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41Z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
           </div>
-         </div>
+          <ol class="md-search-result__list"></ol>
         </div>
-       </div>
       </div>
-     </div>
-     <div class="md-flex__cell md-flex__cell--shrink">
-      <div class="md-header-nav__source">
-       <a class="md-source" data-md-source="github" href="https://github.com/flux-framework/flux-operator/" title="Go to repository">
-        <div class="md-source__icon">
-         <!--<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 24 24" width="28" height="28">
-        <use xlink:href="#__github" width="24" height="24"></use>
-      </svg>-->
-         <!-- updated to match riverml.xml site-->
-         <svg viewbox="0 0 448 512" xmlns="http://www.w3.org/2000/svg">
-          <path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81z" fill="#ffffff">
-          </path>
-         </svg>
-        </div>
-        <div class="md-source__repository">
-         Flux Operator
-        </div>
-       </a>
-      </div>
-     </div>
     </div>
-   </nav>
-  </header>
-  <div class="md-container">
-   <nav class="md-tabs" data-md-component="tabs">
-    <div class="md-tabs__inner md-grid">
-     <ul class="md-tabs__list">
-      <li class="md-tabs__item">
-       <a class="md-tabs__link" href="https://flux-framework.org/">
-        Flux Framework
-       </a>
-      </li>
-      <li class="md-tabs__item">
-       <a class="md-tabs__link" href="https://github.com/flux-framework">
-        Flux Framework on GitHub
-       </a>
-      </li>
-      <li class="md-tabs__item">
-       <a class="md-tabs__link" href="https://github.com/flux-framework/flux-operator">
-        Flux Operator on GitHub
-       </a>
-      </li>
-      <li class="md-tabs__item">
-       <a class="md-tabs__link" href="index.html">
-        Development
-       </a>
-      </li>
-     </ul>
+  </div>
+</div>
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/flux-framework/flux-operator/" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc.--><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    Flux Operator
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+      
+      
+        
+          
+            
+<nav class="md-tabs" aria-label="Tabs" data-md-component="tabs">
+  <div class="md-tabs__inner md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+    
+  
+
+
+  <li class="md-tabs__item">
+    <a href="../getting_started/index.html" class="md-tabs__link md-tabs__link--active">
+      <span class="md-ellipsis">Getting Started</span>
+    </a>
+  </li>
+
+      
+        
+  
+  
+
+
+  <li class="md-tabs__item">
+    <a href="../deployment/index.html" class="md-tabs__link">
+      <span class="md-ellipsis">Deployment</span>
+    </a>
+  </li>
+
+      
+        
+  
+  
+
+
+  <li class="md-tabs__item">
+    <a href="../contributing.html" class="md-tabs__link">
+      <span class="md-ellipsis">About</span>
+    </a>
+  </li>
+
+      
+    </ul>
+  </div>
+</nav>
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+  
+
+
+  
+
+<nav class="md-nav md-nav--primary md-nav--lifted md-nav--integrated" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../index.html" title="Flux Operator" class="md-nav__button md-logo" aria-label="Flux Operator" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54Z"/></svg>
+    </a>
+    Flux Operator
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/flux-framework/flux-operator/" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc.--><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    Flux Operator
+  </div>
+</a>
     </div>
-   </nav>
-   <main class="md-main">
-    <div class="md-main__inner md-grid" data-md-component="container">
-     <div class="md-sidebar md-sidebar--primary" data-md-component="navigation">
-      <div class="md-sidebar__scrollwrap">
-       <div class="md-sidebar__inner">
-        <nav class="md-nav md-nav--primary" data-md-level="0">
-         <label class="md-nav__title md-nav__title--site" for="__drawer">
-          <a class="md-nav__button md-logo" href="../index.html" title="Flux Operator">
-           <i class="md-icon">
-            cycle
-           </i>
-          </a>
-          <a href="../index.html" title="Flux Operator">
-           Flux Operator
-          </a>
-         </label>
-         <div class="md-nav__source">
-          <a class="md-source" data-md-source="github" href="https://github.com/flux-framework/flux-operator/" title="Go to repository">
-           <div class="md-source__icon">
-            <!--<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 24 24" width="28" height="28">
-        <use xlink:href="#__github" width="24" height="24"></use>
-      </svg>-->
-            <!-- updated to match riverml.xml site-->
-            <svg viewbox="0 0 448 512" xmlns="http://www.w3.org/2000/svg">
-             <path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81z" fill="#ffffff">
-             </path>
-            </svg>
-           </div>
-           <div class="md-source__repository">
-            Flux Operator
-           </div>
-          </a>
-         </div>
-         <ul class="md-nav__list">
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+      
+
+  
+  
+    
+  
+  
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_1" type="checkbox" id="__nav_1" checked>
+      
+      
+      
+        <label class="md-nav__link" for="__nav_1">
+          <span class="md-ellipsis">Getting Started</span>
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Getting Started" data-md-level="1">
+        <label class="md-nav__title" for="__nav_1">
+          <span class="md-nav__icon md-icon"></span>
+          <span class="md-ellipsis">Getting Started</span>
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../getting_started/index.html" class="md-nav__link">
+        <span title="/getting_started/index.md (reference label)" class="md-ellipsis">User Guide</span>
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+    
+  
+  
+    
+      
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_1_2" type="checkbox" id="__nav_1_2" checked>
+      
+      
+      
+        
+        <div class="md-nav__link md-nav__link--index ">
+          <a href="index.html"><span title="/development/index.md (reference label)" class="md-ellipsis">Development</span></a>
+          
+            <label for="__nav_1_2">
+              <span class="md-nav__icon md-icon"></span>
+            </label>
+          
+        </div>
+      
+      <nav class="md-nav" aria-label="Development" data-md-level="2">
+        <label class="md-nav__title" for="__nav_1_2">
+          <span class="md-nav__icon md-icon"></span>
+          <span title="/development/index.md (reference label)" class="md-ellipsis">Development</span>
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="developer-guide.html" class="md-nav__link">
+        <span title="/development/developer-guide.md (reference label)" class="md-ellipsis">Developer Guide</span>
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+    
+  
+    
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      
+      <input class="md-nav__toggle md-toggle" data-md-toggle="toc" type="checkbox" id="__toc">
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          <span title="/development/designs.md (reference label)" class="md-ellipsis">Designs</span>
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="#" class="md-nav__link md-nav__link--active">
+        <span title="/development/designs.md (reference label)" class="md-ellipsis">Designs</span>
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary">
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#active-design" class="md-nav__link">
+    <span title="/development/designs.md#active-design (reference label)" class="md-ellipsis">Active Design</span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#early-designs" class="md-nav__link">
+    <span title="/development/designs.md#early-designs (reference label)" class="md-ellipsis">Early Designs</span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Early Designs">
+      <ul class="md-nav__list">
+        
           <li class="md-nav__item">
-           <span class="md-nav__link caption">
-            <span class="caption-text">
-             Getting Started
-            </span>
-           </span>
-          </li>
+  <a href="#design-3-2" class="md-nav__link">
+    <span title="/development/designs.md#design-3-2 (reference label)" class="md-ellipsis">Design 3.<wbr>2</span>
+  </a>
+  
+</li>
+        
           <li class="md-nav__item">
-           <a class="md-nav__link" href="../getting_started/index.html">
-            User Guide
-           </a>
-          </li>
+  <a href="#design-3-1" class="md-nav__link">
+    <span title="/development/designs.md#design-3-1 (reference label)" class="md-ellipsis">Design 3.<wbr>1</span>
+  </a>
+  
+</li>
+        
           <li class="md-nav__item">
-           <a class="md-nav__link" href="index.html">
-            Development
-           </a>
-           <ul class="md-nav__list">
-            <li class="md-nav__item">
-             <a class="md-nav__link" href="developer-guide.html">
-              Developer Guide
-             </a>
-            </li>
-            <li class="md-nav__item">
-             <input class="md-toggle md-nav__toggle" data-md-toggle="toc" id="__toc" type="checkbox"/>
-             <label class="md-nav__link md-nav__link--active" for="__toc">
-              Designs
-             </label>
-             <a class="md-nav__link md-nav__link--active" href="#">
-              Designs
-             </a>
-             <nav class="md-nav md-nav--secondary">
-              <label class="md-nav__title" for="__toc">
-               Contents
-              </label>
-              <ul class="md-nav__list" data-md-scrollfix="">
-               <li class="md-nav__item">
-                <a class="md-nav__link" href="#development-designs--page-root">
-                 Designs
-                </a>
-                <nav class="md-nav">
-                 <ul class="md-nav__list">
-                  <li class="md-nav__item">
-                   <a class="md-nav__link" href="#active-design">
-                    Active Design
-                   </a>
-                  </li>
-                  <li class="md-nav__item">
-                   <a class="md-nav__link" href="#early-designs">
-                    Early Designs
-                   </a>
-                   <nav class="md-nav">
-                    <ul class="md-nav__list">
-                     <li class="md-nav__item">
-                      <a class="md-nav__link" href="#design-3-2">
-                       Design 3.2
-                      </a>
-                     </li>
-                     <li class="md-nav__item">
-                      <a class="md-nav__link" href="#design-3-1">
-                       Design 3.1
-                      </a>
-                     </li>
-                     <li class="md-nav__item">
-                      <a class="md-nav__link" href="#design-2-2">
-                       Design 2.2
-                      </a>
-                     </li>
-                     <li class="md-nav__item">
-                      <a class="md-nav__link" href="#design-2-1">
-                       Design 2.1
-                      </a>
-                     </li>
-                     <li class="md-nav__item">
-                      <a class="md-nav__link" href="#design-1">
-                       Design 1
-                      </a>
-                     </li>
-                    </ul>
-                   </nav>
-                  </li>
-                  <li class="md-nav__item">
-                   <a class="md-nav__link" href="#wisdom">
-                    Wisdom
-                   </a>
-                   <nav class="md-nav">
-                    <ul class="md-nav__list">
-                     <li class="md-nav__item">
-                      <a class="md-nav__link" href="#learned-knowledge">
-                       Learned Knowledge
-                      </a>
-                     </li>
-                     <li class="md-nav__item">
-                      <a class="md-nav__link" href="#what-is-a-workspace">
-                       What is a workspace?
-                      </a>
-                     </li>
-                    </ul>
-                   </nav>
-                  </li>
-                 </ul>
-                </nav>
-               </li>
-               <li class="md-nav__item">
-                <a class="md-nav__extra_link" href="../_sources/development/designs.md.txt">
-                 Show Source
-                </a>
-               </li>
-              </ul>
-             </nav>
-            </li>
-            <li class="md-nav__item">
-             <a class="md-nav__link" href="debugging.html">
-              Debugging
-             </a>
-            </li>
-            <li class="md-nav__item">
-             <a class="md-nav__link" href="creation.html">
-              Operator Creation
-             </a>
-            </li>
-           </ul>
-          </li>
+  <a href="#design-2-2" class="md-nav__link">
+    <span title="/development/designs.md#design-2-2 (reference label)" class="md-ellipsis">Design 2.<wbr>2</span>
+  </a>
+  
+</li>
+        
           <li class="md-nav__item">
-           <span class="md-nav__link caption">
-            <span class="caption-text">
-             Deployment
-            </span>
-           </span>
-          </li>
+  <a href="#design-2-1" class="md-nav__link">
+    <span title="/development/designs.md#design-2-1 (reference label)" class="md-ellipsis">Design 2.<wbr>1</span>
+  </a>
+  
+</li>
+        
           <li class="md-nav__item">
-           <a class="md-nav__link" href="../deployment/index.html">
-            Clouds
-           </a>
-          </li>
+  <a href="#design-1" class="md-nav__link">
+    <span title="/development/designs.md#design-1 (reference label)" class="md-ellipsis">Design 1</span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#wisdom" class="md-nav__link">
+    <span title="/development/designs.md#wisdom (reference label)" class="md-ellipsis">Wisdom</span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Wisdom">
+      <ul class="md-nav__list">
+        
           <li class="md-nav__item">
-           <span class="md-nav__link caption">
-            <span class="caption-text">
-             About
-            </span>
-           </span>
-          </li>
+  <a href="#learned-knowledge" class="md-nav__link">
+    <span title="/development/designs.md#learned-knowledge (reference label)" class="md-ellipsis">Learned Knowledge</span>
+  </a>
+  
+</li>
+        
           <li class="md-nav__item">
-           <a class="md-nav__link" href="../contributing.html">
-            Contributing
-           </a>
-          </li>
-          <li class="md-nav__item">
-           <a class="md-nav__link" href="../about/license.html">
-            License
-           </a>
-          </li>
-         </ul>
-        </nav>
-       </div>
-      </div>
-     </div>
-     <div class="md-sidebar md-sidebar--secondary" data-md-component="toc">
-      <div class="md-sidebar__scrollwrap">
-       <div class="md-sidebar__inner">
-        <nav class="md-nav md-nav--secondary">
-         <label class="md-nav__title" for="__toc">
-          Contents
-         </label>
-         <ul class="md-nav__list" data-md-scrollfix="">
-          <li class="md-nav__item">
-           <a class="md-nav__link" href="#development-designs--page-root">
-            Designs
-           </a>
-           <nav class="md-nav">
-            <ul class="md-nav__list">
-             <li class="md-nav__item">
-              <a class="md-nav__link" href="#active-design">
-               Active Design
-              </a>
-             </li>
-             <li class="md-nav__item">
-              <a class="md-nav__link" href="#early-designs">
-               Early Designs
-              </a>
-              <nav class="md-nav">
-               <ul class="md-nav__list">
-                <li class="md-nav__item">
-                 <a class="md-nav__link" href="#design-3-2">
-                  Design 3.2
-                 </a>
-                </li>
-                <li class="md-nav__item">
-                 <a class="md-nav__link" href="#design-3-1">
-                  Design 3.1
-                 </a>
-                </li>
-                <li class="md-nav__item">
-                 <a class="md-nav__link" href="#design-2-2">
-                  Design 2.2
-                 </a>
-                </li>
-                <li class="md-nav__item">
-                 <a class="md-nav__link" href="#design-2-1">
-                  Design 2.1
-                 </a>
-                </li>
-                <li class="md-nav__item">
-                 <a class="md-nav__link" href="#design-1">
-                  Design 1
-                 </a>
-                </li>
-               </ul>
-              </nav>
-             </li>
-             <li class="md-nav__item">
-              <a class="md-nav__link" href="#wisdom">
-               Wisdom
-              </a>
-              <nav class="md-nav">
-               <ul class="md-nav__list">
-                <li class="md-nav__item">
-                 <a class="md-nav__link" href="#learned-knowledge">
-                  Learned Knowledge
-                 </a>
-                </li>
-                <li class="md-nav__item">
-                 <a class="md-nav__link" href="#what-is-a-workspace">
-                  What is a workspace?
-                 </a>
-                </li>
-               </ul>
-              </nav>
-             </li>
-            </ul>
-           </nav>
-          </li>
-          <li class="md-nav__item">
-           <a class="md-nav__extra_link" href="../_sources/development/designs.md.txt">
-            Show Source
-           </a>
-          </li>
-          <li class="md-nav__item" id="searchbox">
-          </li>
-         </ul>
-        </nav>
-       </div>
-      </div>
-     </div>
-     <div class="md-content">
-      <article class="md-content__inner md-typeset" role="main">
-       <section id="designs">
-        <h1 id="development-designs--page-root">
-         Designs
-         <a class="headerlink" href="#development-designs--page-root" title="Permalink to this heading">
-          ¶
-         </a>
-        </h1>
-        <section id="active-design">
-         <h2 id="active-design">
-          Active Design
-          <a class="headerlink" href="#active-design" title="Permalink to this heading">
-           ¶
-          </a>
-         </h2>
-         <blockquote>
-          <div>
-           <p>
-            3.3
-           </p>
-          </div>
-         </blockquote>
-         <p>
-          <img alt="01-06-2023/the-operator-3.3.png" src="../_images/the-operator-3.3.png"/>
-         </p>
-         <ul class="simple">
-          <li>
-           <p>
-            <a class="reference internal" href="01-06-2023/index.html">
-             <span class="doc std std-doc">
-              See the Design
-             </span>
-            </a>
-           </p>
-          </li>
-         </ul>
-        </section>
-        <section id="early-designs">
-         <h2 id="early-designs">
-          Early Designs
-          <a class="headerlink" href="#early-designs" title="Permalink to this heading">
-           ¶
-          </a>
-         </h2>
-         <p>
-          It is often useful to think about many different designs, and iterate quickly before deciding on a direction
+  <a href="#what-is-a-workspace" class="md-nav__link">
+    <span title="/development/designs.md#what-is-a-workspace (reference label)" class="md-ellipsis">What is a workspace?</span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="debugging.html" class="md-nav__link">
+        <span title="/development/debugging.md (reference label)" class="md-ellipsis">Debugging</span>
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="creation.html" class="md-nav__link">
+        <span title="/development/creation.md (reference label)" class="md-ellipsis">Operator Creation</span>
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" data-md-toggle="__nav_2" type="checkbox" id="__nav_2" checked>
+      
+      
+      
+        <label class="md-nav__link" for="__nav_2">
+          <span class="md-ellipsis">Deployment</span>
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Deployment" data-md-level="1">
+        <label class="md-nav__title" for="__nav_2">
+          <span class="md-nav__icon md-icon"></span>
+          <span class="md-ellipsis">Deployment</span>
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../deployment/index.html" class="md-nav__link">
+        <span title="/deployment/index.md (reference label)" class="md-ellipsis">Clouds</span>
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" data-md-toggle="__nav_3" type="checkbox" id="__nav_3" checked>
+      
+      
+      
+        <label class="md-nav__link" for="__nav_3">
+          <span class="md-ellipsis">About</span>
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="About" data-md-level="1">
+        <label class="md-nav__title" for="__nav_3">
+          <span class="md-nav__icon md-icon"></span>
+          <span class="md-ellipsis">About</span>
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../contributing.html" class="md-nav__link">
+        <span title="/contributing.md (reference label)" class="md-ellipsis">Contributing</span>
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../about/license.html" class="md-nav__link">
+        <span title="/about/license.md (reference label)" class="md-ellipsis">License</span>
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset" role="main">
+                  
+
+
+  <a href="https://github.com/flux-framework/flux-operator/blob/main/docs/development/designs.md" title="Edit this page" class="md-content__button md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10 20H6V4h7v5h5v3.1l2-2V8l-6-6H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h4v-2m10.2-7c.1 0 .3.1.4.2l1.3 1.3c.2.2.2.6 0 .8l-1 1-2.1-2.1 1-1c.1-.1.2-.2.4-.2m0 3.9L14.1 23H12v-2.1l6.1-6.1 2.1 2.1Z"/></svg>
+  </a>
+
+<h1 id="designs">Designs<a class="headerlink" href="#designs" title="Permalink to this heading">¶</a></h1>
+<h2 id="active-design">Active Design<a class="headerlink" href="#active-design" title="Permalink to this heading">¶</a></h2>
+<blockquote>
+<div><p>3.3</p>
+</div></blockquote>
+<p><img alt="01-06-2023/the-operator-3.3.png" src="../_images/the-operator-3.3.png" /></p>
+<ul class="simple">
+<li><p><a class="reference internal" href="01-06-2023/index.html"><span class="doc std std-doc">See the Design</span></a></p></li>
+</ul>
+<h2 id="early-designs">Early Designs<a class="headerlink" href="#early-designs" title="Permalink to this heading">¶</a></h2>
+<p>It is often useful to think about many different designs, and iterate quickly before deciding on a direction
 to take, and this is what we did in the first days of the Flux Operator.  The final design (at the top)
 is what we decided to focus on, and the others are described (and illustrated) in detail at their respective
-links. This is a review of various early designs we’ve thought about, presented in reverse order (newest to latest).
-         </p>
-         <section id="design-3-2">
-          <h3 id="design-3-2">
-           Design 3.2
-           <a class="headerlink" href="#design-3-2" title="Permalink to this heading">
-            ¶
-           </a>
-          </h3>
-          <p>
-           This design extends and improves the Mini Cluster to better handle networking.
-          </p>
-          <ul class="simple">
-           <li>
-            <p>
-             <a class="reference internal" href="09-16-2022/index.html">
-              <span class="doc std std-doc">
-               See the Design
-              </span>
-             </a>
-            </p>
-           </li>
-          </ul>
-         </section>
-         <section id="design-3-1">
-          <h3 id="design-3-1">
-           Design 3.1
-           <a class="headerlink" href="#design-3-1" title="Permalink to this heading">
-            ¶
-           </a>
-          </h3>
-          <p>
-           This design is a simple design based around a single custom resource definition
-          </p>
-          <ul class="simple">
-           <li>
-            <p>
-             <a class="reference internal" href="09-07-2022/index.html">
-              <span class="doc std std-doc">
-               See the Design
-              </span>
-             </a>
-            </p>
-           </li>
-          </ul>
-         </section>
-         <section id="design-2-2">
-          <h3 id="design-2-2">
-           Design 2.2
-           <a class="headerlink" href="#design-2-2" title="Permalink to this heading">
-            ¶
-           </a>
-          </h3>
-          <p>
-           This was a set of weekend work I embarked on because (primarily) I couldn’t get an internal CRD (the MiniCluster) working
-and needed to keep this state elsewhere.
-          </p>
-          <ul class="simple">
-           <li>
-            <p>
-             <a class="reference internal" href="09-05-2022/index.html">
-              <span class="doc std std-doc">
-               See the Design
-              </span>
-             </a>
-            </p>
-           </li>
-          </ul>
-         </section>
-         <section id="design-2-1">
-          <h3 id="design-2-1">
-           Design 2.1
-           <a class="headerlink" href="#design-2-1" title="Permalink to this heading">
-            ¶
-           </a>
-          </h3>
-          <p>
-           This was the earliest design I came up with after talking to Eduardo!
-          </p>
-          <ul class="simple">
-           <li>
-            <p>
-             <a class="reference internal" href="09-01-2022/index.html">
-              <span class="doc std std-doc">
-               See the Design
-              </span>
-             </a>
-            </p>
-           </li>
-          </ul>
-         </section>
-         <section id="design-1">
-          <h3 id="design-1">
-           Design 1
-           <a class="headerlink" href="#design-1" title="Permalink to this heading">
-            ¶
-           </a>
-          </h3>
-          <p>
-           This is the original design spec’d out by Dan!
-          </p>
-          <ul class="simple">
-           <li>
-            <p>
-             <a class="reference internal" href="08-31-2022/index.html">
-              <span class="doc std std-doc">
-               See the Design
-              </span>
-             </a>
-            </p>
-           </li>
-          </ul>
-         </section>
-        </section>
-        <section id="wisdom">
-         <h2 id="wisdom">
-          Wisdom
-          <a class="headerlink" href="#wisdom" title="Permalink to this heading">
-           ¶
+links. This is a review of various early designs we’ve thought about, presented in reverse order (newest to latest).</p>
+<h3 id="design-3-2">Design 3.2<a class="headerlink" href="#design-3-2" title="Permalink to this heading">¶</a></h3>
+<p>This design extends and improves the Mini Cluster to better handle networking.</p>
+<ul class="simple">
+<li><p><a class="reference internal" href="09-16-2022/index.html"><span class="doc std std-doc">See the Design</span></a></p></li>
+</ul>
+<h3 id="design-3-1">Design 3.1<a class="headerlink" href="#design-3-1" title="Permalink to this heading">¶</a></h3>
+<p>This design is a simple design based around a single custom resource definition</p>
+<ul class="simple">
+<li><p><a class="reference internal" href="09-07-2022/index.html"><span class="doc std std-doc">See the Design</span></a></p></li>
+</ul>
+<h3 id="design-2-2">Design 2.2<a class="headerlink" href="#design-2-2" title="Permalink to this heading">¶</a></h3>
+<p>This was a set of weekend work I embarked on because (primarily) I couldn’t get an internal CRD (the MiniCluster) working
+and needed to keep this state elsewhere.</p>
+<ul class="simple">
+<li><p><a class="reference internal" href="09-05-2022/index.html"><span class="doc std std-doc">See the Design</span></a></p></li>
+</ul>
+<h3 id="design-2-1">Design 2.1<a class="headerlink" href="#design-2-1" title="Permalink to this heading">¶</a></h3>
+<p>This was the earliest design I came up with after talking to Eduardo!</p>
+<ul class="simple">
+<li><p><a class="reference internal" href="09-01-2022/index.html"><span class="doc std std-doc">See the Design</span></a></p></li>
+</ul>
+<h3 id="design-1">Design 1<a class="headerlink" href="#design-1" title="Permalink to this heading">¶</a></h3>
+<p>This is the original design spec’d out by Dan!</p>
+<ul class="simple">
+<li><p><a class="reference internal" href="08-31-2022/index.html"><span class="doc std std-doc">See the Design</span></a></p></li>
+</ul>
+<h2 id="wisdom">Wisdom<a class="headerlink" href="#wisdom" title="Permalink to this heading">¶</a></h2>
+<p><strong>from the kubebuilder slack</strong></p>
+<h3 id="learned-knowledge">Learned Knowledge<a class="headerlink" href="#learned-knowledge" title="Permalink to this heading">¶</a></h3>
+<ul class="simple">
+<li><p>Reconciling should only take into account the spec of your object, and the real world.  Don’t use status to hold knowledge for future reconcile loops.  Use a workspace object instead.</p></li>
+<li><p>Status should only hold observations of the reconcile loop.  Conditions, perhaps a “Phase”, IDs of stuff you’ve found, etc.</p></li>
+<li><p>Use k8s ownership model to help with cleaning up things that should automatically be reclaimed when your object is deleted.</p></li>
+<li><p>Use finalizers to do manual clean-up-tasks</p></li>
+<li><p>Send events, but be very limited in how often you send events.  We’ve opted now to send events, essentially only when a Condition is modified (e.g. a Condition changes state or reason).</p></li>
+<li><p>Try not to do too many things in a single reconcile.  One thing is fine.  e.g. see one thing out of order?  Fix that and ask to be reconciled.  The next time you’ll see that it’s in order and you can check the next thing.  The resulting code is very robust and can handle almost any failure you throw at it.</p></li>
+<li><p>Add “kubebuilder:printcolums” markers to help kubectl-users get a nice summary when they do “kubectl get yourthing”.</p></li>
+<li><p>Accept and embrace that you will be reconciling an out-of-date object from time to time.  It shouldn’t really matter.  If it does, you might want to change things around so that it doesn’t matter.  Inconsistency is a fact of k8s life.</p></li>
+<li><p>Place extra care in taking errors and elevating them to useful conditions, and/or events.  These are the most visible part of an operator, and the go-to-place for humans when trying to figure out why your code doesn’t work.  If you’ve taken the time to extract the error text from the underlying system into an Event, your users will be able to fix the problem much quicker.</p></li>
+</ul>
+<h3 id="what-is-a-workspace">What is a workspace?<a class="headerlink" href="#what-is-a-workspace" title="Permalink to this heading">¶</a></h3>
+<p>A workspace object is when you need to record some piece of knowledge about a thing you’re doing, so that later you can use that when reconciling this object. MyObject “foo” is reconciled; so to record the thing you need to remember, create a MyObjectWorkspace — Owned by the MyObject, and with the same name + namespace.  MyObjectWorkspace doesn’t need a reconciler; it’s simply a tool for you to remember the thing. Next time you reconcile a MyObject, also read your MyObjectWorkspace so you can remember “what happened last time”. E.g. I’ve made a controller to create an EC2 instance, and we needed to be completely sure that we didn’t make the “launch instance” API call twice.  EC2 has a “post once only” technique whereby you specify a nonce to avoid duplicate API calls.  You would write the nonce to the workspace use the nonce to call the EC2 API write any status info of what you observed to the status. Rremove the nonce when you know that you’ve stored the results (e.g. instance IDs or whatever) When you reconcile, if the nonce is set, you can re-use it because it means that the EC2 call failed somehow.  EC2 uses the nonce the second time to recognise that “heh, this is the same request as before …” Stuff like this nonce shouldn’t go in your status. Put simply, the status should really never be used as input for your reconcile.</p>
+<p>Know that the scaffolded k8sClient includes a cache that automatically updates based on watches, and may give you out-of-date data (but this is fine because if it is out-of-date, there should be a reconcile in the queue already). Also know that there is a way to request objects bypassing a cache (look for APIReader).  This gives a read-only, but direct access to the API.  Useful for e.g. those workspace objects.</p>
+
+
+  <hr>
+<div class="md-source-file">
+  <small>
+    
+      Last update:
+      Jan 13, 2023
+    
+  </small>
+</div>
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+  <script>var tabs=__md_get("__tabs");if(Array.isArray(tabs))e:for(var set of document.querySelectorAll(".tabbed-set")){var tab,labels=set.querySelector(".tabbed-labels");for(tab of tabs)for(var label of labels.getElementsByTagName("label"))if(label.innerText.trim()===tab){var input=document.getElementById(label.htmlFor);input.checked=!0;continue e}}</script>
+
+        </div>
+        
+          <a href="#" class="md-top md-icon" data-md-component="top" hidden>
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8v12Z"/></svg>
+            Back to top
           </a>
-         </h2>
-         <p>
-          <strong>
-           from the kubebuilder slack
-          </strong>
-         </p>
-         <section id="learned-knowledge">
-          <h3 id="learned-knowledge">
-           Learned Knowledge
-           <a class="headerlink" href="#learned-knowledge" title="Permalink to this heading">
-            ¶
-           </a>
-          </h3>
-          <ul class="simple">
-           <li>
-            <p>
-             Reconciling should only take into account the spec of your object, and the real world.  Don’t use status to hold knowledge for future reconcile loops.  Use a workspace object instead.
-            </p>
-           </li>
-           <li>
-            <p>
-             Status should only hold observations of the reconcile loop.  Conditions, perhaps a “Phase”, IDs of stuff you’ve found, etc.
-            </p>
-           </li>
-           <li>
-            <p>
-             Use k8s ownership model to help with cleaning up things that should automatically be reclaimed when your object is deleted.
-            </p>
-           </li>
-           <li>
-            <p>
-             Use finalizers to do manual clean-up-tasks
-            </p>
-           </li>
-           <li>
-            <p>
-             Send events, but be very limited in how often you send events.  We’ve opted now to send events, essentially only when a Condition is modified (e.g. a Condition changes state or reason).
-            </p>
-           </li>
-           <li>
-            <p>
-             Try not to do too many things in a single reconcile.  One thing is fine.  e.g. see one thing out of order?  Fix that and ask to be reconciled.  The next time you’ll see that it’s in order and you can check the next thing.  The resulting code is very robust and can handle almost any failure you throw at it.
-            </p>
-           </li>
-           <li>
-            <p>
-             Add “kubebuilder:printcolums” markers to help kubectl-users get a nice summary when they do “kubectl get yourthing”.
-            </p>
-           </li>
-           <li>
-            <p>
-             Accept and embrace that you will be reconciling an out-of-date object from time to time.  It shouldn’t really matter.  If it does, you might want to change things around so that it doesn’t matter.  Inconsistency is a fact of k8s life.
-            </p>
-           </li>
-           <li>
-            <p>
-             Place extra care in taking errors and elevating them to useful conditions, and/or events.  These are the most visible part of an operator, and the go-to-place for humans when trying to figure out why your code doesn’t work.  If you’ve taken the time to extract the error text from the underlying system into an Event, your users will be able to fix the problem much quicker.
-            </p>
-           </li>
-          </ul>
-         </section>
-         <section id="what-is-a-workspace">
-          <h3 id="what-is-a-workspace">
-           What is a workspace?
-           <a class="headerlink" href="#what-is-a-workspace" title="Permalink to this heading">
-            ¶
-           </a>
-          </h3>
-          <p>
-           A workspace object is when you need to record some piece of knowledge about a thing you’re doing, so that later you can use that when reconciling this object. MyObject “foo” is reconciled; so to record the thing you need to remember, create a MyObjectWorkspace — Owned by the MyObject, and with the same name + namespace.  MyObjectWorkspace doesn’t need a reconciler; it’s simply a tool for you to remember the thing. Next time you reconcile a MyObject, also read your MyObjectWorkspace so you can remember “what happened last time”. E.g. I’ve made a controller to create an EC2 instance, and we needed to be completely sure that we didn’t make the “launch instance” API call twice.  EC2 has a “post once only” technique whereby you specify a nonce to avoid duplicate API calls.  You would write the nonce to the workspace use the nonce to call the EC2 API write any status info of what you observed to the status. Rremove the nonce when you know that you’ve stored the results (e.g. instance IDs or whatever) When you reconcile, if the nonce is set, you can re-use it because it means that the EC2 call failed somehow.  EC2 uses the nonce the second time to recognise that “heh, this is the same request as before …” Stuff like this nonce shouldn’t go in your status. Put simply, the status should really never be used as input for your reconcile.
-          </p>
-          <p>
-           Know that the scaffolded k8sClient includes a cache that automatically updates based on watches, and may give you out-of-date data (but this is fine because if it is out-of-date, there should be a reconcile in the queue already). Also know that there is a way to request objects bypassing a cache (look for APIReader).  This gives a read-only, but direct access to the API.  Useful for e.g. those workspace objects.
-          </p>
-         </section>
-        </section>
-       </section>
-      </article>
-     </div>
-    </div>
-   </main>
-  </div>
-  <footer class="md-footer">
-   <div class="md-footer-nav">
-    <nav class="md-footer-nav__inner md-grid">
-     <a class="md-flex md-footer-nav__link md-footer-nav__link--prev" href="developer-guide.html" rel="prev" title="Developer Guide">
-      <div class="md-flex__cell md-flex__cell--shrink">
-       <i class="md-icon md-icon--arrow-back md-footer-nav__button">
-       </i>
-      </div>
-      <div class="md-flex__cell md-flex__cell--stretch md-footer-nav__title">
-       <span class="md-flex__ellipsis">
-        <span class="md-footer-nav__direction">
-         Previous
-        </span>
-        Developer Guide
-       </span>
-      </div>
-     </a>
-     <a class="md-flex md-footer-nav__link md-footer-nav__link--next" href="debugging.html" rel="next" title="Debugging">
-      <div class="md-flex__cell md-flex__cell--stretch md-footer-nav__title">
-       <span class="md-flex__ellipsis">
-        <span class="md-footer-nav__direction">
-         Next
-        </span>
-        Debugging
-       </span>
-      </div>
-      <div class="md-flex__cell md-flex__cell--shrink">
-       <i class="md-icon md-icon--arrow-forward md-footer-nav__button">
-       </i>
-      </div>
-     </a>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+    
+    <nav class="md-footer__inner md-grid" aria-label="Footer" >
+      
+        
+        <a href="developer-guide.html" class="md-footer__link md-footer__link--prev" aria-label="Previous: Developer Guide" rel="prev">
+          <div class="md-footer__button md-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
+          </div>
+          <div class="md-footer__title">
+            <div class="md-ellipsis">
+              <span class="md-footer__direction">
+                Previous
+              </span>
+              Developer Guide
+            </div>
+          </div>
+        </a>
+      
+      
+        
+        <a href="debugging.html" class="md-footer__link md-footer__link--next" aria-label="Next: Debugging" rel="next">
+          <div class="md-footer__title">
+            <div class="md-ellipsis">
+              <span class="md-footer__direction">
+                Next
+              </span>
+              Debugging
+            </div>
+          </div>
+          <div class="md-footer__button md-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11H4Z"/></svg>
+          </div>
+        </a>
+      
     </nav>
-   </div>
-   <div class="md-footer-meta md-typeset">
+  
+  
+  
+  <div class="md-footer-meta md-typeset">
+    
     <div class="md-footer-meta__inner md-grid">
-     <div class="md-footer-copyright">
-      <div class="md-footer-copyright__highlight">
-       © Copyright 2022, Flux Developers.
-      </div>
-      Last updated on
-              Jan 07, 2023.
-      <br/>
-      Created using
-      <a href="http://www.sphinx-doc.org/">
-       Sphinx
-      </a>
-      5.3.0.
-             and
-      <a href="https://github.com/bashtage/sphinx-material/">
-       Material for
-              Sphinx
-      </a>
-     </div>
+      <div class="md-copyright">
+  
+    <div class="md-footer-copyright__highlight">
+        &#169; Copyright 2022, Flux Developers.
+        
     </div>
-   </div>
-  </footer>
-  <script src="../_static/javascripts/application.js">
-  </script>
-  <script>
-   app.initialize({version: "1.0.4", url: {base: ".."}})
-  </script>
- </body>
+  
+    Created using
+    <a href="https://www.sphinx-doc.org/" target="_blank" rel="noopener">Sphinx</a>
+    5.3.0.
+     and
+    <a href="https://github.com/jbms/sphinx-immaterial/" target="_blank" rel="noopener">Sphinx-Immaterial</a>
+  
+</div>
+      
+        <div class="md-social">
+  
+    
+    
+    <a href="https://github.com/flux-framework/flux-operator" target="_blank" rel="noopener" title="Flux Operator on GitHub" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc.--><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg>
+    </a>
+  
+    
+    
+    <a href="https://flux-framework.org/" target="_blank" rel="noopener" title="Flux Framework" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 2.05c5.05.5 9 4.77 9 9.95 0 1.45-.32 2.83-.88 4.07l-2.62-1.53c.32-.79.5-1.64.5-2.54 0-3.53-2.61-6.43-6-6.92V2.05M12 19c2.21 0 4.17-1 5.45-2.62l2.6 1.53A9.97 9.97 0 0 1 12 22C6.47 22 2 17.5 2 12a9.99 9.99 0 0 1 9-9.95v3.03C7.61 5.57 5 8.47 5 12a7 7 0 0 0 7 7m0-13a6 6 0 0 1 6 6c0 2.97-2.16 5.44-5 5.92v-3.09c1.17-.41 2-1.52 2-2.83a3 3 0 0 0-3-3l-.55.05-1.54-2.67C10.56 6.13 11.26 6 12 6m-6 6c0-1.86.85-3.5 2.18-4.62l1.54 2.67C9.27 10.57 9 11.26 9 12c0 1.31.83 2.42 2 2.83v3.09c-2.84-.48-5-2.95-5-5.92Z"/></svg>
+    </a>
+  
+</div>
+      
+    </div>
+    
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    <script id="__config" type="application/json">{"base": "..", "features": ["navigation.expand", "navigation.tabs", "toc.integrate", "navigation.sections", "navigation.instant", "header.autohide", "navigation.top", "navigation.tracking", "search.highlight", "search.share", "toc.follow", "toc.sticky", "content.tabs.link", "announce.dismiss"], "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version.title": "Select version"}}</script>
+    
+    
+      <script src="../_static/javascripts/bundle.444abb77.min.js"></script>
+        <script src="../_static/sphinx_highlight.js"></script>
+        <script src="../_static/clipboard.min.js"></script>
+        <script src="../_static/copybutton.js"></script>
+        <script src="../_static/js/rtd_sphinx_search.min.js"></script>
+        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    
+  </body>
 </html>

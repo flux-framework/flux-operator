@@ -47,6 +47,16 @@ the set of containers that you describe.
   size: 4
 ```
 
+### tasks
+
+The `tasks` variable under the spec is the number of tasks that each pod in the MiniCluster should be given. 
+
+```yaml
+  tasks: 4
+```
+
+This value defaults to 1.
+
 ### jobLabels
 
 To add custom labels for your job, add a set of key value pairs (strings) to a "jobLabels" section:
@@ -151,6 +161,18 @@ repository. Generally speaking, you need to have Flux executables, Flux Python b
 and your own executables on the path, and should be started with root with a flux user.
 If you use the [fluxrm/flux-sched](https://hub.docker.com/r/fluxrm/flux-sched) 
 base containers this is usually a good start. 
+
+#### cores
+
+The number of cores to provide to the container as a variable. This does not actually allocate or control cores
+for the container, but exposes the variable for your container template (e.g., for the Flux wait.sh script). 
+
+```yaml
+  cores: 4
+```
+
+This value when unset defaults to 1.
+
 
 #### command
 
