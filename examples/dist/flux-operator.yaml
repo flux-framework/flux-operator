@@ -55,7 +55,6 @@ spec:
                         Flux via a Restful API. We Can remove this when that is finalized.'
                       type: string
                     cores:
-                      default: 1
                       description: Cores the container should use
                       format: int32
                       type: integer

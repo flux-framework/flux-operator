@@ -127,7 +127,6 @@ type MiniClusterContainer struct {
 	Name string `json:"name"`
 
 	// Cores the container should use
-	// +kubebuilder:default=1
 	// +optional
 	Cores int32 `json:"cores"`
 
