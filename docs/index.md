@@ -39,8 +39,7 @@ deployment/index.md
 ```{toctree}
 :caption: About
 :maxdepth: 3
-contributing.md
-about/license
+about/index.md
 ```
 
 <script>

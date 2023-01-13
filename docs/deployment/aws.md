@@ -78,18 +78,8 @@ ip-192-168-79-92.ec2.internal    Ready    <none>   4m57s   v1.22.12-eks-be74326
 
 ## Deploy Operator 
 
-To deploy the Flux Operator, first here is how to do it directly from the codebase:
+To deploy the Flux Operator, [choose one of the options here](https://flux-framework.org/flux-operator/getting_started/user-guide.html#production-install) to deploy the operator. Whether you apply a yaml file, use [flux-cloud](https://converged-computing.github.io/flux-cloud) or clone the repository and `make deploy` you will see the operator install to the `operator-system` namespace.
 
-```bash
-$ git clone https://github.com/flux-framework/flux-operator
-$ cd flux-operator
-```
-
-A deploy will use the latest docker image [from the repository](https://github.com/orgs/flux-framework/packages?repo_name=flux-operator):
-
-```bash
-$ make deploy
-```
 ```console
 ...
 namespace/operator-system created
