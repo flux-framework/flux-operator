@@ -14,7 +14,7 @@ import (
 	"fmt"
 
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
+	"k8s.io/apimachinery/pkg/util/intstr"
 )
 
 // EDIT THIS FILE!  THIS IS SCAFFOLDING FOR YOU TO OWN!
@@ -69,6 +69,10 @@ type MiniClusterSpec struct {
 	// +optional
 	DeadlineSeconds int64 `json:"deadlineSeconds"`
 
+	// Pod spec details
+	// +optional
+	Pod PodSpec `json:"pod"`
+
 	// localDeploy should be true for development, or deploying in the
 	// case that there isn't an actual kubernetes cluster (e.g., you
 	// are not using make deploy. It uses a persistent volume instead of
@@ -76,6 +80,14 @@ type MiniClusterSpec struct {
 	// +kubebuilder:default=false
 	// +optional
 	LocalDeploy bool `json:"localDeploy"`
+}
+
+// PodSpec controlls variables for the cluster pod
+type PodSpec struct {
+
+	// Resources include limits and requests
+	// +optional
+	Resources ContainerResource `json:"resources"`
 }
 
 // MiniClusterStatus defines the observed state of Flux
@@ -207,20 +219,16 @@ type MiniClusterContainer struct {
 // ContainerResources include limits and requests
 type ContainerResources struct {
 
-	// +kubebuilder:pruning:PreserveUnknownFields
-	// +kubebuilder:validation:Schemaless
 	// +optional
 	Limits ContainerResource `json:"limits"`
 
-	// +kubebuilder:pruning:PreserveUnknownFields
-	// +kubebuilder:validation:Schemaless
 	// +optional
 	Requests ContainerResource `json:"requests"`
 }
 
 // +kubebuilder:pruning:PreserveUnknownFields
 // +kubebuilder:validation:Schemaless
-type ContainerResource unstructured.Unstructured
+type ContainerResource map[string]intstr.IntOrString
 
 //+kubebuilder:object:root=true
 //+kubebuilder:subresource:status
@@ -232,15 +240,6 @@ type MiniCluster struct {
 
 	Spec   MiniClusterSpec   `json:"spec,omitempty"`
 	Status MiniClusterStatus `json:"status,omitempty"`
-}
-
-// controller-gen cannot handle the interface{} type of an aliased Unstructured, thus we write our own DeepCopyInto function.
-func (in *ContainerResource) DeepCopyInto(out *ContainerResource) {
-	if out != nil {
-		casted := unstructured.Unstructured(*in)
-		deepCopy := casted.DeepCopy()
-		out.Object = deepCopy.Object
-	}
 }
 
 // Validate ensures we have data that is needed, and sets defaults if needed

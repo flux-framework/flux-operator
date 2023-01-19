@@ -128,6 +128,43 @@ By default they will be read only unless you set `readOnly` to false.
 Since we haven't implemented this for a cloud resource yet, this currently just works
 with localDeploy is set to true, and we can adjust this when we test in a cloud.
 
+
+### pod
+
+Variables and attributes for each pod in the Indexed job.
+
+#### resources
+
+Resources can include limits and requests. Known keys include "memory" and "cpu" (should be provided in some
+string format that can be parsed) and all others are considered some kind of quantity request. 
+
+```yaml
+resources:
+  limits:
+    memory: 500M
+    cpu: 4
+```
+If you wanted to, for example, request a GPU, that might look like:
+
+```yaml
+resources:
+  limits:
+    gpu-vendor.example/example-gpu: 1
+```
+
+Or for a particulat type of networking fabric:
+
+```yaml
+resources:
+  limits:
+    vpc.amazonaws.com/efa: 1
+```
+
+Both limits and resources are flexible to accept a string or an integer value, and you'll get an error if you
+provide something else. If you need something else, [let us know](https://github.com/flux-framework/flux-operator/issues).
+If you are requesting GPU, [this documentation](https://kubernetes.io/docs/tasks/manage-gpus/scheduling-gpus/) is helpful.
+
+
 ### containers
 
 Early on we identified that a job could include more than one container, where there might be a primary container

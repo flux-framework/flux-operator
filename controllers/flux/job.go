@@ -67,6 +67,15 @@ func (r *MiniClusterReconciler) newMiniClusterJob(cluster *api.MiniCluster) (*ba
 		},
 	}
 
+	// Get resources for the pod
+	resources, err := r.getPodResources(cluster)
+	r.log.Info("🌀 MiniCluster", "Pod.Resources", resources)
+	if err != nil {
+		r.log.Info("🌀 MiniCluster", "Pod.Resources", resources)
+		return job, err
+	}
+	job.Spec.Template.Spec.Overhead = resources
+
 	// We need to create the number of containers (and names) that the user requests
 	// Before the stateful set was doing this for us, but for a batch job it's manaul
 	containers, err := r.getMiniClusterContainers(cluster)
@@ -125,7 +134,8 @@ func (r *MiniClusterReconciler) getMiniClusterContainers(cluster *api.MiniCluste
 		}
 
 		// Prepare container resources
-		resources, err := getContainerResources(cluster, &container)
+		resources, err := r.getContainerResources(cluster, &container)
+		r.log.Info("🌀 MiniCluster", "Container.Resources", resources)
 		if err != nil {
 			return containers, err
 		}

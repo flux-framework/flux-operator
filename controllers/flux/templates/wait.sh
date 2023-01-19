@@ -80,6 +80,7 @@ ls ${workdir}{{ end }}
 mkdir -p /etc/flux/system
 
 # --cores=IDS Assign cores with IDS to each rank in R, so we  assign 0-(N-1) to each host
+echo "flux R encode --hosts={{ .Hosts}} {{if .Cores}}--cores=0-{{.Cores}}{{ end }}"
 flux R encode --hosts={{ .Hosts}} {{if .Cores}}--cores=0-{{.Cores}}{{ end }} > /etc/flux/system/R
 {{ if not .TestMode }}printf "\n📦 Resources\n"
 cat /etc/flux/system/R{{ end }}
