@@ -135,34 +135,15 @@ Variables and attributes for each pod in the Indexed job.
 
 #### resources
 
-Resources can include limits and requests. Known keys include "memory" and "cpu" (should be provided in some
+Resource lists for a pod go under [Overhead](https://kubernetes.io/docs/concepts/scheduling-eviction/pod-overhead/). Known keys include "memory" and "cpu" (should be provided in some
 string format that can be parsed) and all others are considered some kind of quantity request. 
 
 ```yaml
-resources:
-  limits:
+pod:
+  resources:
     memory: 500M
     cpu: 4
 ```
-If you wanted to, for example, request a GPU, that might look like:
-
-```yaml
-resources:
-  limits:
-    gpu-vendor.example/example-gpu: 1
-```
-
-Or for a particulat type of networking fabric:
-
-```yaml
-resources:
-  limits:
-    vpc.amazonaws.com/efa: 1
-```
-
-Both limits and resources are flexible to accept a string or an integer value, and you'll get an error if you
-provide something else. If you need something else, [let us know](https://github.com/flux-framework/flux-operator/issues).
-If you are requesting GPU, [this documentation](https://kubernetes.io/docs/tasks/manage-gpus/scheduling-gpus/) is helpful.
 
 
 ### containers

@@ -101,8 +101,8 @@ func (r *MiniClusterReconciler) getMiniClusterContainers(cluster *api.MiniCluste
 		containerName := container.Name
 		command := []string{}
 
-		// This is a wrapper that is going to wait for the generation of update_hosts.sh
-		// Once it's there, we update /etc/hosts, and run the command to start flux.
+		// A Flux runner gets a custom wait.sh script for the container
+		// And also needs to have a consistent name to the cert generator
 		if container.FluxRunner {
 
 			// wait.sh path corresponds to container identifier
