@@ -112,9 +112,19 @@ spec:
                       description: Resources include limits and requests
                       properties:
                         limits:
-                          x-kubernetes-preserve-unknown-fields: true
+                          additionalProperties:
+                            anyOf:
+                            - type: integer
+                            - type: string
+                            x-kubernetes-int-or-string: true
+                          type: object
                         requests:
-                          x-kubernetes-preserve-unknown-fields: true
+                          additionalProperties:
+                            anyOf:
+                            - type: integer
+                            - type: string
+                            x-kubernetes-int-or-string: true
+                          type: object
                       type: object
                     runFlux:
                       description: Main container to run flux (only should be one)
@@ -174,6 +184,18 @@ spec:
                   you are not using make deploy. It uses a persistent volume instead
                   of a claim
                 type: boolean
+              pod:
+                description: Pod spec details
+                properties:
+                  resources:
+                    additionalProperties:
+                      anyOf:
+                      - type: integer
+                      - type: string
+                      x-kubernetes-int-or-string: true
+                    description: Resources include limits and requests
+                    type: object
+                type: object
               podLabels:
                 additionalProperties:
                   type: string

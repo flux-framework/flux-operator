@@ -128,6 +128,24 @@ By default they will be read only unless you set `readOnly` to false.
 Since we haven't implemented this for a cloud resource yet, this currently just works
 with localDeploy is set to true, and we can adjust this when we test in a cloud.
 
+
+### pod
+
+Variables and attributes for each pod in the Indexed job.
+
+#### resources
+
+Resource lists for a pod go under [Overhead](https://kubernetes.io/docs/concepts/scheduling-eviction/pod-overhead/). Known keys include "memory" and "cpu" (should be provided in some
+string format that can be parsed) and all others are considered some kind of quantity request. 
+
+```yaml
+pod:
+  resources:
+    memory: 500M
+    cpu: 4
+```
+
+
 ### containers
 
 Early on we identified that a job could include more than one container, where there might be a primary container

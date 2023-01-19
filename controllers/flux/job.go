@@ -67,6 +67,15 @@ func (r *MiniClusterReconciler) newMiniClusterJob(cluster *api.MiniCluster) (*ba
 		},
 	}
 
+	// Get resources for the pod
+	resources, err := r.getPodResources(cluster)
+	r.log.Info("🌀 MiniCluster", "Pod.Resources", resources)
+	if err != nil {
+		r.log.Info("🌀 MiniCluster", "Pod.Resources", resources)
+		return job, err
+	}
+	job.Spec.Template.Spec.Overhead = resources
+
 	// We need to create the number of containers (and names) that the user requests
 	// Before the stateful set was doing this for us, but for a batch job it's manaul
 	containers, err := r.getMiniClusterContainers(cluster)
@@ -92,8 +101,8 @@ func (r *MiniClusterReconciler) getMiniClusterContainers(cluster *api.MiniCluste
 		containerName := container.Name
 		command := []string{}
 
-		// This is a wrapper that is going to wait for the generation of update_hosts.sh
-		// Once it's there, we update /etc/hosts, and run the command to start flux.
+		// A Flux runner gets a custom wait.sh script for the container
+		// And also needs to have a consistent name to the cert generator
 		if container.FluxRunner {
 
 			// wait.sh path corresponds to container identifier
@@ -125,7 +134,8 @@ func (r *MiniClusterReconciler) getMiniClusterContainers(cluster *api.MiniCluste
 		}
 
 		// Prepare container resources
-		resources, err := getContainerResources(cluster, &container)
+		resources, err := r.getContainerResources(cluster, &container)
+		r.log.Info("🌀 MiniCluster", "Container.Resources", resources)
 		if err != nil {
 			return containers, err
 		}
