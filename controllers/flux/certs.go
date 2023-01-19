@@ -145,6 +145,17 @@ func (r *MiniClusterReconciler) newPodCommandRunner(cluster *api.MiniCluster, co
 		pullPolicy = corev1.PullAlways
 	}
 
+	// Since the hostname needs to match the broker, we find the flux runner
+	var containerName string
+	for i, container := range cluster.Spec.Containers {
+
+		// This is a wrapper that is going to wait for the generation of update_hosts.sh
+		// Once it's there, we update /etc/hosts, and run the command to start flux.
+		if container.FluxRunner {
+			containerName = fmt.Sprintf("%s-%d", cluster.Name, i)
+		}
+	}
+
 	pod := &corev1.Pod{
 		ObjectMeta: metav1.ObjectMeta{Name: cluster.Name + certGenSuffix, Namespace: cluster.Namespace},
 		Spec: corev1.PodSpec{
@@ -166,7 +177,7 @@ func (r *MiniClusterReconciler) newPodCommandRunner(cluster *api.MiniCluster, co
 				},
 			}},
 			Containers: []corev1.Container{{
-				Name:            fmt.Sprintf("%s%s", cluster.Name, certGenSuffix),
+				Name:            containerName,
 				Image:           container.Image,
 				ImagePullPolicy: pullPolicy,
 				WorkingDir:      container.WorkingDir,
