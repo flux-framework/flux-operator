@@ -805,7 +805,7 @@ spec:
         - --leader-elect
         command:
         - /manager
-        image: ghcr.io/flux-framework/flux-operator:test
+        image: ghcr.io/flux-framework/flux-operator:latest
         livenessProbe:
           httpGet:
             path: /healthz
