@@ -118,7 +118,6 @@ spec:
                             - type: string
                             x-kubernetes-int-or-string: true
                           type: object
-                          x-kubernetes-preserve-unknown-fields: true
                         requests:
                           additionalProperties:
                             anyOf:
@@ -126,7 +125,6 @@ spec:
                             - type: string
                             x-kubernetes-int-or-string: true
                           type: object
-                          x-kubernetes-preserve-unknown-fields: true
                       type: object
                     runFlux:
                       description: Main container to run flux (only should be one)
@@ -197,7 +195,6 @@ spec:
                       x-kubernetes-int-or-string: true
                     description: Resources include limits and requests
                     type: object
-                    x-kubernetes-preserve-unknown-fields: true
                 type: object
               podLabels:
                 additionalProperties:

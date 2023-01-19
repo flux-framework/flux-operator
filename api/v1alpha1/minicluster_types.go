@@ -226,8 +226,6 @@ type ContainerResources struct {
 	Requests ContainerResource `json:"requests"`
 }
 
-// +kubebuilder:pruning:PreserveUnknownFields
-// +kubebuilder:validation:Schemaless
 type ContainerResource map[string]intstr.IntOrString
 
 //+kubebuilder:object:root=true
