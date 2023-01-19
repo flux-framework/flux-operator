@@ -530,6 +530,26 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#pod" class="md-nav__link">
+    <span title="/getting_started/custom-resource-definition.md#pod (reference label)" class="md-ellipsis">pod</span>
+  </a>
+  
+    <nav class="md-nav" aria-label="pod">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#resources" class="md-nav__link">
+    <span title="/getting_started/custom-resource-definition.md#resources (reference label)" class="md-ellipsis">resources</span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#containers" class="md-nav__link">
     <span title="/getting_started/custom-resource-definition.md#containers (reference label)" class="md-ellipsis">containers</span>
   </a>
@@ -571,8 +591,8 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#resources" class="md-nav__link">
-    <span title="/getting_started/custom-resource-definition.md#resources (reference label)" class="md-ellipsis">resources</span>
+  <a href="#id1" class="md-nav__link">
+    <span title="/getting_started/custom-resource-definition.md#id1 (reference label)" class="md-ellipsis">resources</span>
   </a>
   
     <nav class="md-nav" aria-label="resources">
@@ -654,8 +674,8 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#id1" class="md-nav__link">
-    <span title="/getting_started/custom-resource-definition.md#id1 (reference label)" class="md-ellipsis">volumes</span>
+  <a href="#id2" class="md-nav__link">
+    <span title="/getting_started/custom-resource-definition.md#id2 (reference label)" class="md-ellipsis">volumes</span>
   </a>
   
 </li>
@@ -944,6 +964,17 @@ with a path:</p>
 <p>By default they will be read only unless you set <code class="docutils literal notranslate"><span class="pre">readOnly</span></code> to false.
 Since we haven’t implemented this for a cloud resource yet, this currently just works
 with localDeploy is set to true, and we can adjust this when we test in a cloud.</p>
+<h3 id="pod">pod<a class="headerlink" href="#pod" title="Permalink to this heading">¶</a></h3>
+<p>Variables and attributes for each pod in the Indexed job.</p>
+<h4 id="resources">resources<a class="headerlink" href="#resources" title="Permalink to this heading">¶</a></h4>
+<p>Resource lists for a pod go under <a class="reference external" href="https://kubernetes.io/docs/concepts/scheduling-eviction/pod-overhead/">Overhead</a>. Known keys include “memory” and “cpu” (should be provided in some
+string format that can be parsed) and all others are considered some kind of quantity request.</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><code><span class="nt">pod</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">resources</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">memory</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">500M</span>
+<span class="w">    </span><span class="nt">cpu</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">4</span>
+</code></pre></div>
+</div>
 <h3 id="containers">containers<a class="headerlink" href="#containers" title="Permalink to this heading">¶</a></h3>
 <p>Early on we identified that a job could include more than one container, where there might be a primary container
 running Flux, and others that provide services. Note that currently we only allow one container to be a FluxRunner,
@@ -986,7 +1017,7 @@ for the container, but exposes the variable for your container template (e.g., f
 <span class="w">    </span><span class="nt">command</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">lmp -v x 2 -v y 2 -v z 2 -in in.reaxc.hns -nocite</span>
 </code></pre></div>
 </div>
-<h3 id="resources">resources<a class="headerlink" href="#resources" title="Permalink to this heading">¶</a></h3>
+<h3 id="id1">resources<a class="headerlink" href="#id1" title="Permalink to this heading">¶</a></h3>
 <p>Resources can include limits and requests. Known keys include “memory” and “cpu” (should be provided in some
 string format that can be parsed) and all others are considered some kind of quantity request.</p>
 <div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><code><span class="nt">resources</span><span class="p">:</span>
@@ -1111,7 +1142,7 @@ we provide this argument on the level of the container. To enable this, set this
 <span class="w">  </span><span class="nt">diagnostics</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
 </code></pre></div>
 </div>
-<h3 id="id1">volumes<a class="headerlink" href="#id1" title="Permalink to this heading">¶</a></h3>
+<h3 id="id2">volumes<a class="headerlink" href="#id2" title="Permalink to this heading">¶</a></h3>
 <p>Volumes that are defined on the level of the MiniCluster (named) can be mounted into containers.
 As an example, here is how we specify the volume <code class="docutils literal notranslate"><span class="pre">myvolume</span></code> to be mounted to the container at <code class="docutils literal notranslate"><span class="pre">/data</span></code>.</p>
 <div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><code><span class="nt">volumes</span><span class="p">:</span>
@@ -1146,7 +1177,7 @@ It defaults to 5000.</p>
   <small>
     
       Last update:
-      Jan 13, 2023
+      Jan 19, 2023
     
   </small>
 </div>
