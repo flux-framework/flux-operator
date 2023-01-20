@@ -183,8 +183,8 @@ else
         # Case 2: Fall back to provided command
         else
 {{ if not .TestMode }} 
-            printf "\n🌀 flux start -o --config /etc/flux/config ${brokerOptions} flux mini submit -N {{.Size}} -n {{.Tasks}} {{ if .FluxOptionFlags }}{{ .FluxOptionFlags}}{{ end }} --watch $@\n"{{ end }}
-            ${asFlux} flux start -o --config /etc/flux/config ${brokerOptions} flux mini submit -N {{.Size}} -n {{.Tasks}} {{ if .FluxOptionFlags }}{{ .FluxOptionFlags}}{{ end }} --watch $@
+            printf "\n🌀 flux start -o --config /etc/flux/config ${brokerOptions} flux mini submit {{ if gt .Tasks .Size }} -N {{.Size}}{{ end }} -n {{.Tasks}} {{ if .FluxOptionFlags }}{{ .FluxOptionFlags}}{{ end }} --watch $@\n"{{ end }}
+            ${asFlux} flux start -o --config /etc/flux/config ${brokerOptions} flux mini submit {{ if gt .Tasks .Size }} -N {{.Size}}{{ end }} -n {{.Tasks}} {{ if .FluxOptionFlags }}{{ .FluxOptionFlags}}{{ end }} --watch $@
         fi
     else
         # Sleep until the broker is ready
