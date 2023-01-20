@@ -11,6 +11,9 @@ asFlux="sudo -u flux -E"
 # If any preCommand logic is defined
 {{ .PreCommand}}
 
+{{ if not .TestMode }}# Show asFlux directive once
+printf "\nAs Flux prefix for flux commands: ${asFlux}\n"{{ end }}
+
 # We currently require sudo and an ubuntu base
 which sudo > /dev/null 2>&1 || (echo "sudo is required to be installed" && exit 1);
 which flux > /dev/null 2>&1 || (echo "flux is required to be installed" && exit 1);
@@ -174,19 +177,19 @@ else
 
             # -o is an "option" for the broker
             # -S corresponds to a shortened --setattr=ATTR=VAL
-            printf "\n🌀${asFlux} flux start -o --config /etc/flux/config ${brokerOptions} ${startServer}\n"{{ end }}
+            printf "\n🌀 flux start -o --config /etc/flux/config ${brokerOptions} ${startServer}\n"{{ end }}
             ${asFlux} flux start -o --config /etc/flux/config ${brokerOptions} ${startServer}
 
         # Case 2: Fall back to provided command
         else
 {{ if not .TestMode }} 
-            printf "\n🌀${asFlux} flux start -o --config /etc/flux/config ${brokerOptions} flux mini submit -n {{.Tasks}} {{ if .FluxOptionFlags }}{{ .FluxOptionFlags}}{{ end }} $@ | xargs flux job attach\n"{{ end }}
-            ${asFlux} flux start -o --config /etc/flux/config ${brokerOptions} flux mini submit -n {{.Tasks}} {{ if .FluxOptionFlags }}{{ .FluxOptionFlags}}{{ end }} $@ | xargs ${asFlux} flux job attach
+            printf "\n🌀 flux start -o --config /etc/flux/config ${brokerOptions} flux mini submit -N {{.Size}} -n {{.Tasks}} {{ if .FluxOptionFlags }}{{ .FluxOptionFlags}}{{ end }} --watch $@\n"{{ end }}
+            ${asFlux} flux start -o --config /etc/flux/config ${brokerOptions} flux mini submit -N {{.Size}} -n {{.Tasks}} {{ if .FluxOptionFlags }}{{ .FluxOptionFlags}}{{ end }} --watch $@
         fi
     else
         # Sleep until the broker is ready
 {{ if not .TestMode }}
-        printf "\n🌀${asFlux} flux start -o --config /etc/flux/config ${brokerOptions}\n"{{ end }}
+        printf "\n🌀 flux start -o --config /etc/flux/config ${brokerOptions}\n"{{ end }}
         while true
         do
             ${asFlux} flux start -o --config /etc/flux/config ${brokerOptions}
