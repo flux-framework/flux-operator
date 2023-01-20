@@ -179,13 +179,14 @@ else
 
         # Case 2: Fall back to provided command
         else
-{{ if not .TestMode }}            
-            printf "\n🌀${asFlux} flux start -o --config /etc/flux/config ${brokerOptions} flux mini run -n {{.Tasks}} {{ if .FluxOptionFlags }}{{ .FluxOptionFlags}}{{ end }} $@\n"{{ end }}
-            ${asFlux} flux start -o --config /etc/flux/config ${brokerOptions} flux mini run -n {{.Tasks}} {{ if .FluxOptionFlags }}{{ .FluxOptionFlags}}{{ end }} $@
+{{ if not .TestMode }} 
+            printf "\n🌀${asFlux} flux start -o --config /etc/flux/config ${brokerOptions} flux mini submit -n {{.Tasks}} {{ if .FluxOptionFlags }}{{ .FluxOptionFlags}}{{ end }} $@ | xargs flux job attach\n"{{ end }}
+            ${asFlux} flux start -o --config /etc/flux/config ${brokerOptions} flux mini submit -n {{.Tasks}} {{ if .FluxOptionFlags }}{{ .FluxOptionFlags}}{{ end }} $@ | xargs flux job attach
         fi
     else
         # Sleep until the broker is ready
-        printf "\n🌀${asFlux} flux start -o --config /etc/flux/config ${brokerOptions}\n"
+{{ if not .TestMode }}
+        printf "\n🌀${asFlux} flux start -o --config /etc/flux/config ${brokerOptions}\n"{{ end }}
         while true
         do
             ${asFlux} flux start -o --config /etc/flux/config ${brokerOptions}
