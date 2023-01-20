@@ -29,6 +29,11 @@ if [[ -e "${expected}" ]]; then
     echo "Expected:"
     cat ${expected}
     diff ${expected} ${actual}
+    retval=$?
+    if [[ "${retval}" != "0" ]]; then
+        echo "Differences found."
+        exit ${retval}
+    fi
 fi
 
 # Ensure all containers exit code 0
