@@ -43,10 +43,9 @@ type MiniClusterSpec struct {
 	// +optional
 	Volumes map[string]MiniClusterVolume `json:"volumes"`
 
-	// Test mode silences all output so the job only shows the test running
-	// +kubebuilder:default=false
+	// Logging modes determine the output you see in the job log
 	// +optional
-	TestMode bool `json:"test"`
+	Logging LoggingSpec `json:"logging"`
 
 	// Customization to Flux Restful API
 	// There should only be one container to run flux with runFlux
@@ -80,6 +79,19 @@ type MiniClusterSpec struct {
 	// +kubebuilder:default=false
 	// +optional
 	LocalDeploy bool `json:"localDeploy"`
+}
+
+type LoggingSpec struct {
+
+	// Quiet mode silences all output so the job only shows the test running
+	// +kubebuilder:default=false
+	// +optional
+	QuietMode bool `json:"quiet"`
+
+	// Timed mode adds timing to Flux commands
+	// +kubebuilder:default=false
+	// +optional
+	TimedMode bool `json:"timed"`
 }
 
 // PodSpec controlls variables for the cluster pod
