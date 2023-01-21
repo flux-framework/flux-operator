@@ -79,15 +79,6 @@ To add custom labels for your pods (in the indexed job), add a set of key value 
 
 Note that the "namespace" variable is controlled by the operator here, and would be over-ridden if you defined it here.
 
-### test
-
-Test mode turns off all verbose output (yes, the emojis too) so only the output of 
-your job will be printed to the console. This way, you can retrieve the job lob
-and then determine if the test was successful based on this output.
-
-```yaml
-  test: true
-```
 
 ### deadline
 
@@ -128,6 +119,49 @@ By default they will be read only unless you set `readOnly` to false.
 Since we haven't implemented this for a cloud resource yet, this currently just works
 with localDeploy is set to true, and we can adjust this when we test in a cloud.
 
+
+### logging
+
+We provide simple types of "logging" within the main script that is run for the job.
+If you don't set any variables, you'll get the most verbosity with timing of the main
+command. You can set any subset of these for a custom output. Note that these logging levels
+are not specific to operator logs, but the indexed job running in the pod. 
+
+#### quiet
+
+Quiet mode turns off all verbose output (yes, the emojis too) so only the output of 
+your job will be printed to the console. This way, you can retrieve the job lob
+and then determine if the test was successful based on this output.
+
+```yaml
+logging:
+  quiet: true
+```
+
+By default quiet is false. In early stages of the operator this was called `test`.
+
+#### timed
+
+Timed mode adds timing for the main Flux command and a few other interactions in the script.
+
+```yaml
+logging:
+  timed: true
+```
+
+By default timed is set to `false` above, and this is because if you turn it on your Flux runner
+container is required to have `time` installed. We target `/usr/bin/time` and not the `time`
+wrapper because we want to set a format with `-f` (which won't be supported by the wrapper).
+Also note that `timed` and `quiet` can influence one another - e.g., if quiet is `true` and
+there are some timed sections under a section that is no longer included when the job
+is quiet, you will not see those times. Here is an example of timing a hello-world run:
+
+```bash
+hello world
+FLUXTIME fluxsubmit wall time 0:04.73
+```
+All timed command lines are prefixed with `FLUXTIME` and the main submit will be `fluxsubmit`
+and the worker pods flux start will have `fluxstart`.
 
 ### pod
 

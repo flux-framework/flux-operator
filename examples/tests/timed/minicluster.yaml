@@ -10,12 +10,12 @@ spec:
   # suppress all output except for test run
   logging:
     quiet: true
+    timed: true
 
   # Number of pods to create for MiniCluster
   size: 4
-  tasks: 4
 
   # This is a list because a pod can support multiple containers
   containers:
     - image: ghcr.io/flux-framework/flux-restful-api:latest
-      command: flux resource list
+      command: echo hello world

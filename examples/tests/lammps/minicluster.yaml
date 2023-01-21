@@ -11,8 +11,9 @@ spec:
   size: 4
   tasks: 2
 
-  # Disable verbose output
-  test: true
+  # suppress all output except for test run
+  logging:
+    quiet: true
 
   # This is a list because a pod can support multiple containers
   containers:

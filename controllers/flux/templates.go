@@ -33,12 +33,14 @@ type WaitTemplate struct {
 	PreCommand        string // Custom commands, looked up by container identifier
 	FluxRestfulBranch string // branch to clone Flux Restful from, defaults to main
 	FluxRestfulPort   int32  // port to run flux restful on
-	ClusterSize       int32  // number of nodes in mini cluster, should be size
-	TestMode          bool   // Don't print additional output
 	Cores             int32
 	Tasks             int32
-	Size              int32
-	FluxLogLevel      int32
+	Size              int32 // size of the Minicluster (nodes / pods in indexed jobs)
+
+	// Logging Modes
+	QuietMode    bool // Don't print additional output
+	TimedMode    bool // Add times when appropriate
+	FluxLogLevel int32
 }
 
 // CertTemplate populates cert-generate.sh

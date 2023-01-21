@@ -7,8 +7,9 @@ spec:
   # Set to true to use volume mounts instead of volume claims
   localDeploy: true
 
-  # Remove this for more verbosity
-  test: true
+  # suppress all output except for test run
+  logging:
+    quiet: true
 
   # Number of pods to create for MiniCluster
   size: 4
