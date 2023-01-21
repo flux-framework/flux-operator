@@ -11,7 +11,8 @@ spec:
   size: 4
 
   # suppress all output except for test run
-  test: true
+  logging:
+    quiet: true
 
   # This is a list because a pod can support multiple containers
   containers:
