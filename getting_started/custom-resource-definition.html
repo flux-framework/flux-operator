@@ -501,13 +501,6 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#test" class="md-nav__link">
-    <span title="/getting_started/custom-resource-definition.md#test (reference label)" class="md-ellipsis">test</span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
   <a href="#deadline" class="md-nav__link">
     <span title="/getting_started/custom-resource-definition.md#deadline (reference label)" class="md-ellipsis">deadline</span>
   </a>
@@ -525,6 +518,33 @@
   <a href="#volumes" class="md-nav__link">
     <span title="/getting_started/custom-resource-definition.md#volumes (reference label)" class="md-ellipsis">volumes</span>
   </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#logging" class="md-nav__link">
+    <span title="/getting_started/custom-resource-definition.md#logging (reference label)" class="md-ellipsis">logging</span>
+  </a>
+  
+    <nav class="md-nav" aria-label="logging">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#quiet" class="md-nav__link">
+    <span title="/getting_started/custom-resource-definition.md#quiet (reference label)" class="md-ellipsis">quiet</span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#timed" class="md-nav__link">
+    <span title="/getting_started/custom-resource-definition.md#timed (reference label)" class="md-ellipsis">timed</span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
   
 </li>
         
@@ -927,13 +947,6 @@ the set of containers that you describe.</p>
 </code></pre></div>
 </div>
 <p>Note that the “namespace” variable is controlled by the operator here, and would be over-ridden if you defined it here.</p>
-<h3 id="test">test<a class="headerlink" href="#test" title="Permalink to this heading">¶</a></h3>
-<p>Test mode turns off all verbose output (yes, the emojis too) so only the output of
-your job will be printed to the console. This way, you can retrieve the job lob
-and then determine if the test was successful based on this output.</p>
-<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><code><span class="w">  </span><span class="nt">test</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
-</code></pre></div>
-</div>
 <h3 id="deadline">deadline<a class="headerlink" href="#deadline" title="Permalink to this heading">¶</a></h3>
 <p>This is the maximum running time for your job. If you leave unset, it is essentially infinite.
 If a Job is suspended (at creation or through an update), this timer will effectively be stopped and reset when the Job is resumed again.</p>
@@ -963,6 +976,38 @@ with a path:</p>
 <p>By default they will be read only unless you set <code class="docutils literal notranslate"><span class="pre">readOnly</span></code> to false.
 Since we haven’t implemented this for a cloud resource yet, this currently just works
 with localDeploy is set to true, and we can adjust this when we test in a cloud.</p>
+<h3 id="logging">logging<a class="headerlink" href="#logging" title="Permalink to this heading">¶</a></h3>
+<p>We provide simple types of “logging” within the main script that is run for the job.
+If you don’t set any variables, you’ll get the most verbosity with timing of the main
+command. You can set any subset of these for a custom output. Note that these logging levels
+are not specific to operator logs, but the indexed job running in the pod.</p>
+<h4 id="quiet">quiet<a class="headerlink" href="#quiet" title="Permalink to this heading">¶</a></h4>
+<p>Quiet mode turns off all verbose output (yes, the emojis too) so only the output of
+your job will be printed to the console. This way, you can retrieve the job lob
+and then determine if the test was successful based on this output.</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><code><span class="nt">logging</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">quiet</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+</code></pre></div>
+</div>
+<p>By default quiet is false. In early stages of the operator this was called <code class="docutils literal notranslate"><span class="pre">test</span></code>.</p>
+<h4 id="timed">timed<a class="headerlink" href="#timed" title="Permalink to this heading">¶</a></h4>
+<p>Timed mode adds timing for the main Flux command and a few other interactions in the script.</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><code><span class="nt">logging</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">timed</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+</code></pre></div>
+</div>
+<p>By default timed is set to <code class="docutils literal notranslate"><span class="pre">false</span></code> above, and this is because if you turn it on your Flux runner
+container is required to have <code class="docutils literal notranslate"><span class="pre">time</span></code> installed. We target <code class="docutils literal notranslate"><span class="pre">/usr/bin/time</span></code> and not the <code class="docutils literal notranslate"><span class="pre">time</span></code>
+wrapper because we want to set a format with <code class="docutils literal notranslate"><span class="pre">-f</span></code> (which won’t be supported by the wrapper).
+Also note that <code class="docutils literal notranslate"><span class="pre">timed</span></code> and <code class="docutils literal notranslate"><span class="pre">quiet</span></code> can influence one another - e.g., if quiet is <code class="docutils literal notranslate"><span class="pre">true</span></code> and
+there are some timed sections under a section that is no longer included when the job
+is quiet, you will not see those times. Here is an example of timing a hello-world run:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>hello<span class="w"> </span>world
+FLUXTIME<span class="w"> </span>fluxsubmit<span class="w"> </span>wall<span class="w"> </span><span class="nb">time</span><span class="w"> </span><span class="m">0</span>:04.73
+</code></pre></div>
+</div>
+<p>All timed command lines are prefixed with <code class="docutils literal notranslate"><span class="pre">FLUXTIME</span></code> and the main submit will be <code class="docutils literal notranslate"><span class="pre">fluxsubmit</span></code>
+and the worker pods flux start will have <code class="docutils literal notranslate"><span class="pre">fluxstart</span></code>.</p>
 <h3 id="pod">pod<a class="headerlink" href="#pod" title="Permalink to this heading">¶</a></h3>
 <p>Variables and attributes for each pod in the Indexed job.</p>
 <h4 id="resources">resources<a class="headerlink" href="#resources" title="Permalink to this heading">¶</a></h4>
@@ -1176,7 +1221,7 @@ It defaults to 5000.</p>
   <small>
     
       Last update:
-      Jan 20, 2023
+      Jan 21, 2023
     
   </small>
 </div>
