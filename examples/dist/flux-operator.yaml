@@ -190,6 +190,20 @@ spec:
                   you are not using make deploy. It uses a persistent volume instead
                   of a claim
                 type: boolean
+              logging:
+                description: Logging modes determine the output you see in the job
+                  log
+                properties:
+                  quiet:
+                    default: false
+                    description: Quiet mode silences all output so the job only shows
+                      the test running
+                    type: boolean
+                  timed:
+                    default: false
+                    description: Timed mode adds timing to Flux commands
+                    type: boolean
+                type: object
               pod:
                 description: Pod spec details
                 properties:
@@ -218,11 +232,6 @@ spec:
                 description: Total number of CPUs being run across entire cluster
                 format: int32
                 type: integer
-              test:
-                default: false
-                description: Test mode silences all output so the job only shows the
-                  test running
-                type: boolean
               volumes:
                 additionalProperties:
                   description: Mini Cluster local volumes available to mount (these
