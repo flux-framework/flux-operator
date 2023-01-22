@@ -26,6 +26,7 @@ var generateCertTemplate string
 // WaitTemplate populates wait.sh
 type WaitTemplate struct {
 	FluxToken         string // Token to log into the UI, should be consistent across containers
+	FluxUser          string // Username for Flux Restful API
 	MainHost          string // Main host identifier
 	FluxOptionFlags   string // Option flags
 	Hosts             string // List of hosts

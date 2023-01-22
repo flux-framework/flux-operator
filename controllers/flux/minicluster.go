@@ -207,7 +207,8 @@ func generateWaitScript(cluster *api.MiniCluster, containerIndex int) (string, e
 	}
 	// The token uuid is the same across images
 	wt := WaitTemplate{
-		FluxToken:         uuid.New().String(),
+		FluxUser:          getFluxUser(cluster.Spec.FluxRestful.Username),
+		FluxToken:         getFluxToken(cluster.Spec.FluxRestful.Token),
 		MainHost:          mainHost,
 		Hosts:             hosts,
 		Diagnostics:       container.Diagnostics,
@@ -244,6 +245,21 @@ func generateRange(size int) string {
 		rangeString = fmt.Sprintf("0-%d", size-1)
 	}
 	return rangeString
+}
+
+// getFluxUser returns a requested user name, or the default
+func getFluxUser(requested string) string {
+	if requested != "" {
+		return requested
+	}
+	return "flux"
+}
+
+func getFluxToken(requested string) string {
+	if requested != "" {
+		return uuid.New().String()
+	}
+	return "flux"
 }
 
 // createConfigMap generates a config map with some kind of data
