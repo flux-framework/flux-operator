@@ -169,7 +169,7 @@ else
             python3 -m pip install -r requirements.txt > /dev/null 2>&1 || python -m pip install -r requirements.txt > /dev/null 2>&1
 
             # Generate a random flux token
-            FLUX_USER=flux 
+            FLUX_USER={{.FluxUser}}
             FLUX_REQUIRE_AUTH=true
             FLUX_NUMBER_NODES={{ .Size}}
             export FLUX_TOKEN FLUX_USER FLUX_REQUIRE_AUTH FLUX_NUMBER_NODES
