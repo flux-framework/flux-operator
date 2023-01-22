@@ -161,7 +161,7 @@ else
         if [ "$@" == "" ]; then
 
             # Start restful API server
-            startServer="uvicorn app.main:app --host=0.0.0.0 --port={{or .FluxRestfulPort 5000}} {{if .Size }}--workers {{.Size}}{{ end }}"
+            startServer="uvicorn app.main:app --host=0.0.0.0 --port={{or .FluxRestfulPort 5000}}"
             git clone -b {{or .FluxRestfulBranch "main"}} --depth 1 https://github.com/flux-framework/flux-restful-api /flux-restful-api > /dev/null 2>&1
             cd /flux-restful-api
 
