@@ -604,18 +604,12 @@
   
 </li>
         
-      </ul>
-    </nav>
-  
-</li>
-        
           <li class="md-nav__item">
   <a href="#id1" class="md-nav__link">
     <span title="/getting_started/custom-resource-definition.md#id1 (reference label)" class="md-ellipsis">resources</span>
   </a>
   
-    <nav class="md-nav" aria-label="resources">
-      <ul class="md-nav__list">
+</li>
         
           <li class="md-nav__item">
   <a href="#imagepullsecret" class="md-nav__link">
@@ -999,7 +993,11 @@ and then determine if the test was successful based on this output.</p>
 <p>By default timed is set to <code class="docutils literal notranslate"><span class="pre">false</span></code> above, and this is because if you turn it on your Flux runner
 container is required to have <code class="docutils literal notranslate"><span class="pre">time</span></code> installed. We target <code class="docutils literal notranslate"><span class="pre">/usr/bin/time</span></code> and not the <code class="docutils literal notranslate"><span class="pre">time</span></code>
 wrapper because we want to set a format with <code class="docutils literal notranslate"><span class="pre">-f</span></code> (which won’t be supported by the wrapper).
-Also note that <code class="docutils literal notranslate"><span class="pre">timed</span></code> and <code class="docutils literal notranslate"><span class="pre">quiet</span></code> can influence one another - e.g., if quiet is <code class="docutils literal notranslate"><span class="pre">true</span></code> and
+By default we ask for <code class="docutils literal notranslate"><span class="pre">-f</span> <span class="pre">E</span></code> which means:</p>
+<blockquote>
+<div><p>Elapsed real (wall clock) time used by the process, in [hours:]minutes:seconds.</p>
+</div></blockquote>
+<p>Also note that <code class="docutils literal notranslate"><span class="pre">timed</span></code> and <code class="docutils literal notranslate"><span class="pre">quiet</span></code> can influence one another - e.g., if quiet is <code class="docutils literal notranslate"><span class="pre">true</span></code> and
 there are some timed sections under a section that is no longer included when the job
 is quiet, you will not see those times. Here is an example of timing a hello-world run:</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>hello<span class="w"> </span>world
@@ -1061,7 +1059,7 @@ for the container, but exposes the variable for your container template (e.g., f
 <span class="w">    </span><span class="nt">command</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">lmp -v x 2 -v y 2 -v z 2 -in in.reaxc.hns -nocite</span>
 </code></pre></div>
 </div>
-<h3 id="id1">resources<a class="headerlink" href="#id1" title="Permalink to this heading">¶</a></h3>
+<h4 id="id1">resources<a class="headerlink" href="#id1" title="Permalink to this heading">¶</a></h4>
 <p>Resources can include limits and requests. Known keys include “memory” and “cpu” (should be provided in some
 string format that can be parsed) and all others are considered some kind of quantity request.</p>
 <div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><code><span class="nt">resources</span><span class="p">:</span>
@@ -1187,14 +1185,18 @@ we provide this argument on the level of the container. To enable this, set this
 </code></pre></div>
 </div>
 <h3 id="id2">volumes<a class="headerlink" href="#id2" title="Permalink to this heading">¶</a></h3>
-<p>Volumes that are defined on the level of the MiniCluster (named) can be mounted into containers.
+<p>Volumes that are defined on the level of the MiniCluster can be referenced on the level
+of the container to be mounted into them.
 As an example, here is how we specify the volume <code class="docutils literal notranslate"><span class="pre">myvolume</span></code> to be mounted to the container at <code class="docutils literal notranslate"><span class="pre">/data</span></code>.</p>
 <div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><code><span class="nt">volumes</span><span class="p">:</span>
 <span class="w">  </span><span class="nt">myvolume</span><span class="p">:</span>
 <span class="w">    </span><span class="nt">path</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">/data</span>
 </code></pre></div>
 </div>
-<p>The <code class="docutils literal notranslate"><span class="pre">myvolume</span></code> key must be defined in the MiniCluster set of volumes, and this is checked.</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">myvolume</span></code> key must be defined in the MiniCluster set of volumes, and this is checked.
+Also note that we currently don’t support shared filesystem volumes for production
+Kubernetes deploys - this only works for a local deploy on your host. We will
+work on this soon.</p>
 <h3 id="fluxrestful">fluxRestful<a class="headerlink" href="#fluxrestful" title="Permalink to this heading">¶</a></h3>
 <p>The “fluxRestful” section has a few parameters to dictate the installation of the
 <a class="reference external" href="https://github.com/flux-framework/flux-restful-api">Flux Restful API</a>, which provides
@@ -1221,7 +1223,7 @@ It defaults to 5000.</p>
   <small>
     
       Last update:
-      Jan 21, 2023
+      Jan 22, 2023
     
   </small>
 </div>
