@@ -42,7 +42,14 @@ jobs:
     # These aren't written yet)
     - name: Run Unit tests
       run: make test
-        
+
+    # Ensure build-config is the same as the one we have
+    - name: Check Updated flux-operator.yaml
+      run: |
+        cp examples/dist/flux-operator.yaml /tmp/flux-operator.yaml
+        make build-config
+        diff examples/dist/flux-operator.yaml /tmp/flux-operator.yaml
+
   test-jobs:
     needs: [unit-tests]
     runs-on: ubuntu-latest

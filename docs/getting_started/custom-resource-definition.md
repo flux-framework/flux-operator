@@ -152,6 +152,10 @@ logging:
 By default timed is set to `false` above, and this is because if you turn it on your Flux runner
 container is required to have `time` installed. We target `/usr/bin/time` and not the `time`
 wrapper because we want to set a format with `-f` (which won't be supported by the wrapper).
+By default we ask for `-f E` which means:
+
+> Elapsed real (wall clock) time used by the process, in [hours:]minutes:seconds.
+
 Also note that `timed` and `quiet` can influence one another - e.g., if quiet is `true` and
 there are some timed sections under a section that is no longer included when the job
 is quiet, you will not see those times. Here is an example of timing a hello-world run:
@@ -239,7 +243,7 @@ Providing (or not providing) a command is going to dictate the behavior of your 
     command: lmp -v x 2 -v y 2 -v z 2 -in in.reaxc.hns -nocite
 ```
 
-### resources
+#### resources
 
 Resources can include limits and requests. Known keys include "memory" and "cpu" (should be provided in some
 string format that can be parsed) and all others are considered some kind of quantity request. 
@@ -408,7 +412,8 @@ we provide this argument on the level of the container. To enable this, set this
 
 ### volumes
 
-Volumes that are defined on the level of the MiniCluster (named) can be mounted into containers.
+Volumes that are defined on the level of the MiniCluster can be referenced on the level
+of the container to be mounted into them.
 As an example, here is how we specify the volume `myvolume` to be mounted to the container at `/data`.
 
 ```yaml
@@ -418,7 +423,9 @@ volumes:
 ```
 
 The `myvolume` key must be defined in the MiniCluster set of volumes, and this is checked.
-
+Also note that we currently don't support shared filesystem volumes for production
+Kubernetes deploys - this only works for a local deploy on your host. We will
+work on this soon.
 
 ### fluxRestful
 
