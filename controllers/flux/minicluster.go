@@ -255,11 +255,12 @@ func getFluxUser(requested string) string {
 	return "flux"
 }
 
+// getFluxToken returns a requested user token, or a generated one
 func getFluxToken(requested string) string {
 	if requested != "" {
-		return uuid.New().String()
+		return requested
 	}
-	return "flux"
+	return uuid.New().String()
 }
 
 // createConfigMap generates a config map with some kind of data
