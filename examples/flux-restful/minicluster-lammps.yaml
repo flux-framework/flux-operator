@@ -10,10 +10,6 @@ spec:
   # Number of pods to create for MiniCluster
   size: 4
 
-  # If we don't specify tasks, the restful API can't communicate with entire cluster
-  # Each minicluster pod (I think) has 1 cpu
-  tasks: 4
-
   # This is a list because a pod can support multiple containers
   containers:
     # The container URI to pull (currently needs to be public)
