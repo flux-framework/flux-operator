@@ -152,6 +152,10 @@ logging:
 By default timed is set to `false` above, and this is because if you turn it on your Flux runner
 container is required to have `time` installed. We target `/usr/bin/time` and not the `time`
 wrapper because we want to set a format with `-f` (which won't be supported by the wrapper).
+By default we ask for `-f E` which means:
+
+> Elapsed real (wall clock) time used by the process, in [hours:]minutes:seconds.
+
 Also note that `timed` and `quiet` can influence one another - e.g., if quiet is `true` and
 there are some timed sections under a section that is no longer included when the job
 is quiet, you will not see those times. Here is an example of timing a hello-world run:
