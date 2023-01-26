@@ -11,6 +11,8 @@ SPDX-License-Identifier: Apache-2.0
 package controllers
 
 import (
+	api "flux-framework/flux-operator/api/v1alpha1"
+
 	_ "embed"
 )
 
@@ -38,9 +40,8 @@ type WaitTemplate struct {
 	Tasks             int32
 	Size              int32 // size of the Minicluster (nodes / pods in indexed jobs)
 
-	// Logging Modes
-	QuietMode    bool // Don't print additional output
-	TimedMode    bool // Add times when appropriate
+	// Logging Modes (FluxLogLevel is per container)
+	Logging      api.LoggingSpec
 	FluxLogLevel int32
 }
 
