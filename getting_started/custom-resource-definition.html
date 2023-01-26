@@ -543,6 +543,13 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#debug" class="md-nav__link">
+    <span title="/getting_started/custom-resource-definition.md#debug (reference label)" class="md-ellipsis">debug</span>
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -1006,6 +1013,12 @@ FLUXTIME<span class="w"> </span>fluxsubmit<span class="w"> </span>wall<span clas
 </div>
 <p>All timed command lines are prefixed with <code class="docutils literal notranslate"><span class="pre">FLUXTIME</span></code> and the main submit will be <code class="docutils literal notranslate"><span class="pre">fluxsubmit</span></code>
 and the worker pods flux start will have <code class="docutils literal notranslate"><span class="pre">fluxstart</span></code>.</p>
+<h4 id="debug">debug<a class="headerlink" href="#debug" title="Permalink to this heading">¶</a></h4>
+<p>Debug mode adds verbosity to flux to see additional information about the job submission.</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><code><span class="nt">logging</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">debug</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+</code></pre></div>
+</div>
 <h3 id="pod">pod<a class="headerlink" href="#pod" title="Permalink to this heading">¶</a></h3>
 <p>Variables and attributes for each pod in the Indexed job.</p>
 <h4 id="resources">resources<a class="headerlink" href="#resources" title="Permalink to this heading">¶</a></h4>
@@ -1223,7 +1236,7 @@ It defaults to 5000.</p>
   <small>
     
       Last update:
-      Jan 22, 2023
+      Jan 26, 2023
     
   </small>
 </div>
