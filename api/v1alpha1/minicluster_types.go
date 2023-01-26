@@ -88,6 +88,11 @@ type LoggingSpec struct {
 	// +optional
 	QuietMode bool `json:"quiet"`
 
+	// Debug mode adds extra verbosity to Flux
+	// +kubebuilder:default=false
+	// +optional
+	DebugMode bool `json:"debug"`
+
 	// Timed mode adds timing to Flux commands
 	// +kubebuilder:default=false
 	// +optional

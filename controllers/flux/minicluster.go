@@ -220,8 +220,7 @@ func generateWaitScript(cluster *api.MiniCluster, containerIndex int) (string, e
 		Cores:             cores,
 		FluxRestfulPort:   cluster.Spec.FluxRestful.Port,
 		FluxRestfulBranch: cluster.Spec.FluxRestful.Branch,
-		QuietMode:         cluster.Spec.Logging.QuietMode,
-		TimedMode:         cluster.Spec.Logging.TimedMode,
+		Logging:           cluster.Spec.Logging,
 	}
 	t, err := template.New("wait-sh").Parse(waitToStartTemplate)
 	if err != nil {

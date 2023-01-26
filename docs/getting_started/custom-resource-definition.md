@@ -167,6 +167,15 @@ FLUXTIME fluxsubmit wall time 0:04.73
 All timed command lines are prefixed with `FLUXTIME` and the main submit will be `fluxsubmit`
 and the worker pods flux start will have `fluxstart`.
 
+#### debug
+
+Debug mode adds verbosity to flux to see additional information about the job submission.
+
+```yaml
+logging:
+  debug: true
+```
+
 ### pod
 
 Variables and attributes for each pod in the Indexed job.

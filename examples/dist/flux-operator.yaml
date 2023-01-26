@@ -202,6 +202,10 @@ spec:
                 description: Logging modes determine the output you see in the job
                   log
                 properties:
+                  debug:
+                    default: false
+                    description: Debug mode adds extra verbosity to Flux
+                    type: boolean
                   quiet:
                     default: false
                     description: Quiet mode silences all output so the job only shows
