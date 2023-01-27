@@ -182,13 +182,13 @@ else
             # -o is an "option" for the broker
             # -S corresponds to a shortened --setattr=ATTR=VAL
             printf "\n🌀 flux start -o --config /etc/flux/config ${brokerOptions} ${startServer}\n"{{ end }}
-            {{ if .Logging.TimedMode }}/usr/bin/time -f "FLUXTIME fluxstart wall time %E" {{ end }}${asFlux} flux start -o --config /etc/flux/config ${brokerOptions} ${startServer}
+            {{ if .Logging.TimedMode }}/usr/bin/time -f "FLUXTIME fluxstart wall time %E" {{ end }}${asFlux} flux start -o --config /etc/flux/config ${brokerOptions} {{ if .Logging.TimedMode }}/usr/bin/time -f "FLUXTIME fluxsubmit wall time %E" {{ end }} ${startServer}
 
         # Case 2: Fall back to provided command
         else
 {{ if not .Logging.QuietMode }} 
             printf "\n🌀 flux start -o --config /etc/flux/config ${brokerOptions} flux mini submit {{ if gt .Tasks .Size }} -N {{.Size}}{{ end }} -n {{.Tasks}} --quiet {{ if .FluxOptionFlags }}{{ .FluxOptionFlags}}{{ end }} --watch{{ if .Logging.DebugMode }} -vvv{{ end }} $@\n"{{ end }}
-            {{ if .Logging.TimedMode }}/usr/bin/time -f "FLUXTIME fluxsubmit wall time %E" {{ end }}${asFlux} flux start -o --config /etc/flux/config ${brokerOptions} flux mini submit {{ if gt .Tasks .Size }} -N {{.Size}}{{ end }} -n {{.Tasks}} --quiet {{ if .FluxOptionFlags }}{{ .FluxOptionFlags}}{{ end }} --watch{{ if .Logging.DebugMode }} -vvv{{ end }} $@
+            {{ if .Logging.TimedMode }}/usr/bin/time -f "FLUXTIME fluxstart wall time %E" {{ end }}${asFlux} flux start -o --config /etc/flux/config ${brokerOptions} {{ if .Logging.TimedMode }}/usr/bin/time -f "FLUXTIME fluxsubmit wall time %E" {{ end }} flux mini submit {{ if gt .Tasks .Size }} -N {{.Size}}{{ end }} -n {{.Tasks}} --quiet {{ if .FluxOptionFlags }}{{ .FluxOptionFlags}}{{ end }} --watch{{ if .Logging.DebugMode }} -vvv{{ end }} $@
         fi
     else
         # Sleep until the broker is ready
