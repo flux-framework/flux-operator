@@ -10,7 +10,7 @@ parameters:
   clusterID: rook-ceph
 
   # CephFS filesystem name into which the volume shall be created
-  fsName: myfs
+  fsName: sharedfs
 
   # Ceph pool into which the volume shall be created
   # Required for provisionVolume: "true"

@@ -219,47 +219,78 @@ this parameter in the configuration.
 
 ### Storage with Rook
 
-We are testing using [rook]() that can be used with [minikube](), e.g.,:
+We are testing using [rook](https://github.com/rook/rook) that can be used with [minikube](https://rook.io/docs/rook/v1.10/Contributing/development-environment/), e.g.,:
 
 ```bash
+# Create minikube cluster
 $ minikube start --disk-size=40g --extra-disks=1 --driver kvm2
+
+# Create aws production "eenie-meenie" cluster, with credentials in environment
+$ eksctl create cluster -f examples/storage/ceph/aws/eksctl-config.yaml
 ```
+
 It's strongly recommended to use the kvm driver in this way, as using docker
-can bork your system in strange ways. For consistently,
+can bork your system in strange ways. If you can't use this driver, it's instead recommended
+to use a production cluster. For consistently,
 the Flux Operator ships with a particular version of the rook yaml files
-to create storage, e.g., we did:
+to create storage, e.g., we did (and you don't need to do this, these files exist):
+
+<details>
+
+<summary>Reproducing creating the yaml configs</summary>
 
 ```bash
-git clone --single-branch --branch v1.10.10 https://github.com/rook/rook.git
-mkdir examples/dist/ceph
-cp rook/deploy/examples/crds.yaml examples/dist/ceph/
-cp rook/deploy/examples/cluster-test.yaml examples/dist/ceph/
-cp rook/deploy/examples/cluster.yaml examples/dist/ceph/
-cp rook/deploy/examples/common.yaml examples/dist/ceph/
-cp rook/deploy/examples/operator.yaml  examples/dist/ceph/
+git clone --depth 1 --single-branch --branch v1.10.10 https://github.com/rook/rook.git
+mkdir -p examples/storage/ceph/minikube
+mkdir -p examples/storage/ceph/aws
+
+# These are shared by any ceph backend
+cp rook/deploy/examples/crds.yaml examples/storage/ceph
+cp rook/deploy/examples/common.yaml examples/storage/ceph/
+cp rook/deploy/examples/operator.yaml  examples/storage/ceph/
+
+# This is for MiniKube
+cp rook/deploy/examples/cluster-test.yaml examples/storage/ceph/minikube/
+
+# This is for a production cluster
+cp rook/deploy/examples/cluster.yaml examples/storage/ceph/aws/
 ```
 
-And given you've started minikube as shown above, you can create the cluster as follows:
+</details>
+
+For any cluster type, you first can install common CRDs for rook:
 
 ```bash
-cd examples/dist/ceph
+cd examples/storage/ceph
 kubectl create -f crds.yaml -f common.yaml -f operator.yaml
+cd -
 ```
 
-Wait until the operator is running before proceeding:
+Wait until the rook-ceph operator is running before proceeding:
 
 ```bash
-kubectl -n rook-ceph get pod
+$ kubectl -n rook-ceph get pod
 ```
 
-When it is running, create the ceph cluster.
+The cluster you create will depend on using MiniKube or a production cluster:
 
 ```bash
-kubectl create -f cluster-test.yaml
-kubectl -n rook-ceph get pod
+# MiniKube
+$ kubectl create -f examples/storage/ceph/minikube/cluster-test.yaml
+
+# Production (e.g., aws or gcp)
+$ kubectl create -f examples/storage/ceph/aws/cluster.yaml
 ```
 
-Wait until the pods are running.
+Then wait until you can see the pod running:
+
+```bash
+$ kubectl -n rook-ceph get pod
+```
+
+#### 2. Create Filesystem / Storage class
+
+After either creating the cluster with Minikube or a production cluster (above), wait until the pods are running.
 
 ```bash
 $ kubectl -n rook-ceph get pod
@@ -275,29 +306,10 @@ rook-ceph-osd-0-576449f5d9-vtgvl                1/1     Running     0          8
 rook-ceph-osd-prepare-minikube-zwv77            0/1     Completed   0          8m50s
 ```
 
-Then we make the filesystem.yaml
+Then we make the filesystem.yaml (we have included at `examples/storage/ceph/filesystem.yaml`)
 
-```yaml
-apiVersion: ceph.rook.io/v1
-kind: CephFilesystem
-metadata:
-  name: myfs
-  namespace: rook-ceph
-spec:
-  metadataPool:
-    replicated:
-      size: 3
-  dataPools:
-    - name: replicated
-      replicated:
-        size: 3
-  preserveFilesystemOnDelete: true
-  metadataServer:
-    activeCount: 1
-    activeStandby: true
-```
 ```bash
-kubectl create -f filesystem.yaml
+$ kubectl create -f examples/storage/ceph/filesystem.yaml
 ```
 Ensure it is running:
 
@@ -307,44 +319,103 @@ NAME                                   READY   STATUS    RESTARTS   AGE
 rook-ceph-mds-myfs-a-dbc94fc7d-xrl25   1/1     Running   0          75s
 rook-ceph-mds-myfs-b-d8494cddb-6r42n   1/1     Running   0          74s
 ```
-and create the storage class:
 
-```yaml
-apiVersion: storage.k8s.io/v1
-kind: StorageClass
-metadata:
-  name: rook-cephfs
-# Change "rook-ceph" provisioner prefix to match the operator namespace if needed
-provisioner: rook-ceph.cephfs.csi.ceph.com
-parameters:
-  # clusterID is the namespace where the rook cluster is running
-  # If you change this namespace, also change the namespace below where the secret namespaces are defined
-  clusterID: rook-ceph
-
-  # CephFS filesystem name into which the volume shall be created
-  fsName: myfs
-
-  # Ceph pool into which the volume shall be created
-  # Required for provisionVolume: "true"
-  pool: myfs-replicated
-
-  # The secrets contain Ceph admin credentials. These are generated automatically by the operator
-  # in the same namespace as the cluster.
-  csi.storage.k8s.io/provisioner-secret-name: rook-csi-cephfs-provisioner
-  csi.storage.k8s.io/provisioner-secret-namespace: rook-ceph
-  csi.storage.k8s.io/controller-expand-secret-name: rook-csi-cephfs-provisioner
-  csi.storage.k8s.io/controller-expand-secret-namespace: rook-ceph
-  csi.storage.k8s.io/node-stage-secret-name: rook-csi-cephfs-node
-  csi.storage.k8s.io/node-stage-secret-namespace: rook-ceph
-
-reclaimPolicy: Delete
-```
+and create the storage class (also included):
 
 ```bash
-kubectl create -f storageclass.yaml
+$ kubectl create -f examples/storage/ceph/storageclass.yaml
 ```
 
-Next I need [to do this](https://rook.io/docs/rook/v1.10/Storage-Configuration/Shared-Filesystem-CephFS/filesystem-storage/#consume-the-shared-filesystem-across-namespaces).
+At this point, we've created a storage class in the rook-ceph namespace, and we need
+to make it available to the flux-operator. Those steps are [outlined here](https://rook.io/docs/rook/v1.10/Storage-Configuration/Shared-Filesystem-CephFS/filesystem-storage/#consume-the-shared-filesystem-across-namespaces).
+We first need to make a copy of the `rook-csi-cephfs-node` secret:
+
+```bash
+$ kubectl -n rook-ceph describe secrets rook-csi-cephfs-node
+```
+
+We will copy this to a different secret, `rook-csi-cephfs-node-user`
+but use a different set of key/values. First, save to file:
+
+```bash
+$ kubectl get secret rook-csi-cephfs-node -n rook-ceph -o yaml > filesystem-secret.yaml
+```
+
+Then make the following changes:
+
+```diff
+apiVersion: v1
+data:
++  userID: Y3NpLWNlcGhmcy1ub2Rl
+-  adminID: Y3NpLWNlcGhmcy1ub2Rl
++  userKey: QVFBZWRkMWpYblB6Q3hBQVp2c3ZYRUkxSWtidE5pVEl1Mk5SNHc9PQ==
+-  adminKey: QVFBZWRkMWpYblB6Q3hBQVp2c3ZYRUkxSWtidE5pVEl1Mk5SNHc9PQ==
+kind: Secret
+metadata:
+  creationTimestamp: "2023-02-03T20:57:02Z"
++  name: rook-csi-cephfs-node-user
+-  name: rook-csi-cephfs-node
+  namespace: rook-ceph
+  ownerReferences:
+  - apiVersion: ceph.rook.io/v1
+    blockOwnerDeletion: true
+    controller: true
+    kind: CephCluster
+    name: rook-ceph
+    uid: 8d9b2c68-51a0-48fe-afe4-4f852f83dce9
+  resourceVersion: "3817"
+  uid: 0c5b103b-1ef4-449e-bfe4-bb8a20cd84e7
+type: kubernetes.io/rook
+```
+
+And apply
+
+```bash
+$ kubectl apply -f filesystem-secret.yaml
+```
+
+Now we can create a Persistent Volume Claim, meaning it will create a Persistent Volume for us!
+Here is what that might look like:
+
+```yaml
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  name: base-pvc
+  namespace: flux-operator
+spec:
+  accessModes:
+    - ReadWriteMany
+  resources:
+    requests:
+      storage: 100Gi
+  storageClassName: rook-cephfs
+  volumeMode: Filesystem
+```
+
+Create out flux-operator namespace, and apply and wait until it shows up.
+
+```bash
+$ kubectl create namespace flux-operator
+```
+```bash
+$ kubectl apply -f examples/storage/aws/pvc.yaml
+```
+```bash
+$ kubectl get pvc --all-namespaces
+NAMESPACE   NAME       STATUS    VOLUME   CAPACITY   ACCESS MODES   STORAGECLASS   AGE
+rook-ceph   base-pvc   Pending                                      rook-cephfs    3m35s
+```
+
+When it's ready, save it's config:
+
+```bash
+$ kubectl get pv base-pvc -n flux-operator -o yaml > base-pvc.yaml
+```
+
+Note that the above does not work - I'm next going to try creating the rook storage
+in the same namespace as the operator to skip the final mapping across namespaces.
+
 
 ### Interacting with Services
 
