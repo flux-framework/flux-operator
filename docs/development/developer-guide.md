@@ -217,6 +217,135 @@ to get in the way! If you want to disable this quiet mode, just comment out
 this parameter in the configuration.
 
 
+### Storage with Rook
+
+We are testing using [rook]() that can be used with [minikube](), e.g.,:
+
+```bash
+$ minikube start --disk-size=40g --extra-disks=1 --driver kvm2
+```
+It's strongly recommended to use the kvm driver in this way, as using docker
+can bork your system in strange ways. For consistently,
+the Flux Operator ships with a particular version of the rook yaml files
+to create storage, e.g., we did:
+
+```bash
+git clone --single-branch --branch v1.10.10 https://github.com/rook/rook.git
+mkdir examples/dist/ceph
+cp rook/deploy/examples/crds.yaml examples/dist/ceph/
+cp rook/deploy/examples/cluster-test.yaml examples/dist/ceph/
+cp rook/deploy/examples/cluster.yaml examples/dist/ceph/
+cp rook/deploy/examples/common.yaml examples/dist/ceph/
+cp rook/deploy/examples/operator.yaml  examples/dist/ceph/
+```
+
+And given you've started minikube as shown above, you can create the cluster as follows:
+
+```bash
+cd examples/dist/ceph
+kubectl create -f crds.yaml -f common.yaml -f operator.yaml
+```
+
+Wait until the operator is running before proceeding:
+
+```bash
+kubectl -n rook-ceph get pod
+```
+
+When it is running, create the ceph cluster.
+
+```bash
+kubectl create -f cluster-test.yaml
+kubectl -n rook-ceph get pod
+```
+
+Wait until the pods are running.
+
+```bash
+$ kubectl -n rook-ceph get pod
+NAME                                            READY   STATUS      RESTARTS   AGE
+csi-cephfsplugin-8qb8k                          2/2     Running     0          9m42s
+csi-cephfsplugin-provisioner-75b9f74d7b-xcj6m   5/5     Running     0          9m42s
+csi-rbdplugin-provisioner-66d48ddf89-wgvbs      5/5     Running     0          9m42s
+csi-rbdplugin-t5rft                             2/2     Running     0          9m42s
+rook-ceph-mgr-a-76c787688-9bfdt                 1/1     Running     0          9m11s
+rook-ceph-mon-a-7b46c8d7c7-cw9vh                1/1     Running     0          9m35s
+rook-ceph-operator-677f8f4c47-ntpxs             1/1     Running     0          12m
+rook-ceph-osd-0-576449f5d9-vtgvl                1/1     Running     0          8m42s
+rook-ceph-osd-prepare-minikube-zwv77            0/1     Completed   0          8m50s
+```
+
+Then we make the filesystem.yaml
+
+```yaml
+apiVersion: ceph.rook.io/v1
+kind: CephFilesystem
+metadata:
+  name: myfs
+  namespace: rook-ceph
+spec:
+  metadataPool:
+    replicated:
+      size: 3
+  dataPools:
+    - name: replicated
+      replicated:
+        size: 3
+  preserveFilesystemOnDelete: true
+  metadataServer:
+    activeCount: 1
+    activeStandby: true
+```
+```bash
+kubectl create -f filesystem.yaml
+```
+Ensure it is running:
+
+```bash
+$ kubectl -n rook-ceph get pod -l app=rook-ceph-mds
+NAME                                   READY   STATUS    RESTARTS   AGE
+rook-ceph-mds-myfs-a-dbc94fc7d-xrl25   1/1     Running   0          75s
+rook-ceph-mds-myfs-b-d8494cddb-6r42n   1/1     Running   0          74s
+```
+and create the storage class:
+
+```yaml
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: rook-cephfs
+# Change "rook-ceph" provisioner prefix to match the operator namespace if needed
+provisioner: rook-ceph.cephfs.csi.ceph.com
+parameters:
+  # clusterID is the namespace where the rook cluster is running
+  # If you change this namespace, also change the namespace below where the secret namespaces are defined
+  clusterID: rook-ceph
+
+  # CephFS filesystem name into which the volume shall be created
+  fsName: myfs
+
+  # Ceph pool into which the volume shall be created
+  # Required for provisionVolume: "true"
+  pool: myfs-replicated
+
+  # The secrets contain Ceph admin credentials. These are generated automatically by the operator
+  # in the same namespace as the cluster.
+  csi.storage.k8s.io/provisioner-secret-name: rook-csi-cephfs-provisioner
+  csi.storage.k8s.io/provisioner-secret-namespace: rook-ceph
+  csi.storage.k8s.io/controller-expand-secret-name: rook-csi-cephfs-provisioner
+  csi.storage.k8s.io/controller-expand-secret-namespace: rook-ceph
+  csi.storage.k8s.io/node-stage-secret-name: rook-csi-cephfs-node
+  csi.storage.k8s.io/node-stage-secret-namespace: rook-ceph
+
+reclaimPolicy: Delete
+```
+
+```bash
+kubectl create -f storageclass.yaml
+```
+
+Next I need [to do this](https://rook.io/docs/rook/v1.10/Storage-Configuration/Shared-Filesystem-CephFS/filesystem-storage/#consume-the-shared-filesystem-across-namespaces).
+
 ### Interacting with Services
 
 Currently, the most reliable thing to do is port forward:
