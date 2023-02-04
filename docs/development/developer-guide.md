@@ -219,7 +219,8 @@ this parameter in the configuration.
 
 ### Storage with Rook
 
-We are testing using [rook](https://github.com/rook/rook) that can be used with [minikube](https://rook.io/docs/rook/v1.10/Contributing/development-environment/), e.g.,:
+We are testing using [rook](https://github.com/rook/rook) that can be used with [minikube](https://rook.io/docs/rook/v1.10/Contributing/development-environment/) or
+a [production cluster](https://rook.io/docs/rook/v1.10/Storage-Configuration/Shared-Filesystem-CephFS/filesystem-storage/#shared-volume-creationls ):
 
 ```bash
 # Create minikube cluster
