@@ -128,9 +128,10 @@ clean:
 	kubectl delete -n flux-operator svc --all --grace-period=0 --force
 	kubectl delete -n flux-operator secret --all --grace-period=0 --force
 	kubectl delete -n flux-operator cm --all --grace-period=0 --force
+	# pods, pvc, and pv need to be deleted in this order
+	kubectl delete -n flux-operator pods --all --grace-period=0 --force
 	kubectl delete -n flux-operator pvc --all --grace-period=0 --force
 	kubectl delete -n flux-operator pv --all --grace-period=0 --force
-	kubectl delete -n flux-operator pods --all --grace-period=0 --force
 	kubectl delete -n flux-operator jobs --all --grace-period=0 --force
 	kubectl delete -n flux-operator MiniCluster --all --grace-period=0 --force
 
@@ -164,7 +165,7 @@ bin/kubectl:
 	chmod +x bin/kubectl
 
 .PHONY: test_e2e
-test_e2e: export TEST_FLUX_OPERATOR_IMAGE = ${IMAGE_TAG_BASE}:latest
+test_e2e: export TEST_FLUX_OPERATOR_IMAGE = ${IMAGE_TAG_BASE}:test
 test_e2e: bin/kubectl kind images dev_manifest
 	go test -tags e2e ./tests/e2e/...
 

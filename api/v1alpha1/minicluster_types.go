@@ -39,7 +39,7 @@ type MiniClusterSpec struct {
 	// +optional
 	PodLabels map[string]string `json:"podLabels"`
 
-	// Volumes on the host (named) accessible to containers
+	// Volumes accessible to containers from a host
 	// +optional
 	Volumes map[string]MiniClusterVolume `json:"volumes"`
 
@@ -71,14 +71,6 @@ type MiniClusterSpec struct {
 	// Pod spec details
 	// +optional
 	Pod PodSpec `json:"pod"`
-
-	// localDeploy should be true for development, or deploying in the
-	// case that there isn't an actual kubernetes cluster (e.g., you
-	// are not using make deploy. It uses a persistent volume instead of
-	// a claim
-	// +kubebuilder:default=false
-	// +optional
-	LocalDeploy bool `json:"localDeploy"`
 }
 
 type LoggingSpec struct {
@@ -142,7 +134,12 @@ type FluxRestful struct {
 
 // Mini Cluster local volumes available to mount (these are on the host)
 type MiniClusterVolume struct {
-	Path string `json:"path"`
+	Path   string            `json:"path"`
+	Labels map[string]string `json:"labels"`
+
+	// +kubebuilder:default="hostpath"
+	// +optional
+	StorageClassName string `json:"class"`
 }
 
 // A Container volume must reference one defined for the MiniCluster
@@ -150,9 +147,9 @@ type MiniClusterVolume struct {
 type ContainerVolume struct {
 	Path string `json:"path"`
 
-	// +kubebuilder:default=true
+	// +kubebuilder:default=false
 	// +optional
-	ReadOnly bool `json:"readOnly"`
+	ReadOnly bool `json:"readonly"`
 }
 
 type MiniClusterContainer struct {
@@ -314,12 +311,6 @@ func (f *MiniCluster) Validate() bool {
 		// If we have volumes defined, they must be provided in the global
 		// volumes for the MiniCluster CRD.
 		for key, _ := range container.Volumes {
-
-			// Currently volumes are only supported for local host paths
-			if !f.Spec.LocalDeploy {
-				fmt.Printf("😥️ %s defines a named volume %s, and currently volumes are only available for localDeploy: true\n", name, key)
-				return false
-			}
 			_, found := f.Spec.Volumes[key]
 			if !found {
 				fmt.Printf("😥️ %s defines a named volume %s but it is not defined for the MiniCluster\n", name, key)

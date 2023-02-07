@@ -136,8 +136,8 @@ spec:
                         properties:
                           path:
                             type: string
-                          readOnly:
-                            default: true
+                          readonly:
+                            default: false
                             type: boolean
                         required:
                         - path
@@ -185,13 +185,6 @@ spec:
                   type: string
                 description: Labels for the job
                 type: object
-              localDeploy:
-                default: false
-                description: localDeploy should be true for development, or deploying
-                  in the case that there isn't an actual kubernetes cluster (e.g.,
-                  you are not using make deploy. It uses a persistent volume instead
-                  of a claim
-                type: boolean
               logging:
                 description: Logging modes determine the output you see in the job
                   log
@@ -243,12 +236,20 @@ spec:
                   description: Mini Cluster local volumes available to mount (these
                     are on the host)
                   properties:
+                    class:
+                      default: hostpath
+                      type: string
+                    labels:
+                      additionalProperties:
+                        type: string
+                      type: object
                     path:
                       type: string
                   required:
+                  - labels
                   - path
                   type: object
-                description: Volumes on the host (named) accessible to containers
+                description: Volumes accessible to containers from a host
                 type: object
             required:
             - containers

@@ -135,7 +135,7 @@ mkdir -p /run/flux /etc/curve
 {{ if not .Logging.QuietMode }}cat /mnt/curve/curve.cert{{ end }}
 cp /mnt/curve/curve.cert /etc/curve/curve.cert
 
-# Remove group and other reead
+# Remove group and other read
 chmod o-r /etc/curve/curve.cert
 chmod g-r /etc/curve/curve.cert
 

@@ -823,7 +823,7 @@ spec:
         - --leader-elect
         command:
         - /manager
-        image: ghcr.io/flux-framework/flux-operator:latest
+        image: ghcr.io/flux-framework/flux-operator:test
         livenessProbe:
           httpGet:
             path: /healthz

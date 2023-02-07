@@ -90,35 +90,36 @@ If a Job is suspended (at creation or through an update), this timer will effect
   deadlineSeconds: 100
 ```
 
-### localDeploy
-
-This is a boolean to indicate that you are doing a local deploy. What it is really determining is if we should
-ask for a volume mount (e.g., binding to a temporary directory) vs. a volume claim (typically only available)
-in production level clusters. If you are developing or working locally using, for example, MiniKube, you
-likely want to set this to True.
-
-```yaml
-  # Set to true to use volume mounts instead of volume claims
-  localDeploy: true
-``` 
-
 ### volumes
 
 Volumes can be defined on the level of the MiniCluster that are then used by containers.
-These volumes are local host volumes, and should be named (the key for the section)
-with a path:
+
+ - For MiniKube, these volumes are expected to be inside of the VM, e.g., accessed via `minikube ssh`
+ - For an actual cluster, they should be on the node running the pod.
+
+For each volume under "volumes" we enforce a unique name by way of using key values - e.g., "myvolume"
+in the example below can then be referenced for a container:
 
 ```yaml
 volumes:
   myvolume:
     path: /full/path/to/volume
-    readOnly: false
+    class: hostpath
 ```
 
-By default they will be read only unless you set `readOnly` to false.
-Since we haven't implemented this for a cloud resource yet, this currently just works
-with localDeploy is set to true, and we can adjust this when we test in a cloud.
+The "class" above (which you can leave out) defaults to hostpath, and should be the storage class that your cluster provides.
+The Operator createst the "hostpath" volume claim. This currently is always created as a host path volume claim in MiniKube,
+and likely in the future will have different logic if it varies from that. Finally, you can add labels:
 
+
+```yaml
+volumes:
+  myvolume:
+    path: /full/path/to/volume
+    class: hostpath
+      labels:
+        type: "local"
+```
 
 ### logging
 
@@ -421,9 +422,9 @@ we provide this argument on the level of the container. To enable this, set this
 
 ### volumes
 
-Volumes that are defined on the level of the MiniCluster can be referenced on the level
-of the container to be mounted into them.
-As an example, here is how we specify the volume `myvolume` to be mounted to the container at `/data`.
+Volumes that are defined on the level of the container must be defined at the top level of the MiniCluster.
+As an example, here is how we tell the container to use the already defined volume "myvolume" to be mounted
+in the container as "/data":
 
 ```yaml
 volumes:
@@ -432,9 +433,15 @@ volumes:
 ```
 
 The `myvolume` key must be defined in the MiniCluster set of volumes, and this is checked.
-Also note that we currently don't support shared filesystem volumes for production
-Kubernetes deploys - this only works for a local deploy on your host. We will
-work on this soon.
+If you want to change the readonly status to true:
+
+```yaml
+volumes:
+  myvolume:
+    path: /data
+    readonly: true
+```
+
 
 ### fluxRestful
 

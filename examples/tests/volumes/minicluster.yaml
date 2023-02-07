@@ -4,9 +4,6 @@ metadata:
   name: flux-sample
   namespace: flux-operator
 spec:
-  # Set to true to use volume mounts instead of volume claims
-  localDeploy: true
-
   # suppress all output except for test run
   logging:
     quiet: true
@@ -14,16 +11,20 @@ spec:
   # Number of pods to create for MiniCluster
   size: 2
 
-  # Named volumes bound to containers, we assume they are all host volumes
+  # Make this kind of persistent volume and claim available to pods
+  # This is a path in minikube (e.g., minikube ssh)
   volumes:
     data:      
-      path: /tmp/data-volumes
+      class: hostpath
+      path: /mnt/data
+      labels:
+        type: "local"
 
   # This is a list because a pod can support multiple containers
   containers:
     - image: ghcr.io/flux-framework/flux-restful-api:latest
-      command: flux resource list
       command: ls /data
       volumes:
         data:
           path: /data
+          # readonly defaults to false

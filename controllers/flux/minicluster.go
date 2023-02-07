@@ -63,6 +63,18 @@ func (r *MiniClusterReconciler) ensureMiniCluster(ctx context.Context, cluster *
 		return result, err
 	}
 
+	// Prepare volumes, if requested, to be available to containers
+	for volumeName, volume := range cluster.Spec.Volumes {
+		_, result, err = r.getPersistentVolume(ctx, cluster, volumeName, volume)
+		if err != nil {
+			return result, err
+		}
+		_, result, err = r.getPersistentVolumeClaim(ctx, cluster, volumeName, volume)
+		if err != nil {
+			return result, err
+		}
+	}
+
 	// Create the batch job that brings it all together!
 	// A batchv1.Job can hold a spec for containers that use the configs we just made
 	_, result, err = r.getMiniCluster(ctx, cluster)
