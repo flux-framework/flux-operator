@@ -165,7 +165,7 @@ bin/kubectl:
 	chmod +x bin/kubectl
 
 .PHONY: test_e2e
-test_e2e: export TEST_FLUX_OPERATOR_IMAGE = ${IMAGE_TAG_BASE}:test
+test_e2e: export TEST_FLUX_OPERATOR_IMAGE = ${IMAGE_TAG_BASE}:latest
 test_e2e: bin/kubectl kind images dev_manifest
 	go test -tags e2e ./tests/e2e/...
 
