@@ -16,7 +16,7 @@ spec:
   volumes:
     data:      
       class: hostpath
-      path: /mnt/data
+      path: /tmp/data
       labels:
         type: "local"
 
