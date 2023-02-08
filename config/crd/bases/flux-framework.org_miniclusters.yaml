@@ -39,7 +39,7 @@ spec:
               "task" within that cluster is flux running something.
             properties:
               cleanup:
-                default: true
+                default: false
                 description: Cleanup the pods and storage when the index broker pod
                   is complete
                 type: boolean

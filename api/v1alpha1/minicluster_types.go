@@ -53,7 +53,7 @@ type MiniClusterSpec struct {
 	FluxRestful FluxRestful `json:"fluxRestful"`
 
 	// Cleanup the pods and storage when the index broker pod is complete
-	// +kubebuilder:default=true
+	// +kubebuilder:default=false
 	// +optional
 	Cleanup bool `json:"cleanup"`
 
