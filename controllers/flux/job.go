@@ -22,7 +22,9 @@ import (
 )
 
 // newMiniCluster is used to create the MiniCluster Job
-func (r *MiniClusterReconciler) newMiniClusterJob(cluster *api.MiniCluster) (*batchv1.Job, error) {
+func (r *MiniClusterReconciler) newMiniClusterJob(
+	cluster *api.MiniCluster,
+) (*batchv1.Job, error) {
 
 	// Number of retries before marking as failed
 	backoffLimit := int32(100)
@@ -84,7 +86,9 @@ func (r *MiniClusterReconciler) newMiniClusterJob(cluster *api.MiniCluster) (*ba
 	return job, err
 }
 
-func (r *MiniClusterReconciler) getMiniClusterContainers(cluster *api.MiniCluster) ([]corev1.Container, error) {
+func (r *MiniClusterReconciler) getMiniClusterContainers(
+	cluster *api.MiniCluster,
+) ([]corev1.Container, error) {
 
 	// Create the containers for the pod
 	containers := []corev1.Container{}
@@ -114,7 +118,10 @@ func (r *MiniClusterReconciler) getMiniClusterContainers(cluster *api.MiniCluste
 		// Do we have a postStartExec Lifecycle command?
 		lifecycle := corev1.Lifecycle{}
 		if container.LifeCyclePostStartExec != "" {
-			r.log.Info("🌀 MiniCluster", "LifeCycle.PostStartExec", container.LifeCyclePostStartExec)
+			r.log.Info(
+				"🌀 MiniCluster",
+				"LifeCycle.PostStartExec", container.LifeCyclePostStartExec,
+			)
 			lifecycle.PostStart = &corev1.LifecycleHandler{
 				Exec: &corev1.ExecAction{
 					Command: []string{container.LifeCyclePostStartExec},
@@ -203,7 +210,9 @@ func getImagePullSecrets(cluster *api.MiniCluster) []corev1.LocalObjectReference
 	pullSecrets := []corev1.LocalObjectReference{}
 	for _, container := range cluster.Spec.Containers {
 		if container.ImagePullSecret != "" {
-			newSecret := corev1.LocalObjectReference{Name: container.ImagePullSecret}
+			newSecret := corev1.LocalObjectReference{
+				Name: container.ImagePullSecret,
+			}
 			pullSecrets = append(pullSecrets, newSecret)
 		}
 	}

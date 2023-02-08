@@ -32,7 +32,12 @@ var (
 )
 
 // podExec executes a command to a named pod
-func (r *MiniClusterReconciler) podExec(ctx context.Context, pod corev1.Pod, cluster *api.MiniCluster, command []string) (string, error) {
+func (r *MiniClusterReconciler) podExec(
+	ctx context.Context,
+	pod corev1.Pod,
+	cluster *api.MiniCluster,
+	command []string,
+) (string, error) {
 
 	// creates the clientset
 	clientset, err := kubernetes.NewForConfig(r.RESTConfig)
@@ -96,7 +101,10 @@ func (r *MiniClusterReconciler) podExec(ctx context.Context, pod corev1.Pod, clu
 }
 
 // getMiniClusterPods returns a sorted (by name) podlist in the MiniCluster
-func (r *MiniClusterReconciler) getMiniClusterPods(ctx context.Context, cluster *api.MiniCluster) *corev1.PodList {
+func (r *MiniClusterReconciler) getMiniClusterPods(
+	ctx context.Context,
+	cluster *api.MiniCluster,
+) *corev1.PodList {
 
 	podList := &corev1.PodList{}
 	opts := []client.ListOption{
@@ -116,7 +124,10 @@ func (r *MiniClusterReconciler) getMiniClusterPods(ctx context.Context, cluster 
 }
 
 // brokerIsReady determines if broker 0 is waiting for worker nodes
-func (r *MiniClusterReconciler) brokerIsReady(ctx context.Context, cluster *api.MiniCluster) (bool, error) {
+func (r *MiniClusterReconciler) brokerIsReady(
+	ctx context.Context,
+	cluster *api.MiniCluster,
+) (bool, error) {
 
 	// Cut out quickly if we've already done this
 	if brokerIsReady {
@@ -140,6 +151,7 @@ func (r *MiniClusterReconciler) brokerIsReady(ctx context.Context, cluster *api.
 	pods := r.getMiniClusterPods(ctx, cluster)
 	for _, pod := range pods.Items {
 		r.log.Info("🦀 Found Pod", "Pod Name", pod.Name)
+
 		if strings.HasPrefix(pod.Name, brokerPrefix) {
 			r.log.Info("🦀 Found Broker", "Pod Name", pod.Name)
 			out, err := r.podExec(ctx, pod, cluster, command)
@@ -171,10 +183,14 @@ func (r *MiniClusterReconciler) brokerIsReady(ctx context.Context, cluster *api.
 }
 
 // getMiniClusterIPS was used when we needed to write /etc/hosts and is no longer used
-func (r *MiniClusterReconciler) getMiniClusterIPS(ctx context.Context, cluster *api.MiniCluster) map[string]string {
+func (r *MiniClusterReconciler) getMiniClusterIPS(
+	ctx context.Context,
+	cluster *api.MiniCluster,
+) map[string]string {
 
 	ips := map[string]string{}
 	for _, pod := range r.getMiniClusterPods(ctx, cluster).Items {
+
 		// Skip init pods
 		if strings.Contains(pod.Name, "init") {
 			continue
@@ -190,7 +206,11 @@ func (r *MiniClusterReconciler) getMiniClusterIPS(ctx context.Context, cluster *
 }
 
 // createMiniClusterIngress exposes the service for the minicluster
-func (r *MiniClusterReconciler) createMiniClusterIngress(ctx context.Context, cluster *api.MiniCluster, service *corev1.Service) error {
+func (r *MiniClusterReconciler) createMiniClusterIngress(
+	ctx context.Context,
+	cluster *api.MiniCluster,
+	service *corev1.Service,
+) error {
 
 	pathType := networkv1.PathTypePrefix
 	ingressBackend := networkv1.IngressBackend{

@@ -29,7 +29,10 @@ var (
 )
 
 // exposeService will expose services - one for the port 5000 forward, and the other for job networking (headless)
-func (r *MiniClusterReconciler) exposeServices(ctx context.Context, cluster *api.MiniCluster) (ctrl.Result, error) {
+func (r *MiniClusterReconciler) exposeServices(
+	ctx context.Context,
+	cluster *api.MiniCluster,
+) (ctrl.Result, error) {
 
 	// This service is for the restful API
 	existing := &corev1.Service{}
@@ -44,7 +47,10 @@ func (r *MiniClusterReconciler) exposeServices(ctx context.Context, cluster *api
 }
 
 // createMiniClusterService creates the service for the minicluster
-func (r *MiniClusterReconciler) createMiniClusterService(ctx context.Context, cluster *api.MiniCluster) (*corev1.Service, error) {
+func (r *MiniClusterReconciler) createMiniClusterService(
+	ctx context.Context,
+	cluster *api.MiniCluster,
+) (*corev1.Service, error) {
 
 	r.log.Info("Creating service with: ", restfulServiceName, cluster.Namespace)
 	service := &corev1.Service{

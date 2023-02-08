@@ -23,6 +23,7 @@ var (
 
 // SetupControllers sets up all controllers.
 func SetupControllers(mgr ctrl.Manager, restClient rest.Interface) (string, error) {
+
 	jobReconciler := controllers.NewMiniClusterReconciler(
 		mgr.GetClient(),
 		mgr.GetScheme(),
@@ -30,6 +31,7 @@ func SetupControllers(mgr ctrl.Manager, restClient rest.Interface) (string, erro
 		restClient,
 		// other watching reconcilers could be added here!
 	)
+
 	if err := jobReconciler.SetupWithManager(mgr); err != nil {
 		setupLog.Error(err, "unable to create controller", "controller", "MiniCluster")
 		return "MiniCluster", err

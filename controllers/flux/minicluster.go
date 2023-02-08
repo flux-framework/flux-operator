@@ -42,7 +42,10 @@ var (
 // 2. Config maps for secrets and other things.
 // 3. We "launch" a job by starting the Indexed job on the connected nodes
 // newMiniCluster creates a new mini cluster, a stateful set for running flux!
-func (r *MiniClusterReconciler) ensureMiniCluster(ctx context.Context, cluster *api.MiniCluster) (ctrl.Result, error) {
+func (r *MiniClusterReconciler) ensureMiniCluster(
+	ctx context.Context,
+	cluster *api.MiniCluster,
+) (ctrl.Result, error) {
 
 	// Ensure the configs are created (for volume sources)
 	_, result, err := r.getConfigMap(ctx, cluster, "flux-config", cluster.Name+fluxConfigSuffix)
@@ -340,7 +343,13 @@ func getFluxToken(requested string) string {
 }
 
 // createConfigMap generates a config map with some kind of data
-func (r *MiniClusterReconciler) createConfigMap(cluster *api.MiniCluster, configName string, data map[string]string) *corev1.ConfigMap {
+func (r *MiniClusterReconciler) createConfigMap(
+	cluster *api.MiniCluster,
+	configName string,
+	data map[string]string,
+) *corev1.ConfigMap {
+
+	// Create the config map with respective data!
 	cm := &corev1.ConfigMap{
 		TypeMeta: metav1.TypeMeta{},
 		ObjectMeta: metav1.ObjectMeta{
@@ -349,6 +358,8 @@ func (r *MiniClusterReconciler) createConfigMap(cluster *api.MiniCluster, config
 		},
 		Data: data,
 	}
+
+	// Show in the logs
 	fmt.Println(cm.Data)
 	ctrl.SetControllerReference(cluster, cm, r.Scheme)
 	return cm
