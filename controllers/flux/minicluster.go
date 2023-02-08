@@ -14,6 +14,7 @@ import (
 	"bytes"
 	"context"
 	"fmt"
+	"strings"
 	"text/template"
 
 	jobctrl "flux-framework/flux-operator/pkg/job"
@@ -103,13 +104,66 @@ func (r *MiniClusterReconciler) ensureMiniCluster(
 	return ctrl.Result{Requeue: true}, nil
 }
 
-// getMiniCluster does an actual check if we have a batch job in the namespace
-func (r *MiniClusterReconciler) getMiniCluster(
+// cleanupPodsStorage looks for the existing job, and cleans up if completed
+func (r *MiniClusterReconciler) cleanupPodsStorage(
 	ctx context.Context,
 	cluster *api.MiniCluster,
-) (*batchv1.Job, ctrl.Result, error) {
+) (ctrl.Result, error) {
 
-	// Look for an existing job
+	// Find the broker pod and determine if finished
+	completed := false
+	for _, pod := range r.getMiniClusterPods(ctx, cluster).Items {
+		if !strings.HasPrefix(pod.Name, fmt.Sprintf("%s-0", cluster.Name)) {
+			continue
+		}
+
+		// If it's succeeded or failed, we call that finished
+		// https://pkg.go.dev/k8s.io/api@v0.25.0/core/v1#PodPhase
+		if pod.Status.Phase == corev1.PodSucceeded || pod.Status.Phase == corev1.PodFailed {
+			completed = true
+			break
+		}
+	}
+
+	// Cut out early if not completed
+	if !completed {
+		r.log.Info("MiniCluster", "Job Status", "Not Completed")
+		return ctrl.Result{Requeue: true}, nil
+	}
+	r.log.Info("MiniCluster", "Job Status", "Completed")
+
+	// Delete the mini cluster first
+	// If we don't, it will keep re-creating the assets and loop forever :)
+	r.Client.Delete(ctx, cluster)
+
+	// The job deletion should handle pods, next delete pvc and pv per each volume
+	// Must be deleted in that order, per internet advice :)
+	for volumeName := range cluster.Spec.Volumes {
+
+		claimName := fmt.Sprintf("%s-claim", volumeName)
+
+		// Only delete if we retrieve without error
+		claim, err := r.getExistingPersistentVolumeClaim(ctx, cluster, claimName)
+		if err != nil {
+			r.log.Info("Volume Claim", "Deletion", claim.Name)
+			r.Client.Delete(ctx, claim)
+		}
+
+		pv, err := r.getExistingPersistentVolume(ctx, cluster, volumeName)
+		if err != nil {
+			r.log.Info("Volume", "Deletion", pv.Name)
+			r.Client.Delete(ctx, pv)
+		}
+	}
+	return ctrl.Result{Requeue: false}, nil
+}
+
+// getExistingJob gets an existing job that matches the MiniCluster CRD
+func (r *MiniClusterReconciler) getExistingJob(
+	ctx context.Context,
+	cluster *api.MiniCluster,
+) (*batchv1.Job, error) {
+
 	existing := &batchv1.Job{}
 	err := r.Client.Get(
 		ctx,
@@ -119,6 +173,17 @@ func (r *MiniClusterReconciler) getMiniCluster(
 		},
 		existing,
 	)
+	return existing, err
+}
+
+// getMiniCluster does an actual check if we have a batch job in the namespace
+func (r *MiniClusterReconciler) getMiniCluster(
+	ctx context.Context,
+	cluster *api.MiniCluster,
+) (*batchv1.Job, ctrl.Result, error) {
+
+	// Look for an existing job
+	existing, err := r.getExistingJob(ctx, cluster)
 
 	// Create a new job if it does not exist
 	if err != nil {
@@ -127,7 +192,7 @@ func (r *MiniClusterReconciler) getMiniCluster(
 			job, err := r.newMiniClusterJob(cluster)
 			if err != nil {
 				r.log.Error(
-					err, " Failed to create new MiniCluster Batch Job",
+					err, "Failed to create new MiniCluster Batch Job",
 					"Namespace:", job.Namespace,
 					"Name:", job.Name,
 				)

@@ -38,6 +38,11 @@ spec:
               MiniCluster corresponds to a Batch Job -> StatefulSet + ConfigMaps A
               "task" within that cluster is flux running something.
             properties:
+              cleanup:
+                default: true
+                description: Cleanup the pods and storage when the index broker pod
+                  is complete
+                type: boolean
               containers:
                 description: Containers is one or more containers to be created in
                   a pod. There should only be one container to run flux with runFlux

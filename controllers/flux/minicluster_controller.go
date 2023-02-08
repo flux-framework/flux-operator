@@ -147,10 +147,14 @@ func (r *MiniClusterReconciler) Reconcile(
 	// By the time we get here we have a Job + pods + config maps!
 	// What else do we want to do?
 	r.log.Info("🌀 Mini Cluster is Ready!")
-	r.log.Info("🌀 Wait for all pods to be running and previously running to be terminated.")
 
 	// Check until the job finishes to clean up volumes if needed
-
+	if cluster.Spec.Cleanup {
+		result, err := r.cleanupPodsStorage(ctx, &cluster)
+		if err != nil {
+			return result, err
+		}
+	}
 	return result, nil
 }
 

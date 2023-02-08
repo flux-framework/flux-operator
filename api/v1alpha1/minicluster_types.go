@@ -52,6 +52,11 @@ type MiniClusterSpec struct {
 	// +optional
 	FluxRestful FluxRestful `json:"fluxRestful"`
 
+	// Cleanup the pods and storage when the index broker pod is complete
+	// +kubebuilder:default=true
+	// +optional
+	Cleanup bool `json:"cleanup"`
+
 	// Size (number of job pods to run, size of minicluster in pods)
 	// +kubebuilder:default=1
 	// +optional

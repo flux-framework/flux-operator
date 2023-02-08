@@ -121,6 +121,20 @@ volumes:
         type: "local"
 ```
 
+### cleanup
+
+If you add any kind of persistent volume to your MiniCluster, it will likely need a cleanup after the fact
+(after you bring the MiniCluster down). By default, the operator will perform this cleanup, checking if the
+Job status is "Completed" and then removing the pods, Persistent Volume Claims, and Persistent Volumes.
+If you want to disable this cleanup:
+
+```yaml
+  cleanup: false
+```
+
+If you are streaming the logs with `kubectl logs` the steam would stop when the broker pod is completed,
+so typically you will get the logs as long as you are streaming when the job starts running.
+
 ### logging
 
 We provide simple types of "logging" within the main script that is run for the job.

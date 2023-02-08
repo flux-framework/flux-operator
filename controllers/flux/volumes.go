@@ -170,6 +170,24 @@ func (r *MiniClusterReconciler) createPersistentVolume(
 	return newVolume
 }
 
+func (r *MiniClusterReconciler) getExistingPersistentVolume(
+	ctx context.Context,
+	cluster *api.MiniCluster,
+	volumeName string,
+) (*corev1.PersistentVolume, error) {
+
+	// First look for an existing persistent volume
+	existing := &corev1.PersistentVolume{}
+	err := r.Client.Get(
+		ctx,
+		types.NamespacedName{
+			Name:      volumeName,
+			Namespace: cluster.Namespace},
+		existing,
+	)
+	return existing, err
+}
+
 // getPersistentVolume creates the PV for the curve certificate (to be written once)
 func (r *MiniClusterReconciler) getPersistentVolume(
 	ctx context.Context,
@@ -178,16 +196,7 @@ func (r *MiniClusterReconciler) getPersistentVolume(
 	volume api.MiniClusterVolume) (*corev1.PersistentVolume, ctrl.Result, error,
 ) {
 
-	// First look for an existing persistent volume
-	existing := &corev1.PersistentVolume{}
-	volumeFullName := fmt.Sprintf("%s-volume", volumeName)
-	err := r.Client.Get(
-		ctx,
-		types.NamespacedName{
-			Name:      volumeName,
-			Namespace: cluster.Namespace},
-		existing,
-	)
+	existing, err := r.getExistingPersistentVolume(ctx, cluster, volumeName)
 
 	if err != nil {
 
@@ -198,18 +207,18 @@ func (r *MiniClusterReconciler) getPersistentVolume(
 			volume := r.createPersistentVolume(cluster, volumeName, volume)
 			r.log.Info(
 				"✨ Creating MiniCluster Mounted Volume ✨",
-				"Type", volumeFullName,
+				"Type", volumeName,
 				"Namespace", cluster.Namespace,
-				"Name", volumeFullName,
+				"Name", volumeName,
 			)
 
 			err = r.Client.Create(ctx, volume)
 			if err != nil {
 				r.log.Error(
-					err, "❌ Failed to create MiniCluster Mounted Volume",
-					"Type", volumeFullName,
+					err, "Failed to create MiniCluster Mounted Volume",
+					"Type", volumeName,
 					"Namespace", cluster.Namespace,
-					"Name", volumeFullName,
+					"Name", volumeName,
 				)
 				return existing, ctrl.Result{}, err
 			}
@@ -225,12 +234,30 @@ func (r *MiniClusterReconciler) getPersistentVolume(
 
 		r.log.Info(
 			"🎉 Found existing MiniCluster Mounted Volume",
-			"Type", volumeFullName,
+			"Type", volumeName,
 			"Namespace", existing.Namespace,
 			"Name", existing.Name,
 		)
 	}
 	return existing, ctrl.Result{}, err
+}
+
+// getExistingVolumeClaim gets an existing volume claim
+func (r *MiniClusterReconciler) getExistingPersistentVolumeClaim(
+	ctx context.Context,
+	cluster *api.MiniCluster,
+	claimName string,
+) (*corev1.PersistentVolumeClaim, error) {
+
+	existing := &corev1.PersistentVolumeClaim{}
+	err := r.Client.Get(
+		ctx,
+		types.NamespacedName{
+			Name:      claimName,
+			Namespace: cluster.Namespace},
+		existing,
+	)
+	return existing, err
 }
 
 // getPersistentVolume creates the PVC claim for the curve certificate (to be written once)
@@ -241,16 +268,8 @@ func (r *MiniClusterReconciler) getPersistentVolumeClaim(
 	volume api.MiniClusterVolume,
 ) (*corev1.PersistentVolumeClaim, ctrl.Result, error) {
 
-	// Look for an existing claim
 	claimName := fmt.Sprintf("%s-claim", volumeName)
-	existing := &corev1.PersistentVolumeClaim{}
-	err := r.Client.Get(
-		ctx,
-		types.NamespacedName{
-			Name:      claimName,
-			Namespace: cluster.Namespace},
-		existing,
-	)
+	existing, err := r.getExistingPersistentVolumeClaim(ctx, cluster, claimName)
 
 	if err != nil {
 
