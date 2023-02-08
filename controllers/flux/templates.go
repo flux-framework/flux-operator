@@ -27,22 +27,19 @@ var generateCertTemplate string
 
 // WaitTemplate populates wait.sh
 type WaitTemplate struct {
-	FluxToken         string // Token to log into the UI, should be consistent across containers
-	FluxUser          string // Username for Flux Restful API
-	MainHost          string // Main host identifier
-	FluxOptionFlags   string // Option flags
-	Hosts             string // List of hosts
-	Diagnostics       bool   // Run diagnostics instead of job?
-	PreCommand        string // Custom commands, looked up by container identifier
-	FluxRestfulBranch string // branch to clone Flux Restful from, defaults to main
-	FluxRestfulPort   int32  // port to run flux restful on
-	Cores             int32
-	Tasks             int32
-	Size              int32 // size of the Minicluster (nodes / pods in indexed jobs)
+	FluxToken string // Token to log into the UI, should be consistent across containers
+	FluxUser  string // Username for Flux Restful API
+	MainHost  string // Main host identifier
+	Hosts     string // List of hosts
+
+	FluxRestful api.FluxRestful
+	Container   api.MiniClusterContainer
+	Cores       int32
+	Tasks       int32
+	Size        int32 // size of the Minicluster (nodes / pods in indexed jobs)
 
 	// Logging Modes (FluxLogLevel is per container)
-	Logging      api.LoggingSpec
-	FluxLogLevel int32
+	Logging api.LoggingSpec
 }
 
 // CertTemplate populates cert-generate.sh

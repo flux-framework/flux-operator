@@ -9,7 +9,7 @@
 asFlux="sudo -u flux -E"
 
 # If any preCommand logic is defined
-{{ .PreCommand}}
+{{ .Container.PreCommand}}
 
 {{ if not .Logging.QuietMode }}# Show asFlux directive once
 printf "\nAs Flux prefix for flux commands: ${asFlux}\n"{{ end }}
@@ -32,7 +32,7 @@ brokerOptions="-Scron.directory=/etc/flux/system/cron.d \
   -Srundir=/run/flux \
   -Sstatedir=${STATE_DIRECTORY:-/var/lib/flux} \
   -Slocal-uri=local:///run/flux/local \
-{{ if not .Logging.QuietMode }}  -Slog-stderr-level={{or .FluxLogLevel 6}} {{ else }} -Slog-stderr-level=0 {{ end }} \
+{{ if not .Logging.QuietMode }}  -Slog-stderr-level={{or .Container.FluxLogLevel 6}} {{ else }} -Slog-stderr-level=0 {{ end }} \
   -Slog-stderr-mode=local"
 
 # quorum settings influence how the instance treats missing ranks
@@ -93,11 +93,11 @@ flux R encode --hosts={{ .Hosts}} {{if .Cores}}--cores=0-{{.Cores}}{{ end }} > /
 cat /etc/flux/system/R{{ end }}
 
 # Do we want to run diagnostics instead of regular entrypoint?
-diagnostics="{{ .Diagnostics}}"
+diagnostics="{{ .Container.Diagnostics}}"
 {{ if not .Logging.QuietMode }}printf "\n🐸 Diagnostics: ${diagnostics}\n"{{ end }}
 
 # Flux option flags
-option_flags="{{ .FluxOptionFlags}}"
+option_flags="{{ .Container.FluxOptionFlags}}"
 if [ "${option_flags}" != "" ]; then
     # Make sure we don't get rid of any already defined flags
     existing_flags="${FLUX_OPTION_FLAGS:-}"
@@ -161,8 +161,8 @@ else
         if [ "$@" == "" ]; then
 
             # Start restful API server
-            startServer="uvicorn app.main:app --host=0.0.0.0 --port={{or .FluxRestfulPort 5000}}"
-            git clone -b {{or .FluxRestfulBranch "main"}} --depth 1 https://github.com/flux-framework/flux-restful-api /flux-restful-api > /dev/null 2>&1
+            startServer="uvicorn app.main:app --host=0.0.0.0 --port={{or .FluxRestful.Port 5000}}"
+            git clone -b {{or .FluxRestful.Branch "main"}} --depth 1 https://github.com/flux-framework/flux-restful-api /flux-restful-api > /dev/null 2>&1
             cd /flux-restful-api
 
             # Install python requirements, with preference for python3
@@ -187,8 +187,8 @@ else
         # Case 2: Fall back to provided command
         else
 {{ if not .Logging.QuietMode }} 
-            printf "\n🌀 flux start -o --config /etc/flux/config ${brokerOptions} flux mini submit {{ if gt .Tasks .Size }} -N {{.Size}}{{ end }} -n {{.Tasks}} --quiet {{ if .FluxOptionFlags }}{{ .FluxOptionFlags}}{{ end }} --watch{{ if .Logging.DebugMode }} -vvv{{ end }} $@\n"{{ end }}
-            {{ if .Logging.TimedMode }}/usr/bin/time -f "FLUXTIME fluxstart wall time %E" {{ end }}${asFlux} flux start -o --config /etc/flux/config ${brokerOptions} {{ if .Logging.TimedMode }}/usr/bin/time -f "FLUXTIME fluxsubmit wall time %E" {{ end }} flux mini submit {{ if gt .Tasks .Size }} -N {{.Size}}{{ end }} -n {{.Tasks}} --quiet {{ if .FluxOptionFlags }}{{ .FluxOptionFlags}}{{ end }} --watch{{ if .Logging.DebugMode }} -vvv{{ end }} $@
+            printf "\n🌀 flux start -o --config /etc/flux/config ${brokerOptions} flux mini submit {{ if gt .Tasks .Size }} -N {{.Size}}{{ end }} -n {{.Tasks}} --quiet {{ if .Container.FluxOptionFlags }}{{ .Container.FluxOptionFlags}}{{ end }} --watch{{ if .Logging.DebugMode }} -vvv{{ end }} $@\n"{{ end }}
+            {{ if .Logging.TimedMode }}/usr/bin/time -f "FLUXTIME fluxstart wall time %E" {{ end }}${asFlux} flux start -o --config /etc/flux/config ${brokerOptions} {{ if .Logging.TimedMode }}/usr/bin/time -f "FLUXTIME fluxsubmit wall time %E" {{ end }} flux mini submit {{ if gt .Tasks .Size }} -N {{.Size}}{{ end }} -n {{.Tasks}} --quiet {{ if .Container.FluxOptionFlags }}{{ .Container.FluxOptionFlags}}{{ end }} --watch{{ if .Logging.DebugMode }} -vvv{{ end }} $@
         fi
     else
         # Sleep until the broker is ready

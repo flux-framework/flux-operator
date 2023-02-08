@@ -1,5 +1,5 @@
 /*
-Copyright 2022 Lawrence Livermore National Security, LLC
+Copyright 2022-2023 Lawrence Livermore National Security, LLC
  (c.f. AUTHORS, NOTICE.LLNS, COPYING)
 
 This is part of the Flux resource manager framework.
@@ -64,55 +64,63 @@ func getVolumes(cluster *api.MiniCluster) []corev1.Volume {
 
 		// For now, only Flux runners get the custom wait.sh script
 		if container.FluxRunner {
-			startScript := corev1.KeyToPath{Key: fmt.Sprintf("wait-%d", i), Path: fmt.Sprintf("wait-%d.sh", i), Mode: &makeExecutable}
+			startScript := corev1.KeyToPath{
+				Key:  fmt.Sprintf("wait-%d", i),
+				Path: fmt.Sprintf("wait-%d.sh", i),
+				Mode: &makeExecutable,
+			}
 			runnerStartScripts = append(runnerStartScripts, startScript)
 		}
 	}
 
-	volumes := []corev1.Volume{{
-		Name: cluster.Name + fluxConfigSuffix,
-		VolumeSource: corev1.VolumeSource{
-			ConfigMap: &corev1.ConfigMapVolumeSource{
-				LocalObjectReference: corev1.LocalObjectReference{
-					Name: cluster.Name + fluxConfigSuffix,
+	volumes := []corev1.Volume{
+		{
+			Name: cluster.Name + fluxConfigSuffix,
+			VolumeSource: corev1.VolumeSource{
+				ConfigMap: &corev1.ConfigMapVolumeSource{
+					LocalObjectReference: corev1.LocalObjectReference{
+						Name: cluster.Name + fluxConfigSuffix,
+					},
+					// /etc/flux/config
+					Items: []corev1.KeyToPath{{
+						Key:  "hostfile",
+						Path: "broker.toml",
+					}},
 				},
-				// /etc/flux/config
-				Items: []corev1.KeyToPath{{
-					Key:  "hostfile",
-					Path: "broker.toml",
-				}},
 			},
 		},
-	}, {
-		Name: cluster.Name + entrypointSuffix,
-		VolumeSource: corev1.VolumeSource{
-			ConfigMap: &corev1.ConfigMapVolumeSource{
+		{
+			Name: cluster.Name + entrypointSuffix,
+			VolumeSource: corev1.VolumeSource{
+				ConfigMap: &corev1.ConfigMapVolumeSource{
 
-				// Namespace based on the cluster
-				LocalObjectReference: corev1.LocalObjectReference{
-					Name: cluster.Name + entrypointSuffix,
+					// Namespace based on the cluster
+					LocalObjectReference: corev1.LocalObjectReference{
+						Name: cluster.Name + entrypointSuffix,
+					},
+					// /flux_operator/wait-<index>.sh
+					Items: runnerStartScripts,
 				},
-				// /flux_operator/wait-<index>.sh
-				Items: runnerStartScripts,
 			},
 		},
-	}, {
-		Name: cluster.Name + curveVolumeSuffix,
-		VolumeSource: corev1.VolumeSource{
-			ConfigMap: &corev1.ConfigMapVolumeSource{
+		{
+			Name: cluster.Name + curveVolumeSuffix,
+			VolumeSource: corev1.VolumeSource{
+				ConfigMap: &corev1.ConfigMapVolumeSource{
 
-				// Namespace based on the cluster
-				LocalObjectReference: corev1.LocalObjectReference{
-					Name: cluster.Name + curveVolumeSuffix,
+					// Namespace based on the cluster
+					LocalObjectReference: corev1.LocalObjectReference{
+						Name: cluster.Name + curveVolumeSuffix,
+					},
+					// /mnt/curve/curve.cert
+					Items: []corev1.KeyToPath{{
+						Key:  curveCertKey,
+						Path: "curve.cert",
+					}},
 				},
-				// /mnt/curve/curve.cert
-				Items: []corev1.KeyToPath{{
-					Key:  curveCertKey,
-					Path: "curve.cert",
-				}},
 			},
 		},
-	}}
+	}
 
 	// Add claims for storage types requested
 	for volumeName := range cluster.Spec.Volumes {
@@ -130,7 +138,12 @@ func getVolumes(cluster *api.MiniCluster) []corev1.Volume {
 }
 
 // createPersistentVolume creates a volume in /mnt
-func (r *MiniClusterReconciler) createPersistentVolume(cluster *api.MiniCluster, volumeName string, volume api.MiniClusterVolume) *corev1.PersistentVolume {
+func (r *MiniClusterReconciler) createPersistentVolume(
+	cluster *api.MiniCluster,
+	volumeName string,
+	volume api.MiniClusterVolume,
+) *corev1.PersistentVolume {
+
 	newVolume := &corev1.PersistentVolume{
 		TypeMeta: metav1.TypeMeta{},
 		ObjectMeta: metav1.ObjectMeta{
@@ -158,11 +171,24 @@ func (r *MiniClusterReconciler) createPersistentVolume(cluster *api.MiniCluster,
 }
 
 // getPersistentVolume creates the PV for the curve certificate (to be written once)
-func (r *MiniClusterReconciler) getPersistentVolume(ctx context.Context, cluster *api.MiniCluster, volumeName string, volume api.MiniClusterVolume) (*corev1.PersistentVolume, ctrl.Result, error) {
+func (r *MiniClusterReconciler) getPersistentVolume(
+	ctx context.Context,
+	cluster *api.MiniCluster,
+	volumeName string,
+	volume api.MiniClusterVolume) (*corev1.PersistentVolume, ctrl.Result, error,
+) {
 
+	// First look for an existing persistent volume
 	existing := &corev1.PersistentVolume{}
 	volumeFullName := fmt.Sprintf("%s-volume", volumeName)
-	err := r.Client.Get(ctx, types.NamespacedName{Name: volumeName, Namespace: cluster.Namespace}, existing)
+	err := r.Client.Get(
+		ctx,
+		types.NamespacedName{
+			Name:      volumeName,
+			Namespace: cluster.Namespace},
+		existing,
+	)
+
 	if err != nil {
 
 		// Case 1: not found yet, and hostfile is ready (recreate)
@@ -170,69 +196,131 @@ func (r *MiniClusterReconciler) getPersistentVolume(ctx context.Context, cluster
 
 			// The volume "<name>-volume" will be under /mnt/<name>
 			volume := r.createPersistentVolume(cluster, volumeName, volume)
-			r.log.Info("✨ Creating MiniCluster Mounted Volume ✨", "Type", volumeFullName, "Namespace", cluster.Namespace, "Name", volumeFullName)
+			r.log.Info(
+				"✨ Creating MiniCluster Mounted Volume ✨",
+				"Type", volumeFullName,
+				"Namespace", cluster.Namespace,
+				"Name", volumeFullName,
+			)
+
 			err = r.Client.Create(ctx, volume)
 			if err != nil {
-				r.log.Error(err, "❌ Failed to create MiniCluster Mounted Volume", "Type", volumeFullName, "Namespace", cluster.Namespace, "Name", volumeFullName)
+				r.log.Error(
+					err, "❌ Failed to create MiniCluster Mounted Volume",
+					"Type", volumeFullName,
+					"Namespace", cluster.Namespace,
+					"Name", volumeFullName,
+				)
 				return existing, ctrl.Result{}, err
 			}
 			// Successful - return and requeue
 			return volume, ctrl.Result{Requeue: true}, nil
+
 		} else if err != nil {
 			r.log.Error(err, "Failed to get MiniCluster Mounted Volume")
 			return existing, ctrl.Result{}, err
 		}
+
 	} else {
-		r.log.Info("🎉 Found existing MiniCluster Mounted Volume", "Type", volumeFullName, "Namespace", existing.Namespace, "Name", existing.Name)
+
+		r.log.Info(
+			"🎉 Found existing MiniCluster Mounted Volume",
+			"Type", volumeFullName,
+			"Namespace", existing.Namespace,
+			"Name", existing.Name,
+		)
 	}
 	return existing, ctrl.Result{}, err
 }
 
 // getPersistentVolume creates the PVC claim for the curve certificate (to be written once)
-func (r *MiniClusterReconciler) getPersistentVolumeClaim(ctx context.Context, cluster *api.MiniCluster, volumeName string, volume api.MiniClusterVolume) (*corev1.PersistentVolumeClaim, ctrl.Result, error) {
+func (r *MiniClusterReconciler) getPersistentVolumeClaim(
+	ctx context.Context,
+	cluster *api.MiniCluster,
+	volumeName string,
+	volume api.MiniClusterVolume,
+) (*corev1.PersistentVolumeClaim, ctrl.Result, error) {
 
+	// Look for an existing claim
 	claimName := fmt.Sprintf("%s-claim", volumeName)
 	existing := &corev1.PersistentVolumeClaim{}
-	err := r.Client.Get(ctx, types.NamespacedName{Name: claimName, Namespace: cluster.Namespace}, existing)
+	err := r.Client.Get(
+		ctx,
+		types.NamespacedName{
+			Name:      claimName,
+			Namespace: cluster.Namespace},
+		existing,
+	)
+
 	if err != nil {
 
 		// Case 1: not found yet, and hostfile is ready (recreate)
 		if errors.IsNotFound(err) {
 			volume := r.createPersistentVolumeClaim(cluster, claimName, volume)
-			r.log.Info("✨ Creating MiniCluster Mounted Volume ✨", "Type", claimName, "Namespace", cluster.Namespace, "Name", claimName)
+			r.log.Info(
+				"✨ Creating MiniCluster Mounted Volume ✨",
+				"Type", claimName,
+				"Namespace", cluster.Namespace,
+				"Name", claimName,
+			)
 			err = r.Client.Create(ctx, volume)
+
+			// This is a creation error we need to report back
 			if err != nil {
-				r.log.Error(err, "❌ Failed to create MiniCluster Mounted Volume", "Type", claimName, "Namespace", volume.Namespace, "Name", claimName)
+				r.log.Error(
+					err, "❌ Failed to create MiniCluster Mounted Volume",
+					"Type", claimName,
+					"Namespace", volume.Namespace,
+					"Name", claimName,
+				)
 				return existing, ctrl.Result{}, err
 			}
 			// Successful - return and requeue
 			return volume, ctrl.Result{Requeue: true}, nil
+
 		} else if err != nil {
 			r.log.Error(err, "Failed to get MiniCluster Mounted Volume")
 			return existing, ctrl.Result{}, err
 		}
+
 	} else {
-		r.log.Info("🎉 Found existing MiniCluster Mounted Volume", "Type", claimName, "Namespace", existing.Namespace, "Name", existing.Name)
+
+		r.log.Info("🎉 Found existing MiniCluster Mounted Volume",
+			"Type", claimName,
+			"Namespace", existing.Namespace,
+			"Name", existing.Name,
+		)
 	}
 	return existing, ctrl.Result{}, err
 }
 
 // createPersistentVolumeClaim generates a PVC
-func (r *MiniClusterReconciler) createPersistentVolumeClaim(cluster *api.MiniCluster, volumeName string, volume api.MiniClusterVolume) *corev1.PersistentVolumeClaim {
+func (r *MiniClusterReconciler) createPersistentVolumeClaim(
+	cluster *api.MiniCluster,
+	volumeName string,
+	volume api.MiniClusterVolume,
+) *corev1.PersistentVolumeClaim {
+
+	// Create a new RWX persistent volume claim
 	newVolume := &corev1.PersistentVolumeClaim{
 		TypeMeta: metav1.TypeMeta{},
 		ObjectMeta: metav1.ObjectMeta{
 			Name:      volumeName,
 			Namespace: cluster.Namespace,
 		},
+
 		Spec: corev1.PersistentVolumeClaimSpec{
 			StorageClassName: &volume.StorageClassName,
-			AccessModes:      []corev1.PersistentVolumeAccessMode{corev1.ReadWriteMany},
+			AccessModes: []corev1.PersistentVolumeAccessMode{
+				corev1.ReadWriteMany,
+			},
 
 			// No idea how much to ask for here! I made it up.
-			Resources: corev1.ResourceRequirements{Requests: corev1.ResourceList{
-				corev1.ResourceStorage: *resource.NewQuantity(1024, resource.BinarySI),
-			}},
+			Resources: corev1.ResourceRequirements{
+				Requests: corev1.ResourceList{
+					corev1.ResourceStorage: *resource.NewQuantity(1024, resource.BinarySI),
+				},
+			},
 		},
 	}
 	ctrl.SetControllerReference(cluster, newVolume, r.Scheme)

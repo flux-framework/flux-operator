@@ -246,7 +246,6 @@ spec:
                     path:
                       type: string
                   required:
-                  - labels
                   - path
                   type: object
                 description: Volumes accessible to containers from a host

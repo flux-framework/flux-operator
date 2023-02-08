@@ -101,39 +101,89 @@ func (r *MiniClusterReconciler) ensureMiniCluster(ctx context.Context, cluster *
 }
 
 // getMiniCluster does an actual check if we have a batch job in the namespace
-func (r *MiniClusterReconciler) getMiniCluster(ctx context.Context, cluster *api.MiniCluster) (*batchv1.Job, ctrl.Result, error) {
+func (r *MiniClusterReconciler) getMiniCluster(
+	ctx context.Context,
+	cluster *api.MiniCluster,
+) (*batchv1.Job, ctrl.Result, error) {
+
+	// Look for an existing job
 	existing := &batchv1.Job{}
-	err := r.Client.Get(ctx, types.NamespacedName{Name: cluster.Name, Namespace: cluster.Namespace}, existing)
+	err := r.Client.Get(
+		ctx,
+		types.NamespacedName{
+			Name:      cluster.Name,
+			Namespace: cluster.Namespace,
+		},
+		existing,
+	)
+
+	// Create a new job if it does not exist
 	if err != nil {
+
 		if errors.IsNotFound(err) {
 			job, err := r.newMiniClusterJob(cluster)
 			if err != nil {
-				r.log.Error(err, " Failed to create new MiniCluster Batch Job", "Namespace:", job.Namespace, "Name:", job.Name)
+				r.log.Error(
+					err, " Failed to create new MiniCluster Batch Job",
+					"Namespace:", job.Namespace,
+					"Name:", job.Name,
+				)
 				return job, ctrl.Result{}, err
 			}
-			r.log.Info("✨ Creating a new MiniCluster Batch Job ✨", "Namespace:", job.Namespace, "Name:", job.Name)
+
+			r.log.Info(
+				"✨ Creating a new MiniCluster Batch Job ✨",
+				"Namespace:", job.Namespace,
+				"Name:", job.Name,
+			)
+
 			err = r.Client.Create(ctx, job)
 			if err != nil {
-				r.log.Error(err, " Failed to create new MiniCluster Batch Job", "Namespace:", job.Namespace, "Name:", job.Name)
+				r.log.Error(
+					err,
+					"Failed to create new MiniCluster Batch Job",
+					"Namespace:", job.Namespace,
+					"Name:", job.Name,
+				)
 				return job, ctrl.Result{}, err
 			}
 			// Successful - return and requeue
 			return job, ctrl.Result{Requeue: true}, nil
+
 		} else if err != nil {
 			r.log.Error(err, "Failed to get MiniCluster Batch Job")
 			return existing, ctrl.Result{}, err
 		}
+
 	} else {
-		r.log.Info("🎉 Found existing MiniCluster Batch Job 🎉", "Namespace:", existing.Namespace, "Name:", existing.Name)
+		r.log.Info(
+			"🎉 Found existing MiniCluster Batch Job 🎉",
+			"Namespace:", existing.Namespace,
+			"Name:", existing.Name,
+		)
 	}
 	return existing, ctrl.Result{}, err
 }
 
 // getHostfileConfig gets an existing configmap, if it's done
-func (r *MiniClusterReconciler) getConfigMap(ctx context.Context, cluster *api.MiniCluster, configName string, configFullName string) (*corev1.ConfigMap, ctrl.Result, error) {
+func (r *MiniClusterReconciler) getConfigMap(
+	ctx context.Context,
+	cluster *api.MiniCluster,
+	configName string,
+	configFullName string,
+) (*corev1.ConfigMap, ctrl.Result, error) {
 
+	// Look for the config map by name
 	existing := &corev1.ConfigMap{}
-	err := r.Client.Get(ctx, types.NamespacedName{Name: configFullName, Namespace: cluster.Namespace}, existing)
+	err := r.Client.Get(
+		ctx,
+		types.NamespacedName{
+			Name:      configFullName,
+			Namespace: cluster.Namespace,
+		},
+		existing,
+	)
+
 	if err != nil {
 
 		// Case 1: not found yet, and hostfile is ready (recreate)
@@ -174,21 +224,40 @@ func (r *MiniClusterReconciler) getConfigMap(ctx context.Context, cluster *api.M
 					}
 				}
 			}
+
+			// Finally create the config map
 			dep := r.createConfigMap(cluster, configFullName, data)
-			r.log.Info("✨ Creating MiniCluster ConfigMap ✨", "Type", configName, "Namespace", dep.Namespace, "Name", dep.Name)
+			r.log.Info(
+				"✨ Creating MiniCluster ConfigMap ✨",
+				"Type", configName,
+				"Namespace", dep.Namespace,
+				"Name", dep.Name,
+			)
 			err = r.Client.Create(ctx, dep)
 			if err != nil {
-				r.log.Error(err, "❌ Failed to create MiniCluster ConfigMap", "Type", configName, "Namespace", dep.Namespace, "Name", (*dep).Name)
+				r.log.Error(
+					err, "❌ Failed to create MiniCluster ConfigMap",
+					"Type", configName,
+					"Namespace", dep.Namespace,
+					"Name", (*dep).Name,
+				)
 				return existing, ctrl.Result{}, err
 			}
 			// Successful - return and requeue
 			return dep, ctrl.Result{Requeue: true}, nil
+
 		} else if err != nil {
 			r.log.Error(err, "Failed to get MiniCluster ConfigMap")
 			return existing, ctrl.Result{}, err
 		}
+
 	} else {
-		r.log.Info("🎉 Found existing MiniCluster ConfigMap", "Type", configName, "Namespace", existing.Namespace, "Name", existing.Name)
+		r.log.Info(
+			"🎉 Found existing MiniCluster ConfigMap",
+			"Type", configName,
+			"Namespace", existing.Namespace,
+			"Name", existing.Name,
+		)
 	}
 	return existing, ctrl.Result{}, err
 }
@@ -219,20 +288,16 @@ func generateWaitScript(cluster *api.MiniCluster, containerIndex int) (string, e
 	}
 	// The token uuid is the same across images
 	wt := WaitTemplate{
-		FluxUser:          getFluxUser(cluster.Spec.FluxRestful.Username),
-		FluxToken:         getFluxToken(cluster.Spec.FluxRestful.Token),
-		MainHost:          mainHost,
-		Hosts:             hosts,
-		Diagnostics:       container.Diagnostics,
-		FluxOptionFlags:   container.FluxOptionFlags,
-		FluxLogLevel:      container.FluxLogLevel,
-		PreCommand:        container.PreCommand,
-		Size:              cluster.Spec.Size,
-		Tasks:             cluster.Spec.Tasks,
-		Cores:             cores,
-		FluxRestfulPort:   cluster.Spec.FluxRestful.Port,
-		FluxRestfulBranch: cluster.Spec.FluxRestful.Branch,
-		Logging:           cluster.Spec.Logging,
+		FluxUser:    getFluxUser(cluster.Spec.FluxRestful.Username),
+		FluxToken:   getFluxToken(cluster.Spec.FluxRestful.Token),
+		MainHost:    mainHost,
+		Hosts:       hosts,
+		Container:   container,
+		Size:        cluster.Spec.Size,
+		Tasks:       cluster.Spec.Tasks,
+		Cores:       cores,
+		FluxRestful: cluster.Spec.FluxRestful,
+		Logging:     cluster.Spec.Logging,
 	}
 	t, err := template.New("wait-sh").Parse(waitToStartTemplate)
 	if err != nil {

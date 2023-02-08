@@ -1,16 +1,16 @@
 # TODO
 
+ - [ ] volume should have size request, not hard coded as it is now
+ - [ ] operator needs to clean up shared storage, if used
+
+### Maybe
+
  - [ ] try webhooks again
-
-### Design 3
-
- - [ ] can (and should) we use generics to reduce redudancy of code? (e.g., the `get<X>` functions) (@vsoch would like to do this!)
  - [ ] Events: deletion should clean up, and update should not be allowed (given rank 0 started)
  - [ ] Currently we have no representation of quota - we need to be able to set (and check) hard limits from the scheduler (or maybe we get that out of the box)?
  - [ ] klog can be changed to add V(2) to handle verbository from the command line, see https://pkg.go.dev/k8s.io/klog/v2
  - [ ] At some point we want more intelligent use of labels/selectors (I haven't really read about them yet)
  - [ ] We might eventually want a variable to control quorum expectation (e.g., rank 0 waiting or not)
- - [ ] Look into slurm feature (salloc option) to just start (locate resource and keep it going?) (do we still need this?)
 
 #### Completed
 

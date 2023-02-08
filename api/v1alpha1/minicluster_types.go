@@ -134,7 +134,9 @@ type FluxRestful struct {
 
 // Mini Cluster local volumes available to mount (these are on the host)
 type MiniClusterVolume struct {
-	Path   string            `json:"path"`
+	Path string `json:"path"`
+
+	// +optional
 	Labels map[string]string `json:"labels"`
 
 	// +kubebuilder:default="hostpath"
