@@ -152,7 +152,8 @@ func (r *MiniClusterReconciler) createPersistentVolume(
 			Labels:    volume.Labels,
 		},
 		Spec: corev1.PersistentVolumeSpec{
-			AccessModes: []corev1.PersistentVolumeAccessMode{corev1.ReadWriteMany},
+			PersistentVolumeReclaimPolicy: corev1.PersistentVolumeReclaimDelete,
+			AccessModes:                   []corev1.PersistentVolumeAccessMode{corev1.ReadWriteMany},
 			Capacity: map[corev1.ResourceName]resource.Quantity{
 				corev1.ResourceStorage: *resource.NewQuantity(1024, resource.BinarySI),
 			},
