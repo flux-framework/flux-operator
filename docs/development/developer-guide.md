@@ -64,17 +64,7 @@ $ make install
 
 Our "default" job config, or custom resource definition "CRD" can be found in [config/samples](https://github.com/flux-framework/flux-operator/tree/main/config/samples).
 We will walk through how to deploy this one, and then any of the ones in our examples gallery.
-First, before launching any jobs, making sure `localDeploy` is set to true in your CRD so you don't ask for a persistent volume claim!
-
-```yaml
-spec:
-# Set to true to use volume mounts instead of volume claims
-  localDeploy: true
-```
-
-The default is set to true (so a local volume in `/tmp` is used) but this won't work on an actual cloud Kubernetes cluster,
-and vice versa - the volume claim won't work locally. When you are sure this is good,
-and you've built and installed the operator, here is how to "launch"
+When you've built and installed the operator, here is how to "launch"
 the Mini Cluster (or if providing a command, an ephemeral job):
 
 ```bash
@@ -293,6 +283,7 @@ so that install locations and users are consistent. This assumes that:
  - flux-core / flux-sched with flux-security should be installed and ready to go.
  - If you haven't created a flux user, one will be created for you (with a common user id 1000)
  - Any executables that the flux user needs for your job should be on the path (if launching command directly)
+ - Do not have any requirements (data or executables in root's home)
  - The container (for now) should start with user root, and we run commands on behalf of flux.
  - You don't need to install the flux-restful-api (it will be installed by the operator)
  - munge should be install, and a key generated at `/etc/munge/munge.key`

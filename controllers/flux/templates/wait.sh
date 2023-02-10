@@ -6,18 +6,21 @@
 # needs to be updated with the config map that has ips!
 
 # Always run flux commands (and the broker) as flux user
-asFlux="sudo -u flux -E"
+# and ensure the home is targeted to be there too.
+asFlux="sudo -u flux -E PYTHONPATH=$PYTHONPATH -E PATH=$PATH"
+
+# We currently require sudo and an ubuntu base
+which sudo > /dev/null 2>&1 || (echo "sudo is required to be installed" && exit 1);
+which flux > /dev/null 2>&1 || (echo "flux is required to be installed" && exit 1);
+
+# Add a flux user (required) that should exist before pre-command
+sudo adduser --disabled-password --uid 1000 --gecos "" flux > /dev/null 2>&1 || {{ if not .Logging.QuietMode }} printf "flux user is already added.\n"{{ else }}true{{ end }}
 
 # If any preCommand logic is defined
 {{ .Container.PreCommand}}
 
 {{ if not .Logging.QuietMode }}# Show asFlux directive once
 printf "\nAs Flux prefix for flux commands: ${asFlux}\n"{{ end }}
-
-
-# We currently require sudo and an ubuntu base
-which sudo > /dev/null 2>&1 || (echo "sudo is required to be installed" && exit 1);
-which flux > /dev/null 2>&1 || (echo "flux is required to be installed" && exit 1);
 
 # We use the actual time command and not the wrapper, otherwise we get there is no argument -f
 {{ if .Logging.TimedMode }}which /usr/bin/time > /dev/null 2>&1 || (echo "/usr/bin/time is required to use logging.timed true" && exit 1);{{ end }}
@@ -123,9 +126,6 @@ cat /etc/flux/imp/conf.d/imp.toml
 
 printf "\n🐸 Broker Configuration\n"
 cat /etc/flux/config/broker.toml{{ end }}
-
-# Add a flux user (required)
-sudo adduser --disabled-password --uid 1000 --gecos "" flux > /dev/null 2>&1 || {{ if not .Logging.QuietMode }} printf "flux user is already added.\n"{{ else }}true{{ end }}
 
 # The rundir needs to be created first, and owned by user flux
 # Along with the state directory and curve certificate

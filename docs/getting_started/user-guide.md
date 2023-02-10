@@ -195,18 +195,8 @@ $ kubectl create namespace flux-operator
 
 ### 3. Apply your custom resource definition
 
-Then apply your custom resource definition or CRD - importantly, the localDeploy needs to be false if you are using a production cluster. 
-Basically, setting to true uses a local mount, which obviously won't work for different instances in the cloud! 
-
-```yaml
-spec:
-# Set to true to use volume mounts instead of volume claims
-  localDeploy: false
-```
-
-Also ensure that your custom resource definition matches the namespace you just created.
-Note that we don't have yet a production solution for a shared filesystem, but @vsoch is going to test this soon. Then apply your CRD. You can use 
-the default [testing one from the repository](https://github.com/flux-framework/flux-operator/blob/main/config/samples/flux-framework.org_v1alpha1_minicluster.yaml) 
+Ensure that your custom resource definition matches the namespace you just created.
+Then apply your CRD. You can use the default [testing one from the repository](https://github.com/flux-framework/flux-operator/blob/main/config/samples/flux-framework.org_v1alpha1_minicluster.yaml) 
 or any in our [examples](https://github.com/flux-framework/flux-operator/tree/main/examples) folder. Here is using the default we provide:
 
 ```bash

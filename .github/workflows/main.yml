@@ -64,7 +64,8 @@ jobs:
                ["timed", "ghcr.io/flux-framework/flux-restful-api:latest", 30],               
                ["debug", "ghcr.io/flux-framework/flux-restful-api:latest", 30],               
                ["flux-resource-list", "ghcr.io/flux-framework/flux-restful-api:latest", 30],
-               ["volumes", "ghcr.io/flux-framework/flux-restful-api:latest", 30]]
+               ["volumes", "ghcr.io/flux-framework/flux-restful-api:latest", 30],
+               ["snakemake", "ghcr.io/rse-ops/atacseq:app-latest", 30]]
         
     steps:
     - name: Clone the code

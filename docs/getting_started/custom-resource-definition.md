@@ -422,6 +422,31 @@ that is not a flux runner, you should write it into your own entrypoint.
     * Points
 ```
 
+As a good example use case, we use an `asFlux` prefix to run any particular flux command
+as the flux user. This defaults to the following:
+
+```bash
+asFlux="sudo -u flux -E PYTHONPATH=$PYTHONPATH -E PATH=$PATH"
+```
+
+However, let's say you have a use case that warrants passing on a custom set of environment
+variables. For example, when we want to use Flux with MPI + libfabric (EFA networking in AWS)
+we want these extra variables:
+
+```bash
+asFlux="sudo -u flux -E PYTHONPATH=$PYTHONPATH -E PATH=$PATH -E FI_EFA_USE_DEVICE_RDMA=1 -E RDMAV_FORK_SAFE=1"
+```
+
+Thus, we would define this line in our `preCommand` section. Since this runs directly after the default asFlux is defined,
+it will be over-ridden to use our variant. As a final example, for a snakemake workflow we are expected to write
+assets to a home directory, so we need to customize the entrypoint for that.
+
+```bash
+# Ensure the cache targets our flux user home
+asFlux="sudo -u flux -E PYTHONPATH=$PYTHONPATH -E PATH=$PATH -E HOME=/home/flux"
+```
+
+
 #### diagnostics
 
 Flux has a command that makes it easy to run diagnostics on a cluster, and we expose a boolean that makes it possible
