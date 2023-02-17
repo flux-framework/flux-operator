@@ -59,6 +59,19 @@ spec:
                         IMPORTANT: This is left here, but not used in favor of exposing
                         Flux via a Restful API. We Can remove this when that is finalized.'
                       type: string
+                    commands:
+                      description: More specific or detailed commands for just workers/broker
+                      properties:
+                        pre:
+                          description: pre command is run after global PreCommand,
+                            before anything else
+                          type: string
+                        runFluxAsRoot:
+                          default: false
+                          description: Run flux start as root - required for some
+                            storage binds
+                          type: boolean
+                      type: object
                     cores:
                       description: Cores the container should use
                       format: int32
@@ -83,6 +96,18 @@ spec:
                         also be set in the user interface to override here. This is
                         only valid for a FluxRunner
                       type: string
+                    fluxUser:
+                      description: Flux User, if created in the container
+                      properties:
+                        name:
+                          default: flux
+                          description: Flux user name
+                          type: string
+                        uid:
+                          default: 1000
+                          description: UID for the FluxUser
+                          type: integer
+                      type: object
                     image:
                       default: fluxrm/flux-sched:focal
                       description: Container image must contain flux and flux-sched
@@ -111,7 +136,8 @@ spec:
                       description: Special command to run at beginning of script,
                         directly after asFlux is defined as sudo -u flux -E (so you
                         can change that if desired.) This is only valid if FluxRunner
-                        is set (that writes a wait.sh script)
+                        is set (that writes a wait.sh script) This is for the indexed
+                        job pods and the certificate generation container.
                       type: string
                     pullAlways:
                       default: false
@@ -247,6 +273,16 @@ spec:
                   description: Mini Cluster local volumes available to mount (these
                     are on the host)
                   properties:
+                    annotations:
+                      additionalProperties:
+                        type: string
+                      description: Annotations for persistent volume claim
+                      type: object
+                    capacity:
+                      default: 5Gi
+                      description: Capacity (string) for PVC (storage request) to
+                        create PV
+                      type: string
                     class:
                       default: hostpath
                       type: string
@@ -255,6 +291,14 @@ spec:
                         type: string
                       type: object
                     path:
+                      type: string
+                    secret:
+                      description: Secret reference in Kubernetes with service account
+                        role
+                      type: string
+                    secretNamespace:
+                      default: default
+                      description: Secret namespace
                       type: string
                   required:
                   - path
@@ -829,6 +873,7 @@ spec:
         command:
         - /manager
         image: ghcr.io/flux-framework/flux-operator:latest
+        imagePullPolicy: Always
         livenessProbe:
           httpGet:
             path: /healthz
