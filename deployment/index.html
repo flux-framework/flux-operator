@@ -451,6 +451,13 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
+  <a href="minikube.html" class="md-nav__link">
+    <span title="/deployment/minikube.md (reference label)" class="md-ellipsis">Mini<wbr>Kube</span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="aws.html" class="md-nav__link">
     <span title="/deployment/aws.md (reference label)" class="md-ellipsis">Amazon Web Services</span>
   </a>
@@ -553,29 +560,59 @@
 any questions, please <a class="reference external" href="https://github.com/flux-framework/flux-operator/issues">let us know</a></p>
 <div class="toctree-wrapper compound">
 <ul>
+<li class="toctree-l1"><a class="reference internal" href="minikube.html">MiniKube</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="minikube.html#external-examples">External Examples</a></li>
+<li class="toctree-l2"><a class="reference internal" href="minikube.html#workflow-with-storage">Workflow with Storage</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="minikube.html#cluster">Cluster</a></li>
+<li class="toctree-l3"><a class="reference internal" href="minikube.html#prepare-data">Prepare Data</a></li>
+<li class="toctree-l3"><a class="reference internal" href="minikube.html#containers">Containers</a></li>
+<li class="toctree-l3"><a class="reference internal" href="minikube.html#mount-data">Mount Data</a></li>
+<li class="toctree-l3"><a class="reference internal" href="minikube.html#run-workflow">Run Workflow</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="minikube.html#development-notes">Development Notes</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="minikube.html#debugging-containers">Debugging Containers</a></li>
+<li class="toctree-l3"><a class="reference internal" href="minikube.html#cleaning-up">Cleaning up</a></li>
+</ul>
+</li>
+</ul>
+</li>
 <li class="toctree-l1"><a class="reference internal" href="aws.html">Amazon Web Services</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="aws.html#install">Install</a></li>
-<li class="toctree-l2"><a class="reference internal" href="aws.html#setup-ssh">Setup SSH</a></li>
-<li class="toctree-l2"><a class="reference internal" href="aws.html#create-cluster">Create Cluster</a></li>
-<li class="toctree-l2"><a class="reference internal" href="aws.html#deploy-operator">Deploy Operator</a></li>
+<li class="toctree-l2"><a class="reference internal" href="aws.html#setup">Setup</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="aws.html#install">Install</a></li>
+<li class="toctree-l3"><a class="reference internal" href="aws.html#setup-ssh">Setup SSH</a></li>
+<li class="toctree-l3"><a class="reference internal" href="aws.html#create-cluster">Create Cluster</a></li>
+<li class="toctree-l3"><a class="reference internal" href="aws.html#deploy-operator">Deploy Operator</a></li>
+</ul>
+</li>
 <li class="toctree-l2"><a class="reference internal" href="aws.html#clean-up">Clean up</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="google.html">Google Cloud</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="google.html#lammps-on-google-kubernetes-engine">Lammps on Google Kubernetes Engine</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="google.html#custom-resource-definition">Custom Resource Definition</a></li>
+<li class="toctree-l2"><a class="reference internal" href="google.html#setup">Setup</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="google.html#install">Install</a></li>
 <li class="toctree-l3"><a class="reference internal" href="google.html#create-cluster">Create Cluster</a></li>
 <li class="toctree-l3"><a class="reference internal" href="google.html#get-credentials">Get Credentials</a></li>
 <li class="toctree-l3"><a class="reference internal" href="google.html#deploy-operator">Deploy Operator</a></li>
 <li class="toctree-l3"><a class="reference internal" href="google.html#create-flux-operator-namespace">Create Flux Operator namespace</a></li>
-<li class="toctree-l3"><a class="reference internal" href="google.html#create-the-lammps-job">Create the Lammps Job</a></li>
-<li class="toctree-l3"><a class="reference internal" href="google.html#clean-up">Clean up</a></li>
 </ul>
 </li>
+<li class="toctree-l2"><a class="reference internal" href="google.html#lammps-on-google-kubernetes-engine">Lammps on Google Kubernetes Engine</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="google.html#custom-resource-definition">Custom Resource Definition</a></li>
+<li class="toctree-l3"><a class="reference internal" href="google.html#create-the-lammps-job">Create the Lammps Job</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="google.html#snakemake-requiring-storage-on-google-kubernetes-engine">Snakemake (requiring storage) on Google Kubernetes Engine</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="google.html#prepare-data">Prepare Data</a></li>
+<li class="toctree-l3"><a class="reference internal" href="google.html#install-the-constainer-storage-driver-csi">Install the Constainer Storage Driver (CSI)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="google.html#permissions-via-secrets">Permissions via Secrets</a></li>
+<li class="toctree-l3"><a class="reference internal" href="google.html#storage-class">Storage Class</a></li>
+<li class="toctree-l3"><a class="reference internal" href="google.html#snakemake-minicluster">Snakemake MiniCluster</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="google.html#clean-up">Clean up</a></li>
 <li class="toctree-l2"><a class="reference internal" href="google.html#customization-and-debugging">Customization and Debugging</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="google.html#firewall">Firewall</a></li>
-<li class="toctree-l3"><a class="reference internal" href="google.html#use-a-different-flux-operator-container">Use a Different Flux Operator Container</a></li>
 </ul>
 </li>
 </ul>
@@ -589,7 +626,7 @@ any questions, please <a class="reference external" href="https://github.com/flu
   <small>
     
       Last update:
-      Jan 27, 2023
+      Feb 17, 2023
     
   </small>
 </div>
@@ -636,13 +673,13 @@ any questions, please <a class="reference external" href="https://github.com/flu
       
       
         
-        <a href="aws.html" class="md-footer__link md-footer__link--next" aria-label="Next: Amazon Web Services" rel="next">
+        <a href="minikube.html" class="md-footer__link md-footer__link--next" aria-label="Next: MiniKube" rel="next">
           <div class="md-footer__title">
             <div class="md-ellipsis">
               <span class="md-footer__direction">
                 Next
               </span>
-              Amazon Web Services
+              MiniKube
             </div>
           </div>
           <div class="md-footer__button md-icon">

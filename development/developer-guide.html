@@ -839,15 +839,7 @@ $ make install
 <h5 id="default-config">Default Config<a class="headerlink" href="#default-config" title="Permalink to this heading">¶</a></h5>
 <p>Our “default” job config, or custom resource definition “CRD” can be found in <a class="reference external" href="https://github.com/flux-framework/flux-operator/tree/main/config/samples">config/samples</a>.
 We will walk through how to deploy this one, and then any of the ones in our examples gallery.
-First, before launching any jobs, making sure <code class="docutils literal notranslate"><span class="pre">localDeploy</span></code> is set to true in your CRD so you don’t ask for a persistent volume claim!</p>
-<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><code><span class="nt">spec</span><span class="p">:</span>
-<span class="c1"># Set to true to use volume mounts instead of volume claims</span>
-<span class="w">  </span><span class="nt">localDeploy</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
-</code></pre></div>
-</div>
-<p>The default is set to true (so a local volume in <code class="docutils literal notranslate"><span class="pre">/tmp</span></code> is used) but this won’t work on an actual cloud Kubernetes cluster,
-and vice versa - the volume claim won’t work locally. When you are sure this is good,
-and you’ve built and installed the operator, here is how to “launch”
+When you’ve built and installed the operator, here is how to “launch”
 the Mini Cluster (or if providing a command, an ephemeral job):</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span>kubectl<span class="w"> </span>apply<span class="w"> </span>-f<span class="w"> </span>config/samples/flux-framework.org_v1alpha1_minicluster.yaml
 </code></pre></div>
@@ -999,13 +991,14 @@ Generally we recommend using the flux-sched base image
 so that install locations and users are consistent. This assumes that:</p>
 <ul class="simple">
 <li><p>we are currently starting focus on supporting debian bases</p></li>
-<li><p>if you created the flux user, it has uid 1000</p></li>
+<li><p>if you created the flux user, it has uid 1000 (unless you customize <code class="docutils literal notranslate"><span class="pre">fluxUser.Uid</span></code>)</p></li>
 <li><p>sudo is available in the container (apt-get install -y sudo)</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">/etc/flux</span></code> is used for configuration and general setup</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">/usr/libexec/flux</span></code> has executables like flux-imp, flux-shell</p></li>
 <li><p>flux-core / flux-sched with flux-security should be installed and ready to go.</p></li>
-<li><p>If you haven’t created a flux user, one will be created for you (with a common user id 1000)</p></li>
+<li><p>If you haven’t created a flux user, one will be created for you (with a common user id 1000 or <code class="docutils literal notranslate"><span class="pre">fluxuser.Uid</span></code>)</p></li>
 <li><p>Any executables that the flux user needs for your job should be on the path (if launching command directly)</p></li>
+<li><p>Do not have any requirements (data or executables in root’s home)</p></li>
 <li><p>The container (for now) should start with user root, and we run commands on behalf of flux.</p></li>
 <li><p>You don’t need to install the flux-restful-api (it will be installed by the operator)</p></li>
 <li><p>munge should be install, and a key generated at <code class="docutils literal notranslate"><span class="pre">/etc/munge/munge.key</span></code></p></li>
@@ -1135,7 +1128,7 @@ server to preview:</p>
   <small>
     
       Last update:
-      Jan 27, 2023
+      Feb 17, 2023
     
   </small>
 </div>

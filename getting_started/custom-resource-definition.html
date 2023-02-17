@@ -508,15 +508,49 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#localdeploy" class="md-nav__link">
-    <span title="/getting_started/custom-resource-definition.md#localdeploy (reference label)" class="md-ellipsis">local<wbr>Deploy</span>
+  <a href="#volumes" class="md-nav__link">
+    <span title="/getting_started/custom-resource-definition.md#volumes (reference label)" class="md-ellipsis">volumes</span>
+  </a>
+  
+    <nav class="md-nav" aria-label="volumes">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#volume-ids" class="md-nav__link">
+    <span title="/getting_started/custom-resource-definition.md#volume-ids (reference label)" class="md-ellipsis">volume ids</span>
   </a>
   
 </li>
         
           <li class="md-nav__item">
-  <a href="#volumes" class="md-nav__link">
-    <span title="/getting_started/custom-resource-definition.md#volumes (reference label)" class="md-ellipsis">volumes</span>
+  <a href="#labels" class="md-nav__link">
+    <span title="/getting_started/custom-resource-definition.md#labels (reference label)" class="md-ellipsis">labels</span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#request-storage-size" class="md-nav__link">
+    <span title="/getting_started/custom-resource-definition.md#request-storage-size (reference label)" class="md-ellipsis">request storage size</span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#secret" class="md-nav__link">
+    <span title="/getting_started/custom-resource-definition.md#secret (reference label)" class="md-ellipsis">secret</span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#cleanup" class="md-nav__link">
+    <span title="/getting_started/custom-resource-definition.md#cleanup (reference label)" class="md-ellipsis">cleanup</span>
   </a>
   
 </li>
@@ -677,6 +711,40 @@
           <li class="md-nav__item">
   <a href="#precommand" class="md-nav__link">
     <span title="/getting_started/custom-resource-definition.md#precommand (reference label)" class="md-ellipsis">pre<wbr>Command</span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#commands" class="md-nav__link">
+    <span title="/getting_started/custom-resource-definition.md#commands (reference label)" class="md-ellipsis">commands</span>
+  </a>
+  
+    <nav class="md-nav" aria-label="commands">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#pre" class="md-nav__link">
+    <span title="/getting_started/custom-resource-definition.md#pre (reference label)" class="md-ellipsis">pre</span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#runfluxasroot" class="md-nav__link">
+    <span title="/getting_started/custom-resource-definition.md#runfluxasroot (reference label)" class="md-ellipsis">run<wbr>Flux<wbr>As<wbr>Root</span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#fluxuser" class="md-nav__link">
+    <span title="/getting_started/custom-resource-definition.md#fluxuser (reference label)" class="md-ellipsis">flux<wbr>User</span>
   </a>
   
 </li>
@@ -955,28 +1023,71 @@ If a Job is suspended (at creation or through an update), this timer will effect
 <span class="w">  </span><span class="nt">deadlineSeconds</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">100</span>
 </code></pre></div>
 </div>
-<h3 id="localdeploy">localDeploy<a class="headerlink" href="#localdeploy" title="Permalink to this heading">¶</a></h3>
-<p>This is a boolean to indicate that you are doing a local deploy. What it is really determining is if we should
-ask for a volume mount (e.g., binding to a temporary directory) vs. a volume claim (typically only available)
-in production level clusters. If you are developing or working locally using, for example, MiniKube, you
-likely want to set this to True.</p>
-<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><code><span class="w">  </span><span class="c1"># Set to true to use volume mounts instead of volume claims</span>
-<span class="w">  </span><span class="nt">localDeploy</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
-</code></pre></div>
-</div>
 <h3 id="volumes">volumes<a class="headerlink" href="#volumes" title="Permalink to this heading">¶</a></h3>
-<p>Volumes can be defined on the level of the MiniCluster that are then used by containers.
-These volumes are local host volumes, and should be named (the key for the section)
-with a path:</p>
+<p>Volumes can be defined on the level of the MiniCluster that are then used by containers.</p>
+<ul class="simple">
+<li><p>For MiniKube, these volumes are expected to be inside of the VM, e.g., accessed via <code class="docutils literal notranslate"><span class="pre">minikube</span> <span class="pre">ssh</span></code></p></li>
+<li><p>For an actual cluster, they should be on the node running the pod.</p></li>
+</ul>
+<h4 id="volume-ids">volume ids<a class="headerlink" href="#volume-ids" title="Permalink to this heading">¶</a></h4>
+<p>For each volume under “volumes” we enforce a unique name by way of using key values - e.g., “myvolume”
+in the example below can then be referenced for a container:</p>
 <div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><code><span class="nt">volumes</span><span class="p">:</span>
 <span class="w">  </span><span class="nt">myvolume</span><span class="p">:</span>
 <span class="w">    </span><span class="nt">path</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">/full/path/to/volume</span>
-<span class="w">    </span><span class="nt">readOnly</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
+<span class="w">    </span><span class="nt">class</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">hostpath</span>
 </code></pre></div>
 </div>
-<p>By default they will be read only unless you set <code class="docutils literal notranslate"><span class="pre">readOnly</span></code> to false.
-Since we haven’t implemented this for a cloud resource yet, this currently just works
-with localDeploy is set to true, and we can adjust this when we test in a cloud.</p>
+<p>The “class” above (which you can leave out) defaults to hostpath, and should be the storage class that your cluster provides.
+The Operator createst the “hostpath” volume claim. This currently is always created as a host path volume claim in MiniKube,
+and likely in the future will have different logic if it varies from that.</p>
+<h4 id="labels">labels<a class="headerlink" href="#labels" title="Permalink to this heading">¶</a></h4>
+<p>You can add labels:</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><code><span class="nt">volumes</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">myvolume</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">path</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">/full/path/to/volume</span>
+<span class="w">    </span><span class="nt">class</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">hostpath</span>
+<span class="w">      </span><span class="l l-Scalar l-Scalar-Plain">labels</span><span class="p p-Indicator">:</span>
+<span class="w">        </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;local&quot;</span>
+</code></pre></div>
+</div>
+<h4 id="request-storage-size">request storage size<a class="headerlink" href="#request-storage-size" title="Permalink to this heading">¶</a></h4>
+<p>By default, a capacity request is “5Gi”, and we only do this because the field is required. However, keep in mind
+for many some cloud storage interfaces there is no concept of a max.
+This is defined as a string to be parsed. To tweak that, meaning
+that this container will request this amount of storage for the container (and here we show a different storageclass
+for Google Cloud)</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><code><span class="nt">volumes</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">myvolume</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">path</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">/full/path/to/volume</span>
+<span class="w">    </span><span class="nt">capacity</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">5Gi</span>
+<span class="w">    </span><span class="nt">class</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">csi-gcs</span>
+</code></pre></div>
+</div>
+<p>Since storage classes are created separately (not by the operator) you should check with your storage
+class to ensure resource limits work with your selection above.</p>
+<h4 id="secret">secret<a class="headerlink" href="#secret" title="Permalink to this heading">¶</a></h4>
+<p>For a CSI (container storage interface) you usually need to provide a secret reference. For example,
+for GKE we create a service account with the appropriate permissions, and then apply them as a secret named <code class="docutils literal notranslate"><span class="pre">csi-gks-secret</span></code>:</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><code><span class="nt">volumes</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">myvolume</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">path</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">/full/path/to/volume</span>
+<span class="w">    </span><span class="nt">capacity</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1Gi</span>
+<span class="w">    </span><span class="nt">class</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">csi-gcs</span>
+<span class="w">    </span><span class="nt">secret</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;csi-gcs-secret&quot;</span>
+</code></pre></div>
+</div>
+<p>The secret (for now) should be in the default namespace.</p>
+<h3 id="cleanup">cleanup<a class="headerlink" href="#cleanup" title="Permalink to this heading">¶</a></h3>
+<p>If you add any kind of persistent volume to your MiniCluster, it will likely need a cleanup after the fact
+(after you bring the MiniCluster down). By default, the operator will perform this cleanup, checking if the
+Job status is “Completed” and then removing the pods, Persistent Volume Claims, and Persistent Volumes.
+If you want to disable this cleanup:</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><code><span class="w">  </span><span class="nt">cleanup</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
+</code></pre></div>
+</div>
+<p>If you are streaming the logs with <code class="docutils literal notranslate"><span class="pre">kubectl</span> <span class="pre">logs</span></code> the steam would stop when the broker pod is completed,
+so typically you will get the logs as long as you are streaming when the job starts running.</p>
 <h3 id="logging">logging<a class="headerlink" href="#logging" title="Permalink to this heading">¶</a></h3>
 <p>We provide simple types of “logging” within the main script that is run for the job.
 If you don’t set any variables, you’ll get the most verbosity with timing of the main
@@ -1176,10 +1287,9 @@ they should not be touched).</p>
 <h4 id="precommand">preCommand<a class="headerlink" href="#precommand" title="Permalink to this heading">¶</a></h4>
 <p>It might be that you want some custom logic at the beginning of your script.
 E.g., perhaps you need to source an environment of interest! To support this we allow
-for a string (multiple lines possible) of custom logic to do that. Remember
-that since this is written into a flux runner wait.sh, this will only be
-used for a Flux runner script. If you need custom logic in a service container
-that is not a flux runner, you should write it into your own entrypoint.</p>
+for a string (multiple lines possible) of custom logic to do that. This
+“global” preCommand will be run for both flux workers (including the broker)
+and the certificate generation script.</p>
 <div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><code><span class="w">  </span><span class="c1"># The pipe preserves line breaks</span>
 <span class="w">  </span><span class="nt">preCommand</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">|</span>
 <span class="w">    </span><span class="no">### Heading</span>
@@ -1188,6 +1298,67 @@ that is not a flux runner, you should write it into your own entrypoint.</p>
 <span class="w">    </span><span class="no">* Points</span>
 </code></pre></div>
 </div>
+<p>As a good example use case, we use an <code class="docutils literal notranslate"><span class="pre">asFlux</span></code> prefix to run any particular flux command
+as the flux user. This defaults to the following giving you have the default <code class="docutils literal notranslate"><span class="pre">runAsFluxUser</span></code> to true:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code><span class="nv">asFlux</span><span class="o">=</span><span class="s2">&quot;sudo -u flux -E PYTHONPATH=</span><span class="nv">$PYTHONPATH</span><span class="s2"> -E PATH=</span><span class="nv">$PATH</span><span class="s2">&quot;</span>
+</code></pre></div>
+</div>
+<p>However, let’s say you have a use case that warrants passing on a custom set of environment
+variables. For example, when we want to use Flux with MPI + libfabric (EFA networking in AWS)
+we want these extra variables:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code><span class="nv">asFlux</span><span class="o">=</span><span class="s2">&quot;sudo -u flux -E PYTHONPATH=</span><span class="nv">$PYTHONPATH</span><span class="s2"> -E PATH=</span><span class="nv">$PATH</span><span class="s2"> -E FI_EFA_USE_DEVICE_RDMA=1 -E RDMAV_FORK_SAFE=1&quot;</span>
+</code></pre></div>
+</div>
+<p>Thus, we would define this line in our <code class="docutils literal notranslate"><span class="pre">preCommand</span></code> section. Since this runs directly after the default asFlux is defined,
+it will be over-ridden to use our variant. As a final example, for a snakemake workflow we are expected to write
+assets to a home directory, so we need to customize the entrypoint for that.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code><span class="c1"># Ensure the cache targets our flux user home</span>
+<span class="nv">asFlux</span><span class="o">=</span><span class="s2">&quot;sudo -u flux -E PYTHONPATH=</span><span class="nv">$PYTHONPATH</span><span class="s2"> -E PATH=</span><span class="nv">$PATH</span><span class="s2"> -E HOME=/home/flux&quot;</span>
+</code></pre></div>
+</div>
+<h4 id="commands">commands<a class="headerlink" href="#commands" title="Permalink to this heading">¶</a></h4>
+<p>A special “commands” section is available for commands that you want to run in the broker and workers containers,
+but not during certificate generation. As an example, if you print extra output to the certificate generator,
+it will mangle the certificate output. Instead, you could write debug statements in this section.</p>
+<h5 id="pre">pre<a class="headerlink" href="#pre" title="Permalink to this heading">¶</a></h5>
+<p>The “pre” command is akin to <code class="docutils literal notranslate"><span class="pre">preCommand</span></code> but only run for the Flux workers and broker. Here is an example:</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><code><span class="nt">containers</span><span class="p">:</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">image</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">my-flux-image</span>
+<span class="w">    </span><span class="l l-Scalar l-Scalar-Plain">...</span>
+<span class="w">    </span><span class="nt">commands</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">pre</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">|</span>
+<span class="w">        </span><span class="no"># Commands that might print to stdout/stderr to debug, etc.</span>
+<span class="w">        </span><span class="no">echo &quot;I am running the pre-command&quot;</span>
+<span class="w">        </span><span class="no">ls /workdir</span>
+</code></pre></div>
+</div>
+<h5 id="runfluxasroot">runFluxAsRoot<a class="headerlink" href="#runfluxasroot" title="Permalink to this heading">¶</a></h5>
+<p>For different storage interfaces (e.g., CSI means “Container Storage Interface”) you might need to
+run flux as root (and not change permission of the mounted working directory) to be owned by the flux user. You
+can set this flag to enable that:</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><code><span class="nt">containers</span><span class="p">:</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">image</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">my-flux-image</span>
+<span class="w">    </span><span class="l l-Scalar l-Scalar-Plain">...</span>
+<span class="w">    </span><span class="nt">commands</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">runFluxAsRoot</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+</code></pre></div>
+</div>
+<p>This defaults to false, meaning we run everything as the Flux user, and you are encouraged to try to figure out
+setting up your storage to be owned by that user.</p>
+<h4 id="fluxuser">fluxUser<a class="headerlink" href="#fluxuser" title="Permalink to this heading">¶</a></h4>
+<p>If you need to change the uid or name for the flux user, you can define that here.</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><code><span class="nt">containers</span><span class="p">:</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">image</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">my-flux-image</span>
+<span class="w">    </span><span class="l l-Scalar l-Scalar-Plain">...</span>
+<span class="w">    </span><span class="nt">fluxuser</span><span class="p">:</span>
+<span class="w">      </span><span class="c1"># Defaults to 1000</span>
+<span class="w">      </span><span class="nt">uid</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1002</span>
+<span class="w">      </span><span class="c1"># Defaults to flux</span>
+<span class="w">      </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">flux</span>
+</code></pre></div>
+</div>
+<p>Note that if the “flux” user already exists in your container, the uid will be discovered and you don’t need
+to set this. These parameters are only if you want the flux user to be created with a different unique id.</p>
 <h4 id="diagnostics">diagnostics<a class="headerlink" href="#diagnostics" title="Permalink to this heading">¶</a></h4>
 <p>Flux has a command that makes it easy to run diagnostics on a cluster, and we expose a boolean that makes it possible
 to run that (instead of your job or starting the server). Since you might only want this for a specific container,
@@ -1198,18 +1369,22 @@ we provide this argument on the level of the container. To enable this, set this
 </code></pre></div>
 </div>
 <h3 id="id2">volumes<a class="headerlink" href="#id2" title="Permalink to this heading">¶</a></h3>
-<p>Volumes that are defined on the level of the MiniCluster can be referenced on the level
-of the container to be mounted into them.
-As an example, here is how we specify the volume <code class="docutils literal notranslate"><span class="pre">myvolume</span></code> to be mounted to the container at <code class="docutils literal notranslate"><span class="pre">/data</span></code>.</p>
+<p>Volumes that are defined on the level of the container must be defined at the top level of the MiniCluster.
+As an example, here is how we tell the container to use the already defined volume “myvolume” to be mounted
+in the container as “/data”:</p>
 <div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><code><span class="nt">volumes</span><span class="p">:</span>
 <span class="w">  </span><span class="nt">myvolume</span><span class="p">:</span>
 <span class="w">    </span><span class="nt">path</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">/data</span>
 </code></pre></div>
 </div>
 <p>The <code class="docutils literal notranslate"><span class="pre">myvolume</span></code> key must be defined in the MiniCluster set of volumes, and this is checked.
-Also note that we currently don’t support shared filesystem volumes for production
-Kubernetes deploys - this only works for a local deploy on your host. We will
-work on this soon.</p>
+If you want to change the readonly status to true:</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><code><span class="nt">volumes</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">myvolume</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">path</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">/data</span>
+<span class="w">    </span><span class="nt">readonly</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+</code></pre></div>
+</div>
 <h3 id="fluxrestful">fluxRestful<a class="headerlink" href="#fluxrestful" title="Permalink to this heading">¶</a></h3>
 <p>The “fluxRestful” section has a few parameters to dictate the installation of the
 <a class="reference external" href="https://github.com/flux-framework/flux-restful-api">Flux Restful API</a>, which provides
@@ -1236,7 +1411,7 @@ It defaults to 5000.</p>
   <small>
     
       Last update:
-      Jan 27, 2023
+      Feb 17, 2023
     
   </small>
 </div>

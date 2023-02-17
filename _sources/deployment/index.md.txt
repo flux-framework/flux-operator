@@ -5,6 +5,7 @@ any questions, please [let us know](https://github.com/flux-framework/flux-opera
 
 ```{toctree}
 :maxdepth: 3
+minikube
 aws
 google
 ```

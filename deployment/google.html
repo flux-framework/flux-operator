@@ -454,6 +454,21 @@
   
   
     <li class="md-nav__item">
+      <a href="minikube.html" class="md-nav__link">
+        <span title="/deployment/minikube.md (reference label)" class="md-ellipsis">Mini<wbr>Kube</span>
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="aws.html" class="md-nav__link">
         <span title="/deployment/aws.md (reference label)" class="md-ellipsis">Amazon Web Services</span>
       </a>
@@ -500,19 +515,12 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#lammps-on-google-kubernetes-engine" class="md-nav__link">
-    <span title="/deployment/google.md#lammps-on-google-kubernetes-engine (reference label)" class="md-ellipsis">Lammps on Google Kubernetes Engine</span>
+  <a href="#setup" class="md-nav__link">
+    <span title="/deployment/google.md#setup (reference label)" class="md-ellipsis">Setup</span>
   </a>
   
-    <nav class="md-nav" aria-label="Lammps on Google Kubernetes Engine">
+    <nav class="md-nav" aria-label="Setup">
       <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#custom-resource-definition" class="md-nav__link">
-    <span title="/deployment/google.md#custom-resource-definition (reference label)" class="md-ellipsis">Custom Resource Definition</span>
-  </a>
-  
-</li>
         
           <li class="md-nav__item">
   <a href="#install" class="md-nav__link">
@@ -549,6 +557,26 @@
   
 </li>
         
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#lammps-on-google-kubernetes-engine" class="md-nav__link">
+    <span title="/deployment/google.md#lammps-on-google-kubernetes-engine (reference label)" class="md-ellipsis">Lammps on Google Kubernetes Engine</span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Lammps on Google Kubernetes Engine">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#custom-resource-definition" class="md-nav__link">
+    <span title="/deployment/google.md#custom-resource-definition (reference label)" class="md-ellipsis">Custom Resource Definition</span>
+  </a>
+  
+</li>
+        
           <li class="md-nav__item">
   <a href="#create-the-lammps-job" class="md-nav__link">
     <span title="/deployment/google.md#create-the-lammps-job (reference label)" class="md-ellipsis">Create the Lammps Job</span>
@@ -556,15 +584,63 @@
   
 </li>
         
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#snakemake-requiring-storage-on-google-kubernetes-engine" class="md-nav__link">
+    <span title="/deployment/google.md#snakemake-requiring-storage-on-google-kubernetes-engine (reference label)" class="md-ellipsis">Snakemake <wbr>(requiring storage) on Google Kubernetes Engine</span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Snakemake (requiring storage) on Google Kubernetes Engine">
+      <ul class="md-nav__list">
+        
           <li class="md-nav__item">
-  <a href="#clean-up" class="md-nav__link">
-    <span title="/deployment/google.md#clean-up (reference label)" class="md-ellipsis">Clean up</span>
+  <a href="#prepare-data" class="md-nav__link">
+    <span title="/deployment/google.md#prepare-data (reference label)" class="md-ellipsis">Prepare Data</span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#install-the-constainer-storage-driver-csi" class="md-nav__link">
+    <span title="/deployment/google.md#install-the-constainer-storage-driver-csi (reference label)" class="md-ellipsis">Install the Constainer Storage Driver <wbr>(CSI)</span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#permissions-via-secrets" class="md-nav__link">
+    <span title="/deployment/google.md#permissions-via-secrets (reference label)" class="md-ellipsis">Permissions via Secrets</span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#storage-class" class="md-nav__link">
+    <span title="/deployment/google.md#storage-class (reference label)" class="md-ellipsis">Storage Class</span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#snakemake-minicluster" class="md-nav__link">
+    <span title="/deployment/google.md#snakemake-minicluster (reference label)" class="md-ellipsis">Snakemake Mini<wbr>Cluster</span>
   </a>
   
 </li>
         
       </ul>
     </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#clean-up" class="md-nav__link">
+    <span title="/deployment/google.md#clean-up (reference label)" class="md-ellipsis">Clean up</span>
+  </a>
   
 </li>
       
@@ -579,13 +655,6 @@
           <li class="md-nav__item">
   <a href="#firewall" class="md-nav__link">
     <span title="/deployment/google.md#firewall (reference label)" class="md-ellipsis">Firewall</span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#use-a-different-flux-operator-container" class="md-nav__link">
-    <span title="/deployment/google.md#use-a-different-flux-operator-container (reference label)" class="md-ellipsis">Use a Different Flux Operator Container</span>
   </a>
   
 </li>
@@ -692,41 +761,9 @@
 so it works really well on Google Cloud, and it’s super fun to use the Flux Operator there! This
 guide will walk you through the basics. We will be deploying a simple <a class="reference external" href="https://www.lammps.org/">lammps</a> workflow as
 shown below.</p>
-<h2 id="lammps-on-google-kubernetes-engine">Lammps on Google Kubernetes Engine<a class="headerlink" href="#lammps-on-google-kubernetes-engine" title="Permalink to this heading">¶</a></h2>
-<p>In this short experiment we will run the Flux Operator on Google Cloud, at
-at a fairly small size intended for development.</p>
-<h3 id="custom-resource-definition">Custom Resource Definition<a class="headerlink" href="#custom-resource-definition" title="Permalink to this heading">¶</a></h3>
-<p>The Custom Resource Definition (CRD) defines our Mini Cluster, and is what we hand to the flux
-operator to create it.  Here is the CRD for a small lammps run.</p>
-<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><code><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">flux-framework.org/v1alpha1</span>
-<span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">MiniCluster</span>
-<span class="nt">metadata</span><span class="p">:</span>
-<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">flux-sample</span>
-<span class="w">  </span><span class="nt">namespace</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">flux-operator</span>
-<span class="nt">spec</span><span class="p">:</span>
-<span class="w">  </span><span class="c1"># localDeploy needs to be false</span>
-<span class="w">  </span><span class="nt">localDeploy</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
-
-<span class="w">  </span><span class="c1"># Number of pods to create for MiniCluster</span>
-<span class="w">  </span><span class="nt">size</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">4</span>
-
-<span class="w">  </span><span class="c1"># Disable verbose output</span>
-<span class="w">  </span><span class="nt">test</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
-
-<span class="w">  </span><span class="c1"># This is a list because a pod can support multiple containers</span>
-<span class="w">  </span><span class="nt">containers</span><span class="p">:</span>
-<span class="w">    </span><span class="c1"># The container URI to pull (currently needs to be public)</span>
-<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">image</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ghcr.io/rse-ops/lammps:flux-sched-focal-v0.24.0</span>
-
-<span class="w">      </span><span class="c1"># You can set the working directory if your container WORKDIR is not correct.</span>
-<span class="w">      </span><span class="nt">workingDir</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">/home/flux/examples/reaxff/HNS</span>
-<span class="w">      </span><span class="nt">command</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">lmp -v x 2 -v y 2 -v z 2 -in in.reaxc.hns -nocite</span>
-
-<span class="w">      </span><span class="c1"># This only matters if test is false</span>
-<span class="w">      </span><span class="nt">fluxLogLevel</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">7</span>
-</code></pre></div>
-</div>
-<p>You can save the above file as <code class="docutils literal notranslate"><span class="pre">minicluster-lammps.yaml</span></code> to get started.</p>
+<h2 id="setup">Setup<a class="headerlink" href="#setup" title="Permalink to this heading">¶</a></h2>
+<p>Whether you choose the LAMMPS or Snakemake tutorial below, the setup for Google cloud is the same!
+Follow these steps and then continue on to either of the tutorials.</p>
 <h3 id="install">Install<a class="headerlink" href="#install" title="Permalink to this heading">¶</a></h3>
 <p>You should first <a class="reference external" href="https://cloud.google.com/sdk/docs/quickstarts">install gcloud</a>
 and ensure you are logged in and have kubectl installed:</p>
@@ -747,17 +784,17 @@ to be cheaper (and closer to me). First, here is our project for easy access:</p
 </code></pre></div>
 </div>
 <p>Replace the above with your project name, of course!</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span>gcloud<span class="w"> </span>container<span class="w"> </span>clusters<span class="w"> </span>create<span class="w"> </span>lammps-cluster<span class="w"> </span>--project<span class="w"> </span><span class="nv">$GOOGLE_PROJECT</span><span class="w"> </span><span class="se">\</span>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span>gcloud<span class="w"> </span>container<span class="w"> </span>clusters<span class="w"> </span>create<span class="w"> </span>flux-cluster<span class="w"> </span>--project<span class="w"> </span><span class="nv">$GOOGLE_PROJECT</span><span class="w"> </span><span class="se">\</span>
 <span class="w">    </span>--zone<span class="w"> </span>us-central1-a<span class="w"> </span>--cluster-version<span class="w"> </span><span class="m">1</span>.23<span class="w"> </span>--machine-type<span class="w"> </span>n1-standard-1<span class="w"> </span><span class="se">\</span>
-<span class="w">    </span>--num-nodes<span class="o">=</span><span class="m">4</span><span class="w"> </span>--enable-network-policy<span class="w"> </span>--tags<span class="o">=</span>lammps-cluster<span class="w"> </span>--enable-intra-node-visibility
+<span class="w">    </span>--num-nodes<span class="o">=</span><span class="m">4</span><span class="w"> </span>--enable-network-policy<span class="w"> </span>--tags<span class="o">=</span>flux-cluster<span class="w"> </span>--enable-intra-node-visibility
 </code></pre></div>
 </div>
 <p>Note that not all of the flags above might be necessary - I did a lot of testing to get
 this working and didn’t go back and try removing things after the fact!
 If you want to use cloud dns instead (after <a class="reference external" href="https://console.cloud.google.com/apis/library/dns.googleapis.com">enabling it</a>)</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span>gcloud<span class="w"> </span>beta<span class="w"> </span>container<span class="w"> </span>clusters<span class="w"> </span>create<span class="w"> </span>lammps-cluster<span class="w"> </span>--project<span class="w"> </span><span class="nv">$GOOGLE_PROJECT</span><span class="w"> </span><span class="se">\</span>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span>gcloud<span class="w"> </span>beta<span class="w"> </span>container<span class="w"> </span>clusters<span class="w"> </span>create<span class="w"> </span>flux-cluster<span class="w"> </span>--project<span class="w"> </span><span class="nv">$GOOGLE_PROJECT</span><span class="w"> </span><span class="se">\</span>
 <span class="w">    </span>--zone<span class="w"> </span>us-central1-a<span class="w"> </span>--cluster-version<span class="w"> </span><span class="m">1</span>.23<span class="w"> </span>--machine-type<span class="w"> </span>n1-standard-1<span class="w"> </span><span class="se">\</span>
-<span class="w">    </span>--num-nodes<span class="o">=</span><span class="m">4</span><span class="w"> </span>--enable-network-policy<span class="w"> </span>--tags<span class="o">=</span>lammps-cluster<span class="w"> </span>--enable-intra-node-visibility<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--num-nodes<span class="o">=</span><span class="m">4</span><span class="w"> </span>--enable-network-policy<span class="w"> </span>--tags<span class="o">=</span>flux-cluster<span class="w"> </span>--enable-intra-node-visibility<span class="w"> </span><span class="se">\</span>
 <span class="w">    </span>--cluster-dns<span class="o">=</span>clouddns<span class="w"> </span><span class="se">\</span>
 <span class="w">    </span>--cluster-dns-scope<span class="o">=</span>cluster
 </code></pre></div>
@@ -771,11 +808,11 @@ this might take a few minutes.</p>
 To get credentials, in the view shown above, select the cluster and click “connect.”
 Doing so will show you the correct statement to run to configure command-line access,
 which probably looks something like this:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span>gcloud<span class="w"> </span>container<span class="w"> </span>clusters<span class="w"> </span>get-credentials<span class="w"> </span>lammps-cluster<span class="w"> </span>--zone<span class="w"> </span>us-central1-a<span class="w"> </span>--project<span class="w"> </span><span class="nv">$GOOGLE_PROJECT</span>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span>gcloud<span class="w"> </span>container<span class="w"> </span>clusters<span class="w"> </span>get-credentials<span class="w"> </span>flux-cluster<span class="w"> </span>--zone<span class="w"> </span>us-central1-a<span class="w"> </span>--project<span class="w"> </span><span class="nv">$GOOGLE_PROJECT</span>
 </code></pre></div>
 </div>
 <div class="highlight-console notranslate"><div class="highlight"><pre><span></span><code><span class="go">Fetching cluster endpoint and auth data.</span>
-<span class="go">kubeconfig entry generated for lammps-cluster.</span>
+<span class="go">kubeconfig entry generated for flux-cluster.</span>
 </code></pre></div>
 </div>
 <p>Finally, use <a class="reference external" href="https://cloud.google.com/iam">cloud IAM</a> to ensure you can create roles, etc.</p>
@@ -790,14 +827,20 @@ which probably looks something like this:</p>
 </code></pre></div>
 </div>
 <div class="highlight-console notranslate"><div class="highlight"><pre><span></span><code><span class="go">NAME                                            STATUS   ROLES    AGE     VERSION</span>
-<span class="go">gke-lammps-cluster-default-pool-f103d9d8-379m   Ready    &lt;none&gt;   3m41s   v1.23.14-gke.1800</span>
-<span class="go">gke-lammps-cluster-default-pool-f103d9d8-3wf9   Ready    &lt;none&gt;   3m42s   v1.23.14-gke.1800</span>
-<span class="go">gke-lammps-cluster-default-pool-f103d9d8-c174   Ready    &lt;none&gt;   3m42s   v1.23.14-gke.1800</span>
-<span class="go">gke-lammps-cluster-default-pool-f103d9d8-zz1q   Ready    &lt;none&gt;   3m42s   v1.23.14-gke.1800</span>
+<span class="go">gke-flux-cluster-default-pool-f103d9d8-379m   Ready    &lt;none&gt;   3m41s   v1.23.14-gke.1800</span>
+<span class="go">gke-flux-cluster-default-pool-f103d9d8-3wf9   Ready    &lt;none&gt;   3m42s   v1.23.14-gke.1800</span>
+<span class="go">gke-flux-cluster-default-pool-f103d9d8-c174   Ready    &lt;none&gt;   3m42s   v1.23.14-gke.1800</span>
+<span class="go">gke-flux-cluster-default-pool-f103d9d8-zz1q   Ready    &lt;none&gt;   3m42s   v1.23.14-gke.1800</span>
 </code></pre></div>
 </div>
 <h3 id="deploy-operator">Deploy Operator<a class="headerlink" href="#deploy-operator" title="Permalink to this heading">¶</a></h3>
 <p>To deploy the Flux Operator, <a class="reference external" href="https://flux-framework.org/flux-operator/getting_started/user-guide.html#production-install">choose one of the options here</a> to deploy the operator. Whether you apply a yaml file, use <a class="reference external" href="https://converged-computing.github.io/flux-cloud">flux-cloud</a> or clone the repository and <code class="docutils literal notranslate"><span class="pre">make</span> <span class="pre">deploy</span></code> you will see the operator install to the <code class="docutils literal notranslate"><span class="pre">operator-system</span></code> namespace.</p>
+<p>For a quick “production deploy” from development, the Makefile has a directive that will build and push a <code class="docutils literal notranslate"><span class="pre">test</span></code> tag (you’ll need to edit <code class="docutils literal notranslate"><span class="pre">DEVIMG</span></code> to be one you can push to) and then generate a
+yaml file targeting that image, e.g.,</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span>make<span class="w"> </span>test-deploy
+$<span class="w"> </span>kubectl<span class="w"> </span>apply<span class="w"> </span>-f<span class="w"> </span>examples/dist/flux-operator-dev.yaml<span class="w"> </span>
+</code></pre></div>
+</div>
 <div class="highlight-console notranslate"><div class="highlight"><pre><span></span><code><span class="go">...</span>
 <span class="go">clusterrole.rbac.authorization.k8s.io/operator-manager-role created</span>
 <span class="go">clusterrole.rbac.authorization.k8s.io/operator-metrics-reader created</span>
@@ -853,6 +896,36 @@ No<span class="w"> </span>LimitRange<span class="w"> </span>resource.
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span>kubectl<span class="w"> </span>create<span class="w"> </span>namespace<span class="w"> </span>flux-operator
 </code></pre></div>
 </div>
+<h2 id="lammps-on-google-kubernetes-engine">Lammps on Google Kubernetes Engine<a class="headerlink" href="#lammps-on-google-kubernetes-engine" title="Permalink to this heading">¶</a></h2>
+<p>In this short experiment we will run the Flux Operator on Google Cloud, at
+at a fairly small size intended for development.</p>
+<h3 id="custom-resource-definition">Custom Resource Definition<a class="headerlink" href="#custom-resource-definition" title="Permalink to this heading">¶</a></h3>
+<p>The Custom Resource Definition (CRD) defines our Mini Cluster, and is what we hand to the flux
+operator to create it.  Here is the CRD for a small lammps run.</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><code><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">flux-framework.org/v1alpha1</span>
+<span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">MiniCluster</span>
+<span class="nt">metadata</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">flux-sample</span>
+<span class="w">  </span><span class="nt">namespace</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">flux-operator</span>
+<span class="nt">spec</span><span class="p">:</span>
+<span class="w">  </span><span class="c1"># Number of pods to create for MiniCluster</span>
+<span class="w">  </span><span class="nt">size</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">4</span>
+
+<span class="w">  </span><span class="c1"># Disable verbose output</span>
+<span class="w">  </span><span class="nt">logging</span><span class="p">:</span><span class="w"> </span>
+<span class="w">    </span><span class="nt">quiet</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+
+<span class="w">  </span><span class="c1"># This is a list because a pod can support multiple containers</span>
+<span class="w">  </span><span class="nt">containers</span><span class="p">:</span>
+<span class="w">    </span><span class="c1"># The container URI to pull (currently needs to be public)</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">image</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ghcr.io/rse-ops/lammps:flux-sched-focal-v0.24.0</span>
+
+<span class="w">      </span><span class="c1"># You can set the working directory if your container WORKDIR is not correct.</span>
+<span class="w">      </span><span class="nt">workingDir</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">/home/flux/examples/reaxff/HNS</span>
+<span class="w">      </span><span class="nt">command</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">lmp -v x 2 -v y 2 -v z 2 -in in.reaxc.hns -nocite</span>
+</code></pre></div>
+</div>
+<p>You can save the above file as <code class="docutils literal notranslate"><span class="pre">minicluster-lammps.yaml</span></code> to get started.</p>
 <h3 id="create-the-lammps-job">Create the Lammps Job<a class="headerlink" href="#create-the-lammps-job" title="Permalink to this heading">¶</a></h3>
 <p>Now let’s apply the custom resource definition to create the lammps mini cluster!
 The file we generated above should be in your present working directory.
@@ -873,8 +946,8 @@ because this is where we are pulling the chonker containers.</p>
 </div>
 <p>And finally, the most meaty piece of metadata is the log for the pod,
 where the Flux Operator will be setting things up and starting flux.</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><code># Add the -f to keep it hanging
-$ kubectl -n flux-operator logs flux-sample-0-742bm -f
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code><span class="c1"># Add the -f to keep it hanging</span>
+$<span class="w"> </span>kubectl<span class="w"> </span>-n<span class="w"> </span>flux-operator<span class="w"> </span>logs<span class="w"> </span>flux-sample-0-742bm<span class="w"> </span>-f
 </code></pre></div>
 </div>
 <p>To shell into a pod to look around (noting where important flux stuff is)</p>
@@ -915,17 +988,437 @@ and apply it again. I wound up running with test set to true, and then saving th
 <p>For fun, here is the first successful run of Lammps using the Flux Operator on GCP
 ever!</p>
 <p><img alt="img/lammps.png" src="../_images/lammps.png" /></p>
-<h3 id="clean-up">Clean up<a class="headerlink" href="#clean-up" title="Permalink to this heading">¶</a></h3>
-<p>Make sure you clean everything up! You can delete the lammps deploy first:</p>
+<p>Then to delete your lammps MiniCluster:</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span>kubectl<span class="w"> </span>delete<span class="w"> </span>-f<span class="w"> </span>minicluster-lammps.yaml
 </code></pre></div>
 </div>
-<p>And then undeploy the operator (this is again at the root of the operator repository clone)</p>
+<h2 id="snakemake-requiring-storage-on-google-kubernetes-engine">Snakemake (requiring storage) on Google Kubernetes Engine<a class="headerlink" href="#snakemake-requiring-storage-on-google-kubernetes-engine" title="Permalink to this heading">¶</a></h2>
+<p>Akin to how we created a local volume, we can do something similar, but instead of pointing the Flux Operator
+to a volume on the host (e.g., in MiniKube) we are going to point it to a storage bucket with our data.
+For Google cloud, the Flux Operator currently uses the <a class="reference external" href="https://github.com/ofek/csi-gcs">this driver</a> to
+connect a cloud storage bucket to our cluster.</p>
+<h3 id="prepare-data">Prepare Data<a class="headerlink" href="#prepare-data" title="Permalink to this heading">¶</a></h3>
+<p>To start, prepare your data in a temporary directory (that we will upload into Google cloud storage):</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span>git<span class="w"> </span>clone<span class="w"> </span>--depth<span class="w"> </span><span class="m">1</span><span class="w"> </span>https://github.com/snakemake/snakemake-tutorial-data<span class="w"> </span>/tmp/workflow
+</code></pre></div>
+</div>
+<p>You’ll want to add the <a class="reference external" href="https://github.com/rse-ops/flux-hpc/blob/main/snakemake/atacseq/Snakefile">Snakefile</a> for your workflow
+along with a <a class="reference external" href="https://github.com/rse-ops/flux-hpc/blob/main/snakemake/atacseq/scripts/plot-quals.py">plotting script</a>:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span>wget<span class="w"> </span>-O<span class="w"> </span>/tmp/workflow/Snakefile<span class="w"> </span>https://raw.githubusercontent.com/rse-ops/flux-hpc/main/snakemake/atacseq/Snakefile
+$<span class="w"> </span>mkdir<span class="w"> </span>-p<span class="w"> </span>/tmp/workflow/scripts
+$<span class="w"> </span>wget<span class="w"> </span>-O<span class="w"> </span>/tmp/workflow/scripts/plot-quals.py<span class="w"> </span>https://raw.githubusercontent.com/rse-ops/flux-hpc/main/snakemake/atacseq/scripts/plot-quals.py
+</code></pre></div>
+</div>
+<p>You should have this structure:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span>tree<span class="w"> </span>/tmp/workflow
+</code></pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><code>/tmp/workflow/
+├── data
+│   ├── genome.fa
+│   ├── genome.fa.amb
+│   ├── genome.fa.ann
+│   ├── genome.fa.bwt
+│   ├── genome.fa.fai
+│   ├── genome.fa.pac
+│   ├── genome.fa.sa
+│   └── samples
+│       ├── A.fastq
+│       ├── B.fastq
+│       └── C.fastq
+├── Dockerfile
+├── environment.yaml
+├── README.md
+├── scripts
+│   └── plot-quals.py
+└── Snakefile
+</code></pre></div>
+</div>
+<p>We can then use Google Cloud (<code class="docutils literal notranslate"><span class="pre">gcloud</span></code>) to create a bucket and upload to it.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span>gcloud<span class="w"> </span>storage<span class="w"> </span>buckets<span class="w"> </span>create<span class="w"> </span>gs://flux-operator-storage<span class="w"> </span>--project<span class="o">=</span>dinodev<span class="w">  </span>--location<span class="o">=</span>US-CENTRAL1<span class="w"> </span>--uniform-bucket-level-access
+</code></pre></div>
+</div>
+<p>In the above, the storage class defaults to “Standard” Once we’ve created the bucket, let’s go to our snakemake data
+and upload the data to it.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span><span class="nb">cd</span><span class="w"> </span>/tmp/workflow
+$<span class="w"> </span>gcloud<span class="w"> </span>storage<span class="w"> </span>cp<span class="w"> </span>--recursive<span class="w"> </span>.<span class="w"> </span>gs://flux-operator-storage/snakemake-workflow/
+</code></pre></div>
+</div>
+<p>You can either view your files in the Google Storage console</p>
+<p><img alt="img/google-storage-console.png" src="../_images/google-storage-console.png" /></p>
+<p>or view with gcloud again:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span>gcloud<span class="w"> </span>storage<span class="w"> </span>ls<span class="w"> </span>gs://flux-operator-storage/snakemake-workflow/
+</code></pre></div>
+</div>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><code><span class="go">gs://flux-operator-storage/snakemake-workflow/.gitpod.yml</span>
+<span class="go">gs://flux-operator-storage/snakemake-workflow/Dockerfile</span>
+<span class="go">gs://flux-operator-storage/snakemake-workflow/README.md</span>
+<span class="go">gs://flux-operator-storage/snakemake-workflow/Snakefile</span>
+<span class="go">gs://flux-operator-storage/snakemake-workflow/environment.yaml</span>
+<span class="go">gs://flux-operator-storage/snakemake-workflow/data/</span>
+<span class="go">gs://flux-operator-storage/snakemake-workflow/scripts/</span>
+</code></pre></div>
+</div>
+<h3 id="install-the-constainer-storage-driver-csi">Install the Constainer Storage Driver (CSI)<a class="headerlink" href="#install-the-constainer-storage-driver-csi" title="Permalink to this heading">¶</a></h3>
+<p>There are many <a class="reference external" href="https://kubernetes-csi.github.io/docs/drivers.html">drivers</a> for kubernetes, and we will use
+<a class="reference external" href="https://ofek.dev/csi-gcs/getting_started/">this one</a> that requires a stateful set and daemon set to work.
+Let’s install those first.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span>kubectl<span class="w"> </span>apply<span class="w"> </span>-k<span class="w"> </span><span class="s2">&quot;github.com/ofek/csi-gcs/deploy/overlays/stable?ref=v0.9.0&quot;</span>
+$<span class="w"> </span>kubectl<span class="w"> </span>get<span class="w"> </span>CSIDriver,daemonsets,pods<span class="w"> </span>-n<span class="w"> </span>kube-system<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>csi
+</code></pre></div>
+</div>
+<p>And to debug:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span>kubectl<span class="w"> </span>logs<span class="w"> </span>-l<span class="w"> </span><span class="nv">app</span><span class="o">=</span>csi-gcs<span class="w"> </span>-c<span class="w"> </span>csi-gcs<span class="w"> </span>-n<span class="w"> </span>kube-system
+</code></pre></div>
+</div>
+<p>As you are working, if the mounts seem to work but you don’t see files, keep
+in mind you need to be aware of <a class="reference external" href="https://ofek.dev/csi-gcs/dynamic_provisioning/#extra-flags">implicit directories</a>.
+The operator will do a <code class="docutils literal notranslate"><span class="pre">mkdir</span> <span class="pre">-p</span></code> on the working directory (and this will show content there) but if you don’t
+see content and expect to, you either need to interact in this way or set this flag as an annotation in
+your <code class="docutils literal notranslate"><span class="pre">minicluster.yaml</span></code>.</p>
+<h3 id="permissions-via-secrets">Permissions via Secrets<a class="headerlink" href="#permissions-via-secrets" title="Permalink to this heading">¶</a></h3>
+<p>We will need to give permission for the nodes to access storage, and we can do that via <a class="reference external" href="https://ofek.dev/csi-gcs/dynamic_provisioning/#permission">these instructions</a>
+to create a service account key (a json file) from a service account. E.g., I first created a custom service account that
+has these permissions:</p>
+<p><img alt="img/google-service-account.png" src="../_images/google-service-account.png" /></p>
+<p>And then I could find the new identifier in a listing:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span>gcloud<span class="w"> </span>iam<span class="w"> </span>service-accounts<span class="w"> </span>list
+DISPLAY<span class="w"> </span>NAME<span class="w">                            </span>EMAIL<span class="w">                                               </span>DISABLED
+Compute<span class="w"> </span>Engine<span class="w"> </span>default<span class="w"> </span>service<span class="w"> </span>account<span class="w">  </span><span class="m">270958151865</span>-compute@developer.gserviceaccount.com<span class="w">  </span>False
+flux-operator-gke<span class="w">                       </span>flux-operator-gke@project.iam.gserviceaccount.com<span class="w">   </span>False
+</code></pre></div>
+</div>
+<p>And create a credential file:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span>gcloud<span class="w"> </span>iam<span class="w"> </span>service-accounts<span class="w"> </span>keys<span class="w"> </span>create<span class="w"> </span>&lt;FILE_NAME&gt;.json<span class="w"> </span>--iam-account<span class="w"> </span>&lt;EMAIL&gt;
+</code></pre></div>
+</div>
+<p>And create a secret from it! This is basically giving your cluster permission to interact with a specific bucket.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span>kubectl<span class="w"> </span>create<span class="w"> </span>secret<span class="w"> </span>generic<span class="w"> </span>csi-gcs-secret<span class="w"> </span>--from-literal<span class="o">=</span><span class="nv">bucket</span><span class="o">=</span>flux-operator-storage<span class="w"> </span>--from-file<span class="o">=</span><span class="nv">key</span><span class="o">=</span>&lt;PATH_TO_SERVICE_ACCOUNT_KEY&gt;
+</code></pre></div>
+</div>
+<h3 id="storage-class">Storage Class<a class="headerlink" href="#storage-class" title="Permalink to this heading">¶</a></h3>
+<p>We can then create our storage class, this file is provided in <code class="docutils literal notranslate"><span class="pre">examples/storage/google/storageclass.yaml</span></code></p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><code><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">storage.k8s.io/v1</span>
+<span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">StorageClass</span>
+<span class="nt">metadata</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">csi-gcs</span>
+<span class="nt">provisioner</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">gcs.csi.ofek.dev</span>
+</code></pre></div>
+</div>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span>kubectl<span class="w"> </span>apply<span class="w"> </span>-f<span class="w"> </span>examples/storage/google/storageclass.yaml
+</code></pre></div>
+</div>
+<h3 id="snakemake-minicluster">Snakemake MiniCluster<a class="headerlink" href="#snakemake-minicluster" title="Permalink to this heading">¶</a></h3>
+<p>The operator can now be run, telling it to use this storage class (named <code class="docutils literal notranslate"><span class="pre">csi-gcs</span></code>) - we provide
+an example Minicluster to run this snakemake tutorial to test this out, and note that if you want to debug
+you can change the command first to be an ls to see what data is there! Before you apply this file,
+make sure that the annotations for storage match your Google project, zone, etc.</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><code><span class="w">  </span><span class="c1"># Make this kind of persistent volume and claim available to pods</span>
+<span class="w">  </span><span class="c1"># This is a type of storage that will use Google Storage</span>
+<span class="w">  </span><span class="nt">volumes</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">data</span><span class="p">:</span><span class="w">      </span>
+<span class="w">      </span><span class="nt">class</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">csi-gcs</span>
+<span class="w">      </span><span class="nt">path</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">/tmp/data</span>
+<span class="w">      </span><span class="nt">secret</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">csi-gcs-secret</span>
+<span class="w">      </span><span class="nt">annotations</span><span class="p">:</span>
+<span class="w">        </span><span class="nt">gcs.csi.ofek.dev/location</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">us-central1</span>
+<span class="w">        </span><span class="nt">gcs.csi.ofek.dev/project-id</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">my-project</span>
+<span class="w">        </span><span class="nt">gcs.csi.ofek.dev/bucket</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">flux-operator-storage</span>
+</code></pre></div>
+</div>
+<p>Also note that we are setting the <code class="docutils literal notranslate"><span class="pre">commands:</span> <span class="pre">-&gt;</span> <span class="pre">runFluxAsRoot</span></code> to true. This isn’t ideal, but it was the
+only way I could get the storage to both be seen and have permission to write there. Let’s create the job!</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span>kubectl<span class="w"> </span>apply<span class="w"> </span>-f<span class="w"> </span>examples/storage/google/minicluster.yaml
+</code></pre></div>
+</div>
+<p>Wait to see the certificate generator pod come up, complete, and the worker pods (that depend on it) will finish creation and
+then come up:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span>kubectl<span class="w"> </span>get<span class="w"> </span>pods<span class="w"> </span>-n<span class="w"> </span>flux-operator
+</code></pre></div>
+</div>
+<p>And I like to get the main pod and stream the output so I don’t miss it:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code><span class="c1"># Stream to your terminal</span>
+$<span class="w"> </span>kubectl<span class="w"> </span>logs<span class="w"> </span>-n<span class="w"> </span>flux-operator<span class="w"> </span>flux-sample-0-fj6td<span class="w"> </span>-f
+
+<span class="c1"># Stream to file</span>
+$<span class="w"> </span>kubectl<span class="w"> </span>logs<span class="w"> </span>-n<span class="w"> </span>flux-operator<span class="w"> </span>flux-sample-0-fj6td<span class="w"> </span>-f<span class="w"> </span>&gt;<span class="w"> </span>output.txt
+</code></pre></div>
+</div>
+<details>
+<summary>Snakemake output from Log</summary>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><code><span class="go">flux user identifiers:</span>
+<span class="go">uid=1000(flux) gid=1000(flux) groups=1000(flux)</span>
+
+<span class="go">As Flux prefix for flux commands: sudo -E PYTHONPATH=/usr/lib/flux/python3.8:/code -E PATH=/opt/micromamba/envs/snakemake/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin -E HOME=/home/flux</span>
+
+<span class="go">👋 Hello, I&#39;m flux-sample-0</span>
+<span class="go">The main host is flux-sample-0</span>
+<span class="go">The working directory is /workflow/snakemake-workflow, contents include:</span>
+<span class="go">Dockerfile  README.md  Snakefile  data  environment.yaml  scripts</span>
+<span class="go">End of file listing, if you see nothing above there are no files.</span>
+<span class="go">flux R encode --hosts=flux-sample-[0-1] </span>
+
+<span class="go">📦 Resources</span>
+<span class="go">{&quot;version&quot;: 1, &quot;execution&quot;: {&quot;R_lite&quot;: [{&quot;rank&quot;: &quot;0-1&quot;, &quot;children&quot;: {&quot;core&quot;: &quot;0&quot;}}], &quot;starttime&quot;: 0.0, &quot;expiration&quot;: 0.0, &quot;nodelist&quot;: [&quot;flux-sample-[0-1]&quot;]}}</span>
+
+<span class="go">🐸 Diagnostics: false</span>
+
+<span class="go">🦊 Independent Minister of Privilege</span>
+<span class="go">[exec]</span>
+<span class="go">allowed-users = [ &quot;flux&quot;, &quot;root&quot; ]</span>
+<span class="go">allowed-shells = [ &quot;/usr/libexec/flux/flux-shell&quot; ]</span>
+
+<span class="go">🐸 Broker Configuration</span>
+<span class="gp"># </span>Flux<span class="w"> </span>needs<span class="w"> </span>to<span class="w"> </span>know<span class="w"> </span>the<span class="w"> </span>path<span class="w"> </span>to<span class="w"> </span>the<span class="w"> </span>IMP<span class="w"> </span>executable
+<span class="go">[exec]</span>
+<span class="go">imp = &quot;/usr/libexec/flux/flux-imp&quot;</span>
+
+<span class="go">[access]</span>
+<span class="go">allow-guest-user = true</span>
+<span class="go">allow-root-owner = true</span>
+
+<span class="gp"># </span>Point<span class="w"> </span>to<span class="w"> </span>resource<span class="w"> </span>definition<span class="w"> </span>generated<span class="w"> </span>with<span class="w"> </span>flux-R<span class="o">(</span><span class="m">1</span><span class="o">)</span>.
+<span class="go">[resource]</span>
+<span class="go">path = &quot;/etc/flux/system/R&quot;</span>
+
+<span class="go">[bootstrap]</span>
+<span class="go">curve_cert = &quot;/etc/curve/curve.cert&quot;</span>
+<span class="go">default_port = 8050</span>
+<span class="go">default_bind = &quot;tcp://eth0:%p&quot;</span>
+<span class="go">default_connect = &quot;tcp://%h.flux-service.flux-operator.svc.cluster.local:%p&quot;</span>
+<span class="go">hosts = [</span>
+<span class="go">        { host=&quot;flux-sample-[0-1]&quot;},</span>
+<span class="go">]</span>
+<span class="gp">#   </span>****<span class="w">  </span>Generated<span class="w"> </span>on<span class="w"> </span><span class="m">2023</span>-02-17<span class="w"> </span><span class="m">21</span>:05:10<span class="w"> </span>by<span class="w"> </span>CZMQ<span class="w">  </span>****
+<span class="gp">#   </span>ZeroMQ<span class="w"> </span>CURVE<span class="w"> </span>**Secret**<span class="w"> </span>Certificate
+<span class="gp">#   </span>DO<span class="w"> </span>NOT<span class="w"> </span>PROVIDE<span class="w"> </span>THIS<span class="w"> </span>FILE<span class="w"> </span>TO<span class="w"> </span>OTHER<span class="w"> </span>USERS<span class="w"> </span>nor<span class="w"> </span>change<span class="w"> </span>its<span class="w"> </span>permissions.
+
+<span class="go">metadata</span>
+<span class="go">    name = &quot;flux-sample-cert-generator&quot;</span>
+<span class="go">    time = &quot;2023-02-17T21:05:10&quot;</span>
+<span class="go">    userid = &quot;0&quot;</span>
+<span class="go">    hostname = &quot;flux-sample-cert-generator&quot;</span>
+<span class="go">curve</span>
+<span class="go">    public-key = &quot;.!?zfo10Ew)m=+J:j^zehs&amp;{Ayy#BGSV0Eets5Ne&quot;</span>
+<span class="go">    secret-key = &quot;vmk%8&amp;dl7ICTfgx?*+0wgPb=@kFA&gt;djvZU-Sl[T6&quot;</span>
+
+<span class="go">🔒️ Working directory permissions:</span>
+<span class="go">total 3</span>
+<span class="go">-rw-rw-r-- 1 root 63147  233 Feb 10 22:57 Dockerfile</span>
+<span class="go">-rw-rw-r-- 1 root 63147  347 Feb 10 22:57 README.md</span>
+<span class="go">-rw-rw-r-- 1 root 63147 1144 Feb 10 22:57 Snakefile</span>
+<span class="go">drwxrwxr-x 1 root 63147    0 Feb 17 21:05 data</span>
+<span class="go">-rw-rw-r-- 1 root 63147  203 Feb 10 22:57 environment.yaml</span>
+<span class="go">drwxrwxr-x 1 root 63147    0 Feb 17 21:05 scripts</span>
+
+
+<span class="go">✨ Curve certificate generated by helper pod</span>
+<span class="gp">#   </span>****<span class="w">  </span>Generated<span class="w"> </span>on<span class="w"> </span><span class="m">2023</span>-02-17<span class="w"> </span><span class="m">21</span>:05:10<span class="w"> </span>by<span class="w"> </span>CZMQ<span class="w">  </span>****
+<span class="gp">#   </span>ZeroMQ<span class="w"> </span>CURVE<span class="w"> </span>**Secret**<span class="w"> </span>Certificate
+<span class="gp">#   </span>DO<span class="w"> </span>NOT<span class="w"> </span>PROVIDE<span class="w"> </span>THIS<span class="w"> </span>FILE<span class="w"> </span>TO<span class="w"> </span>OTHER<span class="w"> </span>USERS<span class="w"> </span>nor<span class="w"> </span>change<span class="w"> </span>its<span class="w"> </span>permissions.
+
+<span class="go">metadata</span>
+<span class="go">    name = &quot;flux-sample-cert-generator&quot;</span>
+<span class="go">    time = &quot;2023-02-17T21:05:10&quot;</span>
+<span class="go">    userid = &quot;0&quot;</span>
+<span class="go">    hostname = &quot;flux-sample-cert-generator&quot;</span>
+<span class="go">curve</span>
+<span class="go">    public-key = &quot;.!?zfo10Ew)m=+J:j^zehs&amp;{Ayy#BGSV0Eets5Ne&quot;</span>
+<span class="go">    secret-key = &quot;vmk%8&amp;dl7ICTfgx?*+0wgPb=@kFA&gt;djvZU-Sl[T6&quot;</span>
+<span class="go">Extra arguments are: snakemake --cores 1 --flux</span>
+
+<span class="go">🌀 flux start -o --config /etc/flux/config -Scron.directory=/etc/flux/system/cron.d   -Stbon.fanout=256   -Srundir=/run/flux   -Sstatedir=/var/lib/flux   -Slocal-uri=local:///run/flux/local   -Slog-stderr-level=6    -Slog-stderr-mode=local flux mini submit  -n 1 --quiet  --watch snakemake --cores 1 --flux</span>
+<span class="go">broker.info[0]: start: none-&gt;join 10.6371ms</span>
+<span class="go">broker.info[0]: parent-none: join-&gt;init 0.051043ms</span>
+<span class="go">cron.info[0]: synchronizing cron tasks to event heartbeat.pulse</span>
+<span class="go">job-manager.info[0]: restart: 0 jobs</span>
+<span class="go">job-manager.info[0]: restart: 0 running jobs</span>
+<span class="go">job-manager.info[0]: restart: checkpoint.job-manager not found</span>
+<span class="go">broker.info[0]: rc1.0: running /etc/flux/rc1.d/01-sched-fluxion</span>
+<span class="go">sched-fluxion-resource.warning[0]: create_reader: allowlist unsupported</span>
+<span class="go">sched-fluxion-resource.info[0]: populate_resource_db: loaded resources from core&#39;s resource.acquire</span>
+<span class="go">broker.info[0]: rc1.0: running /etc/flux/rc1.d/02-cron</span>
+<span class="go">broker.info[0]: rc1.0: /etc/flux/rc1 Exited (rc=0) 0.9s</span>
+<span class="go">broker.info[0]: rc1-success: init-&gt;quorum 0.922753s</span>
+<span class="go">broker.info[0]: online: flux-sample-0 (ranks 0)</span>
+<span class="go">broker.info[0]: online: flux-sample-[0-1] (ranks 0-1)</span>
+<span class="go">broker.info[0]: quorum-full: quorum-&gt;run 0.427513s</span>
+<span class="go">Building DAG of jobs...</span>
+<span class="go">Using shell: /usr/bin/bash</span>
+<span class="go">Provided cores: 1 (use --cores to define parallelism)</span>
+<span class="go">Rules claiming more threads will be scaled down.</span>
+<span class="go">Job stats:</span>
+<span class="go">job               count    min threads    max threads</span>
+<span class="go">--------------  -------  -------------  -------------</span>
+<span class="go">all                   1              1              1</span>
+<span class="go">bcftools_call         1              1              1</span>
+<span class="go">bwa_map               2              1              1</span>
+<span class="go">plot_quals            1              1              1</span>
+<span class="go">samtools_index        2              1              1</span>
+<span class="go">samtools_sort         2              1              1</span>
+<span class="go">total                 9              1              1</span>
+
+<span class="go">Select jobs to execute...</span>
+
+<span class="go">[Fri Feb 17 21:05:22 2023]</span>
+<span class="go">rule bwa_map:</span>
+<span class="go">    input: data/genome.fa, data/samples/A.fastq</span>
+<span class="go">    output: mapped_reads/A.bam</span>
+<span class="go">    jobid: 4</span>
+<span class="go">    reason: Missing output files: mapped_reads/A.bam</span>
+<span class="go">    wildcards: sample=A</span>
+<span class="go">    resources: tmpdir=/tmp</span>
+
+<span class="go">[Fri Feb 17 21:05:42 2023]</span>
+<span class="go">Finished job 4.</span>
+<span class="go">1 of 9 steps (11%) done</span>
+<span class="go">Select jobs to execute...</span>
+
+<span class="go">[Fri Feb 17 21:05:43 2023]</span>
+<span class="go">rule samtools_sort:</span>
+<span class="go">    input: mapped_reads/A.bam</span>
+<span class="go">    output: sorted_reads/A.bam</span>
+<span class="go">    jobid: 3</span>
+<span class="go">    reason: Missing output files: sorted_reads/A.bam; Input files updated by another job: mapped_reads/A.bam</span>
+<span class="go">    wildcards: sample=A</span>
+<span class="go">    resources: tmpdir=/tmp</span>
+
+<span class="go">[Fri Feb 17 21:05:52 2023]</span>
+<span class="go">Finished job 3.</span>
+<span class="go">2 of 9 steps (22%) done</span>
+<span class="go">Select jobs to execute...</span>
+
+<span class="go">[Fri Feb 17 21:05:52 2023]</span>
+<span class="go">rule bwa_map:</span>
+<span class="go">    input: data/genome.fa, data/samples/B.fastq</span>
+<span class="go">    output: mapped_reads/B.bam</span>
+<span class="go">    jobid: 6</span>
+<span class="go">    reason: Missing output files: mapped_reads/B.bam</span>
+<span class="go">    wildcards: sample=B</span>
+<span class="go">    resources: tmpdir=/tmp</span>
+
+<span class="go">[Fri Feb 17 21:06:02 2023]</span>
+<span class="go">Finished job 6.</span>
+<span class="go">3 of 9 steps (33%) done</span>
+<span class="go">Select jobs to execute...</span>
+
+<span class="go">[Fri Feb 17 21:06:02 2023]</span>
+<span class="go">rule samtools_sort:</span>
+<span class="go">    input: mapped_reads/B.bam</span>
+<span class="go">    output: sorted_reads/B.bam</span>
+<span class="go">    jobid: 5</span>
+<span class="go">    reason: Missing output files: sorted_reads/B.bam; Input files updated by another job: mapped_reads/B.bam</span>
+<span class="go">    wildcards: sample=B</span>
+<span class="go">    resources: tmpdir=/tmp</span>
+
+<span class="go">[Fri Feb 17 21:06:12 2023]</span>
+<span class="go">Finished job 5.</span>
+<span class="go">4 of 9 steps (44%) done</span>
+<span class="go">Select jobs to execute...</span>
+
+<span class="go">[Fri Feb 17 21:06:13 2023]</span>
+<span class="go">rule samtools_index:</span>
+<span class="go">    input: sorted_reads/A.bam</span>
+<span class="go">    output: sorted_reads/A.bam.bai</span>
+<span class="go">    jobid: 7</span>
+<span class="go">    reason: Missing output files: sorted_reads/A.bam.bai; Input files updated by another job: sorted_reads/A.bam</span>
+<span class="go">    wildcards: sample=A</span>
+<span class="go">    resources: tmpdir=/tmp</span>
+
+<span class="go">[Fri Feb 17 21:06:22 2023]</span>
+<span class="go">Finished job 7.</span>
+<span class="go">5 of 9 steps (56%) done</span>
+<span class="go">Select jobs to execute...</span>
+
+<span class="go">[Fri Feb 17 21:06:22 2023]</span>
+<span class="go">rule samtools_index:</span>
+<span class="go">    input: sorted_reads/B.bam</span>
+<span class="go">    output: sorted_reads/B.bam.bai</span>
+<span class="go">    jobid: 8</span>
+<span class="go">    reason: Missing output files: sorted_reads/B.bam.bai; Input files updated by another job: sorted_reads/B.bam</span>
+<span class="go">    wildcards: sample=B</span>
+<span class="go">    resources: tmpdir=/tmp</span>
+
+<span class="go">[Fri Feb 17 21:06:32 2023]</span>
+<span class="go">Finished job 8.</span>
+<span class="go">6 of 9 steps (67%) done</span>
+<span class="go">Select jobs to execute...</span>
+
+<span class="go">[Fri Feb 17 21:06:32 2023]</span>
+<span class="go">rule bcftools_call:</span>
+<span class="go">    input: data/genome.fa, sorted_reads/A.bam, sorted_reads/B.bam, sorted_reads/A.bam.bai, sorted_reads/B.bam.bai</span>
+<span class="go">    output: calls/all.vcf</span>
+<span class="go">    jobid: 2</span>
+<span class="go">    reason: Missing output files: calls/all.vcf; Input files updated by another job: sorted_reads/A.bam, sorted_reads/B.bam, sorted_reads/A.bam.bai, sorted_reads/B.bam.bai</span>
+<span class="go">    resources: tmpdir=/tmp</span>
+
+<span class="go">[Fri Feb 17 21:06:43 2023]</span>
+<span class="go">Finished job 2.</span>
+<span class="go">7 of 9 steps (78%) done</span>
+<span class="go">Select jobs to execute...</span>
+
+<span class="go">[Fri Feb 17 21:06:43 2023]</span>
+<span class="go">rule plot_quals:</span>
+<span class="go">    input: calls/all.vcf</span>
+<span class="go">    output: plots/quals.svg</span>
+<span class="go">    jobid: 1</span>
+<span class="go">    reason: Missing output files: plots/quals.svg; Input files updated by another job: calls/all.vcf</span>
+<span class="go">    resources: tmpdir=/tmp</span>
+
+<span class="go">[Fri Feb 17 21:07:02 2023]</span>
+<span class="go">Finished job 1.</span>
+<span class="go">8 of 9 steps (89%) done</span>
+<span class="go">Select jobs to execute...</span>
+
+<span class="go">[Fri Feb 17 21:07:02 2023]</span>
+<span class="go">localrule all:</span>
+<span class="go">    input: plots/quals.svg</span>
+<span class="go">    jobid: 0</span>
+<span class="go">    reason: Input files updated by another job: plots/quals.svg</span>
+<span class="go">    resources: tmpdir=/tmp</span>
+
+<span class="go">[Fri Feb 17 21:07:02 2023]</span>
+<span class="go">Finished job 0.</span>
+<span class="go">9 of 9 steps (100%) done</span>
+<span class="go">Complete log: .snakemake/log/2023-02-17T210519.114509.snakemake.log</span>
+<span class="go">broker.info[0]: rc2.0: flux mini submit -n 1 --quiet --watch snakemake --cores 1 --flux Exited (rc=0) 115.1s</span>
+<span class="go">broker.info[0]: rc2-success: run-&gt;cleanup 1.91796m</span>
+<span class="go">broker.info[0]: cleanup.0: flux queue stop --quiet --all --nocheckpoint Exited (rc=0) 0.0s</span>
+<span class="go">broker.info[0]: cleanup.1: flux job cancelall --user=all --quiet -f --states RUN Exited (rc=0) 0.0s</span>
+<span class="go">broker.info[0]: cleanup.2: flux queue idle --quiet Exited (rc=0) 0.0s</span>
+<span class="go">broker.info[0]: cleanup-success: cleanup-&gt;shutdown 49.7479ms</span>
+<span class="go">broker.info[0]: children-complete: shutdown-&gt;finalize 93.2169ms</span>
+<span class="go">broker.info[0]: rc3.0: running /etc/flux/rc3.d/01-sched-fluxion</span>
+<span class="go">broker.info[0]: online: flux-sample-0 (ranks 0)</span>
+<span class="go">broker.info[0]: rc3.0: /etc/flux/rc3 Exited (rc=0) 0.2s</span>
+<span class="go">broker.info[0]: rc3-success: finalize-&gt;goodbye 0.246792s</span>
+<span class="go">broker.info[0]: goodbye: goodbye-&gt;exit 0.080512ms</span>
+</code></pre></div>
+</div>
+</details>
+<p>After it finishes the job will cleanup (unless you’ve set <code class="docutils literal notranslate"><span class="pre">cleanup:</span> <span class="pre">false</span></code>) in your minicluster.yaml. If you check
+Google storage, you’ll see the output of the run (e.g., data in mapped_reads / mapped_samples /plots) and a “.snakemake”
+hidden directory with logs.</p>
+<p><img alt="img/snakemake-output.png" src="../_images/snakemake-output.png" /></p>
+<p>Note that when this is deployed in a larger scale or a more productions sense, you’ll want to account for
+the details (e.g., resource limits) of the storage. This is basically done by (instead of applying the GitHub provided files)
+editing them <a class="reference external" href="https://ofek.dev/csi-gcs/getting_started/#resource-requests-limits">via kustomize</a>. Note that I haven’t
+tried this yet.</p>
+<p><strong>Note</strong>: we would like to get this working without requiring running the workflow as root, but it hasn’t been figured
+out yet! If you have insight, please comment on <a class="reference external" href="https://github.com/ofek/csi-gcs/issues/155">this issue</a>.</p>
+<h2 id="clean-up">Clean up<a class="headerlink" href="#clean-up" title="Permalink to this heading">¶</a></h2>
+<p>Whatever tutorial you choose, don’t forget to clean up at the end!
+You can optionally undeploy the operator (this is again at the root of the operator repository clone)</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span>make<span class="w"> </span>undeploy
 </code></pre></div>
 </div>
+<p>Or the file you used to deploy it:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span>kubectl<span class="w"> </span>delete<span class="w"> </span>-f<span class="w"> </span>examples/dist/flux-operator.yaml
+$<span class="w"> </span>kubectl<span class="w"> </span>delete<span class="w"> </span>-f<span class="w"> </span>examples/dist/flux-operator-dev.yaml
+</code></pre></div>
+</div>
 <p>And then to delete the cluster with gcloud:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span>gcloud<span class="w"> </span>container<span class="w"> </span>clusters<span class="w"> </span>delete<span class="w"> </span>--zone<span class="w"> </span>us-central1-a<span class="w"> </span>lammps-cluster
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span>gcloud<span class="w"> </span>container<span class="w"> </span>clusters<span class="w"> </span>delete<span class="w"> </span>--zone<span class="w"> </span>us-central1-a<span class="w"> </span>flux-cluster
 </code></pre></div>
 </div>
 <p>I like to check in the cloud console to ensure that it was actually deleted.</p>
@@ -933,26 +1426,10 @@ ever!</p>
 <h3 id="firewall">Firewall<a class="headerlink" href="#firewall" title="Permalink to this heading">¶</a></h3>
 <p>When I first created my cluster, the nodes could not see one another. I added a few
 flags for networking, and looked at firewalls as follows:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span>gcloud<span class="w"> </span>container<span class="w"> </span>clusters<span class="w"> </span>describe<span class="w"> </span>lammps-cluster<span class="w"> </span>--zone<span class="w"> </span>us-central1-a<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>clusterIpv4Cidr
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span>gcloud<span class="w"> </span>container<span class="w"> </span>clusters<span class="w"> </span>describe<span class="w"> </span>flux-cluster<span class="w"> </span>--zone<span class="w"> </span>us-central1-a<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>clusterIpv4Cidr
 </code></pre></div>
 </div>
 <p>I didn’t ultimately change anything, but I found this useful.</p>
-<h3 id="use-a-different-flux-operator-container">Use a Different Flux Operator Container<a class="headerlink" href="#use-a-different-flux-operator-container" title="Permalink to this heading">¶</a></h3>
-<p>If you own the operator, you can build and push first to develop:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span>make<span class="w"> </span>docker-build
-$<span class="w"> </span>make<span class="w"> </span>docker-push
-</code></pre></div>
-</div>
-<p>Otherwise you’ll need to set the IMG variable to your own container (that you’ve built and pushed). E.g, in the Makefile:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code><span class="c1"># Image URL to use all building/pushing image targets</span>
-IMG<span class="w"> </span>?<span class="o">=</span><span class="w"> </span>ghcr.io/flux-framework/flux-operator
-</code></pre></div>
-</div>
-<p>and your command:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>make<span class="w"> </span><span class="nv">IMG</span><span class="o">=</span>mycontainer/flux-operator
-</code></pre></div>
-</div>
-<p>That’s it! Have fun!</p>
 
 
   <hr>
@@ -960,7 +1437,7 @@ IMG<span class="w"> </span>?<span class="o">=</span><span class="w"> </span>ghcr
   <small>
     
       Last update:
-      Jan 27, 2023
+      Feb 17, 2023
     
   </small>
 </div>

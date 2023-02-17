@@ -451,6 +451,21 @@
               
   
   
+  
+  
+    <li class="md-nav__item">
+      <a href="minikube.html" class="md-nav__link">
+        <span title="/deployment/minikube.md (reference label)" class="md-ellipsis">Mini<wbr>Kube</span>
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
     
   
     
@@ -485,30 +500,43 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
+  <a href="#setup" class="md-nav__link">
+    <span title="/deployment/aws.md#setup (reference label)" class="md-ellipsis">Setup</span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Setup">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
   <a href="#install" class="md-nav__link">
     <span title="/deployment/aws.md#install (reference label)" class="md-ellipsis">Install</span>
   </a>
   
 </li>
-      
-        <li class="md-nav__item">
+        
+          <li class="md-nav__item">
   <a href="#setup-ssh" class="md-nav__link">
     <span title="/deployment/aws.md#setup-ssh (reference label)" class="md-ellipsis">Setup SSH</span>
   </a>
   
 </li>
-      
-        <li class="md-nav__item">
+        
+          <li class="md-nav__item">
   <a href="#create-cluster" class="md-nav__link">
     <span title="/deployment/aws.md#create-cluster (reference label)" class="md-ellipsis">Create Cluster</span>
   </a>
   
 </li>
-      
-        <li class="md-nav__item">
+        
+          <li class="md-nav__item">
   <a href="#deploy-operator" class="md-nav__link">
     <span title="/deployment/aws.md#deploy-operator (reference label)" class="md-ellipsis">Deploy Operator</span>
   </a>
+  
+</li>
+        
+      </ul>
+    </nav>
   
 </li>
       
@@ -628,8 +656,10 @@
 
 <h1 id="amazon-web-services">Amazon Web Services<a class="headerlink" href="#amazon-web-services" title="Permalink to this heading">¶</a></h1>
 <p>This small tutorial wall walk through how to run the Flux Operator (from a development
-standpoint) on AWS.</p>
-<h2 id="install">Install<a class="headerlink" href="#install" title="Permalink to this heading">¶</a></h2>
+standpoint) on AWS! You can start with setup (regardless of the workflow you choose)
+and then move on to a cloud-specific workflow.</p>
+<h2 id="setup">Setup<a class="headerlink" href="#setup" title="Permalink to this heading">¶</a></h2>
+<h3 id="install">Install<a class="headerlink" href="#install" title="Permalink to this heading">¶</a></h3>
 <p>You should first <a class="reference external" href="https://github.com/weaveworks/eksctl">install eksctrl</a> and make sure you have access to an AWS cloud (e.g.,
 with credentials or similar in your environment). E.g.,:</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code><span class="nb">export</span><span class="w"> </span><span class="nv">AWS_ACCESS_KEY_ID</span><span class="o">=</span>xxxxxxxxxxxxxxxxxxx
@@ -639,14 +669,15 @@ with credentials or similar in your environment). E.g.,:</p>
 </div>
 <p>The last session token may not be required depending on your setup.
 We assume you also have <a class="reference external" href="https://kubernetes.io/docs/tasks/tools/">kubectl</a>.</p>
-<h2 id="setup-ssh">Setup SSH<a class="headerlink" href="#setup-ssh" title="Permalink to this heading">¶</a></h2>
-<p>You’ll need an ssh key for EKS. Here is how to generate it:</p>
+<h3 id="setup-ssh">Setup SSH<a class="headerlink" href="#setup-ssh" title="Permalink to this heading">¶</a></h3>
+<p>This step is optional if you want to access your nodes.
+You’ll need an ssh key for EKS. Here is how to generate it:</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>ssh-keygen
 <span class="c1"># Ensure you enter the path to ~/.ssh/id_eks</span>
 </code></pre></div>
 </div>
 <p>This is used so you can ssh (connect) to your workers!</p>
-<h2 id="create-cluster">Create Cluster<a class="headerlink" href="#create-cluster" title="Permalink to this heading">¶</a></h2>
+<h3 id="create-cluster">Create Cluster<a class="headerlink" href="#create-cluster" title="Permalink to this heading">¶</a></h3>
 <p>Next, let’s create our cluster using eksctl “eks control.” <strong>IMPORTANT</strong> you absolutely
 need to choose a size that has <a class="reference external" href="https://github.com/aws/amazon-vpc-resource-controller-k8s/blob/master/pkg/aws/vpc/limits.go">IsTrunkingCompatible</a>
 true. Here is an example configuration. Note that we are choosing zones that works
@@ -673,6 +704,24 @@ generated.</p>
 <span class="w">      </span><span class="nt">publicKeyPath</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">~/.ssh/id_eks.pub</span>
 </code></pre></div>
 </div>
+<p>If you don’t need an ssh key:</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><code><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">eksctl.io/v1alpha5</span>
+<span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ClusterConfig</span>
+
+<span class="nt">metadata</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">flux-operator</span>
+<span class="w">  </span><span class="nt">region</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">us-east-1</span>
+<span class="w">  </span><span class="nt">version</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;1.23&quot;</span>
+
+<span class="nt">availabilityZones</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">&quot;us-east-1a&quot;</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">&quot;us-east-1b&quot;</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">&quot;us-east-1d&quot;</span><span class="p p-Indicator">]</span>
+<span class="nt">managedNodeGroups</span><span class="p">:</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">workers</span>
+<span class="w">    </span><span class="nt">instanceType</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">c5.xlarge</span>
+<span class="w">    </span><span class="nt">minSize</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">4</span>
+<span class="w">    </span><span class="nt">maxSize</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">4</span>
+<span class="w">    </span><span class="nt">labels</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">{</span><span class="w"> </span><span class="s">&quot;fluxoperator&quot;</span><span class="p p-Indicator">:</span><span class="w"> </span><span class="s">&quot;true&quot;</span><span class="w"> </span><span class="p p-Indicator">}</span>
+</code></pre></div>
+</div>
 <p>Given the above file <code class="docutils literal notranslate"><span class="pre">eks-cluster-config.yaml</span></code> we create the cluster as follows:</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span>eksctl<span class="w"> </span>create<span class="w"> </span>cluster<span class="w"> </span>-f<span class="w"> </span>eks-cluster-config.yaml
 </code></pre></div>
@@ -687,8 +736,13 @@ And then come back and view your nodes.</p>
 <span class="go">ip-192-168-79-92.ec2.internal    Ready    &lt;none&gt;   4m57s   v1.22.12-eks-be74326</span>
 </code></pre></div>
 </div>
-<h2 id="deploy-operator">Deploy Operator<a class="headerlink" href="#deploy-operator" title="Permalink to this heading">¶</a></h2>
-<p>To deploy the Flux Operator, <a class="reference external" href="https://flux-framework.org/flux-operator/getting_started/user-guide.html#production-install">choose one of the options here</a> to deploy the operator. Whether you apply a yaml file, use <a class="reference external" href="https://converged-computing.github.io/flux-cloud">flux-cloud</a> or clone the repository and <code class="docutils literal notranslate"><span class="pre">make</span> <span class="pre">deploy</span></code> you will see the operator install to the <code class="docutils literal notranslate"><span class="pre">operator-system</span></code> namespace.</p>
+<h3 id="deploy-operator">Deploy Operator<a class="headerlink" href="#deploy-operator" title="Permalink to this heading">¶</a></h3>
+<p>To deploy the Flux Operator, <a class="reference external" href="https://flux-framework.org/flux-operator/getting_started/user-guide.html#production-install">choose one of the options here</a> to deploy the operator. Whether you apply a yaml file, use <a class="reference external" href="https://converged-computing.github.io/flux-cloud">flux-cloud</a> or clone the repository and <code class="docutils literal notranslate"><span class="pre">make</span> <span class="pre">deploy</span></code>. You can also deploy a development image:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span>make<span class="w"> </span>test-deploy
+$<span class="w"> </span>kubectl<span class="w"> </span>apply<span class="w"> </span>-f<span class="w"> </span>examples/dist/flux-operator-dev.yaml<span class="w"> </span>
+</code></pre></div>
+</div>
+<p>you will see the operator install to the <code class="docutils literal notranslate"><span class="pre">operator-system</span></code> namespace.</p>
 <div class="highlight-console notranslate"><div class="highlight"><pre><span></span><code><span class="go">...</span>
 <span class="go">namespace/operator-system created</span>
 <span class="go">customresourcedefinition.apiextensions.k8s.io/miniclusters.flux-framework.org unchanged</span>
@@ -791,7 +845,7 @@ A Python client is <a class="reference external" href="https://flux-framework.or
   <small>
     
       Last update:
-      Jan 27, 2023
+      Feb 17, 2023
     
   </small>
 </div>
@@ -822,7 +876,7 @@ A Python client is <a class="reference external" href="https://flux-framework.or
     <nav class="md-footer__inner md-grid" aria-label="Footer" >
       
         
-        <a href="index.html" class="md-footer__link md-footer__link--prev" aria-label="Previous: Clouds" rel="prev">
+        <a href="minikube.html" class="md-footer__link md-footer__link--prev" aria-label="Previous: MiniKube" rel="prev">
           <div class="md-footer__button md-icon">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
           </div>
@@ -831,7 +885,7 @@ A Python client is <a class="reference external" href="https://flux-framework.or
               <span class="md-footer__direction">
                 Previous
               </span>
-              Clouds
+              MiniKube
             </div>
           </div>
         </a>
