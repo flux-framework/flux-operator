@@ -97,6 +97,8 @@ Volumes can be defined on the level of the MiniCluster that are then used by con
  - For MiniKube, these volumes are expected to be inside of the VM, e.g., accessed via `minikube ssh`
  - For an actual cluster, they should be on the node running the pod.
 
+#### volume ids
+
 For each volume under "volumes" we enforce a unique name by way of using key values - e.g., "myvolume"
 in the example below can then be referenced for a container:
 
@@ -109,7 +111,11 @@ volumes:
 
 The "class" above (which you can leave out) defaults to hostpath, and should be the storage class that your cluster provides.
 The Operator createst the "hostpath" volume claim. This currently is always created as a host path volume claim in MiniKube,
-and likely in the future will have different logic if it varies from that. Finally, you can add labels:
+and likely in the future will have different logic if it varies from that. 
+
+#### labels
+
+You can add labels:
 
 
 ```yaml
@@ -120,6 +126,41 @@ volumes:
       labels:
         type: "local"
 ```
+
+#### request storage size
+
+By default, a capacity request is "5Gi", and we only do this because the field is required. However, keep in mind
+for many some cloud storage interfaces there is no concept of a max. 
+This is defined as a string to be parsed. To tweak that, meaning
+that this container will request this amount of storage for the container (and here we show a different storageclass
+for Google Cloud)
+
+```yaml
+volumes:
+  myvolume:
+    path: /full/path/to/volume
+    capacity: 5Gi
+    class: csi-gcs
+```
+
+Since storage classes are created separately (not by the operator) you should check with your storage
+class to ensure resource limits work with your selection above.
+
+#### secret
+
+For a CSI (container storage interface) you usually need to provide a secret reference. For example,
+for GKE we create a service account with the appropriate permissions, and then apply them as a secret named `csi-gks-secret`:
+
+```yaml
+volumes:
+  myvolume:
+    path: /full/path/to/volume
+    capacity: 1Gi
+    class: csi-gcs
+    secret: "csi-gcs-secret"
+```
+
+The secret (for now) should be in the default namespace.
 
 ### cleanup
 
@@ -190,6 +231,7 @@ Debug mode adds verbosity to flux to see additional information about the job su
 logging:
   debug: true
 ```
+
 
 ### pod
 
@@ -408,10 +450,9 @@ The log level to provide to flux, given that test mode is not on.
 
 It might be that you want some custom logic at the beginning of your script.
 E.g., perhaps you need to source an environment of interest! To support this we allow
-for a string (multiple lines possible) of custom logic to do that. Remember
-that since this is written into a flux runner wait.sh, this will only be
-used for a Flux runner script. If you need custom logic in a service container
-that is not a flux runner, you should write it into your own entrypoint.
+for a string (multiple lines possible) of custom logic to do that. This
+"global" preCommand will be run for both flux workers (including the broker)
+and the certificate generation script.
 
 ```yaml
   # The pipe preserves line breaks
@@ -423,7 +464,7 @@ that is not a flux runner, you should write it into your own entrypoint.
 ```
 
 As a good example use case, we use an `asFlux` prefix to run any particular flux command
-as the flux user. This defaults to the following:
+as the flux user. This defaults to the following giving you have the default `runAsFluxUser` to true:
 
 ```bash
 asFlux="sudo -u flux -E PYTHONPATH=$PYTHONPATH -E PATH=$PATH"
@@ -445,6 +486,63 @@ assets to a home directory, so we need to customize the entrypoint for that.
 # Ensure the cache targets our flux user home
 asFlux="sudo -u flux -E PYTHONPATH=$PYTHONPATH -E PATH=$PATH -E HOME=/home/flux"
 ```
+
+#### commands
+
+A special "commands" section is available for commands that you want to run in the broker and workers containers,
+but not during certificate generation. As an example, if you print extra output to the certificate generator,
+it will mangle the certificate output. Instead, you could write debug statements in this section.
+
+##### pre
+
+The "pre" command is akin to `preCommand` but only run for the Flux workers and broker. Here is an example:
+
+```yaml
+containers:
+  - image: my-flux-image
+    ...
+    commands:
+      pre: |
+        # Commands that might print to stdout/stderr to debug, etc.
+        echo "I am running the pre-command"
+        ls /workdir
+```
+
+##### runFluxAsRoot
+
+For different storage interfaces (e.g., CSI means "Container Storage Interface") you might need to 
+run flux as root (and not change permission of the mounted working directory) to be owned by the flux user. You
+can set this flag to enable that:
+
+```yaml
+containers:
+  - image: my-flux-image
+    ...
+    commands:
+      runFluxAsRoot: true
+```
+
+This defaults to false, meaning we run everything as the Flux user, and you are encouraged to try to figure out
+setting up your storage to be owned by that user.
+
+
+#### fluxUser
+
+If you need to change the uid or name for the flux user, you can define that here.
+
+```yaml
+containers:
+  - image: my-flux-image
+    ...
+    fluxuser:
+      # Defaults to 1000
+      uid: 1002
+      # Defaults to flux
+      name: flux
+```
+
+Note that if the "flux" user already exists in your container, the uid will be discovered and you don't need 
+to set this. These parameters are only if you want the flux user to be created with a different unique id.
 
 
 #### diagnostics
@@ -480,7 +578,6 @@ volumes:
     path: /data
     readonly: true
 ```
-
 
 ### fluxRestful
 

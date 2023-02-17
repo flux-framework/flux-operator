@@ -1,7 +1,6 @@
 # TODO
 
- - [ ] volume should have size request, not hard coded as it is now
- - [ ] operator needs to clean up shared storage, if used
+ - [ ] test storage on AWS / using ceph on any cloud
 
 ### Maybe
 
@@ -14,6 +13,7 @@
 
 #### Completed
 
+ - [x] volume should have size request, not hard coded as it is now
  - [x] make deployments own section of docs
  - [x] interface still needs debugging for 2+ processes
  - [x] diagnostics should be on the level of the container

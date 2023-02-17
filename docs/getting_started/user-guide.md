@@ -220,5 +220,3 @@ $ kubectl get -n flux-operator pods
 And don't forget to clean up! Leaving on resources by accident is expensive! This command
 will vary depending on the cloud you are using. Either way, it's good to check the web console too to ensure you didn't miss anything.
 Next, you might be interested in [ways to submit jobs](jobs.md) or how to build images in our [Developer Guides](../development/developer-guide.md).
-
-

@@ -144,6 +144,33 @@ func (r *MiniClusterReconciler) createPersistentVolume(
 	volume api.MiniClusterVolume,
 ) *corev1.PersistentVolume {
 
+	// We either support a hostpath (miniKube) or a Container Storage Interface (CSI)
+	var pvsource corev1.PersistentVolumeSource
+	if volume.StorageClassName == "hostpath" {
+
+		pvsource = corev1.PersistentVolumeSource{
+			HostPath: &corev1.HostPathVolumeSource{
+				Path: path.Join(volume.Path),
+			},
+		}
+
+	} else {
+		pvsource = corev1.PersistentVolumeSource{
+			CSI: &corev1.CSIPersistentVolumeSource{
+
+				// Choose for the user for now.
+				Driver: "gcs.csi.ofek.dev",
+
+				// Name in storageclass metadata
+				VolumeHandle: "csi-gcs",
+				NodePublishSecretRef: &corev1.SecretReference{
+					Namespace: volume.SecretNamespace,
+					Name:      volume.SecretReference,
+				},
+			},
+		}
+	}
+
 	newVolume := &corev1.PersistentVolume{
 		TypeMeta: metav1.TypeMeta{},
 		ObjectMeta: metav1.ObjectMeta{
@@ -151,22 +178,23 @@ func (r *MiniClusterReconciler) createPersistentVolume(
 			Namespace: cluster.Namespace,
 			Labels:    volume.Labels,
 		},
+
 		Spec: corev1.PersistentVolumeSpec{
 			PersistentVolumeReclaimPolicy: corev1.PersistentVolumeReclaimDelete,
 			AccessModes:                   []corev1.PersistentVolumeAccessMode{corev1.ReadWriteMany},
-			Capacity: map[corev1.ResourceName]resource.Quantity{
-				corev1.ResourceStorage: *resource.NewQuantity(1024, resource.BinarySI),
-			},
 
 			// This is a path in the minikube vm or on the node
-			PersistentVolumeSource: corev1.PersistentVolumeSource{
-				HostPath: &corev1.HostPathVolumeSource{
-					Path: path.Join(volume.Path),
-				},
-			},
-			StorageClassName: volume.StorageClassName,
+			PersistentVolumeSource: pvsource,
+			StorageClassName:       volume.StorageClassName,
 		},
 	}
+	// Capacity is optional for some storage like Google Cloud
+	if volume.Capacity != "" {
+		newVolume.Spec.Capacity = map[corev1.ResourceName]resource.Quantity{
+			corev1.ResourceStorage: resource.MustParse(volume.Capacity),
+		}
+	}
+
 	ctrl.SetControllerReference(cluster, newVolume, r.Scheme)
 	return newVolume
 }
@@ -321,12 +349,15 @@ func (r *MiniClusterReconciler) createPersistentVolumeClaim(
 	volume api.MiniClusterVolume,
 ) *corev1.PersistentVolumeClaim {
 
+	volumeMode := corev1.PersistentVolumeFilesystem
+
 	// Create a new RWX persistent volume claim
 	newVolume := &corev1.PersistentVolumeClaim{
 		TypeMeta: metav1.TypeMeta{},
 		ObjectMeta: metav1.ObjectMeta{
-			Name:      volumeName,
-			Namespace: cluster.Namespace,
+			Name:        volumeName,
+			Namespace:   cluster.Namespace,
+			Annotations: volume.Annotations,
 		},
 
 		Spec: corev1.PersistentVolumeClaimSpec{
@@ -334,11 +365,10 @@ func (r *MiniClusterReconciler) createPersistentVolumeClaim(
 			AccessModes: []corev1.PersistentVolumeAccessMode{
 				corev1.ReadWriteMany,
 			},
-
-			// No idea how much to ask for here! I made it up.
+			VolumeMode: &volumeMode,
 			Resources: corev1.ResourceRequirements{
 				Requests: corev1.ResourceList{
-					corev1.ResourceStorage: *resource.NewQuantity(1024, resource.BinarySI),
+					corev1.ResourceStorage: resource.MustParse(volume.Capacity),
 				},
 			},
 		},

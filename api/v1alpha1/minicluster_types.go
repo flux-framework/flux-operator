@@ -144,9 +144,27 @@ type MiniClusterVolume struct {
 	// +optional
 	Labels map[string]string `json:"labels"`
 
+	// Annotations for persistent volume claim
+	// +optional
+	Annotations map[string]string `json:"annotations"`
+
 	// +kubebuilder:default="hostpath"
 	// +optional
 	StorageClassName string `json:"class"`
+
+	// Secret reference in Kubernetes with service account role
+	// +optional
+	SecretReference string `json:"secret"`
+
+	// Secret namespace
+	// +kubebuilder:default="default"
+	// +optional
+	SecretNamespace string `json:"secretNamespace"`
+
+	// Capacity (string) for PVC (storage request) to create PV
+	// +kubebuilder:default="5Gi"
+	// +optional
+	Capacity string `json:"capacity"`
 }
 
 // A Container volume must reference one defined for the MiniCluster
@@ -180,6 +198,10 @@ type MiniClusterContainer struct {
 	// Run flux diagnostics on start instead of command
 	// +optional
 	Diagnostics bool `json:"diagnostics"`
+
+	// Flux User, if created in the container
+	// +optional
+	FluxUser FluxUser `json:"fluxUser"`
 
 	// Ports to be exposed to other containers in the cluster
 	// We take a single list of integers and map to the same
@@ -235,6 +257,7 @@ type MiniClusterContainer struct {
 	// Special command to run at beginning of script, directly after asFlux
 	// is defined as sudo -u flux -E (so you can change that if desired.)
 	// This is only valid if FluxRunner is set (that writes a wait.sh script)
+	// This is for the indexed job pods and the certificate generation container.
 	// +optional
 	PreCommand string `json:"preCommand"`
 
@@ -245,6 +268,35 @@ type MiniClusterContainer struct {
 	// Resources include limits and requests
 	// +optional
 	Resources ContainerResources `json:"resources"`
+
+	// More specific or detailed commands for just workers/broker
+	// +optional
+	Commands Commands `json:"commands"`
+}
+
+type FluxUser struct {
+
+	// Flux user name
+	// +kubebuilder:default="flux"
+	// +optional
+	Name string `json:"name"`
+
+	// UID for the FluxUser
+	// +optional
+	// +kubebuilder:default=1000
+	Uid int `json:"uid"`
+}
+
+type Commands struct {
+
+	// Run flux start as root - required for some storage binds
+	// +kubebuilder:default=false
+	// +optional
+	RunFluxAsRoot bool `json:"runFluxAsRoot"`
+
+	// pre command is run after global PreCommand, before anything else
+	// +optional
+	Pre string `json:"pre"`
 }
 
 // ContainerResources include limits and requests
@@ -328,6 +380,15 @@ func (f *MiniCluster) Validate() bool {
 	if fluxRunners != 1 {
 		valid = false
 	}
+
+	// For each volume, if it's not a hostvolume, we require a secret reference
+	for key, volume := range f.Spec.Volumes {
+		if volume.StorageClassName != "hostpath" && volume.SecretReference == "" {
+			fmt.Printf("😥️ Found non-hostpath volume %s that is missing a secret\n", key)
+			valid = false
+		}
+	}
+
 	return valid
 }
 

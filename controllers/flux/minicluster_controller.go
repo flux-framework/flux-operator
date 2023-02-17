@@ -133,7 +133,7 @@ func (r *MiniClusterReconciler) Reconcile(
 
 	// Show parameters provided and validate one flux runner
 	if !cluster.Validate() {
-		r.log.Info("🌀 Your MiniCluster should have exactly one container with runFlux true. Canceling!")
+		r.log.Info("🌀 Your MiniCluster confi did not validate! see the sad faces above for details. Canceling!")
 		return ctrl.Result{}, nil
 	}
 	r.log.Info("🌀 Reconciling Mini Cluster", "Containers: ", len(cluster.Spec.Containers))

@@ -276,12 +276,12 @@ Generally we recommend using the flux-sched base image
 so that install locations and users are consistent. This assumes that:
 
  - we are currently starting focus on supporting debian bases
- - if you created the flux user, it has uid 1000
+ - if you created the flux user, it has uid 1000 (unless you customize `fluxUser.Uid`)
  - sudo is available in the container (apt-get install -y sudo)
  - `/etc/flux` is used for configuration and general setup
  - `/usr/libexec/flux` has executables like flux-imp, flux-shell
  - flux-core / flux-sched with flux-security should be installed and ready to go.
- - If you haven't created a flux user, one will be created for you (with a common user id 1000)
+ - If you haven't created a flux user, one will be created for you (with a common user id 1000 or `fluxuser.Uid`)
  - Any executables that the flux user needs for your job should be on the path (if launching command directly)
  - Do not have any requirements (data or executables in root's home)
  - The container (for now) should start with user root, and we run commands on behalf of flux.

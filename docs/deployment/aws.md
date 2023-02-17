@@ -1,9 +1,12 @@
 # Amazon Web Services
 
 This small tutorial wall walk through how to run the Flux Operator (from a development
-standpoint) on AWS. 
+standpoint) on AWS! You can start with setup (regardless of the workflow you choose)
+and then move on to a cloud-specific workflow.
 
-## Install
+## Setup
+
+### Install
 
 You should first [install eksctrl](https://github.com/weaveworks/eksctl) and make sure you have access to an AWS cloud (e.g.,
 with credentials or similar in your environment). E.g.,:
@@ -17,8 +20,9 @@ The last session token may not be required depending on your setup.
 We assume you also have [kubectl](https://kubernetes.io/docs/tasks/tools/). 
 
 
-## Setup SSH
+### Setup SSH
 
+This step is optional if you want to access your nodes.
 You'll need an ssh key for EKS. Here is how to generate it:
 
 ```bash
@@ -28,7 +32,7 @@ ssh-keygen
 
 This is used so you can ssh (connect) to your workers!
 
-## Create Cluster
+### Create Cluster
 
 Next, let's create our cluster using eksctl "eks control." **IMPORTANT** you absolutely
 need to choose a size that has [IsTrunkingCompatible](https://github.com/aws/amazon-vpc-resource-controller-k8s/blob/master/pkg/aws/vpc/limits.go)
@@ -58,6 +62,26 @@ managedNodeGroups:
       publicKeyPath: ~/.ssh/id_eks.pub
 ```
 
+If you don't need an ssh key:
+
+```yaml
+apiVersion: eksctl.io/v1alpha5
+kind: ClusterConfig
+
+metadata:
+  name: flux-operator
+  region: us-east-1
+  version: "1.23"
+
+availabilityZones: ["us-east-1a", "us-east-1b", "us-east-1d"]
+managedNodeGroups:
+  - name: workers
+    instanceType: c5.xlarge
+    minSize: 4
+    maxSize: 4
+    labels: { "fluxoperator": "true" }
+```
+
 Given the above file `eks-cluster-config.yaml` we create the cluster as follows:
 
 ```bash
@@ -76,9 +100,16 @@ ip-192-168-49-92.ec2.internal    Ready    <none>   5m3s    v1.22.12-eks-be74326
 ip-192-168-79-92.ec2.internal    Ready    <none>   4m57s   v1.22.12-eks-be74326
 ```
 
-## Deploy Operator 
+### Deploy Operator 
 
-To deploy the Flux Operator, [choose one of the options here](https://flux-framework.org/flux-operator/getting_started/user-guide.html#production-install) to deploy the operator. Whether you apply a yaml file, use [flux-cloud](https://converged-computing.github.io/flux-cloud) or clone the repository and `make deploy` you will see the operator install to the `operator-system` namespace.
+To deploy the Flux Operator, [choose one of the options here](https://flux-framework.org/flux-operator/getting_started/user-guide.html#production-install) to deploy the operator. Whether you apply a yaml file, use [flux-cloud](https://converged-computing.github.io/flux-cloud) or clone the repository and `make deploy`. You can also deploy a development image:
+
+```bash
+$ make test-deploy
+$ kubectl apply -f examples/dist/flux-operator-dev.yaml 
+```
+
+ you will see the operator install to the `operator-system` namespace.
 
 ```console
 ...

@@ -52,6 +52,10 @@ endif
 
 # Image URL to use all building/pushing image targets
 IMG ?= ghcr.io/flux-framework/flux-operator
+
+# Testing image (for development mostly)
+DEVIMG ?= ghcr.io/flux-framework/flux-operator:test
+
 # ENVTEST_K8S_VERSION refers to the version of kubebuilder assets to be downloaded by envtest binary.
 ENVTEST_K8S_VERSION = 1.24.1
 
@@ -226,6 +230,15 @@ deploy: manifests kustomize ## Deploy controller to the K8s cluster specified in
 build-config: manifests kustomize ## Deploy controller to the K8s cluster specified in ~/.kube/config.
 	cd config/manager && $(KUSTOMIZE) edit set image controller=${IMG}
 	$(KUSTOMIZE) build config/default > examples/dist/flux-operator.yaml
+
+
+# Build a test image, push to the registry at test, and apply the build-config
+.PHONY: test-deploy
+test-deploy: manifests kustomize
+	docker build -t ${DEVIMG} .
+	docker push ${DEVIMG}
+	cd config/manager && $(KUSTOMIZE) edit set image controller=${DEVIMG}
+	$(KUSTOMIZE) build config/default > examples/dist/flux-operator-dev.yaml
 
 .PHONY: undeploy
 undeploy: ## Undeploy controller from the K8s cluster specified in ~/.kube/config. Call with ignore-not-found=true to ignore resource not found errors during deletion.
