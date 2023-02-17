@@ -10,6 +10,9 @@ testbin/*
 config/samples/secrets
 bundle_*
 
+# Development files
+examples/dist/flux-operator-dev.yaml
+
 # Test binary, build with `go test -c`
 *.test
 

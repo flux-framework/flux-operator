@@ -1,0 +1,48 @@
+apiVersion: flux-framework.org/v1alpha1
+kind: MiniCluster
+metadata:
+  name: flux-sample
+  namespace: flux-operator
+spec:
+
+  # Number of pods to create for MiniCluster
+  size: 2
+
+  # Cleanup the storage volume (PVC and PV) after run
+  cleanup: true
+
+  # suppress all output except for test run
+  logging:
+    quiet: true
+
+  # Make this kind of persistent volume and claim available to pods
+  # This is a path in minikube (e.g., minikube ssh)
+  volumes:
+    data:      
+      class: hostpath
+      path: /tmp/data
+      labels:
+        type: "local"
+
+  # This is a list because a pod can support multiple containers
+  containers:
+
+      # This image has snakemake installed, and although it has data, we will 
+      # provide it as a volume to the container to demonstrate that (and share it)
+    - image: ghcr.io/rse-ops/atacseq:app-latest
+
+      # We are saying to mount the "data" volume defined above to "/workflow"
+      # in the container
+      volumes:
+        data:
+          path: /workflow
+          # readonly defaults to false
+                
+      # This is the directory we will bind the data to
+      workingDir: /workflow
+      command: snakemake --cores 1 --flux
+      preCommand: |
+        # Ensure the cache targets our flux user home
+        asFlux="sudo -u flux -E PYTHONPATH=$PYTHONPATH -E PATH=$PATH -E HOME=/home/flux"
+        # Add the flux user beforehand, and ensure we own the working directory with data
+        sudo adduser --disabled-password --uid 1000 --gecos "" flux > /dev/null 2>&1

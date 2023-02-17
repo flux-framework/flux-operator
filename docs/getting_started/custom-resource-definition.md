@@ -90,35 +90,91 @@ If a Job is suspended (at creation or through an update), this timer will effect
   deadlineSeconds: 100
 ```
 
-### localDeploy
-
-This is a boolean to indicate that you are doing a local deploy. What it is really determining is if we should
-ask for a volume mount (e.g., binding to a temporary directory) vs. a volume claim (typically only available)
-in production level clusters. If you are developing or working locally using, for example, MiniKube, you
-likely want to set this to True.
-
-```yaml
-  # Set to true to use volume mounts instead of volume claims
-  localDeploy: true
-``` 
-
 ### volumes
 
 Volumes can be defined on the level of the MiniCluster that are then used by containers.
-These volumes are local host volumes, and should be named (the key for the section)
-with a path:
+
+ - For MiniKube, these volumes are expected to be inside of the VM, e.g., accessed via `minikube ssh`
+ - For an actual cluster, they should be on the node running the pod.
+
+#### volume ids
+
+For each volume under "volumes" we enforce a unique name by way of using key values - e.g., "myvolume"
+in the example below can then be referenced for a container:
 
 ```yaml
 volumes:
   myvolume:
     path: /full/path/to/volume
-    readOnly: false
+    class: hostpath
 ```
 
-By default they will be read only unless you set `readOnly` to false.
-Since we haven't implemented this for a cloud resource yet, this currently just works
-with localDeploy is set to true, and we can adjust this when we test in a cloud.
+The "class" above (which you can leave out) defaults to hostpath, and should be the storage class that your cluster provides.
+The Operator createst the "hostpath" volume claim. This currently is always created as a host path volume claim in MiniKube,
+and likely in the future will have different logic if it varies from that. 
 
+#### labels
+
+You can add labels:
+
+
+```yaml
+volumes:
+  myvolume:
+    path: /full/path/to/volume
+    class: hostpath
+      labels:
+        type: "local"
+```
+
+#### request storage size
+
+By default, a capacity request is "5Gi", and we only do this because the field is required. However, keep in mind
+for many some cloud storage interfaces there is no concept of a max. 
+This is defined as a string to be parsed. To tweak that, meaning
+that this container will request this amount of storage for the container (and here we show a different storageclass
+for Google Cloud)
+
+```yaml
+volumes:
+  myvolume:
+    path: /full/path/to/volume
+    capacity: 5Gi
+    class: csi-gcs
+```
+
+Since storage classes are created separately (not by the operator) you should check with your storage
+class to ensure resource limits work with your selection above.
+
+#### secret
+
+For a CSI (container storage interface) you usually need to provide a secret reference. For example,
+for GKE we create a service account with the appropriate permissions, and then apply them as a secret named `csi-gks-secret`:
+
+```yaml
+volumes:
+  myvolume:
+    path: /full/path/to/volume
+    capacity: 1Gi
+    class: csi-gcs
+    secret: "csi-gcs-secret"
+```
+
+The secret (for now) should be in the default namespace.
+
+### cleanup
+
+If you add any kind of persistent volume to your MiniCluster, it will likely need a cleanup after the fact
+(after you bring the MiniCluster down). By default, the operator will perform this cleanup, checking if the
+Job status is "Completed" and then removing the pods, Persistent Volume Claims, and Persistent Volumes.
+If you want to disable this cleanup:
+
+```yaml
+  cleanup: false
+```
+
+If you are streaming the logs with `kubectl logs` the steam would stop when the broker pod is completed,
+so typically you will get the logs as long as you are streaming when the job starts running.
 
 ### logging
 
@@ -175,6 +231,7 @@ Debug mode adds verbosity to flux to see additional information about the job su
 logging:
   debug: true
 ```
+
 
 ### pod
 
@@ -393,10 +450,9 @@ The log level to provide to flux, given that test mode is not on.
 
 It might be that you want some custom logic at the beginning of your script.
 E.g., perhaps you need to source an environment of interest! To support this we allow
-for a string (multiple lines possible) of custom logic to do that. Remember
-that since this is written into a flux runner wait.sh, this will only be
-used for a Flux runner script. If you need custom logic in a service container
-that is not a flux runner, you should write it into your own entrypoint.
+for a string (multiple lines possible) of custom logic to do that. This
+"global" preCommand will be run for both flux workers (including the broker)
+and the certificate generation script.
 
 ```yaml
   # The pipe preserves line breaks
@@ -406,6 +462,88 @@ that is not a flux runner, you should write it into your own entrypoint.
     * Bullet
     * Points
 ```
+
+As a good example use case, we use an `asFlux` prefix to run any particular flux command
+as the flux user. This defaults to the following giving you have the default `runAsFluxUser` to true:
+
+```bash
+asFlux="sudo -u flux -E PYTHONPATH=$PYTHONPATH -E PATH=$PATH"
+```
+
+However, let's say you have a use case that warrants passing on a custom set of environment
+variables. For example, when we want to use Flux with MPI + libfabric (EFA networking in AWS)
+we want these extra variables:
+
+```bash
+asFlux="sudo -u flux -E PYTHONPATH=$PYTHONPATH -E PATH=$PATH -E FI_EFA_USE_DEVICE_RDMA=1 -E RDMAV_FORK_SAFE=1"
+```
+
+Thus, we would define this line in our `preCommand` section. Since this runs directly after the default asFlux is defined,
+it will be over-ridden to use our variant. As a final example, for a snakemake workflow we are expected to write
+assets to a home directory, so we need to customize the entrypoint for that.
+
+```bash
+# Ensure the cache targets our flux user home
+asFlux="sudo -u flux -E PYTHONPATH=$PYTHONPATH -E PATH=$PATH -E HOME=/home/flux"
+```
+
+#### commands
+
+A special "commands" section is available for commands that you want to run in the broker and workers containers,
+but not during certificate generation. As an example, if you print extra output to the certificate generator,
+it will mangle the certificate output. Instead, you could write debug statements in this section.
+
+##### pre
+
+The "pre" command is akin to `preCommand` but only run for the Flux workers and broker. Here is an example:
+
+```yaml
+containers:
+  - image: my-flux-image
+    ...
+    commands:
+      pre: |
+        # Commands that might print to stdout/stderr to debug, etc.
+        echo "I am running the pre-command"
+        ls /workdir
+```
+
+##### runFluxAsRoot
+
+For different storage interfaces (e.g., CSI means "Container Storage Interface") you might need to 
+run flux as root (and not change permission of the mounted working directory) to be owned by the flux user. You
+can set this flag to enable that:
+
+```yaml
+containers:
+  - image: my-flux-image
+    ...
+    commands:
+      runFluxAsRoot: true
+```
+
+This defaults to false, meaning we run everything as the Flux user, and you are encouraged to try to figure out
+setting up your storage to be owned by that user.
+
+
+#### fluxUser
+
+If you need to change the uid or name for the flux user, you can define that here.
+
+```yaml
+containers:
+  - image: my-flux-image
+    ...
+    fluxuser:
+      # Defaults to 1000
+      uid: 1002
+      # Defaults to flux
+      name: flux
+```
+
+Note that if the "flux" user already exists in your container, the uid will be discovered and you don't need 
+to set this. These parameters are only if you want the flux user to be created with a different unique id.
+
 
 #### diagnostics
 
@@ -421,9 +559,9 @@ we provide this argument on the level of the container. To enable this, set this
 
 ### volumes
 
-Volumes that are defined on the level of the MiniCluster can be referenced on the level
-of the container to be mounted into them.
-As an example, here is how we specify the volume `myvolume` to be mounted to the container at `/data`.
+Volumes that are defined on the level of the container must be defined at the top level of the MiniCluster.
+As an example, here is how we tell the container to use the already defined volume "myvolume" to be mounted
+in the container as "/data":
 
 ```yaml
 volumes:
@@ -432,9 +570,14 @@ volumes:
 ```
 
 The `myvolume` key must be defined in the MiniCluster set of volumes, and this is checked.
-Also note that we currently don't support shared filesystem volumes for production
-Kubernetes deploys - this only works for a local deploy on your host. We will
-work on this soon.
+If you want to change the readonly status to true:
+
+```yaml
+volumes:
+  myvolume:
+    path: /data
+    readonly: true
+```
 
 ### fluxRestful
 

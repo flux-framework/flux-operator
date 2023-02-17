@@ -39,8 +39,10 @@ jobs:
         make manifests
         make kustomize
 
-    # These aren't written yet)
+    # These aren't written yet
     - name: Run Unit tests
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: make test
 
     # Ensure build-config is the same as the one we have
@@ -62,7 +64,8 @@ jobs:
                ["timed", "ghcr.io/flux-framework/flux-restful-api:latest", 30],               
                ["debug", "ghcr.io/flux-framework/flux-restful-api:latest", 30],               
                ["flux-resource-list", "ghcr.io/flux-framework/flux-restful-api:latest", 30],
-               ["volumes", "ghcr.io/flux-framework/flux-restful-api:latest", 30]]
+               ["volumes", "ghcr.io/flux-framework/flux-restful-api:latest", 30],
+               ["snakemake", "ghcr.io/rse-ops/atacseq:app-latest", 30]]
         
     steps:
     - name: Clone the code

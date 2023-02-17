@@ -5,6 +5,14 @@ with the Flux Operator installed and are interested to submit your own [custom r
 to create a MiniCluster, or that someone has already done it for you. If you are a developer wanting to work
 on new functionality or features for the Flux Operator, see our [Developer Guides](../development/index.md) instead.
 
+## Containers Available
+
+All containers are provided under [ghcr.io/flux-framework/flux-operator](https://github.com/flux-framework/flux-operator/pkgs/container/flux-operator). The latest tag is the current main branch, a "bleeding edge" version,
+and we provide the other pinned containers in case you want a previous version:
+
+ - [ghcr.io/flux-framework/flux-operator:feb-2023](https://github.com/flux-framework/flux-operator/pkgs/container/flux-operator): the version used for Kubecon experiments, and before storage (minikube and Google Cloud example) were added.
+
+
 ## Local Install
 
 If you are trying this out on your own, here is a quick start to getting the operator installed on MiniKube (or similar),
@@ -195,18 +203,8 @@ $ kubectl create namespace flux-operator
 
 ### 3. Apply your custom resource definition
 
-Then apply your custom resource definition or CRD - importantly, the localDeploy needs to be false if you are using a production cluster. 
-Basically, setting to true uses a local mount, which obviously won't work for different instances in the cloud! 
-
-```yaml
-spec:
-# Set to true to use volume mounts instead of volume claims
-  localDeploy: false
-```
-
-Also ensure that your custom resource definition matches the namespace you just created.
-Note that we don't have yet a production solution for a shared filesystem, but @vsoch is going to test this soon. Then apply your CRD. You can use 
-the default [testing one from the repository](https://github.com/flux-framework/flux-operator/blob/main/config/samples/flux-framework.org_v1alpha1_minicluster.yaml) 
+Ensure that your custom resource definition matches the namespace you just created.
+Then apply your CRD. You can use the default [testing one from the repository](https://github.com/flux-framework/flux-operator/blob/main/config/samples/flux-framework.org_v1alpha1_minicluster.yaml) 
 or any in our [examples](https://github.com/flux-framework/flux-operator/tree/main/examples) folder. Here is using the default we provide:
 
 ```bash
@@ -230,5 +228,3 @@ $ kubectl get -n flux-operator pods
 And don't forget to clean up! Leaving on resources by accident is expensive! This command
 will vary depending on the cloud you are using. Either way, it's good to check the web console too to ensure you didn't miss anything.
 Next, you might be interested in [ways to submit jobs](jobs.md) or how to build images in our [Developer Guides](../development/developer-guide.md).
-
-

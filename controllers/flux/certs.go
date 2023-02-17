@@ -100,11 +100,23 @@ func generateCertGeneratorEntrypoint(cluster *api.MiniCluster, container api.Min
 }
 
 // getCurveGenerateConfigMap generate the config map entrypoint for the pod to generate the curve cert
-func (r *MiniClusterReconciler) getCurveGenerateConfigMap(ctx context.Context, cluster *api.MiniCluster, container api.MiniClusterContainer) (*corev1.ConfigMap, ctrl.Result, error) {
+func (r *MiniClusterReconciler) getCurveGenerateConfigMap(
+	ctx context.Context,
+	cluster *api.MiniCluster,
+	container api.MiniClusterContainer,
+) (*corev1.ConfigMap, ctrl.Result, error) {
 
 	existing := &corev1.ConfigMap{}
 	configFullName := cluster.Name + certGenSuffix
-	err := r.Client.Get(ctx, types.NamespacedName{Name: configFullName, Namespace: cluster.Namespace}, existing)
+	err := r.Client.Get(
+		ctx,
+		types.NamespacedName{
+			Name:      configFullName,
+			Namespace: cluster.Namespace,
+		},
+		existing,
+	)
+
 	if err != nil {
 
 		// Case 1: not found yet, and hostfile is ready (recreate)
@@ -117,10 +129,19 @@ func (r *MiniClusterReconciler) getCurveGenerateConfigMap(ctx context.Context, c
 			}
 			data[certGeneratorName] = genScript
 			dep := r.createConfigMap(cluster, configFullName, data)
-			r.log.Info("✨ Creating Curve Certificate Pod Generator Entrypoint ✨", "Namespace", dep.Namespace, "Name", dep.Name)
+
+			r.log.Info(
+				"✨ Creating Curve Certificate Pod Generator Entrypoint ✨",
+				"Namespace", dep.Namespace,
+				"Name", dep.Name,
+			)
 			err = r.Client.Create(ctx, dep)
 			if err != nil {
-				r.log.Error(err, "❌ Failed to create Curve Certificate Pod Generator Entrypoint", "Namespace", dep.Namespace, "Name", (*dep).Name)
+				r.log.Error(
+					err, "❌ Failed to create Curve Certificate Pod Generator Entrypoint",
+					"Namespace", dep.Namespace,
+					"Name", (*dep).Name,
+				)
 				return existing, ctrl.Result{}, err
 			}
 			// Successful - return and requeue
@@ -131,13 +152,21 @@ func (r *MiniClusterReconciler) getCurveGenerateConfigMap(ctx context.Context, c
 			return existing, ctrl.Result{}, err
 		}
 	} else {
-		r.log.Info("🎉 Found existing Curve Certificate Pod Generator Entrypoint", "Namespace", existing.Namespace, "Name", existing.Name)
+		r.log.Info(
+			"🎉 Found existing Curve Certificate Pod Generator Entrypoint",
+			"Namespace", existing.Namespace,
+			"Name", existing.Name,
+		)
 	}
 	return existing, ctrl.Result{}, err
 }
 
 // createPersistentVolume creates a volume in /tmp, which doesn't seem to choke
-func (r *MiniClusterReconciler) newPodCommandRunner(cluster *api.MiniCluster, container api.MiniClusterContainer, command []string) *corev1.Pod {
+func (r *MiniClusterReconciler) newPodCommandRunner(
+	cluster *api.MiniCluster,
+	container api.MiniClusterContainer,
+	command []string,
+) *corev1.Pod {
 
 	makeExecutable := int32(0777)
 	pullPolicy := corev1.PullIfNotPresent
@@ -154,7 +183,10 @@ func (r *MiniClusterReconciler) newPodCommandRunner(cluster *api.MiniCluster, co
 	}
 
 	pod := &corev1.Pod{
-		ObjectMeta: metav1.ObjectMeta{Name: cluster.Name + certGenSuffix, Namespace: cluster.Namespace},
+		ObjectMeta: metav1.ObjectMeta{
+			Name:      cluster.Name + certGenSuffix,
+			Namespace: cluster.Namespace,
+		},
 		Spec: corev1.PodSpec{
 			RestartPolicy:    corev1.RestartPolicyOnFailure,
 			ImagePullSecrets: getImagePullSecrets(cluster),

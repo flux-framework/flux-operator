@@ -4,9 +4,6 @@ metadata:
   name: flux-sample
   namespace: flux-operator
 spec:
-  # Set to true to use volume mounts instead of volume claims
-  localDeploy: true
-
   # Number of pods to create for MiniCluster
   size: 2
 

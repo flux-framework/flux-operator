@@ -4,8 +4,6 @@ metadata:
   name: flux-sample
   namespace: flux-operator
 spec:
-  # Set to true to use volume mounts instead of volume claims
-  localDeploy: true
 
   # Number of pods to create for MiniCluster
   size: 2
@@ -21,7 +19,6 @@ spec:
       # custom preCommand logic (run at start of script)
       preCommand: |
         source /etc/profile.d/z10_spack_environment.sh
-        asFlux="sudo -u flux -E PYTHONPATH=$PYTHONPATH"
 
       # While these aren't set, these are the workdir and command for a benchmark
       # /opt/osu-benchmark/build.openmpi/libexec/osu-micro-benchmarks/mpi/one-sided

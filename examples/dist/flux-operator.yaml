@@ -44,6 +44,11 @@ spec:
               MiniCluster corresponds to a Batch Job -> StatefulSet + ConfigMaps A
               "task" within that cluster is flux running something.
             properties:
+              cleanup:
+                default: false
+                description: Cleanup the pods and storage when the index broker pod
+                  is complete
+                type: boolean
               containers:
                 description: Containers is one or more containers to be created in
                   a pod. There should only be one container to run flux with runFlux
@@ -54,6 +59,19 @@ spec:
                         IMPORTANT: This is left here, but not used in favor of exposing
                         Flux via a Restful API. We Can remove this when that is finalized.'
                       type: string
+                    commands:
+                      description: More specific or detailed commands for just workers/broker
+                      properties:
+                        pre:
+                          description: pre command is run after global PreCommand,
+                            before anything else
+                          type: string
+                        runFluxAsRoot:
+                          default: false
+                          description: Run flux start as root - required for some
+                            storage binds
+                          type: boolean
+                      type: object
                     cores:
                       description: Cores the container should use
                       format: int32
@@ -78,6 +96,18 @@ spec:
                         also be set in the user interface to override here. This is
                         only valid for a FluxRunner
                       type: string
+                    fluxUser:
+                      description: Flux User, if created in the container
+                      properties:
+                        name:
+                          default: flux
+                          description: Flux user name
+                          type: string
+                        uid:
+                          default: 1000
+                          description: UID for the FluxUser
+                          type: integer
+                      type: object
                     image:
                       default: fluxrm/flux-sched:focal
                       description: Container image must contain flux and flux-sched
@@ -106,7 +136,8 @@ spec:
                       description: Special command to run at beginning of script,
                         directly after asFlux is defined as sudo -u flux -E (so you
                         can change that if desired.) This is only valid if FluxRunner
-                        is set (that writes a wait.sh script)
+                        is set (that writes a wait.sh script) This is for the indexed
+                        job pods and the certificate generation container.
                       type: string
                     pullAlways:
                       default: false
@@ -142,8 +173,8 @@ spec:
                         properties:
                           path:
                             type: string
-                          readOnly:
-                            default: true
+                          readonly:
+                            default: false
                             type: boolean
                         required:
                         - path
@@ -191,13 +222,6 @@ spec:
                   type: string
                 description: Labels for the job
                 type: object
-              localDeploy:
-                default: false
-                description: localDeploy should be true for development, or deploying
-                  in the case that there isn't an actual kubernetes cluster (e.g.,
-                  you are not using make deploy. It uses a persistent volume instead
-                  of a claim
-                type: boolean
               logging:
                 description: Logging modes determine the output you see in the job
                   log
@@ -249,12 +273,37 @@ spec:
                   description: Mini Cluster local volumes available to mount (these
                     are on the host)
                   properties:
+                    annotations:
+                      additionalProperties:
+                        type: string
+                      description: Annotations for persistent volume claim
+                      type: object
+                    capacity:
+                      default: 5Gi
+                      description: Capacity (string) for PVC (storage request) to
+                        create PV
+                      type: string
+                    class:
+                      default: hostpath
+                      type: string
+                    labels:
+                      additionalProperties:
+                        type: string
+                      type: object
                     path:
+                      type: string
+                    secret:
+                      description: Secret reference in Kubernetes with service account
+                        role
+                      type: string
+                    secretNamespace:
+                      default: default
+                      description: Secret namespace
                       type: string
                   required:
                   - path
                   type: object
-                description: Volumes on the host (named) accessible to containers
+                description: Volumes accessible to containers from a host
                 type: object
             required:
             - containers
@@ -824,6 +873,7 @@ spec:
         command:
         - /manager
         image: ghcr.io/flux-framework/flux-operator:latest
+        imagePullPolicy: Always
         livenessProbe:
           httpGet:
             path: /healthz

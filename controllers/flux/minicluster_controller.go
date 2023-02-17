@@ -44,7 +44,14 @@ type MiniClusterReconciler struct {
 	RESTConfig *rest.Config
 }
 
-func NewMiniClusterReconciler(client client.Client, scheme *runtime.Scheme, restConfig rest.Config, restClient rest.Interface, watchers ...MiniClusterUpdateWatcher) *MiniClusterReconciler {
+func NewMiniClusterReconciler(
+	client client.Client,
+	scheme *runtime.Scheme,
+	restConfig rest.Config,
+	restClient rest.Interface,
+	watchers ...MiniClusterUpdateWatcher,
+) *MiniClusterReconciler {
+
 	return &MiniClusterReconciler{
 		log:        ctrl.Log.WithName("minicluster-reconciler"),
 		Client:     client,
@@ -93,7 +100,10 @@ func NewMiniClusterReconciler(client client.Client, scheme *runtime.Scheme, rest
 //
 // For more details, check Reconcile and its Result here:
 // - https://pkg.go.dev/sigs.k8s.io/controller-runtime@v0.12.1/pkg/reconcile
-func (r *MiniClusterReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl.Result, error) {
+func (r *MiniClusterReconciler) Reconcile(
+	ctx context.Context,
+	req ctrl.Request,
+) (ctrl.Result, error) {
 
 	// Create a new MiniCluster
 	var cluster api.MiniCluster
@@ -123,7 +133,7 @@ func (r *MiniClusterReconciler) Reconcile(ctx context.Context, req ctrl.Request)
 
 	// Show parameters provided and validate one flux runner
 	if !cluster.Validate() {
-		r.log.Info("🌀 Your MiniCluster should have exactly one container with runFlux true. Canceling!")
+		r.log.Info("🌀 Your MiniCluster confi did not validate! see the sad faces above for details. Canceling!")
 		return ctrl.Result{}, nil
 	}
 	r.log.Info("🌀 Reconciling Mini Cluster", "Containers: ", len(cluster.Spec.Containers))
@@ -137,7 +147,14 @@ func (r *MiniClusterReconciler) Reconcile(ctx context.Context, req ctrl.Request)
 	// By the time we get here we have a Job + pods + config maps!
 	// What else do we want to do?
 	r.log.Info("🌀 Mini Cluster is Ready!")
-	r.log.Info("🌀 Wait for all pods to be running and previously running to be terminated.")
+
+	// Check until the job finishes to clean up volumes if needed
+	if cluster.Spec.Cleanup {
+		result, err := r.cleanupPodsStorage(ctx, &cluster)
+		if err != nil {
+			return result, err
+		}
+	}
 	return result, nil
 }
 
