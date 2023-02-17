@@ -5,12 +5,19 @@
 # update_hosts.sh has been populated. This means the pod usually
 # needs to be updated with the config map that has ips!
 
+# Set the flux user from the getgo
+fluxuser={{ if .Container.FluxUser.Name}}{{ .Container.FluxUser.Name }}{{ else }}flux{{ end }}
+fluxuid={{ if .Container.FluxUser.Uid}}{{ .Container.FluxUser.Uid }}{{ else }}1000{{ end }}
+
+{{ if not .Logging.QuietMode }}# Show asFlux directive once
+printf "\nAFlux username: ${fluxuser}\n"{{ end }}
+
 # Always run flux commands (and the broker) as flux user, unless requested otherwise (e.g., for storage)
 {{ if .Container.Commands.RunFluxAsRoot }}
 # Storage won't have write if we are the flux user
-asFlux="sudo -E PYTHONPATH=$PYTHONPATH -E PATH=$PATH -E HOME=/home/{{ .Container.FluxUser.Name }}"{{ else }}
+asFlux="sudo -E PYTHONPATH=$PYTHONPATH -E PATH=$PATH -E HOME=/home/${fluxuser}"{{ else }}
 # and ensure the home is targeted to be there too.
-asFlux="sudo -u {{ .Container.FluxUser.Name }} -E PYTHONPATH=$PYTHONPATH -E PATH=$PATH -E HOME=/home/{{ .Container.FluxUser.Name }}"
+asFlux="sudo -u ${fluxuser} -E PYTHONPATH=$PYTHONPATH -E PATH=$PATH -E HOME=/home/${fluxuser}"
 {{ end }}
 
 # We currently require sudo and an ubuntu base
@@ -18,10 +25,10 @@ which sudo > /dev/null 2>&1 || (echo "sudo is required to be installed" && exit 
 which flux > /dev/null 2>&1 || (echo "flux is required to be installed" && exit 1);
 
 # Add a flux user (required) that should exist before pre-command
-sudo adduser --disabled-password --uid {{ .Container.FluxUser.Uid }} --gecos "" {{ .Container.FluxUser.Name }} > /dev/null 2>&1 || {{ if not .Logging.QuietMode }} printf "{{ .Container.FluxUser.Name }} user is already added.\n"{{ else }}true{{ end }}
+sudo adduser --disabled-password --uid ${fluxuid} --gecos "" ${fluxuser} > /dev/null 2>&1 || {{ if not .Logging.QuietMode }} printf "${fluxuser} user is already added.\n"{{ else }}true{{ end }}
 
 # Show user permissions / ids
-{{ if not .Logging.QuietMode }}printf "{{ .Container.FluxUser.Name }} user identifiers:\n$(id {{ .Container.FluxUser.Name }})\n"{{ end }}
+{{ if not .Logging.QuietMode }}printf "${fluxuser} user identifiers:\n$(id ${fluxuser})\n"{{ end }}
 
 # If any preCommand logic is defined
 {{ .Container.PreCommand}}
@@ -131,7 +138,7 @@ fi
 mkdir -p /etc/flux/imp/conf.d/
 cat <<EOT >> /etc/flux/imp/conf.d/imp.toml
 [exec]
-allowed-users = [ "{{ .Container.FluxUser.Name }}", "root" ]
+allowed-users = [ "${fluxuser}", "root" ]
 allowed-shells = [ "/usr/libexec/flux/flux-shell" ]	
 EOT
 
@@ -155,7 +162,7 @@ chmod g-r /etc/curve/curve.cert
 
 # We must get the correct flux user id - this user needs to own
 # the run directory and these others
-fluxuid=$(id -u {{ .Container.FluxUser.Name }})
+fluxuid=$(id -u ${fluxuser})
 
 {{ if not .Container.Commands.RunFluxAsRoot }}chown -R ${fluxuid} /run/flux ${STATE_DIR} /etc/curve/curve.cert ${workdir}{{ end }}
 
