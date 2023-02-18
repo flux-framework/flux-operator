@@ -12,7 +12,6 @@ and we provide the other pinned containers in case you want a previous version:
 
  - [ghcr.io/flux-framework/flux-operator:feb-2023](https://github.com/flux-framework/flux-operator/pkgs/container/flux-operator): the version used for Kubecon experiments, and before storage (minikube and Google Cloud example) were added.
 
-
 ## Local Install
 
 If you are trying this out on your own, here is a quick start to getting the operator installed on MiniKube (or similar),
@@ -201,7 +200,13 @@ You'll likely Make your namespace for the flux-operator:
 $ kubectl create namespace flux-operator
 ```
 
-### 3. Apply your custom resource definition
+### 3. Validate your container (optional)
+
+Your main container (with flux installed) has a basic [set of requirements](https://flux-framework.org/flux-operator/development/developer-guide.html?h=container#container-requirements) and we provide a simple tool to sanity check the most simple of these requirements, the [Flux Operator Validator](https://github.com/converged-computing/flux-operator-validator).
+You are encouragd to run this script, although it's not required- you can just as easily go
+through the list and verify the points on your own.
+
+### 4. Apply your custom resource definition
 
 Ensure that your custom resource definition matches the namespace you just created.
 Then apply your CRD. You can use the default [testing one from the repository](https://github.com/flux-framework/flux-operator/blob/main/config/samples/flux-framework.org_v1alpha1_minicluster.yaml) 
