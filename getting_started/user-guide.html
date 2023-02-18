@@ -491,8 +491,15 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#validate-your-container-optional" class="md-nav__link">
+    <span title="/getting_started/user-guide.md#validate-your-container-optional (reference label)" class="md-ellipsis">3.<wbr> Validate your container <wbr>(optional)</span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#apply-your-custom-resource-definition" class="md-nav__link">
-    <span title="/getting_started/user-guide.md#apply-your-custom-resource-definition (reference label)" class="md-ellipsis">3.<wbr> Apply your custom resource definition</span>
+    <span title="/getting_started/user-guide.md#apply-your-custom-resource-definition (reference label)" class="md-ellipsis">4.<wbr> Apply your custom resource definition</span>
   </a>
   
 </li>
@@ -841,7 +848,11 @@ First, ensure the <code class="docutils literal notranslate"><span class="pre">o
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span>kubectl<span class="w"> </span>create<span class="w"> </span>namespace<span class="w"> </span>flux-operator
 </code></pre></div>
 </div>
-<h3 id="apply-your-custom-resource-definition">3. Apply your custom resource definition<a class="headerlink" href="#apply-your-custom-resource-definition" title="Permalink to this heading">¶</a></h3>
+<h3 id="validate-your-container-optional">3. Validate your container (optional)<a class="headerlink" href="#validate-your-container-optional" title="Permalink to this heading">¶</a></h3>
+<p>Your main container (with flux installed) has a basic <a class="reference external" href="https://flux-framework.org/flux-operator/development/developer-guide.html?h=container#container-requirements">set of requirements</a> and we provide a simple tool to sanity check the most simple of these requirements, the <a class="reference external" href="https://github.com/converged-computing/flux-operator-validator">Flux Operator Validator</a>.
+You are encouragd to run this script, although it’s not required- you can just as easily go
+through the list and verify the points on your own.</p>
+<h3 id="apply-your-custom-resource-definition">4. Apply your custom resource definition<a class="headerlink" href="#apply-your-custom-resource-definition" title="Permalink to this heading">¶</a></h3>
 <p>Ensure that your custom resource definition matches the namespace you just created.
 Then apply your CRD. You can use the default <a class="reference external" href="https://github.com/flux-framework/flux-operator/blob/main/config/samples/flux-framework.org_v1alpha1_minicluster.yaml">testing one from the repository</a>
 or any in our <a class="reference external" href="https://github.com/flux-framework/flux-operator/tree/main/examples">examples</a> folder. Here is using the default we provide:</p>
@@ -868,7 +879,7 @@ Next, you might be interested in <a class="reference internal" href="jobs.html">
   <small>
     
       Last update:
-      Feb 17, 2023
+      Feb 18, 2023
     
   </small>
 </div>
