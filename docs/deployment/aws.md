@@ -1,8 +1,7 @@
 # Amazon Web Services
 
-This small tutorial wall walk through how to run the Flux Operator (from a development
-standpoint) on AWS! You can start with setup (regardless of the workflow you choose)
-and then move on to a cloud-specific workflow.
+This set ofl tutorials wall walk through how to run the Flux Operator on AWS! 
+You can start with [setup](#setup) and then move down to [examples](#examples).
 
 ## Setup
 
@@ -18,7 +17,6 @@ export AWS_SESSION_TOKEN=xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 ```
 The last session token may not be required depending on your setup.
 We assume you also have [kubectl](https://kubernetes.io/docs/tasks/tools/).
-
 
 ### Setup SSH
 
@@ -85,7 +83,7 @@ managedNodeGroups:
 Given the above file `eks-cluster-config.yaml` we create the cluster as follows:
 
 ```bash
-$ eksctl create cluster -f eks-cluster-config.yaml
+$ eksctl create cluster -f eksctl-config.yaml
 ```
 
 🚧️ Warning! 🚧️ The above takes 15-20 minutes! Go have a party! Grab an avocado! 🥑️
@@ -109,7 +107,7 @@ $ make test-deploy
 $ kubectl apply -f examples/dist/flux-operator-dev.yaml
 ```
 
- you will see the operator install to the `operator-system` namespace.
+you will see the operator install to the `operator-system` namespace.
 
 ```console
 ...
@@ -152,7 +150,7 @@ No resource quota.
 No LimitRange resource.
 ```
 
-And you can find the name of the operator pod as follows:
+And you can find the name of the operator system pod as follows:
 
 ```bash
 $ kubectl get pod --all-namespaces
@@ -162,11 +160,19 @@ $ kubectl get pod --all-namespaces
 operator-system   operator-controller-manager-6c699b7b94-bbp5q   2/2     Running   0             80s   192.168.30.43    ip-192-168-28-166.ec2.internal   <none>           <none>
 ```
 
+### Create the flux-operator namespace
+
 Make your namespace for the flux-operator custom resource definition (CRD):
 
 ```bash
 $ kubectl create namespace flux-operator
 ```
+
+## Examples
+
+After setup, choose one of the following examples to run.
+
+### Run LAMMPS
 
 Then apply your CRD to generate the MiniCluster (default should be size 4, the max nodes of our cluster):
 
@@ -202,12 +208,138 @@ flux-sample-2-zs4h6   1/1     Running   0          2m11s
 flux-sample-3-prtn9   1/1     Running   0          2m11s
 ```
 
-And when the containers are running, in the logs you'll see
-see lots of cute emojis to indicate progress, and then the
-start of your server! You'll need an exposed host to see the user
-interface, or you can interact to submit jobs via the RESTful API.
+And when the containers are running, in the logs you'll see see lots of cute emojis to indicate progress, and then the
+start of your server! You'll need an exposed host to see the user interface, or you can interact to submit jobs via the RESTful API.
 A Python client is [available here](https://flux-framework.org/flux-restful-api/getting_started/user-guide.html#python).
+To use Flux Cloud to programatically submit jobs, [see the guides here](https://converged-computing.github.io/flux-cloud/getting_started/aws.html).
 
+
+### Run Snakemake with a Shared Filesystem
+
+This small tutorial will run a Snakemake workflow on AWS that requires a shared
+filesystem.
+
+#### Prepare S3 Storage
+
+Let's first get our Snakemake pre-requisite analysis files into S3.
+To start, prepare your data in a temporary directory.
+
+```bash
+$ git clone --depth 1 https://github.com/snakemake/snakemake-tutorial-data /tmp/workflow
+```
+
+You'll want to add the [Snakefile](https://github.com/rse-ops/flux-hpc/blob/main/snakemake/atacseq/Snakefile) for your workflow
+along with a [plotting script](https://github.com/rse-ops/flux-hpc/blob/main/snakemake/atacseq/scripts/plot-quals.py):
+
+```bash
+$ wget -O /tmp/workflow/Snakefile https://raw.githubusercontent.com/rse-ops/flux-hpc/main/snakemake/atacseq/Snakefile
+$ mkdir -p /tmp/workflow/scripts
+$ wget -O /tmp/workflow/scripts/plot-quals.py https://raw.githubusercontent.com/rse-ops/flux-hpc/main/snakemake/atacseq/scripts/plot-quals.py
+```
+
+You should have this structure:
+
+```bash
+$ tree /tmp/workflow
+```
+```
+/tmp/workflow/
+├── data
+│   ├── genome.fa
+│   ├── genome.fa.amb
+│   ├── genome.fa.ann
+│   ├── genome.fa.bwt
+│   ├── genome.fa.fai
+│   ├── genome.fa.pac
+│   ├── genome.fa.sa
+│   └── samples
+│       ├── A.fastq
+│       ├── B.fastq
+│       └── C.fastq
+├── Dockerfile
+├── environment.yaml
+├── README.md
+├── scripts
+│   └── plot-quals.py
+└── Snakefile
+```
+
+We can then use the `aws` command line client to make a bucket "mb" and upload to it.
+
+```bash
+$ aws s3 mb s3://flux-operator-workflows --region us-east-2
+```
+
+Sanity check that listing buckets shows your bucket:
+
+```bash
+$ aws s3 ls
+```
+```console
+2023-02-18 18:14:32 flux-operator-workflows
+...
+```
+Now copy the entire workflow to a faux "subdirectory" there:
+
+```bash
+# Present working direcory 
+$ aws s3 cp --recursive . s3://flux-operator-workflows/snakemake-workflow --exclude ".git*"
+```
+
+Sanity check again by listing that path in the bucket
+
+```bash
+$ aws s3 ls s3://flux-operator-workflows/snakemake-workflow/
+```
+
+#### Install the S3 Container Storage Interface
+
+We will install the S3 CSI, and we will use [yandex-cloud/k8s-csi-s3](https://github.com/yandex-cloud/k8s-csi-s3)
+and follow the instructions in the README there. The first step is to create a secret.yaml.
+We've provided one you can edit (to add your credentials) in `examples/storage/aws/secret.yaml`.
+
+```bash
+$ kubectl apply -f ./examples/storage/aws/secret.yaml
+```
+
+Then deploy the driver (these files are also provided here):
+
+```bash
+$ kubectl create -f ./examples/storage/aws/provisioner.yaml
+$ kubectl create -f ./examples/storage/aws/attacher.yaml
+$ kubectl create -f ./examples/storage/aws/csi-s3.yaml
+```
+
+And create the storage class
+
+```bash
+$ kubectl create -f examples/storage/aws/storageclass.yaml
+```
+
+Then (assuming you've already installed the operator and created the flux-operator namespace):
+
+```bash
+$ kubectl create -f ./examples/storage/aws/minicluster.yaml
+```
+
+Get pods - you'll see the containers creating and then running - first the cert-generator
+and then the MiniCluster pods:
+
+```bash
+$ kubectl get -n flux-operator pods
+```
+```console
+NAME                         READY   STATUS              RESTARTS   AGE
+flux-sample-0-f5znt          0/1     ContainerCreating   0          100s
+flux-sample-1-th589          0/1     ContainerCreating   0          100s
+flux-sample-cert-generator   0/1     Completed           0          100s
+```
+
+You can get the output file in the terminal (and don't worry about saving it too much, as it will save to storage):
+
+```bash
+$ kubectl get -n flux-operator flux-sample-0-f5znt
+```
 
 ## Clean up
 
@@ -220,8 +352,9 @@ $ make undeploy
 And then:
 
 ```bash
-$ eksctl delete cluster -f eks-cluster-config.yaml
+$ eksctl delete cluster -f eksctl-config.yaml
 ```
+
 It might be better to add `--wait`, which will wait until all resources are cleaned up:
 
 ```bash
