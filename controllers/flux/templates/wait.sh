@@ -5,12 +5,15 @@
 # update_hosts.sh has been populated. This means the pod usually
 # needs to be updated with the config map that has ips!
 
+# If we are in debug mode, don't set strict mode
+{{ if not .Logging.StrictMode }}set -eEu -o pipefail{{ end }}
+
 # Set the flux user from the getgo
 fluxuser={{ if .Container.FluxUser.Name}}{{ .Container.FluxUser.Name }}{{ else }}flux{{ end }}
 fluxuid={{ if .Container.FluxUser.Uid}}{{ .Container.FluxUser.Uid }}{{ else }}1000{{ end }}
 
 {{ if not .Logging.QuietMode }}# Show asFlux directive once
-printf "\nAFlux username: ${fluxuser}\n"{{ end }}
+printf "\nFlux username: ${fluxuser}\n"{{ end }}
 
 # Always run flux commands (and the broker) as flux user, unless requested otherwise (e.g., for storage)
 {{ if .Container.Commands.RunFluxAsRoot }}
@@ -26,6 +29,15 @@ which flux > /dev/null 2>&1 || (echo "flux is required to be installed" && exit 
 
 # Add a flux user (required) that should exist before pre-command
 sudo adduser --disabled-password --uid ${fluxuid} --gecos "" ${fluxuser} > /dev/null 2>&1 || {{ if not .Logging.QuietMode }} printf "${fluxuser} user is already added.\n"{{ else }}true{{ end }}
+
+# Add users, if requested
+{{ if .Users }}
+which openssl > /dev/null 2>&1 || (echo "openssl is required to be installed to add users" && exit 1);
+{{range $username := .Users}}
+  printf "Adding {{.Name}} with password {{ .Password}}\n"
+  sudo useradd -m -p $(openssl passwd '{{ .Password }}') {{.Name}}
+{{ end }}
+{{ end }}
 
 # Show user permissions / ids
 {{ if not .Logging.QuietMode }}printf "${fluxuser} user identifiers:\n$(id ${fluxuser})\n"{{ end }}
@@ -165,6 +177,29 @@ chmod g-r /etc/curve/curve.cert
 fluxuid=$(id -u ${fluxuser})
 
 {{ if not .Container.Commands.RunFluxAsRoot }}chown -R ${fluxuid} /run/flux ${STATE_DIR} /etc/curve/curve.cert ${workdir}{{ end }}
+# If we have users, then enable flux accounting
+{{ if and .Users .Logging.QuietMode }}
+{{ if not .Container.Commands.RunFluxAsRoot }}chown -R ${fluxuid} /var/lib/flux{{ end }}
+${asFlux} flux account create-db
+${asFlux} flux account add-bank root 1
+${asFlux} flux account add-bank --parent-bank=root user_bank 1
+{{range $index, $username := .Users}}
+  ${asFlux} flux account add-user --username={{ .Name }} --bank=user_bank
+{{ end }}{{ end }}
+
+{{ if and .Users (not .Logging.QuietMode) }}
+{{ if not .Container.Commands.RunFluxAsRoot }}chown -R ${fluxuid} /var/lib/flux{{ end }}
+printf "\n🧾️ Creating flux accounting database\n"
+printf "flux account create-db\n"
+${asFlux} flux account create-db
+printf "flux account add-bank root 1\n"
+${asFlux} flux account add-bank root 1
+printf "flux account add-bank --parent-bank=root user_bank 1\n"
+${asFlux} flux account add-bank --parent-bank=root user_bank 1
+{{range $username := .Users}}
+  printf "flux account add-user --username={{ .Name }} --bank=user_bank\n"
+  ${asFlux} flux account add-user --username={{ .Name }} --bank=user_bank
+{{ end }}{{ end }}
 
 # Make directory world read/writable
 chmod -R 0777 ${workdir}

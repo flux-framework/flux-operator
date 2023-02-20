@@ -19,6 +19,9 @@ import (
 //go:embed templates/broker.toml
 var brokerConfigTemplate string
 
+//go:embed templates/job-manager.toml
+var brokerConfigJobManagerPlugin string
+
 //go:embed templates/wait.sh
 var waitToStartTemplate string
 
@@ -33,6 +36,7 @@ type WaitTemplate struct {
 	Hosts     string // List of hosts
 
 	FluxRestful api.FluxRestful
+	Users       []api.MiniClusterUsers
 	Container   api.MiniClusterContainer
 	Cores       int32
 	Tasks       int32

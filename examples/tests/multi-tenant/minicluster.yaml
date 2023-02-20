@@ -1,0 +1,23 @@
+apiVersion: flux-framework.org/v1alpha1
+kind: MiniCluster
+metadata:
+  name: flux-sample
+  namespace: flux-operator
+spec:
+  # suppress all output except for test run
+  logging:
+    quiet: false
+
+  # Number of pods to create for MiniCluster
+  size: 4
+
+  # Define one or more users for your cluster
+  users:
+    - name: peenut
+    - name: squidward
+    - name: avocadosaurus
+
+  containers:
+    # This image has flux-accounting installed
+    - image: ghcr.io/rse-ops/accounting:app-latest
+    # Multi-user mode should not have a command

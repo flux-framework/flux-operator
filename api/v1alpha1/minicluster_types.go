@@ -31,6 +31,9 @@ type MiniClusterSpec struct {
 	// There should only be one container to run flux with runFlux
 	Containers []MiniClusterContainer `json:"containers"`
 
+	// Users of the MiniCluster
+	Users []MiniClusterUsers `json:"users"`
+
 	// Labels for the job
 	// +optional
 	JobLabels map[string]string `json:"jobLabels"`
@@ -78,12 +81,26 @@ type MiniClusterSpec struct {
 	Pod PodSpec `json:"pod"`
 }
 
+type MiniClusterUsers struct {
+
+	// If a user is defined, the username is required
+	Name string `json:"name"`
+
+	// +optional
+	Password string `json:"password"`
+}
+
 type LoggingSpec struct {
 
 	// Quiet mode silences all output so the job only shows the test running
 	// +kubebuilder:default=false
 	// +optional
 	QuietMode bool `json:"quiet"`
+
+	// Strict mode ensures any failure will not continue in the job entrypoint
+	// +kubebuilder:default=true
+	// +optional
+	StrictMode bool `json:"struct"`
 
 	// Debug mode adds extra verbosity to Flux
 	// +kubebuilder:default=false
@@ -349,6 +366,13 @@ func (f *MiniCluster) Validate() bool {
 		f.Spec.JobLabels = map[string]string{}
 	}
 
+	// Validate user passwords. If provided, need to be 8 or fewer characters
+	for _, user := range f.Spec.Users {
+		if user.Password != "" && len(user.Password) > 8 {
+			fmt.Printf("😥️ %s has a password that is too long, can be no longer than 8 characters\n", user.Name)
+			return false
+		}
+	}
 	for i, container := range f.Spec.Containers {
 		name := fmt.Sprintf("MiniCluster.Container.%d", i)
 		fmt.Printf("🤓 %s.Image %s\n", name, container.Image)
