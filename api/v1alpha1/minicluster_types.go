@@ -194,10 +194,6 @@ type MiniClusterVolume struct {
 	// +optional
 	StorageClass string `json:"storageClass,omitempty"`
 
-	// +kubebuilder:default="pvc-storage-class-name-unset"
-	// +optional
-	PVCStorageClassName string `json:"PVCclass"`
-
 	// Storage driver, e.g., gcs.csi.ofek.dev
 	// Only needed if not using hostpath
 	// +optional

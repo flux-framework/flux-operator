@@ -379,12 +379,6 @@ func (r *MiniClusterReconciler) createPersistentVolumeClaim(
 
 	volumeMode := corev1.PersistentVolumeFilesystem
 
-	// This can be explicitly set to an empty string
-	pvcStorageClass := volume.StorageClassName
-	//if volume.PVCStorageClassName != "pvc-storage-class-name-unset" {
-	//	pvcStorageClass = volume.PVCStorageClassName
-	//}
-
 	// Create a new RWX persistent volume claim
 	newVolume := &corev1.PersistentVolumeClaim{
 		TypeMeta: metav1.TypeMeta{},
