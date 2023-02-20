@@ -84,6 +84,9 @@ Given the above file `eks-cluster-config.yaml` we create the cluster as follows:
 
 ```bash
 $ eksctl create cluster -f eksctl-config.yaml
+
+# use the provided
+$ eksctl create cluster -f ./examples/storage/aws/eksctl-config.yaml
 ```
 
 🚧️ Warning! 🚧️ The above takes 15-20 minutes! Go have a party! Grab an avocado! 🥑️
@@ -292,28 +295,126 @@ Sanity check again by listing that path in the bucket
 $ aws s3 ls s3://flux-operator-workflows/snakemake-workflow/
 ```
 
-#### Install the S3 Container Storage Interface
+#### Prepare the OIDC Provider for EKS
 
-We will install the S3 CSI, and we will use [yandex-cloud/k8s-csi-s3](https://github.com/yandex-cloud/k8s-csi-s3)
-and follow the instructions in the README there. The first step is to create a secret.yaml.
-We've provided one you can edit (to add your credentials) in `examples/storage/aws/secret.yaml`.
+We will be following [this guide](https://dev.to/otomato_io/mount-s3-objects-to-kubernetes-pods-12f5).
+First, [create an OIDC role for the cluster](https://docs.aws.amazon.com/eks/latest/userguide/enable-iam-roles-for-service-accounts.html):
 
 ```bash
-$ kubectl apply -f ./examples/storage/aws/secret.yaml
+$ aws eks describe-cluster --name flux-operator --query "cluster.identity.oidc.issuer" --output text
 ```
 
-Then deploy the driver (these files are also provided here):
+Get the identifier `EXAMPLEXXXXXXXXXXXXXXX` and check if you've already done this. If you have, the following command will have output:
 
 ```bash
-$ kubectl create -f ./examples/storage/aws/provisioner.yaml
-$ kubectl create -f ./examples/storage/aws/attacher.yaml
-$ kubectl create -f ./examples/storage/aws/csi-s3.yaml
+$ aws iam list-open-id-connect-providers | grep EXAMPLED539D4633E53DE1B7
 ```
 
-And create the storage class
+If there is new output, open up the following section to  create the OIDC provider:
+
+<details>
+
+<summary>Create the OIDC provider</summary>
 
 ```bash
-$ kubectl create -f examples/storage/aws/storageclass.yaml
+$ eksctl utils associate-iam-oidc-provider --cluster flux-operator --approve
+```
+```console
+2023-02-19 19:56:55 [ℹ]  will create IAM Open ID Connect provider for cluster "flux-operator" in "us-east-1"
+2023-02-19 19:56:56 [✔]  created IAM Open ID Connect provider for cluster "flux-operator" in "us-east-1"
+```
+
+Then create a `policy.json` with your bucket name:
+
+```json
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Effect": "Allow",
+            "Action": [
+                "s3:*",
+            ],
+            "Resource": [
+                "arn:aws:s3:::flux-operator-workflows"
+            ]
+        }
+    ]
+}
+```
+
+Apply the policy (here is with the example and bucket we provide):
+
+```bash
+$ aws iam create-policy --policy-name kubernetes-s3-access --policy-document file://./examples/storage/aws/policy.json
+```
+
+After you've created it, keep track of the ARN you see in the json output!
+Next, create these environment variables for your AWS account and OIDC:
+
+```bash
+ACCOUNT_ID=$(aws sts get-caller-identity --query "Account" --output text)
+OIDC_PROVIDER=$(aws eks describe-cluster --name cluster-name --query "cluster.identity.oidc.issuer" --output text | sed -e "s/^https:\/\///")
+```
+
+Using these variables, you can generate a `trust.json`
+
+```bash
+read -r -d '' TRUST_RELATIONSHIP <<EOF
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Effect": "Allow",
+      "Principal": {
+        "Federated": "arn:aws:iam::${ACCOUNT_ID}:oidc-provider/${OIDC_PROVIDER}"
+      },
+      "Action": "sts:AssumeRoleWithWebIdentity",
+      "Condition": {
+        "StringEquals": {
+          "${OIDC_PROVIDER}:sub": "system:serviceaccount:my-namespace:my-service-account"
+        }
+      }
+    }
+  ]
+}
+EOF
+echo "${TRUST_RELATIONSHIP}" > trust.json
+```
+
+And create the role:
+
+```bash
+$ aws iam create-role --role-name eks-otomounter-role --assume-role-policy-document file://trust.json --description "Mount s3 bucket to EKS"
+```
+
+</details>
+
+
+#### Install the S3 mounter
+
+Once the role is created, use helm to install the mounter to your cluster. This mounter uses goofyfs.
+
+```bash
+$ helm repo add otomount https://otomato-gh.github.io/s3-mounter
+```
+
+These are the values we want to set:
+
+```bash
+$ helm show values otomount/s3-otomount
+```
+```console
+bucketName: my-bucket
+iamRoleARN: my-role
+mountPath: /var/s3
+hostPath: /mnt/s3data
+```
+
+Set them and install to your cluster!
+
+```bash
+$ helm upgrade --install s3-mounter otomount/s3-otomount  --namespace otomount --set bucketName=<your-bucket-name> --set iamRoleARN=<your-role-arn> --create-namespace
 ```
 
 Then (assuming you've already installed the operator and created the flux-operator namespace):
@@ -359,5 +460,11 @@ It might be better to add `--wait`, which will wait until all resources are clea
 
 ```bash
 $ eksctl delete cluster -f eks-cluster-config.yaml --wait
+
+# using our example
+$ eksctl delete cluster -f ./examples/storage/aws/eksctl-config.yaml --wait
 ```
+
+TODO try again with fixed trust (looks wrong)
+
 Either way, it's good to check the web console too to ensure you didn't miss anything.

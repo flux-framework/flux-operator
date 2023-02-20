@@ -19,15 +19,10 @@ spec:
   # This is a type of storage that will use Google Storage
   volumes:
     data:
-      class: csi-s3
-
-      # This needs to be empty so the storage is not dynamically created
-      #PVCclass: ""
-      driver: ru.yandex.s3.csi 
-      path: /tmp/data
-      secret: csi-s3-secret
-      capacity: 25Gi
-      volumeHandle: flux-operator-workflows/snakemake-workflow
+      class: hostpath
+      # This was a path/variable in the helm chart
+      # this is where the hostpath will mount storage
+      path: /mnt/s3data
 
   # This is a list because a pod can support multiple containers
   containers:
@@ -41,11 +36,12 @@ spec:
       volumes:
         data:
           # This is where we will bind storage
-          path: /workflow
+          # E.g., /mnt/s3data is bound to /var/s3 or /mnt/s3data:/var/s3
+          path: /var/s3:shared
           # readonly defaults to false
                 
       # This should be the directory with the Snakefile
-      workingDir: /workflow
+      workingDir: /var/s3/snakemake-workflow
       command: snakemake --cores 1 --flux
 
       # Commands just for workers / broker

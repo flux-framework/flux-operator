@@ -291,9 +291,6 @@ spec:
                   description: Mini Cluster local volumes available to mount (these
                     are on the host)
                   properties:
-                    PVCclass:
-                      default: pvc-storage-class-name-unset
-                      type: string
                     annotations:
                       additionalProperties:
                         type: string
