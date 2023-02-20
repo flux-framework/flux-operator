@@ -155,18 +155,34 @@ func (r *MiniClusterReconciler) createPersistentVolume(
 		}
 
 	} else {
+
+		// VolumeHandle defaults to storage class name
+		// unless it is explicitly different!
+		volumeHandle := volume.StorageClassName
+		if volume.VolumeHandle != "" {
+			volumeHandle = volume.VolumeHandle
+		}
 		pvsource = corev1.PersistentVolumeSource{
 			CSI: &corev1.CSIPersistentVolumeSource{
 
 				// Choose for the user for now.
-				Driver: "gcs.csi.ofek.dev",
+				Driver: volume.Driver,
 
-				// Name in storageclass metadata
-				VolumeHandle: "csi-gcs",
+				// Name in storageclass metadata, also what we use for name
+				VolumeHandle: volumeHandle,
 				NodePublishSecretRef: &corev1.SecretReference{
 					Namespace: volume.SecretNamespace,
 					Name:      volume.Secret,
 				},
+				ControllerPublishSecretRef: &corev1.SecretReference{
+					Namespace: volume.SecretNamespace,
+					Name:      volume.SecretReference,
+				},
+				NodeStageSecretRef: &corev1.SecretReference{
+					Namespace: volume.SecretNamespace,
+					Name:      volume.SecretReference,
+				},
+				VolumeAttributes: volume.Attributes,
 			},
 		}
 	}
@@ -350,6 +366,12 @@ func (r *MiniClusterReconciler) createPersistentVolumeClaim(
 ) *corev1.PersistentVolumeClaim {
 
 	volumeMode := corev1.PersistentVolumeFilesystem
+
+	// This can be explicitly set to an empty string
+	pvcStorageClass := volume.StorageClassName
+	//if volume.PVCStorageClassName != "pvc-storage-class-name-unset" {
+	//	pvcStorageClass = volume.PVCStorageClassName
+	//}
 
 	// Create a new RWX persistent volume claim
 	newVolume := &corev1.PersistentVolumeClaim{

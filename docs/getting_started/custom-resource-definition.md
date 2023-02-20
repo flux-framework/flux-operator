@@ -115,6 +115,56 @@ volumes:
         type: "local"
 ```
 
+#### driver
+
+If you are using anything aside from hostpath, you'll need a reference to a storage driver (usually a plugin)
+you've installed separately. Here is an example for Google Cloud storage:
+
+```yaml
+volumes:
+  myvolume:
+    path: /full/path/to/volume
+    class: csi-gcs
+    driver: gcs.csi.ofek.dev
+```
+
+#### volumeHandle
+
+If your volume handle differs from your storage class name, you can define it:
+
+```yaml
+volumes:
+  myvolume:
+    path: /full/path/to/volume
+    class: csi-gcs
+    driver: gcs.csi.ofek.dev
+    volumeName: manualbucket/path
+```
+
+#### attributes
+
+If your volume has attributes, you can add them too:
+
+```yaml
+volumes:
+  myvolume:
+    attributes:
+  		mounter: geesefs
+      capacity: 25Gi
+```
+
+#### pvc storage class name
+
+For most scenarios, the PVC storage class name is the same as the volume storage class set on the persistent volume.
+However, in some cases this needs to be set to an empty string (or something else)!
+
+```yaml
+volumes:
+  myvolume:
+    class: csi-gcs
+    PVCclass: ""
+```
+
 #### request storage size
 
 By default, a capacity request is "5Gi", and we only do this because the field is required. However, keep in mind
