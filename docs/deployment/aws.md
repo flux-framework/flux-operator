@@ -214,7 +214,7 @@ flux-sample-3-prtn9   1/1     Running   0          2m11s
 And when the containers are running, in the logs you'll see see lots of cute emojis to indicate progress, and then the
 start of your server! You'll need an exposed host to see the user interface, or you can interact to submit jobs via the RESTful API.
 A Python client is [available here](https://flux-framework.org/flux-restful-api/getting_started/user-guide.html#python).
-To use Flux Cloud to programatically submit jobs, [see the guides here](https://converged-computing.github.io/flux-cloud/getting_started/aws.html).
+To use Flux Cloud to programmatically submit jobs, [see the guides here](https://converged-computing.github.io/flux-cloud/getting_started/aws.html).
 
 
 ### Run Snakemake with a Shared Filesystem
@@ -270,7 +270,7 @@ $ tree /tmp/workflow
 We can then use the `aws` command line client to make a bucket "mb" and upload to it.
 
 ```bash
-$ aws s3 mb s3://flux-operator-workflows --region us-east-2
+$ aws s3 mb s3://flux-operator-storage --region us-east-1
 ```
 
 Sanity check that listing buckets shows your bucket:
@@ -285,14 +285,14 @@ $ aws s3 ls
 Now copy the entire workflow to a faux "subdirectory" there:
 
 ```bash
-# Present working direcory 
-$ aws s3 cp --recursive . s3://flux-operator-workflows/snakemake-workflow --exclude ".git*"
+# Present working directory 
+$ aws s3 cp --recursive . s3://flux-operator-storage/snakemake-workflow --exclude ".git*"
 ```
 
 Sanity check again by listing that path in the bucket
 
 ```bash
-$ aws s3 ls s3://flux-operator-workflows/snakemake-workflow/
+$ aws s3 ls s3://flux-operator-storage/snakemake-workflow/
 ```
 
 #### Prepare the OIDC Provider for EKS
@@ -324,7 +324,7 @@ $ eksctl utils associate-iam-oidc-provider --cluster flux-operator --approve
 2023-02-19 19:56:56 [✔]  created IAM Open ID Connect provider for cluster "flux-operator" in "us-east-1"
 ```
 
-Then create a `policy.json` with your bucket name:
+Then create a `policy.json` with your bucket name (you only need to do this once):
 
 ```json
 {
@@ -335,8 +335,8 @@ Then create a `policy.json` with your bucket name:
             "Action": [
                 "s3:*",
             ],
-            "Resource": [
-                "arn:aws:s3:::flux-operator-workflows"
+            "Resourceju": [
+                "arn:aws:s3:::<your-bucket-name>"
             ]
         }
     ]
@@ -354,10 +354,11 @@ Next, create these environment variables for your AWS account and OIDC:
 
 ```bash
 ACCOUNT_ID=$(aws sts get-caller-identity --query "Account" --output text)
-OIDC_PROVIDER=$(aws eks describe-cluster --name cluster-name --query "cluster.identity.oidc.issuer" --output text | sed -e "s/^https:\/\///")
+OIDC_PROVIDER=$(aws eks describe-cluster --name flux-operator --query "cluster.identity.oidc.issuer" --output text | sed -e "s/^https:\/\///")
 ```
 
-Using these variables, you can generate a `trust.json`
+Using these variables, you can generate a `trust.json`. Notice that you need to set the namespace you expect
+to be accessing the bucket from (e.g., my-namespace)
 
 ```bash
 read -r -d '' TRUST_RELATIONSHIP <<EOF
@@ -372,7 +373,7 @@ read -r -d '' TRUST_RELATIONSHIP <<EOF
       "Action": "sts:AssumeRoleWithWebIdentity",
       "Condition": {
         "StringEquals": {
-          "${OIDC_PROVIDER}:sub": "system:serviceaccount:my-namespace:my-service-account"
+          "${OIDC_PROVIDER}:sub": "system:serviceaccount:flux-operator:default"
         }
       }
     }
@@ -382,14 +383,17 @@ EOF
 echo "${TRUST_RELATIONSHIP}" > trust.json
 ```
 
-And create the role:
+Note that the default service account is "default" and for the namespace we likely want the flux-operator.
+Then create the role:
 
 ```bash
 $ aws iam create-role --role-name eks-otomounter-role --assume-role-policy-document file://trust.json --description "Mount s3 bucket to EKS"
 ```
 
+
 </details>
 
+Ensure that the region your bucket is in matches the resources you are interacting with above!
 
 #### Install the S3 mounter
 
@@ -456,6 +460,15 @@ And then:
 $ eksctl delete cluster -f eksctl-config.yaml
 ```
 
+If you created roles, you probably want to clean these up too:
+
+```bash
+$ aws iam delete-role --role-name eks-otomounter-role
+$ aws iam delete-policy --policy-arn arn:aws:iam::xxxxxxxx:policy/kubernetes-s3-access
+$ aws iam delete-open-id-connect-provider --open-id-connect-provider-arn "arn:aws:iam::633731392008:oidc-provider/oidc.eks.us-east-1.amazonaws.com/id/xxxxxxxxxxxxxx"
+```
+
+I had issues when I didn't delete (and came back to try again later) so this is strongly recommended.
 It might be better to add `--wait`, which will wait until all resources are cleaned up:
 
 ```bash
