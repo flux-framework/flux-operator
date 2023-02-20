@@ -235,6 +235,11 @@ spec:
                     description: Quiet mode silences all output so the job only shows
                       the test running
                     type: boolean
+                  struct:
+                    default: true
+                    description: Strict mode ensures any failure will not continue
+                      in the job entrypoint
+                    type: boolean
                   timed:
                     default: false
                     description: Timed mode adds timing to Flux commands
@@ -268,6 +273,19 @@ spec:
                 description: Total number of CPUs being run across entire cluster
                 format: int32
                 type: integer
+              users:
+                description: Users of the MiniCluster
+                items:
+                  properties:
+                    name:
+                      description: If a user is defined, the username is required
+                      type: string
+                    password:
+                      type: string
+                  required:
+                  - name
+                  type: object
+                type: array
               volumes:
                 additionalProperties:
                   description: Mini Cluster local volumes available to mount (these
@@ -307,6 +325,7 @@ spec:
                 type: object
             required:
             - containers
+            - users
             type: object
           status:
             description: MiniClusterStatus defines the observed state of Flux
