@@ -130,7 +130,7 @@ reset:
 .PHONY: clean
 clean:
 	kubectl delete -n flux-operator svc --all --grace-period=0 --force
-	kubectl delete -n flux-operator secret --all --grace-period=0 --force
+	# kubectl delete -n flux-operator secret --all --grace-period=0 --force
 	kubectl delete -n flux-operator cm --all --grace-period=0 --force
 	# pods, pvc, and pv need to be deleted in this order
 	kubectl delete -n flux-operator pods --all --grace-period=0 --force

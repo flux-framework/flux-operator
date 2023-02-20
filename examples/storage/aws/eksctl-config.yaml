@@ -1,0 +1,15 @@
+apiVersion: eksctl.io/v1alpha5
+kind: ClusterConfig
+
+metadata:
+  name: flux-operator
+  region: us-east-1
+  version: "1.23"
+
+availabilityZones: ["us-east-1a", "us-east-1b", "us-east-1d"]
+managedNodeGroups:
+  - name: workers
+    instanceType: c5.xlarge
+    minSize: 4
+    maxSize: 4
+    labels: { "fluxoperator": "true" }

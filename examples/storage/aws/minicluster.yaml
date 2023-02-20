@@ -18,19 +18,16 @@ spec:
   # Make this kind of persistent volume and claim available to pods
   # This is a type of storage that will use Google Storage
   volumes:
-    data:      
-      class: csi-gcs
-      provisioner: gcs.csi.ofek.dev
-      path: /tmp/data
-      secret: csi-gcs-secret
-      capacity: 25Gi
+    data:
+      class: csi-s3
 
-      # This should coincide with the location of your bucket and project
-      # The storage bucket name is provided with the secret too (supposedly!)
-      annotations:
-        gcs.csi.ofek.dev/location: us-central1
-        gcs.csi.ofek.dev/project-id: dinodev
-        gcs.csi.ofek.dev/bucket: flux-operator-storage
+      # This needs to be empty so the storage is not dynamically created
+      #PVCclass: ""
+      driver: ru.yandex.s3.csi 
+      path: /tmp/data
+      secret: csi-s3-secret
+      capacity: 25Gi
+      volumeHandle: flux-operator-workflows/snakemake-workflow
 
   # This is a list because a pod can support multiple containers
   containers:
@@ -48,7 +45,7 @@ spec:
           # readonly defaults to false
                 
       # This should be the directory with the Snakefile
-      workingDir: /workflow/snakemake-workflow
+      workingDir: /workflow
       command: snakemake --cores 1 --flux
 
       # Commands just for workers / broker
