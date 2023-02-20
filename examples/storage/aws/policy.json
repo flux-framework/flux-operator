@@ -7,7 +7,7 @@
                 "s3:*"
             ],
             "Resource": [
-                "arn:aws:s3:::flux-operator-workflows"
+                "arn:aws:s3:::flux-operator-storage"
             ]
         }
     ]
