@@ -216,7 +216,6 @@ start of your server! You'll need an exposed host to see the user interface, or 
 A Python client is [available here](https://flux-framework.org/flux-restful-api/getting_started/user-guide.html#python).
 To use Flux Cloud to programmatically submit jobs, [see the guides here](https://converged-computing.github.io/flux-cloud/getting_started/aws.html).
 
-
 ### Run Snakemake with a Shared Filesystem
 
 This small tutorial will run a Snakemake workflow on AWS that requires a shared
@@ -373,7 +372,7 @@ read -r -d '' TRUST_RELATIONSHIP <<EOF
       "Action": "sts:AssumeRoleWithWebIdentity",
       "Condition": {
         "StringEquals": {
-          "${OIDC_PROVIDER}:sub": "system:serviceaccount:flux-operator:default"
+          "${OIDC_PROVIDER}:sub": "system:serviceaccount:otomount:s3-otomount"
         }
       }
     }
@@ -383,7 +382,7 @@ EOF
 echo "${TRUST_RELATIONSHIP}" > trust.json
 ```
 
-Note that the default service account is "default" and for the namespace we likely want the flux-operator.
+Note that the default service account for the oidc provider is "s3-otomount" and the namespace is "otomount."
 Then create the role:
 
 ```bash
