@@ -251,7 +251,7 @@ spec:
                   annotations:
                     additionalProperties:
                       type: string
-                    description: Annotations for each pod
+                    description: Annotations for the Pod
                     type: object
                   labels:
                     additionalProperties:
@@ -266,6 +266,9 @@ spec:
                       x-kubernetes-int-or-string: true
                     description: Resources include limits and requests
                     type: object
+                  serviceAccountName:
+                    description: ServiceAccountName
+                    type: string
                 type: object
               size:
                 default: 1

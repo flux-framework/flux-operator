@@ -825,7 +825,7 @@ $ gcloud iam service-accounts list
 
 This account should have the same permissions shown earlier to interact with buckets.
 You can refer to the document [IAM roles for Cloud Storage](https://cloud.google.com/storage/docs/access-control/iam-roles).
-Save the email of your service account to an enviroment variable:
+Save the email of your service account to an environment variable:
 
 ```bash
 ACCOUNT_NAME=<account-name>
