@@ -115,6 +115,10 @@ type PodSpec struct {
 	// +optional
 	Annotations map[string]string `json:"annotations"`
 
+	// ServiceAccountName
+	// +optional
+	ServiceAccountName string `json:"serviceAccountName"`
+
 	// Labels for each pod
 	// +optional
 	Labels map[string]string `json:"labels"`
@@ -395,6 +399,9 @@ func (f *MiniCluster) Validate() bool {
 	}
 	if f.Spec.JobLabels == nil {
 		f.Spec.JobLabels = map[string]string{}
+	}
+	if f.Spec.Pod.Annotations == nil {
+		f.Spec.Pod.Annotations = map[string]string{}
 	}
 
 	// Validate user passwords. If provided, need to be 8 or fewer characters

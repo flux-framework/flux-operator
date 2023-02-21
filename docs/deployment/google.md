@@ -302,12 +302,9 @@ Then to delete your lammps MiniCluster:
 $ kubectl delete -f minicluster-lammps.yaml
 ```
 
-## Snakemake (requiring storage) on Google Kubernetes Engine
+## Storage Tutorials
 
-Akin to how we created a local volume, we can do something similar, but instead of pointing the Flux Operator
-to a volume on the host (e.g., in MiniKube) we are going to point it to a storage bucket with our data.
-For Google cloud, the Flux Operator currently uses the [this driver](https://github.com/ofek/csi-gcs) to 
-connect a cloud storage bucket to our cluster.
+For both of the following tutorials, you'll need storage setup, so do this first.
 
 ### Prepare Data
 
@@ -386,7 +383,14 @@ gs://flux-operator-storage/snakemake-workflow/data/
 gs://flux-operator-storage/snakemake-workflow/scripts/
 ```
 
-### Install the Constainer Storage Driver (CSI)
+### Snakemake (requiring storage) on Google Kubernetes Engine
+
+Akin to how we created a local volume, we can do something similar, but instead of pointing the Flux Operator
+to a volume on the host (e.g., in MiniKube) we are going to point it to a storage bucket with our data.
+For Google cloud, the Flux Operator currently uses the [this driver](https://github.com/ofek/csi-gcs) to 
+connect a cloud storage bucket to our cluster.
+
+#### Install the Constainer Storage Driver (CSI)
 
 There are many [drivers](https://kubernetes-csi.github.io/docs/drivers.html) for kubernetes, and we will use
 [this one](https://ofek.dev/csi-gcs/getting_started/) that requires a stateful set and daemon set to work.
@@ -409,7 +413,7 @@ The operator will do a `mkdir -p` on the working directory (and this will show c
 see content and expect to, you either need to interact in this way or set this flag as an annotation in
 your `minicluster.yaml`.
 
-### Permissions via Secrets
+#### Permissions via Secrets
 
 We will need to give permission for the nodes to access storage, and we can do that via [these instructions](https://ofek.dev/csi-gcs/dynamic_provisioning/#permission)
 to create a service account key (a json file) from a service account. E.g., I first created a custom service account that
@@ -438,9 +442,9 @@ And create a secret from it! This is basically giving your cluster permission to
 $ kubectl create secret generic csi-gcs-secret --from-literal=bucket=flux-operator-storage --from-file=key=<PATH_TO_SERVICE_ACCOUNT_KEY>
 ```
 
-### Storage Class
+#### Storage Class
 
-We can then create our storage class, this file is provided in `examples/storage/google/storageclass.yaml`
+We can then create our storage class, this file is provided in `examples/storage/google/csi-gcs/storageclass.yaml`
 
 ```yaml
 apiVersion: storage.k8s.io/v1
@@ -451,10 +455,10 @@ provisioner: gcs.csi.ofek.dev
 ```
 
 ```bash
-$ kubectl apply -f examples/storage/google/storageclass.yaml
+$ kubectl apply -f examples/storage/google/csi-gcs/storageclass.yaml
 ```
 
-### Snakemake MiniCluster
+#### Snakemake MiniCluster
 
 The operator can now be run, telling it to use this storage class (named `csi-gcs`) - we provide
 an example Minicluster to run this snakemake tutorial to test this out, and note that if you want to debug
@@ -479,7 +483,7 @@ Also note that we are setting the `commands: -> runFluxAsRoot` to true. This isn
 only way I could get the storage to both be seen and have permission to write there. Let's create the job!
 
 ```bash
-$ kubectl apply -f examples/storage/google/minicluster.yaml
+$ kubectl apply -f examples/storage/google/csi-gcs/minicluster.yaml
 ```
 
 Wait to see the certificate generator pod come up, complete, and the worker pods (that depend on it) will finish creation and
@@ -769,6 +773,96 @@ tried this yet.
 **Note**: we would like to get this working without requiring running the workflow as root, but it hasn't been figured
 out yet! If you have insight, please comment on [this issue](https://github.com/ofek/csi-gcs/issues/155).
 
+### The Google Storage CSI
+
+For variety we are also going to try the [GoogleCloudPlatform/gcs-fuse-csi-driver](https://github.com/GoogleCloudPlatform/gcs-fuse-csi-driver)
+which (as you can see) is maintained by Google. At this point your snakemake workflow files should be in storage,
+and you should have a Kubernetes cluster running with the Flux Operator installed. 
+
+#### Prepare the Cluster
+
+First, you'll want to enable workload identity:
+
+```bash
+GOOGLE_PROJECT=<myproject>
+CLUSTER_NAME=flux-cluster
+$ gcloud container clusters update ${CLUSTER_NAME} --workload-pool=${GOOGLE_PROJECT}.svc.id.goog
+$ gcloud container clusters get-credentials ${CLUSTER_NAME}
+```
+
+#### Install the Driver
+
+Then install the driver (you'll need jq). Note we are following [this guide](https://github.com/GoogleCloudPlatform/gcs-fuse-csi-driver/blob/main/docs/installation.md).
+Note that `kustomize` from our Flux operator bin (or [installed another way](https://kubectl.docs.kubernetes.io/installation/kustomize/)) needs to be on the path.
+
+```bash
+$ git clone https://github.com/GoogleCloudPlatform/gcs-fuse-csi-driver.git /tmp/gcs-fuse
+$ cd /tmp/gcs-fuse
+# fetch tags so we build a release version
+$ git fetch
+
+# View tags with git tag and then choose one
+$ git checkout v0.4.1
+
+make install
+```
+
+And check the status:
+
+```bash
+$ kubectl get CSIDriver,Deployment,DaemonSet,Pods -n gcs-fuse-csi-driver
+```
+
+#### Setup Google Cloud Permissions
+
+You'll then need to setup permissions (below is from [this guide](https://github.com/GoogleCloudPlatform/gcs-fuse-csi-driver/blob/main/docs/usage.md#set-up-access-to-gcs-buckets-via-gke-workload-identity)):
+We can use the service account that we [created earlier](#permissions-via-secrets). We assume this account is in the same Google Cloud Project where you
+storage and cluster resides.
+
+```bash
+$ gcloud iam service-accounts list 
+```
+
+This account should have the same permissions shown earlier to interact with buckets.
+You can refer to the document [IAM roles for Cloud Storage](https://cloud.google.com/storage/docs/access-control/iam-roles).
+Save the email of your service account to an enviroment variable:
+
+```bash
+ACCOUNT_NAME=<account-name>
+SERVICE_EMAIL=${ACCOUNT_NAME}@${GOOGLE_PROJECT}.iam.gserviceaccount.com
+```
+
+Create a Kubernetes service account:
+
+```bash
+K8S_NAMESPACE=flux-operator
+K8S_SA_NAME=flux-operator-sa
+
+kubectl create namespace ${K8S_NAMESPACE}
+kubectl create serviceaccount ${K8S_SA_NAME} --namespace ${K8S_NAMESPACE}
+```
+
+Finally, bind the the Kubernetes Service Account with the GCP Service Account.
+
+```bash
+gcloud iam service-accounts add-iam-policy-binding ${SERVICE_EMAIL} \
+    --role roles/iam.workloadIdentityUser \
+    --member "serviceAccount:${GOOGLE_PROJECT}.svc.id.goog[${K8S_NAMESPACE}/${K8S_SA_NAME}]"
+
+kubectl annotate serviceaccount ${K8S_SA_NAME} \
+    --namespace ${K8S_NAMESPACE} \
+    iam.gke.io/gcp-service-account=${ACCOUNT_NAME}@${GOOGLE_PROJECT}.iam.gserviceaccount.com
+```
+
+#### Run the Workflow!
+
+Now we can run our example workflow!
+
+```bash
+$ kubectl apply -f examples/storage/google/gcs-fuse-csi-driver/minicluster.yaml 
+```
+
+TODO need to figure out what secret to supply and why pods not creating (likely need smaller job size compared to cluster?)
 
 ## Clean up
 

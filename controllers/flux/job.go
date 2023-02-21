@@ -61,11 +61,12 @@ func (r *MiniClusterReconciler) newMiniClusterJob(
 				},
 				Spec: corev1.PodSpec{
 					// matches the service
-					Subdomain:         restfulServiceName,
-					SetHostnameAsFQDN: &setAsFQDN,
-					Volumes:           getVolumes(cluster),
-					RestartPolicy:     corev1.RestartPolicyOnFailure,
-					ImagePullSecrets:  getImagePullSecrets(cluster),
+					Subdomain:          restfulServiceName,
+					SetHostnameAsFQDN:  &setAsFQDN,
+					Volumes:            getVolumes(cluster),
+					RestartPolicy:      corev1.RestartPolicyOnFailure,
+					ImagePullSecrets:   getImagePullSecrets(cluster),
+					ServiceAccountName: cluster.Spec.Pod.ServiceAccountName,
 				}},
 		},
 	}
