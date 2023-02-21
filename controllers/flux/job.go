@@ -1,5 +1,5 @@
 /*
-Copyright 2022 Lawrence Livermore National Security, LLC
+Copyright 2022-2023 Lawrence Livermore National Security, LLC
  (c.f. AUTHORS, NOTICE.LLNS, COPYING)
 
 This is part of the Flux resource manager framework.
@@ -32,7 +32,7 @@ func (r *MiniClusterReconciler) newMiniClusterJob(
 	setAsFQDN := false
 
 	// Do we have additional pod labels?
-	podLabels := cluster.Spec.PodLabels
+	podLabels := cluster.Spec.Pod.Labels
 	podLabels["namespace"] = cluster.Namespace
 
 	// This is an indexed-job
@@ -54,9 +54,10 @@ func (r *MiniClusterReconciler) newMiniClusterJob(
 			// Note there is parameter to limit runtime
 			Template: corev1.PodTemplateSpec{
 				ObjectMeta: metav1.ObjectMeta{
-					Name:      cluster.Name,
-					Namespace: cluster.Namespace,
-					Labels:    podLabels,
+					Name:        cluster.Name,
+					Namespace:   cluster.Namespace,
+					Labels:      podLabels,
+					Annotations: cluster.Spec.Pod.Annotations,
 				},
 				Spec: corev1.PodSpec{
 					// matches the service

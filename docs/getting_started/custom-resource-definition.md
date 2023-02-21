@@ -67,18 +67,6 @@ To add custom labels for your job, add a set of key value pairs (strings) to a "
     job-attribute-b: dinosaur-b
 ```
 
-### podLabels
-
-To add custom labels for your pods (in the indexed job), add a set of key value pairs (strings) to a "podLabels" section:
-
-```yaml
-  pobLabels:
-    pod-attribute-a: dinosaur-a
-    pod-attribute-b: dinosaur-b
-```
-
-Note that the "namespace" variable is controlled by the operator here, and would be over-ridden if you defined it here.
-
 
 ### deadline
 
@@ -277,6 +265,31 @@ directly to the Flux Restful API server.
 ### pod
 
 Variables and attributes for each pod in the Indexed job.
+
+#### labels
+
+To add custom labels for your pods (in the indexed job), add a set of key value pairs (strings) to a "labels" section:
+
+```yaml
+pod:
+  labels:
+    pod-attribute-a: dinosaur-a
+    pod-attribute-b: dinosaur-b
+```
+
+Note that the "namespace" variable is controlled by the operator here, and would be over-ridden if you defined it here.
+
+#### annotations
+
+The same is true for annotations! Just add annotations to a pod like so:
+
+
+```yaml
+pod:
+  annotations:
+    pod-annotation-a: dinosaur-a
+    pod-annotation-b: dinosaur-b
+```
 
 #### resources
 

@@ -248,6 +248,16 @@ spec:
               pod:
                 description: Pod spec details
                 properties:
+                  annotations:
+                    additionalProperties:
+                      type: string
+                    description: Annotations for each pod
+                    type: object
+                  labels:
+                    additionalProperties:
+                      type: string
+                    description: Labels for each pod
+                    type: object
                   resources:
                     additionalProperties:
                       anyOf:
@@ -256,11 +266,6 @@ spec:
                       x-kubernetes-int-or-string: true
                     description: Resources include limits and requests
                     type: object
-                type: object
-              podLabels:
-                additionalProperties:
-                  type: string
-                description: Labels for each pod
                 type: object
               size:
                 default: 1
@@ -325,7 +330,6 @@ spec:
                 type: object
             required:
             - containers
-            - users
             type: object
           status:
             description: MiniClusterStatus defines the observed state of Flux

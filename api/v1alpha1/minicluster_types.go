@@ -1,5 +1,5 @@
 /*
-Copyright 2022 Lawrence Livermore National Security, LLC
+Copyright 2022-2023 Lawrence Livermore National Security, LLC
  (c.f. AUTHORS, NOTICE.LLNS, COPYING)
 
 This is part of the Flux resource manager framework.
@@ -32,15 +32,12 @@ type MiniClusterSpec struct {
 	Containers []MiniClusterContainer `json:"containers"`
 
 	// Users of the MiniCluster
+	// +optional
 	Users []MiniClusterUsers `json:"users"`
 
 	// Labels for the job
 	// +optional
 	JobLabels map[string]string `json:"jobLabels"`
-
-	// Labels for each pod
-	// +optional
-	PodLabels map[string]string `json:"podLabels"`
 
 	// Volumes accessible to containers from a host
 	// +optional
@@ -115,6 +112,14 @@ type LoggingSpec struct {
 
 // PodSpec controlls variables for the cluster pod
 type PodSpec struct {
+
+	// Annotations for each pod
+	// +optional
+	Annotations map[string]string `json:"annotations"`
+
+	// Labels for each pod
+	// +optional
+	Labels map[string]string `json:"labels"`
 
 	// Resources include limits and requests
 	// +optional
@@ -359,8 +364,11 @@ func (f *MiniCluster) Validate() bool {
 	}
 
 	// If pod and job labels aren't defined, create label set
-	if f.Spec.PodLabels == nil {
-		f.Spec.PodLabels = map[string]string{}
+	if f.Spec.Pod.Labels == nil {
+		f.Spec.Pod.Labels = map[string]string{}
+	}
+	if f.Spec.Pod.Annotations == nil {
+		f.Spec.Pod.Annotations = map[string]string{}
 	}
 	if f.Spec.JobLabels == nil {
 		f.Spec.JobLabels = map[string]string{}
