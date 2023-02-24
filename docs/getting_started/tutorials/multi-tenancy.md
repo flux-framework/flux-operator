@@ -1,12 +1,16 @@
 # Multi-tenancy
 
-.. warning::
 
-   Multi-tenancy is early in development and should not be used in production.
-   We create a multi-user Flux install, a set of users, and then authenticate
-   to submit jobs via PAM, meaning that no credential is stored anywhere.
-   A future approach might also include a secret for each user so the payloads
-   are encrypted in transport.
+<div class="result docutils container">
+<div class="warning admonition">
+<p class="admonition-title">Warning</p>
+    <p>Multi-tenancy is early in development and should not be used in production.
+    We create a multi-user Flux install, a set of users, and then authenticate
+    to submit jobs via PAM, meaning that no credential is stored anywhere.
+    A future approach might also include a secret for each user so the payloads
+    are encrypted in transport.</p>
+</div>
+</div>
 
 "Multi-tenancy" means having multiple tenants, or users, in a cluster! We can accomplish this
 fairly easily via [Flux Accounting](https://flux-framework.readthedocs.io/en/latest/guides/accounting-guide.html)
@@ -69,7 +73,7 @@ $ kubectl create -f examples/tests/multi-tenant/minicluster.yaml
 
 ## 3. View Logs
 
-cAnd then in the logs, we can see the different blocks of creating users (and passwords):
+And then in the logs, we can see the different blocks of creating users (and passwords):
 
 ```bash
 # get pods

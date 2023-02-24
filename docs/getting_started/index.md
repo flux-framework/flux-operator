@@ -7,7 +7,7 @@ for client interactions. If you have
 any questions or issues, please [let us know](https://github.com/flux-framework/flux-operator/issues)
 
 ```{toctree}
-:maxdepth: 3
+:maxdepth: 2
 user-guide
 tutorials/index
 jobs
