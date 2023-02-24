@@ -7,10 +7,6 @@ spec:
   # Number of pods to create for MiniCluster
   size: 4
 
-  # Development branch with pam AUTH
-  fluxRestful:
-    branch: add/pam-auth
-
   # Define one or more users for your cluster
   users:
     - name: peenut
