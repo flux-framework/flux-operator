@@ -15,10 +15,13 @@ fluxuid={{ if .Container.FluxUser.Uid}}{{ .Container.FluxUser.Uid }}{{ else }}10
 {{ if not .Logging.QuietMode }}# Show asFlux directive once
 printf "\nFlux username: ${fluxuser}\n"{{ end }}
 
+# commands to be run as root
+asSudo="sudo -E PYTHONPATH=$PYTHONPATH -E PATH=$PATH"
+
 # Always run flux commands (and the broker) as flux user, unless requested otherwise (e.g., for storage)
 {{ if .Container.Commands.RunFluxAsRoot }}
 # Storage won't have write if we are the flux user
-asFlux="sudo -E PYTHONPATH=$PYTHONPATH -E PATH=$PATH -E HOME=/home/${fluxuser}"{{ else }}
+asFlux="${asSudo} -E HOME=/home/${fluxuser}"{{ else }}
 # and ensure the home is targeted to be there too.
 asFlux="sudo -u ${fluxuser} -E PYTHONPATH=$PYTHONPATH -E PATH=$PATH -E HOME=/home/${fluxuser}"
 {{ end }}
@@ -99,9 +102,6 @@ mkdir -p ${STATE_DIR}
 # Cron directory
 mkdir -p /etc/flux/system/cron.d
 
-# uuid for flux token (auth)
-FLUX_TOKEN="{{ .FluxToken}}"
-
 # Main host <name>-0
 mainHost="{{ .MainHost}}"
 
@@ -157,6 +157,15 @@ EOT
 {{ if not .Logging.QuietMode }}printf "\n🦊 Independent Minister of Privilege\n"
 cat /etc/flux/imp/conf.d/imp.toml
 
+# If we have Users (and want multi-user mode with pam) this file needs setuid,
+# and ensure the permissions are correctly set
+{{ if .Users }}chmod u+s /usr/libexec/flux/flux-imp
+chmod 4755 /usr/libexec/flux/flux-imp
+chmod 0644 /etc/flux/imp/conf.d/imp.toml
+chmod 0644 /etc/flux/system/conf.d/broker.toml
+sudo service munge start
+{{ end }}
+
 printf "\n🐸 Broker Configuration\n"
 cat /etc/flux/config/broker.toml{{ end }}
 
@@ -185,7 +194,9 @@ ${asFlux} flux account add-bank root 1
 ${asFlux} flux account add-bank --parent-bank=root user_bank 1
 {{range $index, $username := .Users}}
   ${asFlux} flux account add-user --username={{ .Name }} --bank=user_bank
-{{ end }}{{ end }}
+{{ end }}
+${asFlux} flux account-priority-update
+{{ end }}
 
 {{ if and .Users (not .Logging.QuietMode) }}
 {{ if not .Container.Commands.RunFluxAsRoot }}chown -R ${fluxuid} /var/lib/flux{{ end }}
@@ -199,7 +210,9 @@ ${asFlux} flux account add-bank --parent-bank=root user_bank 1
 {{range $username := .Users}}
   printf "flux account add-user --username={{ .Name }} --bank=user_bank\n"
   ${asFlux} flux account add-user --username={{ .Name }} --bank=user_bank
-{{ end }}{{ end }}
+{{ end }}
+${asFlux} flux account-priority-update
+{{ end }}
 
 # Make directory world read/writable
 chmod -R 0777 ${workdir}
@@ -218,7 +231,7 @@ else
     if [ $(hostname) == "${mainHost}" ]; then
 
         # No command - use default to start server
-{{ if not .Logging.QuietMode }}        echo "Extra arguments are: $@"{{ end }}
+{{ if not .Logging.QuietMode }}        echo "Extra command arguments are: $@"{{ end }}
         if [ "$@" == "" ]; then
 
             # Start restful API server
@@ -226,24 +239,47 @@ else
             git clone -b {{or .FluxRestful.Branch "main"}} --depth 1 https://github.com/flux-framework/flux-restful-api /flux-restful-api > /dev/null 2>&1
             cd /flux-restful-api
 
-            # Install python requirements, with preference for python3
-            python3 -m pip install -r requirements.txt > /dev/null 2>&1 || python -m pip install -r requirements.txt > /dev/null 2>&1
-
-            # Generate a random flux token
-            FLUX_USER={{.FluxUser}}
+            # Shared envars across user modes
             FLUX_REQUIRE_AUTH=true
             FLUX_NUMBER_NODES={{ .Size}}
+
+            # Install python requirements, with preference for python3
+            python3 -m pip install -r requirements.txt > /dev/null 2>&1 || python -m pip install -r requirements.txt > /dev/null 2>&1
+     
+            {{ if .Users }}# Multi user-mode will start the broker as a process (as flux) and then the API server as root
+            FLUX_ENABLE_PAM=true
+            FLUX_URI=local:///run/flux/local
+
+            # Do not allow a global flux user/token in multi-auth mode
+            unset FLUX_USER || true
+            unset FLUX_TOKEN || true
+
+            {{ if not .Logging.QuietMode }}printf "\n 🔑 Multi-User Mode Required User Account Credentials!\n"
+            printf "🌀 ${asFlux} flux broker --config-path /etc/flux/config ${brokerOptions} sleep infinity & \n"{{ end }}
+            ${asFlux} flux broker --config-path /etc/flux/config ${brokerOptions} sleep infinity &
+
+            # Flux URI will be found by the RESTful Server to connect to flux
+            export FLUX_URI FLUX_ENABLE_PAM
+
+            # We have to run as root so root can run on behalf of a user
+            {{ if not .Logging.QuietMode }}printf "${asSudo} ${startServer}\n"{{ end }}
+            ${asSudo} ${startServer}
+
+            {{ else }}# In single user mode we generate a random flux token
+            FLUX_USER="{{ .FluxUser}}"
+            FLUX_TOKEN="{{ .FluxToken}}"
+
             export FLUX_TOKEN FLUX_USER FLUX_REQUIRE_AUTH FLUX_NUMBER_NODES
 
 {{ if not .Logging.QuietMode }}
-            printf "\n 🔑 Your Credentials! These will allow you to control your MiniCluster with flux-framework/flux-restful-api\n"
+            printf "\n 🔑 Single-User Mode Credentials! These will allow you to control your MiniCluster with flux-framework/flux-restful-api\n"
             printf "export FLUX_TOKEN=${FLUX_TOKEN}\n"
             printf "export FLUX_USER=${FLUX_USER}\n"
 
             # -o is an "option" for the broker
             # -S corresponds to a shortened --setattr=ATTR=VAL
             printf "\n🌀 flux start -o --config /etc/flux/config ${brokerOptions} ${startServer}\n"{{ end }}
-            {{ if .Logging.TimedMode }}/usr/bin/time -f "FLUXTIME fluxstart wall time %E" {{ end }}${asFlux} flux start -o --config /etc/flux/config ${brokerOptions} {{ if .Logging.TimedMode }}/usr/bin/time -f "FLUXTIME fluxsubmit wall time %E" {{ end }} ${startServer}
+            {{ if .Logging.TimedMode }}/usr/bin/time -f "FLUXTIME fluxstart wall time %E" {{ end }}${asFlux} flux start -o --config /etc/flux/config ${brokerOptions} {{ if .Logging.TimedMode }}/usr/bin/time -f "FLUXTIME fluxsubmit wall time %E" {{ end }} ${startServer}{{ end }}
 
         # Case 2: Fall back to provided command
         else

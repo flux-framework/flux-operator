@@ -4,12 +4,12 @@ metadata:
   name: flux-sample
   namespace: flux-operator
 spec:
-  # suppress all output except for test run
-  logging:
-    quiet: false
-
   # Number of pods to create for MiniCluster
   size: 4
+
+  # Development branch with pam AUTH
+  fluxRestful:
+    branch: add/pam-auth
 
   # Define one or more users for your cluster
   users:
