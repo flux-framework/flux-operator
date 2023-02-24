@@ -5,7 +5,7 @@
 # update_hosts.sh has been populated. This means the pod usually
 # needs to be updated with the config map that has ips!
 
-# If we are in debug mode, don't set strict mode
+# If we are not in strict, don't set strict mode
 {{ if not .Logging.StrictMode }}set -eEu -o pipefail{{ end }}
 
 # Set the flux user from the getgo
@@ -14,6 +14,11 @@ fluxuid={{ if .Container.FluxUser.Uid}}{{ .Container.FluxUser.Uid }}{{ else }}10
 
 {{ if not .Logging.QuietMode }}# Show asFlux directive once
 printf "\nFlux username: ${fluxuser}\n"{{ end }}
+
+# Ensure pythonpath is set to something
+if [ -z ${PYTHONPATH+x} ]; then
+  PYTHONPATH=""
+fi
 
 # commands to be run as root
 asSudo="sudo -E PYTHONPATH=$PYTHONPATH -E PATH=$PATH"
