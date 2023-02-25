@@ -1,3 +1,5 @@
+# coding: utf-8
+
 """
     fluxoperator
 
@@ -8,22 +10,14 @@
 """
 
 
-import sys
+from __future__ import absolute_import
+
 import unittest
+import datetime
 
 import fluxoperator
-from fluxoperator.model.commands import Commands
-from fluxoperator.model.container_resources import ContainerResources
-from fluxoperator.model.container_volume import ContainerVolume
-from fluxoperator.model.flux_user import FluxUser
-from fluxoperator.model.life_cycle import LifeCycle
-globals()['Commands'] = Commands
-globals()['ContainerResources'] = ContainerResources
-globals()['ContainerVolume'] = ContainerVolume
-globals()['FluxUser'] = FluxUser
-globals()['LifeCycle'] = LifeCycle
-from fluxoperator.model.mini_cluster_container import MiniClusterContainer
-
+from fluxoperator.models.mini_cluster_container import MiniClusterContainer  # noqa: E501
+from fluxoperator.rest import ApiException
 
 class TestMiniClusterContainer(unittest.TestCase):
     """MiniClusterContainer unit test stubs"""
@@ -34,12 +28,62 @@ class TestMiniClusterContainer(unittest.TestCase):
     def tearDown(self):
         pass
 
+    def make_instance(self, include_optional):
+        """Test MiniClusterContainer
+            include_option is a boolean, when False only required
+            params are included, when True both required and
+            optional params are included """
+        # model = fluxoperator.models.mini_cluster_container.MiniClusterContainer()  # noqa: E501
+        if include_optional :
+            return MiniClusterContainer(
+                command = '', 
+                commands = fluxoperator.models.commands.Commands(
+                    pre = '', 
+                    run_flux_as_root = True, ), 
+                cores = 56, 
+                diagnostics = True, 
+                environment = {
+                    'key' : ''
+                    }, 
+                flux_log_level = 56, 
+                flux_option_flags = '', 
+                flux_user = fluxoperator.models.flux_user.FluxUser(
+                    name = '', 
+                    uid = 56, ), 
+                image = '', 
+                image_pull_secret = '', 
+                life_cycle = fluxoperator.models.life_cycle.LifeCycle(
+                    post_start_exec = '', ), 
+                name = '', 
+                ports = [
+                    56
+                    ], 
+                pre_command = '', 
+                pull_always = True, 
+                resources = fluxoperator.models.container_resources.ContainerResources(
+                    limits = {
+                        'key' : None
+                        }, 
+                    requests = {
+                        'key' : None
+                        }, ), 
+                run_flux = True, 
+                volumes = {
+                    'key' : fluxoperator.models.container_volume.ContainerVolume(
+                        path = '', 
+                        read_only = True, )
+                    }, 
+                working_dir = ''
+            )
+        else :
+            return MiniClusterContainer(
+                image = '',
+        )
+
     def testMiniClusterContainer(self):
         """Test MiniClusterContainer"""
-        # FIXME: construct object with mandatory attributes with example values
-        # model = MiniClusterContainer()  # noqa: E501
-        pass
-
+        inst_req_only = self.make_instance(include_optional=False)
+        inst_req_and_optional = self.make_instance(include_optional=True)
 
 if __name__ == '__main__':
     unittest.main()

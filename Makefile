@@ -107,8 +107,13 @@ generate: controller-gen
 .PHONY: api
 api: generate api
 	go run hack/python-sdk/main.go ${API_VERSION} > ${SWAGGER_API_JSON}
-	java -jar ${SWAGGER_JAR} generate -i ${SWAGGER_API_JSON} -g python -o ./sdk/python/${API_VERSION} -c ./hack/python-sdk/swagger_config.json --git-repo-id flux-operator --git-user-id flux-framework
+	rm -rf ./sdk/python/${API_VERSION}/fluxoperator/model/*
+	java -jar ${SWAGGER_JAR} generate -i ${SWAGGER_API_JSON} -g python-legacy -o ./sdk/python/${API_VERSION} -c ./hack/python-sdk/swagger_config.json --git-repo-id flux-operator --git-user-id flux-framework
 	cp ./hack/python-sdk/template/* ./sdk/python/${API_VERSION}/
+#cp ./hack/python-sdk/fluxoperator/* ./sdk/python/${API_VERSION}/fluxoperator/model/
+
+# TODO try replacing the names EXACTLY and seeing if the import works
+# Then try removing entirely so not in schema
 
 .PHONY: pre-push
 pre-push: generate api build-config

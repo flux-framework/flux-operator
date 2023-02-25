@@ -1,3 +1,5 @@
+# coding: utf-8
+
 """
     fluxoperator
 
@@ -8,13 +10,17 @@
 """
 
 
+from __future__ import absolute_import
+
 import io
 import json
 import logging
 import re
 import ssl
-from urllib.parse import urlencode
 
+# python 2 and python 3 compatibility library
+import six
+from six.moves.urllib.parse import urlencode
 import urllib3
 
 from fluxoperator.exceptions import ApiException, UnauthorizedException, ForbiddenException, NotFoundException, ServiceException, ApiValueError
@@ -130,7 +136,7 @@ class RESTClientObject(object):
 
         timeout = None
         if _request_timeout:
-            if isinstance(_request_timeout, (int, float)):  # noqa: E501,F821
+            if isinstance(_request_timeout, six.integer_types + (float, )):  # noqa: E501,F821
                 timeout = urllib3.Timeout(total=_request_timeout)
             elif (isinstance(_request_timeout, tuple) and
                   len(_request_timeout) == 2):

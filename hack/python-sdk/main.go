@@ -28,19 +28,18 @@ func main() {
 	oAPIDefs := api.GetOpenAPIDefinitions(filter)
 	defs := spec.Definitions{}
 	for defName, val := range oAPIDefs {
+		//		fmt.Println(val)
 		defs[swaggify(defName)] = val.Schema
 	}
 	swagger := spec.Swagger{
 		SwaggerProps: spec.SwaggerProps{
 			Swagger:     "2.0",
-			Definitions: defs,
+			Info:        &spec.Info{InfoProps: spec.InfoProps{Title: "fluxoperator", Description: "Python SDK for Flux-Operator", Version: version}},
 			Paths:       &spec.Paths{Paths: map[string]spec.PathItem{}},
-			Info: &spec.Info{
-				InfoProps: spec.InfoProps{
-					Title:       "fluxoperator",
-					Description: "Python SDK for Flux-Operator",
-					Version:     version,
-				},
+			Definitions: defs,
+			ExternalDocs: &spec.ExternalDocumentation{
+				Description: "The Flux Operator",
+				URL:         "https://flux-framework.org/flux-operator",
 			},
 		},
 	}
@@ -52,15 +51,24 @@ func main() {
 	fmt.Println(string(jsonBytes))
 }
 
+// Our strategy here is to replace specific needs with classes we will define
 func swaggify(name string) string {
+
+	// These are specific to the Flux Operator
 	name = strings.Replace(name, "github.com/flux-framework/flux-operator/api/v1alpha/", "", -1)
 	name = strings.Replace(name, "../api/v1alpha1/.", "", -1)
 	name = strings.Replace(name, "./api/v1alpha1/.", "", -1)
-	name = strings.Replace(name, "k8s.io/apimachinery/pkg/runtime/v1/", "", -1)
-	name = strings.Replace(name, "k8s.io/apimachinery/pkg/util/", "", -1)
-	name = strings.Replace(name, "k8s.io/apimachinery/pkg/apis/meta/", "", -1)
-	name = strings.Replace(name, "k8s.io/kubernetes/pkg/controller/", "", -1)
-	name = strings.Replace(name, "k8s.io/client-go/listers/core/", "", -1)
-	name = strings.Replace(name, "/", ".", -1)
+
+	// k8s.io/apimachinery/pkg/apis/meta/v1.Condition -> v1Condition
+	name = strings.Replace(name, "k8s.io/apimachinery/pkg/apis/meta/v1.Condition", "v1Condition", -1)
+
+	// k8s.io/apimachinery/pkg/apis/meta/v1.ListMeta
+	name = strings.Replace(name, "k8s.io/apimachinery/pkg/apis/meta/v1.ListMeta", "v1ListMeta", -1)
+
+	// k8s.io/apimachinery/pkg/util/intstr.IntOrString -> IntOrString
+	name = strings.Replace(name, "k8s.io/apimachinery/pkg/util/intstr.", "", -1)
+
+	// k8s.io/apimachinery/pkg/apis/meta/v1.ObjectMeta
+	name = strings.Replace(name, "k8s.io/apimachinery/pkg/apis/meta/v1.ObjectMeta", "v1ObjectMeta", -1)
 	return name
 }

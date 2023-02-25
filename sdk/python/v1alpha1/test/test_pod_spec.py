@@ -1,3 +1,5 @@
+# coding: utf-8
+
 """
     fluxoperator
 
@@ -8,14 +10,14 @@
 """
 
 
-import sys
+from __future__ import absolute_import
+
 import unittest
+import datetime
 
 import fluxoperator
-from fluxoperator.model.k8s_io_apimachinery_pkg_util_intstr_int_or_string import K8sIoApimachineryPkgUtilIntstrIntOrString
-globals()['K8sIoApimachineryPkgUtilIntstrIntOrString'] = K8sIoApimachineryPkgUtilIntstrIntOrString
-from fluxoperator.model.pod_spec import PodSpec
-
+from fluxoperator.models.pod_spec import PodSpec  # noqa: E501
+from fluxoperator.rest import ApiException
 
 class TestPodSpec(unittest.TestCase):
     """PodSpec unit test stubs"""
@@ -26,12 +28,32 @@ class TestPodSpec(unittest.TestCase):
     def tearDown(self):
         pass
 
+    def make_instance(self, include_optional):
+        """Test PodSpec
+            include_option is a boolean, when False only required
+            params are included, when True both required and
+            optional params are included """
+        # model = fluxoperator.models.pod_spec.PodSpec()  # noqa: E501
+        if include_optional :
+            return PodSpec(
+                annotations = {
+                    'key' : ''
+                    }, 
+                labels = {
+                    'key' : ''
+                    }, 
+                resources = {
+                    'key' : None
+                    }
+            )
+        else :
+            return PodSpec(
+        )
+
     def testPodSpec(self):
         """Test PodSpec"""
-        # FIXME: construct object with mandatory attributes with example values
-        # model = PodSpec()  # noqa: E501
-        pass
-
+        inst_req_only = self.make_instance(include_optional=False)
+        inst_req_and_optional = self.make_instance(include_optional=True)
 
 if __name__ == '__main__':
     unittest.main()

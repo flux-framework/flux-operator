@@ -1,3 +1,5 @@
+# coding: utf-8
+
 """
     fluxoperator
 
@@ -8,12 +10,14 @@
 """
 
 
-import sys
+from __future__ import absolute_import
+
 import unittest
+import datetime
 
 import fluxoperator
-from fluxoperator.model.life_cycle import LifeCycle
-
+from fluxoperator.models.life_cycle import LifeCycle  # noqa: E501
+from fluxoperator.rest import ApiException
 
 class TestLifeCycle(unittest.TestCase):
     """LifeCycle unit test stubs"""
@@ -24,12 +28,24 @@ class TestLifeCycle(unittest.TestCase):
     def tearDown(self):
         pass
 
+    def make_instance(self, include_optional):
+        """Test LifeCycle
+            include_option is a boolean, when False only required
+            params are included, when True both required and
+            optional params are included """
+        # model = fluxoperator.models.life_cycle.LifeCycle()  # noqa: E501
+        if include_optional :
+            return LifeCycle(
+                post_start_exec = ''
+            )
+        else :
+            return LifeCycle(
+        )
+
     def testLifeCycle(self):
         """Test LifeCycle"""
-        # FIXME: construct object with mandatory attributes with example values
-        # model = LifeCycle()  # noqa: E501
-        pass
-
+        inst_req_only = self.make_instance(include_optional=False)
+        inst_req_and_optional = self.make_instance(include_optional=True)
 
 if __name__ == '__main__':
     unittest.main()

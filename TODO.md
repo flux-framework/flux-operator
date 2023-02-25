@@ -1,15 +1,13 @@
 # TODO
 
  - [ ] test storage on AWS / using ceph on any cloud
+ - [ ] add port forward to python sdk, and example to programmatically do it, then we need to use that for automated tests 
 
 ### Maybe
 
  - [ ] try webhooks again
- - [ ] Events: deletion should clean up, and update should not be allowed (given rank 0 started)
  - [ ] Currently we have no representation of quota - we need to be able to set (and check) hard limits from the scheduler (or maybe we get that out of the box)?
  - [ ] klog can be changed to add V(2) to handle verbository from the command line, see https://pkg.go.dev/k8s.io/klog/v2
- - [ ] At some point we want more intelligent use of labels/selectors (I haven't really read about them yet)
- - [ ] We might eventually want a variable to control quorum expectation (e.g., rank 0 waiting or not)
 
 #### Completed
 

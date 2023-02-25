@@ -30,14 +30,14 @@
           "type": "object",
           "additionalProperties": {
             "default": {},
-            "$ref": "#/definitions/intstr.IntOrString"
+            "$ref": "#/definitions/IntOrString"
           }
         },
         "requests": {
           "type": "object",
           "additionalProperties": {
             "default": {},
-            "$ref": "#/definitions/intstr.IntOrString"
+            "$ref": "#/definitions/IntOrString"
           }
         }
       }
@@ -148,7 +148,7 @@
         },
         "metadata": {
           "default": {},
-          "$ref": "#/definitions/v1.ObjectMeta"
+          "$ref": "#/definitions/v1ObjectMeta"
         },
         "spec": {
           "default": {},
@@ -300,7 +300,7 @@
         },
         "metadata": {
           "default": {},
-          "$ref": "#/definitions/v1.ListMeta"
+          "$ref": "#/definitions/v1ListMeta"
         }
       }
     },
@@ -396,7 +396,7 @@
           "type": "array",
           "items": {
             "default": {},
-            "$ref": "#/definitions/v1.Condition"
+            "$ref": "#/definitions/v1Condition"
           },
           "x-kubernetes-list-type": "atomic"
         },
@@ -496,10 +496,14 @@
           "type": "object",
           "additionalProperties": {
             "default": {},
-            "$ref": "#/definitions/intstr.IntOrString"
+            "$ref": "#/definitions/IntOrString"
           }
         }
       }
     }
+  },
+  "externalDocs": {
+    "description": "The Flux Operator",
+    "url": "https://flux-framework.org/flux-operator"
   }
 }
