@@ -33,7 +33,7 @@ type MiniClusterSpec struct {
 
 	// Users of the MiniCluster
 	// +optional
-	Users []MiniClusterUsers `json:"users"`
+	Users []MiniClusterUser `json:"users"`
 
 	// Labels for the job
 	// +optional
@@ -78,7 +78,7 @@ type MiniClusterSpec struct {
 	Pod PodSpec `json:"pod"`
 }
 
-type MiniClusterUsers struct {
+type MiniClusterUser struct {
 
 	// If a user is defined, the username is required
 	Name string `json:"name"`
