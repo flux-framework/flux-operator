@@ -100,7 +100,7 @@ manifests: controller-gen
 	$(CONTROLLER_GEN) rbac:roleName=manager-role crd webhook paths="./..." output:crd:artifacts:config=config/crd/bases
 
 .PHONY: generate
-generate: controller-gen
+generate: controller-gen openapi-gen
 	$(CONTROLLER_GEN) object:headerFile="hack/boilerplate.go.txt" paths="./..."
 	${OPENAPI_GEN} --logtostderr=true -i ./api/${API_VERSION}/ -o "" -O zz_generated.openapi -p ./api/${API_VERSION}/ -h ./hack/boilerplate.go.txt -r "-"
 
@@ -110,10 +110,9 @@ api: generate api
 	rm -rf ./sdk/python/${API_VERSION}/fluxoperator/model/*
 	java -jar ${SWAGGER_JAR} generate -i ${SWAGGER_API_JSON} -g python-legacy -o ./sdk/python/${API_VERSION} -c ./hack/python-sdk/swagger_config.json --git-repo-id flux-operator --git-user-id flux-framework
 	cp ./hack/python-sdk/template/* ./sdk/python/${API_VERSION}/
-#cp ./hack/python-sdk/fluxoperator/* ./sdk/python/${API_VERSION}/fluxoperator/model/
 
-# TODO try replacing the names EXACTLY and seeing if the import works
-# Then try removing entirely so not in schema
+# These were needed for the python (not python-legacy)
+# cp ./hack/python-sdk/fluxoperator/* ./sdk/python/${API_VERSION}/fluxoperator/model/
 
 .PHONY: pre-push
 pre-push: generate api build-config
