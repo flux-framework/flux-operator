@@ -15,6 +15,7 @@ The versions coincide with releases on pip. Only major versions will be released
 
 ## [0.0.x](https://github.com/flux-framework/flux-operator/tree/main) (0.0.x)
  - Support for automated testing of examples/tests (0.0.x)
+  - Early support for a basic multi-user mode.
   - Addition of local volumes for workflows that share data.
   - Google Cloud support and documentation
  - Project skeleton release (0.0.0)

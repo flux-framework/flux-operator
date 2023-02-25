@@ -47,6 +47,8 @@ jobs:
 
     # Ensure build-config is the same as the one we have
     - name: Check Updated flux-operator.yaml
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: |
         cp examples/dist/flux-operator.yaml /tmp/flux-operator.yaml
         make build-config

@@ -1,5 +1,5 @@
 /*
-Copyright 2022 Lawrence Livermore National Security, LLC
+Copyright 2022-2023 Lawrence Livermore National Security, LLC
  (c.f. AUTHORS, NOTICE.LLNS, COPYING)
 
 This is part of the Flux resource manager framework.
@@ -337,6 +337,9 @@ func generateFluxConfig(cluster *api.MiniCluster) string {
 	fqdn := fmt.Sprintf("%s.%s.svc.cluster.local", restfulServiceName, cluster.Namespace)
 	hosts := fmt.Sprintf("[%s]", generateRange(int(cluster.Spec.Size)))
 	fluxConfig := fmt.Sprintf(brokerConfigTemplate, fqdn, cluster.Name, hosts)
+	if len(cluster.Spec.Users) > 0 {
+		fluxConfig += brokerConfigJobManagerPlugin
+	}
 	return fluxConfig
 }
 
@@ -349,6 +352,16 @@ func generateWaitScript(cluster *api.MiniCluster, containerIndex int) (string, e
 	mainHost := fmt.Sprintf("%s-0", cluster.Name)
 	hosts := fmt.Sprintf("%s-[%s]", cluster.Name, generateRange(int(cluster.Spec.Size)))
 
+	// Ensure our requested users each each have a password
+	for i, user := range cluster.Spec.Users {
+		cluster.Spec.Users[i].Password = getRandomToken(user.Password)
+
+		// Passwords will be truncated to 8
+		if len(cluster.Spec.Users[i].Password) > 8 {
+			cluster.Spec.Users[i].Password = cluster.Spec.Users[i].Password[:8]
+		}
+	}
+
 	// Only derive cores if > 1
 	var cores int32
 	if container.Cores > 1 {
@@ -357,10 +370,11 @@ func generateWaitScript(cluster *api.MiniCluster, containerIndex int) (string, e
 	// The token uuid is the same across images
 	wt := WaitTemplate{
 		FluxUser:    getFluxUser(cluster.Spec.FluxRestful.Username),
-		FluxToken:   getFluxToken(cluster.Spec.FluxRestful.Token),
+		FluxToken:   getRandomToken(cluster.Spec.FluxRestful.Token),
 		MainHost:    mainHost,
 		Hosts:       hosts,
 		Container:   container,
+		Users:       cluster.Spec.Users,
 		Size:        cluster.Spec.Size,
 		Tasks:       cluster.Spec.Tasks,
 		Cores:       cores,
@@ -399,8 +413,8 @@ func getFluxUser(requested string) string {
 	return "flux"
 }
 
-// getFluxToken returns a requested user token, or a generated one
-func getFluxToken(requested string) string {
+// getRandomToken returns a requested token, or a generated one
+func getRandomToken(requested string) string {
 	if requested != "" {
 		return requested
 	}

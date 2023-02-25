@@ -155,6 +155,13 @@ Or get the output log!
 
 ```bash
 $ flux-restful-cli logs 2324869152768
+```
+
+<details>
+
+<summary>Logs Output</summary>
+
+```console
 LAMMPS (29 Sep 2021 - Update 2)
 OMP_NUM_THREADS environment is not set. Defaulting to 1 thread. (src/comm.cpp:98)
 using 1 OpenMP thread(s) per MPI task
@@ -236,6 +243,8 @@ Neighbor list builds = 5
 Dangerous builds not checked
 Total wall time: 0:00:20
 ```
+
+</details>
 
 Or do the same from within Python:
 

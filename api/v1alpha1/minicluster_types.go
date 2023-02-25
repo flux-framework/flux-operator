@@ -1,5 +1,5 @@
 /*
-Copyright 2022 Lawrence Livermore National Security, LLC
+Copyright 2022-2023 Lawrence Livermore National Security, LLC
  (c.f. AUTHORS, NOTICE.LLNS, COPYING)
 
 This is part of the Flux resource manager framework.
@@ -31,13 +31,13 @@ type MiniClusterSpec struct {
 	// There should only be one container to run flux with runFlux
 	Containers []MiniClusterContainer `json:"containers"`
 
+	// Users of the MiniCluster
+	// +optional
+	Users []MiniClusterUser `json:"users"`
+
 	// Labels for the job
 	// +optional
 	JobLabels map[string]string `json:"jobLabels"`
-
-	// Labels for each pod
-	// +optional
-	PodLabels map[string]string `json:"podLabels"`
 
 	// Volumes accessible to containers from a host
 	// +optional
@@ -78,12 +78,26 @@ type MiniClusterSpec struct {
 	Pod PodSpec `json:"pod"`
 }
 
+type MiniClusterUser struct {
+
+	// If a user is defined, the username is required
+	Name string `json:"name"`
+
+	// +optional
+	Password string `json:"password"`
+}
+
 type LoggingSpec struct {
 
 	// Quiet mode silences all output so the job only shows the test running
 	// +kubebuilder:default=false
 	// +optional
 	QuietMode bool `json:"quiet"`
+
+	// Strict mode ensures any failure will not continue in the job entrypoint
+	// +kubebuilder:default=true
+	// +optional
+	StrictMode bool `json:"struct"`
 
 	// Debug mode adds extra verbosity to Flux
 	// +kubebuilder:default=false
@@ -98,6 +112,14 @@ type LoggingSpec struct {
 
 // PodSpec controlls variables for the cluster pod
 type PodSpec struct {
+
+	// Annotations for each pod
+	// +optional
+	Annotations map[string]string `json:"annotations"`
+
+	// Labels for each pod
+	// +optional
+	Labels map[string]string `json:"labels"`
 
 	// Resources include limits and requests
 	// +optional
@@ -342,13 +364,23 @@ func (f *MiniCluster) Validate() bool {
 	}
 
 	// If pod and job labels aren't defined, create label set
-	if f.Spec.PodLabels == nil {
-		f.Spec.PodLabels = map[string]string{}
+	if f.Spec.Pod.Labels == nil {
+		f.Spec.Pod.Labels = map[string]string{}
+	}
+	if f.Spec.Pod.Annotations == nil {
+		f.Spec.Pod.Annotations = map[string]string{}
 	}
 	if f.Spec.JobLabels == nil {
 		f.Spec.JobLabels = map[string]string{}
 	}
 
+	// Validate user passwords. If provided, need to be 8 or fewer characters
+	for _, user := range f.Spec.Users {
+		if user.Password != "" && len(user.Password) > 8 {
+			fmt.Printf("😥️ %s has a password that is too long, can be no longer than 8 characters\n", user.Name)
+			return false
+		}
+	}
 	for i, container := range f.Spec.Containers {
 		name := fmt.Sprintf("MiniCluster.Container.%d", i)
 		fmt.Printf("🤓 %s.Image %s\n", name, container.Image)

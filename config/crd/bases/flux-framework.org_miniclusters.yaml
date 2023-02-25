@@ -229,6 +229,11 @@ spec:
                     description: Quiet mode silences all output so the job only shows
                       the test running
                     type: boolean
+                  struct:
+                    default: true
+                    description: Strict mode ensures any failure will not continue
+                      in the job entrypoint
+                    type: boolean
                   timed:
                     default: false
                     description: Timed mode adds timing to Flux commands
@@ -237,6 +242,16 @@ spec:
               pod:
                 description: Pod spec details
                 properties:
+                  annotations:
+                    additionalProperties:
+                      type: string
+                    description: Annotations for each pod
+                    type: object
+                  labels:
+                    additionalProperties:
+                      type: string
+                    description: Labels for each pod
+                    type: object
                   resources:
                     additionalProperties:
                       anyOf:
@@ -245,11 +260,6 @@ spec:
                       x-kubernetes-int-or-string: true
                     description: Resources include limits and requests
                     type: object
-                type: object
-              podLabels:
-                additionalProperties:
-                  type: string
-                description: Labels for each pod
                 type: object
               size:
                 default: 1
@@ -262,6 +272,19 @@ spec:
                 description: Total number of CPUs being run across entire cluster
                 format: int32
                 type: integer
+              users:
+                description: Users of the MiniCluster
+                items:
+                  properties:
+                    name:
+                      description: If a user is defined, the username is required
+                      type: string
+                    password:
+                      type: string
+                  required:
+                  - name
+                  type: object
+                type: array
               volumes:
                 additionalProperties:
                   description: Mini Cluster local volumes available to mount (these

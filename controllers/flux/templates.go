@@ -1,5 +1,5 @@
 /*
-Copyright 2022 Lawrence Livermore National Security, LLC
+Copyright 2022-2023 Lawrence Livermore National Security, LLC
  (c.f. AUTHORS, NOTICE.LLNS, COPYING)
 
 This is part of the Flux resource manager framework.
@@ -19,6 +19,9 @@ import (
 //go:embed templates/broker.toml
 var brokerConfigTemplate string
 
+//go:embed templates/job-manager.toml
+var brokerConfigJobManagerPlugin string
+
 //go:embed templates/wait.sh
 var waitToStartTemplate string
 
@@ -33,6 +36,7 @@ type WaitTemplate struct {
 	Hosts     string // List of hosts
 
 	FluxRestful api.FluxRestful
+	Users       []api.MiniClusterUser
 	Container   api.MiniClusterContainer
 	Cores       int32
 	Tasks       int32
