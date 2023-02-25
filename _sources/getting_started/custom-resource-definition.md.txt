@@ -67,18 +67,6 @@ To add custom labels for your job, add a set of key value pairs (strings) to a "
     job-attribute-b: dinosaur-b
 ```
 
-### podLabels
-
-To add custom labels for your pods (in the indexed job), add a set of key value pairs (strings) to a "podLabels" section:
-
-```yaml
-  pobLabels:
-    pod-attribute-a: dinosaur-a
-    pod-attribute-b: dinosaur-b
-```
-
-Note that the "namespace" variable is controlled by the operator here, and would be over-ridden if you defined it here.
-
 
 ### deadline
 
@@ -196,6 +184,17 @@ logging:
 
 By default quiet is false. In early stages of the operator this was called `test`.
 
+#### strict
+
+By default, we run in bash strict mode, meaning that an error in a worker entrypoint script
+will cause it to exit with a non-zero exit code. However, if you want to debug (and pass over the issue)
+you can set this to false (it defaults to true):
+
+```yaml
+logging:
+  strict: false
+```
+
 #### timed
 
 Timed mode adds timing for the main Flux command and a few other interactions in the script.
@@ -232,10 +231,65 @@ logging:
   debug: true
 ```
 
+### users
+
+If you add a listing of users, minimally you need to provide a name for each one:
+
+```yaml
+users:
+  - name: peenut
+  - name: squidward
+  - name: avocadosaurus
+```
+
+The users will be created and added to the Flux Accounting database. If you don't provide passwords,
+they will be generated randomly (and you will need to retrieve them from the operator logs).
+You can also define them manually:
+
+```yaml
+users:
+  - name: peenut
+    password: butter
+  - name: squidward
+    password: underdac
+  - name: avocadosaurus
+    password: eathings
+```
+
+The passwords (if provided) are validated to be 8 or fewer characters.
+Note that although we don't validate this in the job, multi-user mode only makes sense to
+provide alongside a custom resource definition without a command, meaning you submit
+directly to the Flux Restful API server.
+
 
 ### pod
 
 Variables and attributes for each pod in the Indexed job.
+
+#### labels
+
+To add custom labels for your pods (in the indexed job), add a set of key value pairs (strings) to a "labels" section:
+
+```yaml
+pod:
+  labels:
+    pod-attribute-a: dinosaur-a
+    pod-attribute-b: dinosaur-b
+```
+
+Note that the "namespace" variable is controlled by the operator here, and would be over-ridden if you defined it here.
+
+#### annotations
+
+The same is true for annotations! Just add annotations to a pod like so:
+
+
+```yaml
+pod:
+  annotations:
+    pod-annotation-a: dinosaur-a
+    pod-annotation-b: dinosaur-b
+```
 
 #### resources
 

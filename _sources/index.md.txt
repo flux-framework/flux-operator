@@ -25,20 +25,21 @@ Would you like to request a feature or contribute?
 
 ```{toctree}
 :caption: Getting Started
-:maxdepth: 3
+:maxdepth: 2
 getting_started/index.md
 development/index.md
+deployment/index.md
 ```
 
 ```{toctree}
 :caption: Deployment
-:maxdepth: 3
+:maxdepth: 2
 deployment/index.md
 ```
 
 ```{toctree}
 :caption: About
-:maxdepth: 3
+:maxdepth: 2
 about/index.md
 ```
 

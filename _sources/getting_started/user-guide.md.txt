@@ -12,7 +12,26 @@ and we provide the other pinned containers in case you want a previous version:
 
  - [ghcr.io/flux-framework/flux-operator:feb-2023](https://github.com/flux-framework/flux-operator/pkgs/container/flux-operator): the version used for Kubecon experiments, and before storage (minikube and Google Cloud example) were added.
 
-## Local Install
+## Install
+
+### Quick Install
+
+This works best for production Kubernetes clusters, and comes down to downloading the latest yaml config, and applying it.
+
+```bash
+wget https://raw.githubusercontent.com/flux-framework/flux-operator/main/examples/dist/flux-operator.yaml
+kubectl apply -f flux-operator.yaml
+```
+
+Note that from the repository, this config is generated with:
+
+```bash
+$ make build-config
+```
+
+and then saved to the main branch where you retrieve it from.
+
+### Development Install
 
 If you are trying this out on your own, here is a quick start to getting the operator installed on MiniKube (or similar),
 and installing directly from the repository (with the development use case in mind).
@@ -85,60 +104,7 @@ And to stop MiniKube.
 $ minikube stop
 ```
 
-## Production Install
-
-To deploy the Flux Operator, you have a few options! Choose "quick," "repository," or "tool" deploy below,
-and then continue to read how to check that everything worked.
-
-### Quick Deploy
-
-This works best for production Kubernetes clusters, and comes down to downloading the latest yaml config, and applying it.
-
-```bash
-wget https://raw.githubusercontent.com/flux-framework/flux-operator/main/examples/dist/flux-operator.yaml
-kubectl apply -f flux-operator.yaml
-```
-
-Note that from the repository, this config is generated with:
-
-```bash
-$ make build-config
-```
-
-and then saved to the main branch where you retrieve it from.
-
-### Repository Deploy
-
-If you want to possibly develop and then deploy what you are working on, you can start with a clone:
-
-```bash
-$ git clone https://github.com/flux-framework/flux-operator
-$ cd flux-operator
-```
-
-A deploy will use the latest docker image [from the repository](https://github.com/orgs/flux-framework/packages?repo_name=flux-operator):
-
-```bash
-$ make deploy
-```
-```console
-...
-namespace/operator-system created
-customresourcedefinition.apiextensions.k8s.io/miniclusters.flux-framework.org unchanged
-serviceaccount/operator-controller-manager created
-role.rbac.authorization.k8s.io/operator-leader-election-role created
-clusterrole.rbac.authorization.k8s.io/operator-manager-role configured
-clusterrole.rbac.authorization.k8s.io/operator-metrics-reader unchanged
-clusterrole.rbac.authorization.k8s.io/operator-proxy-role unchanged
-rolebinding.rbac.authorization.k8s.io/operator-leader-election-rolebinding created
-clusterrolebinding.rbac.authorization.k8s.io/operator-manager-rolebinding unchanged
-clusterrolebinding.rbac.authorization.k8s.io/operator-proxy-rolebinding unchanged
-configmap/operator-manager-config created
-service/operator-controller-manager-metrics-service created
-deployment.apps/operator-controller-manager created
-```
-
-### Tool Deploy
+### Tool Install
 
 We maintain a tool [Flux Cloud](https://github.com/converged-computing/flux-cloud) that is able to bring up clusters, install the operator,
 and optionally run experiments and bring them down. We currently support a handful of clouds

@@ -405,6 +405,21 @@
   
   
     <li class="md-nav__item">
+      <a href="tutorials/index.html" class="md-nav__link">
+        <span title="/getting_started/tutorials/index.md (reference label)" class="md-ellipsis">Tutorials</span>
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="jobs.html" class="md-nav__link">
         <span title="/getting_started/jobs.md (reference label)" class="md-ellipsis">Jobs</span>
       </a>
@@ -494,13 +509,6 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#podlabels" class="md-nav__link">
-    <span title="/getting_started/custom-resource-definition.md#podlabels (reference label)" class="md-ellipsis">pod<wbr>Labels</span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
   <a href="#deadline" class="md-nav__link">
     <span title="/getting_started/custom-resource-definition.md#deadline (reference label)" class="md-ellipsis">deadline</span>
   </a>
@@ -571,6 +579,13 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#strict" class="md-nav__link">
+    <span title="/getting_started/custom-resource-definition.md#strict (reference label)" class="md-ellipsis">strict</span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#timed" class="md-nav__link">
     <span title="/getting_started/custom-resource-definition.md#timed (reference label)" class="md-ellipsis">timed</span>
   </a>
@@ -590,12 +605,33 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#users" class="md-nav__link">
+    <span title="/getting_started/custom-resource-definition.md#users (reference label)" class="md-ellipsis">users</span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#pod" class="md-nav__link">
     <span title="/getting_started/custom-resource-definition.md#pod (reference label)" class="md-ellipsis">pod</span>
   </a>
   
     <nav class="md-nav" aria-label="pod">
       <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#id1" class="md-nav__link">
+    <span title="/getting_started/custom-resource-definition.md#id1 (reference label)" class="md-ellipsis">labels</span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#annotations" class="md-nav__link">
+    <span title="/getting_started/custom-resource-definition.md#annotations (reference label)" class="md-ellipsis">annotations</span>
+  </a>
+  
+</li>
         
           <li class="md-nav__item">
   <a href="#resources" class="md-nav__link">
@@ -646,8 +682,8 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#id1" class="md-nav__link">
-    <span title="/getting_started/custom-resource-definition.md#id1 (reference label)" class="md-ellipsis">resources</span>
+  <a href="#id2" class="md-nav__link">
+    <span title="/getting_started/custom-resource-definition.md#id2 (reference label)" class="md-ellipsis">resources</span>
   </a>
   
 </li>
@@ -762,8 +798,8 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#id2" class="md-nav__link">
-    <span title="/getting_started/custom-resource-definition.md#id2 (reference label)" class="md-ellipsis">volumes</span>
+  <a href="#id3" class="md-nav__link">
+    <span title="/getting_started/custom-resource-definition.md#id3 (reference label)" class="md-ellipsis">volumes</span>
   </a>
   
 </li>
@@ -826,6 +862,21 @@
     <li class="md-nav__item">
       <a href="../development/index.html" class="md-nav__link">
         <span title="/development/index.md (reference label)" class="md-ellipsis">Development</span>
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../deployment/index.html" class="md-nav__link">
+        <span title="/deployment/index.md (reference label)" class="md-ellipsis">Clouds</span>
       </a>
     </li>
   
@@ -1008,14 +1059,6 @@ the set of containers that you describe.</p>
 <span class="w">    </span><span class="nt">job-attribute-b</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">dinosaur-b</span>
 </code></pre></div>
 </div>
-<h3 id="podlabels">podLabels<a class="headerlink" href="#podlabels" title="Permalink to this heading">¶</a></h3>
-<p>To add custom labels for your pods (in the indexed job), add a set of key value pairs (strings) to a “podLabels” section:</p>
-<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><code><span class="w">  </span><span class="nt">pobLabels</span><span class="p">:</span>
-<span class="w">    </span><span class="nt">pod-attribute-a</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">dinosaur-a</span>
-<span class="w">    </span><span class="nt">pod-attribute-b</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">dinosaur-b</span>
-</code></pre></div>
-</div>
-<p>Note that the “namespace” variable is controlled by the operator here, and would be over-ridden if you defined it here.</p>
 <h3 id="deadline">deadline<a class="headerlink" href="#deadline" title="Permalink to this heading">¶</a></h3>
 <p>This is the maximum running time for your job. If you leave unset, it is essentially infinite.
 If a Job is suspended (at creation or through an update), this timer will effectively be stopped and reset when the Job is resumed again.</p>
@@ -1102,6 +1145,14 @@ and then determine if the test was successful based on this output.</p>
 </code></pre></div>
 </div>
 <p>By default quiet is false. In early stages of the operator this was called <code class="docutils literal notranslate"><span class="pre">test</span></code>.</p>
+<h4 id="strict">strict<a class="headerlink" href="#strict" title="Permalink to this heading">¶</a></h4>
+<p>By default, we run in bash strict mode, meaning that an error in a worker entrypoint script
+will cause it to exit with a non-zero exit code. However, if you want to debug (and pass over the issue)
+you can set this to false (it defaults to true):</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><code><span class="nt">logging</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">strict</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
+</code></pre></div>
+</div>
 <h4 id="timed">timed<a class="headerlink" href="#timed" title="Permalink to this heading">¶</a></h4>
 <p>Timed mode adds timing for the main Flux command and a few other interactions in the script.</p>
 <div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><code><span class="nt">logging</span><span class="p">:</span>
@@ -1130,8 +1181,49 @@ and the worker pods flux start will have <code class="docutils literal notransla
 <span class="w">  </span><span class="nt">debug</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
 </code></pre></div>
 </div>
+<h3 id="users">users<a class="headerlink" href="#users" title="Permalink to this heading">¶</a></h3>
+<p>If you add a listing of users, minimally you need to provide a name for each one:</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><code><span class="nt">users</span><span class="p">:</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">peenut</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">squidward</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">avocadosaurus</span>
+</code></pre></div>
+</div>
+<p>The users will be created and added to the Flux Accounting database. If you don’t provide passwords,
+they will be generated randomly (and you will need to retrieve them from the operator logs).
+You can also define them manually:</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><code><span class="nt">users</span><span class="p">:</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">peenut</span>
+<span class="w">    </span><span class="nt">password</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">butter</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">squidward</span>
+<span class="w">    </span><span class="nt">password</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">underdac</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">avocadosaurus</span>
+<span class="w">    </span><span class="nt">password</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">eathings</span>
+</code></pre></div>
+</div>
+<p>The passwords (if provided) are validated to be 8 or fewer characters.
+Note that although we don’t validate this in the job, multi-user mode only makes sense to
+provide alongside a custom resource definition without a command, meaning you submit
+directly to the Flux Restful API server.</p>
 <h3 id="pod">pod<a class="headerlink" href="#pod" title="Permalink to this heading">¶</a></h3>
 <p>Variables and attributes for each pod in the Indexed job.</p>
+<h4 id="id1">labels<a class="headerlink" href="#id1" title="Permalink to this heading">¶</a></h4>
+<p>To add custom labels for your pods (in the indexed job), add a set of key value pairs (strings) to a “labels” section:</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><code><span class="nt">pod</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">labels</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">pod-attribute-a</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">dinosaur-a</span>
+<span class="w">    </span><span class="nt">pod-attribute-b</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">dinosaur-b</span>
+</code></pre></div>
+</div>
+<p>Note that the “namespace” variable is controlled by the operator here, and would be over-ridden if you defined it here.</p>
+<h4 id="annotations">annotations<a class="headerlink" href="#annotations" title="Permalink to this heading">¶</a></h4>
+<p>The same is true for annotations! Just add annotations to a pod like so:</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><code><span class="nt">pod</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">annotations</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">pod-annotation-a</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">dinosaur-a</span>
+<span class="w">    </span><span class="nt">pod-annotation-b</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">dinosaur-b</span>
+</code></pre></div>
+</div>
 <h4 id="resources">resources<a class="headerlink" href="#resources" title="Permalink to this heading">¶</a></h4>
 <p>Resource lists for a pod go under <a class="reference external" href="https://kubernetes.io/docs/concepts/scheduling-eviction/pod-overhead/">Overhead</a>. Known keys include “memory” and “cpu” (should be provided in some
 string format that can be parsed) and all others are considered some kind of quantity request.</p>
@@ -1183,7 +1275,7 @@ for the container, but exposes the variable for your container template (e.g., f
 <span class="w">    </span><span class="nt">command</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">lmp -v x 2 -v y 2 -v z 2 -in in.reaxc.hns -nocite</span>
 </code></pre></div>
 </div>
-<h4 id="id1">resources<a class="headerlink" href="#id1" title="Permalink to this heading">¶</a></h4>
+<h4 id="id2">resources<a class="headerlink" href="#id2" title="Permalink to this heading">¶</a></h4>
 <p>Resources can include limits and requests. Known keys include “memory” and “cpu” (should be provided in some
 string format that can be parsed) and all others are considered some kind of quantity request.</p>
 <div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><code><span class="nt">resources</span><span class="p">:</span>
@@ -1368,7 +1460,7 @@ we provide this argument on the level of the container. To enable this, set this
 <span class="w">  </span><span class="nt">diagnostics</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
 </code></pre></div>
 </div>
-<h3 id="id2">volumes<a class="headerlink" href="#id2" title="Permalink to this heading">¶</a></h3>
+<h3 id="id3">volumes<a class="headerlink" href="#id3" title="Permalink to this heading">¶</a></h3>
 <p>Volumes that are defined on the level of the container must be defined at the top level of the MiniCluster.
 As an example, here is how we tell the container to use the already defined volume “myvolume” to be mounted
 in the container as “/data”:</p>
@@ -1411,7 +1503,7 @@ It defaults to 5000.</p>
   <small>
     
       Last update:
-      Feb 18, 2023
+      Feb 25, 2023
     
   </small>
 </div>
