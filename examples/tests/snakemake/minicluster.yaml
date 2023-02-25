@@ -36,7 +36,7 @@ spec:
       volumes:
         data:
           path: /workflow
-          # readonly defaults to false
+          # readOnly defaults to false
                 
       # This is the directory we will bind the data to
       workingDir: /workflow

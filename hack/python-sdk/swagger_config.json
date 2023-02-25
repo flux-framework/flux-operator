@@ -1,0 +1,16 @@
+{
+  "packageName" : "fluxoperator",
+  "projectName" : "flux-framework",
+  "packageVersion": "0.0.0",
+  "packageUrl": "https://github.com/flux-framework/flux-operator/tree/main/python-sdk/v1alpha1",
+  "importMappings": {
+    "V1Config": "from kubernetes import config",
+    "V1Configuration": "from kubernetes.client import Configuration",
+    "V1Core": "from kubernetes.client.api import core_v1_api",
+    "V1ResourceRequirements": "from kubernetes.client import V1ResourceRequirements",
+    "V1JobCondition": "from kubernetes.client import V1JobCondition",
+    "V1APIException": "from kubernetes.client.rest import ApiException",
+    "V1PortForward": "from kubernetes.stream import portforward",
+    "V1ListMeta": "from kubernetes.client import V1ListMeta"
+  }
+}

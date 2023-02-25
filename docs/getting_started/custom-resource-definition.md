@@ -624,13 +624,13 @@ volumes:
 ```
 
 The `myvolume` key must be defined in the MiniCluster set of volumes, and this is checked.
-If you want to change the readonly status to true:
+If you want to change the readOnly status to true:
 
 ```yaml
 volumes:
   myvolume:
     path: /data
-    readonly: true
+    readOnly: true
 ```
 
 ### fluxRestful

@@ -108,7 +108,7 @@ func (r *MiniClusterReconciler) getMiniClusterContainers(
 
 		// A Flux runner gets a custom wait.sh script for the container
 		// And also needs to have a consistent name to the cert generator
-		if container.FluxRunner {
+		if container.RunFlux {
 
 			// wait.sh path corresponds to container identifier
 			waitScript := fmt.Sprintf("/flux_operator/wait-%d.sh", i)
@@ -118,14 +118,14 @@ func (r *MiniClusterReconciler) getMiniClusterContainers(
 
 		// Do we have a postStartExec Lifecycle command?
 		lifecycle := corev1.Lifecycle{}
-		if container.LifeCyclePostStartExec != "" {
+		if container.LifeCycle.PostStartExec != "" {
 			r.log.Info(
 				"🌀 MiniCluster",
-				"LifeCycle.PostStartExec", container.LifeCyclePostStartExec,
+				"LifeCycle.PostStartExec", container.LifeCycle.PostStartExec,
 			)
 			lifecycle.PostStart = &corev1.LifecycleHandler{
 				Exec: &corev1.ExecAction{
-					Command: []string{container.LifeCyclePostStartExec},
+					Command: []string{container.LifeCycle.PostStartExec},
 				},
 			}
 		}
@@ -171,7 +171,7 @@ func (r *MiniClusterReconciler) getMiniClusterContainers(
 		envars := []corev1.EnvVar{}
 
 		// If it's the FluxRunner, expose port 5000 for the service
-		if container.FluxRunner {
+		if container.RunFlux {
 			newPort := corev1.ContainerPort{
 				ContainerPort: int32(servicePort),
 				Protocol:      "TCP",
@@ -189,7 +189,7 @@ func (r *MiniClusterReconciler) getMiniClusterContainers(
 		}
 
 		// Add environment variables
-		for key, value := range container.Envars {
+		for key, value := range container.Environment {
 			newEnvar := corev1.EnvVar{
 				Name:  key,
 				Value: value,

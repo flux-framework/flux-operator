@@ -18,7 +18,6 @@ spec:
   - name: v1alpha1
     schema:
       openAPIV3Schema:
-        description: MiniCluster is the Schema for a Flux job launcher on K8s
         properties:
           apiVersion:
             description: 'APIVersion defines the versioned schema of this representation
@@ -33,10 +32,6 @@ spec:
           metadata:
             type: object
           spec:
-            description: MiniCluster defines the desired state of a Flux MiniCluster
-              "I am a Flux user and I want to launch a MiniCluster for my job!" A
-              MiniCluster corresponds to a Batch Job -> StatefulSet + ConfigMaps A
-              "task" within that cluster is flux running something.
             properties:
               cleanup:
                 default: false
@@ -88,7 +83,7 @@ spec:
                       description: Flux option flags, usually provided with -o optional
                         - if needed, default option flags for the server These can
                         also be set in the user interface to override here. This is
-                        only valid for a FluxRunner
+                        only valid for a FluxRunner "runFlux" true
                       type: string
                     fluxUser:
                       description: Flux User, if created in the container
@@ -113,6 +108,12 @@ spec:
                         of an already existing imagePullSecret will specify that secret
                         in the pod spec.
                       type: string
+                    lifeCycle:
+                      description: Lifecycle can handle post start commands, etc.
+                      properties:
+                        postStartExec:
+                          type: string
+                      type: object
                     name:
                       description: Container name is only required for non flux runners
                       type: string
@@ -123,9 +124,7 @@ spec:
                         format: int32
                         type: integer
                       type: array
-                    postStartExec:
-                      description: Lifecycle can handle post start commands, etc.
-                      type: string
+                      x-kubernetes-list-type: atomic
                     preCommand:
                       description: Special command to run at beginning of script,
                         directly after asFlux is defined as sudo -u flux -E (so you
@@ -167,7 +166,7 @@ spec:
                         properties:
                           path:
                             type: string
-                          readonly:
+                          readOnly:
                             default: false
                             type: boolean
                         required:
@@ -183,6 +182,7 @@ spec:
                   - image
                   type: object
                 type: array
+                x-kubernetes-list-type: atomic
               deadlineSeconds:
                 default: 31500000
                 description: Should the job be limited to a particular number of seconds?
@@ -229,7 +229,7 @@ spec:
                     description: Quiet mode silences all output so the job only shows
                       the test running
                     type: boolean
-                  struct:
+                  strict:
                     default: true
                     description: Strict mode ensures any failure will not continue
                       in the job entrypoint
@@ -285,6 +285,7 @@ spec:
                   - name
                   type: object
                 type: array
+                x-kubernetes-list-type: atomic
               volumes:
                 additionalProperties:
                   description: Mini Cluster local volumes available to mount (these
@@ -397,8 +398,10 @@ spec:
                   - type
                   type: object
                 type: array
+                x-kubernetes-list-type: atomic
               jobid:
-                description: The JobUid is set internally to associate to a miniCluster
+                description: The Jobid is set internally to associate to a miniCluster
+                  This isn't currently in use, we only have one!
                 type: string
             required:
             - jobid

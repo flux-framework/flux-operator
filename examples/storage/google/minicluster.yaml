@@ -44,7 +44,7 @@ spec:
         data:
           # This is where we will bind storage
           path: /workflow
-          # readonly defaults to false
+          # readOnly defaults to false
                 
       # This should be the directory with the Snakefile
       workingDir: /workflow/snakemake-workflow

@@ -63,7 +63,7 @@ func getVolumes(cluster *api.MiniCluster) []corev1.Volume {
 	for i, container := range cluster.Spec.Containers {
 
 		// For now, only Flux runners get the custom wait.sh script
-		if container.FluxRunner {
+		if container.RunFlux {
 			startScript := corev1.KeyToPath{
 				Key:  fmt.Sprintf("wait-%d", i),
 				Path: fmt.Sprintf("wait-%d.sh", i),
@@ -165,7 +165,7 @@ func (r *MiniClusterReconciler) createPersistentVolume(
 				VolumeHandle: "csi-gcs",
 				NodePublishSecretRef: &corev1.SecretReference{
 					Namespace: volume.SecretNamespace,
-					Name:      volume.SecretReference,
+					Name:      volume.Secret,
 				},
 			},
 		}
