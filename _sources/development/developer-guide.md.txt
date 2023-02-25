@@ -257,7 +257,11 @@ $ make catalog-build
 $ make catalog-push
 ```
 
-## Build Operator Yaml
+Note that these are done in CI so you shouldn't need to do anything from the command line.
+
+## Other Developer Commands
+
+### Build Operator Yaml
 
 To generate the CRD to install to a cluster, we've added a `make build-config` command:
 
@@ -266,7 +270,25 @@ $ make build-config
 ```
 
 That will generate a yaml to install the operator (with default container image) to a
-cluster in `examples/dist`.
+cluster in `examples/dist`. This file being updated is tested in the PR, so you
+should do it before opening.
+
+## Build API
+
+We use openapi to generate our Python SDK! You can update it as follows:
+
+```bash
+$ make api
+```
+
+## Pre-push
+
+We likely want to build the config _and_ API generation in one swoop.
+We have a courtesy command for that:
+
+```bash
+$ make pre-push
+```
 
 ## Container Requirements
 

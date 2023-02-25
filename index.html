@@ -255,6 +255,18 @@
 
 
   <li class="md-tabs__item">
+    <a href="getting_started/tutorials/index.html" class="md-tabs__link">
+      <span class="md-ellipsis">Tutorials</span>
+    </a>
+  </li>
+
+      
+        
+  
+  
+
+
+  <li class="md-tabs__item">
     <a href="deployment/index.html" class="md-tabs__link">
       <span class="md-ellipsis">Deployment</span>
     </a>
@@ -413,12 +425,61 @@
       
       
         <label class="md-nav__link" for="__nav_2">
+          <span class="md-ellipsis">Tutorials</span>
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Tutorials" data-md-level="1">
+        <label class="md-nav__title" for="__nav_2">
+          <span class="md-nav__icon md-icon"></span>
+          <span class="md-ellipsis">Tutorials</span>
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="getting_started/tutorials/index.html" class="md-nav__link">
+        <span title="/getting_started/tutorials/index.md (reference label)" class="md-ellipsis">Tutorials</span>
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" data-md-toggle="__nav_3" type="checkbox" id="__nav_3" checked>
+      
+      
+      
+        <label class="md-nav__link" for="__nav_3">
           <span class="md-ellipsis">Deployment</span>
           <span class="md-nav__icon md-icon"></span>
         </label>
       
       <nav class="md-nav" aria-label="Deployment" data-md-level="1">
-        <label class="md-nav__title" for="__nav_2">
+        <label class="md-nav__title" for="__nav_3">
           <span class="md-nav__icon md-icon"></span>
           <span class="md-ellipsis">Deployment</span>
         </label>
@@ -457,17 +518,17 @@
     <li class="md-nav__item md-nav__item--nested">
       
       
-        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" data-md-toggle="__nav_3" type="checkbox" id="__nav_3" checked>
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" data-md-toggle="__nav_4" type="checkbox" id="__nav_4" checked>
       
       
       
-        <label class="md-nav__link" for="__nav_3">
+        <label class="md-nav__link" for="__nav_4">
           <span class="md-ellipsis">About</span>
           <span class="md-nav__icon md-icon"></span>
         </label>
       
       <nav class="md-nav" aria-label="About" data-md-level="1">
-        <label class="md-nav__title" for="__nav_3">
+        <label class="md-nav__title" for="__nav_4">
           <span class="md-nav__icon md-icon"></span>
           <span class="md-ellipsis">About</span>
         </label>
@@ -539,7 +600,6 @@ Would you like to request a feature or contribute?
 <li class="toctree-l1"><a class="reference internal" href="getting_started/index.html">User Guide</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="getting_started/user-guide.html">User Guide</a></li>
 <li class="toctree-l2"><a class="reference internal" href="getting_started/tutorials/index.html">Tutorials</a></li>
-<li class="toctree-l2"><a class="reference internal" href="getting_started/jobs.html">Jobs</a></li>
 <li class="toctree-l2"><a class="reference internal" href="getting_started/custom-resource-definition.html">Mini Cluster</a></li>
 </ul>
 </li>
@@ -554,6 +614,29 @@ Would you like to request a feature or contribute?
 <li class="toctree-l2"><a class="reference internal" href="deployment/minikube.html">MiniKube</a></li>
 <li class="toctree-l2"><a class="reference internal" href="deployment/aws.html">Amazon Web Services</a></li>
 <li class="toctree-l2"><a class="reference internal" href="deployment/google.html">Google Cloud</a></li>
+</ul>
+</li>
+</ul>
+</div>
+<div class="toctree-wrapper compound">
+<p class="caption" role="heading"><span class="caption-text">Tutorials</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="getting_started/tutorials/index.html">Tutorials</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="getting_started/tutorials/jobs.html">Submit Jobs</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="getting_started/tutorials/jobs.html#single-job-minicluster-crd">1. Single Job MiniCluster CRD</a></li>
+<li class="toctree-l3"><a class="reference internal" href="getting_started/tutorials/jobs.html#submit-a-minicluster-crd-without-a-command-for-a-persistent-cluster">2. Submit a MiniCluster CRD without a command for a persistent cluster</a></li>
+<li class="toctree-l3"><a class="reference internal" href="getting_started/tutorials/jobs.html#automated-experiments-with-flux-cloud">3. Automated Experiments with flux-cloud</a></li>
+<li class="toctree-l3"><a class="reference internal" href="getting_started/tutorials/jobs.html#submit-jobs-directly-to-flux-via-ssh">4. Submit jobs directly to Flux via ssh</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="getting_started/tutorials/multi-tenancy.html">Multi-tenancy</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="getting_started/tutorials/multi-tenancy.html#create-cluster">1. Create Cluster</a></li>
+<li class="toctree-l3"><a class="reference internal" href="getting_started/tutorials/multi-tenancy.html#custom-resource-definition">2. Custom Resource Definition</a></li>
+<li class="toctree-l3"><a class="reference internal" href="getting_started/tutorials/multi-tenancy.html#view-logs">3. View Logs</a></li>
+<li class="toctree-l3"><a class="reference internal" href="getting_started/tutorials/multi-tenancy.html#expose-web-interface">4. Expose Web Interface</a></li>
+<li class="toctree-l3"><a class="reference internal" href="getting_started/tutorials/multi-tenancy.html#admin-actions">5. Admin Actions</a></li>
+</ul>
+</li>
 </ul>
 </li>
 </ul>

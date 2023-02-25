@@ -257,6 +257,18 @@
 
 
   <li class="md-tabs__item">
+    <a href="../getting_started/tutorials/index.html" class="md-tabs__link">
+      <span class="md-ellipsis">Tutorials</span>
+    </a>
+  </li>
+
+      
+        
+  
+  
+
+
+  <li class="md-tabs__item">
     <a href="../deployment/index.html" class="md-tabs__link">
       <span class="md-ellipsis">Deployment</span>
     </a>
@@ -543,8 +555,35 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#other-developer-commands" class="md-nav__link">
+    <span title="/development/developer-guide.md#other-developer-commands (reference label)" class="md-ellipsis">Other Developer Commands</span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Other Developer Commands">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
   <a href="#build-operator-yaml" class="md-nav__link">
     <span title="/development/developer-guide.md#build-operator-yaml (reference label)" class="md-ellipsis">Build Operator Yaml</span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#build-api" class="md-nav__link">
+    <span title="/development/developer-guide.md#build-api (reference label)" class="md-ellipsis">Build API</span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#pre-push" class="md-nav__link">
+    <span title="/development/developer-guide.md#pre-push (reference label)" class="md-ellipsis">Pre-<wbr>push</span>
   </a>
   
 </li>
@@ -703,12 +742,61 @@
       
       
         <label class="md-nav__link" for="__nav_2">
+          <span class="md-ellipsis">Tutorials</span>
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Tutorials" data-md-level="1">
+        <label class="md-nav__title" for="__nav_2">
+          <span class="md-nav__icon md-icon"></span>
+          <span class="md-ellipsis">Tutorials</span>
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../getting_started/tutorials/index.html" class="md-nav__link">
+        <span title="/getting_started/tutorials/index.md (reference label)" class="md-ellipsis">Tutorials</span>
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" data-md-toggle="__nav_3" type="checkbox" id="__nav_3" checked>
+      
+      
+      
+        <label class="md-nav__link" for="__nav_3">
           <span class="md-ellipsis">Deployment</span>
           <span class="md-nav__icon md-icon"></span>
         </label>
       
       <nav class="md-nav" aria-label="Deployment" data-md-level="1">
-        <label class="md-nav__title" for="__nav_2">
+        <label class="md-nav__title" for="__nav_3">
           <span class="md-nav__icon md-icon"></span>
           <span class="md-ellipsis">Deployment</span>
         </label>
@@ -747,17 +835,17 @@
     <li class="md-nav__item md-nav__item--nested">
       
       
-        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" data-md-toggle="__nav_3" type="checkbox" id="__nav_3" checked>
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" data-md-toggle="__nav_4" type="checkbox" id="__nav_4" checked>
       
       
       
-        <label class="md-nav__link" for="__nav_3">
+        <label class="md-nav__link" for="__nav_4">
           <span class="md-ellipsis">About</span>
           <span class="md-nav__icon md-icon"></span>
         </label>
       
       <nav class="md-nav" aria-label="About" data-md-level="1">
-        <label class="md-nav__title" for="__nav_3">
+        <label class="md-nav__title" for="__nav_4">
           <span class="md-nav__icon md-icon"></span>
           <span class="md-ellipsis">About</span>
         </label>
@@ -992,13 +1080,27 @@ $<span class="w"> </span>make<span class="w"> </span>bundle-push
 $<span class="w"> </span>make<span class="w"> </span>catalog-push
 </code></pre></div>
 </div>
-<h2 id="build-operator-yaml">Build Operator Yaml<a class="headerlink" href="#build-operator-yaml" title="Permalink to this heading">¶</a></h2>
+<p>Note that these are done in CI so you shouldn’t need to do anything from the command line.</p>
+<h2 id="other-developer-commands">Other Developer Commands<a class="headerlink" href="#other-developer-commands" title="Permalink to this heading">¶</a></h2>
+<h3 id="build-operator-yaml">Build Operator Yaml<a class="headerlink" href="#build-operator-yaml" title="Permalink to this heading">¶</a></h3>
 <p>To generate the CRD to install to a cluster, we’ve added a <code class="docutils literal notranslate"><span class="pre">make</span> <span class="pre">build-config</span></code> command:</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span>make<span class="w"> </span>build-config
 </code></pre></div>
 </div>
 <p>That will generate a yaml to install the operator (with default container image) to a
-cluster in <code class="docutils literal notranslate"><span class="pre">examples/dist</span></code>.</p>
+cluster in <code class="docutils literal notranslate"><span class="pre">examples/dist</span></code>. This file being updated is tested in the PR, so you
+should do it before opening.</p>
+<h2 id="build-api">Build API<a class="headerlink" href="#build-api" title="Permalink to this heading">¶</a></h2>
+<p>We use openapi to generate our Python SDK! You can update it as follows:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span>make<span class="w"> </span>api
+</code></pre></div>
+</div>
+<h2 id="pre-push">Pre-push<a class="headerlink" href="#pre-push" title="Permalink to this heading">¶</a></h2>
+<p>We likely want to build the config <em>and</em> API generation in one swoop.
+We have a courtesy command for that:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span>make<span class="w"> </span>pre-push
+</code></pre></div>
+</div>
 <h2 id="container-requirements">Container Requirements<a class="headerlink" href="#container-requirements" title="Permalink to this heading">¶</a></h2>
 <p>If you are looking to build a container to use with the Flux Operator, we have a set of
 example containers <a class="reference external" href="https://github.com/rse-ops/flux-hpc">here</a> and general guidelines are below.
