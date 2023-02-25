@@ -7,5 +7,6 @@ If you have any questions or issues, please [let us know](https://github.com/flu
 
 ```{toctree}
 :maxdepth: 2
+jobs
 multi-tenancy
 ```

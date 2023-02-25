@@ -17,22 +17,20 @@ import (
 	"k8s.io/apimachinery/pkg/util/intstr"
 )
 
-// EDIT THIS FILE!  THIS IS SCAFFOLDING FOR YOU TO OWN!
-// NOTE: json tags are required.  Any new fields you add must have json tags for the fields to be serialized.
+// MiniCluster is an HPC cluster in Kubernetes you can control
+// Either to submit a single job (and go away) or for a persistent single- or multi- user cluster
 
-// MiniCluster defines the desired state of a Flux MiniCluster
-// "I am a Flux user and I want to launch a MiniCluster for my job!"
-// A MiniCluster corresponds to a Batch Job -> StatefulSet + ConfigMaps
-// A "task" within that cluster is flux running something.
 type MiniClusterSpec struct {
 	// Important: Run "make" and "make manifests" to regenerate code after modifying this file
 
 	// Containers is one or more containers to be created in a pod.
 	// There should only be one container to run flux with runFlux
+	// +listType=atomic
 	Containers []MiniClusterContainer `json:"containers"`
 
 	// Users of the MiniCluster
 	// +optional
+	// +listType=atomic
 	Users []MiniClusterUser `json:"users"`
 
 	// Labels for the job
@@ -92,22 +90,22 @@ type LoggingSpec struct {
 	// Quiet mode silences all output so the job only shows the test running
 	// +kubebuilder:default=false
 	// +optional
-	QuietMode bool `json:"quiet"`
+	Quiet bool `json:"quiet"`
 
 	// Strict mode ensures any failure will not continue in the job entrypoint
 	// +kubebuilder:default=true
 	// +optional
-	StrictMode bool `json:"struct"`
+	Strict bool `json:"strict"`
 
 	// Debug mode adds extra verbosity to Flux
 	// +kubebuilder:default=false
 	// +optional
-	DebugMode bool `json:"debug"`
+	Debug bool `json:"debug"`
 
 	// Timed mode adds timing to Flux commands
 	// +kubebuilder:default=false
 	// +optional
-	TimedMode bool `json:"timed"`
+	Timed bool `json:"timed"`
 }
 
 // PodSpec controlls variables for the cluster pod
@@ -129,10 +127,12 @@ type PodSpec struct {
 // MiniClusterStatus defines the observed state of Flux
 type MiniClusterStatus struct {
 
-	// The JobUid is set internally to associate to a miniCluster
-	JobId string `json:"jobid"`
+	// The Jobid is set internally to associate to a miniCluster
+	// This isn't currently in use, we only have one!
+	Jobid string `json:"jobid"`
 
 	// conditions hold the latest Flux Job and MiniCluster states
+	// +listType=atomic
 	Conditions []metav1.Condition `json:"conditions,omitempty"`
 }
 
@@ -172,11 +172,11 @@ type MiniClusterVolume struct {
 
 	// +kubebuilder:default="hostpath"
 	// +optional
-	StorageClassName string `json:"class"`
+	Class string `json:"class"`
 
 	// Secret reference in Kubernetes with service account role
 	// +optional
-	SecretReference string `json:"secret"`
+	Secret string `json:"secret"`
 
 	// Secret namespace
 	// +kubebuilder:default="default"
@@ -196,7 +196,7 @@ type ContainerVolume struct {
 
 	// +kubebuilder:default=false
 	// +optional
-	ReadOnly bool `json:"readonly"`
+	ReadOnly bool `json:"readOnly"`
 }
 
 type MiniClusterContainer struct {
@@ -228,11 +228,12 @@ type MiniClusterContainer struct {
 	// Ports to be exposed to other containers in the cluster
 	// We take a single list of integers and map to the same
 	// +optional
+	// +listType=atomic
 	Ports []int32 `json:"ports"`
 
 	// Key/value pairs for the environment
 	// +optional
-	Envars map[string]string `json:"environment"`
+	Environment map[string]string `json:"environment"`
 
 	// Allow the user to pull authenticated images
 	// By default no secret is selected. Setting
@@ -258,7 +259,7 @@ type MiniClusterContainer struct {
 
 	// Main container to run flux (only should be one)
 	// +optional
-	FluxRunner bool `json:"runFlux"`
+	RunFlux bool `json:"runFlux"`
 
 	// Volumes that can be mounted (must be defined in volumes)
 	// +optional
@@ -267,7 +268,7 @@ type MiniClusterContainer struct {
 	// Flux option flags, usually provided with -o
 	// optional - if needed, default option flags for the server
 	// These can also be set in the user interface to override here.
-	// This is only valid for a FluxRunner
+	// This is only valid for a FluxRunner "runFlux" true
 	// +optional
 	FluxOptionFlags string `json:"fluxOptionFlags"`
 
@@ -285,7 +286,7 @@ type MiniClusterContainer struct {
 
 	// Lifecycle can handle post start commands, etc.
 	// +optional
-	LifeCyclePostStartExec string `json:"postStartExec"`
+	LifeCycle LifeCycle `json:"lifeCycle"`
 
 	// Resources include limits and requests
 	// +optional
@@ -294,6 +295,12 @@ type MiniClusterContainer struct {
 	// More specific or detailed commands for just workers/broker
 	// +optional
 	Commands Commands `json:"commands"`
+}
+
+type LifeCycle struct {
+
+	// +optional
+	PostStartExec string `json:"postStartExec"`
 }
 
 type FluxUser struct {
@@ -333,10 +340,12 @@ type ContainerResources struct {
 
 type ContainerResource map[string]intstr.IntOrString
 
-//+kubebuilder:object:root=true
-//+kubebuilder:subresource:status
-
 // MiniCluster is the Schema for a Flux job launcher on K8s
+
+// +genclient
+// +k8s:deepcopy-gen:interfaces=k8s.io/apimachinery/pkg/runtime.Object
+// +kubebuilder:object:root=true
+// +kubebuilder:subresource:status
 type MiniCluster struct {
 	metav1.TypeMeta   `json:",inline"`
 	metav1.ObjectMeta `json:"metadata,omitempty"`
@@ -360,7 +369,7 @@ func (f *MiniCluster) Validate() bool {
 	// If we only have one container, assume we want to run flux with it
 	// This makes it easier for the user to not require the flag
 	if len(f.Spec.Containers) == 1 {
-		f.Spec.Containers[0].FluxRunner = true
+		f.Spec.Containers[0].RunFlux = true
 	}
 
 	// If pod and job labels aren't defined, create label set
@@ -385,10 +394,10 @@ func (f *MiniCluster) Validate() bool {
 		name := fmt.Sprintf("MiniCluster.Container.%d", i)
 		fmt.Printf("🤓 %s.Image %s\n", name, container.Image)
 		fmt.Printf("🤓 %s.Command %s\n", name, container.Command)
-		fmt.Printf("🤓 %s.FluxRunner %t\n", name, container.FluxRunner)
+		fmt.Printf("🤓 %s.FluxRunner %t\n", name, container.RunFlux)
 
 		// Count the FluxRunners
-		if container.FluxRunner {
+		if container.RunFlux {
 			fluxRunners += 1
 
 			// Non flux-runners are required to have a name
@@ -415,7 +424,7 @@ func (f *MiniCluster) Validate() bool {
 
 	// For each volume, if it's not a hostvolume, we require a secret reference
 	for key, volume := range f.Spec.Volumes {
-		if volume.StorageClassName != "hostpath" && volume.SecretReference == "" {
+		if volume.Class != "hostpath" && volume.Secret == "" {
 			fmt.Printf("😥️ Found non-hostpath volume %s that is missing a secret\n", key)
 			valid = false
 		}
@@ -425,6 +434,7 @@ func (f *MiniCluster) Validate() bool {
 }
 
 //+kubebuilder:object:root=true
+// +k8s:deepcopy-gen:interfaces=k8s.io/apimachinery/pkg/runtime.Object
 
 // MiniClusterList contains a list of MiniCluster
 type MiniClusterList struct {

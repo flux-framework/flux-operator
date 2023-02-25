@@ -32,6 +32,13 @@ deployment/index.md
 ```
 
 ```{toctree}
+:caption: Tutorials
+:maxdepth: 3
+getting_started/tutorials/index.md
+```
+
+
+```{toctree}
 :caption: Deployment
 :maxdepth: 2
 deployment/index.md

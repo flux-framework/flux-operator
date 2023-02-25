@@ -1,0 +1,11 @@
+{
+  "packageName" : "fluxoperator",
+  "projectName" : "flux-framework",
+  "packageVersion": "0.0.0",
+  "packageUrl": "https://github.com/flux-framework/flux-operator/tree/main/python-sdk/v1alpha1",
+  "importMappings": {
+    "V1ObjectMeta": "from kubernetes.client import V1ObjectMeta",
+    "V1ListMeta": "from kubernetes.client import V1ListMeta",
+    "IntOrString": "isinstance((int, str))"
+  }
+}

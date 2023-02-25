@@ -27,6 +27,8 @@ And you can find the following here:
 
 And the following external resources might be useful:
 
+ - [Flux Cloud](https://github.com/converged-computing/flux-cloud): automation of experiments using the Flux Operator
+ - [Python SDK](sdk/python): for deploying MiniClusters and port forwarding.
  - [Flux HPC Examples](https://github.com/rse-ops/flux-hpc) containers and CRD for the operator to run Flux with HPC workloads (under development)
 
 **Note** this project is actively under development, and you can expect change and improvements!

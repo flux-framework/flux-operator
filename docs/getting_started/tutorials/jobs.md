@@ -1,19 +1,74 @@
-# Jobs
+# Submit Jobs
 
-Given a running MiniCluster that exposes a RESTful API, you have several modes for interaction:
+Given a running Kubernetes cluster, you have several modes for interaction, or submitting jobs:
 
-1. Submit jobs in the user interface (basic)
-2. Submit jobs from the command line "RESTful" or within Python (custom)
-3. Use a helper tool "flux-cloud"
-4. Submit jobs interacting with Flux via ssh-ing to the pod (advanced)
+- 1. Submit a MiniCluster custom resource definition (CRD) with a command to run one job. (<a href="#single-job-minicluster-crd">#ref</a>)
+  - a. Submit a minicluster.yaml via `kubectl` (<a href="#a-submit-a-minicluster-yaml-via-kubectl">#ref</a>)
+  - b. Submit a MiniCluster custom resource definition via the Python SDK (<a href="#b-submit-a-minicluster-crd-via-the-python-sdk">#ref</a>)
+- 2. Submit a MiniCluster custom resource definition without a command to start a persistent MiniCluster. (<a href="#submit-a-minicluster-crd-without-a-command-for-a-persistent-cluster">#ref</a>)
+  - a. Submit jobs in the user interface (basic) (<a href="#a-submit-jobs-in-the-user-interface-basic">#ref</a>)
+  - b. Submit jobs from the command line "RESTful" (<a href="#b-submit-jobs-from-the-command-line">#ref</a>)
+- 3. Run a set of experiments (to make many MiniCluster in an automated fashion) with `flux-cloud` (<a href="#automated-experiments-with-flux-cloud">#ref</a>)
+- 4. Submit jobs interacting with Flux via ssh-ing to the pod (advanced) (<a href="#submit-jobs-directly-to-flux-via-ssh">#ref</a>)
 
-We provide [clients](https://github.com/flux-framework/flux-restful-api/tree/main/clients) to interact with
-a running server, and each will be briefly shown below. The Python client is also included in our [Tutorials](https://flux-framework.org/flux-restful-api/auto_examples/index.html).
+Each of the strategies above will be discussed here.
 
-## Credentials
+## 1. Single Job MiniCluster CRD
 
-Whether you use a command line client, a language SDK, or the web interface - you need your credentials!
-The credentials are printed in the log of the index-0. These are the `FLUX_USER` and `FLUX_TOKEN` 
+### a. Submit a minicluster yaml via kubectl
+
+When you define a command in a MiniCluster CRD, this will submit and run one job using that command, and clean up.
+You can find many examples for doing this under our [tests](https://github.com/flux-framework/flux-operator/tree/main/examples/tests)
+directory. For any file there (e.g., lammps) once you have a Kubernetes cluster with the operator installed and
+the `flux-operator` namespace created, you can do:
+
+```bash
+# Create the MiniCluster
+$ kubectl apply -f examples/tests/lammps/minicluster.yaml
+
+# See the status of the pods
+$ kubectl get pods -n flux-operator pods
+
+# View output for lammps (replace with actual pod id)
+$ kubectl logs -n flux-operator lammps-0-xxxxx
+```
+
+### b. Submit a MiniCluster CRD via the Python SDK
+
+We have early in development a [python SDK](https://github.com/flux-framework/flux-operator/tree/main/sdk/python) 
+that interacts directly with the Kubernetes API and defines the MiniCluster CRD programmatically.
+You can see an early [directory of examples](https://github.com/flux-framework/flux-operator/tree/main/sdk/python/v1alpha1/examples). 
+Note that using this method you need to be pedantic - we use the [openapi generator](https://openapi-generator.tech/) and not all defaults
+get correctly carried through. As an example, the default deadline in seconds is a large
+number but it gets passed as 0, so if you don't define it, the Job will never start.
+
+## 2. Submit a MiniCluster CRD without a command for a persistent cluster
+
+If you submit a minicluster.yaml without a command, a single-user persistent MiniCluster will be started!
+We have a few [examples](https://github.com/flux-framework/flux-operator/tree/main/examples/flux-restful) for
+cluster that handle this. In general, you will want to:
+
+1. Create the persistent single-user mini-cluster
+2. Get your credentials (user and token) from the logs
+3. Log in via the interface or command line.
+
+Here is how the first steps of that might look:
+
+```bash
+# Create the MiniCluster with lammps to test
+$ kubectl apply -f examples/flux-restful/minicluster-lammps.yaml
+
+# See the status of the pods
+$ kubectl get pods -n flux-operator pods
+
+# Get credentials in the logs
+$ kubectl logs -n flux-operator lammps-0-xxxxx
+```
+
+#### Credentials
+
+Whichever approach you use above to create the persistent MiniCluster, you need your credentials!
+The credentials are printed in the log of the index-0. For single user mode these are the `FLUX_USER` and `FLUX_TOKEN` 
 environment variables. A client requires exported them to the environment, and the web interface requires
 copy paste into a form. 
 
@@ -27,16 +82,15 @@ $ kubectl logs -n flux-operator ${brokerPod}
 export FLUX_TOKEN=9c605129-3ddc-41e2-9a23-38f59fb8f8e0
 export FLUX_USER=flux
 
-🌀sudo -u flux flux start -o --config /etc/flux/config ...
+🌀flux start -o --config /etc/flux/config ...
 ```
 
 Note that they appear slightly above the command, which isn't at the bottom of the log!
 
-## Ways to Submit
+#### Port Forwarding
 
-### 1. User Interface
-
-To see the user interface, you'll first need to do some kind of port forwarding:
+To see the user interface or interact with the RESTful API, you'll first need to do some kind of port forwarding.
+This again uses the pod if for the broker:
 
 ```console
 kubectl port-forward -n flux-operator flux-sample-0-zdhkp 5000:5000
@@ -45,6 +99,9 @@ Forwarding from 127.0.0.1:5000 -> 5000
 
 This should be exposed at [http://127.0.0.1:5000](http://127.0.0.1:5000). It's not terribly informative, so
 we won't show the main portal here! 🤭
+
+
+### a. Submit jobs in the user interface (basic)
 
 After your MiniCluster is created with a RESTFul API, the easiest thing to do is open the user interface to [http://127.0.0.1:5000](http://127.0.0.1:5000)
 After port forwarding in a terminal and then submitting in the job UI (you will need to login with the flux user and token presented in the terminal). Here is the example command to try
@@ -73,25 +130,18 @@ And that's it for the example! You can further explore the exposed API in the we
 
 ![img/api.png](img/api.png)
 
-And you can also try using the [RESTFul API Clients](https://flux-framework.org/flux-restful-api/getting_started/user-guide.html) to submit instead
+### b. Submit jobs from the command line
+
+If you don't want to use the web interface, 
+
+You can also try using the [RESTFul API Clients](https://flux-framework.org/flux-restful-api/getting_started/user-guide.html) to submit instead
 (discussed next). Note that there is currently no way for the RESTful client to ask to destroy the cluster - you'll
-still need to use kubectl to do that.
-
-### 2. Command Line or Python
-
-Remember that before starting you'll need to export your `FLUX_USER` and `FLUX_TOKEN` to the environment:
+still need to use kubectl to do that. Before starting, ensure you have exported the `FLUX_USER` and `FLUX_TOKEN` you
+got from the previous step to the environment:
 
 ```bash
-# get the job pod identifier for index 0, the broker
-$ kubectl get -n flux-operator pods
-$ kubectl logs -n flux-operator ${brokerPod}
-```
-```console
-🔑 Your Credentials! These will allow you to control your MiniCluster with flux-framework/flux-restful-api
 export FLUX_TOKEN=9c605129-3ddc-41e2-9a23-38f59fb8f8e0
 export FLUX_USER=flux
-
-🌀sudo -u flux flux start -o --config /etc/flux/config ...
 ```
 
 Next, you can use the [flux-framework/flux-restful-api](https://flux-framework.org/flux-restful-api/getting_started/user-guide.html#python)
@@ -100,6 +150,7 @@ Python client to submit a job.
 ```bash
 $ pip install flux-restful-client
 ```
+
 And then (after you've started port forwarding) you can either submit on the command line:
 
 ```bash
@@ -273,7 +324,11 @@ res = cli.output(jobid)
 print(json.dumps(res, indent=4))
 ```
 
-### 3. Flux Cloud Helper Tool
+More detail is provided under the flux-restful-api [clients](https://github.com/flux-framework/flux-restful-api/tree/main/clients) documentation,
+and the Python client is also included in the flux-restful-api [Tutorials](https://flux-framework.org/flux-restful-api/auto_examples/index.html).
+
+
+## 3. Automated Experiments with flux-cloud 
 
 If you have a set of experiments you want to run on a production cluster, and especially
 if you don't want the cluster being up longer than it has to be, check out [Flux Cloud](https://github.com/converged-computing/flux-cloud).
@@ -281,7 +336,7 @@ It's a small experiment runner wrapper that makes bringing up the cluster, insta
 the operator, running a matrix of experiments, and destroying the cluster much
 easier than all the copy pasting of commands typically required! 
 
-### 4. Advanced Shell
+## 4. Submit jobs directly to Flux via ssh
 
 You can also submit jobs interacting with Flux via ssh-ing to the pod! This is considered 
 advanced, and is good for debugging. As you did before, get your pod listing:

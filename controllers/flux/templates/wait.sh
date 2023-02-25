@@ -6,13 +6,13 @@
 # needs to be updated with the config map that has ips!
 
 # If we are not in strict, don't set strict mode
-{{ if not .Logging.StrictMode }}set -eEu -o pipefail{{ end }}
+{{ if not .Logging.Strict }}set -eEu -o pipefail{{ end }}
 
 # Set the flux user from the getgo
 fluxuser={{ if .Container.FluxUser.Name}}{{ .Container.FluxUser.Name }}{{ else }}flux{{ end }}
 fluxuid={{ if .Container.FluxUser.Uid}}{{ .Container.FluxUser.Uid }}{{ else }}1000{{ end }}
 
-{{ if not .Logging.QuietMode }}# Show asFlux directive once
+{{ if not .Logging.Quiet }}# Show asFlux directive once
 printf "\nFlux username: ${fluxuser}\n"{{ end }}
 
 # Ensure pythonpath is set to something
@@ -36,7 +36,7 @@ which sudo > /dev/null 2>&1 || (echo "sudo is required to be installed" && exit 
 which flux > /dev/null 2>&1 || (echo "flux is required to be installed" && exit 1);
 
 # Add a flux user (required) that should exist before pre-command
-sudo adduser --disabled-password --uid ${fluxuid} --gecos "" ${fluxuser} > /dev/null 2>&1 || {{ if not .Logging.QuietMode }} printf "${fluxuser} user is already added.\n"{{ else }}true{{ end }}
+sudo adduser --disabled-password --uid ${fluxuid} --gecos "" ${fluxuser} > /dev/null 2>&1 || {{ if not .Logging.Quiet }} printf "${fluxuser} user is already added.\n"{{ else }}true{{ end }}
 
 # Add users, if requested
 {{ if .Users }}
@@ -48,7 +48,7 @@ which openssl > /dev/null 2>&1 || (echo "openssl is required to be installed to 
 {{ end }}
 
 # Show user permissions / ids
-{{ if not .Logging.QuietMode }}printf "${fluxuser} user identifiers:\n$(id ${fluxuser})\n"{{ end }}
+{{ if not .Logging.Quiet }}printf "${fluxuser} user identifiers:\n$(id ${fluxuser})\n"{{ end }}
 
 # If any preCommand logic is defined
 {{ .Container.PreCommand}}
@@ -56,11 +56,11 @@ which openssl > /dev/null 2>&1 || (echo "openssl is required to be installed to 
 # And pre command logic that isn't passed to the certificate generator
 {{ .Container.Commands.Pre}}
 
-{{ if not .Logging.QuietMode }}# Show asFlux directive once
+{{ if not .Logging.Quiet }}# Show asFlux directive once
 printf "\nAs Flux prefix for flux commands: ${asFlux}\n"{{ end }}
 
 # We use the actual time command and not the wrapper, otherwise we get there is no argument -f
-{{ if .Logging.TimedMode }}which /usr/bin/time > /dev/null 2>&1 || (echo "/usr/bin/time is required to use logging.timed true" && exit 1);{{ end }}
+{{ if .Logging.Timed }}which /usr/bin/time > /dev/null 2>&1 || (echo "/usr/bin/time is required to use logging.timed true" && exit 1);{{ end }}
 
 # Broker Options: important!
 # The local-uri setting places the unix domain socket in rundir 
@@ -72,7 +72,7 @@ brokerOptions="-Scron.directory=/etc/flux/system/cron.d \
   -Srundir=/run/flux \
   -Sstatedir=${STATE_DIRECTORY:-/var/lib/flux} \
   -Slocal-uri=local:///run/flux/local \
-{{ if not .Logging.QuietMode }}  -Slog-stderr-level={{or .Container.FluxLogLevel 6}} {{ else }} -Slog-stderr-level=0 {{ end }} \
+{{ if not .Logging.Quiet }}  -Slog-stderr-level={{or .Container.FluxLogLevel 6}} {{ else }} -Slog-stderr-level=0 {{ end }} \
   -Slog-stderr-mode=local"
 
 # quorum settings influence how the instance treats missing ranks
@@ -116,7 +116,7 @@ workdir=${PWD}
 # And if we are using fusefs / object storage, ensure we can see contents
 mkdir -p ${workdir}
 
-{{ if not .Logging.QuietMode }}
+{{ if not .Logging.Quiet }}
 printf "\n👋 Hello, I'm $(hostname)\n"
 printf "The main host is ${mainHost}\n"
 printf "The working directory is ${workdir}, contents include:\n"
@@ -128,14 +128,14 @@ printf "End of file listing, if you see nothing above there are no files.\n"{{ e
 mkdir -p /etc/flux/system
 
 # --cores=IDS Assign cores with IDS to each rank in R, so we  assign 0-(N-1) to each host
-{{ if not .Logging.QuietMode }}echo "flux R encode --hosts={{ .Hosts}} {{if .Cores}}--cores=0-{{.Cores}}{{ end }}"{{ end }}
+{{ if not .Logging.Quiet }}echo "flux R encode --hosts={{ .Hosts}} {{if .Cores}}--cores=0-{{.Cores}}{{ end }}"{{ end }}
 flux R encode --hosts={{ .Hosts}} {{if .Cores}}--cores=0-{{.Cores}}{{ end }} > /etc/flux/system/R
-{{ if not .Logging.QuietMode }}printf "\n📦 Resources\n"
+{{ if not .Logging.Quiet }}printf "\n📦 Resources\n"
 cat /etc/flux/system/R{{ end }}
 
 # Do we want to run diagnostics instead of regular entrypoint?
 diagnostics="{{ .Container.Diagnostics}}"
-{{ if not .Logging.QuietMode }}printf "\n🐸 Diagnostics: ${diagnostics}\n"{{ end }}
+{{ if not .Logging.Quiet }}printf "\n🐸 Diagnostics: ${diagnostics}\n"{{ end }}
 
 # Flux option flags
 option_flags="{{ .Container.FluxOptionFlags}}"
@@ -149,7 +149,7 @@ if [ "${option_flags}" != "" ]; then
     else 
         export FLUX_OPTION_FLAGS="${option_flags}"
     fi
-{{ if not .Logging.QuietMode }}    echo "🚩️ Flux Option Flags defined"{{ end }}
+{{ if not .Logging.Quiet }}    echo "🚩️ Flux Option Flags defined"{{ end }}
 fi
 
 mkdir -p /etc/flux/imp/conf.d/
@@ -159,7 +159,7 @@ allowed-users = [ "${fluxuser}", "root" ]
 allowed-shells = [ "/usr/libexec/flux/flux-shell" ]	
 EOT
 
-{{ if not .Logging.QuietMode }}printf "\n🦊 Independent Minister of Privilege\n"
+{{ if not .Logging.Quiet }}printf "\n🦊 Independent Minister of Privilege\n"
 cat /etc/flux/imp/conf.d/imp.toml
 
 # If we have Users (and want multi-user mode with pam) this file needs setuid,
@@ -179,7 +179,7 @@ cat /etc/flux/config/broker.toml{{ end }}
 mkdir -p /run/flux /etc/curve
 
 # Show generated curve certificate - the munge.key should already be equivalent (and exist)
-{{ if not .Logging.QuietMode }}cat /mnt/curve/curve.cert{{ end }}
+{{ if not .Logging.Quiet }}cat /mnt/curve/curve.cert{{ end }}
 cp /mnt/curve/curve.cert /etc/curve/curve.cert
 
 # Remove group and other read
@@ -192,7 +192,7 @@ fluxuid=$(id -u ${fluxuser})
 
 {{ if not .Container.Commands.RunFluxAsRoot }}chown -R ${fluxuid} /run/flux ${STATE_DIR} /etc/curve/curve.cert ${workdir}{{ end }}
 # If we have users, then enable flux accounting
-{{ if and .Users .Logging.QuietMode }}
+{{ if and .Users .Logging.Quiet }}
 {{ if not .Container.Commands.RunFluxAsRoot }}chown -R ${fluxuid} /var/lib/flux{{ end }}
 ${asFlux} flux account create-db
 ${asFlux} flux account add-bank root 1
@@ -203,7 +203,7 @@ ${asFlux} flux account add-bank --parent-bank=root user_bank 1
 ${asFlux} flux account-priority-update
 {{ end }}
 
-{{ if and .Users (not .Logging.QuietMode) }}
+{{ if and .Users (not .Logging.Quiet) }}
 {{ if not .Container.Commands.RunFluxAsRoot }}chown -R ${fluxuid} /var/lib/flux{{ end }}
 printf "\n🧾️ Creating flux accounting database\n"
 printf "flux account create-db\n"
@@ -222,7 +222,7 @@ ${asFlux} flux account-priority-update
 # Make directory world read/writable
 chmod -R 0777 ${workdir}
 
-{{ if not .Logging.QuietMode }}
+{{ if not .Logging.Quiet }}
 printf "\n🔒️ Working directory permissions:\n$(ls -l ${workdir})\n\n"
 printf "\n✨ Curve certificate generated by helper pod\n"
 cat /etc/curve/curve.cert{{ end }}
@@ -236,7 +236,7 @@ else
     if [ $(hostname) == "${mainHost}" ]; then
 
         # No command - use default to start server
-{{ if not .Logging.QuietMode }}        echo "Extra command arguments are: $@"{{ end }}
+{{ if not .Logging.Quiet }}        echo "Extra command arguments are: $@"{{ end }}
         if [ "$@" == "" ]; then
 
             # Start restful API server
@@ -259,7 +259,7 @@ else
             unset FLUX_USER || true
             unset FLUX_TOKEN || true
 
-            {{ if not .Logging.QuietMode }}printf "\n 🔑 Multi-User Mode Required User Account Credentials!\n"
+            {{ if not .Logging.Quiet }}printf "\n 🔑 Multi-User Mode Required User Account Credentials!\n"
             printf "🌀 ${asFlux} flux broker --config-path /etc/flux/config ${brokerOptions} sleep infinity & \n"{{ end }}
             ${asFlux} flux broker --config-path /etc/flux/config ${brokerOptions} sleep infinity &
 
@@ -267,7 +267,7 @@ else
             export FLUX_URI FLUX_ENABLE_PAM
 
             # We have to run as root so root can run on behalf of a user
-            {{ if not .Logging.QuietMode }}printf "${asSudo} ${startServer}\n"{{ end }}
+            {{ if not .Logging.Quiet }}printf "${asSudo} ${startServer}\n"{{ end }}
             ${asSudo} ${startServer}
 
             {{ else }}# In single user mode we generate a random flux token
@@ -276,7 +276,7 @@ else
 
             export FLUX_TOKEN FLUX_USER FLUX_REQUIRE_AUTH FLUX_NUMBER_NODES
 
-{{ if not .Logging.QuietMode }}
+{{ if not .Logging.Quiet }}
             printf "\n 🔑 Single-User Mode Credentials! These will allow you to control your MiniCluster with flux-framework/flux-restful-api\n"
             printf "export FLUX_TOKEN=${FLUX_TOKEN}\n"
             printf "export FLUX_USER=${FLUX_USER}\n"
@@ -284,22 +284,22 @@ else
             # -o is an "option" for the broker
             # -S corresponds to a shortened --setattr=ATTR=VAL
             printf "\n🌀 flux start -o --config /etc/flux/config ${brokerOptions} ${startServer}\n"{{ end }}
-            {{ if .Logging.TimedMode }}/usr/bin/time -f "FLUXTIME fluxstart wall time %E" {{ end }}${asFlux} flux start -o --config /etc/flux/config ${brokerOptions} {{ if .Logging.TimedMode }}/usr/bin/time -f "FLUXTIME fluxsubmit wall time %E" {{ end }} ${startServer}{{ end }}
+            {{ if .Logging.Timed }}/usr/bin/time -f "FLUXTIME fluxstart wall time %E" {{ end }}${asFlux} flux start -o --config /etc/flux/config ${brokerOptions} {{ if .Logging.Timed }}/usr/bin/time -f "FLUXTIME fluxsubmit wall time %E" {{ end }} ${startServer}{{ end }}
 
         # Case 2: Fall back to provided command
         else
-{{ if not .Logging.QuietMode }} 
-            printf "\n🌀 flux start -o --config /etc/flux/config ${brokerOptions} flux mini submit {{ if gt .Tasks .Size }} -N {{.Size}}{{ end }} -n {{.Tasks}} --quiet {{ if .Container.FluxOptionFlags }}{{ .Container.FluxOptionFlags}}{{ end }} --watch{{ if .Logging.DebugMode }} -vvv{{ end }} $@\n"{{ end }}
-            {{ if .Logging.TimedMode }}/usr/bin/time -f "FLUXTIME fluxstart wall time %E" {{ end }}${asFlux} flux start -o --config /etc/flux/config ${brokerOptions} {{ if .Logging.TimedMode }}/usr/bin/time -f "FLUXTIME fluxsubmit wall time %E" {{ end }} flux mini submit {{ if gt .Tasks .Size }} -N {{.Size}}{{ end }} -n {{.Tasks}} --quiet {{ if .Container.FluxOptionFlags }}{{ .Container.FluxOptionFlags}}{{ end }} --watch{{ if .Logging.DebugMode }} -vvv{{ end }} $@
+{{ if not .Logging.Quiet }} 
+            printf "\n🌀 flux start -o --config /etc/flux/config ${brokerOptions} flux mini submit {{ if gt .Tasks .Size }} -N {{.Size}}{{ end }} -n {{.Tasks}} --quiet {{ if .Container.FluxOptionFlags }}{{ .Container.FluxOptionFlags}}{{ end }} --watch{{ if .Logging.Debug }} -vvv{{ end }} $@\n"{{ end }}
+            {{ if .Logging.Timed }}/usr/bin/time -f "FLUXTIME fluxstart wall time %E" {{ end }}${asFlux} flux start -o --config /etc/flux/config ${brokerOptions} {{ if .Logging.Timed }}/usr/bin/time -f "FLUXTIME fluxsubmit wall time %E" {{ end }} flux mini submit {{ if gt .Tasks .Size }} -N {{.Size}}{{ end }} -n {{.Tasks}} --quiet {{ if .Container.FluxOptionFlags }}{{ .Container.FluxOptionFlags}}{{ end }} --watch{{ if .Logging.Debug }} -vvv{{ end }} $@
         fi
     else
         # Sleep until the broker is ready
-{{ if not .Logging.QuietMode }}
+{{ if not .Logging.Quiet }}
         printf "\n🌀 flux start -o --config /etc/flux/config ${brokerOptions}\n"{{ end }}
         while true
         do
-            {{ if .Logging.TimedMode }}/usr/bin/time -f "FLUXTIME fluxstart wall time %E" {{ end }}${asFlux} flux start -o --config /etc/flux/config ${brokerOptions}
-            {{ if not .Logging.QuietMode }}printf "\n😪 Sleeping 15s until broker is ready..."{{ end }}
+            {{ if .Logging.Timed }}/usr/bin/time -f "FLUXTIME fluxstart wall time %E" {{ end }}${asFlux} flux start -o --config /etc/flux/config ${brokerOptions}
+            {{ if not .Logging.Quiet }}printf "\n😪 Sleeping 15s until broker is ready..."{{ end }}
             sleep 15
         done
     fi

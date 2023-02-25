@@ -63,7 +63,7 @@ func getVolumes(cluster *api.MiniCluster) []corev1.Volume {
 	for i, container := range cluster.Spec.Containers {
 
 		// For now, only Flux runners get the custom wait.sh script
-		if container.FluxRunner {
+		if container.RunFlux {
 			startScript := corev1.KeyToPath{
 				Key:  fmt.Sprintf("wait-%d", i),
 				Path: fmt.Sprintf("wait-%d.sh", i),
@@ -146,7 +146,7 @@ func (r *MiniClusterReconciler) createPersistentVolume(
 
 	// We either support a hostpath (miniKube) or a Container Storage Interface (CSI)
 	var pvsource corev1.PersistentVolumeSource
-	if volume.StorageClassName == "hostpath" {
+	if volume.Class == "hostpath" {
 
 		pvsource = corev1.PersistentVolumeSource{
 			HostPath: &corev1.HostPathVolumeSource{
@@ -165,7 +165,7 @@ func (r *MiniClusterReconciler) createPersistentVolume(
 				VolumeHandle: "csi-gcs",
 				NodePublishSecretRef: &corev1.SecretReference{
 					Namespace: volume.SecretNamespace,
-					Name:      volume.SecretReference,
+					Name:      volume.Secret,
 				},
 			},
 		}
@@ -185,7 +185,7 @@ func (r *MiniClusterReconciler) createPersistentVolume(
 
 			// This is a path in the minikube vm or on the node
 			PersistentVolumeSource: pvsource,
-			StorageClassName:       volume.StorageClassName,
+			StorageClassName:       volume.Class,
 		},
 	}
 	// Capacity is optional for some storage like Google Cloud
@@ -361,7 +361,7 @@ func (r *MiniClusterReconciler) createPersistentVolumeClaim(
 		},
 
 		Spec: corev1.PersistentVolumeClaimSpec{
-			StorageClassName: &volume.StorageClassName,
+			StorageClassName: &volume.Class,
 			AccessModes: []corev1.PersistentVolumeAccessMode{
 				corev1.ReadWriteMany,
 			},

@@ -27,4 +27,4 @@ spec:
       volumes:
         data:
           path: /data
-          # readonly defaults to false
+          # readOnly defaults to false

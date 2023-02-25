@@ -49,7 +49,7 @@ func (r *MiniClusterReconciler) getCurveCert(ctx context.Context, cluster *api.M
 	// We have already validated at creation that we have at least one!
 	var container api.MiniClusterContainer
 	for _, contender := range cluster.Spec.Containers {
-		if contender.FluxRunner {
+		if contender.RunFlux {
 			container = contender
 			break
 		}
@@ -177,7 +177,7 @@ func (r *MiniClusterReconciler) newPodCommandRunner(
 	// Since the hostname needs to match the broker, we find the flux runner
 	var containerName string
 	for i, container := range cluster.Spec.Containers {
-		if container.FluxRunner {
+		if container.RunFlux {
 			containerName = fmt.Sprintf("%s-%d", cluster.Name, i)
 		}
 	}

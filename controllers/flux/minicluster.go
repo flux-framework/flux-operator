@@ -282,7 +282,7 @@ func (r *MiniClusterReconciler) getConfigMap(
 				// We create a custom script for each container that warrants one,
 				// meaning a Flux Runner.
 				for i, container := range cluster.Spec.Containers {
-					if container.FluxRunner {
+					if container.RunFlux {
 						waitScriptID := fmt.Sprintf("wait-%d", i)
 						waitScript, err := generateWaitScript(cluster, i)
 						if err != nil {
