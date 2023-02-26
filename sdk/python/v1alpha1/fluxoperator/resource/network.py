@@ -3,6 +3,7 @@ from contextlib import contextmanager
 
 import urllib3
 
+
 @contextmanager
 def port_forward(core_v1, *args, **kwds):
     """
@@ -37,8 +38,6 @@ def port_forward(core_v1, *args, **kwds):
         if len(dns_name) == 4:
             if dns_name[1] != "pod":
                 raise RuntimeError("port-forward currently just supports pods.")
-
-        print(f"Port forwarding {name}:{port}")
         pf = portforward(
             core_v1.connect_get_namespaced_pod_portforward,
             name,

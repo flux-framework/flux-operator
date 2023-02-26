@@ -33,50 +33,72 @@ class MiniClusterContainer(object):
                             and the value is json key in definition.
     """
     openapi_types = {
-        'command': 'str',
-        'commands': 'Commands',
-        'cores': 'int',
-        'diagnostics': 'bool',
-        'environment': 'dict(str, str)',
-        'flux_log_level': 'int',
-        'flux_option_flags': 'str',
-        'flux_user': 'FluxUser',
-        'image': 'str',
-        'image_pull_secret': 'str',
-        'life_cycle': 'LifeCycle',
-        'name': 'str',
-        'ports': 'list[int]',
-        'pre_command': 'str',
-        'pull_always': 'bool',
-        'resources': 'ContainerResources',
-        'run_flux': 'bool',
-        'volumes': 'dict(str, ContainerVolume)',
-        'working_dir': 'str'
+        "command": "str",
+        "commands": "Commands",
+        "cores": "int",
+        "diagnostics": "bool",
+        "environment": "dict(str, str)",
+        "flux_log_level": "int",
+        "flux_option_flags": "str",
+        "flux_user": "FluxUser",
+        "image": "str",
+        "image_pull_secret": "str",
+        "life_cycle": "LifeCycle",
+        "name": "str",
+        "ports": "list[int]",
+        "pre_command": "str",
+        "pull_always": "bool",
+        "resources": "ContainerResources",
+        "run_flux": "bool",
+        "volumes": "dict(str, ContainerVolume)",
+        "working_dir": "str",
     }
 
     attribute_map = {
-        'command': 'command',
-        'commands': 'commands',
-        'cores': 'cores',
-        'diagnostics': 'diagnostics',
-        'environment': 'environment',
-        'flux_log_level': 'fluxLogLevel',
-        'flux_option_flags': 'fluxOptionFlags',
-        'flux_user': 'fluxUser',
-        'image': 'image',
-        'image_pull_secret': 'imagePullSecret',
-        'life_cycle': 'lifeCycle',
-        'name': 'name',
-        'ports': 'ports',
-        'pre_command': 'preCommand',
-        'pull_always': 'pullAlways',
-        'resources': 'resources',
-        'run_flux': 'runFlux',
-        'volumes': 'volumes',
-        'working_dir': 'workingDir'
+        "command": "command",
+        "commands": "commands",
+        "cores": "cores",
+        "diagnostics": "diagnostics",
+        "environment": "environment",
+        "flux_log_level": "fluxLogLevel",
+        "flux_option_flags": "fluxOptionFlags",
+        "flux_user": "fluxUser",
+        "image": "image",
+        "image_pull_secret": "imagePullSecret",
+        "life_cycle": "lifeCycle",
+        "name": "name",
+        "ports": "ports",
+        "pre_command": "preCommand",
+        "pull_always": "pullAlways",
+        "resources": "resources",
+        "run_flux": "runFlux",
+        "volumes": "volumes",
+        "working_dir": "workingDir",
     }
 
-    def __init__(self, command='', commands=None, cores=0, diagnostics=False, environment=None, flux_log_level=0, flux_option_flags='', flux_user=None, image='', image_pull_secret='', life_cycle=None, name='', ports=None, pre_command='', pull_always=False, resources=None, run_flux=False, volumes=None, working_dir='', local_vars_configuration=None):  # noqa: E501
+    def __init__(
+        self,
+        command="",
+        commands=None,
+        cores=0,
+        diagnostics=False,
+        environment=None,
+        flux_log_level=0,
+        flux_option_flags="",
+        flux_user=None,
+        image="",
+        image_pull_secret="",
+        life_cycle=None,
+        name="",
+        ports=None,
+        pre_command="",
+        pull_always=False,
+        resources=None,
+        run_flux=False,
+        volumes=None,
+        working_dir="",
+        local_vars_configuration=None,
+    ):  # noqa: E501
         """MiniClusterContainer - a model defined in OpenAPI"""  # noqa: E501
         if local_vars_configuration is None:
             local_vars_configuration = Configuration.get_default_copy()
@@ -341,8 +363,12 @@ class MiniClusterContainer(object):
         :param image: The image of this MiniClusterContainer.  # noqa: E501
         :type image: str
         """
-        if self.local_vars_configuration.client_side_validation and image is None:  # noqa: E501
-            raise ValueError("Invalid value for `image`, must not be `None`")  # noqa: E501
+        if (
+            self.local_vars_configuration.client_side_validation and image is None
+        ):  # noqa: E501
+            raise ValueError(
+                "Invalid value for `image`, must not be `None`"
+            )  # noqa: E501
 
         self._image = image
 
@@ -590,15 +616,11 @@ class MiniClusterContainer(object):
             value = getattr(self, attr)
             attr = self.attribute_map.get(attr, attr) if serialize else attr
             if isinstance(value, list):
-                result[attr] = list(map(
-                    lambda x: convert(x),
-                    value
-                ))
+                result[attr] = list(map(lambda x: convert(x), value))
             elif isinstance(value, dict):
-                result[attr] = dict(map(
-                    lambda item: (item[0], convert(item[1])),
-                    value.items()
-                ))
+                result[attr] = dict(
+                    map(lambda item: (item[0], convert(item[1])), value.items())
+                )
             else:
                 result[attr] = convert(value)
 

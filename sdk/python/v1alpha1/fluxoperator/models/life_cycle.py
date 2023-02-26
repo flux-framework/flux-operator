@@ -32,15 +32,11 @@ class LifeCycle(object):
       attribute_map (dict): The key is attribute name
                             and the value is json key in definition.
     """
-    openapi_types = {
-        'post_start_exec': 'str'
-    }
+    openapi_types = {"post_start_exec": "str"}
 
-    attribute_map = {
-        'post_start_exec': 'postStartExec'
-    }
+    attribute_map = {"post_start_exec": "postStartExec"}
 
-    def __init__(self, post_start_exec='', local_vars_configuration=None):  # noqa: E501
+    def __init__(self, post_start_exec="", local_vars_configuration=None):  # noqa: E501
         """LifeCycle - a model defined in OpenAPI"""  # noqa: E501
         if local_vars_configuration is None:
             local_vars_configuration = Configuration.get_default_copy()
@@ -91,15 +87,11 @@ class LifeCycle(object):
             value = getattr(self, attr)
             attr = self.attribute_map.get(attr, attr) if serialize else attr
             if isinstance(value, list):
-                result[attr] = list(map(
-                    lambda x: convert(x),
-                    value
-                ))
+                result[attr] = list(map(lambda x: convert(x), value))
             elif isinstance(value, dict):
-                result[attr] = dict(map(
-                    lambda item: (item[0], convert(item[1])),
-                    value.items()
-                ))
+                result[attr] = dict(
+                    map(lambda item: (item[0], convert(item[1])), value.items())
+                )
             else:
                 result[attr] = convert(value)
 

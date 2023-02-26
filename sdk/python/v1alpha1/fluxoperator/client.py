@@ -62,7 +62,7 @@ class FluxOperator:
             # If we get down here, pods are ready
             ready = True
 
-        print("All pods are "Running" or "Completed"')
+        print('All pods are "Running" or "Completed"')
 
     def get_broker_pod(self):
         """
