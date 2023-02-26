@@ -172,7 +172,7 @@ type MiniClusterVolume struct {
 
 	// +kubebuilder:default="hostpath"
 	// +optional
-	Class string `json:"class"`
+	StorageClass string `json:"storageClass"`
 
 	// Secret reference in Kubernetes with service account role
 	// +optional
@@ -429,7 +429,7 @@ func (f *MiniCluster) Validate() bool {
 
 	// For each volume, if it's not a hostvolume, we require a secret reference
 	for key, volume := range f.Spec.Volumes {
-		if volume.Class != "hostpath" && volume.Secret == "" {
+		if volume.StorageClass != "hostpath" && volume.Secret == "" {
 			fmt.Printf("😥️ Found non-hostpath volume %s that is missing a secret\n", key)
 			valid = false
 		}

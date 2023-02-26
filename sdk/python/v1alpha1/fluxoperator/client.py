@@ -8,7 +8,7 @@ import time
 
 
 class FluxOperator:
-    def __init__(self, namespace):
+    def __init__(self, namespace, create_namespace=True):
         """
         Create a persistent client to interact with a MiniCluster
         """
@@ -17,6 +17,17 @@ class FluxOperator:
         self.c.assert_hostname = False
         client.Configuration.set_default(self.c)
         self.core_v1 = core_v1_api.CoreV1Api()
+        if create_namespace:
+            self.ensure_namespace()
+
+    def ensure_namespace(self):
+        """
+        Ensure the namespace is created
+        """
+        try:
+             client.create_namespace(client.V1Namespace(metadata=client.V1ObjectMeta(name=self.namespace)))
+        except Exception:
+            pass
 
     @contextmanager
     def port_forward(self, pod):

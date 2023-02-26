@@ -19,7 +19,7 @@ spec:
   # This is a type of storage that will use Google Storage
   volumes:
     data:
-      class: csi-gcs
+      storageClass: csi-gcs
       path: /tmp/data
       secret: csi-gcs-secret
       capacity: 25Gi

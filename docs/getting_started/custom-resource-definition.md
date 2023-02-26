@@ -94,10 +94,10 @@ in the example below can then be referenced for a container:
 volumes:
   myvolume:
     path: /full/path/to/volume
-    class: hostpath
+    storageClass: hostpath
 ```
 
-The "class" above (which you can leave out) defaults to hostpath, and should be the storage class that your cluster provides.
+The "storageClass" above (which you can leave out) defaults to hostpath, and should be the storage class that your cluster provides.
 The Operator createst the "hostpath" volume claim. This currently is always created as a host path volume claim in MiniKube,
 and likely in the future will have different logic if it varies from that.
 
@@ -110,9 +110,9 @@ You can add labels:
 volumes:
   myvolume:
     path: /full/path/to/volume
-    class: hostpath
-      labels:
-        type: "local"
+    storageClass: hostpath
+    labels:
+      type: "local"
 ```
 
 #### request storage size
@@ -128,7 +128,7 @@ volumes:
   myvolume:
     path: /full/path/to/volume
     capacity: 5Gi
-    class: csi-gcs
+    storageClass: csi-gcs
 ```
 
 Since storage classes are created separately (not by the operator) you should check with your storage
@@ -144,7 +144,7 @@ volumes:
   myvolume:
     path: /full/path/to/volume
     capacity: 1Gi
-    class: csi-gcs
+    storageClass: csi-gcs
     secret: "csi-gcs-secret"
 ```
 

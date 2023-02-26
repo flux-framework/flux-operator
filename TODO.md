@@ -1,7 +1,6 @@
 # TODO
 
  - [ ] test storage on AWS / using ceph on any cloud
- - [ ] add port forward to python sdk, and example to programmatically do it, then we need to use that for automated tests
 
 ### Maybe
 
@@ -11,6 +10,7 @@
 
 #### Completed
 
+ - [x] add port forward to python sdk, and example to programmatically do it, then we need to use that for automated tests
  - [x] volume should have size request, not hard coded as it is now
  - [x] make deployments own section of docs
  - [x] interface still needs debugging for 2+ processes

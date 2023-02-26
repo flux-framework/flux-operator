@@ -19,7 +19,7 @@ spec:
   # This is a path in minikube (e.g., minikube ssh)
   volumes:
     data:
-      class: hostpath
+      storageClass: hostpath
       path: /tmp/data
       labels:
         type: "local"

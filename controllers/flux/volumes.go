@@ -158,7 +158,7 @@ func (r *MiniClusterReconciler) createPersistentVolume(
 
 	// We either support a hostpath (miniKube) or a Container Storage Interface (CSI)
 	var pvsource corev1.PersistentVolumeSource
-	if volume.Class == "hostpath" {
+	if volume.StorageClass == "hostpath" {
 
 		pvsource = corev1.PersistentVolumeSource{
 			HostPath: &corev1.HostPathVolumeSource{
@@ -197,7 +197,7 @@ func (r *MiniClusterReconciler) createPersistentVolume(
 
 			// This is a path in the minikube vm or on the node
 			PersistentVolumeSource: pvsource,
-			StorageClassName:       volume.Class,
+			StorageClassName:       volume.StorageClass,
 		},
 	}
 	// Capacity is optional for some storage like Google Cloud
@@ -373,7 +373,7 @@ func (r *MiniClusterReconciler) createPersistentVolumeClaim(
 		},
 
 		Spec: corev1.PersistentVolumeClaimSpec{
-			StorageClassName: &volume.Class,
+			StorageClassName: &volume.StorageClass,
 			AccessModes: []corev1.PersistentVolumeAccessMode{
 				corev1.ReadWriteMany,
 			},
