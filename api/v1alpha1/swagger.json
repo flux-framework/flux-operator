@@ -444,10 +444,6 @@
           "type": "string",
           "default": ""
         },
-        "class": {
-          "type": "string",
-          "default": ""
-        },
         "labels": {
           "type": "object",
           "additionalProperties": {
@@ -466,6 +462,10 @@
         },
         "secretNamespace": {
           "description": "Secret namespace",
+          "type": "string",
+          "default": ""
+        },
+        "storageClass": {
           "type": "string",
           "default": ""
         }

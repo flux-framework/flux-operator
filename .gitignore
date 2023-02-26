@@ -10,6 +10,9 @@ testbin/*
 config/samples/secrets
 bundle_*
 
+# python
+__pycache__
+
 # Development files
 examples/dist/flux-operator-dev.yaml
 

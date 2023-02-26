@@ -301,9 +301,6 @@ spec:
                       description: Capacity (string) for PVC (storage request) to
                         create PV
                       type: string
-                    class:
-                      default: hostpath
-                      type: string
                     labels:
                       additionalProperties:
                         type: string
@@ -317,6 +314,9 @@ spec:
                     secretNamespace:
                       default: default
                       description: Secret namespace
+                      type: string
+                    storageClass:
+                      default: hostpath
                       type: string
                   required:
                   - path

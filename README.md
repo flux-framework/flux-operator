@@ -2,7 +2,7 @@
 
 ![docs/development/the-operator.jpg](docs/development/the-operator.jpg)
 
-The Flux Operator is a Kubernetes Cluster [Operator](https://kubernetes.io/docs/concepts/extend-kubernetes/operator/) 
+The Flux Operator is a Kubernetes Cluster [Operator](https://kubernetes.io/docs/concepts/extend-kubernetes/operator/)
 that you can install to your cluster to create and control [Flux Framework](https://flux-framework.org/) "Mini Clusters"
 to launch jobs to.
 

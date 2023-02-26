@@ -9,7 +9,7 @@ This design is an extended 3, updated for the new year (and work TBA).
  - The flux config is written to a volume at `/etc/flux/config` (created via a config map) as a brokers.toml file.
  - The curve certificate is generated using the Flux Runner container before the cluster is brought up, retrieved via logs, and then written to the job pods as a config map.
  - The startup scripts "wait.sh" (customized per container) handles parsing user preferences and starting the MiniCluster. The main broker runs flux start with the primary command, and the worker nodes run flux start to register with it.
- - As the pods use the same base container with Flux, the munge key should already be equivalent. 
+ - As the pods use the same base container with Flux, the munge key should already be equivalent.
  - A 'test' mode available in the CRD is provided to quiet all output except for the job.
  - Networking of the pods works by way of exposing a service that includes the Pod subdomain. We add fully qualified domain names to the pods so that the `hostname` command matches the full name, and Flux is given the full names in its broker.toml.
  - The main pod either runs `flux start` with a web service (creating a persistent "Mini Cluster" or `flux start` with a specific command (if provided in the CRD) in which case the command runs, and the jobs finish and the cluster goes away.
@@ -25,4 +25,3 @@ This means that:
 - [Link on Excalidraw](https://excalidraw.com/#json=_F0hUUB9knFEry2FykSS4,MaGmgcsyq_JZ2_MrZ3XRIQ)
 
 ![the-operator-3.3.png](the-operator-3.3.png)
-

@@ -30,7 +30,7 @@ This design is a simple design based around a single custom resource definition
 ### Design 2.2
 
 This was a set of weekend work I embarked on because (primarily) I couldn't get an internal CRD (the MiniCluster) working
-and needed to keep this state elsewhere. 
+and needed to keep this state elsewhere.
 
  - [See the Design](09-05-2022/index.md)
 

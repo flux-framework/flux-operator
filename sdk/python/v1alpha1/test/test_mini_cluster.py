@@ -113,10 +113,10 @@ class TestMiniCluster(unittest.TestCase):
                     volumes = {
                         'key' : fluxoperator.models.mini_cluster_volume.MiniClusterVolume(
                             capacity = '', 
-                            class = '', 
                             path = '', 
                             secret = '', 
-                            secret_namespace = '', )
+                            secret_namespace = '', 
+                            storage_class = '', )
                         }, ), 
                 status = fluxoperator.models.mini_cluster_status.MiniClusterStatus(
                     conditions = [

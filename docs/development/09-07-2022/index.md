@@ -2,7 +2,7 @@
 
 This design is a simple design based around a single custom resource definition
 
-## Details 
+## Details
 
  - A **MiniCluster**: is a specification provided by a user with a container image, command, and size to create (over several reconciles) ConfigMaps, Secrets, and a batchv1.Job with pods (containers) and volumes. Once this is created, we conceptually have a MiniCluster within K8s running the user's job! This is a CRD, so the user submitting it owns that MiniCluster.
 
@@ -18,21 +18,21 @@ We discussed this at our meeting on 9-07-22 and wanted to remove the complexity 
 
 ## What is Happening?
 
-If you follow the commands to apply a custom resource definition to this cluster design, 
-you'll see a lot of terminal output, and it might not be clear what is happening. Let's talk about it here. 
-Generally, you'll first see the config maps and supporting resources 
+If you follow the commands to apply a custom resource definition to this cluster design,
+you'll see a lot of terminal output, and it might not be clear what is happening. Let's talk about it here.
+Generally, you'll first see the config maps and supporting resources
 being created. Since we are developing (for the time being) on a local machine, instead of a persistent volume
 claim (which requires a Kubernetes cluster with a provisioner) you'll get a persistent volume
 written to `/tmp` in the job namespace. If you try to use the latter it typically freezes.
 
 The first time the pods are created, they won't have ips (yet) so you'll see an empty list in the logs.
-As they are creating and getting ips, after that is finished you'll see the same output but with a 
+As they are creating and getting ips, after that is finished you'll see the same output but with a
 lookup of hostnames to ip addresses, and after it will tell you the cluster is ready.
 
 ```
 1.6629325562267003e+09  INFO    minicluster-reconciler  🌀 Mini Cluster is Ready!
 ```
-When you are waiting and run `make log` in a separate terminal you'll see output from one of the pods 
+When you are waiting and run `make log` in a separate terminal you'll see output from one of the pods
 in the job. Typically the first bit of time you'll be waiting:
 
 ```bash
@@ -65,7 +65,7 @@ flux-sample-1 is sleeping waiting for main flux node
 ```
 
 And then final configs are created, the flux user is created, and the main
-node creates the certificate and we start the cluster. You can look at 
+node creates the certificate and we start the cluster. You can look at
 `controllers/flux/templates.go`
 for all the scripts and logic that are run. It takes about ~90 seconds for the
 whole thing to come up and run. If `make log` doesn't show you the main node

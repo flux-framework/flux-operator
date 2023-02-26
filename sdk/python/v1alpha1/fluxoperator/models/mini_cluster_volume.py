@@ -35,24 +35,24 @@ class MiniClusterVolume(object):
     openapi_types = {
         'annotations': 'dict(str, str)',
         'capacity': 'str',
-        '_class': 'str',
         'labels': 'dict(str, str)',
         'path': 'str',
         'secret': 'str',
-        'secret_namespace': 'str'
+        'secret_namespace': 'str',
+        'storage_class': 'str'
     }
 
     attribute_map = {
         'annotations': 'annotations',
         'capacity': 'capacity',
-        '_class': 'class',
         'labels': 'labels',
         'path': 'path',
         'secret': 'secret',
-        'secret_namespace': 'secretNamespace'
+        'secret_namespace': 'secretNamespace',
+        'storage_class': 'storageClass'
     }
 
-    def __init__(self, annotations=None, capacity='', _class='', labels=None, path='', secret='', secret_namespace='', local_vars_configuration=None):  # noqa: E501
+    def __init__(self, annotations=None, capacity='', labels=None, path='', secret='', secret_namespace='', storage_class='', local_vars_configuration=None):  # noqa: E501
         """MiniClusterVolume - a model defined in OpenAPI"""  # noqa: E501
         if local_vars_configuration is None:
             local_vars_configuration = Configuration.get_default_copy()
@@ -60,19 +60,17 @@ class MiniClusterVolume(object):
 
         self._annotations = None
         self._capacity = None
-        self.__class = None
         self._labels = None
         self._path = None
         self._secret = None
         self._secret_namespace = None
+        self._storage_class = None
         self.discriminator = None
 
         if annotations is not None:
             self.annotations = annotations
         if capacity is not None:
             self.capacity = capacity
-        if _class is not None:
-            self._class = _class
         if labels is not None:
             self.labels = labels
         self.path = path
@@ -80,6 +78,8 @@ class MiniClusterVolume(object):
             self.secret = secret
         if secret_namespace is not None:
             self.secret_namespace = secret_namespace
+        if storage_class is not None:
+            self.storage_class = storage_class
 
     @property
     def annotations(self):
@@ -126,27 +126,6 @@ class MiniClusterVolume(object):
         """
 
         self._capacity = capacity
-
-    @property
-    def _class(self):
-        """Gets the _class of this MiniClusterVolume.  # noqa: E501
-
-
-        :return: The _class of this MiniClusterVolume.  # noqa: E501
-        :rtype: str
-        """
-        return self.__class
-
-    @_class.setter
-    def _class(self, _class):
-        """Sets the _class of this MiniClusterVolume.
-
-
-        :param _class: The _class of this MiniClusterVolume.  # noqa: E501
-        :type _class: str
-        """
-
-        self.__class = _class
 
     @property
     def labels(self):
@@ -237,6 +216,27 @@ class MiniClusterVolume(object):
         """
 
         self._secret_namespace = secret_namespace
+
+    @property
+    def storage_class(self):
+        """Gets the storage_class of this MiniClusterVolume.  # noqa: E501
+
+
+        :return: The storage_class of this MiniClusterVolume.  # noqa: E501
+        :rtype: str
+        """
+        return self._storage_class
+
+    @storage_class.setter
+    def storage_class(self, storage_class):
+        """Sets the storage_class of this MiniClusterVolume.
+
+
+        :param storage_class: The storage_class of this MiniClusterVolume.  # noqa: E501
+        :type storage_class: str
+        """
+
+        self._storage_class = storage_class
 
     def to_dict(self, serialize=False):
         """Returns the model properties as a dict"""

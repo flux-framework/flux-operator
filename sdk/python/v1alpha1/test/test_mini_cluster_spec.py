@@ -115,13 +115,13 @@ class TestMiniClusterSpec(unittest.TestCase):
                             'key' : ''
                             }, 
                         capacity = '', 
-                        class = '', 
                         labels = {
                             'key' : ''
                             }, 
                         path = '', 
                         secret = '', 
-                        secret_namespace = '', )
+                        secret_namespace = '', 
+                        storage_class = '', )
                     }
             )
         else :

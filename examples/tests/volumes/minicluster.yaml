@@ -14,8 +14,8 @@ spec:
   # Make this kind of persistent volume and claim available to pods
   # This is a path in minikube (e.g., minikube ssh)
   volumes:
-    data:      
-      class: hostpath
+    data:
+      storageClass: hostpath
       path: /tmp/data
       labels:
         type: "local"

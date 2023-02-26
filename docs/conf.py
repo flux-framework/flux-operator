@@ -12,7 +12,7 @@
 #
 import os
 import sys
-   
+
 sys.path.insert(0, os.path.abspath(os.path.dirname(os.path.abspath("."))))
 from distutils.version import LooseVersion  # noqa
 
@@ -117,7 +117,7 @@ html_theme_options = {
         "edit": "material/file-edit-outline",
     },
     "repo_url": "https://github.com/flux-framework/flux-operator/",
-    "repo_name": "Flux Operator", 
+    "repo_name": "Flux Operator",
     "repo_type": "github",
     "edit_uri": "blob/main/docs",
     "globaltoc_collapse": True,

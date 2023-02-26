@@ -166,7 +166,7 @@ applytest:
 	kubectl apply -f examples/tests/${name}/minicluster-$(name).yaml
 
 example:
-	kubectl apply -f examples/flux-restful/minicluster-$(name).yaml 
+	kubectl apply -f examples/flux-restful/minicluster-$(name).yaml
 
 # Clean, apply and run, and apply the job
 redo: clean apply run

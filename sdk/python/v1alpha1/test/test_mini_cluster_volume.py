@@ -40,13 +40,13 @@ class TestMiniClusterVolume(unittest.TestCase):
                     'key' : ''
                     }, 
                 capacity = '', 
-                _class = '', 
                 labels = {
                     'key' : ''
                     }, 
                 path = '', 
                 secret = '', 
-                secret_namespace = ''
+                secret_namespace = '', 
+                storage_class = ''
             )
         else :
             return MiniClusterVolume(

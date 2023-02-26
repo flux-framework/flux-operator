@@ -814,7 +814,7 @@ func schema__api_v1alpha1__MiniClusterVolume(ref common.ReferenceCallback) commo
 							},
 						},
 					},
-					"class": {
+					"storageClass": {
 						SchemaProps: spec.SchemaProps{
 							Default: "",
 							Type:    []string{"string"},

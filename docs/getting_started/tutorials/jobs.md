@@ -35,9 +35,9 @@ $ kubectl logs -n flux-operator lammps-0-xxxxx
 
 ### b. Submit a MiniCluster CRD via the Python SDK
 
-We have early in development a [python SDK](https://github.com/flux-framework/flux-operator/tree/main/sdk/python) 
+We have early in development a [python SDK](https://github.com/flux-framework/flux-operator/tree/main/sdk/python)
 that interacts directly with the Kubernetes API and defines the MiniCluster CRD programmatically.
-You can see an early [directory of examples](https://github.com/flux-framework/flux-operator/tree/main/sdk/python/v1alpha1/examples). 
+You can see an early [directory of examples](https://github.com/flux-framework/flux-operator/tree/main/sdk/python/v1alpha1/examples).
 Note that using this method you need to be pedantic - we use the [openapi generator](https://openapi-generator.tech/) and not all defaults
 get correctly carried through. As an example, the default deadline in seconds is a large
 number but it gets passed as 0, so if you don't define it, the Job will never start.
@@ -68,9 +68,9 @@ $ kubectl logs -n flux-operator lammps-0-xxxxx
 #### Credentials
 
 Whichever approach you use above to create the persistent MiniCluster, you need your credentials!
-The credentials are printed in the log of the index-0. For single user mode these are the `FLUX_USER` and `FLUX_TOKEN` 
+The credentials are printed in the log of the index-0. For single user mode these are the `FLUX_USER` and `FLUX_TOKEN`
 environment variables. A client requires exported them to the environment, and the web interface requires
-copy paste into a form. 
+copy paste into a form.
 
 ```bash
 # get the job pod identifier for index 0, the broker
@@ -132,7 +132,7 @@ And that's it for the example! You can further explore the exposed API in the we
 
 ### b. Submit jobs from the command line
 
-If you don't want to use the web interface, 
+If you don't want to use the web interface,
 
 You can also try using the [RESTFul API Clients](https://flux-framework.org/flux-restful-api/getting_started/user-guide.html) to submit instead
 (discussed next). Note that there is currently no way for the RESTful client to ask to destroy the cluster - you'll
@@ -328,17 +328,17 @@ More detail is provided under the flux-restful-api [clients](https://github.com/
 and the Python client is also included in the flux-restful-api [Tutorials](https://flux-framework.org/flux-restful-api/auto_examples/index.html).
 
 
-## 3. Automated Experiments with flux-cloud 
+## 3. Automated Experiments with flux-cloud
 
 If you have a set of experiments you want to run on a production cluster, and especially
 if you don't want the cluster being up longer than it has to be, check out [Flux Cloud](https://github.com/converged-computing/flux-cloud).
 It's a small experiment runner wrapper that makes bringing up the cluster, installing
 the operator, running a matrix of experiments, and destroying the cluster much
-easier than all the copy pasting of commands typically required! 
+easier than all the copy pasting of commands typically required!
 
 ## 4. Submit jobs directly to Flux via ssh
 
-You can also submit jobs interacting with Flux via ssh-ing to the pod! This is considered 
+You can also submit jobs interacting with Flux via ssh-ing to the pod! This is considered
 advanced, and is good for debugging. As you did before, get your pod listing:
 
 ```bash

@@ -18,8 +18,8 @@ spec:
   # Make this kind of persistent volume and claim available to pods
   # This is a path in minikube (e.g., minikube ssh)
   volumes:
-    data:      
-      class: hostpath
+    data:
+      storageClass: hostpath
       path: /tmp/data
       labels:
         type: "local"
@@ -27,7 +27,7 @@ spec:
   # This is a list because a pod can support multiple containers
   containers:
 
-      # This image has snakemake installed, and although it has data, we will 
+      # This image has snakemake installed, and although it has data, we will
       # provide it as a volume to the container to demonstrate that (and share it)
     - image: ghcr.io/rse-ops/atacseq:app-latest
 
@@ -37,7 +37,7 @@ spec:
         data:
           path: /workflow
           # readOnly defaults to false
-                
+
       # This is the directory we will bind the data to
       workingDir: /workflow
       command: snakemake --cores 1 --flux

@@ -73,6 +73,21 @@ func getVolumes(cluster *api.MiniCluster) []corev1.Volume {
 		}
 	}
 
+	// If we have Multi User mode, we need to set permission 0644
+	brokerFile := corev1.KeyToPath{
+		Key:  "hostfile",
+		Path: "broker.toml",
+	}
+
+	if cluster.MultiUser() {
+		mode := int32(0644)
+		brokerFile = corev1.KeyToPath{
+			Key:  "hostfile",
+			Path: "broker.toml",
+			Mode: &mode,
+		}
+	}
+
 	volumes := []corev1.Volume{
 		{
 			Name: cluster.Name + fluxConfigSuffix,
@@ -82,10 +97,7 @@ func getVolumes(cluster *api.MiniCluster) []corev1.Volume {
 						Name: cluster.Name + fluxConfigSuffix,
 					},
 					// /etc/flux/config
-					Items: []corev1.KeyToPath{{
-						Key:  "hostfile",
-						Path: "broker.toml",
-					}},
+					Items: []corev1.KeyToPath{brokerFile},
 				},
 			},
 		},
@@ -146,7 +158,7 @@ func (r *MiniClusterReconciler) createPersistentVolume(
 
 	// We either support a hostpath (miniKube) or a Container Storage Interface (CSI)
 	var pvsource corev1.PersistentVolumeSource
-	if volume.Class == "hostpath" {
+	if volume.StorageClass == "hostpath" {
 
 		pvsource = corev1.PersistentVolumeSource{
 			HostPath: &corev1.HostPathVolumeSource{
@@ -185,7 +197,7 @@ func (r *MiniClusterReconciler) createPersistentVolume(
 
 			// This is a path in the minikube vm or on the node
 			PersistentVolumeSource: pvsource,
-			StorageClassName:       volume.Class,
+			StorageClassName:       volume.StorageClass,
 		},
 	}
 	// Capacity is optional for some storage like Google Cloud
@@ -361,7 +373,7 @@ func (r *MiniClusterReconciler) createPersistentVolumeClaim(
 		},
 
 		Spec: corev1.PersistentVolumeClaimSpec{
-			StorageClassName: &volume.Class,
+			StorageClassName: &volume.StorageClass,
 			AccessModes: []corev1.PersistentVolumeAccessMode{
 				corev1.ReadWriteMany,
 			},
