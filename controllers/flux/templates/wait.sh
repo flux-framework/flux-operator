@@ -191,6 +191,8 @@ fluxuid=$(id -u ${fluxuser})
 
 {{ if not .Container.Commands.RunFluxAsRoot }}chown -R ${fluxuid} /run/flux ${STATE_DIR} /etc/curve/curve.cert ${workdir}{{ end }}
 
+{{ if .Users }}
+
 # If we have users, enable flux accounting after we start flux
 enable_flux_accounting() {
 
@@ -222,6 +224,8 @@ enable_flux_accounting() {
     ${asFlux} flux account-priority-update
     {{ end }}
 }
+
+{{ end }}
 
 # Make directory world read/writable
 chmod -R 0777 ${workdir}

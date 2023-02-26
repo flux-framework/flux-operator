@@ -12,13 +12,12 @@
 
 from __future__ import absolute_import
 
-import datetime
 import unittest
+import datetime
 
 import fluxoperator
 from fluxoperator.models.mini_cluster_status import MiniClusterStatus  # noqa: E501
 from fluxoperator.rest import ApiException
-
 
 class TestMiniClusterStatus(unittest.TestCase):
     """MiniClusterStatus unit test stubs"""
@@ -31,22 +30,26 @@ class TestMiniClusterStatus(unittest.TestCase):
 
     def make_instance(self, include_optional):
         """Test MiniClusterStatus
-        include_option is a boolean, when False only required
-        params are included, when True both required and
-        optional params are included"""
+            include_option is a boolean, when False only required
+            params are included, when True both required and
+            optional params are included """
         # model = fluxoperator.models.mini_cluster_status.MiniClusterStatus()  # noqa: E501
-        if include_optional:
-            return MiniClusterStatus(conditions=[None], jobid="")
-        else:
+        if include_optional :
             return MiniClusterStatus(
-                jobid="",
+                conditions = [
+                    None
+                    ], 
+                jobid = ''
             )
+        else :
+            return MiniClusterStatus(
+                jobid = '',
+        )
 
     def testMiniClusterStatus(self):
         """Test MiniClusterStatus"""
         inst_req_only = self.make_instance(include_optional=False)
         inst_req_and_optional = self.make_instance(include_optional=True)
 
-
-if __name__ == "__main__":
+if __name__ == '__main__':
     unittest.main()
