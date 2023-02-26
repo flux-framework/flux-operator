@@ -28,7 +28,8 @@ except ImportError:
 config.load_kube_config()
 crd_api = client.CustomObjectsApi()
 
-test_users = ['peenut', 'treenut']
+test_users = ["peenut", "treenut"]
+
 
 def create_minicluster():
     """
@@ -83,55 +84,56 @@ def delete_minicluster(result):
     )
 
 
-# Create the MiniCluster
-print("Creating the MiniCluster...")
-result = create_minicluster()
+def test_multi_tenant():
 
-# Create a client to interact with FluxOperator MiniCluster
-cli = FluxOperator("flux-operator")
+    # Create the MiniCluster
+    print("Creating the MiniCluster...")
+    result = create_minicluster()
 
-# First find the broker pod. This also calls cli.wait_pods()
-broker = cli.get_broker_pod()
+    # Create a client to interact with FluxOperator MiniCluster
+    cli = FluxOperator("flux-operator")
 
-# And then port portfward to it - this waits until the server is ready
-with cli.port_forward(broker) as forward_url:
-    print(f"Port forward opened to {forward_url}")
+    # First find the broker pod. This also calls cli.wait_pods()
+    broker = cli.get_broker_pod()
 
-    # This connection without auth should fail
-    restcli = get_client(host=forward_url)
-    res = restcli.submit("whoami")
-    assert "detail" in res
-    assert "Not authenticated" in res['detail']
+    # And then port portfward to it - this waits until the server is ready
+    with cli.port_forward(broker) as forward_url:
+        print(f"Port forward opened to {forward_url}")
 
-    # Correct user and wrong token
-    try:
-        restcli = get_client(host=forward_url, user="peenut", token="nope")
-        raise ValueError('Request with wrong token should fail')
-    except:
-        pass
-
-    for user in test_users:
-        restcli = get_client(host=forward_url, user=user, token=user)
-        print(f'Submitting "whoami" job as user {user}.')
+        # This connection without auth should fail
+        restcli = get_client(host=forward_url)
         res = restcli.submit("whoami")
-        assert "id" in res
-        print(f"Jobid {res['id']} submit!")
-        time.sleep(3)
+        assert "detail" in res
+        assert "Not authenticated" in res["detail"]
 
-        # We should get able to get the job by id
-        job = restcli.jobs(res['id'])
-        assert job['name'] == 'whoami'
+        # Correct user and wrong token
+        try:
+            restcli = get_client(host=forward_url, user="peenut", token="nope")
+            raise ValueError("Request with wrong token should fail")
+        except:
+            pass
 
-        # We should only have one job - we only get back jobs for the user that requested
-        jobs = restcli.jobs()
-        assert len(jobs) == 1
+        for user in test_users:
+            restcli = get_client(host=forward_url, user=user, token=user)
+            print(f'Submitting "whoami" job as user {user}.')
+            res = restcli.submit("whoami")
+            assert "id" in res
+            print(f"Jobid {res['id']} submit!")
+            time.sleep(3)
 
-        # And get output for the job
-        output = restcli.output(res["id"]).get('Output', '')
-        print(f"Job Output: {output}")
-        assert output and user in output
+            # We should get able to get the job by id
+            job = restcli.jobs(res["id"])
+            assert job["name"] == "whoami"
 
+            # We should only have one job - we only get back jobs for the user that requested
+            jobs = restcli.jobs()
+            assert len(jobs) == 1
 
-# How to cleanup
-print("Cleaning up MiniCluster!")
-delete_minicluster(result)
+            # And get output for the job
+            output = restcli.output(res["id"]).get("Output", "")
+            print(f"Job Output: {output}")
+            assert output and user in output
+
+    # How to cleanup
+    print("Cleaning up MiniCluster!")
+    delete_minicluster(result)
