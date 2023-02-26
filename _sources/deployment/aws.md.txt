@@ -17,7 +17,7 @@ export AWS_SECRET_ACCESS_KEY=xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 export AWS_SESSION_TOKEN=xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 ```
 The last session token may not be required depending on your setup.
-We assume you also have [kubectl](https://kubernetes.io/docs/tasks/tools/). 
+We assume you also have [kubectl](https://kubernetes.io/docs/tasks/tools/).
 
 
 ### Setup SSH
@@ -100,13 +100,13 @@ ip-192-168-49-92.ec2.internal    Ready    <none>   5m3s    v1.22.12-eks-be74326
 ip-192-168-79-92.ec2.internal    Ready    <none>   4m57s   v1.22.12-eks-be74326
 ```
 
-### Deploy Operator 
+### Deploy Operator
 
 To deploy the Flux Operator, [choose one of the options here](https://flux-framework.org/flux-operator/getting_started/user-guide.html#production-install) to deploy the operator. Whether you apply a yaml file, use [flux-cloud](https://converged-computing.github.io/flux-cloud) or clone the repository and `make deploy`. You can also deploy a development image:
 
 ```bash
 $ make test-deploy
-$ kubectl apply -f examples/dist/flux-operator-dev.yaml 
+$ kubectl apply -f examples/dist/flux-operator-dev.yaml
 ```
 
  you will see the operator install to the `operator-system` namespace.
@@ -173,7 +173,7 @@ Then apply your CRD to generate the MiniCluster (default should be size 4, the m
 ```bash
 $ make apply
 # OR
-$ kubectl apply -f config/samples/flux-framework.org_v1alpha1_minicluster.yaml 
+$ kubectl apply -f config/samples/flux-framework.org_v1alpha1_minicluster.yaml
 ```
 
 And now you can get logs for the manager:
@@ -228,4 +228,3 @@ It might be better to add `--wait`, which will wait until all resources are clea
 $ eksctl delete cluster -f eks-cluster-config.yaml --wait
 ```
 Either way, it's good to check the web console too to ensure you didn't miss anything.
-

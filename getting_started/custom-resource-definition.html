@@ -1124,10 +1124,10 @@ in the example below can then be referenced for a container:</p>
 <div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><code><span class="nt">volumes</span><span class="p">:</span>
 <span class="w">  </span><span class="nt">myvolume</span><span class="p">:</span>
 <span class="w">    </span><span class="nt">path</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">/full/path/to/volume</span>
-<span class="w">    </span><span class="nt">class</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">hostpath</span>
+<span class="w">    </span><span class="nt">storageClass</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">hostpath</span>
 </code></pre></div>
 </div>
-<p>The “class” above (which you can leave out) defaults to hostpath, and should be the storage class that your cluster provides.
+<p>The “storageClass” above (which you can leave out) defaults to hostpath, and should be the storage class that your cluster provides.
 The Operator createst the “hostpath” volume claim. This currently is always created as a host path volume claim in MiniKube,
 and likely in the future will have different logic if it varies from that.</p>
 <h4 id="labels">labels<a class="headerlink" href="#labels" title="Permalink to this heading">¶</a></h4>
@@ -1135,9 +1135,9 @@ and likely in the future will have different logic if it varies from that.</p>
 <div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><code><span class="nt">volumes</span><span class="p">:</span>
 <span class="w">  </span><span class="nt">myvolume</span><span class="p">:</span>
 <span class="w">    </span><span class="nt">path</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">/full/path/to/volume</span>
-<span class="w">    </span><span class="nt">class</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">hostpath</span>
-<span class="w">      </span><span class="l l-Scalar l-Scalar-Plain">labels</span><span class="p p-Indicator">:</span>
-<span class="w">        </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;local&quot;</span>
+<span class="w">    </span><span class="nt">storageClass</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">hostpath</span>
+<span class="w">    </span><span class="nt">labels</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;local&quot;</span>
 </code></pre></div>
 </div>
 <h4 id="request-storage-size">request storage size<a class="headerlink" href="#request-storage-size" title="Permalink to this heading">¶</a></h4>
@@ -1150,7 +1150,7 @@ for Google Cloud)</p>
 <span class="w">  </span><span class="nt">myvolume</span><span class="p">:</span>
 <span class="w">    </span><span class="nt">path</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">/full/path/to/volume</span>
 <span class="w">    </span><span class="nt">capacity</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">5Gi</span>
-<span class="w">    </span><span class="nt">class</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">csi-gcs</span>
+<span class="w">    </span><span class="nt">storageClass</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">csi-gcs</span>
 </code></pre></div>
 </div>
 <p>Since storage classes are created separately (not by the operator) you should check with your storage
@@ -1162,7 +1162,7 @@ for GKE we create a service account with the appropriate permissions, and then a
 <span class="w">  </span><span class="nt">myvolume</span><span class="p">:</span>
 <span class="w">    </span><span class="nt">path</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">/full/path/to/volume</span>
 <span class="w">    </span><span class="nt">capacity</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1Gi</span>
-<span class="w">    </span><span class="nt">class</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">csi-gcs</span>
+<span class="w">    </span><span class="nt">storageClass</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">csi-gcs</span>
 <span class="w">    </span><span class="nt">secret</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;csi-gcs-secret&quot;</span>
 </code></pre></div>
 </div>
@@ -1408,7 +1408,7 @@ depending on your container image you might want to set some flags as default.
 You can do this by setting this particular config parameter, and you should
 set the flags just as you would to the command, starting with <code class="docutils literal notranslate"><span class="pre">-o</span></code>:</p>
 <div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><code>	# optional - if needed, default option flags for the server (e.g., -ompi=openmpi@5)
-	fluxOptionFlags: &quot;-ompi=openmpi@5&quot; 
+	fluxOptionFlags: &quot;-ompi=openmpi@5&quot;
 </code></pre></div>
 </div>
 <p>Note that if you run with the user interface, setting a flag in the interface
@@ -1419,7 +1419,7 @@ could equally override them, but if they are set and you don’t define them her
 they should not be touched).</p>
 <h4 id="fluxloglevel">fluxLogLevel<a class="headerlink" href="#fluxloglevel" title="Permalink to this heading">¶</a></h4>
 <p>The log level to provide to flux, given that test mode is not on.</p>
-<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><code>	fluxLogLevel: 7 
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><code>	fluxLogLevel: 7
 </code></pre></div>
 </div>
 <h4 id="precommand">preCommand<a class="headerlink" href="#precommand" title="Permalink to this heading">¶</a></h4>
@@ -1549,7 +1549,7 @@ It defaults to 5000.</p>
   <small>
     
       Last update:
-      Feb 25, 2023
+      Feb 26, 2023
     
   </small>
 </div>

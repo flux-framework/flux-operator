@@ -1563,7 +1563,7 @@ which probably looks something like this:</p>
 <p>For a quick “production deploy” from development, the Makefile has a directive that will build and push a <code class="docutils literal notranslate"><span class="pre">test</span></code> tag (you’ll need to edit <code class="docutils literal notranslate"><span class="pre">DEVIMG</span></code> to be one you can push to) and then generate a
 yaml file targeting that image, e.g.,</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span>make<span class="w"> </span>test-deploy
-$<span class="w"> </span>kubectl<span class="w"> </span>apply<span class="w"> </span>-f<span class="w"> </span>examples/dist/flux-operator-dev.yaml<span class="w"> </span>
+$<span class="w"> </span>kubectl<span class="w"> </span>apply<span class="w"> </span>-f<span class="w"> </span>examples/dist/flux-operator-dev.yaml
 </code></pre></div>
 </div>
 <div class="highlight-console notranslate"><div class="highlight"><pre><span></span><code><span class="go">...</span>
@@ -1637,7 +1637,7 @@ operator to create it.  Here is the CRD for a small lammps run.</p>
 <span class="w">  </span><span class="nt">size</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">4</span>
 
 <span class="w">  </span><span class="c1"># Disable verbose output</span>
-<span class="w">  </span><span class="nt">logging</span><span class="p">:</span><span class="w"> </span>
+<span class="w">  </span><span class="nt">logging</span><span class="p">:</span>
 <span class="w">    </span><span class="nt">quiet</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
 
 <span class="w">  </span><span class="c1"># This is a list because a pod can support multiple containers</span>
@@ -1656,7 +1656,7 @@ operator to create it.  Here is the CRD for a small lammps run.</p>
 The file we generated above should be in your present working directory.
 Importantly, we have set <code class="docutils literal notranslate"><span class="pre">localDeploy</span></code> to false because we need to create volume
 claims and not local host mounts for shared resources.</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span>kubectl<span class="w"> </span>apply<span class="w"> </span>-f<span class="w"> </span>minicluster-lammps.yaml<span class="w"> </span>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span>kubectl<span class="w"> </span>apply<span class="w"> </span>-f<span class="w"> </span>minicluster-lammps.yaml
 </code></pre></div>
 </div>
 <p>There are different ways to see logs for pods. First, see pods running and state.
@@ -1841,7 +1841,7 @@ make sure that the annotations for storage match your Google project, zone, etc.
 <div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><code><span class="w">  </span><span class="c1"># Make this kind of persistent volume and claim available to pods</span>
 <span class="w">  </span><span class="c1"># This is a type of storage that will use Google Storage</span>
 <span class="w">  </span><span class="nt">volumes</span><span class="p">:</span>
-<span class="w">    </span><span class="nt">data</span><span class="p">:</span><span class="w">      </span>
+<span class="w">    </span><span class="nt">data</span><span class="p">:</span>
 <span class="w">      </span><span class="nt">class</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">csi-gcs</span>
 <span class="w">      </span><span class="nt">path</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">/tmp/data</span>
 <span class="w">      </span><span class="nt">secret</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">csi-gcs-secret</span>
@@ -1881,7 +1881,7 @@ $<span class="w"> </span>kubectl<span class="w"> </span>logs<span class="w"> </s
 <span class="go">The working directory is /workflow/snakemake-workflow, contents include:</span>
 <span class="go">Dockerfile  README.md  Snakefile  data  environment.yaml  scripts</span>
 <span class="go">End of file listing, if you see nothing above there are no files.</span>
-<span class="go">flux R encode --hosts=flux-sample-[0-1] </span>
+<span class="go">flux R encode --hosts=flux-sample-[0-1]</span>
 
 <span class="go">📦 Resources</span>
 <span class="go">{&quot;version&quot;: 1, &quot;execution&quot;: {&quot;R_lite&quot;: [{&quot;rank&quot;: &quot;0-1&quot;, &quot;children&quot;: {&quot;core&quot;: &quot;0&quot;}}], &quot;starttime&quot;: 0.0, &quot;expiration&quot;: 0.0, &quot;nodelist&quot;: [&quot;flux-sample-[0-1]&quot;]}}</span>
@@ -2162,7 +2162,7 @@ flags for networking, and looked at firewalls as follows:</p>
   <small>
     
       Last update:
-      Feb 25, 2023
+      Feb 26, 2023
     
   </small>
 </div>

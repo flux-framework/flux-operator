@@ -12,7 +12,7 @@ Follow these steps and then continue on to either of the tutorials.
 
 ### Install
 
-You should first [install gcloud](https://cloud.google.com/sdk/docs/quickstarts) 
+You should first [install gcloud](https://cloud.google.com/sdk/docs/quickstarts)
 and ensure you are logged in and have kubectl installed:
 
 ```bash
@@ -101,16 +101,16 @@ gke-flux-cluster-default-pool-f103d9d8-c174   Ready    <none>   3m42s   v1.23.14
 gke-flux-cluster-default-pool-f103d9d8-zz1q   Ready    <none>   3m42s   v1.23.14-gke.1800
 ```
 
-### Deploy Operator 
+### Deploy Operator
 
 To deploy the Flux Operator, [choose one of the options here](https://flux-framework.org/flux-operator/getting_started/user-guide.html#production-install) to deploy the operator. Whether you apply a yaml file, use [flux-cloud](https://converged-computing.github.io/flux-cloud) or clone the repository and `make deploy` you will see the operator install to the `operator-system` namespace.
 
-For a quick "production deploy" from development, the Makefile has a directive that will build and push a `test` tag (you'll need to edit `DEVIMG` to be one you can push to) and then generate a 
+For a quick "production deploy" from development, the Makefile has a directive that will build and push a `test` tag (you'll need to edit `DEVIMG` to be one you can push to) and then generate a
 yaml file targeting that image, e.g.,
 
 ```bash
 $ make test-deploy
-$ kubectl apply -f examples/dist/flux-operator-dev.yaml 
+$ kubectl apply -f examples/dist/flux-operator-dev.yaml
 ```
 
 ```console
@@ -179,7 +179,7 @@ $ kubectl create namespace flux-operator
 ## Lammps on Google Kubernetes Engine
 
 In this short experiment we will run the Flux Operator on Google Cloud, at
-at a fairly small size intended for development. 
+at a fairly small size intended for development.
 
 ### Custom Resource Definition
 
@@ -197,7 +197,7 @@ spec:
   size: 4
 
   # Disable verbose output
-  logging: 
+  logging:
     quiet: true
 
   # This is a list because a pod can support multiple containers
@@ -221,7 +221,7 @@ Importantly, we have set `localDeploy` to false because we need to create volume
 claims and not local host mounts for shared resources.
 
 ```bash
-$ kubectl apply -f minicluster-lammps.yaml 
+$ kubectl apply -f minicluster-lammps.yaml
 ```
 
 There are different ways to see logs for pods. First, see pods running and state.
@@ -283,7 +283,7 @@ Observations about comparing this to MiniKube (local):
  - The startup times of the different pods vary quite a bit.
  - A few config maps aren't found or timed out mount for up to 3-4 minutes, then it runs.
  - Sometimes it also runs quickly!
- 
+
 If you want to run the same workflow again, use `kubectl delete -f` with the file
 and apply it again. I wound up running with test set to true, and then saving the logs:
 
@@ -292,7 +292,7 @@ $ kubectl -n flux-operator logs flux-sample-0-qc5z2 > lammps.out
 ```
 
 For fun, here is the first successful run of Lammps using the Flux Operator on GCP
-ever! 
+ever!
 
 ![img/lammps.png](img/lammps.png)
 
@@ -306,7 +306,7 @@ $ kubectl delete -f minicluster-lammps.yaml
 
 Akin to how we created a local volume, we can do something similar, but instead of pointing the Flux Operator
 to a volume on the host (e.g., in MiniKube) we are going to point it to a storage bucket with our data.
-For Google cloud, the Flux Operator currently uses the [this driver](https://github.com/ofek/csi-gcs) to 
+For Google cloud, the Flux Operator currently uses the [this driver](https://github.com/ofek/csi-gcs) to
 connect a cloud storage bucket to our cluster.
 
 ### Prepare Data
@@ -403,7 +403,7 @@ And to debug:
 $ kubectl logs -l app=csi-gcs -c csi-gcs -n kube-system
 ```
 
-As you are working, if the mounts seem to work but you don't see files, keep 
+As you are working, if the mounts seem to work but you don't see files, keep
 in mind you need to be aware of [implicit directories](https://ofek.dev/csi-gcs/dynamic_provisioning/#extra-flags).
 The operator will do a `mkdir -p` on the working directory (and this will show content there) but if you don't
 see content and expect to, you either need to interact in this way or set this flag as an annotation in
@@ -465,7 +465,7 @@ make sure that the annotations for storage match your Google project, zone, etc.
   # Make this kind of persistent volume and claim available to pods
   # This is a type of storage that will use Google Storage
   volumes:
-    data:      
+    data:
       class: csi-gcs
       path: /tmp/data
       secret: csi-gcs-secret
@@ -514,7 +514,7 @@ The main host is flux-sample-0
 The working directory is /workflow/snakemake-workflow, contents include:
 Dockerfile  README.md  Snakefile  data  environment.yaml  scripts
 End of file listing, if you see nothing above there are no files.
-flux R encode --hosts=flux-sample-[0-1] 
+flux R encode --hosts=flux-sample-[0-1]
 
 📦 Resources
 {"version": 1, "execution": {"R_lite": [{"rank": "0-1", "children": {"core": "0"}}], "starttime": 0.0, "expiration": 0.0, "nodelist": ["flux-sample-[0-1]"]}}
@@ -755,7 +755,7 @@ broker.info[0]: goodbye: goodbye->exit 0.080512ms
 
 </details>
 
-After it finishes the job will cleanup (unless you've set `cleanup: false`) in your minicluster.yaml. If you check 
+After it finishes the job will cleanup (unless you've set `cleanup: false`) in your minicluster.yaml. If you check
 Google storage, you'll see the output of the run (e.g., data in mapped_reads / mapped_samples /plots) and a ".snakemake"
 hidden directory with logs.
 

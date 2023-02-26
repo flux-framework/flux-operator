@@ -1113,7 +1113,7 @@ And then come back and view your nodes.</p>
 <h3 id="deploy-operator">Deploy Operator<a class="headerlink" href="#deploy-operator" title="Permalink to this heading">¶</a></h3>
 <p>To deploy the Flux Operator, <a class="reference external" href="https://flux-framework.org/flux-operator/getting_started/user-guide.html#production-install">choose one of the options here</a> to deploy the operator. Whether you apply a yaml file, use <a class="reference external" href="https://converged-computing.github.io/flux-cloud">flux-cloud</a> or clone the repository and <code class="docutils literal notranslate"><span class="pre">make</span> <span class="pre">deploy</span></code>. You can also deploy a development image:</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span>make<span class="w"> </span>test-deploy
-$<span class="w"> </span>kubectl<span class="w"> </span>apply<span class="w"> </span>-f<span class="w"> </span>examples/dist/flux-operator-dev.yaml<span class="w"> </span>
+$<span class="w"> </span>kubectl<span class="w"> </span>apply<span class="w"> </span>-f<span class="w"> </span>examples/dist/flux-operator-dev.yaml
 </code></pre></div>
 </div>
 <p>you will see the operator install to the <code class="docutils literal notranslate"><span class="pre">operator-system</span></code> namespace.</p>
@@ -1170,7 +1170,7 @@ No<span class="w"> </span>LimitRange<span class="w"> </span>resource.
 <p>Then apply your CRD to generate the MiniCluster (default should be size 4, the max nodes of our cluster):</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span>make<span class="w"> </span>apply
 <span class="c1"># OR</span>
-$<span class="w"> </span>kubectl<span class="w"> </span>apply<span class="w"> </span>-f<span class="w"> </span>config/samples/flux-framework.org_v1alpha1_minicluster.yaml<span class="w"> </span>
+$<span class="w"> </span>kubectl<span class="w"> </span>apply<span class="w"> </span>-f<span class="w"> </span>config/samples/flux-framework.org_v1alpha1_minicluster.yaml
 </code></pre></div>
 </div>
 <p>And now you can get logs for the manager:</p>
@@ -1219,7 +1219,7 @@ A Python client is <a class="reference external" href="https://flux-framework.or
   <small>
     
       Last update:
-      Feb 25, 2023
+      Feb 26, 2023
     
   </small>
 </div>

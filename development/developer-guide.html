@@ -688,6 +688,21 @@
   
   
     <li class="md-nav__item">
+      <a href="sdks.html" class="md-nav__link">
+        <span title="/development/sdks.md (reference label)" class="md-ellipsis">Language SDKs</span>
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="creation.html" class="md-nav__link">
         <span title="/development/creation.md (reference label)" class="md-ellipsis">Operator Creation</span>
       </a>
@@ -1000,7 +1015,7 @@ file to a variable name. E.g., for the following files, the names would be:</p>
 </code></pre></div>
 </div>
 <p>This, to run the full example for conveyorlc:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span>make<span class="w"> </span><span class="nv">name</span><span class="o">=</span>conveyorlc<span class="w"> </span>redo_example<span class="w"> </span>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span>make<span class="w"> </span><span class="nv">name</span><span class="o">=</span>conveyorlc<span class="w"> </span>redo_example
 </code></pre></div>
 </div>
 <p>Be careful running this on a production cluster, as it will delete all Kubernetes objects in the namespace.
@@ -1026,7 +1041,7 @@ in the examples test folder:</p>
 </code></pre></div>
 </div>
 <p>or (for a less scripted run):</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span>make<span class="w"> </span><span class="nv">name</span><span class="o">=</span>hello-world<span class="w"> </span>redo_test<span class="w"> </span>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span>make<span class="w"> </span><span class="nv">name</span><span class="o">=</span>hello-world<span class="w"> </span>redo_test
 </code></pre></div>
 </div>
 <p>If you just want to just apply the new job without a cleanup, do:</p>
@@ -1220,7 +1235,7 @@ and this will require having Flux.</p>
 <p>The documentation is built using sphinx, and generally you can
 create a virtual environment:</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span><span class="nb">cd</span><span class="w"> </span>docs
-$<span class="w"> </span>python<span class="w"> </span>-m<span class="w"> </span>venv<span class="w"> </span>env<span class="w"> </span>
+$<span class="w"> </span>python<span class="w"> </span>-m<span class="w"> </span>venv<span class="w"> </span>env
 $<span class="w"> </span><span class="nb">source</span><span class="w"> </span>env/bin/activate
 </code></pre></div>
 </div>
@@ -1245,7 +1260,7 @@ server to preview:</p>
   <small>
     
       Last update:
-      Feb 25, 2023
+      Feb 26, 2023
     
   </small>
 </div>

@@ -1123,7 +1123,7 @@ have a minicluster.yaml provided as an example:</p>
 <p>Note that we don’t provide a command to run the Flux Restful API, and we use a container base that has
 flux-accounting installed. Then, create the flux-operator namespace and MiniCluster:</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span>kubectl<span class="w"> </span>create<span class="w"> </span>namespace<span class="w"> </span>flux-operator
-$<span class="w"> </span>kubectl<span class="w"> </span>create<span class="w"> </span>-f<span class="w"> </span>examples/tests/multi-tenant/minicluster.yaml
+$<span class="w"> </span>kubectl<span class="w"> </span>create<span class="w"> </span>-f<span class="w"> </span>examples/flux-restful/minicluster-multi-tenant.yaml
 </code></pre></div>
 </div>
 <h2 id="view-logs">3. View Logs<a class="headerlink" href="#view-logs" title="Permalink to this heading">¶</a></h2>
@@ -1172,7 +1172,9 @@ user account.</p>
 <p>And open your browser to <a class="reference external" href="http://localhost:5000">http://localhost:5000</a>. You
 should be able to login with a user and password. Note that nothing is stored
 in any kind of database for Flux Restful API - all authentication is done
-against the server using PAM.</p>
+against the server using PAM. If you want more programmattic access, look at
+our Python SDK examples for “port forwarding” that will do the same above,
+but not require the manual extra work (all is done in Python).</p>
 <h2 id="admin-actions">5. Admin Actions<a class="headerlink" href="#admin-actions" title="Permalink to this heading">¶</a></h2>
 <h3 id="adding-a-user">Adding a User<a class="headerlink" href="#adding-a-user" title="Permalink to this heading">¶</a></h3>
 <p>It is possible to dynamically add a user! You will need to create them, add them
@@ -1181,7 +1183,7 @@ to the broker pod as follows:</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code><span class="c1"># Get the broker pod kubectl get -n flux-operator pods</span>
 <span class="nv">pod</span><span class="o">=</span><span class="s2">&quot;flux-sample-0-fz64b&quot;</span>
 
-<span class="c1"># Create the user account </span>
+<span class="c1"># Create the user account</span>
 kubectl<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>--stdin<span class="w"> </span>--tty<span class="w"> </span>-n<span class="w"> </span>flux-operator<span class="w"> </span><span class="si">${</span><span class="nv">pod</span><span class="si">}</span><span class="w"> </span>--<span class="w"> </span>sudo<span class="w"> </span>useradd<span class="w"> </span>-m<span class="w"> </span>-p<span class="w"> </span><span class="k">$(</span>openssl<span class="w"> </span>passwd<span class="w"> </span><span class="s1">&#39;greatpw&#39;</span><span class="k">)</span><span class="w"> </span>greatuser
 
 <span class="c1"># Add them to flux accounting - the user bank is just called &quot;user_bank&quot;</span>
@@ -1195,8 +1197,8 @@ kubectl<span class="w"> </span><span class="nb">exec</span><span class="w"> </sp
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>kubectl<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>--stdin<span class="w"> </span>--tty<span class="w"> </span>-n<span class="w"> </span>flux-operator<span class="w"> </span><span class="si">${</span><span class="nv">pod</span><span class="si">}</span><span class="w"> </span>--<span class="w"> </span>sudo<span class="w"> </span>-u<span class="w"> </span>flux<span class="w"> </span>flux<span class="w"> </span>account<span class="w"> </span>view-user<span class="w"> </span>greatuser
 </code></pre></div>
 </div>
-<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><code><span class="go">creation_time   mod_time        active          username        userid          bank            default_bank    shares          job_usage       fairshare       max_running_jobsmax_active_jobs max_nodes       queues          projects        default_project </span>
-<span class="go">1677276554      1677276554      1               greatuser       1006            user_bank       user_bank       1               0.0             0.5             5               7               2147483647                      *               *      </span>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><code><span class="go">creation_time   mod_time        active          username        userid          bank            default_bank    shares          job_usage       fairshare       max_running_jobsmax_active_jobs max_nodes       queues          projects        default_project</span>
+<span class="go">1677276554      1677276554      1               greatuser       1006            user_bank       user_bank       1               0.0             0.5             5               7               2147483647                      *               *</span>
 </code></pre></div>
 </div>
 <p>Most of the fields should be populated, as shown above. If you see empty fields the user was not added properly.</p>
@@ -1207,7 +1209,7 @@ kubectl<span class="w"> </span><span class="nb">exec</span><span class="w"> </sp
   <small>
     
       Last update:
-      Feb 25, 2023
+      Feb 26, 2023
     
   </small>
 </div>
