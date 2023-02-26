@@ -5,7 +5,6 @@ on:
 
 jobs:
   test-python-sdk:
-    needs: [unit-tests]
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false

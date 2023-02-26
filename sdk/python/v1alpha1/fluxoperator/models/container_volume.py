@@ -13,7 +13,6 @@
 import inspect
 import pprint
 import re  # noqa: F401
-
 import six
 
 from fluxoperator.configuration import Configuration
@@ -33,13 +32,17 @@ class ContainerVolume(object):
       attribute_map (dict): The key is attribute name
                             and the value is json key in definition.
     """
-    openapi_types = {"path": "str", "read_only": "bool"}
+    openapi_types = {
+        'path': 'str',
+        'read_only': 'bool'
+    }
 
-    attribute_map = {"path": "path", "read_only": "readOnly"}
+    attribute_map = {
+        'path': 'path',
+        'read_only': 'readOnly'
+    }
 
-    def __init__(
-        self, path="", read_only=False, local_vars_configuration=None
-    ):  # noqa: E501
+    def __init__(self, path='', read_only=False, local_vars_configuration=None):  # noqa: E501
         """ContainerVolume - a model defined in OpenAPI"""  # noqa: E501
         if local_vars_configuration is None:
             local_vars_configuration = Configuration.get_default_copy()
@@ -71,12 +74,8 @@ class ContainerVolume(object):
         :param path: The path of this ContainerVolume.  # noqa: E501
         :type path: str
         """
-        if (
-            self.local_vars_configuration.client_side_validation and path is None
-        ):  # noqa: E501
-            raise ValueError(
-                "Invalid value for `path`, must not be `None`"
-            )  # noqa: E501
+        if self.local_vars_configuration.client_side_validation and path is None:  # noqa: E501
+            raise ValueError("Invalid value for `path`, must not be `None`")  # noqa: E501
 
         self._path = path
 
@@ -119,11 +118,15 @@ class ContainerVolume(object):
             value = getattr(self, attr)
             attr = self.attribute_map.get(attr, attr) if serialize else attr
             if isinstance(value, list):
-                result[attr] = list(map(lambda x: convert(x), value))
+                result[attr] = list(map(
+                    lambda x: convert(x),
+                    value
+                ))
             elif isinstance(value, dict):
-                result[attr] = dict(
-                    map(lambda item: (item[0], convert(item[1])), value.items())
-                )
+                result[attr] = dict(map(
+                    lambda item: (item[0], convert(item[1])),
+                    value.items()
+                ))
             else:
                 result[attr] = convert(value)
 

@@ -44,7 +44,7 @@ if __name__ == "__main__":
         long_description_content_type="text/markdown",
         keywords="flux-operator,flux-framework,kubernetes,workflows,jobs-api",
         setup_requires=["pytest-runner"],
-        install_requires=["kubernetes"],
+        install_requires=["kubernetes", "requests"],
         tests_require=["pytest", "pytest-cov"],
         classifiers=[
             "Intended Audience :: Science/Research",

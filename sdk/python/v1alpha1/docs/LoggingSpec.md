@@ -10,3 +10,5 @@ Name | Type | Description | Notes
 **timed** | **bool** | Timed mode adds timing to Flux commands | [optional] [default to False]
 
 [[Back to Model list]](../README.md#documentation-for-models) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to README]](../README.md)
+
+
