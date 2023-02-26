@@ -31,7 +31,7 @@ spec:
       # Name of an already created ImagePullSecret for the image specified above
       # imagePullSecret: flux-image-secret
       # Set option flags on the level of the server (space separated)
-      # fluxOptionFlags: "-ompi=openmpi@5" 
+      # fluxOptionFlags: "-ompi=openmpi@5"
 
   # Deadline in seconds, if not set there is no deadline
   # deadlineSeconds: 100

@@ -14,7 +14,7 @@ spec:
     - image: ghcr.io/rse-ops/osu-microbench:app-latest
 
       # Option Flags for this flux runner wait.sh entrypoint
-      fluxOptionFlags: "-ompi=openmpi@5" 
+      fluxOptionFlags: "-ompi=openmpi@5"
 
       # custom preCommand logic (run at start of script)
       preCommand: |

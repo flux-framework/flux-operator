@@ -354,6 +354,11 @@ type MiniCluster struct {
 	Status MiniClusterStatus `json:"status,omitempty"`
 }
 
+// MultuUser returns boolean to indicate if we are in multi-user mode
+func (f *MiniCluster) MultiUser() bool {
+	return len(f.Spec.Users) > 0
+}
+
 // Validate ensures we have data that is needed, and sets defaults if needed
 func (f *MiniCluster) Validate() bool {
 	fmt.Println()

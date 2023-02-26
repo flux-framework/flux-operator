@@ -9,7 +9,7 @@ TEST_DIR="${ROOT}/examples/tests/${NAME}"
 
 echo "Namespace: ${NAMESPACE}"
 kubectl get -n ${NAMESPACE} pod
-pods=$(kubectl get -n ${NAMESPACE} pod --output=jsonpath={.items..metadata.name}); 
+pods=$(kubectl get -n ${NAMESPACE} pod --output=jsonpath={.items..metadata.name});
 echo "Pods: ${pods}"
 pod="${pods%% *}"
 echo "Pod: ${pod}"
@@ -41,5 +41,5 @@ for exitcode in $(kubectl get -n flux-operator pod --output=jsonpath={.items...c
    if [[ "${exitcode}" != "0" ]]; then
        echo "Container in ${NAME} had nonzero exit code"
        exit 1
-    fi 
+    fi
 done

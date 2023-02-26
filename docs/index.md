@@ -5,7 +5,7 @@
 
 Welcome to the Flux Operator Documentation!
 
-The Flux Operator is a Kubernetes Cluster [Operator](https://kubernetes.io/docs/concepts/extend-kubernetes/operator/) 
+The Flux Operator is a Kubernetes Cluster [Operator](https://kubernetes.io/docs/concepts/extend-kubernetes/operator/)
 that you can install to your cluster to create and control [Flux Framework](https://flux-framework.org/) "Mini Clusters"
 to launch jobs to. With the Flux Operator you can:
 
@@ -57,7 +57,7 @@ document.addEventListener('DOMContentLoaded', function () {
     currentNode.outerHTML =
 	'<div class="md-sidebar__scrollwrap">' +
 		'<img style="width:100%" src="_static/images/flux-operator.png"/>' +
-		
+
 	'</div>';
 }, false);
 

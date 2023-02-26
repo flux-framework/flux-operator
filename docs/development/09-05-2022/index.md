@@ -11,7 +11,7 @@ and needed to keep this state elsewhere. This resulted in the following entities
 The scheduler above should not be confused with anything intelligent to schedule jobs - it's imagined as a simple check to see if we have resources on our cluster for a new MiniClusters, and grant them permission for create if we do. For Design 2 I was trying to mirror a design that is used by kueue, where the two controllers are aware of the state of the cluster via a third "manager" that can hold a queue of jobs. The assumption here is that the user is submitting jobs (MiniCluster that will map to a "MiniCluster") and the cluster (FluxSetup) has some max amount of room available, and we need those two things to be aware of one another. Currently the flow I'm working on is the following:
 
 1. We create the FluxSetup
- - The Create event creates a queue (and asks for reconcile). 
+ - The Create event creates a queue (and asks for reconcile).
  -  The reconcile should always get the current number of running batch jobs and save to status and check against quota (not done yet). We also need Create/Update to manage cleaning up old setups to replace with new (not done yet). Right now we assume unlimited quota for the namespace, which of course isn't true!
 2. A MiniCluster is submit (e.g., by a user) requesting a MiniCluster
 3. The FluxSetup is watching for the Create event, and when it sees a new job, it adds it to the manager queue (under waiting jobs). The job is flagged as waiting. We eventually want the setup to do more checks here for available resources, but currently we allow everything to be put into waiting.

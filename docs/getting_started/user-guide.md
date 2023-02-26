@@ -87,10 +87,10 @@ At this point, you can kubectl apply your custom resource definition to define y
 either run a job or start a Flux Mini Cluster.
 
 ```bash
-$ kubectl apply -f config/samples/flux-framework.org_v1alpha1_minicluster.yaml 
+$ kubectl apply -f config/samples/flux-framework.org_v1alpha1_minicluster.yaml
 ```
 
-Note that we have other examples (using the web interface in [examples/flux-restful](https://github.com/flux-framework/flux-operator/tree/main/examples/flux-restful) 
+Note that we have other examples (using the web interface in [examples/flux-restful](https://github.com/flux-framework/flux-operator/tree/main/examples/flux-restful)
 and headless examples for testing in [examples/tests](https://github.com/flux-framework/flux-operator/tree/main/examples/tests)).
 When you are all done, cleanup with `kubectl delete` commands and/or!
 
@@ -176,12 +176,12 @@ through the list and verify the points on your own.
 ### 4. Apply your custom resource definition
 
 Ensure that your custom resource definition matches the namespace you just created.
-Then apply your CRD. You can use the default [testing one from the repository](https://github.com/flux-framework/flux-operator/blob/main/config/samples/flux-framework.org_v1alpha1_minicluster.yaml) 
+Then apply your CRD. You can use the default [testing one from the repository](https://github.com/flux-framework/flux-operator/blob/main/config/samples/flux-framework.org_v1alpha1_minicluster.yaml)
 or any in our [examples](https://github.com/flux-framework/flux-operator/tree/main/examples) folder. Here is using the default we provide:
 
 ```bash
 $ wget https://raw.githubusercontent.com/flux-framework/flux-operator/main/config/samples/flux-framework.org_v1alpha1_minicluster.yaml
-$ kubectl apply -f flux-framework.org_v1alpha1_minicluster.yaml 
+$ kubectl apply -f flux-framework.org_v1alpha1_minicluster.yaml
 ```
 
 Please [let us know](https://github.com/flux-framework/flux-operator) if you would like an example type added - we have plans for many more

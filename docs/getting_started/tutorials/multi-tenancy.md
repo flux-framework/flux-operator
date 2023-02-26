@@ -14,7 +14,7 @@
 
 "Multi-tenancy" means having multiple tenants, or users, in a cluster! We can accomplish this
 fairly easily via [Flux Accounting](https://flux-framework.readthedocs.io/en/latest/guides/accounting-guide.html)
-that will allow us to create users for our MiniCluster. This small tutorial will walk through 
+that will allow us to create users for our MiniCluster. This small tutorial will walk through
 creating an example with MiniKube.
 
 
@@ -68,7 +68,7 @@ flux-accounting installed. Then, create the flux-operator namespace and MiniClus
 
 ```bash
 $ kubectl create namespace flux-operator
-$ kubectl create -f examples/tests/multi-tenant/minicluster.yaml
+$ kubectl create -f examples/flux-restful/minicluster-multi-tenant.yaml
 ```
 
 ## 3. View Logs
@@ -127,8 +127,9 @@ $ kubectl port-forward -n flux-operator flux-sample-0-zdhkp 5000:5000
 And open your browser to [http://localhost:5000](http://localhost:5000). You
 should be able to login with a user and password. Note that nothing is stored
 in any kind of database for Flux Restful API - all authentication is done
-against the server using PAM.
-
+against the server using PAM. If you want more programmattic access, look at 
+our Python SDK examples for "port forwarding" that will do the same above, 
+but not require the manual extra work (all is done in Python).
 
 ## 5. Admin Actions
 
@@ -142,7 +143,7 @@ to the broker pod as follows:
 # Get the broker pod kubectl get -n flux-operator pods
 pod="flux-sample-0-fz64b"
 
-# Create the user account 
+# Create the user account
 kubectl exec --stdin --tty -n flux-operator ${pod} -- sudo useradd -m -p $(openssl passwd 'greatpw') greatuser
 
 # Add them to flux accounting - the user bank is just called "user_bank"
@@ -158,8 +159,8 @@ To sanity check your user is added, you can do:
 kubectl exec --stdin --tty -n flux-operator ${pod} -- sudo -u flux flux account view-user greatuser
 ```
 ```console
-creation_time   mod_time        active          username        userid          bank            default_bank    shares          job_usage       fairshare       max_running_jobsmax_active_jobs max_nodes       queues          projects        default_project 
-1677276554      1677276554      1               greatuser       1006            user_bank       user_bank       1               0.0             0.5             5               7               2147483647                      *               *      
+creation_time   mod_time        active          username        userid          bank            default_bank    shares          job_usage       fairshare       max_running_jobsmax_active_jobs max_nodes       queues          projects        default_project
+1677276554      1677276554      1               greatuser       1006            user_bank       user_bank       1               0.0             0.5             5               7               2147483647                      *               *
 ```
 
 Most of the fields should be populated, as shown above. If you see empty fields the user was not added properly.

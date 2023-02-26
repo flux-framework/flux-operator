@@ -13,6 +13,7 @@
 import inspect
 import pprint
 import re  # noqa: F401
+
 import six
 
 from fluxoperator.configuration import Configuration
@@ -33,34 +34,48 @@ class MiniClusterSpec(object):
                             and the value is json key in definition.
     """
     openapi_types = {
-        'cleanup': 'bool',
-        'containers': 'list[MiniClusterContainer]',
-        'deadline_seconds': 'int',
-        'flux_restful': 'FluxRestful',
-        'job_labels': 'dict(str, str)',
-        'logging': 'LoggingSpec',
-        'pod': 'PodSpec',
-        'size': 'int',
-        'tasks': 'int',
-        'users': 'list[MiniClusterUser]',
-        'volumes': 'dict(str, MiniClusterVolume)'
+        "cleanup": "bool",
+        "containers": "list[MiniClusterContainer]",
+        "deadline_seconds": "int",
+        "flux_restful": "FluxRestful",
+        "job_labels": "dict(str, str)",
+        "logging": "LoggingSpec",
+        "pod": "PodSpec",
+        "size": "int",
+        "tasks": "int",
+        "users": "list[MiniClusterUser]",
+        "volumes": "dict(str, MiniClusterVolume)",
     }
 
     attribute_map = {
-        'cleanup': 'cleanup',
-        'containers': 'containers',
-        'deadline_seconds': 'deadlineSeconds',
-        'flux_restful': 'fluxRestful',
-        'job_labels': 'jobLabels',
-        'logging': 'logging',
-        'pod': 'pod',
-        'size': 'size',
-        'tasks': 'tasks',
-        'users': 'users',
-        'volumes': 'volumes'
+        "cleanup": "cleanup",
+        "containers": "containers",
+        "deadline_seconds": "deadlineSeconds",
+        "flux_restful": "fluxRestful",
+        "job_labels": "jobLabels",
+        "logging": "logging",
+        "pod": "pod",
+        "size": "size",
+        "tasks": "tasks",
+        "users": "users",
+        "volumes": "volumes",
     }
 
-    def __init__(self, cleanup=False, containers=None, deadline_seconds=0, flux_restful=None, job_labels=None, logging=None, pod=None, size=0, tasks=0, users=None, volumes=None, local_vars_configuration=None):  # noqa: E501
+    def __init__(
+        self,
+        cleanup=False,
+        containers=None,
+        deadline_seconds=0,
+        flux_restful=None,
+        job_labels=None,
+        logging=None,
+        pod=None,
+        size=0,
+        tasks=0,
+        users=None,
+        volumes=None,
+        local_vars_configuration=None,
+    ):  # noqa: E501
         """MiniClusterSpec - a model defined in OpenAPI"""  # noqa: E501
         if local_vars_configuration is None:
             local_vars_configuration = Configuration.get_default_copy()
@@ -144,8 +159,12 @@ class MiniClusterSpec(object):
         :param containers: The containers of this MiniClusterSpec.  # noqa: E501
         :type containers: list[MiniClusterContainer]
         """
-        if self.local_vars_configuration.client_side_validation and containers is None:  # noqa: E501
-            raise ValueError("Invalid value for `containers`, must not be `None`")  # noqa: E501
+        if (
+            self.local_vars_configuration.client_side_validation and containers is None
+        ):  # noqa: E501
+            raise ValueError(
+                "Invalid value for `containers`, must not be `None`"
+            )  # noqa: E501
 
         self._containers = containers
 
@@ -368,15 +387,11 @@ class MiniClusterSpec(object):
             value = getattr(self, attr)
             attr = self.attribute_map.get(attr, attr) if serialize else attr
             if isinstance(value, list):
-                result[attr] = list(map(
-                    lambda x: convert(x),
-                    value
-                ))
+                result[attr] = list(map(lambda x: convert(x), value))
             elif isinstance(value, dict):
-                result[attr] = dict(map(
-                    lambda item: (item[0], convert(item[1])),
-                    value.items()
-                ))
+                result[attr] = dict(
+                    map(lambda item: (item[0], convert(item[1])), value.items())
+                )
             else:
                 result[attr] = convert(value)
 

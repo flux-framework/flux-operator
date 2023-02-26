@@ -18,7 +18,7 @@ spec:
   # Make this kind of persistent volume and claim available to pods
   # This is a type of storage that will use Google Storage
   volumes:
-    data:      
+    data:
       class: csi-gcs
       path: /tmp/data
       secret: csi-gcs-secret
@@ -34,7 +34,7 @@ spec:
   # This is a list because a pod can support multiple containers
   containers:
 
-      # This image has snakemake installed, and although it has data, we will 
+      # This image has snakemake installed, and although it has data, we will
       # provide it as a volume to the container to demonstrate that (and share it)
     - image: ghcr.io/rse-ops/atacseq:app-latest
 
@@ -45,7 +45,7 @@ spec:
           # This is where we will bind storage
           path: /workflow
           # readOnly defaults to false
-                
+
       # This should be the directory with the Snakefile
       workingDir: /workflow/snakemake-workflow
       command: snakemake --cores 1 --flux

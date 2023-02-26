@@ -25,7 +25,7 @@ $ minikube start
 If you are working from the repository, you can install and run the operator via developer commands:
 
 ```bash
-$ make 
+$ make
 $ make install
 $ make run
 ```
@@ -83,7 +83,7 @@ $ tree /tmp/workflow/
 ```
 
 In a real production setting, you would likely have this data in cloud storage somewhere. We are emulating
-that for MiniKube with a clone to a temporary directory! Note that to make it easier 
+that for MiniKube with a clone to a temporary directory! Note that to make it easier
 
 ### Containers
 
@@ -100,9 +100,9 @@ The Flux Operator is going to expect to find volumes on the host of a particular
 Since we are early in development, we currently (as the default) define a "hostpath" storage type,
 meaning the operator will expect the path to be present on the node where you are running the job.
 This means that we need to mount the data on our host into MiniKube (where the cluster is running)
-with `minikube mount`. 
+with `minikube mount`.
 
-Note that in our [minicluster.yaml](https://github.com/flux-framework/flux-operator/tree/main/examples/tests/snakemake/minicluster.yaml) 
+Note that in our [minicluster.yaml](https://github.com/flux-framework/flux-operator/tree/main/examples/tests/snakemake/minicluster.yaml)
 we are defining the volume on the host (inside the MiniKube VM) to be at `/tmp/data` so let's tell MiniKube to mount our local path there:
 
 ```bash

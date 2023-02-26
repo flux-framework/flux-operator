@@ -13,6 +13,7 @@
 import inspect
 import pprint
 import re  # noqa: F401
+
 import six
 
 from fluxoperator.configuration import Configuration
@@ -33,16 +34,15 @@ class ContainerResources(object):
                             and the value is json key in definition.
     """
     openapi_types = {
-        'limits': 'dict(str, IntOrString)',
-        'requests': 'dict(str, IntOrString)'
+        "limits": "dict(str, IntOrString)",
+        "requests": "dict(str, IntOrString)",
     }
 
-    attribute_map = {
-        'limits': 'limits',
-        'requests': 'requests'
-    }
+    attribute_map = {"limits": "limits", "requests": "requests"}
 
-    def __init__(self, limits=None, requests=None, local_vars_configuration=None):  # noqa: E501
+    def __init__(
+        self, limits=None, requests=None, local_vars_configuration=None
+    ):  # noqa: E501
         """ContainerResources - a model defined in OpenAPI"""  # noqa: E501
         if local_vars_configuration is None:
             local_vars_configuration = Configuration.get_default_copy()
@@ -117,15 +117,11 @@ class ContainerResources(object):
             value = getattr(self, attr)
             attr = self.attribute_map.get(attr, attr) if serialize else attr
             if isinstance(value, list):
-                result[attr] = list(map(
-                    lambda x: convert(x),
-                    value
-                ))
+                result[attr] = list(map(lambda x: convert(x), value))
             elif isinstance(value, dict):
-                result[attr] = dict(map(
-                    lambda item: (item[0], convert(item[1])),
-                    value.items()
-                ))
+                result[attr] = dict(
+                    map(lambda item: (item[0], convert(item[1])), value.items())
+                )
             else:
                 result[attr] = convert(value)
 

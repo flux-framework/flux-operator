@@ -9,7 +9,7 @@ A Kubernetes operator is conceptually like a human operator that takes your CRD,
 looks at the cluster state, and does whatever is necessary to get your cluster state
 to match your request. In the case of the Flux Operator, this means creating the resources
 for a MiniCluster. This document describes the spec of our custom resource definition.
-Development examples can be found under [config/samples](https://github.com/flux-framework/flux-operator/tree/main/config/samples) 
+Development examples can be found under [config/samples](https://github.com/flux-framework/flux-operator/tree/main/config/samples)
 in the repository. We will have more samples soon, either in that directory or
 separately in the [flux-hpc](https://github.com/rse-ops/flux-hpc) repository.
 
@@ -33,7 +33,7 @@ spec:
 ### Spec
 
 Under the spec, there are several variables to define. Descriptions are included below, and we
-recommend that you look at [config/samples](https://github.com/flux-framework/flux-operator/tree/main/config/samples) 
+recommend that you look at [config/samples](https://github.com/flux-framework/flux-operator/tree/main/config/samples)
 in the repository  and the [flux-hpc](https://github.com/rse-ops/flux-hpc) repository to see
 more.
 
@@ -49,7 +49,7 @@ the set of containers that you describe.
 
 ### tasks
 
-The `tasks` variable under the spec is the number of tasks that each pod in the MiniCluster should be given. 
+The `tasks` variable under the spec is the number of tasks that each pod in the MiniCluster should be given.
 
 ```yaml
   tasks: 4
@@ -99,7 +99,7 @@ volumes:
 
 The "class" above (which you can leave out) defaults to hostpath, and should be the storage class that your cluster provides.
 The Operator createst the "hostpath" volume claim. This currently is always created as a host path volume claim in MiniKube,
-and likely in the future will have different logic if it varies from that. 
+and likely in the future will have different logic if it varies from that.
 
 #### labels
 
@@ -118,7 +118,7 @@ volumes:
 #### request storage size
 
 By default, a capacity request is "5Gi", and we only do this because the field is required. However, keep in mind
-for many some cloud storage interfaces there is no concept of a max. 
+for many some cloud storage interfaces there is no concept of a max.
 This is defined as a string to be parsed. To tweak that, meaning
 that this container will request this amount of storage for the container (and here we show a different storageclass
 for Google Cloud)
@@ -169,11 +169,11 @@ so typically you will get the logs as long as you are streaming when the job sta
 We provide simple types of "logging" within the main script that is run for the job.
 If you don't set any variables, you'll get the most verbosity with timing of the main
 command. You can set any subset of these for a custom output. Note that these logging levels
-are not specific to operator logs, but the indexed job running in the pod. 
+are not specific to operator logs, but the indexed job running in the pod.
 
 #### quiet
 
-Quiet mode turns off all verbose output (yes, the emojis too) so only the output of 
+Quiet mode turns off all verbose output (yes, the emojis too) so only the output of
 your job will be printed to the console. This way, you can retrieve the job lob
 and then determine if the test was successful based on this output.
 
@@ -294,7 +294,7 @@ pod:
 #### resources
 
 Resource lists for a pod go under [Overhead](https://kubernetes.io/docs/concepts/scheduling-eviction/pod-overhead/). Known keys include "memory" and "cpu" (should be provided in some
-string format that can be parsed) and all others are considered some kind of quantity request. 
+string format that can be parsed) and all others are considered some kind of quantity request.
 
 ```yaml
 pod:
@@ -335,13 +335,13 @@ This is the only required attribute! You *must* provide a container base that ha
 The requirements of your container are defined in the README of the [flux-hpc](https://github.com/rse-ops/flux-hpc/)
 repository. Generally speaking, you need to have Flux executables, Flux Python bindings,
 and your own executables on the path, and should be started with root with a flux user.
-If you use the [fluxrm/flux-sched](https://hub.docker.com/r/fluxrm/flux-sched) 
-base containers this is usually a good start. 
+If you use the [fluxrm/flux-sched](https://hub.docker.com/r/fluxrm/flux-sched)
+base containers this is usually a good start.
 
 #### cores
 
 The number of cores to provide to the container as a variable. This does not actually allocate or control cores
-for the container, but exposes the variable for your container template (e.g., for the Flux wait.sh script). 
+for the container, but exposes the variable for your container template (e.g., for the Flux wait.sh script).
 
 ```yaml
   cores: 4
@@ -366,7 +366,7 @@ Providing (or not providing) a command is going to dictate the behavior of your 
 #### resources
 
 Resources can include limits and requests. Known keys include "memory" and "cpu" (should be provided in some
-string format that can be parsed) and all others are considered some kind of quantity request. 
+string format that can be parsed) and all others are considered some kind of quantity request.
 
 ```yaml
 resources:
@@ -413,7 +413,7 @@ a job directly with flux start and require a particular working directory, set i
 ```yaml
     # You can set the working directory if your container WORKDIR is not correct.
     workingDir: /home/flux/examples/reaxff/HNS
-```    
+```
 
 Remember that if you don't provide a command and launch the RESTFul API, you can provide the working
 directory needed on the level of each job submit, and you don't need to define it here.
@@ -481,7 +481,7 @@ set the flags just as you would to the command, starting with `-o`:
 
 ```yaml
 	# optional - if needed, default option flags for the server (e.g., -ompi=openmpi@5)
-	fluxOptionFlags: "-ompi=openmpi@5" 
+	fluxOptionFlags: "-ompi=openmpi@5"
 ```
 
 Note that if you run with the user interface, setting a flag in the interface
@@ -496,7 +496,7 @@ they should not be touched).
 The log level to provide to flux, given that test mode is not on.
 
 ```yaml
-	fluxLogLevel: 7 
+	fluxLogLevel: 7
 ```
 
 
@@ -564,7 +564,7 @@ containers:
 
 ##### runFluxAsRoot
 
-For different storage interfaces (e.g., CSI means "Container Storage Interface") you might need to 
+For different storage interfaces (e.g., CSI means "Container Storage Interface") you might need to
 run flux as root (and not change permission of the mounted working directory) to be owned by the flux user. You
 can set this flag to enable that:
 
@@ -595,7 +595,7 @@ containers:
       name: flux
 ```
 
-Note that if the "flux" user already exists in your container, the uid will be discovered and you don't need 
+Note that if the "flux" user already exists in your container, the uid will be discovered and you don't need
 to set this. These parameters are only if you want the flux user to be created with a different unique id.
 
 

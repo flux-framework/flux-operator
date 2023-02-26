@@ -1,7 +1,7 @@
 # TODO
 
  - [ ] test storage on AWS / using ceph on any cloud
- - [ ] add port forward to python sdk, and example to programmatically do it, then we need to use that for automated tests 
+ - [ ] add port forward to python sdk, and example to programmatically do it, then we need to use that for automated tests
 
 ### Maybe
 

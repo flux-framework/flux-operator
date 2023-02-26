@@ -73,6 +73,21 @@ func getVolumes(cluster *api.MiniCluster) []corev1.Volume {
 		}
 	}
 
+	// If we have Multi User mode, we need to set permission 0644
+	brokerFile := corev1.KeyToPath{
+		Key:  "hostfile",
+		Path: "broker.toml",
+	}
+
+	if cluster.MultiUser() {
+		mode := int32(0644)
+		brokerFile = corev1.KeyToPath{
+			Key:  "hostfile",
+			Path: "broker.toml",
+			Mode: &mode,
+		}
+	}
+
 	volumes := []corev1.Volume{
 		{
 			Name: cluster.Name + fluxConfigSuffix,
@@ -82,10 +97,7 @@ func getVolumes(cluster *api.MiniCluster) []corev1.Volume {
 						Name: cluster.Name + fluxConfigSuffix,
 					},
 					// /etc/flux/config
-					Items: []corev1.KeyToPath{{
-						Key:  "hostfile",
-						Path: "broker.toml",
-					}},
+					Items: []corev1.KeyToPath{brokerFile},
 				},
 			},
 		},

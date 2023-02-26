@@ -11,5 +11,4 @@ We create a new custom controller that listens for MiniCluster resources. When a
  2. Create the worker StatefulSet that contains the desired replicas minus 1, as rank 0 also does work. If we use IndexedJob  we can create all desired replicas
  3. Wait for the worker pods to enter Running state.
  4. Create the launcher Job.
- 5. After the launcher job finishes, set the replicas to 0 in the worker StatefulSet, or delete the IndexedJob 
-
+ 5. After the launcher job finishes, set the replicas to 0 in the worker StatefulSet, or delete the IndexedJob

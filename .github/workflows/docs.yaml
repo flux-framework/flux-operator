@@ -17,7 +17,7 @@ jobs:
 
     - name: Generate Docs
       run: |
-        export PATH="/usr/share/miniconda/bin:$PATH"        
+        export PATH="/usr/share/miniconda/bin:$PATH"
         root=$PWD
         source activate fluxdocs
         git clone https://github.com/flux-framework/flux-operator /tmp/operator
@@ -34,7 +34,7 @@ jobs:
         rm -rf $root
         mv /tmp/operator/docs/_build/html $root
         cd ${root}
-        echo "ls $root"        
+        echo "ls $root"
         ls .
         touch .nojekyll
         git add .nojekyll || echo "Already added"
