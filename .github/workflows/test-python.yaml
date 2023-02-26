@@ -1,0 +1,50 @@
+name: test python flux-operator
+
+on:
+  pull_request: []
+
+jobs:
+  test-python-sdk:
+    needs: [unit-tests]
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        # This is a matrix of test commands and containers, MiniKube is assumed to be running
+        test: [["python ./sdk/python/v1alpha1/examples/port-forward.py"], ["ghcr.io/rse-ops/accounting:app-latest"]]
+
+    steps:
+    - name: Checkout the code
+      uses: actions/checkout@v3
+
+    - name: Install fluxoperator python sdk
+      run: |
+        cd ./sdk/python/v1alpha1
+        pip install -e .
+        pip install flux-restful-client
+        cd -
+
+    - name: Setup Go
+      uses: actions/setup-go@v3
+      with:
+        go-version: ^1.18
+
+    - name: Start minikube
+      uses: medyagh/setup-minikube@697f2b7aaed5f70bf2a94ee21a4ec3dde7b12f92 # v0.0.9
+
+    # We assume the clients create the namespaces
+    - name: Pull Docker Containers to MiniKube
+      env:
+        container: ${{ matrix.test[1] }}
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      run: |
+        export SHELL=/bin/bash
+        eval $(minikube -p minikube docker-env)
+        minikube ssh docker pull ${container}
+        make
+        make install
+
+    - name: Test ${{ matrix.test[0] }}
+      env:
+        command: ${{ matrix.test[0] }}
+      run: /bin/bash ./script/test-python.sh ${command}
