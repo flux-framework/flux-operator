@@ -16,7 +16,7 @@ echo "Testing Command: ${cmd}"
 
 # Quick helper script to run a test
 make clean >> /dev/null
-make run > ${out} 2> ${err} &
+make run > /dev/null 2> ${err} &
 pid=$!
 echo "PID for running cluster is ${pid}"
 
