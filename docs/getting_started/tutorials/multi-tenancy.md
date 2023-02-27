@@ -177,7 +177,7 @@ to submit jobs to the same Flux Instance on a set of container bases with the sa
 yet support multi-tenant storage (we are still working on simple storage)! The cluster is persistent,
 meaning it stays up until the Kubernetes cluster owner destroys it.
 
-### 2. Multiple MiniClusters for multi-tenancy
+#### 2. Multiple MiniClusters for multi-tenancy
 
 For this use case, you create a single-user MiniCluster, meaning it's owned by only one user, and that user has total
 control of the Flux Instance, to submit their jobs to. Akin to the previous example, it is persistent and
