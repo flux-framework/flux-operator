@@ -17,7 +17,6 @@ fairly easily via [Flux Accounting](https://flux-framework.readthedocs.io/en/lat
 that will allow us to create users for our MiniCluster. This small tutorial will walk through
 creating an example with MiniKube.
 
-
 ## 1. Create Cluster
 
 Bring up your MiniKube cluster.
@@ -164,3 +163,32 @@ creation_time   mod_time        active          username        userid          
 ```
 
 Most of the fields should be populated, as shown above. If you see empty fields the user was not added properly.
+
+## Frequently Asked Questions
+
+### What are the different types of multi-tenant use cases?
+
+#### 1. A single multi-tenant MiniCluster
+
+In the example above, we define our users in advance and bring up a single MiniCluster, meaning one MiniCluster
+custom resource definition on one Kubernetes cluster, that allows multiple users to submit jobs authenticated
+as themselves with PAM. This use case would be recommended if you have a small group that would be able
+to submit jobs to the same Flux Instance on a set of container bases with the same needs. We do not
+yet support multi-tenant storage (we are still working on simple storage)! The cluster is persistent,
+meaning it stays up until the Kubernetes cluster owner destroys it.
+
+### 2. Multiple MiniClusters for multi-tenancy
+
+For this use case, you create a single-user MiniCluster, meaning it's owned by only one user, and that user has total
+control of the Flux Instance, to submit their jobs to. Akin to the previous example, it is persistent and
+can be brought down when the user is finished. Unlike the first, if you have several (separate) MiniClusters
+running on a Kubernetes cluster, the Flux instances do not communicate. This use case is ideal for users
+that currently need storage or need a custom base container for the MiniCluster.
+
+### What are the non multi-tenant use cases?
+
+Bringing up an ephermal MiniCluster to run one job is not considered a multi-user use case,
+and we don't even care about creating user accounts. The MiniCluster comes up, runs the job,
+and the job completes and everything cleans up.
+
+If you have any questions please [let us know](https://github.com/flux-framework/flux-operator/issues)!
