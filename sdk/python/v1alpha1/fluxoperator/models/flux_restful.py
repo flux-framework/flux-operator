@@ -46,7 +46,7 @@ class FluxRestful(object):
         'username': 'username'
     }
 
-    def __init__(self, branch='', port=0, token='', username='', local_vars_configuration=None):  # noqa: E501
+    def __init__(self, branch='main', port=5000, token='', username='', local_vars_configuration=None):  # noqa: E501
         """FluxRestful - a model defined in OpenAPI"""  # noqa: E501
         if local_vars_configuration is None:
             local_vars_configuration = Configuration.get_default_copy()

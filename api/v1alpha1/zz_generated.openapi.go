@@ -150,7 +150,7 @@ func schema__api_v1alpha1__FluxRestful(ref common.ReferenceCallback) common.Open
 					"branch": {
 						SchemaProps: spec.SchemaProps{
 							Description: "Branch to clone Flux Restful API from",
-							Default:     "",
+							Default:     "main",
 							Type:        []string{"string"},
 							Format:      "",
 						},
@@ -158,7 +158,7 @@ func schema__api_v1alpha1__FluxRestful(ref common.ReferenceCallback) common.Open
 					"port": {
 						SchemaProps: spec.SchemaProps{
 							Description: "Port to run Flux Restful Server On",
-							Default:     0,
+							Default:     5000,
 							Type:        []string{"integer"},
 							Format:      "int32",
 						},
@@ -194,7 +194,7 @@ func schema__api_v1alpha1__FluxUser(ref common.ReferenceCallback) common.OpenAPI
 					"name": {
 						SchemaProps: spec.SchemaProps{
 							Description: "Flux user name",
-							Default:     "",
+							Default:     "flux",
 							Type:        []string{"string"},
 							Format:      "",
 						},
@@ -202,7 +202,7 @@ func schema__api_v1alpha1__FluxUser(ref common.ReferenceCallback) common.OpenAPI
 					"uid": {
 						SchemaProps: spec.SchemaProps{
 							Description: "UID for the FluxUser",
-							Default:     0,
+							Default:     1000,
 							Type:        []string{"integer"},
 							Format:      "int32",
 						},
@@ -249,7 +249,7 @@ func schema__api_v1alpha1__LoggingSpec(ref common.ReferenceCallback) common.Open
 					"strict": {
 						SchemaProps: spec.SchemaProps{
 							Description: "Strict mode ensures any failure will not continue in the job entrypoint",
-							Default:     false,
+							Default:     true,
 							Type:        []string{"boolean"},
 							Format:      "",
 						},
@@ -331,7 +331,7 @@ func schema__api_v1alpha1__MiniClusterContainer(ref common.ReferenceCallback) co
 					"image": {
 						SchemaProps: spec.SchemaProps{
 							Description: "Container image must contain flux and flux-sched install",
-							Default:     "",
+							Default:     "ghcr.io/rse-ops/accounting:app-latest",
 							Type:        []string{"string"},
 							Format:      "",
 						},
@@ -469,7 +469,7 @@ func schema__api_v1alpha1__MiniClusterContainer(ref common.ReferenceCallback) co
 					"fluxLogLevel": {
 						SchemaProps: spec.SchemaProps{
 							Description: "Log level to use for flux logging (only in non TestMode)",
-							Default:     0,
+							Default:     6,
 							Type:        []string{"integer"},
 							Format:      "int32",
 						},
@@ -504,7 +504,6 @@ func schema__api_v1alpha1__MiniClusterContainer(ref common.ReferenceCallback) co
 						},
 					},
 				},
-				Required: []string{"image"},
 			},
 		},
 		Dependencies: []string{
@@ -661,7 +660,7 @@ func schema__api_v1alpha1__MiniClusterSpec(ref common.ReferenceCallback) common.
 					"size": {
 						SchemaProps: spec.SchemaProps{
 							Description: "Size (number of job pods to run, size of minicluster in pods)",
-							Default:     0,
+							Default:     1,
 							Type:        []string{"integer"},
 							Format:      "int32",
 						},
@@ -669,7 +668,7 @@ func schema__api_v1alpha1__MiniClusterSpec(ref common.ReferenceCallback) common.
 					"tasks": {
 						SchemaProps: spec.SchemaProps{
 							Description: "Total number of CPUs being run across entire cluster",
-							Default:     0,
+							Default:     1,
 							Type:        []string{"integer"},
 							Format:      "int32",
 						},
@@ -677,7 +676,7 @@ func schema__api_v1alpha1__MiniClusterSpec(ref common.ReferenceCallback) common.
 					"deadlineSeconds": {
 						SchemaProps: spec.SchemaProps{
 							Description: "Should the job be limited to a particular number of seconds? Approximately one year. This cannot be zero or job won't start",
-							Default:     0,
+							Default:     3.15e+07,
 							Type:        []string{"integer"},
 							Format:      "int64",
 						},
@@ -816,7 +815,7 @@ func schema__api_v1alpha1__MiniClusterVolume(ref common.ReferenceCallback) commo
 					},
 					"storageClass": {
 						SchemaProps: spec.SchemaProps{
-							Default: "",
+							Default: "hostpath",
 							Type:    []string{"string"},
 							Format:  "",
 						},
@@ -832,7 +831,7 @@ func schema__api_v1alpha1__MiniClusterVolume(ref common.ReferenceCallback) commo
 					"secretNamespace": {
 						SchemaProps: spec.SchemaProps{
 							Description: "Secret namespace",
-							Default:     "",
+							Default:     "default",
 							Type:        []string{"string"},
 							Format:      "",
 						},
@@ -840,7 +839,7 @@ func schema__api_v1alpha1__MiniClusterVolume(ref common.ReferenceCallback) commo
 					"capacity": {
 						SchemaProps: spec.SchemaProps{
 							Description: "Capacity (string) for PVC (storage request) to create PV",
-							Default:     "",
+							Default:     "5Gi",
 							Type:        []string{"string"},
 							Format:      "",
 						},

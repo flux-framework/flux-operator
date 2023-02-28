@@ -65,13 +65,13 @@
         "branch": {
           "description": "Branch to clone Flux Restful API from",
           "type": "string",
-          "default": ""
+          "default": "main"
         },
         "port": {
           "description": "Port to run Flux Restful Server On",
           "type": "integer",
           "format": "int32",
-          "default": 0
+          "default": 5000
         },
         "token": {
           "description": "Token to use for RestFul API",
@@ -91,13 +91,13 @@
         "name": {
           "description": "Flux user name",
           "type": "string",
-          "default": ""
+          "default": "flux"
         },
         "uid": {
           "description": "UID for the FluxUser",
           "type": "integer",
           "format": "int32",
-          "default": 0
+          "default": 1000
         }
       }
     },
@@ -126,7 +126,7 @@
         "strict": {
           "description": "Strict mode ensures any failure will not continue in the job entrypoint",
           "type": "boolean",
-          "default": false
+          "default": true
         },
         "timed": {
           "description": "Timed mode adds timing to Flux commands",
@@ -162,9 +162,6 @@
     },
     "MiniClusterContainer": {
       "type": "object",
-      "required": [
-        "image"
-      ],
       "properties": {
         "command": {
           "description": "Single user executable to provide to flux start IMPORTANT: This is left here, but not used in favor of exposing Flux via a Restful API. We Can remove this when that is finalized.",
@@ -199,7 +196,7 @@
           "description": "Log level to use for flux logging (only in non TestMode)",
           "type": "integer",
           "format": "int32",
-          "default": 0
+          "default": 6
         },
         "fluxOptionFlags": {
           "description": "Flux option flags, usually provided with -o optional - if needed, default option flags for the server These can also be set in the user interface to override here. This is only valid for a FluxRunner \"runFlux\" true",
@@ -214,7 +211,7 @@
         "image": {
           "description": "Container image must contain flux and flux-sched install",
           "type": "string",
-          "default": ""
+          "default": "ghcr.io/rse-ops/accounting:app-latest"
         },
         "imagePullSecret": {
           "description": "Allow the user to pull authenticated images By default no secret is selected. Setting this with the name of an already existing imagePullSecret will specify that secret in the pod spec.",
@@ -328,7 +325,7 @@
           "description": "Should the job be limited to a particular number of seconds? Approximately one year. This cannot be zero or job won't start",
           "type": "integer",
           "format": "int64",
-          "default": 0
+          "default": 31500000
         },
         "fluxRestful": {
           "description": "Customization to Flux Restful API There should only be one container to run flux with runFlux",
@@ -357,13 +354,13 @@
           "description": "Size (number of job pods to run, size of minicluster in pods)",
           "type": "integer",
           "format": "int32",
-          "default": 0
+          "default": 1
         },
         "tasks": {
           "description": "Total number of CPUs being run across entire cluster",
           "type": "integer",
           "format": "int32",
-          "default": 0
+          "default": 1
         },
         "users": {
           "description": "Users of the MiniCluster",
@@ -442,7 +439,7 @@
         "capacity": {
           "description": "Capacity (string) for PVC (storage request) to create PV",
           "type": "string",
-          "default": ""
+          "default": "5Gi"
         },
         "labels": {
           "type": "object",
@@ -463,11 +460,11 @@
         "secretNamespace": {
           "description": "Secret namespace",
           "type": "string",
-          "default": ""
+          "default": "default"
         },
         "storageClass": {
           "type": "string",
-          "default": ""
+          "default": "hostpath"
         }
       }
     },
