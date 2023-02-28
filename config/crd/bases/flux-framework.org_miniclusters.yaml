@@ -178,8 +178,6 @@ spec:
                     workingDir:
                       description: Working directory to run command from
                       type: string
-                  required:
-                  - image
                   type: object
                 type: array
                 x-kubernetes-list-type: atomic

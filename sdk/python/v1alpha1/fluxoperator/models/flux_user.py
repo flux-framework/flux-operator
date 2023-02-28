@@ -42,7 +42,7 @@ class FluxUser(object):
         'uid': 'uid'
     }
 
-    def __init__(self, name='', uid=0, local_vars_configuration=None):  # noqa: E501
+    def __init__(self, name='flux', uid=1000, local_vars_configuration=None):  # noqa: E501
         """FluxUser - a model defined in OpenAPI"""  # noqa: E501
         if local_vars_configuration is None:
             local_vars_configuration = Configuration.get_default_copy()

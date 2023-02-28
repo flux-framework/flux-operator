@@ -11,7 +11,7 @@ Name | Type | Description | Notes
 **path** | **str** |  | [default to '']
 **secret** | **str** | Secret reference in Kubernetes with service account role | [optional] [default to '']
 **secret_namespace** | **str** | Secret namespace | [optional] [default to 'default']
-**storage_class** | **str** |  | [optional] [default to '']
+**storage_class** | **str** |  | [optional] [default to 'hostpath']
 
 [[Back to Model list]](../README.md#documentation-for-models) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to README]](../README.md)
 

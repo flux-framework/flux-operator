@@ -52,7 +52,7 @@ class MiniClusterVolume(object):
         'storage_class': 'storageClass'
     }
 
-    def __init__(self, annotations=None, capacity='5Gi', labels=None, path='', secret='', secret_namespace='default', storage_class='', local_vars_configuration=None):  # noqa: E501
+    def __init__(self, annotations=None, capacity='5Gi', labels=None, path='', secret='', secret_namespace='default', storage_class='hostpath', local_vars_configuration=None):  # noqa: E501
         """MiniClusterVolume - a model defined in OpenAPI"""  # noqa: E501
         if local_vars_configuration is None:
             local_vars_configuration = Configuration.get_default_copy()
