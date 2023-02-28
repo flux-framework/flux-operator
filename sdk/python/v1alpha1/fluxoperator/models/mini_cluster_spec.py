@@ -60,7 +60,7 @@ class MiniClusterSpec(object):
         'volumes': 'volumes'
     }
 
-    def __init__(self, cleanup=False, containers=None, deadline_seconds=0, flux_restful=None, job_labels=None, logging=None, pod=None, size=0, tasks=0, users=None, volumes=None, local_vars_configuration=None):  # noqa: E501
+    def __init__(self, cleanup=False, containers=None, deadline_seconds=31500000, flux_restful=None, job_labels=None, logging=None, pod=None, size=1, tasks=1, users=None, volumes=None, local_vars_configuration=None):  # noqa: E501
         """MiniClusterSpec - a model defined in OpenAPI"""  # noqa: E501
         if local_vars_configuration is None:
             local_vars_configuration = Configuration.get_default_copy()

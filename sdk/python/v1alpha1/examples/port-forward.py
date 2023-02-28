@@ -51,8 +51,7 @@ def create_minicluster():
         MiniClusterUser(name="treenut", password="treenut"),
     ]
 
-    # There is currently a bug where the defaults are not set/correct, so for example,
-    # we need to set the deadline seconds or the minicluster will not create.
+    # Create the MiniCluster
     minicluster = MiniCluster(
         kind="MiniCluster",
         api_version="flux-framework.org/v1alpha1",
@@ -62,7 +61,6 @@ def create_minicluster():
         ),
         spec=MiniClusterSpec(
             size=4,
-            deadline_seconds=31500000,
             containers=[container],
             users=users,
         ),

@@ -76,7 +76,7 @@ class MiniClusterContainer(object):
         'working_dir': 'workingDir'
     }
 
-    def __init__(self, command='', commands=None, cores=0, diagnostics=False, environment=None, flux_log_level=0, flux_option_flags='', flux_user=None, image='', image_pull_secret='', life_cycle=None, name='', ports=None, pre_command='', pull_always=False, resources=None, run_flux=False, volumes=None, working_dir='', local_vars_configuration=None):  # noqa: E501
+    def __init__(self, command='', commands=None, cores=1, diagnostics=False, environment=None, flux_log_level=0, flux_option_flags='', flux_user=None, image='ghcr.io/rse-ops/accounting:app-latest', image_pull_secret='', life_cycle=None, name='', ports=None, pre_command='', pull_always=False, resources=None, run_flux=False, volumes=None, working_dir='', local_vars_configuration=None):  # noqa: E501
         """MiniClusterContainer - a model defined in OpenAPI"""  # noqa: E501
         if local_vars_configuration is None:
             local_vars_configuration = Configuration.get_default_copy()

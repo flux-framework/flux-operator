@@ -202,7 +202,7 @@ type ContainerVolume struct {
 type MiniClusterContainer struct {
 
 	// Container image must contain flux and flux-sched install
-	// +kubebuilder:default="fluxrm/flux-sched:focal"
+	// +kubebuilder:default="ghcr.io/rse-ops/accounting:app-latest"
 	Image string `json:"image"`
 
 	// Container name is only required for non flux runners

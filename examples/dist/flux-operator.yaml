@@ -104,7 +104,7 @@ spec:
                           type: integer
                       type: object
                     image:
-                      default: fluxrm/flux-sched:focal
+                      default: ghcr.io/rse-ops/accounting:app-latest
                       description: Container image must contain flux and flux-sched
                         install
                       type: string
