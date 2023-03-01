@@ -20,6 +20,7 @@ spec:
   volumes:
     data:
       storageClass: csi-gcs
+      driver: gcs.csi.ofek.dev
       path: /tmp/data
       secret: csi-gcs-secret
       capacity: 25Gi

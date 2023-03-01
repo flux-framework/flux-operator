@@ -124,7 +124,7 @@ to false:
 volumes:
   myvolume:
     path: /full/path/to/volume
-    class: csi-gcs
+    storageClass: csi-gcs
     delete: false
 ```
 
@@ -137,7 +137,7 @@ you've installed separately. Here is an example for Google Cloud storage:
 volumes:
   myvolume:
     path: /full/path/to/volume
-    class: csi-gcs
+    storageClass: csi-gcs
     driver: gcs.csi.ofek.dev
 ```
 
@@ -149,7 +149,7 @@ If your volume handle differs from your storage class name, you can define it:
 volumes:
   myvolume:
     path: /full/path/to/volume
-    class: csi-gcs
+    storageClass: csi-gcs
     driver: gcs.csi.ofek.dev
     volumeName: manualbucket/path
 ```
@@ -162,21 +162,10 @@ If your volume has attributes, you can add them too:
 volumes:
   myvolume:
     attributes:
-  		mounter: geesefs
-      capacity: 25Gi
+    mounter: geesefs
+    capacity: 25Gi
 ```
 
-#### pvc storage class name
-
-For most scenarios, the PVC storage class name is the same as the volume storage class set on the persistent volume.
-However, in some cases this needs to be set to an empty string (or something else)!
-
-```yaml
-volumes:
-  myvolume:
-    class: csi-gcs
-    PVCclass: ""
-```
 
 #### request storage size
 

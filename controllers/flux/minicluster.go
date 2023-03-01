@@ -150,7 +150,8 @@ func (r *MiniClusterReconciler) cleanupPodsStorage(
 			r.Client.Delete(ctx, claim)
 		}
 
-		if !volumeSpec.Delete {
+		// Different request to delete
+		if volumeSpec.Delete {
 			pv, err := r.getExistingPersistentVolume(ctx, cluster, volumeName)
 			if err != nil {
 				r.log.Info("Volume", "Deletion", pv.Name)
