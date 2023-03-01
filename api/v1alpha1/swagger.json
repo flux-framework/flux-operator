@@ -436,10 +436,23 @@
             "default": ""
           }
         },
+        "attributes": {
+          "description": "Optional volume attributes",
+          "type": "object",
+          "additionalProperties": {
+            "type": "string",
+            "default": ""
+          }
+        },
         "capacity": {
           "description": "Capacity (string) for PVC (storage request) to create PV",
           "type": "string",
           "default": "5Gi"
+        },
+        "driver": {
+          "description": "Storage driver, e.g., gcs.csi.ofek.dev Only needed if not using hostpath",
+          "type": "string",
+          "default": ""
         },
         "labels": {
           "type": "object",
@@ -465,6 +478,11 @@
         "storageClass": {
           "type": "string",
           "default": "hostpath"
+        },
+        "volumeHandle": {
+          "description": "Volume handle, falls back to storage class name if not defined",
+          "type": "string",
+          "default": ""
         }
       }
     },

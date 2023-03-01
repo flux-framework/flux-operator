@@ -19,7 +19,7 @@ spec:
   # This is a type of storage that will use Google Storage
   volumes:
     data:
-      class: hostpath
+      storageClass: hostpath
       # This was a path/variable in the helm chart
       # this is where the hostpath will mount storage
       path: /mnt/s3data
@@ -38,7 +38,7 @@ spec:
           # This is where we will bind storage
           # E.g., /mnt/s3data is bound to /var/s3 or /mnt/s3data:/var/s3
           path: /var/s3:shared
-          # readonly defaults to false
+          # readOnly defaults to false
                 
       # This should be the directory with the Snakefile
       workingDir: /var/s3/snakemake-workflow

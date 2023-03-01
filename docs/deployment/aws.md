@@ -86,7 +86,7 @@ Given the above file `eks-cluster-config.yaml` we create the cluster as follows:
 $ eksctl create cluster -f eksctl-config.yaml
 
 # use the provided
-$ eksctl create cluster -f ./examples/storage/aws/eksctl-config.yaml
+$ eksctl create cluster -f ./examples/storage/aws/oidc/eksctl-config.yaml
 ```
 
 🚧️ Warning! 🚧️ The above takes 15-20 minutes! Go have a party! Grab an avocado! 🥑️
@@ -423,7 +423,7 @@ $ helm upgrade --install s3-mounter otomount/s3-otomount  --namespace otomount -
 Then (assuming you've already installed the operator and created the flux-operator namespace):
 
 ```bash
-$ kubectl create -f ./examples/storage/aws/minicluster.yaml
+$ kubectl create -f ./examples/storage/aws/oidc/minicluster.yaml
 ```
 
 Get pods - you'll see the containers creating and then running - first the cert-generator
@@ -474,7 +474,7 @@ It might be better to add `--wait`, which will wait until all resources are clea
 $ eksctl delete cluster -f eks-cluster-config.yaml --wait
 
 # using our example
-$ eksctl delete cluster -f ./examples/storage/aws/eksctl-config.yaml --wait
+$ eksctl delete cluster -f ./examples/storage/aws/oidc/eksctl-config.yaml --wait
 ```
 
 TODO try again with fixed trust (looks wrong)

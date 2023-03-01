@@ -813,11 +813,43 @@ func schema__api_v1alpha1__MiniClusterVolume(ref common.ReferenceCallback) commo
 							},
 						},
 					},
+					"attributes": {
+						SchemaProps: spec.SchemaProps{
+							Description: "Optional volume attributes",
+							Type:        []string{"object"},
+							AdditionalProperties: &spec.SchemaOrBool{
+								Allows: true,
+								Schema: &spec.Schema{
+									SchemaProps: spec.SchemaProps{
+										Default: "",
+										Type:    []string{"string"},
+										Format:  "",
+									},
+								},
+							},
+						},
+					},
+					"volumeHandle": {
+						SchemaProps: spec.SchemaProps{
+							Description: "Volume handle, falls back to storage class name if not defined",
+							Default:     "",
+							Type:        []string{"string"},
+							Format:      "",
+						},
+					},
 					"storageClass": {
 						SchemaProps: spec.SchemaProps{
 							Default: "hostpath",
 							Type:    []string{"string"},
 							Format:  "",
+						},
+					},
+					"driver": {
+						SchemaProps: spec.SchemaProps{
+							Description: "Storage driver, e.g., gcs.csi.ofek.dev Only needed if not using hostpath",
+							Default:     "",
+							Type:        []string{"string"},
+							Format:      "",
 						},
 					},
 					"secret": {

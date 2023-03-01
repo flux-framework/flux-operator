@@ -331,6 +331,10 @@ spec:
                     storageClass:
                       default: hostpath
                       type: string
+                    volumeHandle:
+                      description: Volume handle, falls back to storage class name
+                        if not defined
+                      type: string
                   required:
                   - path
                   type: object

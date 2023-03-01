@@ -170,7 +170,7 @@ func (r *MiniClusterReconciler) createPersistentVolume(
 
 		// VolumeHandle defaults to storage class name
 		// unless it is explicitly different!
-		volumeHandle := volume.StorageClassName
+		volumeHandle := volume.StorageClass
 		if volume.VolumeHandle != "" {
 			volumeHandle = volume.VolumeHandle
 		}
@@ -188,11 +188,11 @@ func (r *MiniClusterReconciler) createPersistentVolume(
 				},
 				ControllerPublishSecretRef: &corev1.SecretReference{
 					Namespace: volume.SecretNamespace,
-					Name:      volume.SecretReference,
+					Name:      volume.Secret,
 				},
 				NodeStageSecretRef: &corev1.SecretReference{
 					Namespace: volume.SecretNamespace,
-					Name:      volume.SecretReference,
+					Name:      volume.Secret,
 				},
 				VolumeAttributes: volume.Attributes,
 			},
