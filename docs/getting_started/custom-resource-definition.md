@@ -115,6 +115,19 @@ volumes:
       type: "local"
 ```
 
+#### delete
+
+By default, we will cleanup the persistent volume. To not do this (e.g., for a more permanent mount) set delete
+to false:
+
+```yaml
+volumes:
+  myvolume:
+    path: /full/path/to/volume
+    class: csi-gcs
+    delete: false
+```
+
 #### driver
 
 If you are using anything aside from hostpath, you'll need a reference to a storage driver (usually a plugin)

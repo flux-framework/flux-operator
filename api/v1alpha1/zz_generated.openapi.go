@@ -852,6 +852,14 @@ func schema__api_v1alpha1__MiniClusterVolume(ref common.ReferenceCallback) commo
 							Format:      "",
 						},
 					},
+					"delete": {
+						SchemaProps: spec.SchemaProps{
+							Description: "Delete the persistent volume on cleanup",
+							Default:     true,
+							Type:        []string{"boolean"},
+							Format:      "",
+						},
+					},
 					"secret": {
 						SchemaProps: spec.SchemaProps{
 							Description: "Secret reference in Kubernetes with service account role",

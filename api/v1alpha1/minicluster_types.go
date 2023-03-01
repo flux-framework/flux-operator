@@ -199,6 +199,12 @@ type MiniClusterVolume struct {
 	// +optional
 	Driver string `json:"driver"`
 
+	// Delete the persistent volume on cleanup
+	// +kubebuilder:default=true
+	// +default=true
+	// +optional
+	Delete bool `json:"delete,omitempty"`
+
 	// Secret reference in Kubernetes with service account role
 	// +optional
 	Secret string `json:"secret"`

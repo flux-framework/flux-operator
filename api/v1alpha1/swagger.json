@@ -449,6 +449,11 @@
           "type": "string",
           "default": "5Gi"
         },
+        "delete": {
+          "description": "Delete the persistent volume on cleanup",
+          "type": "boolean",
+          "default": true
+        },
         "driver": {
           "description": "Storage driver, e.g., gcs.csi.ofek.dev Only needed if not using hostpath",
           "type": "string",

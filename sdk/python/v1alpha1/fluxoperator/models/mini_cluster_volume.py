@@ -36,6 +36,7 @@ class MiniClusterVolume(object):
         'annotations': 'dict(str, str)',
         'attributes': 'dict(str, str)',
         'capacity': 'str',
+        'delete': 'bool',
         'driver': 'str',
         'labels': 'dict(str, str)',
         'path': 'str',
@@ -49,6 +50,7 @@ class MiniClusterVolume(object):
         'annotations': 'annotations',
         'attributes': 'attributes',
         'capacity': 'capacity',
+        'delete': 'delete',
         'driver': 'driver',
         'labels': 'labels',
         'path': 'path',
@@ -58,7 +60,7 @@ class MiniClusterVolume(object):
         'volume_handle': 'volumeHandle'
     }
 
-    def __init__(self, annotations=None, attributes=None, capacity='5Gi', driver='', labels=None, path='', secret='', secret_namespace='default', storage_class='hostpath', volume_handle='', local_vars_configuration=None):  # noqa: E501
+    def __init__(self, annotations=None, attributes=None, capacity='5Gi', delete=True, driver='', labels=None, path='', secret='', secret_namespace='default', storage_class='hostpath', volume_handle='', local_vars_configuration=None):  # noqa: E501
         """MiniClusterVolume - a model defined in OpenAPI"""  # noqa: E501
         if local_vars_configuration is None:
             local_vars_configuration = Configuration.get_default_copy()
@@ -67,6 +69,7 @@ class MiniClusterVolume(object):
         self._annotations = None
         self._attributes = None
         self._capacity = None
+        self._delete = None
         self._driver = None
         self._labels = None
         self._path = None
@@ -82,6 +85,8 @@ class MiniClusterVolume(object):
             self.attributes = attributes
         if capacity is not None:
             self.capacity = capacity
+        if delete is not None:
+            self.delete = delete
         if driver is not None:
             self.driver = driver
         if labels is not None:
@@ -164,6 +169,29 @@ class MiniClusterVolume(object):
         """
 
         self._capacity = capacity
+
+    @property
+    def delete(self):
+        """Gets the delete of this MiniClusterVolume.  # noqa: E501
+
+        Delete the persistent volume on cleanup  # noqa: E501
+
+        :return: The delete of this MiniClusterVolume.  # noqa: E501
+        :rtype: bool
+        """
+        return self._delete
+
+    @delete.setter
+    def delete(self, delete):
+        """Sets the delete of this MiniClusterVolume.
+
+        Delete the persistent volume on cleanup  # noqa: E501
+
+        :param delete: The delete of this MiniClusterVolume.  # noqa: E501
+        :type delete: bool
+        """
+
+        self._delete = delete
 
     @property
     def driver(self):

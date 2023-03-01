@@ -269,7 +269,7 @@ $ tree /tmp/workflow
 We can then use the `aws` command line client to make a bucket "mb" and upload to it.
 
 ```bash
-$ aws s3 mb s3://flux-operator-storage --region us-east-1
+$ aws s3 mb s3://flux-operator-bucket --region us-east-1
 ```
 
 Sanity check that listing buckets shows your bucket:
@@ -285,14 +285,34 @@ Now copy the entire workflow to a faux "subdirectory" there:
 
 ```bash
 # Present working directory 
-$ aws s3 cp --recursive . s3://flux-operator-storage/snakemake-workflow --exclude ".git*"
+$ aws s3 cp --recursive . s3://flux-operator-bucket/snakemake-workflow --exclude ".git*"
 ```
 
 Sanity check again by listing that path in the bucket
 
 ```bash
-$ aws s3 ls s3://flux-operator-storage/snakemake-workflow/
+$ aws s3 ls s3://flux-operator-bucket/snakemake-workflow/
 ```
+##### S3 Storage Policy
+
+For our testing case, we made the public and created the following Permission -> Bucket policy:
+
+```console
+{
+  "Version":"2012-10-17",
+  "Statement":[
+    {
+      "Sid":"AddPerm",
+      "Effect":"Allow",
+      "Principal": "*",
+      "Action": "s3:*",
+      "Resource":["arn:aws:s3:::my-bucket-name/*"]
+    }
+  ]
+}
+```
+
+You should obviously create a policy that would be associated with your user or credential (IAM) account.
 
 #### Prepare the OIDC Provider for EKS
 
@@ -309,7 +329,7 @@ Get the identifier `EXAMPLEXXXXXXXXXXXXXXX` and check if you've already done thi
 $ aws iam list-open-id-connect-providers | grep EXAMPLED539D4633E53DE1B7
 ```
 
-If there is new output, open up the following section to  create the OIDC provider:
+If there is new output, open up the following section to create the OIDC provider:
 
 <details>
 
@@ -318,12 +338,14 @@ If there is new output, open up the following section to  create the OIDC provid
 ```bash
 $ eksctl utils associate-iam-oidc-provider --cluster flux-operator --approve
 ```
+
 ```console
 2023-02-19 19:56:55 [ℹ]  will create IAM Open ID Connect provider for cluster "flux-operator" in "us-east-1"
 2023-02-19 19:56:56 [✔]  created IAM Open ID Connect provider for cluster "flux-operator" in "us-east-1"
 ```
 
-Then create a `policy.json` with your bucket name (you only need to do this once):
+Then create a `policy.json` with your bucket name (you only need to do this once). The s3* is important
+so we have permissions to mount, read, write, etc.
 
 ```json
 {
@@ -331,10 +353,8 @@ Then create a `policy.json` with your bucket name (you only need to do this once
     "Statement": [
         {
             "Effect": "Allow",
-            "Action": [
-                "s3:*",
-            ],
-            "Resourceju": [
+            "Action": "s3:*",
+            "Resource": [
                 "arn:aws:s3:::<your-bucket-name>"
             ]
         }
@@ -345,88 +365,114 @@ Then create a `policy.json` with your bucket name (you only need to do this once
 Apply the policy (here is with the example and bucket we provide):
 
 ```bash
-$ aws iam create-policy --policy-name kubernetes-s3-access --policy-document file://./examples/storage/aws/policy.json
+$ aws iam create-policy --policy-name kubernetes-s3-access --policy-document file://./examples/storage/aws/oidc/policy.json
 ```
-
-After you've created it, keep track of the ARN you see in the json output!
-Next, create these environment variables for your AWS account and OIDC:
-
-```bash
-ACCOUNT_ID=$(aws sts get-caller-identity --query "Account" --output text)
-OIDC_PROVIDER=$(aws eks describe-cluster --name flux-operator --query "cluster.identity.oidc.issuer" --output text | sed -e "s/^https:\/\///")
-```
-
-Using these variables, you can generate a `trust.json`. Notice that you need to set the namespace you expect
-to be accessing the bucket from (e.g., my-namespace)
-
-```bash
-read -r -d '' TRUST_RELATIONSHIP <<EOF
-{
-  "Version": "2012-10-17",
-  "Statement": [
-    {
-      "Effect": "Allow",
-      "Principal": {
-        "Federated": "arn:aws:iam::${ACCOUNT_ID}:oidc-provider/${OIDC_PROVIDER}"
-      },
-      "Action": "sts:AssumeRoleWithWebIdentity",
-      "Condition": {
-        "StringEquals": {
-          "${OIDC_PROVIDER}:sub": "system:serviceaccount:otomount:s3-otomount"
-        }
-      }
-    }
-  ]
-}
-EOF
-echo "${TRUST_RELATIONSHIP}" > trust.json
-```
-
-Note that the default service account for the oidc provider is "s3-otomount" and the namespace is "otomount."
-Then create the role:
-
-```bash
-$ aws iam create-role --role-name eks-otomounter-role --assume-role-policy-document file://trust.json --description "Mount s3 bucket to EKS"
-```
-
-
 </details>
 
-Ensure that the region your bucket is in matches the resources you are interacting with above!
+Once you have the policy, create the otomount namespace:
+
+```bash
+$ kubectl create namespace otomount
+```
+
+And then use eksctl to create the iam service account:
+
+```bash
+$ eksctl create iamserviceaccount --name s3-mounter --namespace otomount --cluster flux-operator \
+    --role-name "eks-otomounter-role" --attach-policy-arn arn:aws:iam::633731392008:policy/kubernetes-s3-access --approve
+```
+```console
+2023-03-01 13:32:53 [ℹ]  1 iamserviceaccount (otomount/s3-mounter) was included (based on the include/exclude rules)
+2023-03-01 13:32:53 [!]  serviceaccounts that exist in Kubernetes will be excluded, use --override-existing-serviceaccounts to override
+2023-03-01 13:32:53 [ℹ]  1 task: { 
+    2 sequential sub-tasks: { 
+        create IAM role for serviceaccount "otomount/s3-mounter",
+        create serviceaccount "otomount/s3-mounter",
+    } }2023-03-01 13:32:53 [ℹ]  building iamserviceaccount stack "eksctl-flux-operator-addon-iamserviceaccount-otomount-s3-mounter"
+2023-03-01 13:32:53 [ℹ]  deploying stack "eksctl-flux-operator-addon-iamserviceaccount-otomount-s3-mounter"
+2023-03-01 13:32:54 [ℹ]  waiting for CloudFormation stack "eksctl-flux-operator-addon-iamserviceaccount-otomount-s3-mounter"
+2023-03-01 13:33:24 [ℹ]  waiting for CloudFormation stack "eksctl-flux-operator-addon-iamserviceaccount-otomount-s3-mounter"
+2023-03-01 13:33:24 [ℹ]  created serviceaccount "otomount/s3-mounter"
+```
+
+Check to make sure it worked:
+
+```bash
+$ aws iam get-role --role-name eks-otomounter-role --query Role.AssumeRolePolicyDocument
+```
+
+And sanity check the attached role policies:
+
+```bash
+$ aws iam list-attached-role-policies --role-name eks-otomounter-role --query AttachedPolicies[].PolicyArn --output text
+```
+```console
+arn:aws:iam::633731392008:policy/kubernetes-s3-access
+```
+
+Save that to a variable
+
+```bash
+export policy_arn=arn:aws:iam::633731392008:policy/kubernetes-s3-access
+```
+
+Look at it again, to sanity check the annotation of the arn:
+
+```bash
+$ aws iam get-policy --policy-arn $policy_arn
+$ aws iam get-policy-version --policy-arn $policy_arn --version-id v1
+```
+
+Finally, ensure the role shows up alongside the service account:
+
+```bash
+$ kubectl describe serviceaccount s3-mounter -n otomount
+```
+Also ensure that the region your bucket is in matches the resources you are interacting with above!
+At this point you have the correct service account and policy, and next need to create
+a daemonset that will create the mount using that service account!
 
 #### Install the S3 mounter
 
-Once the role is created, use helm to install the mounter to your cluster. This mounter uses goofyfs.
+This storage drive can be installed with [helm](https://otomato-gh.github.io/s3-mounter), but for reproducibility we will
+install directly from yaml (that was generated via helm). The difference here is that we have already created
+the service account. In case you need to see how we generated the original oidc.yaml:
 
 ```bash
-$ helm repo add otomount https://otomato-gh.github.io/s3-mounter
+$ helm template s3-mounter otomount/s3-otomount  --namespace otomount --set bucketName="flux-operator-bucket" \
+   --set iamRoleARN=arn:aws:iam::633731392008:policy/kubernetes-s3-access --create-namespace > ./examples/aws/oidc/oidc.yaml
 ```
 
-These are the values we want to set:
+To install the mounter pods (that are going to run `goofys`), we create a daemon set that will do the work as follows:
 
 ```bash
-$ helm show values otomount/s3-otomount
-```
-```console
-bucketName: my-bucket
-iamRoleARN: my-role
-mountPath: /var/s3
-hostPath: /mnt/s3data
+$ kubectl apply -f ./examples/storage/aws/oidc/oidc.yaml
 ```
 
-Set them and install to your cluster!
+A few notes about this file:
+
+ - the mount permissions assume that root (uid/gid 0) is going to run the workflow, `runFluxAsRoot` is set to true
+ - the volume needs to be mounted in the pod under `/tmp/*` otherwise you won't be able to cleanup
+ - the goofys flags are what we used, but it is not clear if all are needed.
+
+Check the pods are running:
 
 ```bash
-$ helm upgrade --install s3-mounter otomount/s3-otomount  --namespace otomount --set bucketName=<your-bucket-name> --set iamRoleARN=<your-role-arn> --create-namespace
+$ kubectl get -n otomount pods
 ```
 
+You can look at their logs to debug any issues with the mount or permissions. You should
+ensure they are running with no obvious error before continuing!
 Then (assuming you've already installed the operator and created the flux-operator namespace):
 
 ```bash
 $ kubectl create -f ./examples/storage/aws/oidc/minicluster.yaml
 ```
 
-Get pods - you'll see the containers creating and then running - first the cert-generator
+The biggest factor of whether your mount will work (with permission to read and write)
+is determined by the S3 storage policy and rules. For testing, we were irresponsible
+and made the bucket public, but you likely don't want to do that. Next,
+get pods - you'll see the containers creating and then running - first the cert-generator
 and then the MiniCluster pods:
 
 ```bash
@@ -439,44 +485,46 @@ flux-sample-1-th589          0/1     ContainerCreating   0          100s
 flux-sample-cert-generator   0/1     Completed           0          100s
 ```
 
-You can get the output file in the terminal (and don't worry about saving it too much, as it will save to storage):
+You can get the output file in the terminal (and don't worry about saving it too much, as it will save to storage).
+By default cleanup is set to False so you shouldn't lose the pod to get the pods for it.
 
 ```bash
 $ kubectl get -n flux-operator flux-sample-0-f5znt
 ```
 
+Finally, note that with snakemake, once the output file in plots, called_reads and mapped_reads exist,
+if you run it a second time, snakemake will determine there isn't anything to do.
+
 ## Clean up
 
 Make sure you clean everything up!
+Detach roles:
+
+```bash
+$ eksctl delete iamserviceaccount --name s3-mounter --namespace otomount --cluster flux-operator
+```
+
+Delete the flux operator in some way:
 
 ```bash
 $ make undeploy
-```
-
-And then:
-
-```bash
-$ eksctl delete cluster -f eksctl-config.yaml
+$ kubectl delete -f examples/dist/flux-operator-dev.yaml
+$ kubectl delete -f examples/dist/flux-operator.yaml
 ```
 
 If you created roles, you probably want to clean these up too:
 
 ```bash
 $ aws iam delete-role --role-name eks-otomounter-role
-$ aws iam delete-policy --policy-arn arn:aws:iam::xxxxxxxx:policy/kubernetes-s3-access
+$ aws iam delete-policy --policy-arn arn:aws:iam::633731392008:policy/kubernetes-s3-access
 $ aws iam delete-open-id-connect-provider --open-id-connect-provider-arn "arn:aws:iam::633731392008:oidc-provider/oidc.eks.us-east-1.amazonaws.com/id/xxxxxxxxxxxxxx"
 ```
 
-I had issues when I didn't delete (and came back to try again later) so this is strongly recommended.
-It might be better to add `--wait`, which will wait until all resources are cleaned up:
+And then delete your cluster (e.g., one of the following)
 
 ```bash
-$ eksctl delete cluster -f eks-cluster-config.yaml --wait
-
-# using our example
-$ eksctl delete cluster -f ./examples/storage/aws/oidc/eksctl-config.yaml --wait
+$ eksctl delete cluster -f examples/storage/aws/oidc/eksctl-config.yaml --wait
+$ eksctl delete cluster -f eksctl-config.yaml --wait
 ```
-
-TODO try again with fixed trust (looks wrong)
 
 Either way, it's good to check the web console too to ensure you didn't miss anything.

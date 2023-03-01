@@ -8,6 +8,7 @@ Name | Type | Description | Notes
 **annotations** | **dict(str, str)** | Annotations for persistent volume claim | [optional] 
 **attributes** | **dict(str, str)** | Optional volume attributes | [optional] 
 **capacity** | **str** | Capacity (string) for PVC (storage request) to create PV | [optional] [default to '5Gi']
+**delete** | **bool** | Delete the persistent volume on cleanup | [optional] [default to True]
 **driver** | **str** | Storage driver, e.g., gcs.csi.ofek.dev Only needed if not using hostpath | [optional] [default to '']
 **labels** | **dict(str, str)** |  | [optional] 
 **path** | **str** |  | [default to '']

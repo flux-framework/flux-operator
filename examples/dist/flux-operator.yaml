@@ -310,6 +310,10 @@ spec:
                       description: Capacity (string) for PVC (storage request) to
                         create PV
                       type: string
+                    delete:
+                      default: true
+                      description: Delete the persistent volume on cleanup
+                      type: boolean
                     driver:
                       description: Storage driver, e.g., gcs.csi.ofek.dev Only needed
                         if not using hostpath

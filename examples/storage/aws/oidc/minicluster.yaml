@@ -9,7 +9,8 @@ spec:
   size: 2
 
   # Cleanup the storage volume (PVC and PV) after run
-  cleanup: true
+  # Leave this to false so you can see the log in the pod output
+  cleanup: false
 
   # show all operator output and test run output
   logging:
@@ -20,9 +21,9 @@ spec:
   volumes:
     data:
       storageClass: hostpath
-      # This was a path/variable in the helm chart
       # this is where the hostpath will mount storage
-      path: /mnt/s3data
+      # This MUST be in /tmp root to delete correctly
+      path: /tmp/data
 
   # This is a list because a pod can support multiple containers
   containers:
@@ -37,7 +38,7 @@ spec:
         data:
           # This is where we will bind storage
           # E.g., /mnt/s3data is bound to /var/s3 or /mnt/s3data:/var/s3
-          path: /var/s3:shared
+          path: /var/s3
           # readOnly defaults to false
                 
       # This should be the directory with the Snakefile
