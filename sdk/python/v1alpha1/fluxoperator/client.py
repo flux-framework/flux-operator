@@ -49,22 +49,40 @@ class FluxOperator:
             print()
             yield url
 
-    def wait_pods(self):
+    def wait_termination_pods(self):
         """
-        Wait for all pods to be running or completed
+        Ensure the namespace of pods is cleaned up before contining.
         """
+        ready = False
+        while not ready:
+            pod_list = self.core_v1.list_namespaced_pod(self.namespace)
+            if len(pod_list.items) == 0:
+                ready = True
+                break
+            time.sleep(2)
+        print(f'All pods are terminated.')
+
+    def wait_pods(self, states=None):
+        """
+        Wait for all pods to be running or completed (or in a specific set of states)
+        """
+        states = states or ["Running", "Completed"]
+        if not isinstance(states, list):
+            states = [states]
+
         ready = False
         while not ready:
             pod_list = self.core_v1.list_namespaced_pod(self.namespace)
             ready = False
             for pod in pod_list.items:
-                if pod.status.phase not in ["Running", "Completed"]:
+                if pod.status.phase not in states:
                     time.sleep(2)
                     continue
             # If we get down here, pods are ready
             ready = True
 
-        print('All pods are "Running" or "Completed"')
+        states = '" or "'.join(states)
+        print(f'All pods are in states "{states}"')
 
     def get_broker_pod(self):
         """

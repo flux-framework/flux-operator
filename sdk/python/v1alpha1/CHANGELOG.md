@@ -14,5 +14,7 @@ and **Merged pull requests**. Critical items to know are:
 The versions coincide with releases on pip. Only major versions will be released as tags on Github.
 
 ## [0.0.x](https://github.com/flux-framework/flux-operator/tree/main/sdk/python/v2alpha1) (0.0.x)
- - Addition of FluxOperator client to wait for pods and port forward
+ - Support for operator client wait_pods_terminated (0.0.12)
+ - Bug with default args not being provided fixed (0.0.11)
+ - Addition of FluxOperator client to wait for pods and port forward (0.0.1)
  - Skeleton creation of project (0.0.0)
