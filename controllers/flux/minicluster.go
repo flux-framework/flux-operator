@@ -139,20 +139,24 @@ func (r *MiniClusterReconciler) cleanupPodsStorage(
 	// The job deletion should handle pods, next delete pvc and pv per each volume
 	// Must be deleted in that order, per internet advice :)
 	for volumeName := range cluster.Spec.Volumes {
+		volumeSpec := cluster.Spec.Volumes[volumeName]
 
 		claimName := fmt.Sprintf("%s-claim", volumeName)
 
-		// Only delete if we retrieve without error
+		// Only delete if we retrieve without error and user has requested
 		claim, err := r.getExistingPersistentVolumeClaim(ctx, cluster, claimName)
 		if err != nil {
 			r.log.Info("Volume Claim", "Deletion", claim.Name)
 			r.Client.Delete(ctx, claim)
 		}
 
-		pv, err := r.getExistingPersistentVolume(ctx, cluster, volumeName)
-		if err != nil {
-			r.log.Info("Volume", "Deletion", pv.Name)
-			r.Client.Delete(ctx, pv)
+		// Different request to delete
+		if volumeSpec.Delete {
+			pv, err := r.getExistingPersistentVolume(ctx, cluster, volumeName)
+			if err != nil {
+				r.log.Info("Volume", "Deletion", pv.Name)
+				r.Client.Delete(ctx, pv)
+			}
 		}
 	}
 	return ctrl.Result{Requeue: false}, nil

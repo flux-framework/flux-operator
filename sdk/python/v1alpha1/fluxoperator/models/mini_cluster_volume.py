@@ -34,43 +34,61 @@ class MiniClusterVolume(object):
     """
     openapi_types = {
         'annotations': 'dict(str, str)',
+        'attributes': 'dict(str, str)',
         'capacity': 'str',
+        'delete': 'bool',
+        'driver': 'str',
         'labels': 'dict(str, str)',
         'path': 'str',
         'secret': 'str',
         'secret_namespace': 'str',
-        'storage_class': 'str'
+        'storage_class': 'str',
+        'volume_handle': 'str'
     }
 
     attribute_map = {
         'annotations': 'annotations',
+        'attributes': 'attributes',
         'capacity': 'capacity',
+        'delete': 'delete',
+        'driver': 'driver',
         'labels': 'labels',
         'path': 'path',
         'secret': 'secret',
         'secret_namespace': 'secretNamespace',
-        'storage_class': 'storageClass'
+        'storage_class': 'storageClass',
+        'volume_handle': 'volumeHandle'
     }
 
-    def __init__(self, annotations=None, capacity='5Gi', labels=None, path='', secret='', secret_namespace='default', storage_class='hostpath', local_vars_configuration=None):  # noqa: E501
+    def __init__(self, annotations=None, attributes=None, capacity='5Gi', delete=True, driver='', labels=None, path='', secret='', secret_namespace='default', storage_class='hostpath', volume_handle='', local_vars_configuration=None):  # noqa: E501
         """MiniClusterVolume - a model defined in OpenAPI"""  # noqa: E501
         if local_vars_configuration is None:
             local_vars_configuration = Configuration.get_default_copy()
         self.local_vars_configuration = local_vars_configuration
 
         self._annotations = None
+        self._attributes = None
         self._capacity = None
+        self._delete = None
+        self._driver = None
         self._labels = None
         self._path = None
         self._secret = None
         self._secret_namespace = None
         self._storage_class = None
+        self._volume_handle = None
         self.discriminator = None
 
         if annotations is not None:
             self.annotations = annotations
+        if attributes is not None:
+            self.attributes = attributes
         if capacity is not None:
             self.capacity = capacity
+        if delete is not None:
+            self.delete = delete
+        if driver is not None:
+            self.driver = driver
         if labels is not None:
             self.labels = labels
         self.path = path
@@ -80,6 +98,8 @@ class MiniClusterVolume(object):
             self.secret_namespace = secret_namespace
         if storage_class is not None:
             self.storage_class = storage_class
+        if volume_handle is not None:
+            self.volume_handle = volume_handle
 
     @property
     def annotations(self):
@@ -105,6 +125,29 @@ class MiniClusterVolume(object):
         self._annotations = annotations
 
     @property
+    def attributes(self):
+        """Gets the attributes of this MiniClusterVolume.  # noqa: E501
+
+        Optional volume attributes  # noqa: E501
+
+        :return: The attributes of this MiniClusterVolume.  # noqa: E501
+        :rtype: dict(str, str)
+        """
+        return self._attributes
+
+    @attributes.setter
+    def attributes(self, attributes):
+        """Sets the attributes of this MiniClusterVolume.
+
+        Optional volume attributes  # noqa: E501
+
+        :param attributes: The attributes of this MiniClusterVolume.  # noqa: E501
+        :type attributes: dict(str, str)
+        """
+
+        self._attributes = attributes
+
+    @property
     def capacity(self):
         """Gets the capacity of this MiniClusterVolume.  # noqa: E501
 
@@ -126,6 +169,52 @@ class MiniClusterVolume(object):
         """
 
         self._capacity = capacity
+
+    @property
+    def delete(self):
+        """Gets the delete of this MiniClusterVolume.  # noqa: E501
+
+        Delete the persistent volume on cleanup  # noqa: E501
+
+        :return: The delete of this MiniClusterVolume.  # noqa: E501
+        :rtype: bool
+        """
+        return self._delete
+
+    @delete.setter
+    def delete(self, delete):
+        """Sets the delete of this MiniClusterVolume.
+
+        Delete the persistent volume on cleanup  # noqa: E501
+
+        :param delete: The delete of this MiniClusterVolume.  # noqa: E501
+        :type delete: bool
+        """
+
+        self._delete = delete
+
+    @property
+    def driver(self):
+        """Gets the driver of this MiniClusterVolume.  # noqa: E501
+
+        Storage driver, e.g., gcs.csi.ofek.dev Only needed if not using hostpath  # noqa: E501
+
+        :return: The driver of this MiniClusterVolume.  # noqa: E501
+        :rtype: str
+        """
+        return self._driver
+
+    @driver.setter
+    def driver(self, driver):
+        """Sets the driver of this MiniClusterVolume.
+
+        Storage driver, e.g., gcs.csi.ofek.dev Only needed if not using hostpath  # noqa: E501
+
+        :param driver: The driver of this MiniClusterVolume.  # noqa: E501
+        :type driver: str
+        """
+
+        self._driver = driver
 
     @property
     def labels(self):
@@ -237,6 +326,29 @@ class MiniClusterVolume(object):
         """
 
         self._storage_class = storage_class
+
+    @property
+    def volume_handle(self):
+        """Gets the volume_handle of this MiniClusterVolume.  # noqa: E501
+
+        Volume handle, falls back to storage class name if not defined  # noqa: E501
+
+        :return: The volume_handle of this MiniClusterVolume.  # noqa: E501
+        :rtype: str
+        """
+        return self._volume_handle
+
+    @volume_handle.setter
+    def volume_handle(self, volume_handle):
+        """Sets the volume_handle of this MiniClusterVolume.
+
+        Volume handle, falls back to storage class name if not defined  # noqa: E501
+
+        :param volume_handle: The volume_handle of this MiniClusterVolume.  # noqa: E501
+        :type volume_handle: str
+        """
+
+        self._volume_handle = volume_handle
 
     def to_dict(self, serialize=False):
         """Returns the model properties as a dict"""

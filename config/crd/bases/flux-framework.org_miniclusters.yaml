@@ -294,10 +294,23 @@ spec:
                         type: string
                       description: Annotations for persistent volume claim
                       type: object
+                    attributes:
+                      additionalProperties:
+                        type: string
+                      description: Optional volume attributes
+                      type: object
                     capacity:
                       default: 5Gi
                       description: Capacity (string) for PVC (storage request) to
                         create PV
+                      type: string
+                    delete:
+                      default: true
+                      description: Delete the persistent volume on cleanup
+                      type: boolean
+                    driver:
+                      description: Storage driver, e.g., gcs.csi.ofek.dev Only needed
+                        if not using hostpath
                       type: string
                     labels:
                       additionalProperties:
@@ -315,6 +328,10 @@ spec:
                       type: string
                     storageClass:
                       default: hostpath
+                      type: string
+                    volumeHandle:
+                      description: Volume handle, falls back to storage class name
+                        if not defined
                       type: string
                   required:
                   - path

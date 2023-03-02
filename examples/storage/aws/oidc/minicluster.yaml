@@ -9,7 +9,8 @@ spec:
   size: 2
 
   # Cleanup the storage volume (PVC and PV) after run
-  cleanup: true
+  # Leave this to false so you can see the log in the pod output
+  cleanup: false
 
   # show all operator output and test run output
   logging:
@@ -19,23 +20,15 @@ spec:
   # This is a type of storage that will use Google Storage
   volumes:
     data:
-      storageClass: csi-gcs
-      driver: gcs.csi.ofek.dev
+      storageClass: hostpath
+      # this is where the hostpath will mount storage
+      # This MUST be in /tmp root to delete correctly
       path: /tmp/data
-      secret: csi-gcs-secret
-      capacity: 25Gi
-
-      # This should coincide with the location of your bucket and project
-      # The storage bucket name is provided with the secret too (supposedly!)
-      annotations:
-        gcs.csi.ofek.dev/location: us-central1
-        gcs.csi.ofek.dev/project-id: dinodev
-        gcs.csi.ofek.dev/bucket: flux-operator-storage
 
   # This is a list because a pod can support multiple containers
   containers:
 
-      # This image has snakemake installed, and although it has data, we will
+      # This image has snakemake installed, and although it has data, we will 
       # provide it as a volume to the container to demonstrate that (and share it)
     - image: ghcr.io/rse-ops/atacseq:app-latest
 
@@ -44,11 +37,12 @@ spec:
       volumes:
         data:
           # This is where we will bind storage
-          path: /workflow
+          # E.g., /mnt/s3data is bound to /var/s3 or /mnt/s3data:/var/s3
+          path: /var/s3
           # readOnly defaults to false
-
+                
       # This should be the directory with the Snakefile
-      workingDir: /workflow/snakemake-workflow
+      workingDir: /var/s3/snakemake-workflow
       command: snakemake --cores 1 --flux
 
       # Commands just for workers / broker

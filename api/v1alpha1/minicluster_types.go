@@ -180,10 +180,30 @@ type MiniClusterVolume struct {
 	// +optional
 	Annotations map[string]string `json:"annotations"`
 
+	// Optional volume attributes
+	// +optional
+	Attributes map[string]string `json:"attributes"`
+
+	// Volume handle, falls back to storage class name
+	// if not defined
+	// +optional
+	VolumeHandle string `json:"volumeHandle"`
+
 	// +kubebuilder:default="hostpath"
 	// +default="hostpath"
 	// +optional
 	StorageClass string `json:"storageClass,omitempty"`
+
+	// Storage driver, e.g., gcs.csi.ofek.dev
+	// Only needed if not using hostpath
+	// +optional
+	Driver string `json:"driver"`
+
+	// Delete the persistent volume on cleanup
+	// +kubebuilder:default=true
+	// +default=true
+	// +optional
+	Delete bool `json:"delete,omitempty"`
 
 	// Secret reference in Kubernetes with service account role
 	// +optional
