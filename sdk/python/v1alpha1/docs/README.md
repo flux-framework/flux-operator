@@ -13,7 +13,7 @@ Python >= 3.6
 You can install directly from the git subfolder like:
 
 ```bash
-pip install git+https://github.com/flux-framework/flux-operator.git#egg=subdir&subdirectory=python-sdk/v1alpha1
+pip install git+https://github.com/flux-framework/flux-operator.git#egg=subdir&subdirectory=sdk/python/v1alpha1
 ```
 
 or install from pip:
@@ -56,21 +56,21 @@ from pprint import pprint
 
 ## Documentation For Models
 
- - [ApiV1alpha1Commands](docs/ApiV1alpha1Commands.md)
- - [ApiV1alpha1ContainerResources](docs/ApiV1alpha1ContainerResources.md)
- - [ApiV1alpha1ContainerVolume](docs/ApiV1alpha1ContainerVolume.md)
- - [ApiV1alpha1FluxRestful](docs/ApiV1alpha1FluxRestful.md)
- - [ApiV1alpha1FluxUser](docs/ApiV1alpha1FluxUser.md)
- - [ApiV1alpha1LifeCycle](docs/ApiV1alpha1LifeCycle.md)
- - [ApiV1alpha1LoggingSpec](docs/ApiV1alpha1LoggingSpec.md)
- - [ApiV1alpha1MiniCluster](docs/ApiV1alpha1MiniCluster.md)
- - [ApiV1alpha1MiniClusterContainer](docs/ApiV1alpha1MiniClusterContainer.md)
- - [ApiV1alpha1MiniClusterList](docs/ApiV1alpha1MiniClusterList.md)
- - [ApiV1alpha1MiniClusterSpec](docs/ApiV1alpha1MiniClusterSpec.md)
- - [ApiV1alpha1MiniClusterStatus](docs/ApiV1alpha1MiniClusterStatus.md)
- - [ApiV1alpha1MiniClusterUser](docs/ApiV1alpha1MiniClusterUser.md)
- - [ApiV1alpha1MiniClusterVolume](docs/ApiV1alpha1MiniClusterVolume.md)
- - [ApiV1alpha1PodSpec](docs/ApiV1alpha1PodSpec.md)
+ - [Commands](Commands.md)
+ - [ContainerResources](dContainerResources.md)
+ - [ContainerVolume](ContainerVolume.md)
+ - [FluxRestful](FluxRestful.md)
+ - [FluxUser](FluxUser.md)
+ - [LifeCycle](LifeCycle.md)
+ - [LoggingSpec](LoggingSpec.md)
+ - [MiniCluster](MiniCluster.md)
+ - [MiniClusterContainer](MiniClusterContainer.md)
+ - [MiniClusterList](MiniClusterList.md)
+ - [MiniClusterSpec](MiniClusterSpec.md)
+ - [MiniClusterStatus](MiniClusterStatus.md)
+ - [MiniClusterUser](MiniClusterUser.md)
+ - [MiniClusterVolume](MiniClusterVolume.md)
+ - [PodSpec](PodSpec.md)
 
 
 ## Documentation For Authorization
