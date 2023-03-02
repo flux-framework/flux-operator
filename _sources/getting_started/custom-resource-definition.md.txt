@@ -115,6 +115,58 @@ volumes:
       type: "local"
 ```
 
+#### delete
+
+By default, we will cleanup the persistent volume. To not do this (e.g., for a more permanent mount) set delete
+to false:
+
+```yaml
+volumes:
+  myvolume:
+    path: /full/path/to/volume
+    storageClass: csi-gcs
+    delete: false
+```
+
+#### driver
+
+If you are using anything aside from hostpath, you'll need a reference to a storage driver (usually a plugin)
+you've installed separately. Here is an example for Google Cloud storage:
+
+```yaml
+volumes:
+  myvolume:
+    path: /full/path/to/volume
+    storageClass: csi-gcs
+    driver: gcs.csi.ofek.dev
+```
+
+#### volumeHandle
+
+If your volume handle differs from your storage class name, you can define it:
+
+```yaml
+volumes:
+  myvolume:
+    path: /full/path/to/volume
+    storageClass: csi-gcs
+    driver: gcs.csi.ofek.dev
+    volumeName: manualbucket/path
+```
+
+#### attributes
+
+If your volume has attributes, you can add them too:
+
+```yaml
+volumes:
+  myvolume:
+    attributes:
+    mounter: geesefs
+    capacity: 25Gi
+```
+
+
 #### request storage size
 
 By default, a capacity request is "5Gi", and we only do this because the field is required. However, keep in mind

@@ -535,6 +535,34 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#delete" class="md-nav__link">
+    <span title="/getting_started/custom-resource-definition.md#delete (reference label)" class="md-ellipsis">delete</span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#driver" class="md-nav__link">
+    <span title="/getting_started/custom-resource-definition.md#driver (reference label)" class="md-ellipsis">driver</span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#volumehandle" class="md-nav__link">
+    <span title="/getting_started/custom-resource-definition.md#volumehandle (reference label)" class="md-ellipsis">volume<wbr>Handle</span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#attributes" class="md-nav__link">
+    <span title="/getting_started/custom-resource-definition.md#attributes (reference label)" class="md-ellipsis">attributes</span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#request-storage-size" class="md-nav__link">
     <span title="/getting_started/custom-resource-definition.md#request-storage-size (reference label)" class="md-ellipsis">request storage size</span>
   </a>
@@ -1140,6 +1168,45 @@ and likely in the future will have different logic if it varies from that.</p>
 <span class="w">      </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;local&quot;</span>
 </code></pre></div>
 </div>
+<h4 id="delete">delete<a class="headerlink" href="#delete" title="Permalink to this heading">¶</a></h4>
+<p>By default, we will cleanup the persistent volume. To not do this (e.g., for a more permanent mount) set delete
+to false:</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><code><span class="nt">volumes</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">myvolume</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">path</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">/full/path/to/volume</span>
+<span class="w">    </span><span class="nt">storageClass</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">csi-gcs</span>
+<span class="w">    </span><span class="nt">delete</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
+</code></pre></div>
+</div>
+<h4 id="driver">driver<a class="headerlink" href="#driver" title="Permalink to this heading">¶</a></h4>
+<p>If you are using anything aside from hostpath, you’ll need a reference to a storage driver (usually a plugin)
+you’ve installed separately. Here is an example for Google Cloud storage:</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><code><span class="nt">volumes</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">myvolume</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">path</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">/full/path/to/volume</span>
+<span class="w">    </span><span class="nt">storageClass</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">csi-gcs</span>
+<span class="w">    </span><span class="nt">driver</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">gcs.csi.ofek.dev</span>
+</code></pre></div>
+</div>
+<h4 id="volumehandle">volumeHandle<a class="headerlink" href="#volumehandle" title="Permalink to this heading">¶</a></h4>
+<p>If your volume handle differs from your storage class name, you can define it:</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><code><span class="nt">volumes</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">myvolume</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">path</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">/full/path/to/volume</span>
+<span class="w">    </span><span class="nt">storageClass</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">csi-gcs</span>
+<span class="w">    </span><span class="nt">driver</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">gcs.csi.ofek.dev</span>
+<span class="w">    </span><span class="nt">volumeName</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">manualbucket/path</span>
+</code></pre></div>
+</div>
+<h4 id="attributes">attributes<a class="headerlink" href="#attributes" title="Permalink to this heading">¶</a></h4>
+<p>If your volume has attributes, you can add them too:</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><code><span class="nt">volumes</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">myvolume</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">attributes</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">mounter</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">geesefs</span>
+<span class="w">    </span><span class="nt">capacity</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">25Gi</span>
+</code></pre></div>
+</div>
 <h4 id="request-storage-size">request storage size<a class="headerlink" href="#request-storage-size" title="Permalink to this heading">¶</a></h4>
 <p>By default, a capacity request is “5Gi”, and we only do this because the field is required. However, keep in mind
 for many some cloud storage interfaces there is no concept of a max.
@@ -1549,7 +1616,7 @@ It defaults to 5000.</p>
   <small>
     
       Last update:
-      Feb 28, 2023
+      Mar 02, 2023
     
   </small>
 </div>
@@ -1626,7 +1693,7 @@ It defaults to 5000.</p>
   
     Created using
     <a href="https://www.sphinx-doc.org/" target="_blank" rel="noopener">Sphinx</a>
-    5.3.0.
+    6.1.3.
      and
     <a href="https://github.com/jbms/sphinx-immaterial/" target="_blank" rel="noopener">Sphinx-Immaterial</a>
   
