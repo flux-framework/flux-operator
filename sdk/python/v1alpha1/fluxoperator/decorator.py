@@ -18,8 +18,8 @@ class timed(Decorator):
 
     def __call__(self, cls, *args, **kwargs):
         # Name of the key is after command
-        if "name" in kwargs:
-            key = kwargs["name"]
+        if "timed_name" in kwargs:
+            key = kwargs["timed_name"]
         # Fallback to name of function
         else:
             key = self.func.__name__
