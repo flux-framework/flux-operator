@@ -19,6 +19,7 @@ import fluxoperator
 from fluxoperator.models.flux_restful import FluxRestful  # noqa: E501
 from fluxoperator.rest import ApiException
 
+
 class TestFluxRestful(unittest.TestCase):
     """FluxRestful unit test stubs"""
 
@@ -30,25 +31,20 @@ class TestFluxRestful(unittest.TestCase):
 
     def make_instance(self, include_optional):
         """Test FluxRestful
-            include_option is a boolean, when False only required
-            params are included, when True both required and
-            optional params are included """
+        include_option is a boolean, when False only required
+        params are included, when True both required and
+        optional params are included"""
         # model = fluxoperator.models.flux_restful.FluxRestful()  # noqa: E501
-        if include_optional :
-            return FluxRestful(
-                branch = '', 
-                port = 56, 
-                token = '', 
-                username = ''
-            )
-        else :
-            return FluxRestful(
-        )
+        if include_optional:
+            return FluxRestful(branch="", port=56, token="", username="")
+        else:
+            return FluxRestful()
 
     def testFluxRestful(self):
         """Test FluxRestful"""
         inst_req_only = self.make_instance(include_optional=False)
         inst_req_and_optional = self.make_instance(include_optional=True)
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     unittest.main()
