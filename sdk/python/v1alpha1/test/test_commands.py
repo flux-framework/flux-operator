@@ -19,6 +19,7 @@ import fluxoperator
 from fluxoperator.models.commands import Commands  # noqa: E501
 from fluxoperator.rest import ApiException
 
+
 class TestCommands(unittest.TestCase):
     """Commands unit test stubs"""
 
@@ -30,23 +31,20 @@ class TestCommands(unittest.TestCase):
 
     def make_instance(self, include_optional):
         """Test Commands
-            include_option is a boolean, when False only required
-            params are included, when True both required and
-            optional params are included """
+        include_option is a boolean, when False only required
+        params are included, when True both required and
+        optional params are included"""
         # model = fluxoperator.models.commands.Commands()  # noqa: E501
-        if include_optional :
-            return Commands(
-                pre = '', 
-                run_flux_as_root = True
-            )
-        else :
-            return Commands(
-        )
+        if include_optional:
+            return Commands(pre="", run_flux_as_root=True)
+        else:
+            return Commands()
 
     def testCommands(self):
         """Test Commands"""
         inst_req_only = self.make_instance(include_optional=False)
         inst_req_and_optional = self.make_instance(include_optional=True)
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     unittest.main()

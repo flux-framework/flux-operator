@@ -19,6 +19,7 @@ import fluxoperator
 from fluxoperator.models.logging_spec import LoggingSpec  # noqa: E501
 from fluxoperator.rest import ApiException
 
+
 class TestLoggingSpec(unittest.TestCase):
     """LoggingSpec unit test stubs"""
 
@@ -30,25 +31,20 @@ class TestLoggingSpec(unittest.TestCase):
 
     def make_instance(self, include_optional):
         """Test LoggingSpec
-            include_option is a boolean, when False only required
-            params are included, when True both required and
-            optional params are included """
+        include_option is a boolean, when False only required
+        params are included, when True both required and
+        optional params are included"""
         # model = fluxoperator.models.logging_spec.LoggingSpec()  # noqa: E501
-        if include_optional :
-            return LoggingSpec(
-                debug = True, 
-                quiet = True, 
-                strict = True, 
-                timed = True
-            )
-        else :
-            return LoggingSpec(
-        )
+        if include_optional:
+            return LoggingSpec(debug=True, quiet=True, strict=True, timed=True)
+        else:
+            return LoggingSpec()
 
     def testLoggingSpec(self):
         """Test LoggingSpec"""
         inst_req_only = self.make_instance(include_optional=False)
         inst_req_and_optional = self.make_instance(include_optional=True)
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     unittest.main()

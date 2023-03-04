@@ -15,6 +15,8 @@ The versions coincide with releases on pip. Only major versions will be released
 
 ## [0.0.x](https://github.com/flux-framework/flux-operator/tree/main/sdk/python/v2alpha1) (0.0.x)
  - Support for operator client wait_pods_terminated (0.0.12)
+   - Basic functions to create/delete minicluster
+   - Times saved to FluxOperator client for most actions
  - Bug with default args not being provided fixed (0.0.11)
  - Addition of FluxOperator client to wait for pods and port forward (0.0.1)
  - Skeleton creation of project (0.0.0)
