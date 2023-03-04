@@ -56,21 +56,21 @@ from pprint import pprint
 
 ## Documentation For Models
 
- - [Commands](Commands.md)
- - [ContainerResources](dContainerResources.md)
- - [ContainerVolume](ContainerVolume.md)
- - [FluxRestful](FluxRestful.md)
- - [FluxUser](FluxUser.md)
- - [LifeCycle](LifeCycle.md)
- - [LoggingSpec](LoggingSpec.md)
- - [MiniCluster](MiniCluster.md)
- - [MiniClusterContainer](MiniClusterContainer.md)
- - [MiniClusterList](MiniClusterList.md)
- - [MiniClusterSpec](MiniClusterSpec.md)
- - [MiniClusterStatus](MiniClusterStatus.md)
- - [MiniClusterUser](MiniClusterUser.md)
- - [MiniClusterVolume](MiniClusterVolume.md)
- - [PodSpec](PodSpec.md)
+ - [Commands](https://github.com/flux-framework/flux-operator/tree/main/sdk/python/v1alpha1/docs/Commands.md)
+ - [ContainerResources](https://github.com/flux-framework/flux-operator/tree/main/sdk/python/v1alpha1/docs/ContainerResources.md)
+ - [ContainerVolume](https://github.com/flux-framework/flux-operator/tree/main/sdk/python/v1alpha1/docs/ContainerVolume.md)
+ - [FluxRestful](https://github.com/flux-framework/flux-operator/tree/main/sdk/python/v1alpha1/docs/FluxRestful.md)
+ - [FluxUser](https://github.com/flux-framework/flux-operator/tree/main/sdk/python/v1alpha1/docs/FluxUser.md)
+ - [LifeCycle](https://github.com/flux-framework/flux-operator/tree/main/sdk/python/v1alpha1/docs/LifeCycle.md)
+ - [LoggingSpec](https://github.com/flux-framework/flux-operator/tree/main/sdk/python/v1alpha1/docs/LoggingSpec.md)
+ - [MiniCluster](https://github.com/flux-framework/flux-operator/tree/main/sdk/python/v1alpha1/docs/MiniCluster.md)
+ - [MiniClusterContainer](https://github.com/flux-framework/flux-operator/tree/main/sdk/python/v1alpha1/docs/MiniClusterContainer.md)
+ - [MiniClusterList](https://github.com/flux-framework/flux-operator/tree/main/sdk/python/v1alpha1/docs/MiniClusterList.md)
+ - [MiniClusterSpec](https://github.com/flux-framework/flux-operator/tree/main/sdk/python/v1alpha1/docs/MiniClusterSpec.md)
+ - [MiniClusterStatus](https://github.com/flux-framework/flux-operator/tree/main/sdk/python/v1alpha1/docs/MiniClusterStatus.md)
+ - [MiniClusterUser](https://github.com/flux-framework/flux-operator/tree/main/sdk/python/v1alpha1/docs/MiniClusterUser.md)
+ - [MiniClusterVolume](https://github.com/flux-framework/flux-operator/tree/main/sdk/python/v1alpha1/docs/MiniClusterVolume.md)
+ - [PodSpec](https://github.com/flux-framework/flux-operator/tree/main/sdk/python/v1alpha1/docs/PodSpec.md)
 
 
 ## Documentation For Authorization

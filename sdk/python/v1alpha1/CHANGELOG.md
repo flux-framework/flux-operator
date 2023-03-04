@@ -14,6 +14,7 @@ and **Merged pull requests**. Critical items to know are:
 The versions coincide with releases on pip. Only major versions will be released as tags on Github.
 
 ## [0.0.x](https://github.com/flux-framework/flux-operator/tree/main/sdk/python/v2alpha1) (0.0.x)
+ - FluxOperator client can create namespace (0.0.13)
  - Support for operator client wait_pods_terminated (0.0.12)
    - Basic functions to create/delete minicluster
    - Times saved to FluxOperator client for most actions

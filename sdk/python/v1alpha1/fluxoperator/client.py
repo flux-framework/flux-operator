@@ -37,6 +37,12 @@ class FluxOperator:
         self._core_v1 = core_v1_api.CoreV1Api()
         return self._core_v1
 
+    def create_namespace(self):
+        """
+        Create the namespace
+        """
+        self.core_v1.create_namespace(client.V1Namespace(metadata=client.V1ObjectMeta(name=self.namespace)))
+
     @contextmanager
     def port_forward(self, pod, retry_seconds=1):
         """
