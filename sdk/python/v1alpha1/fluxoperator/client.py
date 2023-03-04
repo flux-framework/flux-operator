@@ -31,9 +31,14 @@ class FluxOperator:
         if self._core_v1 is not None:
             return self._core_v1
 
-        self.c = client.Configuration.get_default_copy()
-        self.c.assert_hostname = False
-        client.Configuration.set_default(self.c)
+        try:
+            self.c = client.Configuration.get_default_copy()
+            self.c.assert_hostname = False
+            client.Configuration.set_default(self.c)
+        except Exception as e:
+            self.c = client.Configuration.get_default_copy()
+            client.Configuration.set_default(self.c)
+
         self._core_v1 = core_v1_api.CoreV1Api()
         return self._core_v1
 
