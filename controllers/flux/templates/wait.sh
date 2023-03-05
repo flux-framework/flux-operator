@@ -160,7 +160,7 @@ cat /etc/flux/config/broker.toml{{ end }}
 chmod u+s /usr/libexec/flux/flux-imp
 chmod 4755 /usr/libexec/flux/flux-imp
 chmod 0644 /etc/flux/imp/conf.d/imp.toml
-sudo service munge start
+sudo service munge start > /dev/null 2>&1
 
 # The rundir needs to be created first, and owned by user flux
 # Along with the state directory and curve certificate
