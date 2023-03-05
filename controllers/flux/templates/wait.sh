@@ -167,7 +167,6 @@ sudo service munge start
 mkdir -p /run/flux /etc/curve
 
 # Show generated curve certificate - the munge.key should already be equivalent (and exist)
-{{ if not .Logging.Quiet }}cat /mnt/curve/curve.cert{{ end }}
 cp /mnt/curve/curve.cert /etc/curve/curve.cert
 
 # Remove group and other read
@@ -202,8 +201,8 @@ else
 
             # Start restful API server
             startServer="uvicorn app.main:app --host=0.0.0.0 --port={{or .FluxRestful.Port 5000}}"
-            #git clone -b {{or .FluxRestful.Branch "main"}} --depth 1 https://github.com/flux-framework/flux-restful-api /flux-restful-api > /dev/null 2>&1
-            git clone -b list-jobs-tweaks --depth 1 https://github.com/flux-framework/flux-restful-api /flux-restful-api > /dev/null 2>&1            
+            printf "Cloning flux-framework/flux-restful-api branch {{.FluxRestful.Branch}}\n"
+            git clone -b {{.FluxRestful.Branch}} --depth 1 https://github.com/flux-framework/flux-restful-api /flux-restful-api > /dev/null 2>&1
             cd /flux-restful-api
             
             # Export the main flux user and token "superuser"
@@ -219,8 +218,8 @@ else
             python3 app/db/init_db.py init || python app/db/init_db.py init
 
             {{ if .Users }}{{range $username := .Users}}# Add additional users
-            printf "Adding {{.Name}} with password {{ .Password}}\n"
-            python3 ./app/db/init_db.py add-user {{.Name}} {{.Password}} || python ./app/db/init_db.py add-user {{.Name}} {{.Password}}
+            printf "Adding '{{.Name}}' with password '{{ .Password}}'\n"
+            python3 ./app/db/init_db.py add-user "{{.Name}}" "{{.Password}}" || python ./app/db/init_db.py add-user "{{.Name}}" "{{.Password}}"
             {{ end }}{{ end }}
 
             # Shared envars across user modes

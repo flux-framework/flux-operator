@@ -341,9 +341,6 @@ func generateFluxConfig(cluster *api.MiniCluster) string {
 	fqdn := fmt.Sprintf("%s.%s.svc.cluster.local", restfulServiceName, cluster.Namespace)
 	hosts := fmt.Sprintf("[%s]", generateRange(int(cluster.Spec.Size)))
 	fluxConfig := fmt.Sprintf(brokerConfigTemplate, fqdn, cluster.Name, hosts)
-	if cluster.MultiUser() {
-		fluxConfig += brokerConfigJobManagerPlugin
-	}
 	return fluxConfig
 }
 

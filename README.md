@@ -23,11 +23,11 @@ And you can find the following here:
  - [API Spec](api/v1alpha1/) are under `api/v1alpha1/` also for `MiniCluster`
  - [Packages](pkg) include supporting packages for job conditions (state), if we eventually want that.
  - [Config](config) includes mostly automatically generated yaml configuration files needed by Kubernetes
- - [TODO.md](TODO.md) is a set of things to be worked on, if you'd like to contribute!
 
 And the following external resources might be useful:
 
  - [Flux Cloud](https://github.com/converged-computing/flux-cloud): automation of experiments using the Flux Operator
+ - [Flux RESTful API](https://github.com/flux-framework/flux-restful-api): provides the interface for submitting jobs, if no command provided to the operator.
  - [Python SDK](sdk/python): for deploying MiniClusters and port forwarding.
  - [Flux HPC Examples](https://github.com/rse-ops/flux-hpc) containers and CRD for the operator to run Flux with HPC workloads (under development)
 
