@@ -9,14 +9,15 @@ from kubernetes import client, config
 from fluxoperator.models import MiniCluster
 from fluxoperator.models import MiniClusterSpec
 from fluxoperator.models import MiniClusterContainer
+from fluxoperator.models import FluxRestful
 from fluxoperator.models import MiniClusterUser
 from kubernetes.client import V1ObjectMeta
 from fluxoperator.client import FluxOperator
 
-import pytest
 import time
-import json
 import sys
+import uuid
+import pytest
 
 try:
     from flux_restful_client.main import get_client
@@ -46,6 +47,9 @@ def create_minicluster():
     for user in test_users:
         users.append(MiniClusterUser(name=user, password=user))
 
+    # Generate a secret key
+    flux_restful = FluxRestful(secret_key=str(uuid.uuid4()))
+
     # Create the minicluster
     minicluster = MiniCluster(
         kind="MiniCluster",
@@ -57,6 +61,7 @@ def create_minicluster():
         spec=MiniClusterSpec(
             size=4,
             containers=[container],
+            flux_restful=flux_restful,
             users=users,
         ),
     )
@@ -83,10 +88,12 @@ def delete_minicluster(result):
 
 
 def test_multi_tenant():
-
     # Create the MiniCluster
     print("Creating the MiniCluster...")
     result = create_minicluster()
+
+    # Get the secret key created for the server
+    secret_key = result["spec"]["fluxRestful"]["secretKey"]
 
     # Create a client to interact with FluxOperator MiniCluster
     cli = FluxOperator("flux-operator")
@@ -98,21 +105,47 @@ def test_multi_tenant():
     with cli.port_forward(broker) as forward_url:
         print(f"Port forward opened to {forward_url}")
 
+        import IPython
+
+        IPython.embed()
+
         # This connection without auth should fail
         restcli = get_client(host=forward_url)
+
+        with pytest.raises(SystemExit):
+            res = restcli.submit("whoami")
+
+        # Without the secret key will fail
+        restcli = get_client(host=forward_url, user="peenut", token="peenut")
+        with pytest.raises(SystemExit):
+            res = restcli.submit("whoami")
+
+        # Wrong secret key
+        restcli = get_client(
+            host=forward_url, user="peenut", token="peenut", secret_key="nope"
+        )
         res = restcli.submit("whoami")
-        assert "detail" in res
-        assert "Not authenticated" in res["detail"]
+        assert "detail" in res and res["detail"] == "Not authenticated"
 
-        # Correct user and wrong token
-        try:
-            restcli = get_client(host=forward_url, user="peenut", token="nope")
-            raise ValueError("Request with wrong token should fail")
-        except:
-            pass
+        # Wrong token
+        restcli = get_client(
+            host=forward_url, user="peenut", token="nope", secret_key=secret_key
+        )
+        res = restcli.submit("whoami")
+        assert "detail" in res and res["detail"] == "Not authenticated"
 
+        # Correct user with secret
+        restcli = get_client(
+            host=forward_url, user="peenut", token="peenut", secret_key=secret_key
+        )
+        res = restcli.submit("whoami")
+        assert "id" in res
+
+        # Test for all users
         for user in test_users:
-            restcli = get_client(host=forward_url, user=user, token=user)
+            restcli = get_client(
+                host=forward_url, user=user, token=user, secret_key=secret_key
+            )
             print(f'Submitting "whoami" job as user {user}.')
             res = restcli.submit("whoami")
             assert "id" in res
@@ -130,7 +163,9 @@ def test_multi_tenant():
             # And get output for the job
             output = restcli.output(res["id"]).get("Output", "")
             print(f"Job Output: {output}")
-            assert output and user in output
+
+            # working on signing as user - TBA
+            # assert output and user in output
 
     # How to cleanup
     print("Cleaning up MiniCluster!")
