@@ -105,10 +105,6 @@ def test_multi_tenant():
     with cli.port_forward(broker) as forward_url:
         print(f"Port forward opened to {forward_url}")
 
-        import IPython
-
-        IPython.embed()
-
         # This connection without auth should fail
         restcli = get_client(host=forward_url)
 
