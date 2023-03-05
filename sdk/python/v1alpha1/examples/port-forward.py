@@ -15,12 +15,14 @@ from fluxoperator.models import MiniCluster
 from fluxoperator.models import MiniClusterSpec
 from fluxoperator.models import MiniClusterContainer
 from fluxoperator.models import MiniClusterUser
+from fluxoperator.models import FluxRestful
 from kubernetes.client import V1ObjectMeta
 from fluxoperator.client import FluxOperator
 
 import requests
 import time
 import json
+import uuid
 
 try:
     from flux_restful_client.main import get_client
@@ -51,6 +53,7 @@ def create_minicluster():
         MiniClusterUser(name="treenut", password="treenut"),
     ]
 
+    flux_restful = FluxRestful(secret_key=str(uuid.uuid4()))
     # Create the MiniCluster
     minicluster = MiniCluster(
         kind="MiniCluster",
@@ -63,6 +66,7 @@ def create_minicluster():
             size=4,
             containers=[container],
             users=users,
+            flux_restful=flux_restful
         ),
     )
 
@@ -105,11 +109,15 @@ with cli.port_forward(broker) as forward_url:
     response = requests.get(forward_url)
     print(response.status_code)
 
+    # Get the secret key created for the server
+    secret_key = result["spec"]["fluxRestful"]["secretKey"]
+
     # This would be the RESTFUl API
     # See endpoints here https://flux-framework.org/flux-restful-api/getting_started/api.html
     # You will need to authenticate for the multi-user example here
     if get_client is not None:
-        restcli = get_client(host=forward_url, user="peenut", token="peenut")
+
+        restcli = get_client(host=forward_url, user="peenut", token="peenut", secret_key=secret_key)
         print('Submitting "whoami" job as user peenut.')
         res = restcli.submit("whoami")
         print(f"Jobid {res['id']} submit!")
