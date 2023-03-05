@@ -7,9 +7,6 @@ spec:
   # Number of pods to create for MiniCluster
   size: 4
 
-  fluxRestful:
-    branch: list-jobs-tweaks
-
   # Define one or more users for your cluster
   users:
     - name: peenut
@@ -17,5 +14,5 @@ spec:
     - name: avocadosaurus
 
   containers:
-    - image: ghcr.io/flux-framework/flux-restful-api:test
+    - image: ghcr.io/flux-framework/flux-restful-api:latest
     # Multi-user mode should not have a command
