@@ -366,6 +366,9 @@ func generateWaitScript(cluster *api.MiniCluster, containerIndex int) (string, e
 		}
 	}
 
+	// Ensure Flux Restful has a secret key
+	cluster.Spec.FluxRestful.SecretKey = getRandomToken(cluster.Spec.FluxRestful.SecretKey)
+
 	// Only derive cores if > 1
 	var cores int32
 	if container.Cores > 1 {

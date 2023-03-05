@@ -206,6 +206,9 @@ spec:
                     description: Port to run Flux Restful Server On
                     format: int32
                     type: integer
+                  secretKey:
+                    description: Secret key shared between server and client
+                    type: string
                   token:
                     description: Token to use for RestFul API
                     type: string
