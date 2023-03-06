@@ -38,15 +38,6 @@ which flux > /dev/null 2>&1 || (echo "flux is required to be installed" && exit 
 # Add a flux user (required) that should exist before pre-command
 sudo adduser --disabled-password --uid ${fluxuid} --gecos "" ${fluxuser} > /dev/null 2>&1 || {{ if not .Logging.Quiet }} printf "${fluxuser} user is already added.\n"{{ else }}true{{ end }}
 
-# Add users, if requested
-{{ if .Users }}
-which openssl > /dev/null 2>&1 || (echo "openssl is required to be installed to add users" && exit 1);
-{{range $username := .Users}}
-  printf "Adding {{.Name}} with password {{ .Password}}\n"
-  sudo useradd -m -p $(openssl passwd '{{ .Password }}') {{.Name}}
-{{ end }}
-{{ end }}
-
 # Show user permissions / ids
 {{ if not .Logging.Quiet }}printf "${fluxuser} user identifiers:\n$(id ${fluxuser})\n"{{ end }}
 
@@ -162,23 +153,20 @@ EOT
 {{ if not .Logging.Quiet }}printf "\n🦊 Independent Minister of Privilege\n"
 cat /etc/flux/imp/conf.d/imp.toml
 
-# If we have Users (and want multi-user mode with pam) this file needs setuid,
-# and ensure the permissions are correctly set
-{{ if .Users }}chmod u+s /usr/libexec/flux/flux-imp
-chmod 4755 /usr/libexec/flux/flux-imp
-chmod 0644 /etc/flux/imp/conf.d/imp.toml
-sudo service munge start
-{{ end }}
-
 printf "\n🐸 Broker Configuration\n"
 cat /etc/flux/config/broker.toml{{ end }}
+
+# If we are communicating via the flux uri this service needs to be started
+chmod u+s /usr/libexec/flux/flux-imp
+chmod 4755 /usr/libexec/flux/flux-imp
+chmod 0644 /etc/flux/imp/conf.d/imp.toml
+sudo service munge start > /dev/null 2>&1
 
 # The rundir needs to be created first, and owned by user flux
 # Along with the state directory and curve certificate
 mkdir -p /run/flux /etc/curve
 
 # Show generated curve certificate - the munge.key should already be equivalent (and exist)
-{{ if not .Logging.Quiet }}cat /mnt/curve/curve.cert{{ end }}
 cp /mnt/curve/curve.cert /etc/curve/curve.cert
 
 # Remove group and other read
@@ -190,42 +178,6 @@ chmod g-r /etc/curve/curve.cert
 fluxuid=$(id -u ${fluxuser})
 
 {{ if not .Container.Commands.RunFluxAsRoot }}chown -R ${fluxuid} /run/flux ${STATE_DIR} /etc/curve/curve.cert ${workdir}{{ end }}
-
-{{ if .Users }}
-
-# If we have users, enable flux accounting after we start flux
-enable_flux_accounting() {
-
-    # If we have users, then enable flux accounting
-{{ if and .Users .Logging.Quiet }}
-{{ if not .Container.Commands.RunFluxAsRoot }}chown -R ${fluxuid} /var/lib/flux{{ end }}
-    ${asFlux} flux account create-db
-    ${asFlux} flux account add-bank root 1
-    ${asFlux} flux account add-bank --parent-bank=root user_bank 1
-    {{range $index, $username := .Users}}
-      ${asFlux} flux account add-user --username={{ .Name }} --bank=user_bank
-    {{ end }}
-    ${asFlux} flux account-priority-update
-    {{ end }}
-
-    {{ if and .Users (not .Logging.Quiet) }}
-    {{ if not .Container.Commands.RunFluxAsRoot }}chown -R ${fluxuid} /var/lib/flux{{ end }}
-    printf "\n🧾️ Creating flux accounting database\n"
-    printf "flux account create-db\n"
-    ${asFlux} flux account create-db
-    printf "flux account add-bank root 1\n"
-    ${asFlux} flux account add-bank root 1
-    printf "flux account add-bank --parent-bank=root user_bank 1\n"
-    ${asFlux} flux account add-bank --parent-bank=root user_bank 1
-    {{range $username := .Users}}
-      printf "flux account add-user --username={{ .Name }} --bank=user_bank\n"
-      ${asFlux} flux account add-user --username={{ .Name }} --bank=user_bank
-    {{ end }}
-    ${asFlux} flux account-priority-update
-    {{ end }}
-}
-
-{{ end }}
 
 # Make directory world read/writable
 chmod -R 0777 ${workdir}
@@ -249,59 +201,44 @@ else
 
             # Start restful API server
             startServer="uvicorn app.main:app --host=0.0.0.0 --port={{or .FluxRestful.Port 5000}}"
-            git clone -b {{or .FluxRestful.Branch "main"}} --depth 1 https://github.com/flux-framework/flux-restful-api /flux-restful-api > /dev/null 2>&1
+            printf "Cloning flux-framework/flux-restful-api branch {{.FluxRestful.Branch}}\n"
+            git clone -b {{.FluxRestful.Branch}} --depth 1 https://github.com/flux-framework/flux-restful-api /flux-restful-api > /dev/null 2>&1
             cd /flux-restful-api
-
-            # Shared envars across user modes
-            FLUX_REQUIRE_AUTH=true
-            FLUX_NUMBER_NODES={{ .Size}}
+            
+            # Export the main flux user and token "superuser"
+            export FLUX_USER={{ .FluxUser}}
+            export FLUX_TOKEN={{ .FluxToken}}
 
             # Install python requirements, with preference for python3
             python3 -m pip install -r requirements.txt > /dev/null 2>&1 || python -m pip install -r requirements.txt > /dev/null 2>&1
 
-            {{ if .Users }}# Multi user-mode will start the broker as a process (as flux) and then the API server as root
-            FLUX_ENABLE_PAM=true
-            FLUX_URI=local:///run/flux/local
+            # Prepare databases!
+            alembic revision --autogenerate -m "Create intital tables"
+            alembic upgrade head
+            python3 app/db/init_db.py init || python app/db/init_db.py init
 
-            # Do not allow a global flux user/token in multi-auth mode
-            unset FLUX_USER || true
-            unset FLUX_TOKEN || true
+            {{ if .Users }}{{range $username := .Users}}# Add additional users
+            printf "Adding '{{.Name}}' with password '{{ .Password}}'\n"
+            python3 ./app/db/init_db.py add-user "{{.Name}}" "{{.Password}}" || python ./app/db/init_db.py add-user "{{.Name}}" "{{.Password}}"
+            {{ end }}{{ end }}
 
-            {{ if not .Logging.Quiet }}printf "\n 🔑 Multi-User Mode Required User Account Credentials!\n"
-            printf "🌀 ${asFlux} flux broker --config-path /etc/flux/config ${brokerOptions} sleep infinity & \n"{{ end }}
-            ${asFlux} flux broker --config-path /etc/flux/config ${brokerOptions} sleep infinity &
+            # Shared envars across user modes
+            export FLUX_REQUIRE_AUTH=true
+            export FLUX_SECRET_KEY={{ .FluxRestful.SecretKey}}
+            export FLUX_NUMBER_NODES={{ .Size}}
 
-            # TODO make this optional
-            enable_flux_accounting
-
-            # Flux URI will be found by the RESTful Server to connect to flux
-            export FLUX_URI FLUX_ENABLE_PAM
-
-            # We have to run as root so root can run on behalf of a user
-            {{ if not .Logging.Quiet }}printf "${asSudo} ${startServer}\n"{{ end }}
-            ${asSudo} ${startServer}
-
-            {{ else }}# In single user mode we generate a random flux token
-            FLUX_USER="{{ .FluxUser}}"
-            FLUX_TOKEN="{{ .FluxToken}}"
-
-            export FLUX_TOKEN FLUX_USER FLUX_REQUIRE_AUTH FLUX_NUMBER_NODES
-
-{{ if not .Logging.Quiet }}
-            printf "\n 🔑 Single-User Mode Credentials! These will allow you to control your MiniCluster with flux-framework/flux-restful-api\n"
-            printf "export FLUX_TOKEN=${FLUX_TOKEN}\n"
-            printf "export FLUX_USER=${FLUX_USER}\n"
+            printf "\n 🔑 Use your Flux user and token credentials to authenticate with the MiniCluster with flux-framework/flux-restful-api\n"
 
             # -o is an "option" for the broker
-            # -S corresponds to a shortened --setattr=ATTR=VAL
-            printf "\n🌀 flux start -o --config /etc/flux/config ${brokerOptions} ${startServer}\n"{{ end }}
-            {{ if .Logging.Timed }}/usr/bin/time -f "FLUXTIME fluxstart wall time %E" {{ end }}${asFlux} flux start -o --config /etc/flux/config ${brokerOptions} {{ if .Logging.Timed }}/usr/bin/time -f "FLUXTIME fluxsubmit wall time %E" {{ end }} ${startServer}{{ end }}
+            # -S corresponds to a shortened --setattr=ATTR=VAL 
+            printf "\n🌀 ${asFlux} flux broker --config-path /etc/flux/config ${brokerOptions} sleep infinity\n"
+            ${asFlux} flux broker --config-path /etc/flux/config ${brokerOptions} ${startServer}
 
         # Case 2: Fall back to provided command
         else
-{{ if not .Logging.Quiet }}
-            printf "\n🌀 flux start -o --config /etc/flux/config ${brokerOptions} flux mini submit {{ if gt .Tasks .Size }} -N {{.Size}}{{ end }} -n {{.Tasks}} --quiet {{ if .Container.FluxOptionFlags }}{{ .Container.FluxOptionFlags}}{{ end }} --watch{{ if .Logging.Debug }} -vvv{{ end }} $@\n"{{ end }}
-            {{ if .Logging.Timed }}/usr/bin/time -f "FLUXTIME fluxstart wall time %E" {{ end }}${asFlux} flux start -o --config /etc/flux/config ${brokerOptions} {{ if .Logging.Timed }}/usr/bin/time -f "FLUXTIME fluxsubmit wall time %E" {{ end }} flux mini submit {{ if gt .Tasks .Size }} -N {{.Size}}{{ end }} -n {{.Tasks}} --quiet {{ if .Container.FluxOptionFlags }}{{ .Container.FluxOptionFlags}}{{ end }} --watch{{ if .Logging.Debug }} -vvv{{ end }} $@
+{{ if not .Logging.Quiet }} # if tasks >= size
+            printf "\n🌀 flux start -o --config /etc/flux/config ${brokerOptions} flux submit {{ if ge .Tasks .Size }} -N {{.Size}}{{ end }} -n {{.Tasks}} --quiet {{ if .Container.FluxOptionFlags }}{{ .Container.FluxOptionFlags}}{{ end }} --watch{{ if .Logging.Debug }} -vvv{{ end }} $@\n"{{ end }}
+            {{ if .Logging.Timed }}/usr/bin/time -f "FLUXTIME fluxstart wall time %E" {{ end }}${asFlux} flux start -o --config /etc/flux/config ${brokerOptions} {{ if .Logging.Timed }}/usr/bin/time -f "FLUXTIME fluxsubmit wall time %E" {{ end }} flux submit {{ if ge .Tasks .Size }} -N {{.Size}}{{ end }} -n {{.Tasks}} --quiet {{ if .Container.FluxOptionFlags }}{{ .Container.FluxOptionFlags}}{{ end }} --watch{{ if .Logging.Debug }} -vvv{{ end }} $@
         fi
     else
         # Sleep until the broker is ready

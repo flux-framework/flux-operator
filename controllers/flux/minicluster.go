@@ -341,9 +341,6 @@ func generateFluxConfig(cluster *api.MiniCluster) string {
 	fqdn := fmt.Sprintf("%s.%s.svc.cluster.local", restfulServiceName, cluster.Namespace)
 	hosts := fmt.Sprintf("[%s]", generateRange(int(cluster.Spec.Size)))
 	fluxConfig := fmt.Sprintf(brokerConfigTemplate, fqdn, cluster.Name, hosts)
-	if cluster.MultiUser() {
-		fluxConfig += brokerConfigJobManagerPlugin
-	}
 	return fluxConfig
 }
 
@@ -365,6 +362,9 @@ func generateWaitScript(cluster *api.MiniCluster, containerIndex int) (string, e
 			cluster.Spec.Users[i].Password = cluster.Spec.Users[i].Password[:8]
 		}
 	}
+
+	// Ensure Flux Restful has a secret key
+	cluster.Spec.FluxRestful.SecretKey = getRandomToken(cluster.Spec.FluxRestful.SecretKey)
 
 	// Only derive cores if > 1
 	var cores int32

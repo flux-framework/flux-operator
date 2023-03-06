@@ -14,6 +14,5 @@ spec:
     - name: avocadosaurus
 
   containers:
-    # This image has flux-accounting installed
-    - image: ghcr.io/rse-ops/accounting:app-latest
+    - image: ghcr.io/flux-framework/flux-restful-api:latest
     # Multi-user mode should not have a command

@@ -35,6 +35,7 @@ class FluxRestful(object):
     openapi_types = {
         'branch': 'str',
         'port': 'int',
+        'secret_key': 'str',
         'token': 'str',
         'username': 'str'
     }
@@ -42,11 +43,12 @@ class FluxRestful(object):
     attribute_map = {
         'branch': 'branch',
         'port': 'port',
+        'secret_key': 'secretKey',
         'token': 'token',
         'username': 'username'
     }
 
-    def __init__(self, branch='main', port=5000, token='', username='', local_vars_configuration=None):  # noqa: E501
+    def __init__(self, branch='main', port=5000, secret_key='', token='', username='', local_vars_configuration=None):  # noqa: E501
         """FluxRestful - a model defined in OpenAPI"""  # noqa: E501
         if local_vars_configuration is None:
             local_vars_configuration = Configuration.get_default_copy()
@@ -54,6 +56,7 @@ class FluxRestful(object):
 
         self._branch = None
         self._port = None
+        self._secret_key = None
         self._token = None
         self._username = None
         self.discriminator = None
@@ -62,6 +65,8 @@ class FluxRestful(object):
             self.branch = branch
         if port is not None:
             self.port = port
+        if secret_key is not None:
+            self.secret_key = secret_key
         if token is not None:
             self.token = token
         if username is not None:
@@ -112,6 +117,29 @@ class FluxRestful(object):
         """
 
         self._port = port
+
+    @property
+    def secret_key(self):
+        """Gets the secret_key of this FluxRestful.  # noqa: E501
+
+        Secret key shared between server and client  # noqa: E501
+
+        :return: The secret_key of this FluxRestful.  # noqa: E501
+        :rtype: str
+        """
+        return self._secret_key
+
+    @secret_key.setter
+    def secret_key(self, secret_key):
+        """Sets the secret_key of this FluxRestful.
+
+        Secret key shared between server and client  # noqa: E501
+
+        :param secret_key: The secret_key of this FluxRestful.  # noqa: E501
+        :type secret_key: str
+        """
+
+        self._secret_key = secret_key
 
     @property
     def token(self):

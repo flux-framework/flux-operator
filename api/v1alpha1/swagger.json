@@ -73,6 +73,11 @@
           "format": "int32",
           "default": 5000
         },
+        "secretKey": {
+          "description": "Secret key shared between server and client",
+          "type": "string",
+          "default": ""
+        },
         "token": {
           "description": "Token to use for RestFul API",
           "type": "string",

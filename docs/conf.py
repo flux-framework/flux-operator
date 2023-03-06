@@ -27,7 +27,7 @@ FORCE_CLASSIC = FORCE_CLASSIC in ("1", "true")
 project = "Flux Operator"
 html_title = "Flux Operator"
 
-copyright = "2022, Flux Developers"
+copyright = "2022-2023, Flux Developers"
 author = "@vsoch"
 
 # The full version, including alpha/beta/rc tags
@@ -56,8 +56,6 @@ extensions = [
     "sphinx_immaterial.graphviz",
     "nbsphinx",
     "sphinx_markdown_tables",
-    "sphinx_copybutton",
-    "sphinx_search.extension",
 ]
 
 autosummary_generate = True

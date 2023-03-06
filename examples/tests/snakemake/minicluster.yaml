@@ -40,7 +40,7 @@ spec:
 
       # This is the directory we will bind the data to
       workingDir: /workflow
-      command: snakemake --cores 1 --flux
+      command: snakemake --cores 1 --flux --jobs 1
       preCommand: |
         # Ensure the cache targets our flux user home
         asFlux="sudo -u flux -E PYTHONPATH=$PYTHONPATH -E PATH=$PATH -E HOME=/home/flux"
