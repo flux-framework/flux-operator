@@ -34,8 +34,6 @@
       
     
         <link rel="stylesheet" type="text/css" href="../../_static/sphinx_immaterial_theme.fa3fbbd75cfdd7cef.min.css" />
-        <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css" />
-        <link rel="stylesheet" type="text/css" href="../../_static/css/rtd_sphinx_search.min.css" />
         <link rel="stylesheet" type="text/css" href="../../_static/custom.css" />
     <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
     
@@ -539,6 +537,13 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#viewing-instance-jobs" class="md-nav__link">
+    <span title="/getting_started/tutorials/multi-tenancy.md#viewing-instance-jobs (reference label)" class="md-ellipsis">Viewing Instance Jobs</span>
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -884,6 +889,21 @@
 
             
           
+            
+              
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="#viewing-instance-jobs" class="md-nav__link">
+        <span title="/getting_started/tutorials/multi-tenancy.md#viewing-instance-jobs (reference label)" class="md-ellipsis">Viewing Instance Jobs</span>
+      </a>
+    </li>
+  
+
+            
+          
         </ul>
       </nav>
     </li>
@@ -1090,6 +1110,13 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#viewing-instance-jobs" class="md-nav__link">
+    <span title="/getting_started/tutorials/multi-tenancy.md#viewing-instance-jobs (reference label)" class="md-ellipsis">Viewing Instance Jobs</span>
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -1289,14 +1316,15 @@
 <p class="admonition-title">Warning</p>
     <p>Multi-tenancy is early in development and should not be used in production.
     We create a multi-user Flux install, a set of users, and then authenticate
-    to submit jobs via PAM, meaning that no credential is stored anywhere.
-    A future approach might also include a secret for each user so the payloads
-    are encrypted in transport.</p>
+    to submit jobs via OAuth2 with encoded payloads, meaning that we store hashed
+    passwords in the temporary database and the Flux Operator generates a shared
+    secret for the Flux Restful API and itself. The multi-tenant case is really
+    only relevant for a persistent minicluster or one that uses submit because
+    otherwise we are just submitting jobs directly as one flux user.</p>
 </div>
 </div>
 <p>“Multi-tenancy” means having multiple tenants, or users, in a cluster! We can accomplish this
-fairly easily via <a class="reference external" href="https://flux-framework.readthedocs.io/en/latest/guides/accounting-guide.html">Flux Accounting</a>
-that will allow us to create users for our MiniCluster. This small tutorial will walk through
+fairly by creating multiple users for our MiniCluster. This small tutorial will walk through
 creating an example with MiniKube.</p>
 <h2 id="create-cluster">1. Create Cluster<a class="headerlink" href="#create-cluster" title="Permalink to this heading">¶</a></h2>
 <p>Bring up your MiniKube cluster.</p>
@@ -1330,13 +1358,16 @@ have a minicluster.yaml provided as an example:</p>
 <span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">avocadosaurus</span>
 
 <span class="w">  </span><span class="nt">containers</span><span class="p">:</span>
-<span class="w">    </span><span class="c1"># This image has flux-accounting installed</span>
 <span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">image</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ghcr.io/rse-ops/accounting:app-latest</span>
 <span class="w">    </span><span class="c1"># Multi-user mode should not have a command</span>
 </code></pre></div>
 </div>
-<p>Note that we don’t provide a command to run the Flux Restful API, and we use a container base that has
-flux-accounting installed. Then, create the flux-operator namespace and MiniCluster:</p>
+<p>Note that we don’t provide a command to run the Flux Restful API. It’s recommended to pull the container
+to MiniKube first:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span>minikube<span class="w"> </span>ssh<span class="w"> </span>docker<span class="w"> </span>pull<span class="w"> </span>ghcr.io/rse-ops/accounting:app-latest
+</code></pre></div>
+</div>
+<p>Then, create the flux-operator namespace and MiniCluster:</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span>kubectl<span class="w"> </span>create<span class="w"> </span>namespace<span class="w"> </span>flux-operator
 $<span class="w"> </span>kubectl<span class="w"> </span>create<span class="w"> </span>-f<span class="w"> </span>examples/flux-restful/minicluster-multi-tenant.yaml
 </code></pre></div>
@@ -1363,16 +1394,15 @@ $<span class="w"> </span>kubectl<span class="w"> </span>logs<span class="w"> </s
 <span class="go">flux account add-user --username=avocadosaurus --bank=user_bank</span>
 </code></pre></div>
 </div>
-<p>And the Flux Restful Server is ready to go! Note that pam is enabled,
-and we don’t have a Flux user or flux token provided. When you authenticate with PAM
-you are not allowed to have a global Flux user, as it wouldn’t coincide with an actual
-user account.</p>
-<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><code><span class="go">broker.err[0]: accepting connection from flux-sample-3 (rank 3) status full</span>
+<p>And the Flux Restful Server is ready to go! Note that a secret is generated by the
+server that would be required for you to use the RESTful API (to encode payloads)
+For the web interface, you can use basic auth.</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><code><span class="go">broker.info[0]: quorum-full: quorum-&gt;run 0.363998s</span>
 <span class="go">🍓 Require auth: True</span>
-<span class="go">🍓     PAM auth: True</span>
-<span class="go">🍓    Flux user: unset</span>
-<span class="go">🍓   Flux token: unset</span>
-<span class="go">INFO:     Started server process [170]</span>
+<span class="go">🍓   Secret key ************************************</span>
+<span class="go">🍓    Flux user: ****</span>
+<span class="go">🍓   Flux token: ************************************</span>
+<span class="go">INFO:     Started server process [193]</span>
 <span class="go">INFO:     Waiting for application startup.</span>
 <span class="go">INFO:     Application startup complete.</span>
 <span class="go">INFO:     Uvicorn running on http://0.0.0.0:5000 (Press CTRL+C to quit)</span>
@@ -1385,45 +1415,60 @@ user account.</p>
 </code></pre></div>
 </div>
 <p>And open your browser to <a class="reference external" href="http://localhost:5000">http://localhost:5000</a>. You
-should be able to login with a user and password. Note that nothing is stored
-in any kind of database for Flux Restful API - all authentication is done
-against the server using PAM. If you want more programmattic access, look at
+should be able to login with a user and password, which are required when you want to
+submit or see the jobs table. If you want more programmattic access, look at
 our Python SDK examples for “port forwarding” that will do the same above,
 but not require the manual extra work (all is done in Python).</p>
 <h2 id="admin-actions">5. Admin Actions<a class="headerlink" href="#admin-actions" title="Permalink to this heading">¶</a></h2>
 <h3 id="adding-a-user">Adding a User<a class="headerlink" href="#adding-a-user" title="Permalink to this heading">¶</a></h3>
-<p>It is possible to dynamically add a user! You will need to create them, add them
-to the accounting database, and then updating. You can exec a set of commands
-to the broker pod as follows:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code><span class="c1"># Get the broker pod kubectl get -n flux-operator pods</span>
-<span class="nv">pod</span><span class="o">=</span><span class="s2">&quot;flux-sample-0-fz64b&quot;</span>
-
-<span class="c1"># Create the user account</span>
-kubectl<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>--stdin<span class="w"> </span>--tty<span class="w"> </span>-n<span class="w"> </span>flux-operator<span class="w"> </span><span class="si">${</span><span class="nv">pod</span><span class="si">}</span><span class="w"> </span>--<span class="w"> </span>sudo<span class="w"> </span>useradd<span class="w"> </span>-m<span class="w"> </span>-p<span class="w"> </span><span class="k">$(</span>openssl<span class="w"> </span>passwd<span class="w"> </span><span class="s1">&#39;greatpw&#39;</span><span class="k">)</span><span class="w"> </span>greatuser
-
-<span class="c1"># Add them to flux accounting - the user bank is just called &quot;user_bank&quot;</span>
-kubectl<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>--stdin<span class="w"> </span>--tty<span class="w"> </span>-n<span class="w"> </span>flux-operator<span class="w"> </span><span class="si">${</span><span class="nv">pod</span><span class="si">}</span><span class="w"> </span>--<span class="w"> </span>sudo<span class="w"> </span>-u<span class="w"> </span>flux<span class="w"> </span>flux<span class="w"> </span>account<span class="w"> </span>add-user<span class="w"> </span>--username<span class="o">=</span>greatuser<span class="w"> </span>--bank<span class="o">=</span>user_bank
-
-<span class="c1"># Update. If you don&#39;t run this, the user jobs will be stuck in priority-wait!</span>
-kubectl<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>--stdin<span class="w"> </span>--tty<span class="w"> </span>-n<span class="w"> </span>flux-operator<span class="w"> </span><span class="si">${</span><span class="nv">pod</span><span class="si">}</span><span class="w"> </span>--<span class="w"> </span>sudo<span class="w"> </span>-u<span class="w"> </span>flux<span class="w"> </span>flux<span class="w"> </span>account-priority-update
+<p>It is possible to dynamically add a user! You will need to create them inside the container.
+Shell inside to interact directly:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span>kubectl<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>-it<span class="w"> </span>-n<span class="w"> </span>flux-operator<span class="w"> </span>flux-sample-0-bnwnt<span class="w"> </span>--<span class="w"> </span>bash
 </code></pre></div>
 </div>
-<p>To sanity check your user is added, you can do:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>kubectl<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>--stdin<span class="w"> </span>--tty<span class="w"> </span>-n<span class="w"> </span>flux-operator<span class="w"> </span><span class="si">${</span><span class="nv">pod</span><span class="si">}</span><span class="w"> </span>--<span class="w"> </span>sudo<span class="w"> </span>-u<span class="w"> </span>flux<span class="w"> </span>flux<span class="w"> </span>account<span class="w"> </span>view-user<span class="w"> </span>greatuser
+<p>The flux-restful-api is under <code class="docutils literal notranslate"><span class="pre">/flux-restful-api</span></code></p>
+<p>Add a new user:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span>python3<span class="w"> </span>/flux-restful-api/app/db/init_db.py<span class="w"> </span>add-user<span class="w"> </span>newuser<span class="w"> </span>newuser
 </code></pre></div>
 </div>
-<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><code><span class="go">creation_time   mod_time        active          username        userid          bank            default_bank    shares          job_usage       fairshare       max_running_jobsmax_active_jobs max_nodes       queues          projects        default_project</span>
-<span class="go">1677276554      1677276554      1               greatuser       1006            user_bank       user_bank       1               0.0             0.5             5               7               2147483647                      *               *</span>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><code><span class="go">INFO:flux-restful:User newuser has been created.</span>
 </code></pre></div>
 </div>
-<p>Most of the fields should be populated, as shown above. If you see empty fields the user was not added properly.</p>
+<h3 id="viewing-instance-jobs">Viewing Instance Jobs<a class="headerlink" href="#viewing-instance-jobs" title="Permalink to this heading">¶</a></h3>
+<p>If you shell into the broker pod (as shown above) you can connect to the broker’s socket, the <code class="docutils literal notranslate"><span class="pre">FLUX_URI</span></code>
+as follows:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span><span class="nb">export</span><span class="w"> </span><span class="nv">FLUX_URI</span><span class="o">=</span>local:///run/flux/local
+$<span class="w"> </span>sudo<span class="w"> </span>-u<span class="w"> </span>flux<span class="w"> </span>flux<span class="w"> </span>proxy<span class="w"> </span><span class="nv">$FLUX_URI</span>
+</code></pre></div>
+</div>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span>flux<span class="w"> </span><span class="nb">jobs</span><span class="w"> </span>-a
+</code></pre></div>
+</div>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><code><span class="go">       JOBID USER     NAME       ST NTASKS NNODES     TIME INFO</span>
+<span class="go">   ƒ7EaBwt4w flux     hostname   CD      1      1   0.019s flux-sample-3</span>
+<span class="go">   ƒ6X8ua7Fu flux     pwd        CD      1      1   0.042s flux-sample-3</span>
+<span class="go">   ƒ6MNGWc9m flux     hostname   CD      1      1   0.047s flux-sample-3</span>
+<span class="go">   ƒ5u2QLkgP flux     hostname   CD      1      1   0.075s flux-sample-1</span>
+</code></pre></div>
+</div>
+<p>You’ll be the flux user that owns the instance:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span>whoami
+flux
+</code></pre></div>
+</div>
+<p>We are currently testing different ways to (aside from the id) ensure ownership
+of a job. This is why multi-user mode is “use at your own risk” for the time being -
+both jobs and the working space is largely shared.</p>
 <h2 id="frequently-asked-questions">Frequently Asked Questions<a class="headerlink" href="#frequently-asked-questions" title="Permalink to this heading">¶</a></h2>
 <h3 id="what-are-the-different-types-of-multi-tenant-use-cases">What are the different types of multi-tenant use cases?<a class="headerlink" href="#what-are-the-different-types-of-multi-tenant-use-cases" title="Permalink to this heading">¶</a></h3>
 <h4 id="a-single-multi-tenant-minicluster">1. A single multi-tenant MiniCluster<a class="headerlink" href="#a-single-multi-tenant-minicluster" title="Permalink to this heading">¶</a></h4>
 <p>In the example above, we define our users in advance and bring up a single MiniCluster, meaning one MiniCluster
-custom resource definition on one Kubernetes cluster, that allows multiple users to submit jobs authenticated
-as themselves with PAM. This use case would be recommended if you have a small group that would be able
-to submit jobs to the same Flux Instance on a set of container bases with the same needs. We do not
+custom resource definition on one Kubernetes cluster, that allows multiple users to submit jobs authenticating
+with basic auth to the Flux RESTFul API database. You can equivalently use the <a class="reference external" href="https://github.com/flux-framework/flux-restful-api">flux-restful-api</a>
+client to submit jobs from the command line, and this will require the server secret to encode the payloads. E.g.,
+you can imagine providing a cluster that doesn’t expose the interface, but allows this submission.
+This use case would be recommended if you have a small group that would be able to submit jobs to the same
+Flux Instance on a set of container bases with the same needs, and where you largely trust one another. We do not
 yet support multi-tenant storage (we are still working on simple storage)! The cluster is persistent,
 meaning it stays up until the Kubernetes cluster owner destroys it.</p>
 <h4 id="multiple-miniclusters-for-multi-tenancy">2. Multiple MiniClusters for multi-tenancy<a class="headerlink" href="#multiple-miniclusters-for-multi-tenancy" title="Permalink to this heading">¶</a></h4>
@@ -1444,7 +1489,7 @@ and the job completes and everything cleans up.</p>
   <small>
     
       Last update:
-      Mar 04, 2023
+      Mar 06, 2023
     
   </small>
 </div>
@@ -1515,7 +1560,7 @@ and the job completes and everything cleans up.</p>
       <div class="md-copyright">
   
     <div class="md-footer-copyright__highlight">
-        &#169; Copyright 2022, Flux Developers.
+        &#169; Copyright 2022-2023, Flux Developers.
         
     </div>
   
@@ -1557,9 +1602,6 @@ and the job completes and everything cleans up.</p>
     
       
         <script src="../../_static/sphinx_immaterial_theme.cea6a0c1d5b0618cf.min.js"></script>
-        <script src="../../_static/clipboard.min.js"></script>
-        <script src="../../_static/copybutton.js"></script>
-        <script src="../../_static/js/rtd_sphinx_search.min.js"></script>
         <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
     
   </body>

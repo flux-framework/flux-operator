@@ -34,8 +34,6 @@
       
     
         <link rel="stylesheet" type="text/css" href="../_static/sphinx_immaterial_theme.fa3fbbd75cfdd7cef.min.css" />
-        <link rel="stylesheet" type="text/css" href="../_static/copybutton.css" />
-        <link rel="stylesheet" type="text/css" href="../_static/css/rtd_sphinx_search.min.css" />
         <link rel="stylesheet" type="text/css" href="../_static/custom.css" />
     <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
     
@@ -851,6 +849,13 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#secretkey" class="md-nav__link">
+    <span title="/getting_started/custom-resource-definition.md#secretkey (reference label)" class="md-ellipsis">secret<wbr>Key</span>
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -1609,6 +1614,15 @@ It defaults to 5000.</p>
 <span class="w">    </span><span class="nt">port</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">5000</span>
 </code></pre></div>
 </div>
+<h4 id="secretkey">secretKey<a class="headerlink" href="#secretkey" title="Permalink to this heading">¶</a></h4>
+<p>We use a secretKey to encode all payloads to the server. If you don’t specify one,
+the Flux Operator will make one for you! If you intend to communicate with your
+MiniCluster outside of this context, you can either grab this from the logs
+or define your own as follows:</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><code><span class="w">  </span><span class="nt">fluxRestful</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">secretKey</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">notsosecrethoo</span>
+</code></pre></div>
+</div>
 
 
   <hr>
@@ -1616,7 +1630,7 @@ It defaults to 5000.</p>
   <small>
     
       Last update:
-      Mar 04, 2023
+      Mar 06, 2023
     
   </small>
 </div>
@@ -1687,7 +1701,7 @@ It defaults to 5000.</p>
       <div class="md-copyright">
   
     <div class="md-footer-copyright__highlight">
-        &#169; Copyright 2022, Flux Developers.
+        &#169; Copyright 2022-2023, Flux Developers.
         
     </div>
   
@@ -1729,9 +1743,6 @@ It defaults to 5000.</p>
     
       
         <script src="../_static/sphinx_immaterial_theme.cea6a0c1d5b0618cf.min.js"></script>
-        <script src="../_static/clipboard.min.js"></script>
-        <script src="../_static/copybutton.js"></script>
-        <script src="../_static/js/rtd_sphinx_search.min.js"></script>
         <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
     
   </body>

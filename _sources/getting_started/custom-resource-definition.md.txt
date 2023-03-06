@@ -711,3 +711,15 @@ It defaults to 5000.
   fluxRestful:
     port: 5000
 ```
+
+#### secretKey
+
+We use a secretKey to encode all payloads to the server. If you don't specify one,
+the Flux Operator will make one for you! If you intend to communicate with your
+MiniCluster outside of this context, you can either grab this from the logs
+or define your own as follows:
+
+```yaml
+  fluxRestful:
+    secretKey: notsosecrethoo
+```
