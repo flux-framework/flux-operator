@@ -48,7 +48,7 @@ def create_minicluster():
         users.append(MiniClusterUser(name=user, password=user))
 
     # Generate a secret key
-    flux_restful = FluxRestful(secret_key=str(uuid.uuid4()))
+    flux_restful = FluxRestful(secret_key=str(uuid.uuid4()), branch="debug-multi-user")
 
     # Create the minicluster
     minicluster = MiniCluster(

@@ -23,6 +23,13 @@ jobs:
 
   test-python-sdk:
     runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        # This is a matrix of test commands and containers, MiniKube is assumed to be running
+        test: [["python ./sdk/python/v1alpha1/examples/port-forward.py", "ghcr.io/flux-framework/flux-restful-api:latest"],
+               ["pytest -xs ./tests/python/test_*.py", "ghcr.io/flux-framework/flux-restful-api:latest"]]
+
     steps:
     - name: Checkout the code
       uses: actions/checkout@v3
@@ -48,16 +55,16 @@ jobs:
 
     - name: Pull Docker Containers to MiniKube
       env:
+        container: ${{ matrix.test[1] }}
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: |
         export SHELL=/bin/bash
         eval $(minikube -p minikube docker-env)
-        minikube ssh docker pull ghcr.io/flux-framework/flux-restful-api:latest
+        minikube ssh docker pull ${container}
         make
         make install
 
-    - name: Test port-forward example
-      run: /bin/bash ./script/test-python.sh python ./sdk/python/v1alpha1/examples/port-forward.py
-
-    - name: Tests in pytest
-      run: /bin/bash ./script/test-python.sh python pytest -xs ./tests/python/test_*.py
+    - name: Test ${{ matrix.test[0] }}
+      env:
+        command: ${{ matrix.test[0] }}
+      run: /bin/bash ./script/test-python.sh ${command}

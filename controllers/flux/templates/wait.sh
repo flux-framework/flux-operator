@@ -35,6 +35,9 @@ asFlux="sudo -u ${fluxuser} -E PYTHONPATH=$PYTHONPATH -E PATH=$PATH -E HOME=/hom
 which sudo > /dev/null 2>&1 || (echo "sudo is required to be installed" && exit 1);
 which flux > /dev/null 2>&1 || (echo "flux is required to be installed" && exit 1);
 
+# Add fluxuser to sudoers
+echo "${fluxuser} ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers
+
 # Add a flux user (required) that should exist before pre-command
 sudo adduser --disabled-password --uid ${fluxuid} --gecos "" ${fluxuser} > /dev/null 2>&1 || {{ if not .Logging.Quiet }} printf "${fluxuser} user is already added.\n"{{ else }}true{{ end }}
 
