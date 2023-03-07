@@ -209,9 +209,10 @@ else
         if [ "$@" == "" ]; then
 
             # Start restful API server
+            branch={{if .FluxRestful.Branch}}{{.FluxRestful.Branch}}{{else}}main{{end}}
             startServer="uvicorn app.main:app --host=0.0.0.0 --port={{or .FluxRestful.Port 5000}}"
-            printf "Cloning flux-framework/flux-restful-api branch {{.FluxRestful.Branch}}\n"
-            git clone -b {{.FluxRestful.Branch}} --depth 1 https://github.com/flux-framework/flux-restful-api /flux-restful-api > /dev/null 2>&1
+            printf "Cloning flux-framework/flux-restful-api branch ${branch}\n"
+            git clone -b ${branch} --depth 1 https://github.com/flux-framework/flux-restful-api /flux-restful-api > /dev/null 2>&1
             cd /flux-restful-api
             
             # Export the main flux user and token "superuser"
