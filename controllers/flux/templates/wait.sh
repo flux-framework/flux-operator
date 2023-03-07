@@ -38,9 +38,6 @@ which flux > /dev/null 2>&1 || (echo "flux is required to be installed" && exit 
 # Add a flux user (required) that should exist before pre-command
 sudo adduser --disabled-password --uid ${fluxuid} --gecos "" ${fluxuser} > /dev/null 2>&1 || {{ if not .Logging.Quiet }} printf "${fluxuser} user is already added.\n"{{ else }}true{{ end }}
 
-# Needs to be added to sudoers to sign jobs
-# echo "${fluxuser} ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers
-
 {{ if .Users }}{{range $username := .Users}}# Add additional users
 printf "Adding '{{.Name}}' with password '{{ .Password}}'\n"
 sudo adduser --disabled-password --gecos "" "{{ .Name}}"
@@ -228,8 +225,7 @@ else
 
             {{ if .Users }}{{range $username := .Users}}# Add additional users
             printf "Adding '{{.Name}}' with password '{{ .Password}}'\n"
-            {{ if .SecretKey}}python3 ./app/db/init_db.py add-user --secret-key "{{.SecretKey}}" "{{.Name}}" "{{.Password}}" || python ./app/db/init_db.py add-user --secret-key "{{.SecretKey}}" "{{.Name}}" "{{.Password}}"
-            {{ else }}python3 ./app/db/init_db.py add-user "{{.Name}}" "{{.Password}}" || python ./app/db/init_db.py add-user "{{.Name}}" "{{.Password}}"{{ end }}
+            python3 ./app/db/init_db.py add-user "{{.Name}}" "{{.Password}}" || python ./app/db/init_db.py add-user "{{.Name}}" "{{.Password}}"
             {{ end }}{{ end }}
 
             # Shared envars across user modes
