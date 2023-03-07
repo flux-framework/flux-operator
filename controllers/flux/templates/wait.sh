@@ -43,7 +43,7 @@ sudo adduser --disabled-password --uid ${fluxuid} --gecos "" ${fluxuser} > /dev/
 
 {{ if .Users }}{{range $username := .Users}}# Add additional users
 printf "Adding '{{.Name}}' with password '{{ .Password}}'\n"
-sudo adduser --disabled-password --gecos "" "{{ .Name}}"
+sudo useradd -m -p $(openssl passwd '{{ .Password }}') {{.Name}}
 {{ end }}{{ end }}
 
 # Show user permissions / ids
