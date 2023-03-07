@@ -15,8 +15,8 @@ cmd="$@"
 echo "Testing Command: ${cmd}"
 
 # Quick helper script to run a test
-make clean >> /dev/null
-make run > /dev/null 2> /dev/null &
+make clean
+make run &
 pid=$!
 echo "PID for running cluster is ${pid}"
 
