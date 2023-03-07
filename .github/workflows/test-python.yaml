@@ -27,8 +27,8 @@ jobs:
       fail-fast: false
       matrix:
         # This is a matrix of test commands and containers, MiniKube is assumed to be running
-        test: [["python ./sdk/python/v1alpha1/examples/port-forward.py", "ghcr.io/rse-ops/accounting:app-latest"],
-               ["pytest -xs ./tests/python/test_*.py", "ghcr.io/rse-ops/accounting:app-latest"]]
+        test: [["python ./sdk/python/v1alpha1/examples/port-forward.py", "ghcr.io/flux-framework/flux-restful-api:latest"],
+               ["pytest -xs ./tests/python/test_*.py", "ghcr.io/flux-framework/flux-restful-api:latest"]]
 
     steps:
     - name: Checkout the code

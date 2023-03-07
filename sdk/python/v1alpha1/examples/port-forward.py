@@ -44,7 +44,7 @@ def create_minicluster():
     # Here is our main container with Flux accounting
     # run_flux True is required here
     container = MiniClusterContainer(
-        image="ghcr.io/rse-ops/accounting:app-latest", run_flux=True
+        image="ghcr.io/flux-framework/flux-restful-api:latest", run_flux=True
     )
 
     # Two users (set their passwords so we know)
