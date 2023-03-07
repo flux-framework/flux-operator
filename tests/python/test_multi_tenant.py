@@ -161,6 +161,7 @@ def test_multi_tenant():
             print(f"Job Output: {output}")
 
             # working on signing as user - TBA
+            output = "".join(output)
             assert output and user in output
 
     # How to cleanup
