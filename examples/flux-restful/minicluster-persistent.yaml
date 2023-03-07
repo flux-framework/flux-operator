@@ -21,6 +21,3 @@ spec:
     # The container URI to pull (currently needs to be public)
     - image: ghcr.io/rse-ops/pokemon:app-latest
       fluxOptionFlags: "-ompi=openmpi@5"
-  
-          
-         
