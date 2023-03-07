@@ -39,7 +39,7 @@ def create_minicluster():
     # Here is our main container with Flux accounting
     # run_flux True is required here
     container = MiniClusterContainer(
-        image="ghcr.io/rse-ops/accounting:app-latest", run_flux=True
+        image="ghcr.io/flux-framework/flux-restful-api:latest", run_flux=True
     )
 
     # Two users (set their passwords so we know)
@@ -161,7 +161,8 @@ def test_multi_tenant():
             print(f"Job Output: {output}")
 
             # working on signing as user - TBA
-            # assert output and user in output
+            output = "".join(output)
+            assert output and user in output
 
     # How to cleanup
     print("Cleaning up MiniCluster!")
