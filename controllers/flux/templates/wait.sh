@@ -38,6 +38,14 @@ which flux > /dev/null 2>&1 || (echo "flux is required to be installed" && exit 
 # Add a flux user (required) that should exist before pre-command
 sudo adduser --disabled-password --uid ${fluxuid} --gecos "" ${fluxuser} > /dev/null 2>&1 || {{ if not .Logging.Quiet }} printf "${fluxuser} user is already added.\n"{{ else }}true{{ end }}
 
+# Needs to be added to sudoers to sign jobs
+# echo "${fluxuser} ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers
+
+{{ if .Users }}{{range $username := .Users}}# Add additional users
+printf "Adding '{{.Name}}' with password '{{ .Password}}'\n"
+sudo adduser --disabled-password --gecos "" "{{ .Name}}"
+{{ end }}{{ end }}
+
 # Show user permissions / ids
 {{ if not .Logging.Quiet }}printf "${fluxuser} user identifiers:\n$(id ${fluxuser})\n"{{ end }}
 
@@ -49,6 +57,7 @@ sudo adduser --disabled-password --uid ${fluxuid} --gecos "" ${fluxuser} > /dev/
 
 {{ if not .Logging.Quiet }}# Show asFlux directive once
 printf "\nAs Flux prefix for flux commands: ${asFlux}\n"{{ end }}
+
 
 # We use the actual time command and not the wrapper, otherwise we get there is no argument -f
 {{ if .Logging.Timed }}which /usr/bin/time > /dev/null 2>&1 || (echo "/usr/bin/time is required to use logging.timed true" && exit 1);{{ end }}
@@ -219,7 +228,8 @@ else
 
             {{ if .Users }}{{range $username := .Users}}# Add additional users
             printf "Adding '{{.Name}}' with password '{{ .Password}}'\n"
-            python3 ./app/db/init_db.py add-user "{{.Name}}" "{{.Password}}" || python ./app/db/init_db.py add-user "{{.Name}}" "{{.Password}}"
+            {{ if .SecretKey}}python3 ./app/db/init_db.py add-user --secret-key "{{.SecretKey}}" "{{.Name}}" "{{.Password}}" || python ./app/db/init_db.py add-user --secret-key "{{.SecretKey}}" "{{.Name}}" "{{.Password}}"
+            {{ else }}python3 ./app/db/init_db.py add-user "{{.Name}}" "{{.Password}}" || python ./app/db/init_db.py add-user "{{.Name}}" "{{.Password}}"{{ end }}
             {{ end }}{{ end }}
 
             # Shared envars across user modes

@@ -311,8 +311,7 @@ users:
 The passwords (if provided) are validated to be 8 or fewer characters.
 Note that although we don't validate this in the job, multi-user mode only makes sense to
 provide alongside a custom resource definition without a command, meaning you submit
-directly to the Flux Restful API server.
-
+directly to the Flux Restful API server.```
 
 ### pod
 
