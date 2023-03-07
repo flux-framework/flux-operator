@@ -41,7 +41,7 @@ jobs:
         go-version: ^1.18
 
     - name: Start minikube
-      uses: medyagh/setup-minikube
+      uses: medyagh/setup-minikube@697f2b7aaed5f70bf2a94ee21a4ec3dde7b12f92 # v0.0.9
 
     - name: Create the namespace
       run: kubectl create namespace flux-operator
