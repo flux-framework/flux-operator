@@ -299,7 +299,7 @@ spec:
                     annotations:
                       additionalProperties:
                         type: string
-                      description: Annotations for persistent volume claim
+                      description: Annotations for the volume
                       type: object
                     attributes:
                       additionalProperties:
@@ -311,6 +311,11 @@ spec:
                       description: Capacity (string) for PVC (storage request) to
                         create PV
                       type: string
+                    claimAnnotations:
+                      additionalProperties:
+                        type: string
+                      description: Annotations for the persistent volume claim
+                      type: object
                     delete:
                       default: true
                       description: Delete the persistent volume on cleanup

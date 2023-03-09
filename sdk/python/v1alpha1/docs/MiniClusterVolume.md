@@ -5,9 +5,10 @@ Mini Cluster local volumes available to mount (these are on the host)
 ## Properties
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**annotations** | **dict(str, str)** | Annotations for persistent volume claim | [optional] 
+**annotations** | **dict(str, str)** | Annotations for the volume | [optional] 
 **attributes** | **dict(str, str)** | Optional volume attributes | [optional] 
 **capacity** | **str** | Capacity (string) for PVC (storage request) to create PV | [optional] [default to '5Gi']
+**claim_annotations** | **dict(str, str)** | Annotations for the persistent volume claim | [optional] 
 **delete** | **bool** | Delete the persistent volume on cleanup | [optional] [default to True]
 **driver** | **str** | Storage driver, e.g., gcs.csi.ofek.dev Only needed if not using hostpath | [optional] [default to '']
 **labels** | **dict(str, str)** |  | [optional] 

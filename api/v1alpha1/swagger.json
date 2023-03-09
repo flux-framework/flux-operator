@@ -439,7 +439,7 @@
       ],
       "properties": {
         "annotations": {
-          "description": "Annotations for persistent volume claim",
+          "description": "Annotations for the volume",
           "type": "object",
           "additionalProperties": {
             "type": "string",
@@ -458,6 +458,14 @@
           "description": "Capacity (string) for PVC (storage request) to create PV",
           "type": "string",
           "default": "5Gi"
+        },
+        "claimAnnotations": {
+          "description": "Annotations for the persistent volume claim",
+          "type": "object",
+          "additionalProperties": {
+            "type": "string",
+            "default": ""
+          }
         },
         "delete": {
           "description": "Delete the persistent volume on cleanup",

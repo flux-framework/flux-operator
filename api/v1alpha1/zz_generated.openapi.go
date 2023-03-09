@@ -815,7 +815,23 @@ func schema__api_v1alpha1__MiniClusterVolume(ref common.ReferenceCallback) commo
 					},
 					"annotations": {
 						SchemaProps: spec.SchemaProps{
-							Description: "Annotations for persistent volume claim",
+							Description: "Annotations for the volume",
+							Type:        []string{"object"},
+							AdditionalProperties: &spec.SchemaOrBool{
+								Allows: true,
+								Schema: &spec.Schema{
+									SchemaProps: spec.SchemaProps{
+										Default: "",
+										Type:    []string{"string"},
+										Format:  "",
+									},
+								},
+							},
+						},
+					},
+					"claimAnnotations": {
+						SchemaProps: spec.SchemaProps{
+							Description: "Annotations for the persistent volume claim",
 							Type:        []string{"object"},
 							AdditionalProperties: &spec.SchemaOrBool{
 								Allows: true,

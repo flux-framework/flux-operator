@@ -25,9 +25,10 @@ spec:
       secret: csi-gcs-secret
       capacity: 25Gi
 
+      # Annotations for the persistent volume claim
       # This should coincide with the location of your bucket and project
       # The storage bucket name is provided with the secret too (supposedly!)
-      annotations:
+      claimAnnotations:
         gcs.csi.ofek.dev/location: us-central1
         gcs.csi.ofek.dev/project-id: dinodev
         gcs.csi.ofek.dev/bucket: flux-operator-storage

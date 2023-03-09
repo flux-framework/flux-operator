@@ -355,6 +355,13 @@ func (in *MiniClusterVolume) DeepCopyInto(out *MiniClusterVolume) {
 			(*out)[key] = val
 		}
 	}
+	if in.ClaimAnnotations != nil {
+		in, out := &in.ClaimAnnotations, &out.ClaimAnnotations
+		*out = make(map[string]string, len(*in))
+		for key, val := range *in {
+			(*out)[key] = val
+		}
+	}
 	if in.Attributes != nil {
 		in, out := &in.Attributes, &out.Attributes
 		*out = make(map[string]string, len(*in))

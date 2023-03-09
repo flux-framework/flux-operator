@@ -185,9 +185,13 @@ type MiniClusterVolume struct {
 	// +optional
 	Labels map[string]string `json:"labels"`
 
-	// Annotations for persistent volume claim
+	// Annotations for the volume
 	// +optional
 	Annotations map[string]string `json:"annotations"`
+
+	// Annotations for the persistent volume claim
+	// +optional
+	ClaimAnnotations map[string]string `json:"claimAnnotations"`
 
 	// Optional volume attributes
 	// +optional

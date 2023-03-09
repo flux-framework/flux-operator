@@ -36,6 +36,7 @@ class MiniClusterVolume(object):
         'annotations': 'dict(str, str)',
         'attributes': 'dict(str, str)',
         'capacity': 'str',
+        'claim_annotations': 'dict(str, str)',
         'delete': 'bool',
         'driver': 'str',
         'labels': 'dict(str, str)',
@@ -50,6 +51,7 @@ class MiniClusterVolume(object):
         'annotations': 'annotations',
         'attributes': 'attributes',
         'capacity': 'capacity',
+        'claim_annotations': 'claimAnnotations',
         'delete': 'delete',
         'driver': 'driver',
         'labels': 'labels',
@@ -60,7 +62,7 @@ class MiniClusterVolume(object):
         'volume_handle': 'volumeHandle'
     }
 
-    def __init__(self, annotations=None, attributes=None, capacity='5Gi', delete=True, driver='', labels=None, path='', secret='', secret_namespace='default', storage_class='hostpath', volume_handle='', local_vars_configuration=None):  # noqa: E501
+    def __init__(self, annotations=None, attributes=None, capacity='5Gi', claim_annotations=None, delete=True, driver='', labels=None, path='', secret='', secret_namespace='default', storage_class='hostpath', volume_handle='', local_vars_configuration=None):  # noqa: E501
         """MiniClusterVolume - a model defined in OpenAPI"""  # noqa: E501
         if local_vars_configuration is None:
             local_vars_configuration = Configuration.get_default_copy()
@@ -69,6 +71,7 @@ class MiniClusterVolume(object):
         self._annotations = None
         self._attributes = None
         self._capacity = None
+        self._claim_annotations = None
         self._delete = None
         self._driver = None
         self._labels = None
@@ -85,6 +88,8 @@ class MiniClusterVolume(object):
             self.attributes = attributes
         if capacity is not None:
             self.capacity = capacity
+        if claim_annotations is not None:
+            self.claim_annotations = claim_annotations
         if delete is not None:
             self.delete = delete
         if driver is not None:
@@ -105,7 +110,7 @@ class MiniClusterVolume(object):
     def annotations(self):
         """Gets the annotations of this MiniClusterVolume.  # noqa: E501
 
-        Annotations for persistent volume claim  # noqa: E501
+        Annotations for the volume  # noqa: E501
 
         :return: The annotations of this MiniClusterVolume.  # noqa: E501
         :rtype: dict(str, str)
@@ -116,7 +121,7 @@ class MiniClusterVolume(object):
     def annotations(self, annotations):
         """Sets the annotations of this MiniClusterVolume.
 
-        Annotations for persistent volume claim  # noqa: E501
+        Annotations for the volume  # noqa: E501
 
         :param annotations: The annotations of this MiniClusterVolume.  # noqa: E501
         :type annotations: dict(str, str)
@@ -169,6 +174,29 @@ class MiniClusterVolume(object):
         """
 
         self._capacity = capacity
+
+    @property
+    def claim_annotations(self):
+        """Gets the claim_annotations of this MiniClusterVolume.  # noqa: E501
+
+        Annotations for the persistent volume claim  # noqa: E501
+
+        :return: The claim_annotations of this MiniClusterVolume.  # noqa: E501
+        :rtype: dict(str, str)
+        """
+        return self._claim_annotations
+
+    @claim_annotations.setter
+    def claim_annotations(self, claim_annotations):
+        """Sets the claim_annotations of this MiniClusterVolume.
+
+        Annotations for the persistent volume claim  # noqa: E501
+
+        :param claim_annotations: The claim_annotations of this MiniClusterVolume.  # noqa: E501
+        :type claim_annotations: dict(str, str)
+        """
+
+        self._claim_annotations = claim_annotations
 
     @property
     def delete(self):

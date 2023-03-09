@@ -144,7 +144,7 @@ volumes:
 #### driver
 
 If you are using anything aside from hostpath, you'll need a reference to a storage driver (usually a plugin)
-you've installed separately. Here is an example for Google Cloud storage:
+you've installed separately. This can also be referenced as a provisioner. Here is an example for Google Cloud storage:
 
 ```yaml
 volumes:
@@ -214,6 +214,30 @@ volumes:
 ```
 
 The secret (for now) should be in the default namespace.
+
+#### annotations
+
+To add annotations for the volume use "annotations"
+
+```yaml
+volumes:
+  myvolume:
+    annotations:
+      provider.svc/attribute: value
+```
+
+### claimAnnotations
+
+To set annotations for the claim:
+
+```yaml
+volumes:
+  myvolume:
+    claimAnnotations:
+      gcs.csi.ofek.dev/location: us-central1
+      gcs.csi.ofek.dev/project-id: my-project
+      gcs.csi.ofek.dev/bucket: flux-operator-storage
+```
 
 ### cleanup
 

@@ -469,7 +469,7 @@ make sure that the annotations for storage match your Google project, zone, etc.
       class: csi-gcs
       path: /tmp/data
       secret: csi-gcs-secret
-      annotations:
+      claimAnnotations:
         gcs.csi.ofek.dev/location: us-central1
         gcs.csi.ofek.dev/project-id: my-project
         gcs.csi.ofek.dev/bucket: flux-operator-storage

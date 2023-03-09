@@ -202,9 +202,10 @@ func (r *MiniClusterReconciler) createPersistentVolume(
 	newVolume := &corev1.PersistentVolume{
 		TypeMeta: metav1.TypeMeta{},
 		ObjectMeta: metav1.ObjectMeta{
-			Name:      volumeName,
-			Namespace: cluster.Namespace,
-			Labels:    volume.Labels,
+			Name:        volumeName,
+			Namespace:   cluster.Namespace,
+			Annotations: volume.Annotations,
+			Labels:      volume.Labels,
 		},
 
 		Spec: corev1.PersistentVolumeSpec{
@@ -385,7 +386,7 @@ func (r *MiniClusterReconciler) createPersistentVolumeClaim(
 		ObjectMeta: metav1.ObjectMeta{
 			Name:        volumeName,
 			Namespace:   cluster.Namespace,
-			Annotations: volume.Annotations,
+			Annotations: volume.ClaimAnnotations,
 		},
 
 		Spec: corev1.PersistentVolumeClaimSpec{
