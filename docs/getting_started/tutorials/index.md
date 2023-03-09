@@ -9,4 +9,5 @@ If you have any questions or issues, please [let us know](https://github.com/flu
 :maxdepth: 2
 jobs
 multi-tenancy
+interactive
 ```
