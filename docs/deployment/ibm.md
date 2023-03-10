@@ -533,6 +533,9 @@ cos:
 -  s3Provider: ""
 +  s3Provider: "ibm"
 ```
+
+</details>
+
 Using the above, we would install the plugin directly with our customizations:
 
 ```bash
