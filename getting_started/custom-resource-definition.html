@@ -497,6 +497,13 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#interactive" class="md-nav__link">
+    <span title="/getting_started/custom-resource-definition.md#interactive (reference label)" class="md-ellipsis">interactive</span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#joblabels" class="md-nav__link">
     <span title="/getting_started/custom-resource-definition.md#joblabels (reference label)" class="md-ellipsis">job<wbr>Labels</span>
   </a>
@@ -1131,6 +1138,15 @@ the set of containers that you describe.</p>
 </code></pre></div>
 </div>
 <p>This value defaults to 1.</p>
+<h3 id="interactive">interactive<a class="headerlink" href="#interactive" title="Permalink to this heading">¶</a></h3>
+<p>Interactive mode means that the Flux broker is started without a command, and this would
+allow you to shell into your cluster, connect to the broker, and interact with the Flux install.</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><code><span class="w">  </span><span class="nt">interactive</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+</code></pre></div>
+</div>
+<p>This would be equivalent to giving a start command of <code class="docutils literal notranslate"><span class="pre">sleep</span> <span class="pre">infinity</span></code> however on exit
+(e.g., if there is a flux shutdown from within the Flux instance) the sleep command would
+not exit with a failed code.</p>
 <h3 id="joblabels">jobLabels<a class="headerlink" href="#joblabels" title="Permalink to this heading">¶</a></h3>
 <p>To add custom labels for your job, add a set of key value pairs (strings) to a “jobLabels” section:</p>
 <div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><code><span class="w">  </span><span class="nt">jobLabels</span><span class="p">:</span>
@@ -1630,7 +1646,7 @@ or define your own as follows:</p>
   <small>
     
       Last update:
-      Mar 09, 2023
+      Mar 10, 2023
     
   </small>
 </div>

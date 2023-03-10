@@ -510,8 +510,8 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#shell" class="md-nav__link">
-    <span title="/getting_started/tutorials/interactive.md#shell (reference label)" class="md-ellipsis">Shell</span>
+  <a href="#persistent-cluster" class="md-nav__link">
+    <span title="/getting_started/tutorials/interactive.md#persistent-cluster (reference label)" class="md-ellipsis">Persistent Cluster</span>
   </a>
   
 </li>
@@ -741,8 +741,8 @@
   
   
     <li class="md-nav__item">
-      <a href="#shell" class="md-nav__link">
-        <span title="/getting_started/tutorials/interactive.md#shell (reference label)" class="md-ellipsis">Shell</span>
+      <a href="#persistent-cluster" class="md-nav__link">
+        <span title="/getting_started/tutorials/interactive.md#persistent-cluster (reference label)" class="md-ellipsis">Persistent Cluster</span>
       </a>
     </li>
   
@@ -784,8 +784,8 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#shell" class="md-nav__link">
-    <span title="/getting_started/tutorials/interactive.md#shell (reference label)" class="md-ellipsis">Shell</span>
+  <a href="#persistent-cluster" class="md-nav__link">
+    <span title="/getting_started/tutorials/interactive.md#persistent-cluster (reference label)" class="md-ellipsis">Persistent Cluster</span>
   </a>
   
 </li>
@@ -949,11 +949,13 @@
 <h1 id="interactive">Interactive<a class="headerlink" href="#interactive" title="Permalink to this heading">¶</a></h1>
 <p>The following tutorials demonstrate interactive MiniClusters, beyond using the Flux Restful API or
 launching a job to run and complete.</p>
-<h2 id="shell">Shell<a class="headerlink" href="#shell" title="Permalink to this heading">¶</a></h2>
-<p><strong><a class="reference external" href="https://github.com/flux-framework/flux-operator/blob/main/examples/interactive/minicluster-shell.yaml">Tutorial File</a></strong></p>
+<h2 id="persistent-cluster">Persistent Cluster<a class="headerlink" href="#persistent-cluster" title="Permalink to this heading">¶</a></h2>
+<blockquote>
+<div><p>This example is for a persistent minicluster that provides a shell</p>
+</div></blockquote>
+<p><strong><a class="reference external" href="https://github.com/flux-framework/flux-operator/blob/main/examples/interactive/minicluster-persistent.yaml">Tutorial File</a></strong></p>
 <p>This example demonstrates bringing up a MiniCluster solely to shell in and interact with Flux. First,
-note that there is nothing special about the MiniCluster YAML except that the command is intended
-to run forever, a <code class="docutils literal notranslate"><span class="pre">sleep</span> <span class="pre">infinity</span></code>.</p>
+note that there is nothing special about the MiniCluster YAML except that we set interactive to true:</p>
 <div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><code><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">flux-framework.org/v1alpha1</span>
 <span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">MiniCluster</span>
 <span class="nt">metadata</span><span class="p">:</span>
@@ -963,19 +965,20 @@ to run forever, a <code class="docutils literal notranslate"><span class="pre">s
 
 <span class="w">  </span><span class="c1"># Number of pods to create for MiniCluster</span>
 <span class="w">  </span><span class="nt">size</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">2</span>
+<span class="w">  </span><span class="nt">interactive</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
 
-<span class="w">  </span><span class="c1"># This is a list because a pod can support multiple containers</span>
+<span class="c1"># This is a list because a pod can support multiple containers</span>
 <span class="w">  </span><span class="nt">containers</span><span class="p">:</span>
-<span class="w">    </span><span class="c1"># The container URI to pull (currently needs to be public)</span>
 <span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">image</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ghcr.io/rse-ops/pokemon:app-latest</span>
 <span class="w">      </span><span class="nt">fluxOptionFlags</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;-ompi=openmpi@5&quot;</span>
-<span class="w">      </span><span class="nt">command</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">sleep infinity</span>
 </code></pre></div>
 </div>
-<p>The container you choose should have the software you are interested in having for each node.
+<p>When interactive is true, we tell the Flux broker to start without a command. This means
+the cluster will remain running until you shutdown Flux or <code class="docutils literal notranslate"><span class="pre">kubectl</span> <span class="pre">delete</span></code> the MiniCluster
+itself. The container you choose should have the software you are interested in having for each node.
 Given a running cluster, we can create the namespace and the MiniCluster as follows:</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span>kubectl<span class="w"> </span>create<span class="w"> </span>namespace<span class="w"> </span>flux-operator
-$<span class="w"> </span>kubectl<span class="w"> </span>apply<span class="w"> </span>-f<span class="w"> </span>examples/interactive/minicluster-shell.yaml
+$<span class="w"> </span>kubectl<span class="w"> </span>apply<span class="w"> </span>-f<span class="w"> </span>examples/interactive/minicluster-persistent.yaml
 </code></pre></div>
 </div>
 <p>We can then wait for our pods to be running</p>
@@ -987,7 +990,7 @@ flux-sample-cert-generator<span class="w">   </span><span class="m">0</span>/1<s
 </code></pre></div>
 </div>
 <p>And then shell into the broker pod, index 0:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span>kubectl<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>-it<span class="w">  </span>-n<span class="w"> </span>flux-operator<span class="w">  </span>flux-sample-0-p5xls<span class="w"> </span>--<span class="w"> </span>bash
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span>kubectl<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>-it<span class="w">  </span>-n<span class="w"> </span>flux-operator<span class="w"> </span>flux-sample-0-p5xls<span class="w"> </span>--<span class="w"> </span>bash
 </code></pre></div>
 </div>
 <p>At this point, remember the broker is running, and we need to connect to it. We do this via
@@ -1004,30 +1007,37 @@ flux
 <p>And can also see the resources known to your instance!</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>flux@flux-sample-0:/code$<span class="w"> </span>flux<span class="w"> </span>resource<span class="w"> </span>list
 <span class="w">     </span>STATE<span class="w"> </span>NNODES<span class="w">   </span>NCORES<span class="w"> </span>NODELIST
-<span class="w">      </span>free<span class="w">      </span><span class="m">1</span><span class="w">        </span><span class="m">1</span><span class="w"> </span>flux-sample-0
-<span class="w"> </span>allocated<span class="w">      </span><span class="m">1</span><span class="w">        </span><span class="m">1</span><span class="w"> </span>flux-sample-1
+<span class="w">      </span>free<span class="w">      </span><span class="m">2</span><span class="w">        </span><span class="m">2</span><span class="w"> </span>flux-sample-<span class="o">[</span><span class="m">0</span>-1<span class="o">]</span>
+<span class="w"> </span>allocated<span class="w">      </span><span class="m">0</span><span class="w">        </span><span class="m">0</span>
 <span class="w">      </span>down<span class="w">      </span><span class="m">0</span><span class="w">        </span><span class="m">0</span><span class="w"> </span>
 </code></pre></div>
 </div>
-<p>At this point you have your own Flux install connected to your entire MiniCluster,
+<p>If you see a node is down, it could be the worker node has not connected to the broker
+yet. When the cluster is ready, it will look like the above! At this point you
+have your own Flux install connected to your entire MiniCluster,
 and you can launch and monitor jobs as you please.</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span>flux<span class="w"> </span>submit<span class="w"> </span>sleep<span class="w"> </span><span class="m">120</span>
-ƒ34hRjsAX
+ƒg4ZRVS7
 </code></pre></div>
 </div>
 <p>Note that under flux jobs below, the first sleep (flux-sample-1) is the command
 originally given to the broker. The second, newer sleep is the job we just launched.</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>flux@flux-sample-0:/code$<span class="w"> </span>flux<span class="w"> </span><span class="nb">jobs</span>
 <span class="w">       </span>JOBID<span class="w"> </span>USER<span class="w">     </span>NAME<span class="w">       </span>ST<span class="w"> </span>NTASKS<span class="w"> </span>NNODES<span class="w">     </span>TIME<span class="w"> </span>INFO
-<span class="w">   </span>ƒ34hRjsAX<span class="w"> </span>flux<span class="w">     </span>sleep<span class="w">       </span>R<span class="w">      </span><span class="m">1</span><span class="w">      </span><span class="m">1</span><span class="w">   </span><span class="m">2</span>.342s<span class="w"> </span>flux-sample-0
-<span class="w">     </span>ƒVjP5kb<span class="w"> </span>flux<span class="w">     </span>sleep<span class="w">       </span>R<span class="w">      </span><span class="m">1</span><span class="w">      </span><span class="m">1</span><span class="w">   </span><span class="m">4</span>.547m<span class="w"> </span>flux-sample-1
+<span class="w">    </span>ƒg4ZRVS7<span class="w"> </span>flux<span class="w">     </span>sleep<span class="w">       </span>R<span class="w">      </span><span class="m">1</span><span class="w">      </span><span class="m">1</span><span class="w">   </span><span class="m">1</span>.290s<span class="w"> </span>flux-sample-1
 </code></pre></div>
 </div>
-<p>When you are done, exit from the instance, and exit from the pod, and then delete
-the MiniCluster.</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span>kubectl<span class="w"> </span>delete<span class="w"> </span>-f<span class="w"> </span>examples/interactive/minicluster-shell.yaml
+<p>When you are done, there are a few ways to “get out.” You could just shutdown Flux from
+inside of the instance:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span>flux<span class="w"> </span>shutdown
 </code></pre></div>
 </div>
+<p>Or you could exit from the instance, and exit from the pod, and then delete the MiniCluster.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span>kubectl<span class="w"> </span>delete<span class="w"> </span>-f<span class="w"> </span>examples/interactive/minicluster-persistent.yaml
+</code></pre></div>
+</div>
+<p>If your MiniCluster spec does not have <code class="docutils literal notranslate"><span class="pre">clean:</span> <span class="pre">true</span></code> you might need to run this
+anyway with a shutdown. List pods if you aren’t sure. Have fun!</p>
 
 
   <hr>
@@ -1035,7 +1045,7 @@ the MiniCluster.</p>
   <small>
     
       Last update:
-      Mar 09, 2023
+      Mar 10, 2023
     
   </small>
 </div>
