@@ -223,8 +223,6 @@ func (r *MiniClusterReconciler) createPersistentVolume(
 			corev1.ResourceStorage: resource.MustParse(volume.Capacity),
 		}
 	}
-
-	ctrl.SetControllerReference(cluster, newVolume, r.Scheme)
 	return newVolume
 }
 
@@ -297,6 +295,9 @@ func (r *MiniClusterReconciler) getPersistentVolume(
 			"Name", existing.Name,
 		)
 	}
+
+	// Always set owner to controller, whether created or found
+	ctrl.SetControllerReference(cluster, existing, r.Scheme)
 	return existing, ctrl.Result{}, err
 }
 

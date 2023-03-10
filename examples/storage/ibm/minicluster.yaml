@@ -52,15 +52,15 @@ spec:
         volume.kubernetes.io/storage-provisioner: ibm.io/ibmc-s3fs
 
       # These are volume "pv" annotations
-      annotations:
-        ibm.io/auto-create-bucket: "false"
-        ibm.io/auto-delete-bucket: "false"
-        ibm.io/auto_cache: "true"
-        ibm.io/bucket: flux-operator-storage
-        ibm.io/secret-name: s3-secret
-        ibm.io/secret-namespace: flux-operator
-        ibm.io/debug-level: "warn"
-        ibm.io/curl-debug: "true"
+#      annotations:
+#        ibm.io/auto-create-bucket: "false"
+#        ibm.io/auto-delete-bucket: "false"
+#        ibm.io/auto_cache: "true"
+#        ibm.io/bucket: flux-operator-storage
+#        ibm.io/secret-name: s3-secret
+#        ibm.io/secret-namespace: flux-operator
+#        ibm.io/debug-level: "warn"
+#        ibm.io/curl-debug: "true"
         # We can put the endpoint here too, if not provided to the helm install
         # ibm.io/endpoint: "https://s3-api.dal-us-geo.objectstorage.service.networklayer.com"
         # ibm.io/region: "us-standard"

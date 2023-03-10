@@ -615,18 +615,52 @@ $  kubectl get -n operator-system pod operator-controller-manager-858c9ccfb4-2k7
 #    uid: 87b73461-b5fc-4746-a959-e84518096ed4
 ```
 
-Although it didn't seem to make a difference - a second PV (or PVC?) was always made.
-Next make it:
-
-```yaml
-$ kubectl create -f examples/storage/ibm/pv.yaml
-```
-
-And then right after, create the MiniCluster
+Next, we are going to create the MiniCluster. Note that the driver is going to create a PV [with a name we cannot modify](https://github.com/IBM/ibmcloud-object-storage-plugin/blob/455032aea2f820b8b3ad927e9af1eef6942dc2d5/provisioner/ibm-s3fs-provisioner.go#L795) so we will need to make the cluster, see the PV/PVC created (and lost) and then recreate the PV with the correct name.
+Here is how to create the cluster:
 
 ```bash
 $ kubectl apply -f examples/storage/ibm/minicluster.yaml
 ```
+
+And once you see a PV and PVC:
+
+```bash
+$ kubectl get -n flux-operator pv,pvc
+```
+
+Save the PV to a new yaml file:
+
+```bash
+$ kubectl get -n flux-operator pv -o yaml > pv.yaml
+```
+
+And edit the name to be "data"
+
+```diff
+-    name: pvc-47014577-77af-4402-b88a-0f76132a214d
++    name: data
+```
+
+And apply it again.
+
+```bash
+$ kubectl create -f pv.yaml
+```
+
+And delete the old one:
+
+```bash
+$ kubectl delete pv -n flux-operator pvc-47014577-77af-4402-b88a-0f76132a214d 
+```
+
+Patch it with a new name:
+
+```bash
+$ kubectl patch -n flux-operator pv pvc-47014577-77af-4402-b88a-0f76132a214d -p "{\"metadata\":{\"name\":\"data\"}}"
+```
+
+And then right after, create the MiniCluster
+
 
 The pods will take a bit to pull the containers, in the meantime you can check out the pv and pvc:
 
