@@ -57,6 +57,19 @@ The `tasks` variable under the spec is the number of tasks that each pod in the 
 
 This value defaults to 1.
 
+### interactive
+
+Interactive mode means that the Flux broker is started without a command, and this would
+allow you to shell into your cluster, connect to the broker, and interact with the Flux install.
+
+```yaml
+  interactive: true
+```
+
+This would be equivalent to giving a start command of `sleep infinity` however on exit
+(e.g., if there is a flux shutdown from within the Flux instance) the sleep command would
+not exit with a failed code.
+
 ### jobLabels
 
 To add custom labels for your job, add a set of key value pairs (strings) to a "jobLabels" section:

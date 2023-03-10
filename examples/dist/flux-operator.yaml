@@ -218,6 +218,10 @@ spec:
                       API
                     type: string
                 type: object
+              interactive:
+                default: false
+                description: Run a single-user, interactive minicluster
+                type: boolean
               jobLabels:
                 additionalProperties:
                   type: string
