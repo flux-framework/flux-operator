@@ -341,6 +341,7 @@ func generateFluxConfig(cluster *api.MiniCluster) string {
 	fqdn := fmt.Sprintf("%s.%s.svc.cluster.local", restfulServiceName, cluster.Namespace)
 	hosts := fmt.Sprintf("[%s]", generateRange(int(cluster.Spec.Size)))
 	fluxConfig := fmt.Sprintf(brokerConfigTemplate, fqdn, cluster.Name, hosts)
+	fluxConfig += "\n" + brokerArchiveSection
 	return fluxConfig
 }
 
@@ -372,12 +373,14 @@ func generateWaitScript(cluster *api.MiniCluster, containerIndex int) (string, e
 		cores = container.Cores - 1
 	}
 	// The token uuid is the same across images
+	// TODO we could simplify the templating to just provide the cluster.Spec
 	wt := WaitTemplate{
 		FluxUser:    getFluxUser(cluster.Spec.FluxRestful.Username),
 		FluxToken:   getRandomToken(cluster.Spec.FluxRestful.Token),
 		MainHost:    mainHost,
 		Hosts:       hosts,
 		Container:   container,
+		Interactive: cluster.Spec.Interactive,
 		Users:       cluster.Spec.Users,
 		Size:        cluster.Spec.Size,
 		Tasks:       cluster.Spec.Tasks,

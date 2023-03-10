@@ -337,6 +337,11 @@
           "default": {},
           "$ref": "#/definitions/FluxRestful"
         },
+        "interactive": {
+          "description": "Run a single-user, interactive minicluster",
+          "type": "boolean",
+          "default": false
+        },
         "jobLabels": {
           "description": "Labels for the job",
           "type": "object",

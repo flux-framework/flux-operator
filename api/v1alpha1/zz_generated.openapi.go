@@ -628,6 +628,14 @@ func schema__api_v1alpha1__MiniClusterSpec(ref common.ReferenceCallback) common.
 							},
 						},
 					},
+					"interactive": {
+						SchemaProps: spec.SchemaProps{
+							Description: "Run a single-user, interactive minicluster",
+							Default:     false,
+							Type:        []string{"boolean"},
+							Format:      "",
+						},
+					},
 					"volumes": {
 						SchemaProps: spec.SchemaProps{
 							Description: "Volumes accessible to containers from a host",

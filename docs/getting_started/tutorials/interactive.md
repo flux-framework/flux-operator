@@ -3,9 +3,11 @@
 The following tutorials demonstrate interactive MiniClusters, beyond using the Flux Restful API or
 launching a job to run and complete.
 
-## Shell
+## Persistent Cluster
 
- **[Tutorial File](https://github.com/flux-framework/flux-operator/blob/main/examples/interactive/minicluster-shell.yaml)**
+> This example is for a persistent minicluster that provides a shell
+
+ **[Tutorial File](https://github.com/flux-framework/flux-operator/blob/main/examples/interactive/minicluster-persistent.yaml)**
 
 This example demonstrates bringing up a MiniCluster solely to shell in and interact with Flux. First, 
 note that there is nothing special about the MiniCluster YAML except that the command is intended
@@ -35,7 +37,7 @@ Given a running cluster, we can create the namespace and the MiniCluster as foll
 
 ```bash
 $ kubectl create namespace flux-operator
-$ kubectl apply -f examples/interactive/minicluster-shell.yaml
+$ kubectl apply -f examples/interactive/minicluster-persistent.yaml
 ```
 
 We can then wait for our pods to be running
@@ -51,7 +53,7 @@ flux-sample-cert-generator   0/1     Completed   0          7s
 And then shell into the broker pod, index 0:
 
 ```bash
-$ kubectl exec -it  -n flux-operator  flux-sample-0-p5xls -- bash
+$ kubectl exec -it  -n flux-operator flux-sample-0-p5xls -- bash
 ```
 
 At this point, remember the broker is running, and we need to connect to it. We do this via

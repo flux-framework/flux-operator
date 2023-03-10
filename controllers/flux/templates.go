@@ -22,6 +22,9 @@ var brokerConfigTemplate string
 //go:embed templates/job-manager.toml
 var brokerConfigJobManagerPlugin string
 
+//go:embed templates/archive.toml
+var brokerArchiveSection string
+
 //go:embed templates/wait.sh
 var waitToStartTemplate string
 
@@ -38,6 +41,7 @@ type WaitTemplate struct {
 	FluxRestful api.FluxRestful
 	Users       []api.MiniClusterUser
 	Container   api.MiniClusterContainer
+	Interactive bool
 	Cores       int32
 	Tasks       int32
 	Size        int32 // size of the Minicluster (nodes / pods in indexed jobs)

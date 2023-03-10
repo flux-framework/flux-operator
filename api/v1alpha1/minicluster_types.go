@@ -37,6 +37,11 @@ type MiniClusterSpec struct {
 	// +optional
 	JobLabels map[string]string `json:"jobLabels"`
 
+	// Run a single-user, interactive minicluster
+	// +kubebuilder:default=false
+	// +optional
+	Interactive bool `json:"interactive"`
+
 	// Volumes accessible to containers from a host
 	// +optional
 	Volumes map[string]MiniClusterVolume `json:"volumes"`

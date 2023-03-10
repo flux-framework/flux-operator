@@ -37,6 +37,7 @@ class MiniClusterSpec(object):
         'containers': 'list[MiniClusterContainer]',
         'deadline_seconds': 'int',
         'flux_restful': 'FluxRestful',
+        'interactive': 'bool',
         'job_labels': 'dict(str, str)',
         'logging': 'LoggingSpec',
         'pod': 'PodSpec',
@@ -51,6 +52,7 @@ class MiniClusterSpec(object):
         'containers': 'containers',
         'deadline_seconds': 'deadlineSeconds',
         'flux_restful': 'fluxRestful',
+        'interactive': 'interactive',
         'job_labels': 'jobLabels',
         'logging': 'logging',
         'pod': 'pod',
@@ -60,7 +62,7 @@ class MiniClusterSpec(object):
         'volumes': 'volumes'
     }
 
-    def __init__(self, cleanup=False, containers=None, deadline_seconds=31500000, flux_restful=None, job_labels=None, logging=None, pod=None, size=1, tasks=1, users=None, volumes=None, local_vars_configuration=None):  # noqa: E501
+    def __init__(self, cleanup=False, containers=None, deadline_seconds=31500000, flux_restful=None, interactive=False, job_labels=None, logging=None, pod=None, size=1, tasks=1, users=None, volumes=None, local_vars_configuration=None):  # noqa: E501
         """MiniClusterSpec - a model defined in OpenAPI"""  # noqa: E501
         if local_vars_configuration is None:
             local_vars_configuration = Configuration.get_default_copy()
@@ -70,6 +72,7 @@ class MiniClusterSpec(object):
         self._containers = None
         self._deadline_seconds = None
         self._flux_restful = None
+        self._interactive = None
         self._job_labels = None
         self._logging = None
         self._pod = None
@@ -86,6 +89,8 @@ class MiniClusterSpec(object):
             self.deadline_seconds = deadline_seconds
         if flux_restful is not None:
             self.flux_restful = flux_restful
+        if interactive is not None:
+            self.interactive = interactive
         if job_labels is not None:
             self.job_labels = job_labels
         if logging is not None:
@@ -192,6 +197,29 @@ class MiniClusterSpec(object):
         """
 
         self._flux_restful = flux_restful
+
+    @property
+    def interactive(self):
+        """Gets the interactive of this MiniClusterSpec.  # noqa: E501
+
+        Run a single-user, interactive minicluster  # noqa: E501
+
+        :return: The interactive of this MiniClusterSpec.  # noqa: E501
+        :rtype: bool
+        """
+        return self._interactive
+
+    @interactive.setter
+    def interactive(self, interactive):
+        """Sets the interactive of this MiniClusterSpec.
+
+        Run a single-user, interactive minicluster  # noqa: E501
+
+        :param interactive: The interactive of this MiniClusterSpec.  # noqa: E501
+        :type interactive: bool
+        """
+
+        self._interactive = interactive
 
     @property
     def job_labels(self):

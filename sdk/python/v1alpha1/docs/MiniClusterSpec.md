@@ -8,6 +8,7 @@ Name | Type | Description | Notes
 **containers** | [**list[MiniClusterContainer]**](MiniClusterContainer.md) | Containers is one or more containers to be created in a pod. There should only be one container to run flux with runFlux | 
 **deadline_seconds** | **int** | Should the job be limited to a particular number of seconds? Approximately one year. This cannot be zero or job won&#39;t start | [optional] [default to 31500000]
 **flux_restful** | [**FluxRestful**](FluxRestful.md) |  | [optional] 
+**interactive** | **bool** | Run a single-user, interactive minicluster | [optional] [default to False]
 **job_labels** | **dict(str, str)** | Labels for the job | [optional] 
 **logging** | [**LoggingSpec**](LoggingSpec.md) |  | [optional] 
 **pod** | [**PodSpec**](PodSpec.md) |  | [optional] 
