@@ -10,8 +10,7 @@ launching a job to run and complete.
  **[Tutorial File](https://github.com/flux-framework/flux-operator/blob/main/examples/interactive/minicluster-persistent.yaml)**
 
 This example demonstrates bringing up a MiniCluster solely to shell in and interact with Flux. First, 
-note that there is nothing special about the MiniCluster YAML except that the command is intended
-to run forever, a `sleep infinity`.
+note that there is nothing special about the MiniCluster YAML except that we set interactive to true:
 
 ```yaml
 apiVersion: flux-framework.org/v1alpha1
@@ -23,16 +22,17 @@ spec:
 
   # Number of pods to create for MiniCluster
   size: 2
+  interactive: true
 
-  # This is a list because a pod can support multiple containers
+# This is a list because a pod can support multiple containers
   containers:
-    # The container URI to pull (currently needs to be public)
     - image: ghcr.io/rse-ops/pokemon:app-latest
       fluxOptionFlags: "-ompi=openmpi@5"
-      command: sleep infinity
 ```
 
-The container you choose should have the software you are interested in having for each node.
+When interactive is true, we tell the Flux broker to start without a command. This means
+the cluster will remain running until you shutdown Flux or `kubectl delete` the MiniCluster
+itself. The container you choose should have the software you are interested in having for each node.
 Given a running cluster, we can create the namespace and the MiniCluster as follows:
 
 ```bash
@@ -75,17 +75,19 @@ And can also see the resources known to your instance!
 ```bash
 flux@flux-sample-0:/code$ flux resource list
      STATE NNODES   NCORES NODELIST
-      free      1        1 flux-sample-0
- allocated      1        1 flux-sample-1
+      free      2        2 flux-sample-[0-1]
+ allocated      0        0
       down      0        0 
 ```
 
-At this point you have your own Flux install connected to your entire MiniCluster,
+If you see a node is down, it could be the worker node has not connected to the broker
+yet. When the cluster is ready, it will look like the above! At this point you 
+have your own Flux install connected to your entire MiniCluster,
 and you can launch and monitor jobs as you please.
 
 ```bash
 $ flux submit sleep 120
-ƒ34hRjsAX
+ƒg4ZRVS7
 ```
 
 Note that under flux jobs below, the first sleep (flux-sample-1) is the command
@@ -94,14 +96,21 @@ originally given to the broker. The second, newer sleep is the job we just launc
 ```bash
 flux@flux-sample-0:/code$ flux jobs
        JOBID USER     NAME       ST NTASKS NNODES     TIME INFO
-   ƒ34hRjsAX flux     sleep       R      1      1   2.342s flux-sample-0
-     ƒVjP5kb flux     sleep       R      1      1   4.547m flux-sample-1
+    ƒg4ZRVS7 flux     sleep       R      1      1   1.290s flux-sample-1
 ```
 
-When you are done, exit from the instance, and exit from the pod, and then delete
-the MiniCluster.
+When you are done, there are a few ways to "get out." You could just shutdown Flux from
+inside of the instance:
 
 ```bash
-$ kubectl delete -f examples/interactive/minicluster-shell.yaml
+$ flux shutdown
 ```
 
+Or you could exit from the instance, and exit from the pod, and then delete the MiniCluster.
+
+```bash
+$ kubectl delete -f examples/interactive/minicluster-persistent.yaml
+```
+
+If your MiniCluster spec does not have `clean: true` you might need to run this 
+anyway with a shutdown. List pods if you aren't sure. Have fun! 

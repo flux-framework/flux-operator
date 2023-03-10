@@ -208,6 +208,7 @@ function run_flux_restful() {
     # Export the main flux user and token "superuser"
     export FLUX_USER={{ .FluxUser}}
     export FLUX_TOKEN={{ .FluxToken}}
+    printf "🔒️ Credentials, my friend!\n    FLUX_USER: ${FLUX_USER}\n    FLUX_TOKEN: ${FLUX_TOKEN}\n\n"
 
     # Install python requirements, with preference for python3
     python3 -m pip install -r requirements.txt > /dev/null 2>&1 || python -m pip install -r requirements.txt > /dev/null 2>&1
