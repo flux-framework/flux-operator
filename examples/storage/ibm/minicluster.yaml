@@ -19,7 +19,7 @@ spec:
   # This is a type of storage that will use Google Storage
   volumes:
     data:
-      storageClass: ibmc-s3fs-standard-regional
+      storageClass: ibm-s3-storage
       driver: ibmc-s3fs
       path: /tmp/data
       secret: s3-secret

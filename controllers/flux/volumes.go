@@ -362,7 +362,7 @@ func (r *MiniClusterReconciler) getPersistentVolumeClaim(
 
 	} else {
 
-		r.log.Info("🎉 Found existing MiniCluster Mounted Volume",
+		r.log.Info("🎉 Found existing MiniCluster Mounted Volume Claim",
 			"Type", claimName,
 			"Namespace", existing.Namespace,
 			"Name", existing.Name,

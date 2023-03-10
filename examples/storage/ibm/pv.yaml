@@ -2,8 +2,20 @@ apiVersion: v1
 kind: PersistentVolume
 metadata:
 
+  ownerReferences:
+  - apiVersion: flux-framework.org/v1alpha1
+    blockOwnerDeletion: true
+    controller: true
+    kind: MiniCluster
+    name: flux-sample
+
+    # Get from:
+    #  kubectl get -n operator-system pod operator-controller-manager-858c9ccfb4-2k79n -o yaml 
+    uid: 87b73461-b5fc-4746-a959-e84518096ed4
+
   # IMPORTANT: this needs to correspond with your volume name "e.g., data" in the minicluster
   name: data
+  namespace: flux-operator
   annotations:
     ibm.io/auto-create-bucket: "false"
     ibm.io/auto-delete-bucket: "false"
@@ -39,7 +51,7 @@ spec:
     options:
       access-mode: ReadWriteMany
       bucket: flux-operator-storage
-      chunk-size-mb: "40"
+      chunk-size-mb: "16"
       curl-debug: "false"
       debug-level: warn
       iam-endpoint: https://iam.cloud.ibm.com
@@ -56,15 +68,6 @@ spec:
       name: s3-secret
       namespace: flux-operator
   persistentVolumeReclaimPolicy: Delete
-  storageClassName: ibmc-s3fs-standard-regional
+  # This is the custom class we made
+  storageClassName: ibm-s3-storage
   volumeMode: Filesystem
-
-#    ownerReferences:
-#    - apiVersion: flux-framework.org/v1alpha1
-#      blockOwnerDeletion: true
-#      controller: true
-#      kind: MiniCluster
-#      name: flux-sample
-#      uid: bb74e21f-e648-47a1-973f-892af93b1f85
-#    resourceVersion: "9186"
-#    uid: b17fa8c1-7021-4974-9dcf-8839056c8763

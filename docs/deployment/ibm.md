@@ -279,6 +279,25 @@ $ ibmcloud ks cluster create ${WORKER_NODE_PROVIDER} \
   --workers=4 
 ```
 
+If you get an error about providing a VLAN, then do:
+
+
+```bash
+$ ibmcloud ks vlans --zone ${CLUSTER_ZONE}
+```
+
+and set the public and private VLAN ids to environment variables `PUBLIC_VLAN_ID` and `PRIVATE_VLAN_ID`
+
+```bash
+$ ibmcloud ks cluster create ${WORKER_NODE_PROVIDER} \
+  --name=$CLUSTER_NAME \
+  --zone=$CLUSTER_ZONE \
+  --flavor ${WORKER_NODE_FLAVOR} \
+  --workers=4 \
+  --private-vlan ${PRIVATE_VLAN_ID} \
+  --public-vlan ${PUBLIC_VLAN_ID} 
+```
+
 The instructions in the linked tutorial mention to use a command line tool to check status, but this didn't work for me.
 Instead I watched until the cluster was ready on the [IBM Cloud Kubernetes](https://cloud.ibm.com/kubernetes/clusters) page.
 Once it's ready, you should be able to list:
@@ -348,9 +367,10 @@ And you can find the name of the operator pod as follows:
 $ kubectl get pod --all-namespaces
 ```
 ```console
-      <none>
 operator-system   operator-controller-manager-56b5bcf9fd-m8wg4               2/2     Running   0          73s
 ```
+
+And wait until that is Running.
 
 ### Create Flux Operator namespace
 
@@ -362,7 +382,13 @@ $ kubectl create namespace flux-operator
 
 ### Install the Container Storage Plugin
 
-You will need to [install helm](https://helm.sh/docs/intro/install/). First,
+We did a combined approach of using helm and our own YAML.
+
+<details>
+
+<summary>Instructions for Generation of YAML</summary>
+
+If you do want to use helm to reproduce this, you will need to [install helm](https://helm.sh/docs/intro/install/). First,
 add the [IBM repository](https://github.com/IBM/charts/tree/5870731bfebc867a47fec79507f2f7f616688e25/stable/ibm-object-storage-plugin) to helm:
 
 ```bash
@@ -398,10 +424,6 @@ variables:
 ```bash
 $ helm show values ibm-helm/ibm-object-storage-plugin
 ```
-
-<details>
-
-<summary>Helm Values Detail</summary>
 
 ```console
 replicaCount: 1
@@ -477,8 +499,6 @@ allowCrossNsSecret: true
 s3fsVersion: current
 ```
 
-</details>
-
 Of the values we can set, we likely want to set the following:
 
 ```diff
@@ -513,11 +533,10 @@ cos:
 -  s3Provider: ""
 +  s3Provider: "ibm"
 ```
-Using the above, we can then install the plugin with our customizations:
+Using the above, we would install the plugin directly with our customizations:
 
 ```bash
-$ helm ibmc install ibm-object-storage-plugin ibm-helm/ibm-object-storage-plugin --set license=true --set provider=IBMC --set platform=K8s --set workerOS=debian \
-    --set cos.endpoint="https://s3.us-east.cloud-object-storage.appdomain.cloud/" --set cos.s3Provider=ibm
+$ helm ibmc install ibm-object-storage-plugin ibm-helm/ibm-object-storage-plugin --set license=true --set provider=IBMC --set platform=K8s --set workerOS=debian --set cos.s3Provider=ibm
 ```
 
 Give a minute or so, and then check that the storage classes were created correctly:
@@ -569,9 +588,15 @@ the service instance id should be `$COS_NAME`.
 $ kubectl create secret generic s3-secret --namespace=flux-operator --type=ibm/ibmc-s3fs  --from-literal=api-key=${COS_APIKEY} --from-literal=service-instance-id=${COS_NAME}
 ```
 
+Finally, we need to create a storage class that points to the correct credentials
+and namespace. Note this file names it "ibm-s3-storage":
+
+```bash
+$ kubectl apply -f examples/storage/ibm/storageclass.yaml 
+```
+
 At this point we have the storage driver running, along with the storage class and secret, and we should
 attempt to use it with the Flux Operator.
-
 
 ### Snakemake MiniCluster
 
@@ -579,7 +604,16 @@ Note that I found all these annotation options [here](https://github.com/IBM/ibm
 Also note that we are setting the `commands: -> runFluxAsRoot` to true. This isn't ideal, but it was the
 only way I could get the storage to both be seen and have permission to write there. Let's create the job!
 Since the storage plugin uses a FlexDriver, and this is being deprecated, we need to create the persistent
-volume manually. It will be discovered and used by the Flux Operator:
+volume manually. It will be discovered and used by the Flux Operator. I tried adding the
+owner reference "uid" to this file first:
+
+```bash
+$  kubectl get -n operator-system pod operator-controller-manager-858c9ccfb4-2k79n -o yaml 
+#    uid: 87b73461-b5fc-4746-a959-e84518096ed4
+```
+
+Although it didn't seem to make a difference - a second PV (or PVC?) was always made.
+Next make it:
 
 ```yaml
 $ kubectl create -f examples/storage/ibm/pv.yaml
@@ -593,13 +627,29 @@ $ kubectl apply -f examples/storage/ibm/minicluster.yaml
 
 The pods will take a bit to pull the containers, in the meantime you can check out the pv and pvc:
 
-STOPPED HERE - the pvc cannot see the bucket:
+STOPPED HERE - the pvc seems to create a second PV but then the pod is in pending because the "data" one
+we created (which wasn't used) is the one available.:
 
+```console
+$ kubectl get -n flux-operator pv
+NAME                                       CAPACITY   ACCESS MODES   RECLAIM POLICY   STATUS      CLAIM                      STORAGECLASS     REASON   AGE
+data                                       25Gi       RWX            Delete           Available   flux-operator/data-claim   ibm-s3-storage            3m24s
+pvc-0400f3cc-2662-4cb2-a83b-3bda9e0ea0be   25Gi       RWX            Delete           Pending     flux-operator/data-claim   ibm-s3-storage            113s
 ```
+Why was the second created?
+
+```console
+$ kubectl get -n flux-operator pvc
+NAME         STATUS   VOLUME   CAPACITY   ACCESS MODES   STORAGECLASS     AGE
+data-claim   Lost                                        ibm-s3-storage   5m55s
+```
+And then the data claim is lost...
+
+```console
 $ kubectl describe -n flux-operator pvc
 Name:          data-claim
 Namespace:     flux-operator
-StorageClass:  ibmc-s3fs-standard-regional
+StorageClass:  ibm-s3-storage
 Status:        Lost
 Volume:        
 Labels:        <none>
@@ -627,20 +677,20 @@ Finalizers:    [kubernetes.io/pvc-protection]
 Capacity:      
 Access Modes:  
 VolumeMode:    Filesystem
-Used By:       flux-sample-0-l62p2
-               flux-sample-1-ccwtv
+Used By:       flux-sample-0-wbqft
+               flux-sample-1-rcf97
 Events:
-  Type     Reason              Age   From                                                                                                   Message
-  ----     ------              ----  ----                                                                                                   -------
-  Warning  ClaimLost           16s   persistentvolume-controller                                                                            Bound claim has lost reference to PersistentVolume. Data on the volume is lost!
-  Warning  ProvisioningFailed  16s   ibm.io/ibmc-s3fs_ibmcloud-object-storage-plugin-84f94f4b67-ncq2z_5925a4f0-cd23-426a-bd84-bff0c667e4c7  failed to provision volume with StorageClass "ibmc-s3fs-standard-regional": data-claim : cg54590d0b7conrbfmtg :cannot access bucket flux-operator-storage: NotFound: Not Found
-           status code: 404, request id: eae58676-cd01-4311-858b-30b740481e32, host id:
-  Warning  ProvisioningFailed  16s  ibm.io/ibmc-s3fs_ibmcloud-object-storage-plugin-84f94f4b67-ncq2z_5925a4f0-cd23-426a-bd84-bff0c667e4c7  failed to provision volume with StorageClass "ibmc-s3fs-standard-regional": data-claim : cg54590d0b7conrbfmtg :cannot access bucket flux-operator-storage: NotFound: Not Found
-           status code: 404, request id: 4cdced62-3bca-4fc3-a73b-7bed6bc7720d, host id:
-  Normal   Provisioning        1s (x3 over 16s)  ibm.io/ibmc-s3fs_ibmcloud-object-storage-plugin-84f94f4b67-ncq2z_5925a4f0-cd23-426a-bd84-bff0c667e4c7  External provisioner is provisioning volume for claim "flux-operator/data-claim"
-  Warning  ProvisioningFailed  0s                ibm.io/ibmc-s3fs_ibmcloud-object-storage-plugin-84f94f4b67-ncq2z_5925a4f0-cd23-426a-bd84-bff0c667e4c7  failed to provision volume with StorageClass "ibmc-s3fs-standard-regional": data-claim : cg54590d0b7conrbfmtg :cannot access bucket flux-operator-storage: NotFound: Not Found
-           status code: 404, request id: 3358f83e-5894-40a5-844a-a9f7e5a64bfa, host id:
+  Type     Reason                 Age   From                                                                                                  Message
+  ----     ------                 ----  ----                                                                                                  -------
+  Normal   Provisioning           6m4s  ibm.io/ibmc-s3fs_ibmcloud-object-storage-plugin-bd89679b7-lgmx9_55bf4496-14e8-47dd-999e-7e9398a9bfd8  External provisioner is provisioning volume for claim "flux-operator/data-claim"
+  Warning  ClaimLost              6m3s  persistentvolume-controller                                                                           Bound claim has lost reference to PersistentVolume. Data on the volume is lost!
+  Normal   ProvisioningSucceeded  6m3s  ibm.io/ibmc-s3fs_ibmcloud-object-storage-plugin-bd89679b7-lgmx9_55bf4496-14e8-47dd-999e-7e9398a9bfd8  Successfully provisioned volume pvc-0400f3cc-2662-4cb2-a83b-3bda9e0ea0be
+(env) (base) vanessa@vanessa-ThinkPad-T490s:~/Desktop/Code/flux/operator$ kubectl get -n flux-operator pv
+NAME                                       CAPACITY   ACCESS MODES   RECLAIM POLICY   STATUS      CLAIM                      STORAGECLASS     REASON   AGE
+data                                       25Gi       RWX            Delete           Available   flux-operator/data-claim   ibm-s3-storage            8m39s
+pvc-0400f3cc-2662-4cb2-a83b-3bda9e0ea0be   25Gi       RWX            Delete           Pending     flux-operator/data-claim   ibm-s3-storage            7m8s
 ```
+But reports using the second (pending) one?
 
 ## Clean up
 
