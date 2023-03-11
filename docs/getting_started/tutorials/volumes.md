@@ -60,3 +60,116 @@ however it's not ideal from a security standpoint. More testers are needed to te
 container storage interfaces (or other volume types) to find the correct mount options to set in order
 to allow ownership by the "flux" user (or for more advanced cases, breaking storage into pieces to be
 owned by a set of cluster users)!
+
+
+### Example
+
+You can see an example in the [existing-volumes](https://github.com/flux-framework/flux-operator/tree/main/examples/tests/existing-volumes)
+test, where we create a host path volume and copy a file there in advance, and then use it during the operator execution. Specifically,
+we have the following object manifest for the persistent volume:
+
+```yaml
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: flux-sample
+  namespace: flux-operator
+spec:
+  persistentVolumeReclaimPolicy: Delete
+  capacity:
+    storage: 5Gi
+  accessModes:
+    - ReadWriteMany
+  hostPath:
+    path: /tmp/data
+```
+
+And the persistent volume claim:
+
+```yaml
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: data
+  namespace: flux-operator
+spec:
+  accessModes:
+    - ReadWriteMany
+  storageClassName: ""
+  resources:
+    requests:
+      storage: 1Gi
+```
+
+Given our minicluster defined to use the claim named "data":
+
+```yaml
+apiVersion: flux-framework.org/v1alpha1
+kind: MiniCluster
+metadata:
+  name: flux-sample
+  namespace: flux-operator
+spec:
+  # suppress all output except for test run
+  logging:
+    quiet: true
+
+  # Number of pods to create for MiniCluster
+  size: 2
+
+  # This is a list because a pod can support multiple containers
+  containers:
+    - image: ghcr.io/flux-framework/flux-restful-api:latest
+      command: ls /data
+      existingVolumes:
+        data:
+          path: /data
+          claimName: data
+```
+
+We can start minikube:
+
+```bash
+$ minikube start
+```
+
+Create the operator namespace:
+
+```bash
+$ kubectl create -n flux-operator
+```
+
+Prepare the volume directory in the minikube virtual machine:
+
+```bash
+$ minikube ssh -- mkdir -p /tmp/data
+$ minikube cp .pancakes.txt /tmp/data/pancakes.txt
+$ minikube ssh ls /tmp/data
+```
+
+And then create each of the PV and PVC above:
+
+```bash
+$ kubectl apply -f ./pv.yaml 
+$ kubectl apply -f ./pvc.yam
+```
+
+And then we are ready to create the minicluster!
+
+```bash
+$ kubectl apply -f minicluster.yaml
+```
+
+If you watch the logs, the command is doing an ls to data, so you should see `pancakes.txt`.
+
+Note that for cleanup, pods typically need to be deleted before pvc and pv. Since the MiniCluster
+doesn't own either of the PV nor PVC, the easiest thing to do is:
+
+```bash
+$ kubectl delete -n flux-operator pods --all --grace-period=0 --force
+$ kubectl delete -n flux-operator pvc --all --grace-period=0 --force
+$ kubectl delete -n flux-operator pv --all --grace-period=0 --force
+$ kubectl delete -f minicluster.yaml
+```
+
+You can also delete the MiniCluster first and retain the PV and PVC. Have fun!
