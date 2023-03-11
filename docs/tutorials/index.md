@@ -6,7 +6,7 @@ For these tutorials, we assume using a generic cluster. For cloud-specific tutor
 If you have any questions or issues, please [let us know](https://github.com/flux-framework/flux-operator/issues)
 
 ```{toctree}
-:maxdepth: 2
+:maxdepth: 3
 jobs
 multi-tenancy
 interactive

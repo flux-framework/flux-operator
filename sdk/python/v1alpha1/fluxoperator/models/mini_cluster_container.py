@@ -38,11 +38,13 @@ class MiniClusterContainer(object):
         'cores': 'int',
         'diagnostics': 'bool',
         'environment': 'dict(str, str)',
+        'existing_volumes': 'dict(str, MiniClusterExistingVolume)',
         'flux_log_level': 'int',
         'flux_option_flags': 'str',
         'flux_user': 'FluxUser',
         'image': 'str',
         'image_pull_secret': 'str',
+        'launcher': 'bool',
         'life_cycle': 'LifeCycle',
         'name': 'str',
         'ports': 'list[int]',
@@ -60,11 +62,13 @@ class MiniClusterContainer(object):
         'cores': 'cores',
         'diagnostics': 'diagnostics',
         'environment': 'environment',
+        'existing_volumes': 'existingVolumes',
         'flux_log_level': 'fluxLogLevel',
         'flux_option_flags': 'fluxOptionFlags',
         'flux_user': 'fluxUser',
         'image': 'image',
         'image_pull_secret': 'imagePullSecret',
+        'launcher': 'launcher',
         'life_cycle': 'lifeCycle',
         'name': 'name',
         'ports': 'ports',
@@ -76,7 +80,7 @@ class MiniClusterContainer(object):
         'working_dir': 'workingDir'
     }
 
-    def __init__(self, command='', commands=None, cores=0, diagnostics=False, environment=None, flux_log_level=6, flux_option_flags='', flux_user=None, image='ghcr.io/rse-ops/accounting:app-latest', image_pull_secret='', life_cycle=None, name='', ports=None, pre_command='', pull_always=False, resources=None, run_flux=False, volumes=None, working_dir='', local_vars_configuration=None):  # noqa: E501
+    def __init__(self, command='', commands=None, cores=0, diagnostics=False, environment=None, existing_volumes=None, flux_log_level=6, flux_option_flags='', flux_user=None, image='ghcr.io/rse-ops/accounting:app-latest', image_pull_secret='', launcher=False, life_cycle=None, name='', ports=None, pre_command='', pull_always=False, resources=None, run_flux=False, volumes=None, working_dir='', local_vars_configuration=None):  # noqa: E501
         """MiniClusterContainer - a model defined in OpenAPI"""  # noqa: E501
         if local_vars_configuration is None:
             local_vars_configuration = Configuration.get_default_copy()
@@ -87,11 +91,13 @@ class MiniClusterContainer(object):
         self._cores = None
         self._diagnostics = None
         self._environment = None
+        self._existing_volumes = None
         self._flux_log_level = None
         self._flux_option_flags = None
         self._flux_user = None
         self._image = None
         self._image_pull_secret = None
+        self._launcher = None
         self._life_cycle = None
         self._name = None
         self._ports = None
@@ -113,6 +119,8 @@ class MiniClusterContainer(object):
             self.diagnostics = diagnostics
         if environment is not None:
             self.environment = environment
+        if existing_volumes is not None:
+            self.existing_volumes = existing_volumes
         if flux_log_level is not None:
             self.flux_log_level = flux_log_level
         if flux_option_flags is not None:
@@ -123,6 +131,8 @@ class MiniClusterContainer(object):
             self.image = image
         if image_pull_secret is not None:
             self.image_pull_secret = image_pull_secret
+        if launcher is not None:
+            self.launcher = launcher
         if life_cycle is not None:
             self.life_cycle = life_cycle
         if name is not None:
@@ -146,7 +156,7 @@ class MiniClusterContainer(object):
     def command(self):
         """Gets the command of this MiniClusterContainer.  # noqa: E501
 
-        Single user executable to provide to flux start IMPORTANT: This is left here, but not used in favor of exposing Flux via a Restful API. We Can remove this when that is finalized.  # noqa: E501
+        Single user executable to provide to flux start  # noqa: E501
 
         :return: The command of this MiniClusterContainer.  # noqa: E501
         :rtype: str
@@ -157,7 +167,7 @@ class MiniClusterContainer(object):
     def command(self, command):
         """Sets the command of this MiniClusterContainer.
 
-        Single user executable to provide to flux start IMPORTANT: This is left here, but not used in favor of exposing Flux via a Restful API. We Can remove this when that is finalized.  # noqa: E501
+        Single user executable to provide to flux start  # noqa: E501
 
         :param command: The command of this MiniClusterContainer.  # noqa: E501
         :type command: str
@@ -254,6 +264,29 @@ class MiniClusterContainer(object):
         """
 
         self._environment = environment
+
+    @property
+    def existing_volumes(self):
+        """Gets the existing_volumes of this MiniClusterContainer.  # noqa: E501
+
+        Existing Volumes to add to the containers  # noqa: E501
+
+        :return: The existing_volumes of this MiniClusterContainer.  # noqa: E501
+        :rtype: dict(str, MiniClusterExistingVolume)
+        """
+        return self._existing_volumes
+
+    @existing_volumes.setter
+    def existing_volumes(self, existing_volumes):
+        """Sets the existing_volumes of this MiniClusterContainer.
+
+        Existing Volumes to add to the containers  # noqa: E501
+
+        :param existing_volumes: The existing_volumes of this MiniClusterContainer.  # noqa: E501
+        :type existing_volumes: dict(str, MiniClusterExistingVolume)
+        """
+
+        self._existing_volumes = existing_volumes
 
     @property
     def flux_log_level(self):
@@ -367,6 +400,29 @@ class MiniClusterContainer(object):
         """
 
         self._image_pull_secret = image_pull_secret
+
+    @property
+    def launcher(self):
+        """Gets the launcher of this MiniClusterContainer.  # noqa: E501
+
+        Indicate that the command is a launcher that will ask for its own jobs (and provided directly to flux start)  # noqa: E501
+
+        :return: The launcher of this MiniClusterContainer.  # noqa: E501
+        :rtype: bool
+        """
+        return self._launcher
+
+    @launcher.setter
+    def launcher(self, launcher):
+        """Sets the launcher of this MiniClusterContainer.
+
+        Indicate that the command is a launcher that will ask for its own jobs (and provided directly to flux start)  # noqa: E501
+
+        :param launcher: The launcher of this MiniClusterContainer.  # noqa: E501
+        :type launcher: bool
+        """
+
+        self._launcher = launcher
 
     @property
     def life_cycle(self):

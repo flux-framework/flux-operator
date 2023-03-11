@@ -9,3 +9,5 @@ echo "Copying local volume to /tmp/data-volumes in minikube"
 minikube ssh -- mkdir -p /tmp/data
 minikube cp ${TESTS}/data/pancakes.txt /tmp/data/pancakes.txt
 minikube ssh ls /tmp/data
+kubectl apply -f ${HERE}/pv.yaml 
+kubectl apply -f ${HERE}/pvc.yaml

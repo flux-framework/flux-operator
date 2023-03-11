@@ -4,16 +4,18 @@
 ## Properties
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**command** | **str** | Single user executable to provide to flux start IMPORTANT: This is left here, but not used in favor of exposing Flux via a Restful API. We Can remove this when that is finalized. | [optional] [default to '']
+**command** | **str** | Single user executable to provide to flux start | [optional] [default to '']
 **commands** | [**Commands**](Commands.md) |  | [optional] 
 **cores** | **int** | Cores the container should use | [optional] [default to 0]
 **diagnostics** | **bool** | Run flux diagnostics on start instead of command | [optional] [default to False]
 **environment** | **dict(str, str)** | Key/value pairs for the environment | [optional] 
+**existing_volumes** | [**dict(str, MiniClusterExistingVolume)**](MiniClusterExistingVolume.md) | Existing Volumes to add to the containers | [optional] 
 **flux_log_level** | **int** | Log level to use for flux logging (only in non TestMode) | [optional] [default to 6]
 **flux_option_flags** | **str** | Flux option flags, usually provided with -o optional - if needed, default option flags for the server These can also be set in the user interface to override here. This is only valid for a FluxRunner \&quot;runFlux\&quot; true | [optional] [default to '']
 **flux_user** | [**FluxUser**](FluxUser.md) |  | [optional] 
 **image** | **str** | Container image must contain flux and flux-sched install | [optional] [default to 'ghcr.io/rse-ops/accounting:app-latest']
 **image_pull_secret** | **str** | Allow the user to pull authenticated images By default no secret is selected. Setting this with the name of an already existing imagePullSecret will specify that secret in the pod spec. | [optional] [default to '']
+**launcher** | **bool** | Indicate that the command is a launcher that will ask for its own jobs (and provided directly to flux start) | [optional] [default to False]
 **life_cycle** | [**LifeCycle**](LifeCycle.md) |  | [optional] 
 **name** | **str** | Container name is only required for non flux runners | [optional] [default to '']
 **ports** | **list[int]** | Ports to be exposed to other containers in the cluster We take a single list of integers and map to the same | [optional] 

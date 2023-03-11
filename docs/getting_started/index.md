@@ -9,7 +9,6 @@ any questions or issues, please [let us know](https://github.com/flux-framework/
 ```{toctree}
 :maxdepth: 2
 user-guide
-tutorials/index
 jobs
 custom-resource-definition
 ```

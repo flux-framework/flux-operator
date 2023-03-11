@@ -1,0 +1,37 @@
+apiVersion: flux-framework.org/v1alpha1
+kind: MiniCluster
+metadata:
+  name: flux-sample
+  namespace: flux-operator
+spec:
+
+  # Number of pods to create for MiniCluster
+  size: 2
+
+  # show all operator output and test run output
+  logging:
+    quiet: false
+
+        
+  # This is a list because a pod can support multiple containers
+  containers:
+
+      # This image has snakemake installed, and although it has data, we will
+      # provide it as a volume to the container to demonstrate that (and share it)
+    - image: ghcr.io/rse-ops/atacseq:app-latest
+
+      # This is an existing PVC (and associated PV) we created before the MiniCluster
+      existingVolumes:
+        data:
+          path: /workflow
+          claimName: data 
+
+      # This is where storage is mounted - we are only going to touch a file
+      workingDir: /workflow
+      command: touch test-file.txt
+
+      # Commands just for workers / broker
+      commands:
+
+        # Running flux as root is currently required for the storage driver to work
+        runFluxAsRoot: true

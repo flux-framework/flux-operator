@@ -43,6 +43,7 @@ type MiniClusterSpec struct {
 	Interactive bool `json:"interactive"`
 
 	// Volumes accessible to containers from a host
+	// Not all containers are required to use them
 	// +optional
 	Volumes map[string]MiniClusterVolume `json:"volumes"`
 
@@ -185,9 +186,13 @@ type MiniClusterVolume struct {
 	// +optional
 	Labels map[string]string `json:"labels"`
 
-	// Annotations for persistent volume claim
+	// Annotations for the volume
 	// +optional
 	Annotations map[string]string `json:"annotations"`
+
+	// Annotations for the persistent volume claim
+	// +optional
+	ClaimAnnotations map[string]string `json:"claimAnnotations"`
 
 	// Optional volume attributes
 	// +optional
@@ -229,6 +234,19 @@ type MiniClusterVolume struct {
 	// +default="5Gi"
 	// +optional
 	Capacity string `json:"capacity,omitempty"`
+}
+
+// Mini Cluster local volumes available to mount (these are on the host)
+type MiniClusterExistingVolume struct {
+
+	// Path and claim name are always required
+	Path      string `json:"path"`
+	ClaimName string `json:"claimName"`
+
+	// +kubebuilder:default=false
+	// +default=false
+	// +optional
+	ReadOnly bool `json:"readOnly,omitempty"`
 }
 
 // A Container volume must reference one defined for the MiniCluster
@@ -288,11 +306,13 @@ type MiniClusterContainer struct {
 	ImagePullSecret string `json:"imagePullSecret"`
 
 	// Single user executable to provide to flux start
-	// IMPORTANT: This is left here, but not used in
-	// favor of exposing Flux via a Restful API. We
-	// Can remove this when that is finalized.
 	// +optional
 	Command string `json:"command"`
+
+	// Indicate that the command is a launcher that will
+	// ask for its own jobs (and provided directly to flux start)
+	// +optional
+	Launcher bool `json:"launcher"`
 
 	// Allow the user to dictate pulling
 	// By default we pull if not present. Setting
@@ -309,6 +329,10 @@ type MiniClusterContainer struct {
 	// Volumes that can be mounted (must be defined in volumes)
 	// +optional
 	Volumes map[string]ContainerVolume `json:"volumes"`
+
+	// Existing Volumes to add to the containers
+	// +optional
+	ExistingVolumes map[string]MiniClusterExistingVolume `json:"existingVolumes"`
 
 	// Flux option flags, usually provided with -o
 	// optional - if needed, default option flags for the server
@@ -406,6 +430,19 @@ type MiniCluster struct {
 // MultuUser returns boolean to indicate if we are in multi-user mode
 func (f *MiniCluster) MultiUser() bool {
 	return len(f.Spec.Users) > 0
+}
+
+// Return a lookup of all container existing volumes (for the higher level Pod)
+// Volumes are unique by name.
+func (f *MiniCluster) ExistingVolumes() map[string]MiniClusterExistingVolume {
+
+	volumes := map[string]MiniClusterExistingVolume{}
+	for _, container := range f.Spec.Containers {
+		for name, volume := range container.ExistingVolumes {
+			volumes[name] = volume
+		}
+	}
+	return volumes
 }
 
 // Validate ensures we have data that is needed, and sets defaults if needed

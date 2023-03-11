@@ -44,9 +44,7 @@ spec:
                 items:
                   properties:
                     command:
-                      description: 'Single user executable to provide to flux start
-                        IMPORTANT: This is left here, but not used in favor of exposing
-                        Flux via a Restful API. We Can remove this when that is finalized.'
+                      description: Single user executable to provide to flux start
                       type: string
                     commands:
                       description: More specific or detailed commands for just workers/broker
@@ -72,6 +70,25 @@ spec:
                       additionalProperties:
                         type: string
                       description: Key/value pairs for the environment
+                      type: object
+                    existingVolumes:
+                      additionalProperties:
+                        description: Mini Cluster local volumes available to mount
+                          (these are on the host)
+                        properties:
+                          claimName:
+                            type: string
+                          path:
+                            description: Path and claim name are always required
+                            type: string
+                          readOnly:
+                            default: false
+                            type: boolean
+                        required:
+                        - claimName
+                        - path
+                        type: object
+                      description: Existing Volumes to add to the containers
                       type: object
                     fluxLogLevel:
                       default: 6
@@ -108,6 +125,10 @@ spec:
                         of an already existing imagePullSecret will specify that secret
                         in the pod spec.
                       type: string
+                    launcher:
+                      description: Indicate that the command is a launcher that will
+                        ask for its own jobs (and provided directly to flux start)
+                      type: boolean
                     lifeCycle:
                       description: Lifecycle can handle post start commands, etc.
                       properties:
@@ -299,7 +320,7 @@ spec:
                     annotations:
                       additionalProperties:
                         type: string
-                      description: Annotations for persistent volume claim
+                      description: Annotations for the volume
                       type: object
                     attributes:
                       additionalProperties:
@@ -311,6 +332,11 @@ spec:
                       description: Capacity (string) for PVC (storage request) to
                         create PV
                       type: string
+                    claimAnnotations:
+                      additionalProperties:
+                        type: string
+                      description: Annotations for the persistent volume claim
+                      type: object
                     delete:
                       default: true
                       description: Delete the persistent volume on cleanup
@@ -343,7 +369,8 @@ spec:
                   required:
                   - path
                   type: object
-                description: Volumes accessible to containers from a host
+                description: Volumes accessible to containers from a host Not all
+                  containers are required to use them
                 type: object
             required:
             - containers

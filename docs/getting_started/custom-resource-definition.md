@@ -70,6 +70,17 @@ This would be equivalent to giving a start command of `sleep infinity` however o
 (e.g., if there is a flux shutdown from within the Flux instance) the sleep command would
 not exit with a failed code.
 
+### launcher
+
+If you are using an executor that launches Flux Jobs (e.g., workflow managers such as Snakemake and Nextflow do!)
+then you can set launcher to true.
+
+```yaml
+  launcher: true
+```
+
+The main difference is that for a launcher, we don't wrap it in a flux submit (as we would do with a job command).
+
 ### jobLabels
 
 To add custom labels for your job, add a set of key value pairs (strings) to a "jobLabels" section:
@@ -144,7 +155,7 @@ volumes:
 #### driver
 
 If you are using anything aside from hostpath, you'll need a reference to a storage driver (usually a plugin)
-you've installed separately. Here is an example for Google Cloud storage:
+you've installed separately. This can also be referenced as a provisioner. Here is an example for Google Cloud storage:
 
 ```yaml
 volumes:
@@ -214,6 +225,30 @@ volumes:
 ```
 
 The secret (for now) should be in the default namespace.
+
+#### annotations
+
+To add annotations for the volume use "annotations"
+
+```yaml
+volumes:
+  myvolume:
+    annotations:
+      provider.svc/attribute: value
+```
+
+### claimAnnotations
+
+To set annotations for the claim:
+
+```yaml
+volumes:
+  myvolume:
+    claimAnnotations:
+      gcs.csi.ofek.dev/location: us-central1
+      gcs.csi.ofek.dev/project-id: my-project
+      gcs.csi.ofek.dev/bucket: flux-operator-storage
+```
 
 ### cleanup
 
@@ -696,6 +731,32 @@ volumes:
     path: /data
     readOnly: true
 ```
+
+### existingVolumes
+
+Existing volumes come down (typically) to a persistent volume claim (PVC) and persistent volume (PV)
+that you've already created and want to give to the operator. As an example, the IBM plugin we use
+to setup takes this approach, and then we define the existing volume on the level of the container:
+
+
+```yaml
+# This is a list because a pod can support multiple containers
+containers:
+
+    # This image has snakemake installed, and although it has data, we will
+    # provide it as a volume to the container to demonstrate that (and share it)
+  - image: ghcr.io/rse-ops/atacseq:app-latest
+
+    # This is an existing PVC (and associated PV) we created before the MiniCluster
+    existingVolumes:
+      data:
+        path: /workflow
+        claimName: data 
+```
+
+The above would add a claim named "data" to the container it is defined alongside. Note that the names
+define uniqueness, so if you use a claim in two places with the same name "data" it should also
+use the same path "/workflow." If this doesn't work for your use case, please [let us know](https://github.com/flux-framework/flux-operator/issues).
 
 ### fluxRestful
 

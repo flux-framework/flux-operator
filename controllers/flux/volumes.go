@@ -134,7 +134,22 @@ func getVolumes(cluster *api.MiniCluster) []corev1.Volume {
 		},
 	}
 
+	// Add claims that already exist (not created by the Flux Operator)
+	// These are unique names and path/claim names across containers
+	for volumeName, volumeMeta := range cluster.ExistingVolumes() {
+		newVolume := corev1.Volume{
+			Name: volumeName,
+			VolumeSource: corev1.VolumeSource{
+				PersistentVolumeClaim: &corev1.PersistentVolumeClaimVolumeSource{
+					ClaimName: volumeMeta.ClaimName,
+				},
+			},
+		}
+		volumes = append(volumes, newVolume)
+	}
+
 	// Add claims for storage types requested
+	// These are created by the Flux Operator and should be Container Storage Interfaces (CSI)
 	for volumeName := range cluster.Spec.Volumes {
 		newVolume := corev1.Volume{
 			Name: volumeName,
@@ -202,9 +217,10 @@ func (r *MiniClusterReconciler) createPersistentVolume(
 	newVolume := &corev1.PersistentVolume{
 		TypeMeta: metav1.TypeMeta{},
 		ObjectMeta: metav1.ObjectMeta{
-			Name:      volumeName,
-			Namespace: cluster.Namespace,
-			Labels:    volume.Labels,
+			Name:        volumeName,
+			Namespace:   cluster.Namespace,
+			Annotations: volume.Annotations,
+			Labels:      volume.Labels,
 		},
 
 		Spec: corev1.PersistentVolumeSpec{
@@ -222,8 +238,6 @@ func (r *MiniClusterReconciler) createPersistentVolume(
 			corev1.ResourceStorage: resource.MustParse(volume.Capacity),
 		}
 	}
-
-	ctrl.SetControllerReference(cluster, newVolume, r.Scheme)
 	return newVolume
 }
 
@@ -296,6 +310,9 @@ func (r *MiniClusterReconciler) getPersistentVolume(
 			"Name", existing.Name,
 		)
 	}
+
+	// Always set owner to controller, whether created or found
+	ctrl.SetControllerReference(cluster, existing, r.Scheme)
 	return existing, ctrl.Result{}, err
 }
 
@@ -361,7 +378,7 @@ func (r *MiniClusterReconciler) getPersistentVolumeClaim(
 
 	} else {
 
-		r.log.Info("🎉 Found existing MiniCluster Mounted Volume",
+		r.log.Info("🎉 Found existing MiniCluster Mounted Volume Claim",
 			"Type", claimName,
 			"Namespace", existing.Namespace,
 			"Name", existing.Name,
@@ -385,7 +402,7 @@ func (r *MiniClusterReconciler) createPersistentVolumeClaim(
 		ObjectMeta: metav1.ObjectMeta{
 			Name:        volumeName,
 			Namespace:   cluster.Namespace,
-			Annotations: volume.Annotations,
+			Annotations: volume.ClaimAnnotations,
 		},
 
 		Spec: corev1.PersistentVolumeClaimSpec{

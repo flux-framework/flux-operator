@@ -140,6 +140,17 @@ func (r *MiniClusterReconciler) getMiniClusterContainers(
 			}
 			mounts = append(mounts, mount)
 		}
+
+		// Add on existing volumes/claims
+		for volumeName, volume := range container.ExistingVolumes {
+			mount := corev1.VolumeMount{
+				Name:      volumeName,
+				MountPath: volume.Path,
+				ReadOnly:  volume.ReadOnly,
+			}
+			mounts = append(mounts, mount)
+		}
+
 		r.log.Info("🌀 MiniCluster", "Container.Mounts", mounts)
 
 		// Prepare container resources
