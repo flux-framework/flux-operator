@@ -47,5 +47,4 @@ setup.cfg
 setup.py
 test-requirements.txt
 test/__init__.py
-test/test_mini_cluster_existing_volume.py
 tox.ini
