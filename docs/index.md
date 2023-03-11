@@ -28,15 +28,13 @@ Would you like to request a feature or contribute?
 :maxdepth: 2
 getting_started/index.md
 development/index.md
-deployment/index.md
 ```
 
 ```{toctree}
 :caption: Tutorials
-:maxdepth: 3
-getting_started/tutorials/index.md
+:maxdepth: 2
+tutorials/index.md
 ```
-
 
 ```{toctree}
 :caption: Deployment
