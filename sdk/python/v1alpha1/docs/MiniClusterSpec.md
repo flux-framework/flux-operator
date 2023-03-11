@@ -15,7 +15,7 @@ Name | Type | Description | Notes
 **size** | **int** | Size (number of job pods to run, size of minicluster in pods) | [optional] [default to 1]
 **tasks** | **int** | Total number of CPUs being run across entire cluster | [optional] [default to 1]
 **users** | [**list[MiniClusterUser]**](MiniClusterUser.md) | Users of the MiniCluster | [optional] 
-**volumes** | [**dict(str, MiniClusterVolume)**](MiniClusterVolume.md) | Volumes accessible to containers from a host | [optional] 
+**volumes** | [**dict(str, MiniClusterVolume)**](MiniClusterVolume.md) | Volumes accessible to containers from a host Not all containers are required to use them | [optional] 
 
 [[Back to Model list]](../README.md#documentation-for-models) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to README]](../README.md)
 

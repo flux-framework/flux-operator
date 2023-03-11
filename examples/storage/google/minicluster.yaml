@@ -50,7 +50,10 @@ spec:
 
       # This should be the directory with the Snakefile
       workingDir: /workflow/snakemake-workflow
-      command: snakemake --cores 1 --flux
+      command: snakemake --cores 1 --flux --jobs 1
+
+      # This should be given directly to flux start (will launch / request own jobs)
+      launcher: true
 
       # Commands just for workers / broker
       commands:

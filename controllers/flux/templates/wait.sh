@@ -116,12 +116,17 @@ workdir=${PWD}
 # And if we are using fusefs / object storage, ensure we can see contents
 mkdir -p ${workdir}
 
+# We always do a listing in case it's needed to "expose" object storage
+# Often this isn't enough and a list of the paths needed should be
+# added to containers[].commands.pre
 {{ if not .Logging.Quiet }}
 printf "\n👋 Hello, I'm $(hostname)\n"
 printf "The main host is ${mainHost}\n"
 printf "The working directory is ${workdir}, contents include:\n"
-ls ${workdir}
-printf "End of file listing, if you see nothing above there are no files.\n"{{ end }}
+ls -R ${workdir}
+printf "End of file listing, if you see nothing above there are no files.\n"{{ else }}
+ls -R ${workdir} > /dev/null 2>&1
+{{ end }}
 
 # These actions need to happen on all hosts
 # Configure resources
@@ -261,8 +266,19 @@ else
         # Case 2: Fall back to provided command
         else
 {{ if not .Logging.Quiet }} # if tasks >= size
-            printf "\n🌀 flux start -o --config /etc/flux/config ${brokerOptions} flux submit {{ if ge .Tasks .Size }} -N {{.Size}}{{ end }} -n {{.Tasks}} --quiet {{ if .Container.FluxOptionFlags }}{{ .Container.FluxOptionFlags}}{{ end }} --watch{{ if .Logging.Debug }} -vvv{{ end }} $@\n"{{ end }}
-            {{ if .Logging.Timed }}/usr/bin/time -f "FLUXTIME fluxstart wall time %E" {{ end }}${asFlux} flux start -o --config /etc/flux/config ${brokerOptions} {{ if .Logging.Timed }}/usr/bin/time -f "FLUXTIME fluxsubmit wall time %E" {{ end }} flux submit {{ if ge .Tasks .Size }} -N {{.Size}}{{ end }} -n {{.Tasks}} --quiet {{ if .Container.FluxOptionFlags }}{{ .Container.FluxOptionFlags}}{{ end }} --watch{{ if .Logging.Debug }} -vvv{{ end }} $@
+            # Container launchers are snakemake, nextflow, that will launch their own jobs
+            {{ if .Container.Launcher }}
+            printf "\n🌀 Launcher Mode: flux start -o --config /etc/flux/config ${brokerOptions} $@\n"
+            {{ else }}
+            printf "\n🌀 Submit Mode: flux start -o --config /etc/flux/config ${brokerOptions} flux submit {{ if ge .Tasks .Size }} -N {{.Size}}{{ end }} -n {{.Tasks}} --quiet {{ if .Container.FluxOptionFlags }}{{ .Container.FluxOptionFlags}}{{ end }} --watch{{ if .Logging.Debug }} -vvv{{ end }} $@\n"
+            {{ end }}
+{{ end }}
+            prefix="{{ if .Logging.Timed }}/usr/bin/time -f \"FLUXTIME fluxstart wall time %E\" {{ end }}${asFlux} flux start -o --config /etc/flux/config ${brokerOptions} {{ if .Logging.Timed }}/usr/bin/time -f \"FLUXTIME fluxsubmit wall time %E\" {{ end }}"
+            {{ if .Container.Launcher }}
+            $prefix $@
+            {{ else }}
+            $prefix flux submit {{ if ge .Tasks .Size }} -N {{.Size}}{{ end }} -n {{.Tasks}} --quiet {{ if .Container.FluxOptionFlags }}{{ .Container.FluxOptionFlags}}{{ end }} --watch{{ if .Logging.Debug }} -vvv{{ end }} $@
+            {{ end }}
         fi
     else
         # Sleep until the broker is ready

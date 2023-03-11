@@ -8,62 +8,10 @@ spec:
   # Number of pods to create for MiniCluster
   size: 2
 
-  # Cleanup the storage volume (PVC and PV) after run
-  # cleanup: true
-
   # show all operator output and test run output
   logging:
     quiet: false
 
-  # Make this kind of persistent volume and claim available to pods
-  # This is a type of storage that will use Google Storage
-  volumes:
-    data:
-      storageClass: ibm-s3-storage
-      driver: ibmc-s3fs
-      path: /tmp/data
-      secret: s3-secret
-      secretNamespace: flux-operator
-      capacity: 25Gi
-
-      # See https://github.com/IBM/ibmcloud-object-storage-plugin/blob/master/provisioner/ibm-s3fs-provisioner.go
-      # These are PVC annotations
-      claimAnnotations:
-        ibm.io/auto-create-bucket: "false"
-        ibm.io/auto-delete-bucket: "false"
-        ibm.io/bucket: flux-operator-storage
-        ibm.io/chunk-size-mb: "40"
-        ibm.io/curl-debug: "false"
-        ibm.io/debug-level: warn
-        ibm.io/iam-endpoint: https://iam.cloud.ibm.com
-        # ibm.io/iam-endpoint: https://private.iam.cloud.ibm.com
-        ibm.io/kernel-cache: "true"
-        ibm.io/multireq-max: "20"
-        ibm.io/object-store-endpoint: https://s3.direct.us-east.cloud-object-storage.appdomain.cloud
-        ibm.io/object-store-storage-class: us-east-standard
-        ibm.io/parallel-count: "20"
-        ibm.io/s3fs-fuse-retry-count: "5"
-        ibm.io/secret-name: s3-secret
-        ibm.io/secret-namespace: flux-operator
-        ibm.io/stat-cache-size: "100000"
-        pv.kubernetes.io/bind-completed: "yes"
-        pv.kubernetes.io/bound-by-controller: "yes"
-        volume.beta.kubernetes.io/storage-provisioner: ibm.io/ibmc-s3fs
-        volume.kubernetes.io/storage-provisioner: ibm.io/ibmc-s3fs
-
-      # These are volume "pv" annotations
-#      annotations:
-#        ibm.io/auto-create-bucket: "false"
-#        ibm.io/auto-delete-bucket: "false"
-#        ibm.io/auto_cache: "true"
-#        ibm.io/bucket: flux-operator-storage
-#        ibm.io/secret-name: s3-secret
-#        ibm.io/secret-namespace: flux-operator
-#        ibm.io/debug-level: "warn"
-#        ibm.io/curl-debug: "true"
-        # We can put the endpoint here too, if not provided to the helm install
-        # ibm.io/endpoint: "https://s3-api.dal-us-geo.objectstorage.service.networklayer.com"
-        # ibm.io/region: "us-standard"
         
   # This is a list because a pod can support multiple containers
   containers:
@@ -72,20 +20,18 @@ spec:
       # provide it as a volume to the container to demonstrate that (and share it)
     - image: ghcr.io/rse-ops/atacseq:app-latest
 
-      # We are saying to mount the "data" volume defined above to "/workflow"
-      # in the container
-      volumes:
+      # This is an existing PVC (and associated PV) we created before the MiniCluster
+      existingVolumes:
         data:
-          # This is where we will bind storage
           path: /workflow
-          # readOnly defaults to false
+          claimName: data 
 
-      # This should be the directory with the Snakefile
-      workingDir: /workflow/snakemake-workflow
-      command: snakemake --cores 1 --flux
+      # This is where storage is mounted - we are only going to touch a file
+      workingDir: /workflow
+      command: touch test-file.txt
 
       # Commands just for workers / broker
       commands:
 
-        # This is currently required for the storage driver to work
+        # Running flux as root is currently required for the storage driver to work
         runFluxAsRoot: true

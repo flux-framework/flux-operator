@@ -1,0 +1,29 @@
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  name: data
+  namespace: flux-operator
+  annotations:
+      ibm.io/auto-create-bucket: "false"
+      ibm.io/auto-delete-bucket: "false"
+      ibm.io/debug-level: warn
+      ibm.io/bucket: "flux-operator-storage"
+      ibm.io/secret-name: "s3-secret"
+      ibm.io/secret-namespace: "flux-operator"
+      ibm.io/kernel-cache: "true"
+      ibm.io/iam-endpoint: https://iam.cloud.ibm.com
+      ibm.io/endpoint: "https://s3.us-east.cloud-object-storage.appdomain.cloud"
+# Note sure if this could help with something
+#      ibm.io/add-mount-param: "del_cache,retries=6"
+#    ibm.io/object-store-endpoint: https://s3.direct.us-east.cloud-object-storage.appdomain.cloud
+#    ibm.io/object-store-storage-class: us-east-standard
+      ibm.io/tls-cipher-suite: "default"
+
+
+spec:
+  accessModes:
+    - ReadWriteMany
+  resources:
+    requests:
+      storage: 25Gi
+  storageClassName: ibmc-s3fs-standard-regional

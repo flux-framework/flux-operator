@@ -3,6 +3,23 @@
 For this tutorial you will need to create or have access to an account on [IBM Cloud](https://cloud.ibm.com/).
 We are going to use the [IBM Kubernetes Service](https://cloud.ibm.com/docs/containers?topic=containers-getting-started).
 
+<div class="result docutils container">
+<div class="warning admonition">
+<p class="admonition-title">Warning</p>
+    <p>IBM Cloud uses a plugin with a deprecated feature, a FlexVolume.
+    Underlying this volume we use s3f3, and in our testing while the plugin
+    mounts successfully, at least running Snakemake, there were errors
+    that popped up with respect to finding objects in storage. The example
+    here shows how to upload files to a bucket if needed, but is largely
+    a "hello world" that simply mounts and writes files to a bucket. If you
+    run into issues, we suggest you look at s3fs and the plugin options
+    for mounting. We hope that in the future IBM provides a more traditional
+    CSI plugin.
+</p>
+</div>
+</div>
+
+
 ## Setup
 
 ### Credentials
@@ -52,15 +69,17 @@ If you are doing this for the first time, you'll notice the CRN is blank. We wil
 In addition to this client, you'll need [aws](https://docs.aws.amazon.com/cli/latest/userguide/cli-chap-getting-started.html) and [kubectl](https://kubernetes.io/docs/tasks/tools/).
 
 
-## Snakemake (requiring storage) on IBM Cloud
+## Accessing Storage on IBM Cloud
 
 Akin to how we created a local volume, we can do something similar, but instead of pointing the Flux Operator
-to a volume on the host (e.g., in MiniKube) we are going to point it to a storage bucket with our data.
-IBM Cloud has an s3-like storage option we can use.
+to a volume on the host (e.g., in MiniKube) we are going to point it to a storage bucket where we will interact
+with some workflow. IBM Cloud has an s3-like storage option we can use.
+
 
 ### Prepare Data
 
-To start, prepare your data in a temporary directory (that we will upload into IBM cloud storage):
+This example shows preparing snakemake data, however you don't need to do this to run the example
+to create a file in storage.
 
 <details>
 
@@ -120,6 +139,8 @@ Following [these instructions](https://ibm.github.io/kubernetes-storage/Lab5/cos
 The first step is to grant a service authorization in the cloud console, which looks like this:
 
 ![img/ibm-storage.png](img/ibm-storage.png)
+
+And then read the next section to understand how to create a service and bucket.
 
 <details>
 
@@ -204,10 +225,10 @@ $ ibmcloud cos list-buckets --ibm-service-instance-id $COS_CRN
 
 </details>
 
-When you have your storage, you then upload the workflow using the `aws` client. We will first need to make a service
+When you have your storage, given some data, you would then upload the workflow using the `aws` client. We will first need to make a service
 credential. I did this by clicking the top left hamburger menu, and then "[Resource List](https://cloud.ibm.com/resources)" and clicking the arrow
 to expand storage, clicking on the instance ID, and then I saw my bucket! Note that for small data, you can click "Upload" on the right
-side and select a folder. But likely you want to do it from the command line - you can find your AWS acces token and secret in this json
+side and select a folder. But likely you want to do it from the command line - you can find your AWS access token and secret in this json
 payload under credentials->cos_hmac_keys:
 
 ```bash
@@ -231,7 +252,11 @@ REGION=us-east
 $ aws s3 ls $COS_BUCKET_NAME --endpoint-url https://s3.${REGION}.cloud-object-storage.appdomain.cloud
 ```
 
-And then
+Click the accordion to see examples of uploading data (not necessary for this tutorial):
+
+<details>
+
+<summary>Example to Upload Data</summary>
 
 ```bash
 $ aws s3 cp --recursive /tmp/workflow/ s3://${COS_BUCKET_NAME}/snakemake-workflow --endpoint-url https://s3.${REGION}.cloud-object-storage.appdomain.cloud
@@ -246,6 +271,10 @@ $ aws s3 ls s3://${COS_BUCKET_NAME}/snakemake-workflow/ --endpoint-url https://s
 You can also see the created files in the web interface:
 
 ![img/ibm-storage-create.png](img/ibm-storage-create.png)
+
+</details>
+
+For the tutorial here, it's fine to have an empty bucket. We will simply write files to it.
 
 ### Create Cluster
 
@@ -266,7 +295,7 @@ Choose a worker node instance type:
 
 ```bash
 $ ibmcloud ks flavors --zone dal12 --provider classic
-egxport WORKER_NODE_FLAVOR="u3c.2x4"
+export WORKER_NODE_FLAVOR="u3c.2x4"
 ```
 
 And then create the cluster!
@@ -572,7 +601,7 @@ And then make sure that the image pull secret is available in the ibm-object-s3f
 $ kubectl get secrets -n ibm-object-s3fs | grep icr-io
 ```
 
-Verify that the state of the plugin pods changes to "Running".
+Verify again that the state of the plugin pods changes to "Running".
 
 ```bash
 $ kubectl get pods -n ibm-object-s3fs | grep object
@@ -591,143 +620,90 @@ the service instance id should be `$COS_NAME`.
 $ kubectl create secret generic s3-secret --namespace=flux-operator --type=ibm/ibmc-s3fs  --from-literal=api-key=${COS_APIKEY} --from-literal=service-instance-id=${COS_NAME}
 ```
 
-Finally, we need to create a storage class that points to the correct credentials
-and namespace. Note this file names it "ibm-s3-storage":
-
-```bash
-$ kubectl apply -f examples/storage/ibm/storageclass.yaml 
-```
-
 At this point we have the storage driver running, along with the storage class and secret, and we should
 attempt to use it with the Flux Operator.
 
-### Snakemake MiniCluster
+### Example MiniCluster
 
-Note that I found all these annotation options [here](https://github.com/IBM/ibmcloud-object-storage-plugin/blob/455032aea2f820b8b3ad927e9af1eef6942dc2d5/provisioner/ibm-s3fs-provisioner_test.go#L73).
-Also note that we are setting the `commands: -> runFluxAsRoot` to true. This isn't ideal, but it was the
+Note that we are setting the `commands: -> runFluxAsRoot` to true. This isn't ideal, but it was the
 only way I could get the storage to both be seen and have permission to write there. Let's create the job!
 Since the storage plugin uses a FlexDriver, and this is being deprecated, we need to create the persistent
-volume manually. It will be discovered and used by the Flux Operator. I tried adding the
-owner reference "uid" to this file first:
+volume claim manually, and doing so will create the volume, and then we provide both to the operator to use.
+You can first verify there are no PVs or PVs on the cluster:
 
 ```bash
-$  kubectl get -n operator-system pod operator-controller-manager-858c9ccfb4-2k79n -o yaml 
-#    uid: 87b73461-b5fc-4746-a959-e84518096ed4
+$ kubectl get -n flux-operator pv,pvc
+```
+```console
+No resources found
 ```
 
-Next, we are going to create the MiniCluster. Note that the driver is going to create a PV [with a name we cannot modify](https://github.com/IBM/ibmcloud-object-storage-plugin/blob/455032aea2f820b8b3ad927e9af1eef6942dc2d5/provisioner/ibm-s3fs-provisioner.go#L795) so we will need to make the cluster, see the PV/PVC created (and lost) and then recreate the PV with the correct name.
-Here is how to create the cluster:
+Here is how to create the persistent volume claim.
+
+```bash
+$ kubectl apply -f examples/storage/ibm/pvc.yaml
+```
+
+Try listing again:
+
+```bash
+$ kubectl get -n flux-operator pv,pvc
+```
+```console
+NAME                                                        CAPACITY   ACCESS MODES   RECLAIM POLICY   STATUS   CLAIM                STORAGECLASS                  REASON   AGE
+persistentvolume/pvc-8cd3cbb8-d0d4-4310-bc9d-748bb70ab8ca   25Gi       RWX            Delete           Bound    flux-operator/data   ibmc-s3fs-standard-regional            4s
+
+NAME                         STATUS   VOLUME                                     CAPACITY   ACCESS MODES   STORAGECLASS                  AGE
+persistentvolumeclaim/data   Bound    pvc-8cd3cbb8-d0d4-4310-bc9d-748bb70ab8ca   25Gi       RWX            ibmc-s3fs-standard-regional   4s
+```
+
+The volume and claim should both be "Bound" and not "Lost" or anything like that. If this isn't the case, use `kubectl describe` to see details
+of why it might be. Importantly, we need to get the name of the claim for the minicluster. It should be the one that you provided in your
+spec, but just in case, here is how to check with jq:
+
+```bash
+$ kubectl get -n flux-operator pvc -o json | jq ".items[].metadata.name"
+"data"
+```
+
+This is the name of the claim that you need to have in your MiniCluster under "existingVolumes":
+
+```yaml
+# This is an existing PVC (and associated PV) we created before the MiniCluster
+existingVolumes:
+  data:
+    path: /workflow
+    claimName: data  
+```
+
+Next, we are going to create the MiniCluster, pointing to this claim:
 
 ```bash
 $ kubectl apply -f examples/storage/ibm/minicluster.yaml
 ```
 
-And once you see a PV and PVC:
+It will take 4+ minutes or so to (again) pull the new container. You can check pods:
 
 ```bash
-$ kubectl get -n flux-operator pv,pvc
+$ kubectl get -n flux-operator pods
 ```
 
-Save the PV to a new yaml file:
+You can watch the broker to see if the files mounted (toward the top of the log) and to see when Snakemake starts:
 
 ```bash
-$ kubectl get -n flux-operator pv -o yaml > pv.yaml
+$ kubectl logs -n flux-operator flux-sample-0-xxxx -f
 ```
 
-And edit the name to be "data"
+Note that nothing will start running until all the pods are ready, so you'll want to wait to see that the "quorum is reached"
+and then the storage will be mounted (a listing happens at the beginning) and the file will be touched.
+If you check your cloud storage interface after the job, you should see the test file:
 
-```diff
--    name: pvc-47014577-77af-4402-b88a-0f76132a214d
-+    name: data
-```
+![img/test-file.png](img/test-file.png)
 
-And apply it again.
-
-```bash
-$ kubectl create -f pv.yaml
-```
-
-And delete the old one:
-
-```bash
-$ kubectl delete pv -n flux-operator pvc-47014577-77af-4402-b88a-0f76132a214d 
-```
-
-Patch it with a new name:
-
-```bash
-$ kubectl patch -n flux-operator pv pvc-47014577-77af-4402-b88a-0f76132a214d -p "{\"metadata\":{\"name\":\"data\"}}"
-```
-
-And then right after, create the MiniCluster
-
-
-The pods will take a bit to pull the containers, in the meantime you can check out the pv and pvc:
-
-STOPPED HERE - the pvc seems to create a second PV but then the pod is in pending because the "data" one
-we created (which wasn't used) is the one available.:
-
-```console
-$ kubectl get -n flux-operator pv
-NAME                                       CAPACITY   ACCESS MODES   RECLAIM POLICY   STATUS      CLAIM                      STORAGECLASS     REASON   AGE
-data                                       25Gi       RWX            Delete           Available   flux-operator/data-claim   ibm-s3-storage            3m24s
-pvc-0400f3cc-2662-4cb2-a83b-3bda9e0ea0be   25Gi       RWX            Delete           Pending     flux-operator/data-claim   ibm-s3-storage            113s
-```
-Why was the second created?
-
-```console
-$ kubectl get -n flux-operator pvc
-NAME         STATUS   VOLUME   CAPACITY   ACCESS MODES   STORAGECLASS     AGE
-data-claim   Lost                                        ibm-s3-storage   5m55s
-```
-And then the data claim is lost...
-
-```console
-$ kubectl describe -n flux-operator pvc
-Name:          data-claim
-Namespace:     flux-operator
-StorageClass:  ibm-s3-storage
-Status:        Lost
-Volume:        
-Labels:        <none>
-Annotations:   ibm.io/auto-create-bucket: false
-               ibm.io/auto-delete-bucket: false
-               ibm.io/bucket: flux-operator-storage
-               ibm.io/chunk-size-mb: 40
-               ibm.io/curl-debug: false
-               ibm.io/debug-level: warn
-               ibm.io/iam-endpoint: https://iam.cloud.ibm.com
-               ibm.io/kernel-cache: true
-               ibm.io/multireq-max: 20
-               ibm.io/object-store-endpoint: https://s3.direct.us-east.cloud-object-storage.appdomain.cloud
-               ibm.io/object-store-storage-class: us-east-standard
-               ibm.io/parallel-count: 20
-               ibm.io/s3fs-fuse-retry-count: 5
-               ibm.io/secret-name: s3-secret
-               ibm.io/secret-namespace: flux-operator
-               ibm.io/stat-cache-size: 100000
-               pv.kubernetes.io/bind-completed: yes
-               pv.kubernetes.io/bound-by-controller: yes
-               volume.beta.kubernetes.io/storage-provisioner: ibm.io/ibmc-s3fs
-               volume.kubernetes.io/storage-provisioner: ibm.io/ibmc-s3fs
-Finalizers:    [kubernetes.io/pvc-protection]
-Capacity:      
-Access Modes:  
-VolumeMode:    Filesystem
-Used By:       flux-sample-0-wbqft
-               flux-sample-1-rcf97
-Events:
-  Type     Reason                 Age   From                                                                                                  Message
-  ----     ------                 ----  ----                                                                                                  -------
-  Normal   Provisioning           6m4s  ibm.io/ibmc-s3fs_ibmcloud-object-storage-plugin-bd89679b7-lgmx9_55bf4496-14e8-47dd-999e-7e9398a9bfd8  External provisioner is provisioning volume for claim "flux-operator/data-claim"
-  Warning  ClaimLost              6m3s  persistentvolume-controller                                                                           Bound claim has lost reference to PersistentVolume. Data on the volume is lost!
-  Normal   ProvisioningSucceeded  6m3s  ibm.io/ibmc-s3fs_ibmcloud-object-storage-plugin-bd89679b7-lgmx9_55bf4496-14e8-47dd-999e-7e9398a9bfd8  Successfully provisioned volume pvc-0400f3cc-2662-4cb2-a83b-3bda9e0ea0be
-(env) (base) vanessa@vanessa-ThinkPad-T490s:~/Desktop/Code/flux/operator$ kubectl get -n flux-operator pv
-NAME                                       CAPACITY   ACCESS MODES   RECLAIM POLICY   STATUS      CLAIM                      STORAGECLASS     REASON   AGE
-data                                       25Gi       RWX            Delete           Available   flux-operator/data-claim   ibm-s3-storage            8m39s
-pvc-0400f3cc-2662-4cb2-a83b-3bda9e0ea0be   25Gi       RWX            Delete           Pending     flux-operator/data-claim   ibm-s3-storage            7m8s
-```
-But reports using the second (pending) one?
+And that's it! This can be a starting base for customizing your own workflows to use IBM cloud.
+Note that the s3fs is a bit fussy when it comes to mounting, and if you run into issues you
+should [explore the options](https://github.com/s3fs-fuse/s3fs-fuse) and see what is already
+[exposed by the plugin](https://github.com/IBM/ibmcloud-object-storage-plugin).
 
 ## Clean up
 

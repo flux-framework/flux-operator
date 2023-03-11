@@ -5,80 +5,58 @@ see our [storage examples directory](https://github.com/flux-framework/flux-oper
 
 ## Existing Persistent Volume
 
-It might be the case that you've already defined a persistent volume, and you simply want
-to ask for claims (for your pods). And technically, this could work for the PVC too.
-Either way, as long as you create your object with the matching:
+It might be the case that you've already defined a persistent volume claim, and you simply want to use it.
+We currently support this, and require that you manage both the PVC and the PV (in our testing,
+when a PV was created beforehand and then a PVC created by the operator, it would get status "Lost").
+We think it might be possible to create the PV first (and have the PVC created by the operator)
+but more testing is needed. Thus, for the time being, we recommend that you create your own
+PV and PVC in advance, and then provide it to the operator. Here is an example
+workflow that will use a pre-defined persistent volume claim:
 
-1. namespace for metadata (for a PVC)
-2. name for metadata (e.g., flux-sample)
-3. name for the volume (e.g., data)
-
-The operator should detect that it already exists, and not try to re-create it, but
-still use the names. As an example, here is a complete PVC and PV created by the operator
-for a simple volume (in the MiniCluster CRD) named "data." Here is an example
-creating a PVC that is a driver type (Flex) that is deprecated that the operator does
-not support:
 
 ```yaml
-apiVersion: v1
-kind: PersistentVolume
+apiVersion: flux-framework.org/v1alpha1
+kind: MiniCluster
 metadata:
-
-  # IMPORTANT: this needs to correspond with your volume name "e.g., data" in the minicluster
-  name: data
-  annotations:
-    ibm.io/auto-create-bucket: "false"
-    ibm.io/auto-delete-bucket: "false"
-    ibm.io/bucket: flux-operator-storage
-    ibm.io/chunk-size-mb: "40"
-    ibm.io/cos-service: ""
-    ibm.io/debug-level: warn
-    # ibm.io/iam-endpoint: https://private.iam.cloud.ibm.com
-    ibm.io/iam-endpoint: https://iam.cloud.ibm.com
-    ibm.io/multireq-max: "20"
-    ibm.io/parallel-count: "20"
-    ibm.io/s3fs-fuse-retry-count: "5"
-    ibm.io/secret-name: s3-secret
-    ibm.io/secret-namespace: flux-operator
-    ibm.io/stat-cache-size: "100000"
-    pv.kubernetes.io/provisioned-by: ibm.io/ibmc-s3fs
-
+  name: flux-sample
+  namespace: flux-operator
 spec:
-  accessModes:
-  - ReadWriteMany
-  capacity:
-    storage: 25Gi
-  claimRef:
-    apiVersion: v1
-    kind: PersistentVolumeClaim
 
-    # IMPORTANT: this must be the name of the volume plus "-claim"
-    name: data-claim
-    namespace: flux-operator
+  # Number of pods to create for MiniCluster
+  size: 2
 
-  flexVolume:
-    driver: ibm/ibmc-s3fs
-    options:
-      access-mode: ReadWriteMany
-      bucket: flux-operator-storage
-      chunk-size-mb: "40"
-      curl-debug: "false"
-      debug-level: warn
-      iam-endpoint: https://iam.cloud.ibm.com
-      kernel-cache: "true"
-      multireq-max: "20"
-      object-store-storage-class: us-east-standard
-      parallel-count: "20"
-      s3fs-fuse-retry-count: "5"
-      stat-cache-size: "100000"
-      tls-cipher-suite: AESGCM
-    secretRef:
-      name: s3-secret
-      namespace: flux-operator
-  persistentVolumeReclaimPolicy: Delete
-  storageClassName: ibmc-s3fs-standard-regional
-  volumeMode: Filesystem
+  # show all operator output and test run output
+  logging:
+    quiet: false
+
+        
+  # This is a list because a pod can support multiple containers
+  containers:
+
+      # This image has snakemake installed, and although it has data, we will
+      # provide it as a volume to the container to demonstrate that (and share it)
+    - image: ghcr.io/rse-ops/atacseq:app-latest
+
+      # This is an existing PVC (and associated PV) we created before the MiniCluster
+      existingVolumes:
+        data:
+          path: /workflow
+          claimName: data 
+
+      # This is where storage is mounted - we are only going to touch a file
+      workingDir: /workflow
+      command: touch test-file.txt
+
+      # Commands just for workers / broker
+      commands:
+
+        # Running flux as root is currently required for the storage driver to work
+        runFluxAsRoot: true
 ```
 
-Note that we've given it the name from our minicluster volume "data" and the claim name is always the volume 
-name + "-claim" (e.g., "data-claim") and the namespace and name for the objects match the one for our MiniCluster. 
+In the above, we've created a PVC called "data" and we want it to be mounted to "/workflow" in the container.
+Note that we are currently running flux as root because it's the lazy way to ensure the volume mount works,
+however it's not ideal from a security standpoint. More testers are needed to test different (specific)
+container storage interfaces (or other volume types) to find the correct mount options to set in order
+to allow ownership by the "flux" user (or for more advanced cases, breaking storage into pieces to be
+owned by a set of cluster users)!

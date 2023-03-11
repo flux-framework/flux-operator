@@ -359,7 +359,7 @@ class MiniClusterSpec(object):
     def volumes(self):
         """Gets the volumes of this MiniClusterSpec.  # noqa: E501
 
-        Volumes accessible to containers from a host  # noqa: E501
+        Volumes accessible to containers from a host Not all containers are required to use them  # noqa: E501
 
         :return: The volumes of this MiniClusterSpec.  # noqa: E501
         :rtype: dict(str, MiniClusterVolume)
@@ -370,7 +370,7 @@ class MiniClusterSpec(object):
     def volumes(self, volumes):
         """Sets the volumes of this MiniClusterSpec.
 
-        Volumes accessible to containers from a host  # noqa: E501
+        Volumes accessible to containers from a host Not all containers are required to use them  # noqa: E501
 
         :param volumes: The volumes of this MiniClusterSpec.  # noqa: E501
         :type volumes: dict(str, MiniClusterVolume)

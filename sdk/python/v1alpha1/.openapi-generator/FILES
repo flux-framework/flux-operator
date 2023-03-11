@@ -11,6 +11,7 @@ docs/LifeCycle.md
 docs/LoggingSpec.md
 docs/MiniCluster.md
 docs/MiniClusterContainer.md
+docs/MiniClusterExistingVolume.md
 docs/MiniClusterList.md
 docs/MiniClusterSpec.md
 docs/MiniClusterStatus.md
@@ -32,6 +33,7 @@ fluxoperator/models/life_cycle.py
 fluxoperator/models/logging_spec.py
 fluxoperator/models/mini_cluster.py
 fluxoperator/models/mini_cluster_container.py
+fluxoperator/models/mini_cluster_existing_volume.py
 fluxoperator/models/mini_cluster_list.py
 fluxoperator/models/mini_cluster_spec.py
 fluxoperator/models/mini_cluster_status.py
@@ -45,4 +47,5 @@ setup.cfg
 setup.py
 test-requirements.txt
 test/__init__.py
+test/test_mini_cluster_existing_volume.py
 tox.ini

@@ -24,21 +24,22 @@ import (
 
 func GetOpenAPIDefinitions(ref common.ReferenceCallback) map[string]common.OpenAPIDefinition {
 	return map[string]common.OpenAPIDefinition{
-		"./api/v1alpha1/.Commands":             schema__api_v1alpha1__Commands(ref),
-		"./api/v1alpha1/.ContainerResources":   schema__api_v1alpha1__ContainerResources(ref),
-		"./api/v1alpha1/.ContainerVolume":      schema__api_v1alpha1__ContainerVolume(ref),
-		"./api/v1alpha1/.FluxRestful":          schema__api_v1alpha1__FluxRestful(ref),
-		"./api/v1alpha1/.FluxUser":             schema__api_v1alpha1__FluxUser(ref),
-		"./api/v1alpha1/.LifeCycle":            schema__api_v1alpha1__LifeCycle(ref),
-		"./api/v1alpha1/.LoggingSpec":          schema__api_v1alpha1__LoggingSpec(ref),
-		"./api/v1alpha1/.MiniCluster":          schema__api_v1alpha1__MiniCluster(ref),
-		"./api/v1alpha1/.MiniClusterContainer": schema__api_v1alpha1__MiniClusterContainer(ref),
-		"./api/v1alpha1/.MiniClusterList":      schema__api_v1alpha1__MiniClusterList(ref),
-		"./api/v1alpha1/.MiniClusterSpec":      schema__api_v1alpha1__MiniClusterSpec(ref),
-		"./api/v1alpha1/.MiniClusterStatus":    schema__api_v1alpha1__MiniClusterStatus(ref),
-		"./api/v1alpha1/.MiniClusterUser":      schema__api_v1alpha1__MiniClusterUser(ref),
-		"./api/v1alpha1/.MiniClusterVolume":    schema__api_v1alpha1__MiniClusterVolume(ref),
-		"./api/v1alpha1/.PodSpec":              schema__api_v1alpha1__PodSpec(ref),
+		"./api/v1alpha1/.Commands":                  schema__api_v1alpha1__Commands(ref),
+		"./api/v1alpha1/.ContainerResources":        schema__api_v1alpha1__ContainerResources(ref),
+		"./api/v1alpha1/.ContainerVolume":           schema__api_v1alpha1__ContainerVolume(ref),
+		"./api/v1alpha1/.FluxRestful":               schema__api_v1alpha1__FluxRestful(ref),
+		"./api/v1alpha1/.FluxUser":                  schema__api_v1alpha1__FluxUser(ref),
+		"./api/v1alpha1/.LifeCycle":                 schema__api_v1alpha1__LifeCycle(ref),
+		"./api/v1alpha1/.LoggingSpec":               schema__api_v1alpha1__LoggingSpec(ref),
+		"./api/v1alpha1/.MiniCluster":               schema__api_v1alpha1__MiniCluster(ref),
+		"./api/v1alpha1/.MiniClusterContainer":      schema__api_v1alpha1__MiniClusterContainer(ref),
+		"./api/v1alpha1/.MiniClusterExistingVolume": schema__api_v1alpha1__MiniClusterExistingVolume(ref),
+		"./api/v1alpha1/.MiniClusterList":           schema__api_v1alpha1__MiniClusterList(ref),
+		"./api/v1alpha1/.MiniClusterSpec":           schema__api_v1alpha1__MiniClusterSpec(ref),
+		"./api/v1alpha1/.MiniClusterStatus":         schema__api_v1alpha1__MiniClusterStatus(ref),
+		"./api/v1alpha1/.MiniClusterUser":           schema__api_v1alpha1__MiniClusterUser(ref),
+		"./api/v1alpha1/.MiniClusterVolume":         schema__api_v1alpha1__MiniClusterVolume(ref),
+		"./api/v1alpha1/.PodSpec":                   schema__api_v1alpha1__PodSpec(ref),
 	}
 }
 
@@ -429,9 +430,17 @@ func schema__api_v1alpha1__MiniClusterContainer(ref common.ReferenceCallback) co
 					},
 					"command": {
 						SchemaProps: spec.SchemaProps{
-							Description: "Single user executable to provide to flux start IMPORTANT: This is left here, but not used in favor of exposing Flux via a Restful API. We Can remove this when that is finalized.",
+							Description: "Single user executable to provide to flux start",
 							Default:     "",
 							Type:        []string{"string"},
+							Format:      "",
+						},
+					},
+					"launcher": {
+						SchemaProps: spec.SchemaProps{
+							Description: "Indicate that the command is a launcher that will ask for its own jobs (and provided directly to flux start)",
+							Default:     false,
+							Type:        []string{"boolean"},
 							Format:      "",
 						},
 					},
@@ -461,6 +470,21 @@ func schema__api_v1alpha1__MiniClusterContainer(ref common.ReferenceCallback) co
 									SchemaProps: spec.SchemaProps{
 										Default: map[string]interface{}{},
 										Ref:     ref("./api/v1alpha1/.ContainerVolume"),
+									},
+								},
+							},
+						},
+					},
+					"existingVolumes": {
+						SchemaProps: spec.SchemaProps{
+							Description: "Existing Volumes to add to the containers",
+							Type:        []string{"object"},
+							AdditionalProperties: &spec.SchemaOrBool{
+								Allows: true,
+								Schema: &spec.Schema{
+									SchemaProps: spec.SchemaProps{
+										Default: map[string]interface{}{},
+										Ref:     ref("./api/v1alpha1/.MiniClusterExistingVolume"),
 									},
 								},
 							},
@@ -515,7 +539,43 @@ func schema__api_v1alpha1__MiniClusterContainer(ref common.ReferenceCallback) co
 			},
 		},
 		Dependencies: []string{
-			"./api/v1alpha1/.Commands", "./api/v1alpha1/.ContainerResources", "./api/v1alpha1/.ContainerVolume", "./api/v1alpha1/.FluxUser", "./api/v1alpha1/.LifeCycle"},
+			"./api/v1alpha1/.Commands", "./api/v1alpha1/.ContainerResources", "./api/v1alpha1/.ContainerVolume", "./api/v1alpha1/.FluxUser", "./api/v1alpha1/.LifeCycle", "./api/v1alpha1/.MiniClusterExistingVolume"},
+	}
+}
+
+func schema__api_v1alpha1__MiniClusterExistingVolume(ref common.ReferenceCallback) common.OpenAPIDefinition {
+	return common.OpenAPIDefinition{
+		Schema: spec.Schema{
+			SchemaProps: spec.SchemaProps{
+				Description: "Mini Cluster local volumes available to mount (these are on the host)",
+				Type:        []string{"object"},
+				Properties: map[string]spec.Schema{
+					"path": {
+						SchemaProps: spec.SchemaProps{
+							Description: "Path and claim name are always required",
+							Default:     "",
+							Type:        []string{"string"},
+							Format:      "",
+						},
+					},
+					"claimName": {
+						SchemaProps: spec.SchemaProps{
+							Default: "",
+							Type:    []string{"string"},
+							Format:  "",
+						},
+					},
+					"readOnly": {
+						SchemaProps: spec.SchemaProps{
+							Default: false,
+							Type:    []string{"boolean"},
+							Format:  "",
+						},
+					},
+				},
+				Required: []string{"path", "claimName"},
+			},
+		},
 	}
 }
 
@@ -638,7 +698,7 @@ func schema__api_v1alpha1__MiniClusterSpec(ref common.ReferenceCallback) common.
 					},
 					"volumes": {
 						SchemaProps: spec.SchemaProps{
-							Description: "Volumes accessible to containers from a host",
+							Description: "Volumes accessible to containers from a host Not all containers are required to use them",
 							Type:        []string{"object"},
 							AdditionalProperties: &spec.SchemaOrBool{
 								Allows: true,

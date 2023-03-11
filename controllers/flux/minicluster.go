@@ -69,10 +69,10 @@ func (r *MiniClusterReconciler) ensureMiniCluster(
 
 	// Prepare volumes, if requested, to be available to containers
 	for volumeName, volume := range cluster.Spec.Volumes {
-		/*_, result, err = r.getPersistentVolume(ctx, cluster, volumeName, volume)
+		_, result, err = r.getPersistentVolume(ctx, cluster, volumeName, volume)
 		if err != nil {
 			return result, err
-		}*/
+		}
 		_, result, err = r.getPersistentVolumeClaim(ctx, cluster, volumeName, volume)
 		if err != nil {
 			return result, err

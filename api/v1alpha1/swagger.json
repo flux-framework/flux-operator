@@ -169,7 +169,7 @@
       "type": "object",
       "properties": {
         "command": {
-          "description": "Single user executable to provide to flux start IMPORTANT: This is left here, but not used in favor of exposing Flux via a Restful API. We Can remove this when that is finalized.",
+          "description": "Single user executable to provide to flux start",
           "type": "string",
           "default": ""
         },
@@ -197,6 +197,14 @@
             "default": ""
           }
         },
+        "existingVolumes": {
+          "description": "Existing Volumes to add to the containers",
+          "type": "object",
+          "additionalProperties": {
+            "default": {},
+            "$ref": "#/definitions/MiniClusterExistingVolume"
+          }
+        },
         "fluxLogLevel": {
           "description": "Log level to use for flux logging (only in non TestMode)",
           "type": "integer",
@@ -222,6 +230,11 @@
           "description": "Allow the user to pull authenticated images By default no secret is selected. Setting this with the name of an already existing imagePullSecret will specify that secret in the pod spec.",
           "type": "string",
           "default": ""
+        },
+        "launcher": {
+          "description": "Indicate that the command is a launcher that will ask for its own jobs (and provided directly to flux start)",
+          "type": "boolean",
+          "default": false
         },
         "lifeCycle": {
           "description": "Lifecycle can handle post start commands, etc.",
@@ -275,6 +288,29 @@
           "description": "Working directory to run command from",
           "type": "string",
           "default": ""
+        }
+      }
+    },
+    "MiniClusterExistingVolume": {
+      "description": "Mini Cluster local volumes available to mount (these are on the host)",
+      "type": "object",
+      "required": [
+        "path",
+        "claimName"
+      ],
+      "properties": {
+        "claimName": {
+          "type": "string",
+          "default": ""
+        },
+        "path": {
+          "description": "Path and claim name are always required",
+          "type": "string",
+          "default": ""
+        },
+        "readOnly": {
+          "type": "boolean",
+          "default": false
         }
       }
     },
@@ -382,7 +418,7 @@
           "x-kubernetes-list-type": "atomic"
         },
         "volumes": {
-          "description": "Volumes accessible to containers from a host",
+          "description": "Volumes accessible to containers from a host Not all containers are required to use them",
           "type": "object",
           "additionalProperties": {
             "default": {},
