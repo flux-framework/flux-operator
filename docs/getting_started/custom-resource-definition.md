@@ -237,7 +237,7 @@ volumes:
       provider.svc/attribute: value
 ```
 
-### claimAnnotations
+#### claimAnnotations
 
 To set annotations for the claim:
 
