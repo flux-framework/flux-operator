@@ -1,0 +1,1447 @@
+
+
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+      <link rel="icon" href="../_static/favicon.ico">
+    
+    
+      
+        <title>IBM Cloud - Flux Operator</title>
+      
+    
+    
+      
+        
+        
+      
+      
+
+    
+    
+    
+      
+        
+        
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+        <link rel="stylesheet" type="text/css" href="../_static/sphinx_immaterial_theme.fa3fbbd75cfdd7cef.min.css" />
+        <link rel="stylesheet" type="text/css" href="../_static/custom.css" />
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+    
+
+
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
+
+<!-- Social: Facebook / Open Graph -->
+<title>Flux Operator </title>
+<link rel="canonical" href="https://flux-framework.github.io/flux-operator/"/>
+<meta property="og:type" content="website">
+
+<meta property="og:url" content="https://flux-framework.github.io/flux-operator/">
+<meta property="og:title" content="Flux Operator">
+<meta property="og:image" content="https://raw.githubusercontent.com/flux-framework/flux-operator/main/docs/images/flux-operator.png">
+<meta property="og:description" content="Flux Operator ">
+<meta property="og:site_name" content="Flux Operator">
+<meta property="og:locale" content="en_US">
+
+<!-- Social: Twitter -->
+<meta name="twitter:card" content="summary">
+<meta name="twitter:site" content="@FluxFramework">
+<meta name="twitter:title" content="Flux Framework">
+<meta name="twitter:description" content="Flux Operator ">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/flux-framework/flux-operator/main/docs/images/flux-operator.png">
+
+<!-- Social: Google+ / Schema.org  -->
+<meta itemprop="name" content="Flux Operator">
+<meta itemprop="description" content="Flux Operator ">
+<meta itemprop="image" content="https://raw.githubusercontent.com/flux-framework/flux-operator/main/docs/images/flux-operator.png">
+<script type="application/ld+json">
+  {"@type":"WebSite","headline":"Flux Operator","url":"https://flux-framework.github.io/flux-operator","description":"The Flux Operator creates Flux MiniClusters on Kubernetes ","name":"Flux Operator","@context":"https://schema.org"}
+</script>
+
+<style>
+.material-symbols-outlined {
+  font-variation-settings:
+  'FILL' 0,
+  'wght' 400,
+  'GRAD' 0,
+  'opsz' 48
+}
+.sphx-glr-script-out .highlight pre {
+  background-color: #def0ff !important;
+}
+  </style>
+
+
+
+
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="blue" data-md-color-accent="light-blue">
+  
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&"object"==typeof palette.color)for(var key of Object.keys(palette.color))document.body.setAttribute("data-md-color-"+key,palette.color[key])</script>
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../index.html" title="Flux Operator" class="md-header__button md-logo" aria-label="Flux Operator" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54Z"/></svg>
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2Z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Flux Operator
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              IBM Cloud
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      <form class="md-header__option" data-md-component="palette">
+        
+          
+          
+          <input class="md-option" data-md-color-media="(prefers-color-scheme: light)" data-md-color-scheme="default" data-md-color-primary="blue" data-md-color-accent="light-blue"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_1">
+          
+            <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_2" hidden>
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 2a7 7 0 0 1 7 7c0 2.38-1.19 4.47-3 5.74V17a1 1 0 0 1-1 1H9a1 1 0 0 1-1-1v-2.26C6.19 13.47 5 11.38 5 9a7 7 0 0 1 7-7M9 21v-1h6v1a1 1 0 0 1-1 1h-4a1 1 0 0 1-1-1m3-17a5 5 0 0 0-5 5c0 2.05 1.23 3.81 3 4.58V16h4v-2.42c1.77-.77 3-2.53 3-4.58a5 5 0 0 0-5-5Z"/></svg>
+            </label>
+          
+        
+          
+          
+          <input class="md-option" data-md-color-media="(prefers-color-scheme: dark)" data-md-color-scheme="slate" data-md-color-primary="blue" data-md-color-accent="light-blue"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_2">
+          
+            <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_1" hidden>
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 2a7 7 0 0 0-7 7c0 2.38 1.19 4.47 3 5.74V17a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1v-2.26c1.81-1.27 3-3.36 3-5.74a7 7 0 0 0-7-7M9 21a1 1 0 0 0 1 1h4a1 1 0 0 0 1-1v-1H9v1Z"/></svg>
+            </label>
+          
+        
+      </form>
+    
+    
+    
+      <label class="md-header__button md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+      </label>
+      <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+          <a href="javascript:void(0)" class="md-search__icon md-icon" title="Share" aria-label="Share" data-clipboard data-clipboard-text="" data-md-component="search-share" tabindex="-1">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7 0-.24-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9a3 3 0 0 0-3 3 3 3 0 0 0 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.15c-.05.21-.08.43-.08.66 0 1.61 1.31 2.91 2.92 2.91 1.61 0 2.92-1.3 2.92-2.91A2.92 2.92 0 0 0 18 16.08Z"/></svg>
+          </a>
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41Z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/flux-framework/flux-operator/" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc.--><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    Flux Operator
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+      
+      
+        
+          
+            
+<nav class="md-tabs" aria-label="Tabs" data-md-component="tabs">
+  <div class="md-tabs__inner md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+
+
+  <li class="md-tabs__item">
+    <a href="../getting_started/index.html" class="md-tabs__link">
+      <span class="md-ellipsis">Getting Started</span>
+    </a>
+  </li>
+
+      
+        
+  
+  
+
+
+  <li class="md-tabs__item">
+    <a href="../tutorials/index.html" class="md-tabs__link">
+      <span class="md-ellipsis">Tutorials</span>
+    </a>
+  </li>
+
+      
+        
+  
+  
+    
+  
+
+
+  <li class="md-tabs__item">
+    <a href="index.html" class="md-tabs__link md-tabs__link--active">
+      <span class="md-ellipsis">Deployment</span>
+    </a>
+  </li>
+
+      
+        
+  
+  
+
+
+  <li class="md-tabs__item">
+    <a href="../about/index.html" class="md-tabs__link">
+      <span class="md-ellipsis">About</span>
+    </a>
+  </li>
+
+      
+    </ul>
+  </div>
+</nav>
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+  
+
+
+  
+
+<nav class="md-nav md-nav--primary md-nav--lifted md-nav--integrated" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../index.html" title="Flux Operator" class="md-nav__button md-logo" aria-label="Flux Operator" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54Z"/></svg>
+    </a>
+    Flux Operator
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/flux-framework/flux-operator/" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc.--><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    Flux Operator
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+      
+
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" data-md-toggle="__nav_1" type="checkbox" id="__nav_1" checked>
+      
+      
+      
+        <label class="md-nav__link" for="__nav_1">
+          <span class="md-ellipsis">Getting Started</span>
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Getting Started" data-md-level="1">
+        <label class="md-nav__title" for="__nav_1">
+          <span class="md-nav__icon md-icon"></span>
+          <span class="md-ellipsis">Getting Started</span>
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../getting_started/index.html" class="md-nav__link">
+        <span title="/getting_started/index.md (reference label)" class="md-ellipsis">User Guide</span>
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../development/index.html" class="md-nav__link">
+        <span title="/development/index.md (reference label)" class="md-ellipsis">Development</span>
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" data-md-toggle="__nav_2" type="checkbox" id="__nav_2" checked>
+      
+      
+      
+        <label class="md-nav__link" for="__nav_2">
+          <span class="md-ellipsis">Tutorials</span>
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Tutorials" data-md-level="1">
+        <label class="md-nav__title" for="__nav_2">
+          <span class="md-nav__icon md-icon"></span>
+          <span class="md-ellipsis">Tutorials</span>
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../tutorials/index.html" class="md-nav__link">
+        <span title="/tutorials/index.md (reference label)" class="md-ellipsis">Tutorials</span>
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+  
+
+    
+      
+      
+      
+
+  
+  
+    
+  
+  
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_3" type="checkbox" id="__nav_3" checked>
+      
+      
+      
+        <label class="md-nav__link" for="__nav_3">
+          <span class="md-ellipsis">Deployment</span>
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Deployment" data-md-level="1">
+        <label class="md-nav__title" for="__nav_3">
+          <span class="md-nav__icon md-icon"></span>
+          <span class="md-ellipsis">Deployment</span>
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+    
+  
+  
+    
+      
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_3_1" type="checkbox" id="__nav_3_1" checked>
+      
+      
+      
+        
+        <div class="md-nav__link md-nav__link--index ">
+          <a href="index.html"><span title="/deployment/index.md (reference label)" class="md-ellipsis">Clouds</span></a>
+          
+            <label for="__nav_3_1">
+              <span class="md-nav__icon md-icon"></span>
+            </label>
+          
+        </div>
+      
+      <nav class="md-nav" aria-label="Clouds" data-md-level="2">
+        <label class="md-nav__title" for="__nav_3_1">
+          <span class="md-nav__icon md-icon"></span>
+          <span title="/deployment/index.md (reference label)" class="md-ellipsis">Clouds</span>
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="minikube.html" class="md-nav__link">
+        <span title="/deployment/minikube.md (reference label)" class="md-ellipsis">Mini<wbr>Kube</span>
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="aws.html" class="md-nav__link">
+        <span title="/deployment/aws.md (reference label)" class="md-ellipsis">Amazon Web Services</span>
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="google.html" class="md-nav__link">
+        <span title="/deployment/google.md (reference label)" class="md-ellipsis">Google Cloud</span>
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+    
+  
+    
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      
+      <input class="md-nav__toggle md-toggle" data-md-toggle="toc" type="checkbox" id="__toc">
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          <span title="/deployment/ibm.md (reference label)" class="md-ellipsis">IBM Cloud</span>
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="#" class="md-nav__link md-nav__link--active">
+        <span title="/deployment/ibm.md (reference label)" class="md-ellipsis">IBM Cloud</span>
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary">
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#setup" class="md-nav__link">
+    <span title="/deployment/ibm.md#setup (reference label)" class="md-ellipsis">Setup</span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Setup">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#credentials" class="md-nav__link">
+    <span title="/deployment/ibm.md#credentials (reference label)" class="md-ellipsis">Credentials</span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#install" class="md-nav__link">
+    <span title="/deployment/ibm.md#install (reference label)" class="md-ellipsis">Install</span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#accessing-storage-on-ibm-cloud" class="md-nav__link">
+    <span title="/deployment/ibm.md#accessing-storage-on-ibm-cloud (reference label)" class="md-ellipsis">Accessing Storage on IBM Cloud</span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Accessing Storage on IBM Cloud">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#prepare-data" class="md-nav__link">
+    <span title="/deployment/ibm.md#prepare-data (reference label)" class="md-ellipsis">Prepare Data</span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#create-cluster" class="md-nav__link">
+    <span title="/deployment/ibm.md#create-cluster (reference label)" class="md-ellipsis">Create Cluster</span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#deploy-operator" class="md-nav__link">
+    <span title="/deployment/ibm.md#deploy-operator (reference label)" class="md-ellipsis">Deploy Operator</span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#create-flux-operator-namespace" class="md-nav__link">
+    <span title="/deployment/ibm.md#create-flux-operator-namespace (reference label)" class="md-ellipsis">Create Flux Operator namespace</span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#install-the-container-storage-plugin" class="md-nav__link">
+    <span title="/deployment/ibm.md#install-the-container-storage-plugin (reference label)" class="md-ellipsis">Install the Container Storage Plugin</span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#example-minicluster" class="md-nav__link">
+    <span title="/deployment/ibm.md#example-minicluster (reference label)" class="md-ellipsis">Example Mini<wbr>Cluster</span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#clean-up" class="md-nav__link">
+    <span title="/deployment/ibm.md#clean-up (reference label)" class="md-ellipsis">Clean up</span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" data-md-toggle="__nav_4" type="checkbox" id="__nav_4" checked>
+      
+      
+      
+        <label class="md-nav__link" for="__nav_4">
+          <span class="md-ellipsis">About</span>
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="About" data-md-level="1">
+        <label class="md-nav__title" for="__nav_4">
+          <span class="md-nav__icon md-icon"></span>
+          <span class="md-ellipsis">About</span>
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../about/index.html" class="md-nav__link">
+        <span title="/about/index.md (reference label)" class="md-ellipsis">About the Flux Operator</span>
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset" role="main">
+                  
+
+
+  <a href="https://github.com/flux-framework/flux-operator/blob/main/docs/deployment/ibm.md" title="Edit this page" class="md-content__button md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10 20H6V4h7v5h5v3.1l2-2V8l-6-6H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h4v-2m10.2-7c.1 0 .3.1.4.2l1.3 1.3c.2.2.2.6 0 .8l-1 1-2.1-2.1 1-1c.1-.1.2-.2.4-.2m0 3.9L14.1 23H12v-2.1l6.1-6.1 2.1 2.1Z"/></svg>
+  </a>
+
+<h1 id="ibm-cloud">IBM Cloud<a class="headerlink" href="#ibm-cloud" title="Permalink to this heading">¶</a></h1>
+<p>For this tutorial you will need to create or have access to an account on <a class="reference external" href="https://cloud.ibm.com/">IBM Cloud</a>.
+We are going to use the <a class="reference external" href="https://cloud.ibm.com/docs/containers?topic=containers-getting-started">IBM Kubernetes Service</a>.</p>
+<div class="result docutils container">
+<div class="warning admonition">
+<p class="admonition-title">Warning</p>
+    <p>IBM Cloud uses a plugin with a deprecated feature, a FlexVolume.
+    Underlying this volume we use s3f3, and in our testing while the plugin
+    mounts successfully, at least running Snakemake, there were errors
+    that popped up with respect to finding objects in storage. The example
+    here shows how to upload files to a bucket if needed, but is largely
+    a "hello world" that simply mounts and writes files to a bucket. If you
+    run into issues, we suggest you look at s3fs and the plugin options
+    for mounting. We hope that in the future IBM provides a more traditional
+    CSI plugin.
+</p>
+</div>
+</div>
+<h2 id="setup">Setup<a class="headerlink" href="#setup" title="Permalink to this heading">¶</a></h2>
+<h3 id="credentials">Credentials<a class="headerlink" href="#credentials" title="Permalink to this heading">¶</a></h3>
+<p>IBM works by way of <a class="reference external" href="https://cloud.ibm.com/docs/account?topic=account-userapikey&amp;amp;interface=ui#userapikey">access keys</a> for the API.
+If you click on your profile in the top right of the console, you can click “Log in to CLI and API” and a box will pop up.
+You will want to copy paste the first command that logs in as follows:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span>ibmcloud<span class="w"> </span>login<span class="w"> </span>-a<span class="w"> </span>https://cloud.ibm.com<span class="w"> </span>-u<span class="w"> </span>passcode<span class="w"> </span>-p<span class="w"> </span>xxxxxxx
+</code></pre></div>
+</div>
+<p>And then choose a zone (e.g., us-east).</p>
+<h3 id="install">Install<a class="headerlink" href="#install" title="Permalink to this heading">¶</a></h3>
+<p>You’ll first need to <a class="reference external" href="https://cloud.ibm.com/docs/cli?topic=cli-getting-started">install the ibmcloud</a> command line
+client.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span>curl<span class="w"> </span>-fsSL<span class="w"> </span>https://clis.cloud.ibm.com/install/linux<span class="w"> </span>&gt;<span class="w"> </span>install.sh
+$<span class="w"> </span>chmod<span class="w"> </span>+x<span class="w"> </span>install.sh
+$<span class="w"> </span>./install.sh
+</code></pre></div>
+</div>
+<p>This should create the <code class="docutils literal notranslate"><span class="pre">ibmcloud</span></code> executable on your path.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span>which<span class="w"> </span>ibmcloud
+</code></pre></div>
+</div>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><code><span class="go">/usr/local/bin/ibmcloud</span>
+</code></pre></div>
+</div>
+<p>Ensure the <a class="reference external" href="https://cloud.ibm.com/docs/cloud-object-storage?topic=cloud-object-storage-cli-plugin-ic-cos-cli">storage plugin</a> is installed
+along with the <a class="reference external" href="https://cloud.ibm.com/docs/containers?topic=containers-cs_cli_install">kubernetes plugin</a>:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span>ibmcloud<span class="w"> </span>plugin<span class="w"> </span>install<span class="w"> </span>cloud-object-storage
+$<span class="w"> </span>ibmcloud<span class="w"> </span>plugin<span class="w"> </span>install<span class="w"> </span>container-service
+
+<span class="c1"># And view your current config</span>
+$<span class="w"> </span>ibmcloud<span class="w"> </span>cos<span class="w"> </span>config<span class="w"> </span>list
+</code></pre></div>
+</div>
+<p>If you are doing this for the first time, you’ll notice the CRN is blank. We will create a CRN when we push objects to the bucket.
+In addition to this client, you’ll need <a class="reference external" href="https://docs.aws.amazon.com/cli/latest/userguide/cli-chap-getting-started.html">aws</a> and <a class="reference external" href="https://kubernetes.io/docs/tasks/tools/">kubectl</a>.</p>
+<h2 id="accessing-storage-on-ibm-cloud">Accessing Storage on IBM Cloud<a class="headerlink" href="#accessing-storage-on-ibm-cloud" title="Permalink to this heading">¶</a></h2>
+<p>Akin to how we created a local volume, we can do something similar, but instead of pointing the Flux Operator
+to a volume on the host (e.g., in MiniKube) we are going to point it to a storage bucket where we will interact
+with some workflow. IBM Cloud has an s3-like storage option we can use.</p>
+<h3 id="prepare-data">Prepare Data<a class="headerlink" href="#prepare-data" title="Permalink to this heading">¶</a></h3>
+<p>This example shows preparing snakemake data, however you don’t need to do this to run the example
+to create a file in storage.</p>
+<details>
+<summary>Instructions for preparing Snakemake data</summary>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span>git<span class="w"> </span>clone<span class="w"> </span>--depth<span class="w"> </span><span class="m">1</span><span class="w"> </span>https://github.com/snakemake/snakemake-tutorial-data<span class="w"> </span>/tmp/workflow
+</code></pre></div>
+</div>
+<p>You’ll want to add the <a class="reference external" href="https://github.com/rse-ops/flux-hpc/blob/main/snakemake/atacseq/Snakefile">Snakefile</a> for your workflow
+along with a <a class="reference external" href="https://github.com/rse-ops/flux-hpc/blob/main/snakemake/atacseq/scripts/plot-quals.py">plotting script</a>:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span>wget<span class="w"> </span>-O<span class="w"> </span>/tmp/workflow/Snakefile<span class="w"> </span>https://raw.githubusercontent.com/rse-ops/flux-hpc/main/snakemake/atacseq/Snakefile
+$<span class="w"> </span>mkdir<span class="w"> </span>-p<span class="w"> </span>/tmp/workflow/scripts
+$<span class="w"> </span>wget<span class="w"> </span>-O<span class="w"> </span>/tmp/workflow/scripts/plot-quals.py<span class="w"> </span>https://raw.githubusercontent.com/rse-ops/flux-hpc/main/snakemake/atacseq/scripts/plot-quals.py
+</code></pre></div>
+</div>
+<p>Delete GitHub/git assets:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span>rm<span class="w"> </span>-rf<span class="w"> </span>.git<span class="w"> </span>.github
+</code></pre></div>
+</div>
+<p>You should have this structure:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span>tree<span class="w"> </span>/tmp/workflow
+</code></pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><code>/tmp/workflow/
+├── data
+│   ├── genome.fa
+│   ├── genome.fa.amb
+│   ├── genome.fa.ann
+│   ├── genome.fa.bwt
+│   ├── genome.fa.fai
+│   ├── genome.fa.pac
+│   ├── genome.fa.sa
+│   └── samples
+│       ├── A.fastq
+│       ├── B.fastq
+│       └── C.fastq
+├── Dockerfile
+├── environment.yaml
+├── README.md
+├── scripts
+│   └── plot-quals.py
+└── Snakefile
+</code></pre></div>
+</div>
+</details>
+<p>Let’s first <a class="reference external" href="https://cloud.ibm.com/docs/cloud-object-storage?topic=cloud-object-storage-cli-plugin-ic-cos-cli#ic-create-bucket">create a bucket</a>,
+and this will use <a class="reference external" href="https://github.com/IBM/ibmcloud-cos-cli">this plugin</a>.
+Following <a class="reference external" href="https://ibm.github.io/kubernetes-storage/Lab5/cos-with-s3fs/COS/">these instructions</a>.
+The first step is to grant a service authorization in the cloud console, which looks like this:</p>
+<p><img alt="img/ibm-storage.png" src="../_images/ibm-storage.png" /></p>
+<p>And then read the next section to understand how to create a service and bucket.</p>
+<details>
+<summary>Creating the IBM Cloud Storage</summary>
+<p>We first need to create a service account:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code><span class="c1"># This is usually &quot;Default&quot; - try doing &quot;ibmcloud resource groups&quot;</span>
+<span class="nv">RESOURCEGROUP</span><span class="o">=</span><span class="k">$(</span>ibmcloud<span class="w"> </span>resource<span class="w"> </span>groups<span class="w"> </span>--output<span class="w"> </span>json<span class="w"> </span><span class="p">|</span><span class="w"> </span>jq<span class="w"> </span>-r<span class="w"> </span><span class="s1">&#39;.[0].name&#39;</span><span class="k">)</span><span class="w"> </span>
+<span class="nv">COS_NAME_RANDOM</span><span class="o">=</span><span class="k">$(</span>date<span class="w"> </span><span class="p">|</span><span class="w"> </span>md5sum<span class="w"> </span><span class="p">|</span><span class="w"> </span>head<span class="w"> </span>-c10<span class="k">)</span>
+<span class="nv">COS_NAME</span><span class="o">=</span><span class="nv">$COS_NAME_RANDOM</span>-cos-1
+<span class="nv">COS_CREDENTIALS</span><span class="o">=</span><span class="nv">$COS_NAME</span>-credentials
+<span class="nv">COS_PLAN</span><span class="o">=</span>Lite
+<span class="nv">COS_BUCKET_NAME</span><span class="o">=</span>flux-operator-storage
+<span class="nv">REGION</span><span class="o">=</span>us-east
+<span class="nv">COS_PRIVATE_ENDPOINT</span><span class="o">=</span>s3.private.<span class="nv">$REGION</span>.cloud-object-storage.appdomain.cloud
+</code></pre></div>
+</div>
+<p>And now we can make the service instance:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span>ibmcloud<span class="w"> </span>resource<span class="w"> </span>service-instance-create<span class="w"> </span><span class="nv">$COS_NAME</span><span class="w"> </span>cloud-object-storage<span class="w"> </span><span class="nv">$COS_PLAN</span><span class="w"> </span>global<span class="w"> </span>-g<span class="w"> </span><span class="nv">$RESOURCEGROUP</span>
+</code></pre></div>
+</div>
+<p>And list to ensure it was created (repeats the output above for the most part, but can be run separately or
+after the fact):</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span>ibmcloud<span class="w"> </span>resource<span class="w"> </span>service-instance<span class="w"> </span><span class="nv">$COS_NAME</span>
+</code></pre></div>
+</div>
+<p>Next, set the GUID of the object storage instance,</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code><span class="nv">COS_GUID</span><span class="o">=</span><span class="k">$(</span>ibmcloud<span class="w"> </span>resource<span class="w"> </span>service-instance<span class="w"> </span><span class="nv">$COS_NAME</span><span class="w"> </span>--output<span class="w"> </span>json<span class="w"> </span><span class="p">|</span><span class="w"> </span>jq<span class="w"> </span>-r<span class="w"> </span><span class="s1">&#39;.[0].guid&#39;</span><span class="k">)</span>
+<span class="nb">echo</span><span class="w"> </span><span class="nv">$COS_GUID</span>
+</code></pre></div>
+</div>
+<p>And add credentials so you can authenticate with IAM.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span>ibmcloud<span class="w"> </span>resource<span class="w"> </span>service-key-create<span class="w"> </span><span class="nv">$COS_CREDENTIALS</span><span class="w"> </span>Writer<span class="w"> </span>--instance-name<span class="w"> </span><span class="nv">$COS_NAME</span><span class="w"> </span>--parameters<span class="w"> </span><span class="s1">&#39;{&quot;HMAC&quot;:true}&#39;</span>
+</code></pre></div>
+</div>
+<p>And generate the API key in json:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code><span class="nv">COS_APIKEY</span><span class="o">=</span><span class="k">$(</span>ibmcloud<span class="w"> </span>resource<span class="w"> </span>service-key<span class="w"> </span><span class="nv">$COS_CREDENTIALS</span><span class="w"> </span>--output<span class="w"> </span>json<span class="w"> </span><span class="p">|</span><span class="w"> </span>jq<span class="w"> </span>-r<span class="w"> </span><span class="s1">&#39;.[0].credentials.apikey&#39;</span><span class="k">)</span>
+<span class="nb">echo</span><span class="w"> </span><span class="nv">$COS_APIKEY</span>
+</code></pre></div>
+</div>
+<p>Now we can (finally) create a bucket, first getting the CRN:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code><span class="nv">COS_CRN</span><span class="o">=</span><span class="k">$(</span>ibmcloud<span class="w"> </span>resource<span class="w"> </span>service-key<span class="w"> </span><span class="nv">$COS_CREDENTIALS</span><span class="w"> </span>--output<span class="w"> </span>json<span class="w"> </span><span class="p">|</span><span class="w"> </span>jq<span class="w"> </span>-r<span class="w"> </span><span class="s1">&#39;.[0].credentials.resource_instance_id&#39;</span><span class="k">)</span>
+<span class="nb">echo</span><span class="w"> </span><span class="nv">$COS_CRN</span>
+</code></pre></div>
+</div>
+<p>Add the CRN:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span>ibmcloud<span class="w"> </span>cos<span class="w"> </span>config<span class="w"> </span>crn<span class="w"> </span>--crn<span class="w"> </span><span class="nv">$COS_CRN</span>
+</code></pre></div>
+</div>
+<p>Verify that it shows up:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span>ibmcloud<span class="w"> </span>cos<span class="w"> </span>config<span class="w"> </span>list
+</code></pre></div>
+</div>
+<p>And then create the bucket:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span>ibmcloud<span class="w"> </span>cos<span class="w"> </span>bucket-create<span class="w"> </span>--bucket<span class="w"> </span><span class="nv">$COS_BUCKET_NAME</span><span class="w"> </span>--region<span class="w"> </span><span class="nv">$REGION</span>
+</code></pre></div>
+</div>
+<p>And verify it was created:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span>ibmcloud<span class="w"> </span>cos<span class="w"> </span>list-buckets<span class="w"> </span>--ibm-service-instance-id<span class="w"> </span><span class="nv">$COS_CRN</span>
+</code></pre></div>
+</div>
+</details>
+<p>When you have your storage, given some data, you would then upload the workflow using the <code class="docutils literal notranslate"><span class="pre">aws</span></code> client. We will first need to make a service
+credential. I did this by clicking the top left hamburger menu, and then “<a class="reference external" href="https://cloud.ibm.com/resources">Resource List</a>” and clicking the arrow
+to expand storage, clicking on the instance ID, and then I saw my bucket! Note that for small data, you can click “Upload” on the right
+side and select a folder. But likely you want to do it from the command line - you can find your AWS access token and secret in this json
+payload under credentials-&gt;cos_hmac_keys:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span>ibmcloud<span class="w"> </span>resource<span class="w"> </span>service-key<span class="w"> </span><span class="nv">$COS_CREDENTIALS</span><span class="w"> </span>--output<span class="w"> </span>json
+</code></pre></div>
+</div>
+<p>Export them to the environment.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code><span class="nb">export</span><span class="w"> </span><span class="nv">AWS_ACCESS_KEY_ID</span><span class="o">=</span>xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+<span class="nb">export</span><span class="w"> </span><span class="nv">AWS_SECRET_ACCESS_KEY</span><span class="o">=</span>xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+</code></pre></div>
+</div>
+<p>And then you should be able to list your (currently empty) bucket:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code><span class="nv">COS_BUCKET_NAME</span><span class="o">=</span>flux-operator-storage
+<span class="nv">REGION</span><span class="o">=</span>us-east
+</code></pre></div>
+</div>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span>aws<span class="w"> </span>s3<span class="w"> </span>ls<span class="w"> </span><span class="nv">$COS_BUCKET_NAME</span><span class="w"> </span>--endpoint-url<span class="w"> </span>https://s3.<span class="si">${</span><span class="nv">REGION</span><span class="si">}</span>.cloud-object-storage.appdomain.cloud
+</code></pre></div>
+</div>
+<p>Click the accordion to see examples of uploading data (not necessary for this tutorial):</p>
+<details>
+<summary>Example to Upload Data</summary>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span>aws<span class="w"> </span>s3<span class="w"> </span>cp<span class="w"> </span>--recursive<span class="w"> </span>/tmp/workflow/<span class="w"> </span>s3://<span class="si">${</span><span class="nv">COS_BUCKET_NAME</span><span class="si">}</span>/snakemake-workflow<span class="w"> </span>--endpoint-url<span class="w"> </span>https://s3.<span class="si">${</span><span class="nv">REGION</span><span class="si">}</span>.cloud-object-storage.appdomain.cloud
+</code></pre></div>
+</div>
+<p>Do a listing again to ensure everything is there!</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span>aws<span class="w"> </span>s3<span class="w"> </span>ls<span class="w"> </span>s3://<span class="si">${</span><span class="nv">COS_BUCKET_NAME</span><span class="si">}</span>/snakemake-workflow/<span class="w"> </span>--endpoint-url<span class="w"> </span>https://s3.<span class="si">${</span><span class="nv">REGION</span><span class="si">}</span>.cloud-object-storage.appdomain.cloud
+</code></pre></div>
+</div>
+<p>You can also see the created files in the web interface:</p>
+<p><img alt="img/ibm-storage-create.png" src="../_images/ibm-storage-create.png" /></p>
+</details>
+<p>For the tutorial here, it’s fine to have an empty bucket. We will simply write files to it.</p>
+<h3 id="create-cluster">Create Cluster<a class="headerlink" href="#create-cluster" title="Permalink to this heading">¶</a></h3>
+<p>Next let’s create a cluster called “flux-operator,” following <a class="reference external" href="https://www.kubeflow.org/docs/distributions/ibm/create-cluster/">these instructions</a>.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code><span class="c1"># Do ibmcloud ks versions to see versions available</span>
+<span class="c1"># I left unset to use the default</span>
+<span class="c1"># export KUBERNETES_VERSION=1.26</span>
+
+<span class="c1"># ibmcloud ks locations</span>
+<span class="nb">export</span><span class="w"> </span><span class="nv">CLUSTER_ZONE</span><span class="o">=</span>dal12
+<span class="nb">export</span><span class="w"> </span><span class="nv">WORKER_NODE_PROVIDER</span><span class="o">=</span>classic
+<span class="nb">export</span><span class="w"> </span><span class="nv">CLUSTER_NAME</span><span class="o">=</span>flux-operator
+</code></pre></div>
+</div>
+<p>Choose a worker node instance type:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span>ibmcloud<span class="w"> </span>ks<span class="w"> </span>flavors<span class="w"> </span>--zone<span class="w"> </span>dal12<span class="w"> </span>--provider<span class="w"> </span>classic
+<span class="nb">export</span><span class="w"> </span><span class="nv">WORKER_NODE_FLAVOR</span><span class="o">=</span><span class="s2">&quot;u3c.2x4&quot;</span>
+</code></pre></div>
+</div>
+<p>And then create the cluster!</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span>ibmcloud<span class="w"> </span>ks<span class="w"> </span>cluster<span class="w"> </span>create<span class="w"> </span><span class="si">${</span><span class="nv">WORKER_NODE_PROVIDER</span><span class="si">}</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--name<span class="o">=</span><span class="nv">$CLUSTER_NAME</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--zone<span class="o">=</span><span class="nv">$CLUSTER_ZONE</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--flavor<span class="w"> </span><span class="si">${</span><span class="nv">WORKER_NODE_FLAVOR</span><span class="si">}</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--workers<span class="o">=</span><span class="m">4</span><span class="w"> </span>
+</code></pre></div>
+</div>
+<p>If you get an error about providing a VLAN, then do:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span>ibmcloud<span class="w"> </span>ks<span class="w"> </span>vlans<span class="w"> </span>--zone<span class="w"> </span><span class="si">${</span><span class="nv">CLUSTER_ZONE</span><span class="si">}</span>
+</code></pre></div>
+</div>
+<p>and set the public and private VLAN ids to environment variables <code class="docutils literal notranslate"><span class="pre">PUBLIC_VLAN_ID</span></code> and <code class="docutils literal notranslate"><span class="pre">PRIVATE_VLAN_ID</span></code></p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span>ibmcloud<span class="w"> </span>ks<span class="w"> </span>cluster<span class="w"> </span>create<span class="w"> </span><span class="si">${</span><span class="nv">WORKER_NODE_PROVIDER</span><span class="si">}</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--name<span class="o">=</span><span class="nv">$CLUSTER_NAME</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--zone<span class="o">=</span><span class="nv">$CLUSTER_ZONE</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--flavor<span class="w"> </span><span class="si">${</span><span class="nv">WORKER_NODE_FLAVOR</span><span class="si">}</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--workers<span class="o">=</span><span class="m">4</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--private-vlan<span class="w"> </span><span class="si">${</span><span class="nv">PRIVATE_VLAN_ID</span><span class="si">}</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--public-vlan<span class="w"> </span><span class="si">${</span><span class="nv">PUBLIC_VLAN_ID</span><span class="si">}</span><span class="w"> </span>
+</code></pre></div>
+</div>
+<p>The instructions in the linked tutorial mention to use a command line tool to check status, but this didn’t work for me.
+Instead I watched until the cluster was ready on the <a class="reference external" href="https://cloud.ibm.com/kubernetes/clusters">IBM Cloud Kubernetes</a> page.
+Once it’s ready, you should be able to list:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span>ibmcloud<span class="w"> </span>ks<span class="w"> </span>cluster<span class="w"> </span>ls
+</code></pre></div>
+</div>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><code><span class="go">OK</span>
+<span class="go">Name            ID                     State    Created          Workers   Location   Version       Resource Group Name   Provider</span>
+<span class="go">flux-operator   cg54590d0b7conrbfmtg   normal   25 minutes ago   4         Dallas     1.25.6_1534   Default               classic</span>
+</code></pre></div>
+</div>
+<p>And then switch the kubernetes context to use it:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span>ibmcloud<span class="w"> </span>ks<span class="w"> </span>cluster<span class="w"> </span>config<span class="w"> </span>--cluster<span class="w"> </span><span class="si">${</span><span class="nv">CLUSTER_NAME</span><span class="si">}</span>
+</code></pre></div>
+</div>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><code><span class="go">The configuration for flux-operator was downloaded successfully.</span>
+
+<span class="go">Added context for flux-operator to the current kubeconfig file.</span>
+<span class="go">You can now execute &#39;kubectl&#39; commands against your cluster. For example, run &#39;kubectl get nodes&#39;.</span>
+</code></pre></div>
+</div>
+<p>Make sure all worker nodes are up with the command below</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span>kubectl<span class="w"> </span>get<span class="w"> </span>nodes
+</code></pre></div>
+</div>
+<p>and make sure all the nodes are in Ready state. Next we can move on to installing the operator!</p>
+<h3 id="deploy-operator">Deploy Operator<a class="headerlink" href="#deploy-operator" title="Permalink to this heading">¶</a></h3>
+<p>To deploy the Flux Operator, <a class="reference external" href="https://flux-framework.org/flux-operator/getting_started/user-guide.html#production-install">choose one of the options here</a> to deploy the operator. Whether you apply a yaml file, use <a class="reference external" href="https://converged-computing.github.io/flux-cloud">flux-cloud</a> or clone the repository and <code class="docutils literal notranslate"><span class="pre">make</span> <span class="pre">deploy</span></code> you will see the operator install to the <code class="docutils literal notranslate"><span class="pre">operator-system</span></code> namespace.</p>
+<p>For a quick “production deploy” from development, the Makefile has a directive that will build and push a <code class="docutils literal notranslate"><span class="pre">test</span></code> tag (you’ll need to edit <code class="docutils literal notranslate"><span class="pre">DEVIMG</span></code> to be one you can push to) and then generate a
+yaml file targeting that image, e.g.,</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span>make<span class="w"> </span>test-deploy
+$<span class="w"> </span>kubectl<span class="w"> </span>apply<span class="w"> </span>-f<span class="w"> </span>examples/dist/flux-operator-dev.yaml
+</code></pre></div>
+</div>
+<p>Ensure the <code class="docutils literal notranslate"><span class="pre">operator-system</span></code> namespace was created:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span>kubectl<span class="w"> </span>get<span class="w"> </span>namespace
+</code></pre></div>
+</div>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><code><span class="go">NAME              STATUS   AGE</span>
+<span class="go">default           Active   28m</span>
+<span class="go">ibm-cert-store    Active   7m29s</span>
+<span class="go">ibm-operators     Active   27m</span>
+<span class="go">ibm-system        Active   27m</span>
+<span class="go">kube-node-lease   Active   28m</span>
+<span class="go">kube-public       Active   28m</span>
+<span class="go">kube-system       Active   28m</span>
+<span class="go">operator-system   Active   11s</span>
+</code></pre></div>
+</div>
+<p>And you can find the name of the operator pod as follows:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span>kubectl<span class="w"> </span>get<span class="w"> </span>pod<span class="w"> </span>--all-namespaces
+</code></pre></div>
+</div>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><code><span class="go">operator-system   operator-controller-manager-56b5bcf9fd-m8wg4               2/2     Running   0          73s</span>
+</code></pre></div>
+</div>
+<p>And wait until that is Running.</p>
+<h3 id="create-flux-operator-namespace">Create Flux Operator namespace<a class="headerlink" href="#create-flux-operator-namespace" title="Permalink to this heading">¶</a></h3>
+<p>Make your namespace for the flux-operator custom resource definition (CRD), which is the yaml file above that generates the MiniCluster:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span>kubectl<span class="w"> </span>create<span class="w"> </span>namespace<span class="w"> </span>flux-operator
+</code></pre></div>
+</div>
+<h3 id="install-the-container-storage-plugin">Install the Container Storage Plugin<a class="headerlink" href="#install-the-container-storage-plugin" title="Permalink to this heading">¶</a></h3>
+<p>We did a combined approach of using helm and our own YAML.</p>
+<details>
+<summary>Instructions for Generation of YAML</summary>
+<p>If you do want to use helm to reproduce this, you will need to <a class="reference external" href="https://helm.sh/docs/intro/install/">install helm</a>. First,
+add the <a class="reference external" href="https://github.com/IBM/charts/tree/5870731bfebc867a47fec79507f2f7f616688e25/stable/ibm-object-storage-plugin">IBM repository</a> to helm:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span>helm<span class="w"> </span>repo<span class="w"> </span>add<span class="w"> </span>ibm-helm<span class="w"> </span>https://raw.githubusercontent.com/IBM/charts/master/repo/ibm-helm
+</code></pre></div>
+</div>
+<p>Then you’ll want to update the helm IBM repository:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span>helm<span class="w"> </span>repo<span class="w"> </span>update
+$<span class="w"> </span>helm<span class="w"> </span>plugin<span class="w"> </span>remove<span class="w"> </span>ibmc<span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;No ibmc plugin installed&quot;</span>
+</code></pre></div>
+</div>
+<p>And pull and install the latest:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span>helm<span class="w"> </span>fetch<span class="w"> </span>--untar<span class="w"> </span>ibm-helm/ibm-object-storage-plugin
+$<span class="w"> </span>helm<span class="w"> </span>plugin<span class="w"> </span>install<span class="w"> </span>./ibm-object-storage-plugin/helm-ibmc
+</code></pre></div>
+</div>
+<p>Ensure you set the right permissions:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span>chmod<span class="w"> </span><span class="m">755</span><span class="w"> </span>/home/<span class="si">${</span><span class="nv">USER</span><span class="si">}</span>/.local/share/helm/plugins/helm-ibmc/ibmc.sh
+</code></pre></div>
+</div>
+<p>And then berify installation:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span>helm<span class="w"> </span>ibmc<span class="w"> </span>--help
+</code></pre></div>
+</div>
+<p>The output version of the Helm version needs to be &gt;3.0. Then we can inspect
+variables:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span>helm<span class="w"> </span>show<span class="w"> </span>values<span class="w"> </span>ibm-helm/ibm-object-storage-plugin
+</code></pre></div>
+</div>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><code>replicaCount: 1
+maxUnavailableNodeCount: 1
+
+# Change license to true to indicate have read and agreed to license agreement
+# https://www.apache.org/licenses/LICENSE-2.0
+license: false
+
+image:
+  providerImage:
+    # This image is required only for IBM Cloud clusters
+    ibmContainerRegistry: icr.io/ibm/ibmcloud-provider-storage:1.30.6
+  pluginImage:
+    ibmContainerRegistry: icr.io/ibm/ibmcloud-object-storage-plugin@sha256:ce509caa7a47c3329cb4d854e0b3763081ac725901e40d5e57fe93b6cd125243
+    publicRegistry: icr.io/cpopen/ibmcloud-object-storage-plugin@sha256:ce509caa7a47c3329cb4d854e0b3763081ac725901e40d5e57fe93b6cd125243
+  driverImage:
+    ibmContainerRegistry: icr.io/ibm/ibmcloud-object-storage-driver@sha256:8c91974660bf98efc772f369b828b3dbcea5d6829cbd85e6321884f4c4eabe09
+    publicRegistry: icr.io/cpopen/ibmcloud-object-storage-driver@sha256:8c91974660bf98efc772f369b828b3dbcea5d6829cbd85e6321884f4c4eabe09
+  pullPolicy: Always
+
+# IAM endpoint url
+iamEndpoint: https://iam.cloud.ibm.com
+iamEndpointVPC: https://private.iam.cloud.ibm.com
+
+# IBMC || IBMC-VPC || RHOCP || SATELLITE
+provider: RHOCP
+
+# Container platform [ K8S vs OpenShift ]
+platform: OpenShift
+
+# Datacenter name where cluster is deployed (required only for IKS)
+dcname: &quot;&quot;
+region: &quot;&quot;
+# Worker node&#39;s OS [ redhat || debian ]
+workerOS: redhat
+
+# COS endpoints and COS storageClass configuration
+# For satellite clusters, to use aws, wasabi or ibm object storage, please provide the s3Provider(aws/wasabi/ibm) and respective storageClass(region) values.
+# If user provides all 3 values endpoint, storageClass and s3Provider, precedence is given to storageClass and s3Provider.
+# To input endpoint explicitly, input only endpoint and storageClass and skip s3Provider.
+# For non-satellite rhocp clusters, please provide cos endpoint and cos storageclass.
+
+cos:
+  # The s3 endpoint url for the targeted object storage service; format - https://&lt;Endpoint URL&gt;
+  endpoint: &quot;NA&quot;
+  # The region in which the bucket has to be created as per the object storage service provider, ex - us-south
+  storageClass: &quot;&quot;
+  # Supported object storage service providers are aws, ibm, wasabi
+  s3Provider: &quot;&quot;
+
+secondaryValueFile: ibm/values.yaml
+secondaryValueFileSat: satellite/values.yaml
+
+arch: amd64
+
+resource:
+  memory: 500Mi
+  cpu: 500m
+  ephemeralStorageReq: 5Mi
+  ephemeralStorageLimit: 105Mi
+
+# /etc/kubernetes for RHOCP else /usr/libexec/kubernetes
+kubeDriver: /usr/libexec/kubernetes
+
+bucketAccessPolicy: false
+
+quotaLimit: false
+
+allowCrossNsSecret: true
+
+# current and previous
+s3fsVersion: current
+</code></pre></div>
+</div>
+<p>Of the values we can set, we likely want to set the following:</p>
+<div class="highlight-diff notranslate"><div class="highlight"><pre><span></span><code><span class="w"># Change license to true to indicate have read and agreed to license agreement</span>
+<span class="w"># https://www.apache.org/licenses/LICENSE-2.0</span>
+<span class="gd">- license: false</span>
+<span class="gi">+ license: true</span>
+
+<span class="w"># IBMC || IBMC-VPC || RHOCP || SATELLITE</span>
+<span class="gd">- provider: RHOCP</span>
+<span class="gi">+ provider: IBMC</span>
+
+<span class="w"># Container platform [ K8S vs OpenShift ]</span>
+<span class="gd">- platform: OpenShift</span>
+<span class="gi">+ platform: K8S</span>
+
+<span class="w"># Worker node&#39;s OS [ redhat || debian ]</span>
+<span class="gd">- workerOS: redhat</span>
+<span class="gi">+ workerOS: debian</span>
+
+<span class="w"># COS endpoints and COS storageClass configuration</span>
+<span class="w"># For satellite clusters, to use aws, wasabi or ibm object storage, please provide the s3Provider(aws/wasabi/ibm) and respective storageClass(region) values.</span>
+<span class="w"># If user provides all 3 values endpoint, storageClass and s3Provider, precedence is given to storageClass and s3Provider.</span>
+<span class="w"># To input endpoint explicitly, input only endpoint and storageClass and skip s3Provider.</span>
+<span class="w"># For non-satellite rhocp clusters, please provide cos endpoint and cos storageclass.</span>
+
+<span class="w">cos:</span>
+<span class="w"> </span> # The s3 endpoint url for the targeted object storage service; format - https://&lt;Endpoint URL&gt;
+<span class="gd">-  endpoint: &quot;NA&quot;</span>
+<span class="gi">+ endpoint: &quot;https://s3.us-east.cloud-object-storage.appdomain.cloud/&quot;</span>
+<span class="w"> </span> # Supported object storage service providers are aws, ibm, wasabi
+<span class="gd">-  s3Provider: &quot;&quot;</span>
+<span class="gi">+  s3Provider: &quot;ibm&quot;</span>
+</code></pre></div>
+</div>
+</details>
+<p>Using the above, we would install the plugin directly with our customizations:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span>helm<span class="w"> </span>ibmc<span class="w"> </span>install<span class="w"> </span>ibm-object-storage-plugin<span class="w"> </span>ibm-helm/ibm-object-storage-plugin<span class="w"> </span>--set<span class="w"> </span><span class="nv">license</span><span class="o">=</span><span class="nb">true</span><span class="w"> </span>--set<span class="w"> </span><span class="nv">provider</span><span class="o">=</span>IBMC<span class="w"> </span>--set<span class="w"> </span><span class="nv">platform</span><span class="o">=</span>K8s<span class="w"> </span>--set<span class="w"> </span><span class="nv">workerOS</span><span class="o">=</span>debian<span class="w"> </span>--set<span class="w"> </span>cos.s3Provider<span class="o">=</span>ibm
+</code></pre></div>
+</div>
+<p>Give a minute or so, and then check that the storage classes were created correctly:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span>kubectl<span class="w"> </span>get<span class="w"> </span>storageclass<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span><span class="s1">&#39;ibmc-s3fs&#39;</span>
+</code></pre></div>
+</div>
+<p>Then make sure the plugin pods are running (in “RUNNING” state):</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span>kubectl<span class="w"> </span>get<span class="w"> </span>pods<span class="w"> </span>-n<span class="w"> </span>ibm-object-s3fs<span class="w"> </span>-o<span class="w"> </span>wide<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>object
+</code></pre></div>
+</div>
+<p>Ensure the secret exists in the default namespace:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span>kubectl<span class="w"> </span>get<span class="w"> </span>secrets<span class="w"> </span>-n<span class="w"> </span>default<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>icr-io
+</code></pre></div>
+</div>
+<p>We will want to copy the secret to ibm-object-s3fs namespace</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span>kubectl<span class="w"> </span>get<span class="w"> </span>secret<span class="w"> </span>-n<span class="w"> </span>default<span class="w"> </span>all-icr-io<span class="w"> </span>-o<span class="w"> </span>yaml<span class="w"> </span><span class="p">|</span><span class="w"> </span>sed<span class="w"> </span><span class="s1">&#39;s/default/ibm-object-s3fs/g&#39;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>kubectl<span class="w"> </span>-n<span class="w"> </span>ibm-object-s3fs<span class="w"> </span>create<span class="w"> </span>-f<span class="w"> </span>-
+</code></pre></div>
+</div>
+<p>And then make sure that the image pull secret is available in the ibm-object-s3fs  namespace.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span>kubectl<span class="w"> </span>get<span class="w"> </span>secrets<span class="w"> </span>-n<span class="w"> </span>ibm-object-s3fs<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>icr-io
+</code></pre></div>
+</div>
+<p>Verify again that the state of the plugin pods changes to “Running”.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span>kubectl<span class="w"> </span>get<span class="w"> </span>pods<span class="w"> </span>-n<span class="w"> </span>ibm-object-s3fs<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>object
+</code></pre></div>
+</div>
+<p>Finally, create a secret with our service ID to give access to storage. To get your API key:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span>ibmcloud<span class="w"> </span>resource<span class="w"> </span>service-key<span class="w"> </span><span class="nv">$COS_CREDENTIALS</span><span class="w"> </span>--output<span class="w"> </span>json
+</code></pre></div>
+</div>
+<p>If you are doing the full tutorial, this is the variable under <code class="docutils literal notranslate"><span class="pre">$COS_APIKEY</span></code> and the
+the service instance id should be <code class="docutils literal notranslate"><span class="pre">$COS_NAME</span></code>.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span>kubectl<span class="w"> </span>create<span class="w"> </span>secret<span class="w"> </span>generic<span class="w"> </span>s3-secret<span class="w"> </span>--namespace<span class="o">=</span>flux-operator<span class="w"> </span>--type<span class="o">=</span>ibm/ibmc-s3fs<span class="w">  </span>--from-literal<span class="o">=</span>api-key<span class="o">=</span><span class="si">${</span><span class="nv">COS_APIKEY</span><span class="si">}</span><span class="w"> </span>--from-literal<span class="o">=</span>service-instance-id<span class="o">=</span><span class="si">${</span><span class="nv">COS_NAME</span><span class="si">}</span>
+</code></pre></div>
+</div>
+<p>At this point we have the storage driver running, along with the storage class and secret, and we should
+attempt to use it with the Flux Operator.</p>
+<h3 id="example-minicluster">Example MiniCluster<a class="headerlink" href="#example-minicluster" title="Permalink to this heading">¶</a></h3>
+<p>Note that we are setting the <code class="docutils literal notranslate"><span class="pre">commands:</span> <span class="pre">-&gt;</span> <span class="pre">runFluxAsRoot</span></code> to true. This isn’t ideal, but it was the
+only way I could get the storage to both be seen and have permission to write there. Let’s create the job!
+Since the storage plugin uses a FlexDriver, and this is being deprecated, we need to create the persistent
+volume claim manually, and doing so will create the volume, and then we provide both to the operator to use.
+You can first verify there are no PVs or PVs on the cluster:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span>kubectl<span class="w"> </span>get<span class="w"> </span>-n<span class="w"> </span>flux-operator<span class="w"> </span>pv,pvc
+</code></pre></div>
+</div>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><code><span class="go">No resources found</span>
+</code></pre></div>
+</div>
+<p>Here is how to create the persistent volume claim.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span>kubectl<span class="w"> </span>apply<span class="w"> </span>-f<span class="w"> </span>examples/storage/ibm/pvc.yaml
+</code></pre></div>
+</div>
+<p>Try listing again:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span>kubectl<span class="w"> </span>get<span class="w"> </span>-n<span class="w"> </span>flux-operator<span class="w"> </span>pv,pvc
+</code></pre></div>
+</div>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><code><span class="go">NAME                                                        CAPACITY   ACCESS MODES   RECLAIM POLICY   STATUS   CLAIM                STORAGECLASS                  REASON   AGE</span>
+<span class="go">persistentvolume/pvc-8cd3cbb8-d0d4-4310-bc9d-748bb70ab8ca   25Gi       RWX            Delete           Bound    flux-operator/data   ibmc-s3fs-standard-regional            4s</span>
+
+<span class="go">NAME                         STATUS   VOLUME                                     CAPACITY   ACCESS MODES   STORAGECLASS                  AGE</span>
+<span class="go">persistentvolumeclaim/data   Bound    pvc-8cd3cbb8-d0d4-4310-bc9d-748bb70ab8ca   25Gi       RWX            ibmc-s3fs-standard-regional   4s</span>
+</code></pre></div>
+</div>
+<p>The volume and claim should both be “Bound” and not “Lost” or anything like that. If this isn’t the case, use <code class="docutils literal notranslate"><span class="pre">kubectl</span> <span class="pre">describe</span></code> to see details
+of why it might be. Importantly, we need to get the name of the claim for the minicluster. It should be the one that you provided in your
+spec, but just in case, here is how to check with jq:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span>kubectl<span class="w"> </span>get<span class="w"> </span>-n<span class="w"> </span>flux-operator<span class="w"> </span>pvc<span class="w"> </span>-o<span class="w"> </span>json<span class="w"> </span><span class="p">|</span><span class="w"> </span>jq<span class="w"> </span><span class="s2">&quot;.items[].metadata.name&quot;</span>
+<span class="s2">&quot;data&quot;</span>
+</code></pre></div>
+</div>
+<p>This is the name of the claim that you need to have in your MiniCluster under “existingVolumes”:</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><code><span class="c1"># This is an existing PVC (and associated PV) we created before the MiniCluster</span>
+<span class="nt">existingVolumes</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">data</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">path</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">/workflow</span>
+<span class="w">    </span><span class="nt">claimName</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">data</span><span class="w">  </span>
+</code></pre></div>
+</div>
+<p>Next, we are going to create the MiniCluster, pointing to this claim:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span>kubectl<span class="w"> </span>apply<span class="w"> </span>-f<span class="w"> </span>examples/storage/ibm/minicluster.yaml
+</code></pre></div>
+</div>
+<p>It will take 4+ minutes or so to (again) pull the new container. You can check pods:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span>kubectl<span class="w"> </span>get<span class="w"> </span>-n<span class="w"> </span>flux-operator<span class="w"> </span>pods
+</code></pre></div>
+</div>
+<p>You can watch the broker to see if the files mounted (toward the top of the log) and to see when Snakemake starts:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span>kubectl<span class="w"> </span>logs<span class="w"> </span>-n<span class="w"> </span>flux-operator<span class="w"> </span>flux-sample-0-xxxx<span class="w"> </span>-f
+</code></pre></div>
+</div>
+<p>Note that nothing will start running until all the pods are ready, so you’ll want to wait to see that the “quorum is reached”
+and then the storage will be mounted (a listing happens at the beginning) and the file will be touched.
+If you check your cloud storage interface after the job, you should see the test file:</p>
+<p><img alt="img/test-file.png" src="../_images/test-file.png" /></p>
+<p>And that’s it! This can be a starting base for customizing your own workflows to use IBM cloud.
+Note that the s3fs is a bit fussy when it comes to mounting, and if you run into issues you
+should <a class="reference external" href="https://github.com/s3fs-fuse/s3fs-fuse">explore the options</a> and see what is already
+<a class="reference external" href="https://github.com/IBM/ibmcloud-object-storage-plugin">exposed by the plugin</a>.</p>
+<h2 id="clean-up">Clean up<a class="headerlink" href="#clean-up" title="Permalink to this heading">¶</a></h2>
+<p>To clean up:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code><span class="c1"># Delete the cluster</span>
+$<span class="w"> </span>ibmcloud<span class="w"> </span>ks<span class="w"> </span>cluster<span class="w"> </span>rm<span class="w"> </span>--force-delete-storage<span class="w"> </span>-c<span class="w"> </span><span class="si">${</span><span class="nv">CLUSTER_NAME</span><span class="si">}</span>
+
+<span class="c1"># Delete storage</span>
+$<span class="w"> </span>ibmcloud<span class="w"> </span>cos<span class="w"> </span>bucket-delete<span class="w"> </span>--bucket<span class="w"> </span><span class="nv">$name_bucket</span>
+</code></pre></div>
+</div>
+
+
+  <hr>
+<div class="md-source-file">
+  <small>
+    
+      Last update:
+      Mar 11, 2023
+    
+  </small>
+</div>
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+  <script>var tabs=__md_get("__tabs");if(Array.isArray(tabs))e:for(var set of document.querySelectorAll(".tabbed-set")){var tab,labels=set.querySelector(".tabbed-labels");for(tab of tabs)for(var label of labels.getElementsByTagName("label"))if(label.innerText.trim()===tab){var input=document.getElementById(label.htmlFor);input.checked=!0;continue e}}</script>
+
+        </div>
+        
+          <a href="#" class="md-top md-icon" data-md-component="top" hidden>
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8v12Z"/></svg>
+            Back to top
+          </a>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+    
+    <nav class="md-footer__inner md-grid" aria-label="Footer" >
+      
+        
+        <a href="google.html" class="md-footer__link md-footer__link--prev" aria-label="Previous: Google Cloud" rel="prev">
+          <div class="md-footer__button md-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
+          </div>
+          <div class="md-footer__title">
+            <div class="md-ellipsis">
+              <span class="md-footer__direction">
+                Previous
+              </span>
+              Google Cloud
+            </div>
+          </div>
+        </a>
+      
+      
+        
+        <a href="../about/index.html" class="md-footer__link md-footer__link--next" aria-label="Next: About the Flux Operator" rel="next">
+          <div class="md-footer__title">
+            <div class="md-ellipsis">
+              <span class="md-footer__direction">
+                Next
+              </span>
+              About the Flux Operator
+            </div>
+          </div>
+          <div class="md-footer__button md-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11H4Z"/></svg>
+          </div>
+        </a>
+      
+    </nav>
+  
+  
+  
+  <div class="md-footer-meta md-typeset">
+    
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+    <div class="md-footer-copyright__highlight">
+        &#169; Copyright 2022-2023, Flux Developers.
+        
+    </div>
+  
+    Created using
+    <a href="https://www.sphinx-doc.org/" target="_blank" rel="noopener">Sphinx</a>
+    6.1.3.
+     and
+    <a href="https://github.com/jbms/sphinx-immaterial/" target="_blank" rel="noopener">Sphinx-Immaterial</a>
+  
+</div>
+      
+        <div class="md-social">
+  
+    
+    
+    <a href="https://github.com/flux-framework/flux-operator" target="_blank" rel="noopener" title="Flux Operator on GitHub" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--! Font Awesome Free 6.2.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc.--><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg>
+    </a>
+  
+    
+    
+    <a href="https://flux-framework.org/" target="_blank" rel="noopener" title="Flux Framework" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 2.05c5.05.5 9 4.77 9 9.95 0 1.45-.32 2.83-.88 4.07l-2.62-1.53c.32-.79.5-1.64.5-2.54 0-3.53-2.61-6.43-6-6.92V2.05M12 19c2.21 0 4.17-1 5.45-2.62l2.6 1.53A9.97 9.97 0 0 1 12 22C6.47 22 2 17.5 2 12a9.99 9.99 0 0 1 9-9.95v3.03C7.61 5.57 5 8.47 5 12a7 7 0 0 0 7 7m0-13a6 6 0 0 1 6 6c0 2.97-2.16 5.44-5 5.92v-3.09c1.17-.41 2-1.52 2-2.83a3 3 0 0 0-3-3l-.55.05-1.54-2.67C10.56 6.13 11.26 6 12 6m-6 6c0-1.86.85-3.5 2.18-4.62l1.54 2.67C9.27 10.57 9 11.26 9 12c0 1.31.83 2.42 2 2.83v3.09c-2.84-.48-5-2.95-5-5.92Z"/></svg>
+    </a>
+  
+</div>
+      
+    </div>
+    
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    <script id="__config" type="application/json">{"base": "..", "features": ["navigation.expand", "navigation.tabs", "toc.integrate", "navigation.sections", "navigation.instant", "header.autohide", "navigation.top", "navigation.tracking", "search.highlight", "search.share", "toc.follow", "toc.sticky", "content.tabs.link", "announce.dismiss"], "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version.title": "Select version"}}</script>
+    
+      
+        <script src="../_static/sphinx_immaterial_theme.cea6a0c1d5b0618cf.min.js"></script>
+        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    
+  </body>
+</html>
