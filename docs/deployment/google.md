@@ -37,7 +37,57 @@ to be cheaper (and closer to me). First, here is our project for easy access:
 ```bash
 GOOGLE_PROJECT=myproject
 ```
-Replace the above with your project name, of course!
+
+Replace the above with your project name, of course! If you are doing the fusion demo, it
+has a [few requirements](https://github.com/seqeralabs/wave-showcase/tree/master/example-gke):
+
+#### Fusion Storage Creation
+
+```bash
+$ gcloud container clusters create flux-cluster --project $GOOGLE_PROJECT \
+    --zone us-central1-a --machine-type n1-standard-1 \
+    --num-nodes=4 --enable-network-policy --tags=flux-cluster --enable-intra-node-visibility \
+    --ephemeral-storage-local-ssd=1 --workload-pool=${GOOGLE_PROJECT}.svc.id.goog \
+    --workload-metadata=GKE_METADATA
+```
+
+ - The "clusters create" command is for a standard cluster
+ - The n1-standard-2 has two vCPU ([see this page](https://cloud.google.com/compute/docs/general-purpose-machines))
+ - We create ssd storage with `--ephemeral-storage-local-ssd` and this is the [number per node](https://cloud.google.com/kubernetes-engine/docs/how-to/persistent-volumes/local-ssd)
+ - We enable [workfload identity](https://cloud.google.com/kubernetes-engine/docs/how-to/workload-identity) via ` --workload-pool`
+ - We enable the metadata server via `--workload-metadata`
+
+Then get credentials:
+
+```bash
+$ gcloud container clusters get-credentials flux-cluster --zone us-central1-a --project $GOOGLE_PROJECT
+```
+
+Create the "flux-operator" namespace:
+
+```bash
+$ kubectl create namespace flux-operator
+```
+
+Create a service account:
+
+```bash
+$ kubectl create serviceaccount flux-operator-sa --namespace flux-operator
+```
+
+STOPPED HERE - it's not clear what instructions with kubectl I need to run vs what
+are already provided in gke.yaml.
+
+
+#### General Tutorial Creation
+
+```bash
+$ gcloud container clusters create flux-cluster --project $GOOGLE_PROJECT \
+    --zone us-central1-a --machine-type n1-standard-1 \
+    --num-nodes=4 --enable-network-policy --tags=flux-cluster --enable-intra-node-visibility
+```
+
+If you need a particular Kubernetes version:
 
 ```bash
 $ gcloud container clusters create flux-cluster --project $GOOGLE_PROJECT \
@@ -64,7 +114,7 @@ this might take a few minutes.
 
 I also chose a tiny size (nodes and instances) anticipating having it up longer to figure things out.
 
-### Get Credentials
+#### Get Credentials
 
 Next we need to ensure that we can issue commands to our cluster with kubectl.
 To get credentials, in the view shown above, select the cluster and click "connect."
@@ -111,6 +161,12 @@ yaml file targeting that image, e.g.,
 ```bash
 $ make test-deploy
 $ kubectl apply -f examples/dist/flux-operator-dev.yaml
+```
+
+or the production version:
+
+```bash
+$ kubectl apply -f examples/dist/flux-operator.yaml
 ```
 
 ```console
@@ -306,8 +362,12 @@ $ kubectl delete -f minicluster-lammps.yaml
 
 Akin to how we created a local volume, we can do something similar, but instead of pointing the Flux Operator
 to a volume on the host (e.g., in MiniKube) we are going to point it to a storage bucket with our data.
-For Google cloud, the Flux Operator currently uses the [this driver](https://github.com/ofek/csi-gcs) to
-connect a cloud storage bucket to our cluster.
+There are two ways to go about this:
+  
+  - For Google cloud we can use the [this driver](https://github.com/ofek/csi-gcs) to connect a cloud storage bucket to our cluster.
+  - We can use [fusion](https://www.nextflow.io/docs/latest/fusion.html) as a custom binary to bind to the same storage.
+
+Both approaches will be reviewed here! 
 
 ### Prepare Data
 
@@ -386,32 +446,9 @@ gs://flux-operator-storage/snakemake-workflow/data/
 gs://flux-operator-storage/snakemake-workflow/scripts/
 ```
 
-### Install the Constainer Storage Driver (CSI)
+#### Permissions via Secrets
 
-There are many [drivers](https://kubernetes-csi.github.io/docs/drivers.html) for kubernetes, and we will use
-[this one](https://ofek.dev/csi-gcs/getting_started/) that requires a stateful set and daemon set to work.
-Let's install those first.
-
-```bash
-$ kubectl apply -k "github.com/ofek/csi-gcs/deploy/overlays/stable?ref=v0.9.0"
-$ kubectl get CSIDriver,daemonsets,pods -n kube-system | grep csi
-```
-
-And to debug:
-
-```bash
-$ kubectl logs -l app=csi-gcs -c csi-gcs -n kube-system
-```
-
-As you are working, if the mounts seem to work but you don't see files, keep
-in mind you need to be aware of [implicit directories](https://ofek.dev/csi-gcs/dynamic_provisioning/#extra-flags).
-The operator will do a `mkdir -p` on the working directory (and this will show content there) but if you don't
-see content and expect to, you either need to interact in this way or set this flag as an annotation in
-your `minicluster.yaml`.
-
-### Permissions via Secrets
-
-We will need to give permission for the nodes to access storage, and we can do that via [these instructions](https://ofek.dev/csi-gcs/dynamic_provisioning/#permission)
+For both methods, we will need to give permission for the nodes to access storage, and we can do that via [these instructions](https://ofek.dev/csi-gcs/dynamic_provisioning/#permission)
 to create a service account key (a json file) from a service account. E.g., I first created a custom service account that
 has these permissions:
 
@@ -438,7 +475,32 @@ And create a secret from it! This is basically giving your cluster permission to
 $ kubectl create secret generic csi-gcs-secret --from-literal=bucket=flux-operator-storage --from-file=key=<PATH_TO_SERVICE_ACCOUNT_KEY>
 ```
 
-### Storage Class
+### Approach 1: Using a Container Storage Driver (CSI)
+
+#### Install the CSI
+
+There are many [drivers](https://kubernetes-csi.github.io/docs/drivers.html) for kubernetes, and we will use
+[this one](https://ofek.dev/csi-gcs/getting_started/) that requires a stateful set and daemon set to work.
+Let's install those first.
+
+```bash
+$ kubectl apply -k "github.com/ofek/csi-gcs/deploy/overlays/stable?ref=v0.9.0"
+$ kubectl get CSIDriver,daemonsets,pods -n kube-system | grep csi
+```
+
+And to debug:
+
+```bash
+$ kubectl logs -l app=csi-gcs -c csi-gcs -n kube-system
+```
+
+As you are working, if the mounts seem to work but you don't see files, keep
+in mind you need to be aware of [implicit directories](https://ofek.dev/csi-gcs/dynamic_provisioning/#extra-flags).
+The operator will do a `mkdir -p` on the working directory (and this will show content there) but if you don't
+see content and expect to, you either need to interact in this way or set this flag as an annotation in
+your `minicluster.yaml`.
+
+#### Storage Class
 
 We can then create our storage class, this file is provided in `examples/storage/google/storageclass.yaml`
 
@@ -451,10 +513,10 @@ provisioner: gcs.csi.ofek.dev
 ```
 
 ```bash
-$ kubectl apply -f examples/storage/google/storageclass.yaml
+$ kubectl apply -f examples/storage/google/gcs-csi/storageclass.yaml
 ```
 
-### Snakemake MiniCluster
+#### Snakemake MiniCluster
 
 The operator can now be run, telling it to use this storage class (named `csi-gcs`) - we provide
 an example Minicluster to run this snakemake tutorial to test this out, and note that if you want to debug
@@ -479,7 +541,7 @@ Also note that we are setting the `commands: -> runFluxAsRoot` to true. This isn
 only way I could get the storage to both be seen and have permission to write there. Let's create the job!
 
 ```bash
-$ kubectl apply -f examples/storage/google/minicluster.yaml
+$ kubectl apply -f examples/storage/google/gcs-csi/minicluster.yaml
 ```
 
 Wait to see the certificate generator pod come up, complete, and the worker pods (that depend on it) will finish creation and
@@ -768,6 +830,35 @@ tried this yet.
 
 **Note**: we would like to get this working without requiring running the workflow as root, but it hasn't been figured
 out yet! If you have insight, please comment on [this issue](https://github.com/ofek/csi-gcs/issues/155).
+
+
+### Approach 2: Fusion
+
+Fusion is cool because it binds from the pod, so we don't need any special daemon sets or storage classes
+beyond adding a few extra lines to the minicluster.yaml to set up the cluster.
+
+```bash
+$ kubectl apply -f examples/storage/google/fusion/minicluster.yaml
+```
+
+Wait to see the certificate generator pod come up, complete, and the worker pods (that depend on it) will finish creation and
+then come up:
+
+```bash
+$ kubectl get pods -n flux-operator
+```
+
+And I like to get the main pod and stream the output so I don't miss it:
+
+```bash
+# Stream to your terminal
+$ kubectl logs -n flux-operator flux-sample-0-fj6td -f
+
+# Stream to file
+$ kubectl logs -n flux-operator flux-sample-0-fj6td -f > output.txt
+```
+
+
 
 
 ## Clean up
