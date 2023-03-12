@@ -22,6 +22,12 @@ jobs:
         source activate fluxdocs
         git clone https://github.com/flux-framework/flux-operator /tmp/operator
         cd /tmp/operator/docs
+        # Install sphinx from master for this bug:
+        # https://github.com/sphinx-doc/sphinx/pull/11192
+        git clone --depth 1 https://github.com/sphinx-doc/sphinx /tmp/sphinx
+        cd /tmp/sphinx
+        pip install .
+        cd -
         pip install -r requirements.txt
         make html
         echo
