@@ -802,7 +802,7 @@ below with kubectl apply) or you can run a demo script that runs the commands on
 </div>
 <details>
 <summary>View the Interactive Example Output</summary>
-<script async id="asciicast-566800" src="https://asciinema.org/a/566800.js"></script>
+<script async id="asciicast-566800" src="https://asciinema.org/a/566800.js" data-speed="2"></script>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span>bash<span class="w"> </span>examples/state/basic-job-completion/example.sh<span class="w">  </span>
 </code></pre></div>
 </div>
@@ -891,7 +891,8 @@ below with kubectl apply) or you can run a demo script that runs the commands on
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span>kubectl<span class="w"> </span>apply<span class="w"> </span>-f<span class="w"> </span>examples/state/basic-job-completion/minicluster.yaml<span class="w"> </span>
 </code></pre></div>
 </div>
-<p>At this point you can proceed to either <a class="reference internal" href="#interactive-submit"><span class="xref myst">Interactive Submit</span></a> or <a class="reference internal" href="#programmatic-submit"><span class="xref myst">Programmatic Submit</span></a>.</p>
+<p>At this point you can proceed to either <a class="reference internal" href="#interactive-submit"><span class="xref myst">Interactive Submit</span></a> or <a class="reference internal" href="#programmatic-submit"><span class="xref myst">Programmatic Submit</span></a>.
+We also have this example demonstrated <a class="reference external" href="https://github.com/flux-framework/flux-operator/tree/main/sdk/python/v1alpha1/examples/state-basic-job-completion-minicluster.py">entirely in Python</a> using the Flux Operator Python SDK.</p>
 <h3 id="interactive-submit">Interactive Submit<a class="headerlink" href="#interactive-submit" title="Permalink to this heading">¶</a></h3>
 <p>And now we need to submit a bunch of jobs to run to completion. We can do this by shelling in (and
 note this could be done by the Flux Restful API for a more proggrammatic example). First,
@@ -929,12 +930,10 @@ $<span class="w"> </span>kubectl<span class="w"> </span><span class="nb">exec</s
 <span class="c1"># no output</span>
 </code></pre></div>
 </div>
-<p>Then submit one job…</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span>kubectl<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>-it<span class="w"> </span>-n<span class="w"> </span>flux-operator<span class="w"> </span>flux-sample-0-g6gv4<span class="w"> </span>--<span class="w"> </span>sudo<span class="w"> </span>-u<span class="w"> </span>flux<span class="w"> </span>flux<span class="w"> </span>proxy<span class="w"> </span>local:///var/run/flux/local<span class="w"> </span>flux<span class="w"> </span>submit<span class="w"> </span>sleep<span class="w"> </span><span class="m">2</span>
-</code></pre></div>
-</div>
-<p>or do many in a loop!</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code><span class="k">for</span><span class="w"> </span>i<span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="o">{</span><span class="m">1</span>..5<span class="o">}</span>
+<p>Then submit jobs - either one or many:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>kubectl<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>-it<span class="w"> </span>-n<span class="w"> </span>flux-operator<span class="w"> </span>flux-sample-0-g6gv4<span class="w"> </span>--<span class="w"> </span>sudo<span class="w"> </span>-u<span class="w"> </span>flux<span class="w"> </span>flux<span class="w"> </span>proxy<span class="w"> </span>local:///var/run/flux/local<span class="w"> </span>flux<span class="w"> </span>submit<span class="w"> </span>sleep<span class="w"> </span><span class="m">2</span>
+
+<span class="k">for</span><span class="w"> </span>i<span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="o">{</span><span class="m">1</span>..5<span class="o">}</span>
 <span class="k">do</span>
 <span class="w">   </span>kubectl<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>-it<span class="w"> </span>-n<span class="w"> </span>flux-operator<span class="w"> </span>flux-sample-0-g6gv4<span class="w"> </span>--<span class="w"> </span>sudo<span class="w"> </span>-u<span class="w"> </span>flux<span class="w"> </span>flux<span class="w"> </span>proxy<span class="w"> </span>local:///var/run/flux/local<span class="w"> </span>flux<span class="w"> </span>submit<span class="w"> </span>sleep<span class="w"> </span><span class="si">${</span><span class="nv">i</span><span class="si">}</span>
 <span class="w">   </span>kubectl<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>-it<span class="w"> </span>-n<span class="w"> </span>flux-operator<span class="w"> </span>flux-sample-0-g6gv4<span class="w"> </span>--<span class="w"> </span>sudo<span class="w"> </span>-u<span class="w"> </span>flux<span class="w"> </span>flux<span class="w"> </span>proxy<span class="w"> </span>local:///var/run/flux/local<span class="w"> </span>flux<span class="w"> </span>submit<span class="w"> </span>whoami
@@ -945,28 +944,21 @@ $<span class="w"> </span>kubectl<span class="w"> </span><span class="nb">exec</s
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span>kubectl<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>-it<span class="w"> </span>-n<span class="w"> </span>flux-operator<span class="w"> </span>flux-sample-0-mbv54<span class="w"> </span>--<span class="w"> </span>sudo<span class="w"> </span>-u<span class="w"> </span>flux<span class="w"> </span>flux<span class="w"> </span>proxy<span class="w"> </span>local:///var/run/flux/local<span class="w"> </span>flux<span class="w"> </span><span class="nb">jobs</span><span class="w"> </span>-a
 </code></pre></div>
 </div>
-<p>Make sure to wait at least a minute (the time that it takes for the archive to save). You can check by looking at the flux state
-directory (the timestamps will change):</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span>kubectl<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>-it<span class="w"> </span>-n<span class="w"> </span>flux-operator<span class="w"> </span>flux-sample-0-mbv54<span class="w"> </span>--<span class="w"> </span>ls<span class="w"> </span>-l<span class="w"> </span>/var/lib/flux
-</code></pre></div>
-</div>
-<p>If you try submitting a job and then waiting a minute, you should see those timestamps change!
-After that, outside of the shell (if you didn’t already exit) let’s delete the Minicluster.</p>
+<p>Give the jobs a little bit of time to run, and after that, outside of the shell (if you didn’t already exit) let’s delete the Minicluster.</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span>kubectl<span class="w"> </span>delete<span class="w"> </span>-f<span class="w"> </span>examples/state/basic-job-completion/minicluster.yaml<span class="w"> </span>
 </code></pre></div>
 </div>
 <p>Since we have the lifecycle hook in place, it’s going to take slightly longer to be terminated than if we didn’t.
-At this point, it should be the case that the same flux state directory is dumped to the archive path we requested, which
-is located at <code class="docutils literal notranslate"><span class="pre">/tmp/data</span></code> in the MiniKube vm (<code class="docutils literal notranslate"><span class="pre">/tmp/data</span></code> is bound to <code class="docutils literal notranslate"><span class="pre">/state</span></code> and the
-archive is asked to be saved to <code class="docutils literal notranslate"><span class="pre">/state/archive.tar.gz</span></code>).</p>
+At this point, it should be the case that the same flux state directory is dumped to the archive path we requested,
+which is located at <code class="docutils literal notranslate"><span class="pre">/tmp/data/archive.tar.gz</span></code> in the MiniKube vm (<code class="docutils literal notranslate"><span class="pre">/tmp/data</span></code> is bound to <code class="docutils literal notranslate"><span class="pre">/state</span></code> and the
+archive inside the container is asked to be saved to <code class="docutils literal notranslate"><span class="pre">/state/archive.tar.gz</span></code>).</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span>minikube<span class="w"> </span>ssh<span class="w"> </span>--<span class="w"> </span>ls<span class="w"> </span>-l<span class="w"> </span>/tmp/data/
 total<span class="w"> </span><span class="m">7</span>
 -rw-rw-r--<span class="w"> </span><span class="m">1</span><span class="w"> </span>docker<span class="w"> </span>docker<span class="w"> </span><span class="m">6231</span><span class="w"> </span>Mar<span class="w"> </span><span class="m">12</span><span class="w"> </span><span class="m">07</span>:44<span class="w"> </span>archive.tar.gz
 </code></pre></div>
 </div>
-<p>Next, let’s bring up the minicluster again! This time, it should instead find the existing archive,
-load into the broker, and then we will see them. Since we were just executing commands
-manually, we can use the same minicluster file!</p>
+<p>Next, let’s bring up a second minicluster! This time, in the entry point it should find the existing archive,
+load into the broker, and then we will see them. We can use the same minicluster file!</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span>kubectl<span class="w"> </span>apply<span class="w"> </span>-f<span class="w"> </span>examples/state/basic-job-completion/minicluster.yaml<span class="w"> </span>
 </code></pre></div>
 </div>
