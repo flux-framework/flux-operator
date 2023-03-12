@@ -641,6 +641,13 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#archive" class="md-nav__link">
+    <span title="/getting_started/custom-resource-definition.md#archive (reference label)" class="md-ellipsis">archive</span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#users" class="md-nav__link">
     <span title="/getting_started/custom-resource-definition.md#users (reference label)" class="md-ellipsis">users</span>
   </a>
@@ -1338,6 +1345,18 @@ and the worker pods flux start will have <code class="docutils literal notransla
 <span class="w">  </span><span class="nt">debug</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
 </code></pre></div>
 </div>
+<h3 id="archive">archive<a class="headerlink" href="#archive" title="Permalink to this heading">¶</a></h3>
+<p>If you want to save state between MiniClusters, you can set an archive path for
+the MiniCluster to load and save to. Given that the path exists, in the entrypoint
+script it will be loaded via <code class="docutils literal notranslate"><span class="pre">flux</span> <span class="pre">system</span> <span class="pre">reload</span></code>. At the end, a pre stop hook
+will then do another <code class="docutils literal notranslate"><span class="pre">flux</span> <span class="pre">dump</span></code> to that same path.</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><code><span class="nt">archive</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">path</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">/state/archive.tar.gz</span>
+</code></pre></div>
+</div>
+<p>This obviously requires that you have a persistent volume to save to that subsequent MiniClusters
+can access! This also assumes we are OK updating the archive state (and don’t want to save the original). This can
+be adjusted if needed.</p>
 <h3 id="users">users<a class="headerlink" href="#users" title="Permalink to this heading">¶</a></h3>
 <p>If you add a listing of users, minimally you need to provide a name for each one:</p>
 <div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><code><span class="nt">users</span><span class="p">:</span>
@@ -1690,7 +1709,7 @@ or define your own as follows:</p>
   <small>
     
       Last update:
-      Mar 11, 2023
+      Mar 12, 2023
     
   </small>
 </div>

@@ -331,6 +331,23 @@ logging:
   debug: true
 ```
 
+### archive
+
+If you want to save state between MiniClusters, you can set an archive path for
+the MiniCluster to load and save to. Given that the path exists, in the entrypoint
+script it will be loaded via `flux system reload`. At the end, a pre stop hook
+will then do another `flux dump` to that same path.
+
+```yaml
+archive:
+  path: /state/archive.tar.gz
+```
+
+This obviously requires that you have a persistent volume to save to that subsequent MiniClusters
+can access! This also assumes we are OK updating the archive state (and don't want to save the original). This can
+be adjusted if needed.
+
+
 ### users
 
 If you add a listing of users, minimally you need to provide a name for each one:
