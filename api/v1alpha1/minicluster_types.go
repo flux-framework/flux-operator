@@ -51,6 +51,10 @@ type MiniClusterSpec struct {
 	// +optional
 	Logging LoggingSpec `json:"logging"`
 
+	// Archive to load or save
+	// +optional
+	Archive MiniClusterArchive `json:"archive"`
+
 	// Customization to Flux Restful API
 	// There should only be one container to run flux with runFlux
 	// +optional
@@ -93,6 +97,13 @@ type MiniClusterUser struct {
 
 	// +optional
 	Password string `json:"password"`
+}
+
+type MiniClusterArchive struct {
+
+	// Save or load from this directory path
+	// +optional
+	Path string `json:"path,omitempty"`
 }
 
 type LoggingSpec struct {

@@ -10,6 +10,7 @@ docs/FluxUser.md
 docs/LifeCycle.md
 docs/LoggingSpec.md
 docs/MiniCluster.md
+docs/MiniClusterArchive.md
 docs/MiniClusterContainer.md
 docs/MiniClusterExistingVolume.md
 docs/MiniClusterList.md
@@ -32,6 +33,7 @@ fluxoperator/models/flux_user.py
 fluxoperator/models/life_cycle.py
 fluxoperator/models/logging_spec.py
 fluxoperator/models/mini_cluster.py
+fluxoperator/models/mini_cluster_archive.py
 fluxoperator/models/mini_cluster_container.py
 fluxoperator/models/mini_cluster_existing_volume.py
 fluxoperator/models/mini_cluster_list.py

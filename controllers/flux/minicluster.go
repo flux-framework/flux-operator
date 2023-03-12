@@ -380,6 +380,7 @@ func generateWaitScript(cluster *api.MiniCluster, containerIndex int) (string, e
 		MainHost:    mainHost,
 		Hosts:       hosts,
 		Container:   container,
+		Archive:     cluster.Spec.Archive,
 		Interactive: cluster.Spec.Interactive,
 		Users:       cluster.Spec.Users,
 		Size:        cluster.Spec.Size,

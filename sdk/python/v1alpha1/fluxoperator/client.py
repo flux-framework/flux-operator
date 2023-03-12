@@ -1,4 +1,5 @@
 from kubernetes import client, watch
+from kubernetes.stream import stream
 from kubernetes.client.api import core_v1_api
 from contextlib import contextmanager
 from .resource.network import port_forward
@@ -88,6 +89,26 @@ class FluxOperator:
                 fd.write(line.strip() + "\n")
                 if stdout:
                     print(line)
+
+    def kubectl_exec(self, command, pod=None):
+        """
+        Issue a command with kubectl exec
+
+        A pod is required. If not provided, we retrieve (and wait for)
+        the broker pod to be ready.
+        """
+        if not pod:
+            pod = self.get_broker_pod()
+        print(command)
+
+        # Assemble the exec command - bash subshell always easier
+        exec_command = ['/bin/sh', '-c', command]
+        return stream(self.core_v1.connect_get_namespaced_pod_exec,
+                  pod.metadata.name,
+                  self.namespace,                      
+                  command=exec_command,
+                  stderr=True, stdin=False,
+                  stdout=True, tty=False)
 
     def get_pods(self):
         """

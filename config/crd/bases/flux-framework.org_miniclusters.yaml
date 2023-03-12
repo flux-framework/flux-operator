@@ -33,6 +33,13 @@ spec:
             type: object
           spec:
             properties:
+              archive:
+                description: Archive to load or save
+                properties:
+                  path:
+                    description: Save or load from this directory path
+                    type: string
+                type: object
               cleanup:
                 default: false
                 description: Cleanup the pods and storage when the index broker pod

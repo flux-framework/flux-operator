@@ -64,6 +64,7 @@ from pprint import pprint
  - [LifeCycle](LifeCycle.md)
  - [LoggingSpec](LoggingSpec.md)
  - [MiniCluster](MiniCluster.md)
+ - [MiniClusterArchive](MiniClusterArchive.md)
  - [MiniClusterContainer](MiniClusterContainer.md)
  - [MiniClusterList](MiniClusterList.md)
  - [MiniClusterSpec](MiniClusterSpec.md)
