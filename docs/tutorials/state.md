@@ -82,7 +82,7 @@ $ /bin/bash ./examples/state/basic-job-completion/example.sh
 
 <summary>View the Interactive Example Output</summary>
 
-<script async id="asciicast-566800" src="https://asciinema.org/a/566800.js"></script>
+<script async id="asciicast-566800" src="https://asciinema.org/a/566800.js" data-speed="2"></script>
 
 
 ```bash
@@ -179,6 +179,7 @@ $ kubectl apply -f examples/state/basic-job-completion/minicluster.yaml
 ```
 
 At this point you can proceed to either [Interactive Submit](#interactive-submit) or [Programmatic Submit](#programmatic-submit).
+We also have this example demonstrated [entirely in Python](https://github.com/flux-framework/flux-operator/tree/main/sdk/python/v1alpha1/examples/state-basic-job-completion-minicluster.py) using the Flux Operator Python SDK.
 
 ### Interactive Submit
 
@@ -230,15 +231,11 @@ $ minikube ssh ls /tmp/data
 # no output
 ```
 
-Then submit one job...
+Then submit jobs - either one or many:
 
 ```bash
-$ kubectl exec -it -n flux-operator flux-sample-0-g6gv4 -- sudo -u flux flux proxy local:///var/run/flux/local flux submit sleep 2
-```
+kubectl exec -it -n flux-operator flux-sample-0-g6gv4 -- sudo -u flux flux proxy local:///var/run/flux/local flux submit sleep 2
 
-or do many in a loop!
-
-```bash
 for i in {1..5}
 do
    kubectl exec -it -n flux-operator flux-sample-0-g6gv4 -- sudo -u flux flux proxy local:///var/run/flux/local flux submit sleep ${i}
@@ -252,24 +249,16 @@ When you are done, you can see all the jobs:
 $ kubectl exec -it -n flux-operator flux-sample-0-mbv54 -- sudo -u flux flux proxy local:///var/run/flux/local flux jobs -a
 ```
 
-Make sure to wait at least a minute (the time that it takes for the archive to save). You can check by looking at the flux state
-directory (the timestamps will change):
-
-```bash
-$ kubectl exec -it -n flux-operator flux-sample-0-mbv54 -- ls -l /var/lib/flux
-```
-
-If you try submitting a job and then waiting a minute, you should see those timestamps change!
-After that, outside of the shell (if you didn't already exit) let's delete the Minicluster.
+Give the jobs a little bit of time to run, and after that, outside of the shell (if you didn't already exit) let's delete the Minicluster.
 
 ```bash
 $ kubectl delete -f examples/state/basic-job-completion/minicluster.yaml 
 ```
 
 Since we have the lifecycle hook in place, it's going to take slightly longer to be terminated than if we didn't.
-At this point, it should be the case that the same flux state directory is dumped to the archive path we requested, which
-is located at `/tmp/data` in the MiniKube vm (`/tmp/data` is bound to `/state` and the
-archive is asked to be saved to `/state/archive.tar.gz`).
+At this point, it should be the case that the same flux state directory is dumped to the archive path we requested, 
+which is located at `/tmp/data/archive.tar.gz` in the MiniKube vm (`/tmp/data` is bound to `/state` and the
+archive inside the container is asked to be saved to `/state/archive.tar.gz`).
 
 ```bash
 $ minikube ssh -- ls -l /tmp/data/
@@ -277,9 +266,8 @@ total 7
 -rw-rw-r-- 1 docker docker 6231 Mar 12 07:44 archive.tar.gz
 ```
 
-Next, let's bring up the minicluster again! This time, it should instead find the existing archive,
-load into the broker, and then we will see them. Since we were just executing commands
-manually, we can use the same minicluster file!
+Next, let's bring up a second minicluster! This time, in the entry point it should find the existing archive,
+load into the broker, and then we will see them. We can use the same minicluster file!
 
 ```bash
 $ kubectl apply -f examples/state/basic-job-completion/minicluster.yaml 
