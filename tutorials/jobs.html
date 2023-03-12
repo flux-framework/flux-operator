@@ -522,11 +522,18 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#submit-a-minicluster-crd-without-a-command-for-a-persistent-cluster" class="md-nav__link">
-    <span title="/tutorials/jobs.md#submit-a-minicluster-crd-without-a-command-for-a-persistent-cluster (reference label)" class="md-ellipsis">2.<wbr> Submit a Mini<wbr>Cluster CRD without a command for a persistent cluster</span>
+  <a href="#submit-in-interactive-mode" class="md-nav__link">
+    <span title="/tutorials/jobs.md#submit-in-interactive-mode (reference label)" class="md-ellipsis">2.<wbr> Submit in interactive mode</span>
   </a>
   
-    <nav class="md-nav" aria-label="2. Submit a MiniCluster CRD without a command for a persistent cluster">
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#submit-a-minicluster-crd-without-a-command-for-a-persistent-cluster" class="md-nav__link">
+    <span title="/tutorials/jobs.md#submit-a-minicluster-crd-without-a-command-for-a-persistent-cluster (reference label)" class="md-ellipsis">3.<wbr> Submit a Mini<wbr>Cluster CRD without a command for a persistent cluster</span>
+  </a>
+  
+    <nav class="md-nav" aria-label="3. Submit a MiniCluster CRD without a command for a persistent cluster">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
@@ -564,14 +571,14 @@
       
         <li class="md-nav__item">
   <a href="#automated-experiments-with-flux-cloud" class="md-nav__link">
-    <span title="/tutorials/jobs.md#automated-experiments-with-flux-cloud (reference label)" class="md-ellipsis">3.<wbr> Automated Experiments with flux-<wbr>cloud</span>
+    <span title="/tutorials/jobs.md#automated-experiments-with-flux-cloud (reference label)" class="md-ellipsis">4.<wbr> Automated Experiments with flux-<wbr>cloud</span>
   </a>
   
 </li>
       
         <li class="md-nav__item">
   <a href="#submit-jobs-directly-to-flux-via-ssh" class="md-nav__link">
-    <span title="/tutorials/jobs.md#submit-jobs-directly-to-flux-via-ssh (reference label)" class="md-ellipsis">4.<wbr> Submit jobs directly to Flux via ssh</span>
+    <span title="/tutorials/jobs.md#submit-jobs-directly-to-flux-via-ssh (reference label)" class="md-ellipsis">5.<wbr> Submit jobs directly to Flux via ssh</span>
   </a>
   
 </li>
@@ -789,6 +796,10 @@
 </ul>
 </li>
 <li><ol class="arabic simple" start="2">
+<li><p>Submit in “interactive” mode, starting a Flux broker and instance, and interacting with your Flux instance. (<a href="submit-in-interactive-mode">#ref</a>)</p></li>
+</ol>
+</li>
+<li><ol class="arabic simple" start="3">
 <li><p>Submit a MiniCluster custom resource definition without a command to start a persistent MiniCluster. (<a href="#submit-a-minicluster-crd-without-a-command-for-a-persistent-cluster">#ref</a>)</p></li>
 </ol>
 <ul class="simple">
@@ -796,16 +807,17 @@
 <li><p>b. Submit jobs from the command line “RESTful” (<a href="#b-submit-jobs-from-the-command-line">#ref</a>)</p></li>
 </ul>
 </li>
-<li><ol class="arabic simple" start="3">
+<li><ol class="arabic simple" start="4">
 <li><p>Run a set of experiments (to make many MiniCluster in an automated fashion) with <code class="docutils literal notranslate"><span class="pre">flux-cloud</span></code> (<a href="#automated-experiments-with-flux-cloud">#ref</a>)</p></li>
 </ol>
 </li>
-<li><ol class="arabic simple" start="4">
+<li><ol class="arabic simple" start="5">
 <li><p>Submit jobs interacting with Flux via ssh-ing to the pod (advanced) (<a href="#submit-jobs-directly-to-flux-via-ssh">#ref</a>)</p></li>
 </ol>
 </li>
 </ul>
-<p>Each of the strategies above will be discussed here.</p>
+<p>The reason we have many options is because we are still testing and understanding what use cases are best matched for each!
+Each of the strategies above will be discussed here.</p>
 <h2 id="single-job-minicluster-crd">1. Single Job MiniCluster CRD<a class="headerlink" href="#single-job-minicluster-crd" title="Permalink to this heading">¶</a></h2>
 <h3 id="a-submit-a-minicluster-yaml-via-kubectl">a. Submit a minicluster yaml via kubectl<a class="headerlink" href="#a-submit-a-minicluster-yaml-via-kubectl" title="Permalink to this heading">¶</a></h3>
 <p>When you define a command in a MiniCluster CRD, this will submit and run one job using that command, and clean up.
@@ -829,7 +841,16 @@ You can see an early <a class="reference external" href="https://github.com/flux
 Note that using this method you need to be pedantic - we use the <a class="reference external" href="https://openapi-generator.tech/">openapi generator</a> and not all defaults
 get correctly carried through. As an example, the default deadline in seconds is a large
 number but it gets passed as 0, so if you don’t define it, the Job will never start.</p>
-<h2 id="submit-a-minicluster-crd-without-a-command-for-a-persistent-cluster">2. Submit a MiniCluster CRD without a command for a persistent cluster<a class="headerlink" href="#submit-a-minicluster-crd-without-a-command-for-a-persistent-cluster" title="Permalink to this heading">¶</a></h2>
+<h2 id="submit-in-interactive-mode">2. Submit in interactive mode<a class="headerlink" href="#submit-in-interactive-mode" title="Permalink to this heading">¶</a></h2>
+<p>We have an <a class="reference external" href="https://flux-framework.org/flux-operator/tutorials/interactive.html?h=interactive#interactive">interactive mode</a>
+that means starting a single-user MiniCluster, however not starting a RESTFul API server, nor launching a command.
+We start the broker, and essentially wait for you to interact with it. This can mean issuing commands from
+the terminal with <code class="docutils literal notranslate"><span class="pre">kubectl</span> <span class="pre">exec</span></code> (as shown in the tutorial above) or writing a Python script using the Flux Operator
+Python SDK to proggrammatically interact. This is a really nice solution if you want to automate something,
+but don’t want the extra dependency of the Flux RESTFul API and needing to port forward. If you are interested
+in this submit type, check out our <a class="reference external" href="https://github.com/flux-framework/flux-operator/tree/main/sdk/python/v1alpha1/examples/interactive-submit.py">interactive-submit.py</a>
+example.</p>
+<h2 id="submit-a-minicluster-crd-without-a-command-for-a-persistent-cluster">3. Submit a MiniCluster CRD without a command for a persistent cluster<a class="headerlink" href="#submit-a-minicluster-crd-without-a-command-for-a-persistent-cluster" title="Permalink to this heading">¶</a></h2>
 <p>If you submit a minicluster.yaml without a command, a single-user persistent MiniCluster will be started!
 We have a few <a class="reference external" href="https://github.com/flux-framework/flux-operator/tree/main/examples/flux-restful">examples</a> for
 cluster that handle this. In general, you will want to:</p>
@@ -1073,13 +1094,13 @@ Python client to submit a job.</p>
 </div>
 <p>More detail is provided under the flux-restful-api <a class="reference external" href="https://github.com/flux-framework/flux-restful-api/tree/main/clients">clients</a> documentation,
 and the Python client is also included in the flux-restful-api <a class="reference external" href="https://flux-framework.org/flux-restful-api/auto_examples/index.html">Tutorials</a>.</p>
-<h2 id="automated-experiments-with-flux-cloud">3. Automated Experiments with flux-cloud<a class="headerlink" href="#automated-experiments-with-flux-cloud" title="Permalink to this heading">¶</a></h2>
+<h2 id="automated-experiments-with-flux-cloud">4. Automated Experiments with flux-cloud<a class="headerlink" href="#automated-experiments-with-flux-cloud" title="Permalink to this heading">¶</a></h2>
 <p>If you have a set of experiments you want to run on a production cluster, and especially
 if you don’t want the cluster being up longer than it has to be, check out <a class="reference external" href="https://github.com/converged-computing/flux-cloud">Flux Cloud</a>.
 It’s a small experiment runner wrapper that makes bringing up the cluster, installing
 the operator, running a matrix of experiments, and destroying the cluster much
 easier than all the copy pasting of commands typically required!</p>
-<h2 id="submit-jobs-directly-to-flux-via-ssh">4. Submit jobs directly to Flux via ssh<a class="headerlink" href="#submit-jobs-directly-to-flux-via-ssh" title="Permalink to this heading">¶</a></h2>
+<h2 id="submit-jobs-directly-to-flux-via-ssh">5. Submit jobs directly to Flux via ssh<a class="headerlink" href="#submit-jobs-directly-to-flux-via-ssh" title="Permalink to this heading">¶</a></h2>
 <p>You can also submit jobs interacting with Flux via ssh-ing to the pod! This is considered
 advanced, and is good for debugging. As you did before, get your pod listing:</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span>kubectl<span class="w"> </span>-n<span class="w"> </span>flux-operator<span class="w"> </span>pods
