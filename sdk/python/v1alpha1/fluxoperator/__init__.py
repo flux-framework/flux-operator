@@ -36,6 +36,7 @@ from fluxoperator.models.flux_user import FluxUser
 from fluxoperator.models.life_cycle import LifeCycle
 from fluxoperator.models.logging_spec import LoggingSpec
 from fluxoperator.models.mini_cluster import MiniCluster
+from fluxoperator.models.mini_cluster_archive import MiniClusterArchive
 from fluxoperator.models.mini_cluster_container import MiniClusterContainer
 from fluxoperator.models.mini_cluster_existing_volume import MiniClusterExistingVolume
 from fluxoperator.models.mini_cluster_list import MiniClusterList

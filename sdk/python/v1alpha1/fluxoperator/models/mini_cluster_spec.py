@@ -33,6 +33,7 @@ class MiniClusterSpec(object):
                             and the value is json key in definition.
     """
     openapi_types = {
+        'archive': 'MiniClusterArchive',
         'cleanup': 'bool',
         'containers': 'list[MiniClusterContainer]',
         'deadline_seconds': 'int',
@@ -48,6 +49,7 @@ class MiniClusterSpec(object):
     }
 
     attribute_map = {
+        'archive': 'archive',
         'cleanup': 'cleanup',
         'containers': 'containers',
         'deadline_seconds': 'deadlineSeconds',
@@ -62,12 +64,13 @@ class MiniClusterSpec(object):
         'volumes': 'volumes'
     }
 
-    def __init__(self, cleanup=False, containers=None, deadline_seconds=31500000, flux_restful=None, interactive=False, job_labels=None, logging=None, pod=None, size=1, tasks=1, users=None, volumes=None, local_vars_configuration=None):  # noqa: E501
+    def __init__(self, archive=None, cleanup=False, containers=None, deadline_seconds=31500000, flux_restful=None, interactive=False, job_labels=None, logging=None, pod=None, size=1, tasks=1, users=None, volumes=None, local_vars_configuration=None):  # noqa: E501
         """MiniClusterSpec - a model defined in OpenAPI"""  # noqa: E501
         if local_vars_configuration is None:
             local_vars_configuration = Configuration.get_default_copy()
         self.local_vars_configuration = local_vars_configuration
 
+        self._archive = None
         self._cleanup = None
         self._containers = None
         self._deadline_seconds = None
@@ -82,6 +85,8 @@ class MiniClusterSpec(object):
         self._volumes = None
         self.discriminator = None
 
+        if archive is not None:
+            self.archive = archive
         if cleanup is not None:
             self.cleanup = cleanup
         self.containers = containers
@@ -105,6 +110,27 @@ class MiniClusterSpec(object):
             self.users = users
         if volumes is not None:
             self.volumes = volumes
+
+    @property
+    def archive(self):
+        """Gets the archive of this MiniClusterSpec.  # noqa: E501
+
+
+        :return: The archive of this MiniClusterSpec.  # noqa: E501
+        :rtype: MiniClusterArchive
+        """
+        return self._archive
+
+    @archive.setter
+    def archive(self, archive):
+        """Sets the archive of this MiniClusterSpec.
+
+
+        :param archive: The archive of this MiniClusterSpec.  # noqa: E501
+        :type archive: MiniClusterArchive
+        """
+
+        self._archive = archive
 
     @property
     def cleanup(self):

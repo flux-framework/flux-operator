@@ -4,6 +4,7 @@
 ## Properties
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
+**archive** | [**MiniClusterArchive**](MiniClusterArchive.md) |  | [optional] 
 **cleanup** | **bool** | Cleanup the pods and storage when the index broker pod is complete | [optional] [default to False]
 **containers** | [**list[MiniClusterContainer]**](MiniClusterContainer.md) | Containers is one or more containers to be created in a pod. There should only be one container to run flux with runFlux | 
 **deadline_seconds** | **int** | Should the job be limited to a particular number of seconds? Approximately one year. This cannot be zero or job won&#39;t start | [optional] [default to 31500000]

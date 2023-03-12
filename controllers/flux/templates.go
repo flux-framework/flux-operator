@@ -39,6 +39,7 @@ type WaitTemplate struct {
 	Hosts     string // List of hosts
 
 	FluxRestful api.FluxRestful
+	Archive     api.MiniClusterArchive
 	Users       []api.MiniClusterUser
 	Container   api.MiniClusterContainer
 	Interactive bool

@@ -116,19 +116,8 @@ func (r *MiniClusterReconciler) getMiniClusterContainers(
 			containerName = fmt.Sprintf("%s-%d", cluster.Name, i)
 		}
 
-		// Do we have a postStartExec Lifecycle command?
-		lifecycle := corev1.Lifecycle{}
-		if container.LifeCycle.PostStartExec != "" {
-			r.log.Info(
-				"🌀 MiniCluster",
-				"LifeCycle.PostStartExec", container.LifeCycle.PostStartExec,
-			)
-			lifecycle.PostStart = &corev1.LifecycleHandler{
-				Exec: &corev1.ExecAction{
-					Command: []string{container.LifeCycle.PostStartExec},
-				},
-			}
-		}
+		// Prepare lifescycle commands for the container
+		lifecycle := r.createContainerLifecycle(cluster, container)
 
 		// Get volume mounts, add on container specific ones
 		mounts := getVolumeMounts(cluster)
@@ -169,7 +158,7 @@ func (r *MiniClusterReconciler) getMiniClusterContainers(
 			VolumeMounts:    mounts,
 			Stdin:           true,
 			TTY:             true,
-			Lifecycle:       &lifecycle,
+			Lifecycle:       lifecycle,
 			Resources:       resources,
 		}
 

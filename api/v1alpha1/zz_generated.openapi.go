@@ -32,6 +32,7 @@ func GetOpenAPIDefinitions(ref common.ReferenceCallback) map[string]common.OpenA
 		"./api/v1alpha1/.LifeCycle":                 schema__api_v1alpha1__LifeCycle(ref),
 		"./api/v1alpha1/.LoggingSpec":               schema__api_v1alpha1__LoggingSpec(ref),
 		"./api/v1alpha1/.MiniCluster":               schema__api_v1alpha1__MiniCluster(ref),
+		"./api/v1alpha1/.MiniClusterArchive":        schema__api_v1alpha1__MiniClusterArchive(ref),
 		"./api/v1alpha1/.MiniClusterContainer":      schema__api_v1alpha1__MiniClusterContainer(ref),
 		"./api/v1alpha1/.MiniClusterExistingVolume": schema__api_v1alpha1__MiniClusterExistingVolume(ref),
 		"./api/v1alpha1/.MiniClusterList":           schema__api_v1alpha1__MiniClusterList(ref),
@@ -328,6 +329,25 @@ func schema__api_v1alpha1__MiniCluster(ref common.ReferenceCallback) common.Open
 		},
 		Dependencies: []string{
 			"./api/v1alpha1/.MiniClusterSpec", "./api/v1alpha1/.MiniClusterStatus", "k8s.io/apimachinery/pkg/apis/meta/v1.ObjectMeta"},
+	}
+}
+
+func schema__api_v1alpha1__MiniClusterArchive(ref common.ReferenceCallback) common.OpenAPIDefinition {
+	return common.OpenAPIDefinition{
+		Schema: spec.Schema{
+			SchemaProps: spec.SchemaProps{
+				Type: []string{"object"},
+				Properties: map[string]spec.Schema{
+					"path": {
+						SchemaProps: spec.SchemaProps{
+							Description: "Save or load from this directory path",
+							Type:        []string{"string"},
+							Format:      "",
+						},
+					},
+				},
+			},
+		},
 	}
 }
 
@@ -718,6 +738,13 @@ func schema__api_v1alpha1__MiniClusterSpec(ref common.ReferenceCallback) common.
 							Ref:         ref("./api/v1alpha1/.LoggingSpec"),
 						},
 					},
+					"archive": {
+						SchemaProps: spec.SchemaProps{
+							Description: "Archive to load or save",
+							Default:     map[string]interface{}{},
+							Ref:         ref("./api/v1alpha1/.MiniClusterArchive"),
+						},
+					},
 					"fluxRestful": {
 						SchemaProps: spec.SchemaProps{
 							Description: "Customization to Flux Restful API There should only be one container to run flux with runFlux",
@@ -769,7 +796,7 @@ func schema__api_v1alpha1__MiniClusterSpec(ref common.ReferenceCallback) common.
 			},
 		},
 		Dependencies: []string{
-			"./api/v1alpha1/.FluxRestful", "./api/v1alpha1/.LoggingSpec", "./api/v1alpha1/.MiniClusterContainer", "./api/v1alpha1/.MiniClusterUser", "./api/v1alpha1/.MiniClusterVolume", "./api/v1alpha1/.PodSpec"},
+			"./api/v1alpha1/.FluxRestful", "./api/v1alpha1/.LoggingSpec", "./api/v1alpha1/.MiniClusterArchive", "./api/v1alpha1/.MiniClusterContainer", "./api/v1alpha1/.MiniClusterUser", "./api/v1alpha1/.MiniClusterVolume", "./api/v1alpha1/.PodSpec"},
 	}
 }
 

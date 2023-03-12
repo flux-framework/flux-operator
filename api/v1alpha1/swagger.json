@@ -165,6 +165,15 @@
         }
       }
     },
+    "MiniClusterArchive": {
+      "type": "object",
+      "properties": {
+        "path": {
+          "description": "Save or load from this directory path",
+          "type": "string"
+        }
+      }
+    },
     "MiniClusterContainer": {
       "type": "object",
       "properties": {
@@ -348,6 +357,11 @@
         "containers"
       ],
       "properties": {
+        "archive": {
+          "description": "Archive to load or save",
+          "default": {},
+          "$ref": "#/definitions/MiniClusterArchive"
+        },
         "cleanup": {
           "description": "Cleanup the pods and storage when the index broker pod is complete",
           "type": "boolean",

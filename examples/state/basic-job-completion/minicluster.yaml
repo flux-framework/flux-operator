@@ -1,0 +1,32 @@
+apiVersion: flux-framework.org/v1alpha1
+kind: MiniCluster
+metadata:
+  name: flux-sample
+  namespace: flux-operator
+spec:
+  # Number of pods to create for MiniCluster
+  size: 2
+
+  # Make this interactive so we can launch a bunch of jobs!
+  interactive: true
+
+  # Define the archive load/save path here (in our volume mount that persists)
+  archive:
+    path: /state/archive.tar.gz
+
+  # Ask the archive to be written to a state directory in /state/archive
+  # This hostpath volume (we are using MiniKube, but any volume will work)
+  # is required to save the Flux archives, we call this the "state directory"
+  volumes:
+    data:
+      storageClass: hostpath
+      path: /tmp/data
+      labels:
+        type: "local"
+
+  # This is a list because a pod can support multiple containers
+  containers:
+    - image: ghcr.io/flux-framework/flux-restful-api:latest
+      volumes:
+        data:
+          path: /state
