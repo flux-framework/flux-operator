@@ -5,12 +5,14 @@ Given a running Kubernetes cluster, you have several modes for interaction, or s
 - 1. Submit a MiniCluster custom resource definition (CRD) with a command to run one job. (<a href="#single-job-minicluster-crd">#ref</a>)
   - a. Submit a minicluster.yaml via `kubectl` (<a href="#a-submit-a-minicluster-yaml-via-kubectl">#ref</a>)
   - b. Submit a MiniCluster custom resource definition via the Python SDK (<a href="#b-submit-a-minicluster-crd-via-the-python-sdk">#ref</a>)
-- 2. Submit a MiniCluster custom resource definition without a command to start a persistent MiniCluster. (<a href="#submit-a-minicluster-crd-without-a-command-for-a-persistent-cluster">#ref</a>)
+- 2. Submit in "interactive" mode, starting a Flux broker and instance, and interacting with your Flux instance. (<a href="submit-in-interactive-mode">#ref</a>)
+- 3. Submit a MiniCluster custom resource definition without a command to start a persistent MiniCluster. (<a href="#submit-a-minicluster-crd-without-a-command-for-a-persistent-cluster">#ref</a>)
   - a. Submit jobs in the user interface (basic) (<a href="#a-submit-jobs-in-the-user-interface-basic">#ref</a>)
   - b. Submit jobs from the command line "RESTful" (<a href="#b-submit-jobs-from-the-command-line">#ref</a>)
-- 3. Run a set of experiments (to make many MiniCluster in an automated fashion) with `flux-cloud` (<a href="#automated-experiments-with-flux-cloud">#ref</a>)
-- 4. Submit jobs interacting with Flux via ssh-ing to the pod (advanced) (<a href="#submit-jobs-directly-to-flux-via-ssh">#ref</a>)
+- 4. Run a set of experiments (to make many MiniCluster in an automated fashion) with `flux-cloud` (<a href="#automated-experiments-with-flux-cloud">#ref</a>)
+- 5. Submit jobs interacting with Flux via ssh-ing to the pod (advanced) (<a href="#submit-jobs-directly-to-flux-via-ssh">#ref</a>)
 
+The reason we have many options is because we are still testing and understanding what use cases are best matched for each!
 Each of the strategies above will be discussed here.
 
 ## 1. Single Job MiniCluster CRD
@@ -42,7 +44,18 @@ Note that using this method you need to be pedantic - we use the [openapi genera
 get correctly carried through. As an example, the default deadline in seconds is a large
 number but it gets passed as 0, so if you don't define it, the Job will never start.
 
-## 2. Submit a MiniCluster CRD without a command for a persistent cluster
+## 2. Submit in interactive mode
+
+We have an [interactive mode](https://flux-framework.org/flux-operator/tutorials/interactive.html?h=interactive#interactive)
+that means starting a single-user MiniCluster, however not starting a RESTFul API server, nor launching a command.
+We start the broker, and essentially wait for you to interact with it. This can mean issuing commands from
+the terminal with `kubectl exec` (as shown in the tutorial above) or writing a Python script using the Flux Operator
+Python SDK to proggrammatically interact. This is a really nice solution if you want to automate something,
+but don't want the extra dependency of the Flux RESTFul API and needing to port forward. If you are interested
+in this submit type, check out our [interactive-submit.py](https://github.com/flux-framework/flux-operator/tree/main/sdk/python/v1alpha1/examples/interactive-submit.py)
+example.
+
+## 3. Submit a MiniCluster CRD without a command for a persistent cluster
 
 If you submit a minicluster.yaml without a command, a single-user persistent MiniCluster will be started!
 We have a few [examples](https://github.com/flux-framework/flux-operator/tree/main/examples/flux-restful) for
@@ -328,7 +341,7 @@ More detail is provided under the flux-restful-api [clients](https://github.com/
 and the Python client is also included in the flux-restful-api [Tutorials](https://flux-framework.org/flux-restful-api/auto_examples/index.html).
 
 
-## 3. Automated Experiments with flux-cloud
+## 4. Automated Experiments with flux-cloud
 
 If you have a set of experiments you want to run on a production cluster, and especially
 if you don't want the cluster being up longer than it has to be, check out [Flux Cloud](https://github.com/converged-computing/flux-cloud).
@@ -336,7 +349,7 @@ It's a small experiment runner wrapper that makes bringing up the cluster, insta
 the operator, running a matrix of experiments, and destroying the cluster much
 easier than all the copy pasting of commands typically required!
 
-## 4. Submit jobs directly to Flux via ssh
+## 5. Submit jobs directly to Flux via ssh
 
 You can also submit jobs interacting with Flux via ssh-ing to the pod! This is considered
 advanced, and is good for debugging. As you did before, get your pod listing:

@@ -63,10 +63,7 @@ def create_minicluster():
             namespace="flux-operator",
         ),
         spec=MiniClusterSpec(
-            size=4,
-            containers=[container],
-            users=users,
-            flux_restful=flux_restful
+            size=4, containers=[container], users=users, flux_restful=flux_restful
         ),
     )
 
@@ -116,8 +113,9 @@ with cli.port_forward(broker) as forward_url:
     # See endpoints here https://flux-framework.org/flux-restful-api/getting_started/api.html
     # You will need to authenticate for the multi-user example here
     if get_client is not None:
-
-        restcli = get_client(host=forward_url, user="peenut", token="peenut", secret_key=secret_key)
+        restcli = get_client(
+            host=forward_url, user="peenut", token="peenut", secret_key=secret_key
+        )
         print('Submitting "whoami" job as user peenut.')
         res = restcli.submit("whoami")
         print(f"Jobid {res['id']} submit!")
