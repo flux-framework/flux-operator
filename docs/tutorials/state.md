@@ -291,6 +291,13 @@ We then then test if this current setup has a memory of the jobs run on the firs
 $ kubectl exec -it -n flux-operator flux-sample-0-dpd42 -- sudo -u flux flux proxy local:///var/run/flux/local flux jobs -a
 ```
 
+And of course, clean up when you are done.
+
+```bash
+$ kubectl delete -f examples/state/basic-job-completion/minicluster.yaml 
+$ minikube ssh -- rm -rf /tmp/data/archive.tar.gz
+```
+
 We also have this example demonstrated [entirely in Python](https://github.com/flux-framework/flux-operator/tree/main/sdk/python/v1alpha1/examples/state-basic-job-completion-minicluster.py) using the Flux Operator Python SDK.
 
 > What are next steps?
