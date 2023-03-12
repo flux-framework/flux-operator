@@ -113,4 +113,7 @@ $ kubectl delete -f examples/interactive/minicluster-persistent.yaml
 ```
 
 If your MiniCluster spec does not have `clean: true` you might need to run this 
-anyway with a shutdown. List pods if you aren't sure. Have fun! 
+anyway with a shutdown. List pods if you aren't sure. Finally, interactive mode works
+very well when using the Flux Operator Python SDK. [Here is a full example](https://github.com/flux-framework/flux-operator/tree/main/sdk/python/v1alpha1/examples/interactive-submit.py).
+
+Have fun! 🦄

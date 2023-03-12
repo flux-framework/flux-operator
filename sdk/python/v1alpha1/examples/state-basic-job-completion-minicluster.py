@@ -8,7 +8,14 @@
 import time
 from kubernetes import client, config
 from kubernetes.client import V1ObjectMeta
-from fluxoperator.models import MiniCluster, MiniClusterContainer, MiniClusterSpec, MiniClusterArchive, MiniClusterVolume, ContainerVolume
+from fluxoperator.models import (
+    MiniCluster,
+    MiniClusterContainer,
+    MiniClusterSpec,
+    MiniClusterArchive,
+    MiniClusterVolume,
+    ContainerVolume,
+)
 from fluxoperator.client import FluxOperator
 from fluxoperator.resource.pods import delete_minicluster
 
@@ -26,7 +33,7 @@ container = MiniClusterContainer(
 
 # In order to save state we need a persistent volume between the MiniClusters
 # it will be bound to /state, and the archive saved as "archive.tar.gz"
-volumes = {"data": MiniClusterVolume(storage_class="hostpath", path= "/tmp/data")}
+volumes = {"data": MiniClusterVolume(storage_class="hostpath", path="/tmp/data")}
 archive = MiniClusterArchive(path="/state/archive.tar.gz")
 
 # This is creating the full minicluster
@@ -39,7 +46,13 @@ minicluster = MiniCluster(
         name=minicluster_name,
         namespace=namespace,
     ),
-    spec=MiniClusterSpec(size=2, containers=[container], interactive=True, archive=archive, volumes=volumes),
+    spec=MiniClusterSpec(
+        size=2,
+        containers=[container],
+        interactive=True,
+        archive=archive,
+        volumes=volumes,
+    ),
 )
 
 # Make sure your cluster or minikube is running
@@ -66,23 +79,33 @@ cli = FluxOperator(namespace)
 print("🥱️ Waiting for MiniCluster to be ready...")
 cli.get_broker_pod()
 
-# Let's exec commands to run a bunch of jobs! 
+# Let's exec commands to run a bunch of jobs!
 # This is why we want interactive mod!
 # By default, this selects (and waits for) the broker pod
 print("✨️ Submitting jobs!")
 time.sleep(5)
 for iter in range(0, 5):
-    res = cli.kubectl_exec("sudo -u flux flux proxy local:///var/run/flux/local flux submit sleep %s" % iter)
-    assert res.startswith('ƒ')
-    print(f'  {res}', end="")
-    res = cli.kubectl_exec("sudo -u flux flux proxy local:///var/run/flux/local flux submit whoami")
-    assert res.startswith('ƒ')
-    print(f'  {res}', end="")
+    res = cli.kubectl_exec(
+        "sudo -u flux flux proxy local:///var/run/flux/local flux submit sleep %s"
+        % iter
+    )
+    assert res.startswith("ƒ")
+    print(f"  {res}", end="")
+    res = cli.kubectl_exec(
+        "sudo -u flux flux proxy local:///var/run/flux/local flux submit whoami"
+    )
+    assert res.startswith("ƒ")
+    print(f"  {res}", end="")
 
 print("\n🥱️ Waiting for jobs...")
 print("Jobs finished...")
-print(cli.kubectl_exec("sudo -u flux flux proxy local:///var/run/flux/local flux jobs -a"), end="")
-print ("\n🥱️ Wait to be sure we have saved...")
+print(
+    cli.kubectl_exec(
+        "sudo -u flux flux proxy local:///var/run/flux/local flux jobs -a"
+    ),
+    end="",
+)
+print("\n🥱️ Wait to be sure we have saved...")
 time.sleep(50)
 
 print("\n🧊️ Current state directory at /var/lib/flux...")
@@ -114,9 +137,11 @@ print("\n🤓️ Inspecting state directory in new cluster...")
 print(cli.kubectl_exec("ls -l /var/lib/flux"), end="")
 
 print("\n😎️ Looking to see if old job history exists...")
-res = cli.kubectl_exec("sudo -u flux flux proxy local:///var/run/flux/local flux jobs -a")
+res = cli.kubectl_exec(
+    "sudo -u flux flux proxy local:///var/run/flux/local flux jobs -a"
+)
 print(res, end="")
-assert res.count('ƒ') == 10
+assert res.count("ƒ") == 10
 time.sleep(5)
 
 print("Cleaning up..")
