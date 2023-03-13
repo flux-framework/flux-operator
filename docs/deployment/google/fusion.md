@@ -154,11 +154,7 @@ $ kubectl exec -it -n flux-operator flux-sample-0-87ll7 -- bash
 # cd there
 $ cd /fusion/gs/flux-operator-storage/snakemake-workflow
 
-# Connect to the broker instance
-$ sudo -E PATH=$PATH -E PYTHONPATH=$PYTHONPATH flux proxy local:///var/run/flux/local
-
-# Run the workflow! Note there is a bug with the snakemake flux executor
-# I haven't figured out yet, so we run with vanilal snakemakels
+# Run the workflow!
 $ flux start snakemake --cores 2  --jobs 2 --flux
 ```
 
