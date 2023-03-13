@@ -3,7 +3,10 @@
 This basic tutorial will walk through creating a MiniCluster to run LAMMPS! You should have
 already [setup your workspace](setup.md)
 
-.. include:: includes/basic-setup.md
+
+```{include} includes/basic-setup.md
+```
+
 
 Now let's run a short experiment with LAMMPS!
 
@@ -125,8 +128,8 @@ Then to delete your lammps MiniCluster:
 $ kubectl delete -f minicluster-lammps.yaml
 ```
 
-.. include:: includes/cleanup.md
-
+```{include} includes/cleanup.md
+```
 
 ## Customization and Debugging
 

@@ -636,6 +636,40 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
+  <a href="#create-cluster" class="md-nav__link">
+    <span title="/deployment/google/basic.md#create-cluster (reference label)" class="md-ellipsis">Create Cluster</span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#get-credentials" class="md-nav__link">
+    <span title="/deployment/google/basic.md#get-credentials (reference label)" class="md-ellipsis">Get Credentials</span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Get Credentials">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#deploy-operator" class="md-nav__link">
+    <span title="/deployment/google/basic.md#deploy-operator (reference label)" class="md-ellipsis">Deploy Operator</span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#create-flux-operator-namespace" class="md-nav__link">
+    <span title="/deployment/google/basic.md#create-flux-operator-namespace (reference label)" class="md-ellipsis">Create Flux Operator namespace</span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#custom-resource-definition" class="md-nav__link">
     <span title="/deployment/google/basic.md#custom-resource-definition (reference label)" class="md-ellipsis">Custom Resource Definition</span>
   </a>
@@ -645,6 +679,13 @@
         <li class="md-nav__item">
   <a href="#create-the-lammps-job" class="md-nav__link">
     <span title="/deployment/google/basic.md#create-the-lammps-job (reference label)" class="md-ellipsis">Create the Lammps Job</span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#clean-up" class="md-nav__link">
+    <span title="/deployment/google/basic.md#clean-up (reference label)" class="md-ellipsis">Clean up</span>
   </a>
   
 </li>
@@ -802,7 +843,136 @@
 <h1 id="lammps-on-google-cloud">Lammps on Google Cloud<a class="headerlink" href="#lammps-on-google-cloud" title="Permalink to this heading">¶</a></h1>
 <p>This basic tutorial will walk through creating a MiniCluster to run LAMMPS! You should have
 already <a class="reference internal" href="setup.html"><span class="std std-doc">setup your workspace</span></a></p>
-<p>.. include:: includes/basic-setup.md</p>
+<h2 id="create-cluster">Create Cluster<a class="headerlink" href="#create-cluster" title="Permalink to this heading">¶</a></h2>
+<p>Let’s use gcloud to create a cluster, and we are purposefully going to choose
+a very small node type to test. Note that I choose us-central1-a because it tends
+to be cheaper (and closer to me). First, here is our project for easy access:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code><span class="nv">GOOGLE_PROJECT</span><span class="o">=</span>myproject
+</code></pre></div>
+</div>
+<p>Then create your cluster as follows:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span>gcloud<span class="w"> </span>container<span class="w"> </span>clusters<span class="w"> </span>create<span class="w"> </span>flux-cluster<span class="w"> </span>--project<span class="w"> </span><span class="nv">$GOOGLE_PROJECT</span><span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--zone<span class="w"> </span>us-central1-a<span class="w"> </span>--machine-type<span class="w"> </span>n1-standard-1<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--num-nodes<span class="o">=</span><span class="m">4</span><span class="w"> </span>--enable-network-policy<span class="w"> </span>--tags<span class="o">=</span>flux-cluster<span class="w"> </span>--enable-intra-node-visibility
+</code></pre></div>
+</div>
+<p>If you need a particular Kubernetes version:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span>gcloud<span class="w"> </span>container<span class="w"> </span>clusters<span class="w"> </span>create<span class="w"> </span>flux-cluster<span class="w"> </span>--project<span class="w"> </span><span class="nv">$GOOGLE_PROJECT</span><span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--zone<span class="w"> </span>us-central1-a<span class="w"> </span>--cluster-version<span class="w"> </span><span class="m">1</span>.23<span class="w"> </span>--machine-type<span class="w"> </span>n1-standard-1<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--num-nodes<span class="o">=</span><span class="m">4</span><span class="w"> </span>--enable-network-policy<span class="w"> </span>--tags<span class="o">=</span>flux-cluster<span class="w"> </span>--enable-intra-node-visibility
+</code></pre></div>
+</div>
+<p>Note that not all of the flags above might be necessary - I did a lot of testing to get
+this working and didn’t go back and try removing things after the fact!
+If you want to use cloud dns instead (after <a class="reference external" href="https://console.cloud.google.com/apis/library/dns.googleapis.com">enabling it</a>)</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span>gcloud<span class="w"> </span>beta<span class="w"> </span>container<span class="w"> </span>clusters<span class="w"> </span>create<span class="w"> </span>flux-cluster<span class="w"> </span>--project<span class="w"> </span><span class="nv">$GOOGLE_PROJECT</span><span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--zone<span class="w"> </span>us-central1-a<span class="w"> </span>--cluster-version<span class="w"> </span><span class="m">1</span>.23<span class="w"> </span>--machine-type<span class="w"> </span>n1-standard-1<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--num-nodes<span class="o">=</span><span class="m">4</span><span class="w"> </span>--enable-network-policy<span class="w"> </span>--tags<span class="o">=</span>flux-cluster<span class="w"> </span>--enable-intra-node-visibility<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--cluster-dns<span class="o">=</span>clouddns<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--cluster-dns-scope<span class="o">=</span>cluster
+</code></pre></div>
+</div>
+<p>In your Google cloud interface, you should be able to see the cluster! Note
+this might take a few minutes.</p>
+<p><img alt="img/cluster.png" src="deployment/img/cluster.png" /></p>
+<p>I also chose a tiny size (nodes and instances) anticipating having it up longer to figure things out.</p>
+<h2 id="get-credentials">Get Credentials<a class="headerlink" href="#get-credentials" title="Permalink to this heading">¶</a></h2>
+<p>Next we need to ensure that we can issue commands to our cluster with kubectl.
+To get credentials, in the view shown above, select the cluster and click “connect.”
+Doing so will show you the correct statement to run to configure command-line access,
+which probably looks something like this:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span>gcloud<span class="w"> </span>container<span class="w"> </span>clusters<span class="w"> </span>get-credentials<span class="w"> </span>flux-cluster<span class="w"> </span>--zone<span class="w"> </span>us-central1-a<span class="w"> </span>--project<span class="w"> </span><span class="nv">$GOOGLE_PROJECT</span>
+</code></pre></div>
+</div>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><code><span class="go">Fetching cluster endpoint and auth data.</span>
+<span class="go">kubeconfig entry generated for flux-cluster.</span>
+</code></pre></div>
+</div>
+<p>Finally, use <a class="reference external" href="https://cloud.google.com/iam">cloud IAM</a> to ensure you can create roles, etc.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span>kubectl<span class="w"> </span>create<span class="w"> </span>clusterrolebinding<span class="w"> </span>cluster-admin-binding<span class="w"> </span>--clusterrole<span class="w"> </span>cluster-admin<span class="w"> </span>--user<span class="w"> </span><span class="k">$(</span>gcloud<span class="w"> </span>config<span class="w"> </span>get-value<span class="w"> </span>core/account<span class="k">)</span>
+</code></pre></div>
+</div>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><code><span class="go">clusterrolebinding.rbac.authorization.k8s.io/cluster-admin-binding created</span>
+</code></pre></div>
+</div>
+<p>At this point you should be able to get your nodes:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span>kubectl<span class="w"> </span>get<span class="w"> </span>nodes
+</code></pre></div>
+</div>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><code><span class="go">NAME                                            STATUS   ROLES    AGE     VERSION</span>
+<span class="go">gke-flux-cluster-default-pool-f103d9d8-379m   Ready    &lt;none&gt;   3m41s   v1.23.14-gke.1800</span>
+<span class="go">gke-flux-cluster-default-pool-f103d9d8-3wf9   Ready    &lt;none&gt;   3m42s   v1.23.14-gke.1800</span>
+<span class="go">gke-flux-cluster-default-pool-f103d9d8-c174   Ready    &lt;none&gt;   3m42s   v1.23.14-gke.1800</span>
+<span class="go">gke-flux-cluster-default-pool-f103d9d8-zz1q   Ready    &lt;none&gt;   3m42s   v1.23.14-gke.1800</span>
+</code></pre></div>
+</div>
+<h3 id="deploy-operator">Deploy Operator<a class="headerlink" href="#deploy-operator" title="Permalink to this heading">¶</a></h3>
+<p>To deploy the Flux Operator, <a class="reference external" href="https://flux-framework.org/flux-operator/getting_started/user-guide.html#production-install">choose one of the options here</a> to deploy the operator. Whether you apply a yaml file, use <a class="reference external" href="https://converged-computing.github.io/flux-cloud">flux-cloud</a> or clone the repository and <code class="docutils literal notranslate"><span class="pre">make</span> <span class="pre">deploy</span></code> you will see the operator install to the <code class="docutils literal notranslate"><span class="pre">operator-system</span></code> namespace.</p>
+<p>For a quick “production deploy” from development, the Makefile has a directive that will build and push a <code class="docutils literal notranslate"><span class="pre">test</span></code> tag (you’ll need to edit <code class="docutils literal notranslate"><span class="pre">DEVIMG</span></code> to be one you can push to) and then generate a
+yaml file targeting that image, e.g.,</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span>make<span class="w"> </span>test-deploy
+$<span class="w"> </span>kubectl<span class="w"> </span>apply<span class="w"> </span>-f<span class="w"> </span>examples/dist/flux-operator-dev.yaml
+</code></pre></div>
+</div>
+<p>or the production version:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span>kubectl<span class="w"> </span>apply<span class="w"> </span>-f<span class="w"> </span>examples/dist/flux-operator.yaml
+</code></pre></div>
+</div>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><code><span class="go">...</span>
+<span class="go">clusterrole.rbac.authorization.k8s.io/operator-manager-role created</span>
+<span class="go">clusterrole.rbac.authorization.k8s.io/operator-metrics-reader created</span>
+<span class="go">clusterrole.rbac.authorization.k8s.io/operator-proxy-role created</span>
+<span class="go">rolebinding.rbac.authorization.k8s.io/operator-leader-election-rolebinding created</span>
+<span class="go">clusterrolebinding.rbac.authorization.k8s.io/operator-manager-rolebinding created</span>
+<span class="go">clusterrolebinding.rbac.authorization.k8s.io/operator-proxy-rolebinding created</span>
+<span class="go">configmap/operator-manager-config created</span>
+<span class="go">service/operator-controller-manager-metrics-service created</span>
+<span class="go">deployment.apps/operator-controller-manager created</span>
+</code></pre></div>
+</div>
+<p>Ensure the <code class="docutils literal notranslate"><span class="pre">operator-system</span></code> namespace was created:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span>kubectl<span class="w"> </span>get<span class="w"> </span>namespace
+NAME<span class="w">              </span>STATUS<span class="w">   </span>AGE
+default<span class="w">           </span>Active<span class="w">   </span>6m39s
+kube-node-lease<span class="w">   </span>Active<span class="w">   </span>6m42s
+kube-public<span class="w">       </span>Active<span class="w">   </span>6m42s
+kube-system<span class="w">       </span>Active<span class="w">   </span>6m42s
+operator-system<span class="w">   </span>Active<span class="w">   </span>39s
+</code></pre></div>
+</div>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span>kubectl<span class="w"> </span>describe<span class="w"> </span>namespace<span class="w"> </span>operator-system
+Name:<span class="w">         </span>operator-system
+Labels:<span class="w">       </span>control-plane<span class="o">=</span>controller-manager
+<span class="w">              </span>kubernetes.io/metadata.name<span class="o">=</span>operator-system
+Annotations:<span class="w">  </span>&lt;none&gt;
+Status:<span class="w">       </span>Active
+
+Resource<span class="w"> </span>Quotas
+<span class="w">  </span>Name:<span class="w">                              </span>gke-resource-quotas
+<span class="w">  </span>Resource<span class="w">                           </span>Used<span class="w">  </span>Hard
+<span class="w">  </span>--------<span class="w">                           </span>---<span class="w">   </span>---
+<span class="w">  </span>count/ingresses.extensions<span class="w">         </span><span class="m">0</span><span class="w">     </span><span class="m">100</span>
+<span class="w">  </span>count/ingresses.networking.k8s.io<span class="w">  </span><span class="m">0</span><span class="w">     </span><span class="m">100</span>
+<span class="w">  </span>count/jobs.batch<span class="w">                   </span><span class="m">0</span><span class="w">     </span>5k
+<span class="w">  </span>pods<span class="w">                               </span><span class="m">1</span><span class="w">     </span><span class="m">1500</span>
+<span class="w">  </span>services<span class="w">                           </span><span class="m">1</span><span class="w">     </span><span class="m">500</span>
+
+No<span class="w"> </span>LimitRange<span class="w"> </span>resource.
+</code></pre></div>
+</div>
+<p>And you can find the name of the operator pod as follows:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span>kubectl<span class="w"> </span>get<span class="w"> </span>pod<span class="w"> </span>--all-namespaces
+</code></pre></div>
+</div>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><code><span class="go">      &lt;none&gt;</span>
+<span class="go">operator-system   operator-controller-manager-56b5bcf9fd-m8wg4               2/2     Running   0          73s</span>
+</code></pre></div>
+</div>
+<h3 id="create-flux-operator-namespace">Create Flux Operator namespace<a class="headerlink" href="#create-flux-operator-namespace" title="Permalink to this heading">¶</a></h3>
+<p>Make your namespace for the flux-operator custom resource definition (CRD), which is the yaml file above that generates the MiniCluster:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span>kubectl<span class="w"> </span>create<span class="w"> </span>namespace<span class="w"> </span>flux-operator
+</code></pre></div>
+</div>
 <p>Now let’s run a short experiment with LAMMPS!</p>
 <h2 id="custom-resource-definition">Custom Resource Definition<a class="headerlink" href="#custom-resource-definition" title="Permalink to this heading">¶</a></h2>
 <p>The Custom Resource Definition (CRD) defines our Mini Cluster, and is what we hand to the flux
@@ -895,7 +1065,22 @@ ever!</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span>kubectl<span class="w"> </span>delete<span class="w"> </span>-f<span class="w"> </span>minicluster-lammps.yaml
 </code></pre></div>
 </div>
-<p>.. include:: includes/cleanup.md</p>
+<h2 id="clean-up">Clean up<a class="headerlink" href="#clean-up" title="Permalink to this heading">¶</a></h2>
+<p>Whatever tutorial you choose, don’t forget to clean up at the end!
+You can optionally undeploy the operator (this is again at the root of the operator repository clone)</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span>make<span class="w"> </span>undeploy
+</code></pre></div>
+</div>
+<p>Or the file you used to deploy it:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span>kubectl<span class="w"> </span>delete<span class="w"> </span>-f<span class="w"> </span>examples/dist/flux-operator.yaml
+$<span class="w"> </span>kubectl<span class="w"> </span>delete<span class="w"> </span>-f<span class="w"> </span>examples/dist/flux-operator-dev.yaml
+</code></pre></div>
+</div>
+<p>And then to delete the cluster with gcloud:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span>gcloud<span class="w"> </span>container<span class="w"> </span>clusters<span class="w"> </span>delete<span class="w"> </span>--zone<span class="w"> </span>us-central1-a<span class="w"> </span>flux-cluster
+</code></pre></div>
+</div>
+<p>I like to check in the cloud console to ensure that it was actually deleted.</p>
 <h2 id="customization-and-debugging">Customization and Debugging<a class="headerlink" href="#customization-and-debugging" title="Permalink to this heading">¶</a></h2>
 <h3 id="firewall">Firewall<a class="headerlink" href="#firewall" title="Permalink to this heading">¶</a></h3>
 <p>When I first created my cluster, the nodes could not see one another. I added a few

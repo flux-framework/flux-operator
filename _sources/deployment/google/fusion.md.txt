@@ -1,20 +1,5 @@
 # Snakemake with Fusion Storage
 
-<div class="result docutils container">
-<div class="warning admonition">
-<p class="admonition-title">Warning</p>
-    <p>I haven't gotten the Snakemake run with Flux working in this environment yet -
-    there is some combination of the fusion bind + Flux + snakemake (being installed
-    in a different location) so that we get an error "shell_init no such file or 
-    directory." The likely first thing to try is to get Snakemake installed to the
-    same Python as Flux. The tutorial here will still get the fusion mounts working
-    on the MiniCluster, so if you want to run something else (not Snakemake)
-    likely it will be useful for you!
-</p>
-</div>
-</div>
-
-
 This basic tutorial will walk through creating a MiniCluster to run a Snakemake workflow! You should have
 already [setup your workspace](setup.md), including preparing the Snakemake data in
 Google Storage. The cluster creation commands are slightly modified here, discussed below.
@@ -104,16 +89,7 @@ $ kubectl apply -f examples/storage/google/fusion/daemonset.yaml
 A few things I learned for this daemonset! If you create it in a namespace other than kube-system (and have the
 priority class defined) you'll get an error about quotas. The fix (for now) is to deploy to the kube-system
 namespace. I also adjusted the config.yaml at the bottom to equal the number of nodes in my cluster (2 for this demo)
-and I'm not sure how much that matters (the previous setting was at 20). After you deploy, make sure
-your daemonset pods are running:
-
-```bash
-$ kubectl get -n kube-system pods | grep device
-```
-```console
-smarter-device-manager-qv7xf                             1/1     Running   0          39m
-smarter-device-manager-trtbl                             1/1     Running   0          39m
-```
+and I'm not sure how much that matters (the previous setting was at 20). 
 
 And then label the nodes so they can use the manager:
 
@@ -121,6 +97,16 @@ And then label the nodes so they can use the manager:
 for n in $(kubectl get nodes | tail -n +2 | cut -d' ' -f1 ); do
     kubectl label node $n smarter-device-manager=enabled
 done 
+```
+
+After this, you should have two daemonset pods running:
+
+```bash
+$ kubectl get -n kube-system pods | grep device
+```
+```console
+smarter-device-manager-qv7xf                             1/1     Running   0          39m
+smarter-device-manager-trtbl                             1/1     Running   0          39m
 ```
 
 You can do some jq fu to verify they are there:
@@ -136,10 +122,8 @@ Now we will create the MiniCluster. Note that:
  - It's annotated both to use the Google Service account and be able to use the fuse device!
  - We install fusion and mount at default /fusion in a commands->pre block
  - We have to run flux as root / the container as privileged for fuse.
- - snakemake is run as a launcher so it launches jobs directly as the broker script
  - pod resource requests ask for the fuse mount
- - The organization of a mount is based on the service (e.g., `/fusion/s3` or `/fusion/gs` and both will appear)
-  - The mounted files only appear when you list / request them.
+ - The organization of a mount is based on the service (e.g., `/fusion/s3` or `/fusion/gs` and both will appear with `ls`)
 
 It's probably easiest if you [look at the file](https://github.com/flux-framework/flux-operator/blob/main/examples/storage/google/fusion/minicluster.yaml), 
 which is well-commented. For the permissions, ideally someone can test this out and design a configuration that will allow
@@ -168,22 +152,12 @@ $ kubectl exec -it -n flux-operator flux-sample-0-87ll7 -- bash
 # cd there
 $ cd /fusion/gs/flux-operator-storage/snakemake-workflow
 
-# Connect to the broker instance
-$ sudo -E PATH=$PATH -E PYTHONPATH=$PYTHONPATH flux proxy local:///var/run/flux/local
-
-# Run the workflow! Note there is a bug with the snakemake flux executor
-# I haven't figured out yet, so we run with vanilal snakemake
-$ snakemake --cores 1  --jobs 1
+# Run the workflow!
+$ flux start snakemake --cores 2  --jobs 2 --flux
 ```
 
-So assuming the flux bug is fixed (I guess that's on me...) we would have done:
-
-```bash
-$ snakemake --cores 1  --jobs 1 --flux
-```
-
-And likely this needs refining in terms of the workflow being successful with Flux and how we automate, but
-for a Sunday, it's a pretty good feat to figure out the hard part (the bind I think).
+And likely this needs refining in terms of how we automate (and optimizing the bind and permissions), but
+it's a pretty good feat to figure out given that other storage options have taken up to a week!
 When you exit the container:
 
 ```bash
@@ -193,7 +167,10 @@ $ kubectl delete -f examples/storage/google/fusion/minicluster.yaml
 I think the fix we need is to have Snakemake installed to the same python environment as Flux.
 The issues we are running into come down to paths, etc.
 
-.. include:: includes/cleanup.md
+
+```{include} includes/cleanup.md
+```
+
 
 
 ## How does it work?
@@ -244,40 +221,3 @@ $ tree /fusion/gs/flux-operator-storage
 It's so cool how easy that was to get working! Nice! I know it's a lot of steps, but trust me
 this took an afternoon to figure out after some initial reading, and other storage drivers
 have taken up to a week to figure out.
-
-## Clean up
-
-Whatever tutorial you choose, don't forget to clean up at the end!
-You can optionally undeploy the operator (this is again at the root of the operator repository clone)
-
-```bash
-$ make undeploy
-```
-
-Or the file you used to deploy it:
-
-```bash
-$ kubectl delete -f examples/dist/flux-operator.yaml
-$ kubectl delete -f examples/dist/flux-operator-dev.yaml
-```
-
-And then to delete the cluster with gcloud:
-
-```bash
-$ gcloud container clusters delete --zone us-central1-a flux-cluster
-```
-
-I like to check in the cloud console to ensure that it was actually deleted.
-
-
-## Customization and Debugging
-
-### Firewall
-
-When I first created my cluster, the nodes could not see one another. I added a few
-flags for networking, and looked at firewalls as follows:
-
-```bash
-$ gcloud container clusters describe flux-cluster --zone us-central1-a | grep clusterIpv4Cidr
-```
-I didn't ultimately change anything, but I found this useful.

@@ -680,13 +680,6 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#how-does-it-work" class="md-nav__link">
-    <span title="/deployment/google/fusion.md#how-does-it-work (reference label)" class="md-ellipsis">How does it work?</span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
   <a href="#clean-up" class="md-nav__link">
     <span title="/deployment/google/fusion.md#clean-up (reference label)" class="md-ellipsis">Clean up</span>
   </a>
@@ -694,22 +687,9 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#customization-and-debugging" class="md-nav__link">
-    <span title="/deployment/google/fusion.md#customization-and-debugging (reference label)" class="md-ellipsis">Customization and Debugging</span>
+  <a href="#how-does-it-work" class="md-nav__link">
+    <span title="/deployment/google/fusion.md#how-does-it-work (reference label)" class="md-ellipsis">How does it work?</span>
   </a>
-  
-    <nav class="md-nav" aria-label="Customization and Debugging">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#firewall" class="md-nav__link">
-    <span title="/deployment/google/fusion.md#firewall (reference label)" class="md-ellipsis">Firewall</span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
   
 </li>
       
@@ -814,19 +794,6 @@
   </a>
 
 <h1 id="snakemake-with-fusion-storage">Snakemake with Fusion Storage<a class="headerlink" href="#snakemake-with-fusion-storage" title="Permalink to this heading">¶</a></h1>
-<div class="result docutils container">
-<div class="warning admonition">
-<p class="admonition-title">Warning</p>
-    <p>I haven't gotten the Snakemake run with Flux working in this environment yet -
-    there is some combination of the fusion bind + Flux + snakemake (being installed
-    in a different location) so that we get an error "shell_init no such file or 
-    directory." The likely first thing to try is to get Snakemake installed to the
-    same Python as Flux. The tutorial here will still get the fusion mounts working
-    on the MiniCluster, so if you want to run something else (not Snakemake)
-    likely it will be useful for you!
-</p>
-</div>
-</div>
 <p>This basic tutorial will walk through creating a MiniCluster to run a Snakemake workflow! You should have
 already <a class="reference internal" href="setup.html"><span class="std std-doc">setup your workspace</span></a>, including preparing the Snakemake data in
 Google Storage. The cluster creation commands are slightly modified here, discussed below.</p>
@@ -897,19 +864,19 @@ manager so fuse to be used:</p>
 <p>A few things I learned for this daemonset! If you create it in a namespace other than kube-system (and have the
 priority class defined) you’ll get an error about quotas. The fix (for now) is to deploy to the kube-system
 namespace. I also adjusted the config.yaml at the bottom to equal the number of nodes in my cluster (2 for this demo)
-and I’m not sure how much that matters (the previous setting was at 20). After you deploy, make sure
-your daemonset pods are running:</p>
+and I’m not sure how much that matters (the previous setting was at 20).</p>
+<p>And then label the nodes so they can use the manager:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code><span class="k">for</span><span class="w"> </span>n<span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="k">$(</span>kubectl<span class="w"> </span>get<span class="w"> </span>nodes<span class="w"> </span><span class="p">|</span><span class="w"> </span>tail<span class="w"> </span>-n<span class="w"> </span>+2<span class="w"> </span><span class="p">|</span><span class="w"> </span>cut<span class="w"> </span>-d<span class="s1">&#39; &#39;</span><span class="w"> </span>-f1<span class="w"> </span><span class="k">)</span><span class="p">;</span><span class="w"> </span><span class="k">do</span>
+<span class="w">    </span>kubectl<span class="w"> </span>label<span class="w"> </span>node<span class="w"> </span><span class="nv">$n</span><span class="w"> </span>smarter-device-manager<span class="o">=</span>enabled
+<span class="k">done</span><span class="w"> </span>
+</code></pre></div>
+</div>
+<p>After this, you should have two daemonset pods running:</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span>kubectl<span class="w"> </span>get<span class="w"> </span>-n<span class="w"> </span>kube-system<span class="w"> </span>pods<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>device
 </code></pre></div>
 </div>
 <div class="highlight-console notranslate"><div class="highlight"><pre><span></span><code><span class="go">smarter-device-manager-qv7xf                             1/1     Running   0          39m</span>
 <span class="go">smarter-device-manager-trtbl                             1/1     Running   0          39m</span>
-</code></pre></div>
-</div>
-<p>And then label the nodes so they can use the manager:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code><span class="k">for</span><span class="w"> </span>n<span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="k">$(</span>kubectl<span class="w"> </span>get<span class="w"> </span>nodes<span class="w"> </span><span class="p">|</span><span class="w"> </span>tail<span class="w"> </span>-n<span class="w"> </span>+2<span class="w"> </span><span class="p">|</span><span class="w"> </span>cut<span class="w"> </span>-d<span class="s1">&#39; &#39;</span><span class="w"> </span>-f1<span class="w"> </span><span class="k">)</span><span class="p">;</span><span class="w"> </span><span class="k">do</span>
-<span class="w">    </span>kubectl<span class="w"> </span>label<span class="w"> </span>node<span class="w"> </span><span class="nv">$n</span><span class="w"> </span>smarter-device-manager<span class="o">=</span>enabled
-<span class="k">done</span><span class="w"> </span>
 </code></pre></div>
 </div>
 <p>You can do some jq fu to verify they are there:</p>
@@ -923,10 +890,8 @@ your daemonset pods are running:</p>
 <li><p>It’s annotated both to use the Google Service account and be able to use the fuse device!</p></li>
 <li><p>We install fusion and mount at default /fusion in a commands-&gt;pre block</p></li>
 <li><p>We have to run flux as root / the container as privileged for fuse.</p></li>
-<li><p>snakemake is run as a launcher so it launches jobs directly as the broker script</p></li>
 <li><p>pod resource requests ask for the fuse mount</p></li>
-<li><p>The organization of a mount is based on the service (e.g., <code class="docutils literal notranslate"><span class="pre">/fusion/s3</span></code> or <code class="docutils literal notranslate"><span class="pre">/fusion/gs</span></code> and both will appear)</p></li>
-<li><p>The mounted files only appear when you list / request them.</p></li>
+<li><p>The organization of a mount is based on the service (e.g., <code class="docutils literal notranslate"><span class="pre">/fusion/s3</span></code> or <code class="docutils literal notranslate"><span class="pre">/fusion/gs</span></code> and both will appear with <code class="docutils literal notranslate"><span class="pre">ls</span></code>)</p></li>
 </ul>
 <p>It’s probably easiest if you <a class="reference external" href="https://github.com/flux-framework/flux-operator/blob/main/examples/storage/google/fusion/minicluster.yaml">look at the file</a>,
 which is well-commented. For the permissions, ideally someone can test this out and design a configuration that will allow
@@ -948,27 +913,34 @@ $<span class="w"> </span>kubectl<span class="w"> </span><span class="nb">exec</s
 <span class="c1"># cd there</span>
 $<span class="w"> </span><span class="nb">cd</span><span class="w"> </span>/fusion/gs/flux-operator-storage/snakemake-workflow
 
-<span class="c1"># Connect to the broker instance</span>
-$<span class="w"> </span>sudo<span class="w"> </span>-E<span class="w"> </span><span class="nv">PATH</span><span class="o">=</span><span class="nv">$PATH</span><span class="w"> </span>-E<span class="w"> </span><span class="nv">PYTHONPATH</span><span class="o">=</span><span class="nv">$PYTHONPATH</span><span class="w"> </span>flux<span class="w"> </span>proxy<span class="w"> </span>local:///var/run/flux/local
-
-<span class="c1"># Run the workflow! Note there is a bug with the snakemake flux executor</span>
-<span class="c1"># I haven&#39;t figured out yet, so we run with vanilal snakemake</span>
-$<span class="w"> </span>snakemake<span class="w"> </span>--cores<span class="w"> </span><span class="m">1</span><span class="w">  </span>--jobs<span class="w"> </span><span class="m">1</span>
+<span class="c1"># Run the workflow!</span>
+$<span class="w"> </span>flux<span class="w"> </span>start<span class="w"> </span>snakemake<span class="w"> </span>--cores<span class="w"> </span><span class="m">2</span><span class="w">  </span>--jobs<span class="w"> </span><span class="m">2</span><span class="w"> </span>--flux
 </code></pre></div>
 </div>
-<p>So assuming the flux bug is fixed (I guess that’s on me…) we would have done:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span>snakemake<span class="w"> </span>--cores<span class="w"> </span><span class="m">1</span><span class="w">  </span>--jobs<span class="w"> </span><span class="m">1</span><span class="w"> </span>--flux
-</code></pre></div>
-</div>
-<p>And likely this needs refining in terms of the workflow being successful with Flux and how we automate, but
-for a Sunday, it’s a pretty good feat to figure out the hard part (the bind I think).
+<p>And likely this needs refining in terms of how we automate (and optimizing the bind and permissions), but
+it’s a pretty good feat to figure out given that other storage options have taken up to a week!
 When you exit the container:</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span>kubectl<span class="w"> </span>delete<span class="w"> </span>-f<span class="w"> </span>examples/storage/google/fusion/minicluster.yaml
 </code></pre></div>
 </div>
 <p>I think the fix we need is to have Snakemake installed to the same python environment as Flux.
 The issues we are running into come down to paths, etc.</p>
-<p>.. include:: includes/cleanup.md</p>
+<h2 id="clean-up">Clean up<a class="headerlink" href="#clean-up" title="Permalink to this heading">¶</a></h2>
+<p>Whatever tutorial you choose, don’t forget to clean up at the end!
+You can optionally undeploy the operator (this is again at the root of the operator repository clone)</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span>make<span class="w"> </span>undeploy
+</code></pre></div>
+</div>
+<p>Or the file you used to deploy it:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span>kubectl<span class="w"> </span>delete<span class="w"> </span>-f<span class="w"> </span>examples/dist/flux-operator.yaml
+$<span class="w"> </span>kubectl<span class="w"> </span>delete<span class="w"> </span>-f<span class="w"> </span>examples/dist/flux-operator-dev.yaml
+</code></pre></div>
+</div>
+<p>And then to delete the cluster with gcloud:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span>gcloud<span class="w"> </span>container<span class="w"> </span>clusters<span class="w"> </span>delete<span class="w"> </span>--zone<span class="w"> </span>us-central1-a<span class="w"> </span>flux-cluster
+</code></pre></div>
+</div>
+<p>I like to check in the cloud console to ensure that it was actually deleted.</p>
 <h2 id="how-does-it-work">How does it work?<a class="headerlink" href="#how-does-it-work" title="Permalink to this heading">¶</a></h2>
 <p>You can read <a class="reference external" href="https://seqera.io/fusion/">more about fusion here</a>. Specifically, I was confused why it didn’t require me to define
 a bucket anywhere. The reason is because the request for a bucket path happens when you list the filesystem. E.g.,
@@ -1014,30 +986,6 @@ in storage!</p>
 <p>It’s so cool how easy that was to get working! Nice! I know it’s a lot of steps, but trust me
 this took an afternoon to figure out after some initial reading, and other storage drivers
 have taken up to a week to figure out.</p>
-<h2 id="clean-up">Clean up<a class="headerlink" href="#clean-up" title="Permalink to this heading">¶</a></h2>
-<p>Whatever tutorial you choose, don’t forget to clean up at the end!
-You can optionally undeploy the operator (this is again at the root of the operator repository clone)</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span>make<span class="w"> </span>undeploy
-</code></pre></div>
-</div>
-<p>Or the file you used to deploy it:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span>kubectl<span class="w"> </span>delete<span class="w"> </span>-f<span class="w"> </span>examples/dist/flux-operator.yaml
-$<span class="w"> </span>kubectl<span class="w"> </span>delete<span class="w"> </span>-f<span class="w"> </span>examples/dist/flux-operator-dev.yaml
-</code></pre></div>
-</div>
-<p>And then to delete the cluster with gcloud:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span>gcloud<span class="w"> </span>container<span class="w"> </span>clusters<span class="w"> </span>delete<span class="w"> </span>--zone<span class="w"> </span>us-central1-a<span class="w"> </span>flux-cluster
-</code></pre></div>
-</div>
-<p>I like to check in the cloud console to ensure that it was actually deleted.</p>
-<h2 id="customization-and-debugging">Customization and Debugging<a class="headerlink" href="#customization-and-debugging" title="Permalink to this heading">¶</a></h2>
-<h3 id="firewall">Firewall<a class="headerlink" href="#firewall" title="Permalink to this heading">¶</a></h3>
-<p>When I first created my cluster, the nodes could not see one another. I added a few
-flags for networking, and looked at firewalls as follows:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span>gcloud<span class="w"> </span>container<span class="w"> </span>clusters<span class="w"> </span>describe<span class="w"> </span>flux-cluster<span class="w"> </span>--zone<span class="w"> </span>us-central1-a<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>clusterIpv4Cidr
-</code></pre></div>
-</div>
-<p>I didn’t ultimately change anything, but I found this useful.</p>
 
 
   <hr>
