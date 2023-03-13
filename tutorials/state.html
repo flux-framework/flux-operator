@@ -555,6 +555,13 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
+  <a href="#saving-pending-jobs" class="md-nav__link">
+    <span title="/tutorials/state.md#saving-pending-jobs (reference label)" class="md-ellipsis">Saving Pending Jobs</span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#basic-saving-jobs-and-metadata" class="md-nav__link">
     <span title="/tutorials/state.md#basic-saving-jobs-and-metadata (reference label)" class="md-ellipsis">Basic Saving Jobs and Metadata</span>
   </a>
@@ -741,6 +748,34 @@ of difficulty:</p>
 this will be using the Flux Operator Python SDK (since we need to create multiple clusters)
 in a reasonable way) but for the purposes of explanation, minicluster.yaml files are provided
 as well.</p>
+<h2 id="saving-pending-jobs">Saving Pending Jobs<a class="headerlink" href="#saving-pending-jobs" title="Permalink to this heading">¶</a></h2>
+<blockquote>
+<div><p>Pausing scheduling and the queue in a populated queue</p>
+</div></blockquote>
+<p>This example shows (via the Python SDK) how we can pause and stop a running queue and move
+the jobs to a new MiniCluster to continue.</p>
+<p><strong><a class="reference external" href="https://github.com/flux-framework/flux-operator/blob/main/sdk/python/v1alpha1/examples/state-pending-jobs-minicluster.py">Tutorial File</a></strong></p>
+<p>To run this example:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span>python<span class="w"> </span>sdk/python/v1alpha1/examples/state-pending-jobs-minicluster.py<span class="w"> </span>
+</code></pre></div>
+</div>
+<p>Using this example, we are able to (with slight modification) test:</p>
+<ul class="simple">
+<li><p>Starting jobs on one cluster and running on another</p></li>
+<li><p>Changing the size of the cluster to be larger</p></li>
+<li><p>Changing the size of the cluster to be smaller</p></li>
+</ul>
+<p>For the different cases, you can adjust the original size (and updated size) in the script
+by changing the <code class="docutils literal notranslate"><span class="pre">minicluster.size</span></code>. All cases are successful to pause and resume
+on the new cluster (regardless of size) however there are always a few failing
+jobs that seem to not have been able to save information. As an example:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span>flux<span class="w"> </span>job<span class="w"> </span>attach<span class="w"> </span>ƒrGXgioy<span class="w"> </span>
+<span class="m">142</span>.227s:<span class="w"> </span>job.exception<span class="w"> </span><span class="nv">type</span><span class="o">=</span><span class="nb">exec</span><span class="w"> </span><span class="nv">severity</span><span class="o">=</span><span class="m">0</span><span class="w"> </span>failed<span class="w"> </span>to<span class="w"> </span>create<span class="w"> </span>guest<span class="w"> </span>ns:<span class="w"> </span>No<span class="w"> </span>such<span class="w"> </span>file<span class="w"> </span>or<span class="w"> </span>directory
+<span class="m">142</span>.410s:<span class="w"> </span>job.exception<span class="w"> </span><span class="nv">type</span><span class="o">=</span>scheduler-restart<span class="w"> </span><span class="nv">severity</span><span class="o">=</span><span class="m">0</span><span class="w"> </span>failed<span class="w"> </span>to<span class="w"> </span>reallocate<span class="w"> </span>R<span class="w"> </span><span class="k">for</span><span class="w"> </span>running<span class="w"> </span>job
+flux-job:<span class="w"> </span>flux_job_event_watch_get:<span class="w"> </span>Operation<span class="w"> </span>not<span class="w"> </span>supported
+</code></pre></div>
+</div>
+<p>We will be looking into this issue further.</p>
 <h2 id="basic-saving-jobs-and-metadata">Basic Saving Jobs and Metadata<a class="headerlink" href="#basic-saving-jobs-and-metadata" title="Permalink to this heading">¶</a></h2>
 <blockquote>
 <div><p>Saving state of the jobs queue and metadata, after runs are complete (between two MiniClusters)</p>
