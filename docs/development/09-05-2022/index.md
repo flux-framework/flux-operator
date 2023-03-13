@@ -32,6 +32,6 @@ Some current additional notes:
 2. This design wasn't very good, but I learned a ton (and was on cloud 9 working on it!)
 
 
-![design-2-v.png](design-2-v.png)
+![design-2-v.png](design-two-v.png)
 
 The drawing session [can be found here](https://excalidraw.com/#json=QU4SQU-NMBWZS6dFiqa_1,3pI-im0G_WGhF7UdgJdUOg)

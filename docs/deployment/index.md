@@ -7,6 +7,11 @@ any questions, please [let us know](https://github.com/flux-framework/flux-opera
 :maxdepth: 3
 minikube
 aws
-google
 ibm
+```
+
+```{toctree}
+:caption: Google Cloud
+:maxdepth: 3
+google/index.md
 ```

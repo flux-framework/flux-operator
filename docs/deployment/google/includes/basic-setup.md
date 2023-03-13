@@ -39,7 +39,7 @@ $ gcloud beta container clusters create flux-cluster --project $GOOGLE_PROJECT \
 In your Google cloud interface, you should be able to see the cluster! Note
 this might take a few minutes.
 
-![img/cluster.png](img/cluster.png)
+![img/cluster.png](../img/cluster.png)
 
 I also chose a tiny size (nodes and instances) anticipating having it up longer to figure things out.
 
