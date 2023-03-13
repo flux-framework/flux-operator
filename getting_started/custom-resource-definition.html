@@ -683,6 +683,20 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#serviceaccountname" class="md-nav__link">
+    <span title="/getting_started/custom-resource-definition.md#serviceaccountname (reference label)" class="md-ellipsis">service<wbr>Account<wbr>Name</span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#nodeselector" class="md-nav__link">
+    <span title="/getting_started/custom-resource-definition.md#nodeselector (reference label)" class="md-ellipsis">node<wbr>Selector</span>
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -812,6 +826,13 @@
           <li class="md-nav__item">
   <a href="#runfluxasroot" class="md-nav__link">
     <span title="/getting_started/custom-resource-definition.md#runfluxasroot (reference label)" class="md-ellipsis">run<wbr>Flux<wbr>As<wbr>Root</span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#prefix" class="md-nav__link">
+    <span title="/getting_started/custom-resource-definition.md#prefix (reference label)" class="md-ellipsis">prefix</span>
   </a>
   
 </li>
@@ -1409,6 +1430,20 @@ string format that can be parsed) and all others are considered some kind of qua
 <span class="w">    </span><span class="nt">cpu</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">4</span>
 </code></pre></div>
 </div>
+<h4 id="serviceaccountname">serviceAccountName<a class="headerlink" href="#serviceaccountname" title="Permalink to this heading">¶</a></h4>
+<p>To give a service account name to your pods, simply do:</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><code><span class="nt">pod</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">serviceAccountName</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">my-service-account</span>
+</code></pre></div>
+</div>
+<h4 id="nodeselector">nodeSelector<a class="headerlink" href="#nodeselector" title="Permalink to this heading">¶</a></h4>
+<p>A node selector is a set of key value pairs that helps to schedule pods to the right nodes! You can
+add nodeSelector attributes to your pod as follows:</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><code><span class="nt">pod</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">nodeSelector</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">iam.gke.io/gke-metadata-server-enabled</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;true&quot;</span>
+</code></pre></div>
+</div>
 <h3 id="containers">containers<a class="headerlink" href="#containers" title="Permalink to this heading">¶</a></h3>
 <p>Early on we identified that a job could include more than one container, where there might be a primary container
 running Flux, and others that provide services. Note that currently we only allow one container to be a FluxRunner,
@@ -1613,6 +1648,17 @@ can set this flag to enable that:</p>
 </div>
 <p>This defaults to false, meaning we run everything as the Flux user, and you are encouraged to try to figure out
 setting up your storage to be owned by that user.</p>
+<h5 id="prefix">prefix<a class="headerlink" href="#prefix" title="Permalink to this heading">¶</a></h5>
+<p>This is a “wrapper” to any of flux submit, broker, or start. It typically is needed if you need to wrap
+the initial command with something else. As an example, to get a storage driver working in the context
+of a command, you might need to prefix the executable (see <a class="reference internal" href="../deployment/google/fusion.html"><span class="std std-doc">fusion storage</span></a>).</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><code><span class="nt">containers</span><span class="p">:</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">image</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">my-flux-image</span>
+<span class="w">    </span><span class="l l-Scalar l-Scalar-Plain">...</span>
+<span class="w">    </span><span class="nt">commands</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">prefix</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">fusion</span>
+</code></pre></div>
+</div>
 <h4 id="fluxuser">fluxUser<a class="headerlink" href="#fluxuser" title="Permalink to this heading">¶</a></h4>
 <p>If you need to change the uid or name for the flux user, you can define that here.</p>
 <div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><code><span class="nt">containers</span><span class="p">:</span>
@@ -1709,7 +1755,7 @@ or define your own as follows:</p>
   <small>
     
       Last update:
-      Mar 12, 2023
+      Mar 13, 2023
     
   </small>
 </div>

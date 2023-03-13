@@ -524,15 +524,15 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="google.html" class="md-nav__link">
-    <span title="/deployment/google.md (reference label)" class="md-ellipsis">Google Cloud</span>
+  <a href="ibm.html" class="md-nav__link">
+    <span title="/deployment/ibm.md (reference label)" class="md-ellipsis">IBM Cloud</span>
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="ibm.html" class="md-nav__link">
-    <span title="/deployment/ibm.md (reference label)" class="md-ellipsis">IBM Cloud</span>
+  <a href="google/index.html" class="md-nav__link">
+    <span title="/deployment/google/index.rst (reference label)" class="md-ellipsis">Google Cloud</span>
   </a>
   
 </li>
@@ -660,35 +660,6 @@ any questions, please <a class="reference external" href="https://github.com/flu
 <li class="toctree-l2"><a class="reference internal" href="aws.html#clean-up">Clean up</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="google.html">Google Cloud</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="google.html#setup">Setup</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="google.html#install">Install</a></li>
-<li class="toctree-l3"><a class="reference internal" href="google.html#create-cluster">Create Cluster</a></li>
-<li class="toctree-l3"><a class="reference internal" href="google.html#get-credentials">Get Credentials</a></li>
-<li class="toctree-l3"><a class="reference internal" href="google.html#deploy-operator">Deploy Operator</a></li>
-<li class="toctree-l3"><a class="reference internal" href="google.html#create-flux-operator-namespace">Create Flux Operator namespace</a></li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="google.html#lammps-on-google-kubernetes-engine">Lammps on Google Kubernetes Engine</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="google.html#custom-resource-definition">Custom Resource Definition</a></li>
-<li class="toctree-l3"><a class="reference internal" href="google.html#create-the-lammps-job">Create the Lammps Job</a></li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="google.html#snakemake-requiring-storage-on-google-kubernetes-engine">Snakemake (requiring storage) on Google Kubernetes Engine</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="google.html#prepare-data">Prepare Data</a></li>
-<li class="toctree-l3"><a class="reference internal" href="google.html#install-the-constainer-storage-driver-csi">Install the Constainer Storage Driver (CSI)</a></li>
-<li class="toctree-l3"><a class="reference internal" href="google.html#permissions-via-secrets">Permissions via Secrets</a></li>
-<li class="toctree-l3"><a class="reference internal" href="google.html#storage-class">Storage Class</a></li>
-<li class="toctree-l3"><a class="reference internal" href="google.html#snakemake-minicluster">Snakemake MiniCluster</a></li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="google.html#clean-up">Clean up</a></li>
-<li class="toctree-l2"><a class="reference internal" href="google.html#customization-and-debugging">Customization and Debugging</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="google.html#firewall">Firewall</a></li>
-</ul>
-</li>
-</ul>
-</li>
 <li class="toctree-l1"><a class="reference internal" href="ibm.html">IBM Cloud</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="ibm.html#setup">Setup</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="ibm.html#credentials">Credentials</a></li>
@@ -709,6 +680,39 @@ any questions, please <a class="reference external" href="https://github.com/flu
 </li>
 </ul>
 </div>
+<div class="toctree-wrapper compound">
+<p class="caption" role="heading"><span class="caption-text">Google Cloud</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="google/index.html">Google Cloud</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="google/setup.html">Setup</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="google/setup.html#install">Install</a></li>
+<li class="toctree-l3"><a class="reference internal" href="google/setup.html#prepare-data">Prepare Data</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="google/basic.html">Lammps on Google Cloud</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="google/basic.html#custom-resource-definition">Custom Resource Definition</a></li>
+<li class="toctree-l3"><a class="reference internal" href="google/basic.html#create-the-lammps-job">Create the Lammps Job</a></li>
+<li class="toctree-l3"><a class="reference internal" href="google/basic.html#customization-and-debugging">Customization and Debugging</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="google/csi.html">Snakemake (requiring storage) on Google Kubernetes Engine</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="google/csi.html#install-the-csi">Install the CSI</a></li>
+<li class="toctree-l3"><a class="reference internal" href="google/csi.html#storage-class">Storage Class</a></li>
+<li class="toctree-l3"><a class="reference internal" href="google/csi.html#snakemake-minicluster">Snakemake MiniCluster</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="google/fusion.html">Snakemake with Fusion Storage</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="google/fusion.html#create-cluster">Create Cluster</a></li>
+<li class="toctree-l3"><a class="reference internal" href="google/fusion.html#running-snakemake">Running Snakemake</a></li>
+<li class="toctree-l3"><a class="reference internal" href="google/fusion.html#how-does-it-work">How does it work?</a></li>
+<li class="toctree-l3"><a class="reference internal" href="google/fusion.html#clean-up">Clean up</a></li>
+<li class="toctree-l3"><a class="reference internal" href="google/fusion.html#customization-and-debugging">Customization and Debugging</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</div>
 
 
   <hr>
@@ -716,7 +720,7 @@ any questions, please <a class="reference external" href="https://github.com/flu
   <small>
     
       Last update:
-      Mar 12, 2023
+      Mar 13, 2023
     
   </small>
 </div>
