@@ -68,6 +68,9 @@ func swaggify(name string) string {
 	// k8s.io/apimachinery/pkg/util/intstr.IntOrString -> IntOrString
 	name = strings.Replace(name, "k8s.io/apimachinery/pkg/util/intstr.", "", -1)
 
+	// k8s.io/api/core/v1.SecurityContext -> v1SecurityContext
+	name = strings.Replace(name, "k8s.io/api/core/v1.SecurityContext", "v1SecurityContext", -1)
+
 	// k8s.io/apimachinery/pkg/apis/meta/v1.ObjectMeta
 	name = strings.Replace(name, "k8s.io/apimachinery/pkg/apis/meta/v1.ObjectMeta", "v1ObjectMeta", -1)
 	return name

@@ -293,7 +293,7 @@
         "securityContext": {
           "description": "Security Context https://kubernetes.io/docs/tasks/configure-pod-container/security-context/",
           "default": {},
-          "$ref": "#/definitions/k8s.io~1api~1core~1v1.SecurityContext"
+          "$ref": "#/definitions/v1SecurityContext"
         },
         "volumes": {
           "description": "Volumes that can be mounted (must be defined in volumes)",

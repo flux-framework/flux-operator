@@ -52,7 +52,7 @@ class MiniClusterContainer(object):
         'pull_always': 'bool',
         'resources': 'ContainerResources',
         'run_flux': 'bool',
-        'security_context': 'K8sIoApiCoreV1SecurityContext',
+        'security_context': 'V1SecurityContext',
         'volumes': 'dict(str, ContainerVolume)',
         'working_dir': 'str'
     }
@@ -592,7 +592,7 @@ class MiniClusterContainer(object):
 
 
         :return: The security_context of this MiniClusterContainer.  # noqa: E501
-        :rtype: K8sIoApiCoreV1SecurityContext
+        :rtype: V1SecurityContext
         """
         return self._security_context
 
@@ -602,7 +602,7 @@ class MiniClusterContainer(object):
 
 
         :param security_context: The security_context of this MiniClusterContainer.  # noqa: E501
-        :type security_context: K8sIoApiCoreV1SecurityContext
+        :type security_context: V1SecurityContext
         """
 
         self._security_context = security_context
