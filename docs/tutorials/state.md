@@ -12,6 +12,41 @@ this will be using the Flux Operator Python SDK (since we need to create multipl
 in a reasonable way) but for the purposes of explanation, minicluster.yaml files are provided
 as well.
 
+## Saving Pending Jobs
+
+> Pausing scheduling and the queue in a populated queue
+
+This example shows (via the Python SDK) how we can pause and stop a running queue and move
+the jobs to a new MiniCluster to continue.
+
+ **[Tutorial File](https://github.com/flux-framework/flux-operator/blob/main/sdk/python/v1alpha1/examples/state-pending-jobs-minicluster.py)**
+
+To run this example:
+
+```bash
+$ python sdk/python/v1alpha1/examples/state-pending-jobs-minicluster.py 
+```
+
+Using this example, we are able to (with slight modification) test:
+
+ - Starting jobs on one cluster and running on another
+ - Changing the size of the cluster to be larger
+ - Changing the size of the cluster to be smaller
+
+For the different cases, you can adjust the original size (and updated size) in the script
+by changing the `minicluster.size`. All cases are successful to pause and resume
+on the new cluster (regardless of size) however there are always a few failing
+jobs that seem to not have been able to save information. As an example:
+
+```bash
+$ flux job attach ƒrGXgioy 
+142.227s: job.exception type=exec severity=0 failed to create guest ns: No such file or directory
+142.410s: job.exception type=scheduler-restart severity=0 failed to reallocate R for running job
+flux-job: flux_job_event_watch_get: Operation not supported
+```
+
+We will be looking into this issue further.
+
 ## Basic Saving Jobs and Metadata
 
 > Saving state of the jobs queue and metadata, after runs are complete (between two MiniClusters)
