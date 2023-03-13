@@ -122,10 +122,8 @@ Now we will create the MiniCluster. Note that:
  - It's annotated both to use the Google Service account and be able to use the fuse device!
  - We install fusion and mount at default /fusion in a commands->pre block
  - We have to run flux as root / the container as privileged for fuse.
- - snakemake is run as a launcher so it launches jobs directly as the broker script
  - pod resource requests ask for the fuse mount
- - The organization of a mount is based on the service (e.g., `/fusion/s3` or `/fusion/gs` and both will appear)
-  - The mounted files only appear when you list / request them.
+ - The organization of a mount is based on the service (e.g., `/fusion/s3` or `/fusion/gs` and both will appear with `ls`)
 
 It's probably easiest if you [look at the file](https://github.com/flux-framework/flux-operator/blob/main/examples/storage/google/fusion/minicluster.yaml), 
 which is well-commented. For the permissions, ideally someone can test this out and design a configuration that will allow
