@@ -110,7 +110,7 @@ api: generate api
 	rm -rf ./sdk/python/${API_VERSION}/fluxoperator/model/*
 	rm -rf ./sdk/python/${API_VERSION}/fluxoperator/test/test_*.py
 	java -jar ${SWAGGER_JAR} generate -i ${SWAGGER_API_JSON} -g python-legacy -o ./sdk/python/${API_VERSION} -c ./hack/python-sdk/swagger_config.json --git-repo-id flux-operator --git-user-id flux-framework
-#cp ./hack/python-sdk/template/* ./sdk/python/${API_VERSION}/
+	cp ./hack/python-sdk/template/* ./sdk/python/${API_VERSION}/
 
 # These were needed for the python (not python-legacy)
 # cp ./hack/python-sdk/fluxoperator/* ./sdk/python/${API_VERSION}/fluxoperator/model/
