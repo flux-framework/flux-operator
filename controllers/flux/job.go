@@ -61,11 +61,13 @@ func (r *MiniClusterReconciler) newMiniClusterJob(
 				},
 				Spec: corev1.PodSpec{
 					// matches the service
-					Subdomain:         restfulServiceName,
-					SetHostnameAsFQDN: &setAsFQDN,
-					Volumes:           getVolumes(cluster),
-					RestartPolicy:     corev1.RestartPolicyOnFailure,
-					ImagePullSecrets:  getImagePullSecrets(cluster),
+					Subdomain:          restfulServiceName,
+					SetHostnameAsFQDN:  &setAsFQDN,
+					Volumes:            getVolumes(cluster),
+					RestartPolicy:      corev1.RestartPolicyOnFailure,
+					ImagePullSecrets:   getImagePullSecrets(cluster),
+					ServiceAccountName: cluster.Spec.Pod.ServiceAccountName,
+					NodeSelector:       cluster.Spec.Pod.NodeSelector,
 				}},
 		},
 	}
@@ -160,6 +162,7 @@ func (r *MiniClusterReconciler) getMiniClusterContainers(
 			TTY:             true,
 			Lifecycle:       lifecycle,
 			Resources:       resources,
+			SecurityContext: &container.SecurityContext,
 		}
 
 		// Only add command if we actually have one

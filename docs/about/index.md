@@ -17,7 +17,6 @@ If you have any questions, please [let us know](https://github.com/flux-framewor
 
 ```{toctree}
 :maxdepth: 3
-about
 contributing
 license
 ```

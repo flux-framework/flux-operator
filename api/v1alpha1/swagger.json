@@ -15,6 +15,11 @@
           "type": "string",
           "default": ""
         },
+        "prefix": {
+          "description": "Prefix to flux start / submit / broker Typically used for a wrapper command to mount, etc.",
+          "type": "string",
+          "default": ""
+        },
         "runFluxAsRoot": {
           "description": "Run flux start as root - required for some storage binds",
           "type": "boolean",
@@ -284,6 +289,11 @@
           "description": "Main container to run flux (only should be one)",
           "type": "boolean",
           "default": false
+        },
+        "securityContext": {
+          "description": "Security Context https://kubernetes.io/docs/tasks/configure-pod-container/security-context/",
+          "default": {},
+          "$ref": "#/definitions/v1SecurityContext"
         },
         "volumes": {
           "description": "Volumes that can be mounted (must be defined in volumes)",
@@ -579,6 +589,14 @@
             "default": ""
           }
         },
+        "nodeSelector": {
+          "description": "NodeSelectors for a pod",
+          "type": "object",
+          "additionalProperties": {
+            "type": "string",
+            "default": ""
+          }
+        },
         "resources": {
           "description": "Resources include limits and requests",
           "type": "object",
@@ -586,6 +604,10 @@
             "default": {},
             "$ref": "#/definitions/IntOrString"
           }
+        },
+        "serviceAccountName": {
+          "description": "Service account name for the pod",
+          "type": "string"
         }
       }
     }

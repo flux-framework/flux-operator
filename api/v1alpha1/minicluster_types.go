@@ -13,6 +13,7 @@ package v1alpha1
 import (
 	"fmt"
 
+	v1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/util/intstr"
 )
@@ -143,6 +144,14 @@ type PodSpec struct {
 	// Labels for each pod
 	// +optional
 	Labels map[string]string `json:"labels"`
+
+	// Service account name for the pod
+	// +optional
+	ServiceAccountName string `json:"serviceAccountName,omitempty"`
+
+	// NodeSelectors for a pod
+	// +optional
+	NodeSelector map[string]string `json:"nodeSelector,omitempty"`
 
 	// Resources include limits and requests
 	// +optional
@@ -376,6 +385,11 @@ type MiniClusterContainer struct {
 	// More specific or detailed commands for just workers/broker
 	// +optional
 	Commands Commands `json:"commands"`
+
+	// Security Context
+	// https://kubernetes.io/docs/tasks/configure-pod-container/security-context/
+	// +optional
+	SecurityContext v1.SecurityContext `json:"securityContext"`
 }
 
 type LifeCycle struct {
@@ -406,6 +420,11 @@ type Commands struct {
 	// +default=false
 	// +optional
 	RunFluxAsRoot bool `json:"runFluxAsRoot,omitempty"`
+
+	// Prefix to flux start / submit / broker
+	// Typically used for a wrapper command to mount, etc.
+	// +optional
+	Prefix string `json:"prefix"`
 
 	// pre command is run after global PreCommand, before anything else
 	// +optional
