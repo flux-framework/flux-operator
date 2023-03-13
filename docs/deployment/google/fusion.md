@@ -164,9 +164,6 @@ When you exit the container:
 $ kubectl delete -f examples/storage/google/fusion/minicluster.yaml
 ```
 
-I think the fix we need is to have Snakemake installed to the same python environment as Flux.
-The issues we are running into come down to paths, etc.
-
 
 ```{include} includes/cleanup.md
 ```
