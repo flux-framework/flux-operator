@@ -23,7 +23,7 @@ Name | Type | Description | Notes
 **pull_always** | **bool** | Allow the user to dictate pulling By default we pull if not present. Setting this to true will indicate to pull always | [optional] [default to False]
 **resources** | [**ContainerResources**](ContainerResources.md) |  | [optional] 
 **run_flux** | **bool** | Main container to run flux (only should be one) | [optional] [default to False]
-**security_context** | [**V1SecurityContext**](V1SecurityContext.md) |  | [optional] 
+**security_context** | [**SecurityContext**](SecurityContext.md) |  | [optional] 
 **volumes** | [**dict(str, ContainerVolume)**](ContainerVolume.md) | Volumes that can be mounted (must be defined in volumes) | [optional] 
 **working_dir** | **str** | Working directory to run command from | [optional] [default to '']
 

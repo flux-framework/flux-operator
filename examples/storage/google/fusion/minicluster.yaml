@@ -31,7 +31,7 @@ spec:
 
       # This image has snakemake installed, and although it has data, we will
       # provide it as a volume to the container to demonstrate that (and share it)
-    - image: ghcr.io/rse-ops/atacseq:app-latest
+    - image: ghcr.io/rse-ops/atacseq-vanilla:app-latest
 
       # I hope this trickles up to the pod
       resources:

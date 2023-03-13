@@ -41,6 +41,7 @@ func GetOpenAPIDefinitions(ref common.ReferenceCallback) map[string]common.OpenA
 		"./api/v1alpha1/.MiniClusterUser":           schema__api_v1alpha1__MiniClusterUser(ref),
 		"./api/v1alpha1/.MiniClusterVolume":         schema__api_v1alpha1__MiniClusterVolume(ref),
 		"./api/v1alpha1/.PodSpec":                   schema__api_v1alpha1__PodSpec(ref),
+		"./api/v1alpha1/.SecurityContext":           schema__api_v1alpha1__SecurityContext(ref),
 	}
 }
 
@@ -567,14 +568,14 @@ func schema__api_v1alpha1__MiniClusterContainer(ref common.ReferenceCallback) co
 						SchemaProps: spec.SchemaProps{
 							Description: "Security Context https://kubernetes.io/docs/tasks/configure-pod-container/security-context/",
 							Default:     map[string]interface{}{},
-							Ref:         ref("k8s.io/api/core/v1.SecurityContext"),
+							Ref:         ref("./api/v1alpha1/.SecurityContext"),
 						},
 					},
 				},
 			},
 		},
 		Dependencies: []string{
-			"./api/v1alpha1/.Commands", "./api/v1alpha1/.ContainerResources", "./api/v1alpha1/.ContainerVolume", "./api/v1alpha1/.FluxUser", "./api/v1alpha1/.LifeCycle", "./api/v1alpha1/.MiniClusterExistingVolume", "k8s.io/api/core/v1.SecurityContext"},
+			"./api/v1alpha1/.Commands", "./api/v1alpha1/.ContainerResources", "./api/v1alpha1/.ContainerVolume", "./api/v1alpha1/.FluxUser", "./api/v1alpha1/.LifeCycle", "./api/v1alpha1/.MiniClusterExistingVolume", "./api/v1alpha1/.SecurityContext"},
 	}
 }
 
@@ -1107,5 +1108,24 @@ func schema__api_v1alpha1__PodSpec(ref common.ReferenceCallback) common.OpenAPID
 		},
 		Dependencies: []string{
 			"k8s.io/apimachinery/pkg/util/intstr.IntOrString"},
+	}
+}
+
+func schema__api_v1alpha1__SecurityContext(ref common.ReferenceCallback) common.OpenAPIDefinition {
+	return common.OpenAPIDefinition{
+		Schema: spec.Schema{
+			SchemaProps: spec.SchemaProps{
+				Type: []string{"object"},
+				Properties: map[string]spec.Schema{
+					"privileged": {
+						SchemaProps: spec.SchemaProps{
+							Description: "Privileged container",
+							Type:        []string{"boolean"},
+							Format:      "",
+						},
+					},
+				},
+			},
+		},
 	}
 }
