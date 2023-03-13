@@ -150,6 +150,9 @@ func (r *MiniClusterReconciler) getMiniClusterContainers(
 		if err != nil {
 			return containers, err
 		}
+		securityContext := corev1.SecurityContext{
+			Privileged: &container.SecurityContext.Privileged,
+		}
 		newContainer := corev1.Container{
 
 			// Call this the driver container, number 0
@@ -162,7 +165,7 @@ func (r *MiniClusterReconciler) getMiniClusterContainers(
 			TTY:             true,
 			Lifecycle:       lifecycle,
 			Resources:       resources,
-			SecurityContext: &container.SecurityContext,
+			SecurityContext: &securityContext,
 		}
 
 		// Only add command if we actually have one

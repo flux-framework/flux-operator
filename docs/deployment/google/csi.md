@@ -4,7 +4,10 @@ This basic tutorial will walk through creating a MiniCluster to run a Snakemake 
 already [setup your workspace](setup.md), including preparing the Snakemake data in
 Google Storage.
 
-.. include:: includes/basic-setup.md
+
+```{include} includes/basic-setup.md
+```
+
 
 Akin to how we created a local volume, we can do something similar, but instead of pointing the Flux Operator
 to a volume on the host (e.g., in MiniKube) we are going to point it to a storage bucket with our data.
@@ -364,5 +367,5 @@ tried this yet.
 **Note**: we would like to get this working without requiring running the workflow as root, but it hasn't been figured
 out yet! If you have insight, please comment on [this issue](https://github.com/ofek/csi-gcs/issues/155).
 
-
-.. include:: includes/cleanup.md
+```{include} includes/cleanup.md
+```

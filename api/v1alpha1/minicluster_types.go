@@ -13,7 +13,6 @@ package v1alpha1
 import (
 	"fmt"
 
-	v1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/util/intstr"
 )
@@ -389,7 +388,14 @@ type MiniClusterContainer struct {
 	// Security Context
 	// https://kubernetes.io/docs/tasks/configure-pod-container/security-context/
 	// +optional
-	SecurityContext v1.SecurityContext `json:"securityContext"`
+	SecurityContext SecurityContext `json:"securityContext"`
+}
+
+type SecurityContext struct {
+
+	// Privileged container
+	// +optional
+	Privileged bool `json:"privileged,omitempty"`
 }
 
 type LifeCycle struct {
