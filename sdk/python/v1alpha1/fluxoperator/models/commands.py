@@ -34,26 +34,31 @@ class Commands(object):
     """
     openapi_types = {
         'pre': 'str',
+        'prefix': 'str',
         'run_flux_as_root': 'bool'
     }
 
     attribute_map = {
         'pre': 'pre',
+        'prefix': 'prefix',
         'run_flux_as_root': 'runFluxAsRoot'
     }
 
-    def __init__(self, pre='', run_flux_as_root=False, local_vars_configuration=None):  # noqa: E501
+    def __init__(self, pre='', prefix='', run_flux_as_root=False, local_vars_configuration=None):  # noqa: E501
         """Commands - a model defined in OpenAPI"""  # noqa: E501
         if local_vars_configuration is None:
             local_vars_configuration = Configuration.get_default_copy()
         self.local_vars_configuration = local_vars_configuration
 
         self._pre = None
+        self._prefix = None
         self._run_flux_as_root = None
         self.discriminator = None
 
         if pre is not None:
             self.pre = pre
+        if prefix is not None:
+            self.prefix = prefix
         if run_flux_as_root is not None:
             self.run_flux_as_root = run_flux_as_root
 
@@ -79,6 +84,29 @@ class Commands(object):
         """
 
         self._pre = pre
+
+    @property
+    def prefix(self):
+        """Gets the prefix of this Commands.  # noqa: E501
+
+        Prefix to flux start / submit / broker Typically used for a wrapper command to mount, etc.  # noqa: E501
+
+        :return: The prefix of this Commands.  # noqa: E501
+        :rtype: str
+        """
+        return self._prefix
+
+    @prefix.setter
+    def prefix(self, prefix):
+        """Sets the prefix of this Commands.
+
+        Prefix to flux start / submit / broker Typically used for a wrapper command to mount, etc.  # noqa: E501
+
+        :param prefix: The prefix of this Commands.  # noqa: E501
+        :type prefix: str
+        """
+
+        self._prefix = prefix
 
     @property
     def run_flux_as_root(self):

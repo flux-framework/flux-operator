@@ -242,14 +242,14 @@ function run_flux_restful() {
 
     # -o is an "option" for the broker
     # -S corresponds to a shortened --setattr=ATTR=VAL 
-    printf "\n🌀 ${asFlux} flux broker --config-path /etc/flux/config ${brokerOptions} ${startServer}\n"
-    ${asFlux} flux broker --config-path /etc/flux/config ${brokerOptions} ${startServer}
+    printf "\n🌀 ${asFlux} {{.Container.Commands.Prefix}} flux broker --config-path /etc/flux/config ${brokerOptions} ${startServer}\n"
+    ${asFlux} {{.Container.Commands.Prefix}} flux broker --config-path /etc/flux/config ${brokerOptions} ${startServer}
 }
 
 # Run an interactive cluster, giving no command to flux start
 function run_interactive_cluster() {
-    printf "\n🌀 ${asFlux} flux broker --config-path /etc/flux/config ${brokerOptions}\n"
-    ${asFlux} flux broker --config-path /etc/flux/config ${brokerOptions}
+    printf "\n🌀 ${asFlux} {{.Container.Commands.Prefix}} flux broker --config-path /etc/flux/config ${brokerOptions}\n"
+    ${asFlux} {{.Container.Commands.Prefix}} flux broker --config-path /etc/flux/config ${brokerOptions}
 }
 
 # Are we running diagnostics or the start command?
@@ -273,24 +273,24 @@ else
 {{ if not .Logging.Quiet }} # if tasks >= size
             # Container launchers are snakemake, nextflow, that will launch their own jobs
             {{ if .Container.Launcher }}
-            printf "\n🌀 Launcher Mode: flux start -o --config /etc/flux/config ${brokerOptions} $@\n"
+            printf "\n🌀 Launcher Mode: flux start -o --config /etc/flux/config ${brokerOptions} {{.Container.Commands.Prefix}} $@\n"
             {{ else }}
-            printf "\n🌀 Submit Mode: flux start -o --config /etc/flux/config ${brokerOptions} flux submit {{ if ge .Tasks .Size }} -N {{.Size}}{{ end }} -n {{.Tasks}} --quiet {{ if .Container.FluxOptionFlags }}{{ .Container.FluxOptionFlags}}{{ end }} --watch{{ if .Logging.Debug }} -vvv{{ end }} $@\n"
+            printf "\n🌀 Submit Mode: flux start -o --config /etc/flux/config ${brokerOptions} {{.Container.Commands.Prefix}} flux submit {{ if ge .Tasks .Size }} -N {{.Size}}{{ end }} -n {{.Tasks}} --quiet {{ if .Container.FluxOptionFlags }}{{ .Container.FluxOptionFlags}}{{ end }} --watch{{ if .Logging.Debug }} -vvv{{ end }} $@\n"
             {{ end }}
 {{ end }}
             {{ if .Container.Launcher }}
-            {{ if .Logging.Timed }}/usr/bin/time -f "FLUXTIME fluxstart wall time %E" {{ end }}${asFlux} flux start -o --config /etc/flux/config ${brokerOptions} {{ if .Logging.Timed }}/usr/bin/time -f "FLUXTIME fluxsubmit wall time %E" {{ end }} $@
+            {{ if .Logging.Timed }}/usr/bin/time -f "FLUXTIME fluxstart wall time %E" {{ end }}${asFlux} flux start -o --config /etc/flux/config ${brokerOptions} {{ if .Logging.Timed }}/usr/bin/time -f "FLUXTIME fluxsubmit wall time %E" {{ end }} {{.Container.Commands.Prefix}} $@
             {{ else }}
-            {{ if .Logging.Timed }}/usr/bin/time -f "FLUXTIME fluxstart wall time %E" {{ end }}${asFlux} flux start -o --config /etc/flux/config ${brokerOptions} {{ if .Logging.Timed }}/usr/bin/time -f "FLUXTIME fluxsubmit wall time %E" {{ end }} flux submit {{ if ge .Tasks .Size }} -N {{.Size}}{{ end }} -n {{.Tasks}} --quiet {{ if .Container.FluxOptionFlags }}{{ .Container.FluxOptionFlags}}{{ end }} --watch{{ if .Logging.Debug }} -vvv{{ end }} $@
+            {{ if .Logging.Timed }}/usr/bin/time -f "FLUXTIME fluxstart wall time %E" {{ end }}${asFlux} flux start -o --config /etc/flux/config ${brokerOptions} {{ if .Logging.Timed }}/usr/bin/time -f "FLUXTIME fluxsubmit wall time %E" {{ end }} {{.Container.Commands.Prefix}} flux submit {{ if ge .Tasks .Size }} -N {{.Size}}{{ end }} -n {{.Tasks}} --quiet {{ if .Container.FluxOptionFlags }}{{ .Container.FluxOptionFlags}}{{ end }} --watch{{ if .Logging.Debug }} -vvv{{ end }} $@
             {{ end }}
         fi
     else
         # Sleep until the broker is ready
 {{ if not .Logging.Quiet }}
-        printf "\n🌀 flux start -o --config /etc/flux/config ${brokerOptions}\n"{{ end }}
+        printf "\n🌀 {{.Container.Commands.Prefix}} flux start -o --config /etc/flux/config ${brokerOptions}\n"{{ end }}
         while true
         do
-            {{ if .Logging.Timed }}/usr/bin/time -f "FLUXTIME fluxstart wall time %E" {{ end }}${asFlux} flux start -o --config /etc/flux/config ${brokerOptions}
+            {{ if .Logging.Timed }}/usr/bin/time -f "FLUXTIME fluxstart wall time %E" {{ end }}${asFlux} {{.Container.Commands.Prefix}} flux start -o --config /etc/flux/config ${brokerOptions}
             {{ if not .Logging.Quiet }}printf "\n😪 Sleeping 15s until broker is ready..."{{ end }}
             sleep 15
         done

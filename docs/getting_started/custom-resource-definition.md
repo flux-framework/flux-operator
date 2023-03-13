@@ -419,6 +419,25 @@ pod:
     cpu: 4
 ```
 
+#### serviceAccountName
+
+To give a service account name to your pods, simply do:
+
+```yaml
+pod:
+  serviceAccountName: my-service-account
+```
+
+#### nodeSelector
+
+A node selector is a set of key value pairs that helps to schedule pods to the right nodes! You can
+add nodeSelector attributes to your pod as follows:
+
+```yaml
+pod:
+  nodeSelector:
+    iam.gke.io/gke-metadata-server-enabled: "true"
+```
 
 ### containers
 
@@ -695,6 +714,19 @@ containers:
 This defaults to false, meaning we run everything as the Flux user, and you are encouraged to try to figure out
 setting up your storage to be owned by that user.
 
+##### prefix
+
+This is a "wrapper" to any of flux submit, broker, or start. It typically is needed if you need to wrap
+the initial command with something else. As an example, to get a storage driver working in the context
+of a command, you might need to prefix the executable (see [fusion storage](../deployment/google/fusion.md)).
+
+```yaml
+containers:
+  - image: my-flux-image
+    ...
+    commands:
+      prefix: fusion
+```
 
 #### fluxUser
 

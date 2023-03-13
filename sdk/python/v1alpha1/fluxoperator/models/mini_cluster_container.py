@@ -52,6 +52,7 @@ class MiniClusterContainer(object):
         'pull_always': 'bool',
         'resources': 'ContainerResources',
         'run_flux': 'bool',
+        'security_context': 'K8sIoApiCoreV1SecurityContext',
         'volumes': 'dict(str, ContainerVolume)',
         'working_dir': 'str'
     }
@@ -76,11 +77,12 @@ class MiniClusterContainer(object):
         'pull_always': 'pullAlways',
         'resources': 'resources',
         'run_flux': 'runFlux',
+        'security_context': 'securityContext',
         'volumes': 'volumes',
         'working_dir': 'workingDir'
     }
 
-    def __init__(self, command='', commands=None, cores=0, diagnostics=False, environment=None, existing_volumes=None, flux_log_level=6, flux_option_flags='', flux_user=None, image='ghcr.io/rse-ops/accounting:app-latest', image_pull_secret='', launcher=False, life_cycle=None, name='', ports=None, pre_command='', pull_always=False, resources=None, run_flux=False, volumes=None, working_dir='', local_vars_configuration=None):  # noqa: E501
+    def __init__(self, command='', commands=None, cores=0, diagnostics=False, environment=None, existing_volumes=None, flux_log_level=6, flux_option_flags='', flux_user=None, image='ghcr.io/rse-ops/accounting:app-latest', image_pull_secret='', launcher=False, life_cycle=None, name='', ports=None, pre_command='', pull_always=False, resources=None, run_flux=False, security_context=None, volumes=None, working_dir='', local_vars_configuration=None):  # noqa: E501
         """MiniClusterContainer - a model defined in OpenAPI"""  # noqa: E501
         if local_vars_configuration is None:
             local_vars_configuration = Configuration.get_default_copy()
@@ -105,6 +107,7 @@ class MiniClusterContainer(object):
         self._pull_always = None
         self._resources = None
         self._run_flux = None
+        self._security_context = None
         self._volumes = None
         self._working_dir = None
         self.discriminator = None
@@ -147,6 +150,8 @@ class MiniClusterContainer(object):
             self.resources = resources
         if run_flux is not None:
             self.run_flux = run_flux
+        if security_context is not None:
+            self.security_context = security_context
         if volumes is not None:
             self.volumes = volumes
         if working_dir is not None:
@@ -580,6 +585,27 @@ class MiniClusterContainer(object):
         """
 
         self._run_flux = run_flux
+
+    @property
+    def security_context(self):
+        """Gets the security_context of this MiniClusterContainer.  # noqa: E501
+
+
+        :return: The security_context of this MiniClusterContainer.  # noqa: E501
+        :rtype: K8sIoApiCoreV1SecurityContext
+        """
+        return self._security_context
+
+    @security_context.setter
+    def security_context(self, security_context):
+        """Sets the security_context of this MiniClusterContainer.
+
+
+        :param security_context: The security_context of this MiniClusterContainer.  # noqa: E501
+        :type security_context: K8sIoApiCoreV1SecurityContext
+        """
+
+        self._security_context = security_context
 
     @property
     def volumes(self):

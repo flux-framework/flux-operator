@@ -35,16 +35,20 @@ class PodSpec(object):
     openapi_types = {
         'annotations': 'dict(str, str)',
         'labels': 'dict(str, str)',
-        'resources': 'dict(str, IntOrString)'
+        'node_selector': 'dict(str, str)',
+        'resources': 'dict(str, IntOrString)',
+        'service_account_name': 'str'
     }
 
     attribute_map = {
         'annotations': 'annotations',
         'labels': 'labels',
-        'resources': 'resources'
+        'node_selector': 'nodeSelector',
+        'resources': 'resources',
+        'service_account_name': 'serviceAccountName'
     }
 
-    def __init__(self, annotations=None, labels=None, resources=None, local_vars_configuration=None):  # noqa: E501
+    def __init__(self, annotations=None, labels=None, node_selector=None, resources=None, service_account_name=None, local_vars_configuration=None):  # noqa: E501
         """PodSpec - a model defined in OpenAPI"""  # noqa: E501
         if local_vars_configuration is None:
             local_vars_configuration = Configuration.get_default_copy()
@@ -52,15 +56,21 @@ class PodSpec(object):
 
         self._annotations = None
         self._labels = None
+        self._node_selector = None
         self._resources = None
+        self._service_account_name = None
         self.discriminator = None
 
         if annotations is not None:
             self.annotations = annotations
         if labels is not None:
             self.labels = labels
+        if node_selector is not None:
+            self.node_selector = node_selector
         if resources is not None:
             self.resources = resources
+        if service_account_name is not None:
+            self.service_account_name = service_account_name
 
     @property
     def annotations(self):
@@ -109,6 +119,29 @@ class PodSpec(object):
         self._labels = labels
 
     @property
+    def node_selector(self):
+        """Gets the node_selector of this PodSpec.  # noqa: E501
+
+        NodeSelectors for a pod  # noqa: E501
+
+        :return: The node_selector of this PodSpec.  # noqa: E501
+        :rtype: dict(str, str)
+        """
+        return self._node_selector
+
+    @node_selector.setter
+    def node_selector(self, node_selector):
+        """Sets the node_selector of this PodSpec.
+
+        NodeSelectors for a pod  # noqa: E501
+
+        :param node_selector: The node_selector of this PodSpec.  # noqa: E501
+        :type node_selector: dict(str, str)
+        """
+
+        self._node_selector = node_selector
+
+    @property
     def resources(self):
         """Gets the resources of this PodSpec.  # noqa: E501
 
@@ -130,6 +163,29 @@ class PodSpec(object):
         """
 
         self._resources = resources
+
+    @property
+    def service_account_name(self):
+        """Gets the service_account_name of this PodSpec.  # noqa: E501
+
+        Service account name for the pod  # noqa: E501
+
+        :return: The service_account_name of this PodSpec.  # noqa: E501
+        :rtype: str
+        """
+        return self._service_account_name
+
+    @service_account_name.setter
+    def service_account_name(self, service_account_name):
+        """Sets the service_account_name of this PodSpec.
+
+        Service account name for the pod  # noqa: E501
+
+        :param service_account_name: The service_account_name of this PodSpec.  # noqa: E501
+        :type service_account_name: str
+        """
+
+        self._service_account_name = service_account_name
 
     def to_dict(self, serialize=False):
         """Returns the model properties as a dict"""

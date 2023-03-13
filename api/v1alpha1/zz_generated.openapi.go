@@ -58,6 +58,14 @@ func schema__api_v1alpha1__Commands(ref common.ReferenceCallback) common.OpenAPI
 							Format:      "",
 						},
 					},
+					"prefix": {
+						SchemaProps: spec.SchemaProps{
+							Description: "Prefix to flux start / submit / broker Typically used for a wrapper command to mount, etc.",
+							Default:     "",
+							Type:        []string{"string"},
+							Format:      "",
+						},
+					},
 					"pre": {
 						SchemaProps: spec.SchemaProps{
 							Description: "pre command is run after global PreCommand, before anything else",
@@ -555,11 +563,18 @@ func schema__api_v1alpha1__MiniClusterContainer(ref common.ReferenceCallback) co
 							Ref:         ref("./api/v1alpha1/.Commands"),
 						},
 					},
+					"securityContext": {
+						SchemaProps: spec.SchemaProps{
+							Description: "Security Context https://kubernetes.io/docs/tasks/configure-pod-container/security-context/",
+							Default:     map[string]interface{}{},
+							Ref:         ref("k8s.io/api/core/v1.SecurityContext"),
+						},
+					},
 				},
 			},
 		},
 		Dependencies: []string{
-			"./api/v1alpha1/.Commands", "./api/v1alpha1/.ContainerResources", "./api/v1alpha1/.ContainerVolume", "./api/v1alpha1/.FluxUser", "./api/v1alpha1/.LifeCycle", "./api/v1alpha1/.MiniClusterExistingVolume"},
+			"./api/v1alpha1/.Commands", "./api/v1alpha1/.ContainerResources", "./api/v1alpha1/.ContainerVolume", "./api/v1alpha1/.FluxUser", "./api/v1alpha1/.LifeCycle", "./api/v1alpha1/.MiniClusterExistingVolume", "k8s.io/api/core/v1.SecurityContext"},
 	}
 }
 
@@ -1036,6 +1051,29 @@ func schema__api_v1alpha1__PodSpec(ref common.ReferenceCallback) common.OpenAPID
 					"labels": {
 						SchemaProps: spec.SchemaProps{
 							Description: "Labels for each pod",
+							Type:        []string{"object"},
+							AdditionalProperties: &spec.SchemaOrBool{
+								Allows: true,
+								Schema: &spec.Schema{
+									SchemaProps: spec.SchemaProps{
+										Default: "",
+										Type:    []string{"string"},
+										Format:  "",
+									},
+								},
+							},
+						},
+					},
+					"serviceAccountName": {
+						SchemaProps: spec.SchemaProps{
+							Description: "Service account name for the pod",
+							Type:        []string{"string"},
+							Format:      "",
+						},
+					},
+					"nodeSelector": {
+						SchemaProps: spec.SchemaProps{
+							Description: "NodeSelectors for a pod",
 							Type:        []string{"object"},
 							AdditionalProperties: &spec.SchemaOrBool{
 								Allows: true,
