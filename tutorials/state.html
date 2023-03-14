@@ -767,15 +767,32 @@ the jobs to a new MiniCluster to continue.</p>
 </ul>
 <p>For the different cases, you can adjust the original size (and updated size) in the script
 by changing the <code class="docutils literal notranslate"><span class="pre">minicluster.size</span></code>. All cases are successful to pause and resume
-on the new cluster (regardless of size) however there are always a few failing
-jobs that seem to not have been able to save information. As an example:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span>flux<span class="w"> </span>job<span class="w"> </span>attach<span class="w"> </span>ƒrGXgioy<span class="w"> </span>
-<span class="m">142</span>.227s:<span class="w"> </span>job.exception<span class="w"> </span><span class="nv">type</span><span class="o">=</span><span class="nb">exec</span><span class="w"> </span><span class="nv">severity</span><span class="o">=</span><span class="m">0</span><span class="w"> </span>failed<span class="w"> </span>to<span class="w"> </span>create<span class="w"> </span>guest<span class="w"> </span>ns:<span class="w"> </span>No<span class="w"> </span>such<span class="w"> </span>file<span class="w"> </span>or<span class="w"> </span>directory
-<span class="m">142</span>.410s:<span class="w"> </span>job.exception<span class="w"> </span><span class="nv">type</span><span class="o">=</span>scheduler-restart<span class="w"> </span><span class="nv">severity</span><span class="o">=</span><span class="m">0</span><span class="w"> </span>failed<span class="w"> </span>to<span class="w"> </span>reallocate<span class="w"> </span>R<span class="w"> </span><span class="k">for</span><span class="w"> </span>running<span class="w"> </span>job
-flux-job:<span class="w"> </span>flux_job_event_watch_get:<span class="w"> </span>Operation<span class="w"> </span>not<span class="w"> </span>supported
+on the new cluster (regardless of size). Make sure (between runs) that you delete
+the previous archive so you aren’t loading jobs across <em>all</em> the clusters!</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span>minikube<span class="w"> </span>ssh<span class="w"> </span>--<span class="w"> </span>rm<span class="w"> </span>/tmp/data/archive.tar.gz
 </code></pre></div>
 </div>
-<p>We will be looking into this issue further.</p>
+<p>The commands we are issuing to flux are:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code><span class="c1"># Stop the queue</span>
+flux<span class="w"> </span>queue<span class="w"> </span>stop
+
+<span class="c1"># This should wait for running jobs to finish</span>
+flux<span class="w"> </span>queue<span class="w"> </span>idle
+</code></pre></div>
+</div>
+<p>And this means we will stop and wait for jobs to finish, and then this state is loaded
+into the next cluster. If you run the example you might want to insert an <code class="docutils literal notranslate"><span class="pre">IPython.embed()</span></code>
+before the delete command at the end, and then interactively shell into the new MiniCluster
+(when the node are running) and then look at jobs:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span>kubectl<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>-it<span class="w"> </span>-n<span class="w"> </span>flux-operator<span class="w"> </span>flux-sample-0-mbv54<span class="w"> </span>--<span class="w"> </span>sudo<span class="w"> </span>-u<span class="w"> </span>flux<span class="w"> </span>flux<span class="w"> </span>proxy<span class="w"> </span>local:///var/run/flux/local<span class="w"> </span>flux<span class="w"> </span><span class="nb">jobs</span><span class="w"> </span>-a
+</code></pre></div>
+</div>
+<p>And always make sure to clean up your archive at the end!</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span>minikube<span class="w"> </span>ssh<span class="w"> </span>--<span class="w"> </span>rm<span class="w"> </span>/tmp/data/archive.tar.gz
+</code></pre></div>
+</div>
+<p>The next (basic) example goes through the same ideas, but manually for each step so you
+can learn about what the script is doing.</p>
 <h2 id="basic-saving-jobs-and-metadata">Basic Saving Jobs and Metadata<a class="headerlink" href="#basic-saving-jobs-and-metadata" title="Permalink to this heading">¶</a></h2>
 <blockquote>
 <div><p>Saving state of the jobs queue and metadata, after runs are complete (between two MiniClusters)</p>
@@ -1023,7 +1040,7 @@ the Python SDK? I’m not sure - we will find out!</p>
   <small>
     
       Last update:
-      Mar 13, 2023
+      Mar 14, 2023
     
   </small>
 </div>
