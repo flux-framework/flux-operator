@@ -27,6 +27,7 @@ from fluxoperator.resource.pods import delete_minicluster
 namespace = "flux-operator"
 minicluster_name = "save-state"
 
+
 # Here is our custom class to "wrap" an exec
 class CommandExecutor(FluxOperator):
     fluxuser = "flux"
@@ -119,7 +120,7 @@ cli.execute("flux queue stop")
 time.sleep(5)
 
 print("\n🥱️ Waiting for running jobs...")
-cli.execute('flux queue idle')
+cli.execute("flux queue idle")
 
 print("\n🧐️ Inspecting jobs...")
 cli.execute("flux jobs -a")
@@ -129,9 +130,6 @@ print(cli.kubectl_exec("ls -l /var/lib/flux"), end="")
 
 print("\n🧊️ Current archive directory at /state... should be empty, not saved yet")
 print(cli.kubectl_exec("ls -l /state"), end="")
-
-#print("Taking a looong sleep!...")
-#time.sleep(300)
 
 print("Cleaning up...")
 delete_minicluster(minicluster_name, namespace)
