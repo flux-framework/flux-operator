@@ -127,14 +127,10 @@ crd_api.create_namespaced_custom_object(
     body=minicluster,
 )
 
-
 # This also waits for the cluster to be running
 print("🧊️ Current archive directory at /state... should now be populated")
 print(cli.kubectl_exec("ls -l /state"), end="")
 time.sleep(10)
-
-print("\n🤓️ Inspecting state directory in new cluster...")
-print(cli.kubectl_exec("ls -l /var/lib/flux"), end="")
 
 print("\n😎️ Looking to see if old job history exists...")
 res = cli.kubectl_exec(
