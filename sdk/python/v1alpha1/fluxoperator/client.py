@@ -20,6 +20,7 @@ class FluxOperator:
         self.namespace = namespace
         self._core_v1 = None
         self.times = {}
+        self._size = None
 
     @property
     def core_v1(self):
@@ -90,7 +91,7 @@ class FluxOperator:
                 if stdout:
                     print(line)
 
-    def kubectl_exec(self, command, pod=None):
+    def kubectl_exec(self, command, pod=None, quiet=False):
         """
         Issue a command with kubectl exec
 
@@ -98,17 +99,22 @@ class FluxOperator:
         the broker pod to be ready.
         """
         if not pod:
-            pod = self.get_broker_pod()
-        print(command)
+            pod = self.get_broker_pod(quiet=quiet)
+        if not quiet:
+            print(command)
 
         # Assemble the exec command - bash subshell always easier
-        exec_command = ['/bin/sh', '-c', command]
-        return stream(self.core_v1.connect_get_namespaced_pod_exec,
-                  pod.metadata.name,
-                  self.namespace,                      
-                  command=exec_command,
-                  stderr=True, stdin=False,
-                  stdout=True, tty=False)
+        exec_command = ["/bin/sh", "-c", command]
+        return stream(
+            self.core_v1.connect_get_namespaced_pod_exec,
+            pod.metadata.name,
+            self.namespace,
+            command=exec_command,
+            stderr=True,
+            stdin=False,
+            stdout=True,
+            tty=False,
+        )
 
     def get_pods(self):
         """
@@ -141,6 +147,7 @@ class FluxOperator:
         """
         Create (and time the creation of) the MiniCluster
         """
+        self._size = kwargs.get("size")
         res = create_minicluster(*args, **kwargs)
         self.wait_pods()
         return res
@@ -158,26 +165,33 @@ class FluxOperator:
         """
         Wait for all pods to be running or completed (or in a specific set of states)
         """
-        states = states or ["Running", "Completed"]
+        states = states or ["Running", "Succeeded"]
         if not isinstance(states, list):
             states = [states]
 
-        ready = False
-        while not ready:
+        # We don't have a size - get from cluster
+        if not self._size:
+            time.sleep(10)
             pod_list = self.core_v1.list_namespaced_pod(self.namespace)
-            ready = False
+            self._size = len(pod_list.items)
+
+        # Size of cluster plus cert pod
+        size = self._size + 1
+
+        ready = set()
+        while len(ready) != size:
+            pod_list = self.core_v1.list_namespaced_pod(self.namespace)
             for pod in pod_list.items:
                 if pod.status.phase not in states:
                     time.sleep(retry_seconds)
-                    continue
-            # If we get down here, pods are ready
-            ready = True
+                else:
+                    ready.add(pod.metadata.name)
 
         if not quiet:
             states = '" or "'.join(states)
             print(f'All pods are in states "{states}"')
 
-    def get_broker_pod(self, quiet=True):
+    def get_broker_pod(self, quiet=False):
         """
         Given a core_v1 connection and namespace, get the broker pod.
         """
@@ -190,6 +204,7 @@ class FluxOperator:
             pod_list = self.core_v1.list_namespaced_pod(self.namespace)
             for pod in pod_list.items:
                 if "-0" in pod.metadata.name and pod.status.phase in ["Running"]:
-                    print(f"Found broker pod {pod.metadata.name}")
+                    if not quiet:
+                        print(f"Found broker pod {pod.metadata.name}")
                     brokerPod = pod
         return brokerPod
