@@ -175,12 +175,13 @@ class FluxOperator:
             pod_list = self.core_v1.list_namespaced_pod(self.namespace)
             self._size = len(pod_list.items)
 
-        # Size of cluster plus cert pod
-        size = self._size + 1
-
         ready = set()
-        while len(ready) != size:
+        while len(ready) != self._size:
             pod_list = self.core_v1.list_namespaced_pod(self.namespace)
+
+            # Upate size with more pods
+            if len(pod_list.items) > self._size:
+                self._size = len(pod_list.items)
             for pod in pod_list.items:
                 if pod.status.phase not in states:
                     time.sleep(retry_seconds)
