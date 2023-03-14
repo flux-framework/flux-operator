@@ -6,6 +6,9 @@
 # We do this by way of turning on a flag to save an archive, and then load from
 # that same location for the next MiniCluster.
 
+# IMPORTANT! Remember to clear your old archive first
+# minikube ssh -- rm /tmp/data/archive.tar.gz
+
 import time
 from kubernetes import client, config
 from kubernetes.client import V1ObjectMeta
@@ -100,10 +103,9 @@ cli.get_broker_pod()
 # This is why we want interactive mod!
 # By default, this selects (and waits for) the broker pod
 
-
 print("✨️ Submitting a ton of jobs!")
 time.sleep(5)
-for iter in range(0, 50):
+for iter in range(0, 30):
     res = cli.execute("flux submit sleep %s" % iter)
     assert res.startswith("ƒ")
     res = cli.execute("flux submit whoami")
@@ -112,12 +114,13 @@ for iter in range(0, 50):
 print("\n🥱️ Waiting for a few jobs...")
 cli.execute("flux jobs -a")
 
-print("\n🥱️ Asking flux to stop scheduling...")
-cli.execute('flux queue disable "Pausing minicluster to save state"')
-
-print("\n🥱️ Asking flux to stop the queue - this usually waits for running jobs...")
+print("\n🥱️ Asking flux to stop the queue...")
 cli.execute("flux queue stop")
 time.sleep(5)
+
+print("\n🥱️ Waiting for running jobs...")
+cli.execute('flux queue idle')
+
 print("\n🧐️ Inspecting jobs...")
 cli.execute("flux jobs -a")
 
@@ -126,6 +129,9 @@ print(cli.kubectl_exec("ls -l /var/lib/flux"), end="")
 
 print("\n🧊️ Current archive directory at /state... should be empty, not saved yet")
 print(cli.kubectl_exec("ls -l /state"), end="")
+
+#print("Taking a looong sleep!...")
+#time.sleep(300)
 
 print("Cleaning up...")
 delete_minicluster(minicluster_name, namespace)
@@ -142,7 +148,8 @@ crd_api.create_namespaced_custom_object(
     plural="miniclusters",
     body=minicluster,
 )
-
+print("Wait for MiniCluster...")
+time.sleep(120)
 
 # This also waits for the cluster to be running
 print("🧊️ Current archive directory at /state... should now be populated")
@@ -151,6 +158,7 @@ time.sleep(10)
 
 print("\n🤓️ Inspecting state directory in new cluster...")
 print(cli.kubectl_exec("ls -l /var/lib/flux"), end="")
+time.sleep(10)
 
 print("\n😎️ Looking to see if old job history exists...")
 cli.execute("flux jobs -a")

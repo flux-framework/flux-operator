@@ -35,17 +35,40 @@ Using this example, we are able to (with slight modification) test:
 
 For the different cases, you can adjust the original size (and updated size) in the script
 by changing the `minicluster.size`. All cases are successful to pause and resume
-on the new cluster (regardless of size) however there are always a few failing
-jobs that seem to not have been able to save information. As an example:
+on the new cluster (regardless of size). Make sure (between runs) that you delete
+the previous archive so you aren't loading jobs across *all* the clusters!
 
 ```bash
-$ flux job attach ƒrGXgioy 
-142.227s: job.exception type=exec severity=0 failed to create guest ns: No such file or directory
-142.410s: job.exception type=scheduler-restart severity=0 failed to reallocate R for running job
-flux-job: flux_job_event_watch_get: Operation not supported
+$ minikube ssh -- rm /tmp/data/archive.tar.gz
 ```
 
-We will be looking into this issue further.
+The commands we are issuing to flux are:
+
+```bash
+# Stop the queue
+flux queue stop
+
+# This should wait for running jobs to finish
+flux queue idle
+```
+
+And this means we will stop and wait for jobs to finish, and then this state is loaded
+into the next cluster. If you run the example you might want to insert an `IPython.embed()`
+before the delete command at the end, and then interactively shell into the new MiniCluster
+(when the node are running) and then look at jobs:
+
+```bash
+$ kubectl exec -it -n flux-operator flux-sample-0-mbv54 -- sudo -u flux flux proxy local:///var/run/flux/local flux jobs -a
+```
+
+And always make sure to clean up your archive at the end!
+
+```bash
+$ minikube ssh -- rm /tmp/data/archive.tar.gz
+```
+
+The next (basic) example goes through the same ideas, but manually for each step so you
+can learn about what the script is doing.
 
 ## Basic Saving Jobs and Metadata
 
