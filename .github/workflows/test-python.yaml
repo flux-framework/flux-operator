@@ -65,8 +65,15 @@ jobs:
         minikube ssh docker pull ${container}
         make
         make install
+        make docker-build
+        printf "Loading Flux Operator latest image...\n"
+        minikube image load ghcr.io/flux-framework/flux-operator:latest
+        kubectl apply -f ./examples/dist/flux-operator.yaml
 
     - name: Test ${{ matrix.test[0] }}
       env:
         command: ${{ matrix.test[0] }}
-      run: /bin/bash ./script/test-python.sh ${command}
+      run: |
+        make clean
+        echo "Running command: ${command}"
+        ${command}

@@ -14,9 +14,6 @@ echo "Testing Command: $@"
 
 # Quick helper script to run a test
 make clean > /dev/null 2> /dev/null
-make run &
-pid=$!
-echo "PID for running cluster is ${pid}"
 
 # If there is a pre-run script
 $@
