@@ -124,7 +124,7 @@ Note that interactive mode is set to true - this will start a broker to keep run
 Since we are defining the archive path to `/state/archive.tar.gz`, this means that before Flux is started,
 we will load an archive from that path given that it exists with `flux resource reload`. This is done directly
 in the entrypoint. To have better control of the reverse sequence - saving the final state to that same location,
-we will run `flux dump` to that same archive via a Pre stop lifecycle hook. Note this is a simple approach
+we will run `flux dump` to that same archive as an interactive command. Note this is a simple approach
 that assumes we are OK replacing a previous state with a new one - for more complex workflows (where
 possibly we need to maintain an original state) we likely will need to do something differently. For
 the time being, let's create this first minicluster to submit jobs to, and the plan will be
