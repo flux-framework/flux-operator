@@ -10,7 +10,10 @@ of difficulty:
 These small tutorials will walk through examples of each. The most likely use cases for doing
 this will be using the Flux Operator Python SDK (since we need to create multiple clusters)
 in a reasonable way) but for the purposes of explanation, minicluster.yaml files are provided
-as well.
+as well. One important note is that since we cannot control the timing of a pod termination,
+while we can have Flux automatically load a saved archive, for the process to wait for
+jobs to finish and then dump the archive anew, we rely on issuing a command to the MiniCluster
+(done by a script or workflow tool). This can likely be improved upon.
 
 ## Saving Pending Jobs
 
@@ -50,6 +53,9 @@ flux queue stop
 
 # This should wait for running jobs to finish
 flux queue idle
+
+# And then do the dump!
+flux dump /state/archive.tar.gz
 ```
 
 And this means we will stop and wait for jobs to finish, and then this state is loaded
@@ -118,7 +124,7 @@ Note that interactive mode is set to true - this will start a broker to keep run
 Since we are defining the archive path to `/state/archive.tar.gz`, this means that before Flux is started,
 we will load an archive from that path given that it exists with `flux resource reload`. This is done directly
 in the entrypoint. To have better control of the reverse sequence - saving the final state to that same location,
-we will run `flux dump` to that same archive via a Pre stop lifecycle hook. Note this is a simple approach
+we will run `flux dump` to that same archive as an interactive command. Note this is a simple approach
 that assumes we are OK replacing a previous state with a new one - for more complex workflows (where
 possibly we need to maintain an original state) we likely will need to do something differently. For
 the time being, let's create this first minicluster to submit jobs to, and the plan will be
@@ -237,7 +243,6 @@ $ kubectl apply -f examples/state/basic-job-completion/minicluster.yaml
 ```
 
 At this point you can proceed to either [Interactive Submit](#interactive-submit) or [Programmatic Submit](#programmatic-submit).
-We also have this example demonstrated [entirely in Python](https://github.com/flux-framework/flux-operator/tree/main/sdk/python/v1alpha1/examples/state-basic-job-completion-minicluster.py) using the Flux Operator Python SDK.
 
 ### Interactive Submit
 
@@ -307,13 +312,22 @@ When you are done, you can see all the jobs:
 $ kubectl exec -it -n flux-operator flux-sample-0-mbv54 -- sudo -u flux flux proxy local:///var/run/flux/local flux jobs -a
 ```
 
-Give the jobs a little bit of time to run, and after that, outside of the shell (if you didn't already exit) let's delete the Minicluster.
+Then you can stop the queue, wait for jobs to finish, and request the dump. Note that we do this
+as an interactive command and not automatically because (for large dumps 💩️) we cannot ensure that the time
+will be given for completion. 
+
+```bash
+$ kubectl exec -it -n flux-operator flux-sample-0-mbv54 -- sudo -u flux flux proxy local:///var/run/flux/local flux queue stop
+$ kubectl exec -it -n flux-operator flux-sample-0-mbv54 -- sudo -u flux flux proxy local:///var/run/flux/local flux queue idle
+$ kubectl exec -it -n flux-operator flux-sample-0-mbv54 -- sudo -u flux flux proxy local:///var/run/flux/local flux queue dump /state/archive.tar.gz
+```
+
+After that, outside of the shell (if you didn't already exit) let's delete the Minicluster.
 
 ```bash
 $ kubectl delete -f examples/state/basic-job-completion/minicluster.yaml 
 ```
 
-Since we have the lifecycle hook in place, it's going to take slightly longer to be terminated than if we didn't.
 At this point, it should be the case that the same flux state directory is dumped to the archive path we requested, 
 which is located at `/tmp/data/archive.tar.gz` in the MiniKube vm (`/tmp/data` is bound to `/state` and the
 archive inside the container is asked to be saved to `/state/archive.tar.gz`).

@@ -856,6 +856,13 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#lifecycle" class="md-nav__link">
+    <span title="/getting_started/custom-resource-definition.md#lifecycle (reference label)" class="md-ellipsis">life<wbr>Cycle</span>
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -1682,6 +1689,13 @@ we provide this argument on the level of the container. To enable this, set this
 <span class="w">  </span><span class="nt">diagnostics</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
 </code></pre></div>
 </div>
+<h4 id="lifecycle">lifeCycle<a class="headerlink" href="#lifecycle" title="Permalink to this heading">¶</a></h4>
+<p>You can define postStartExec or preStopExec hooks.</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><code><span class="nt">lifeCycle</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">postStartExec</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">...</span>
+<span class="w">  </span><span class="nt">preStopExec</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">...</span>
+</code></pre></div>
+</div>
 <h3 id="id4">volumes<a class="headerlink" href="#id4" title="Permalink to this heading">¶</a></h3>
 <p>Volumes that are defined on the level of the container must be defined at the top level of the MiniCluster.
 As an example, here is how we tell the container to use the already defined volume “myvolume” to be mounted
@@ -1755,7 +1769,7 @@ or define your own as follows:</p>
   <small>
     
       Last update:
-      Mar 14, 2023
+      Mar 15, 2023
     
   </small>
 </div>

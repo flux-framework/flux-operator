@@ -747,7 +747,10 @@ of difficulty:</p>
 <p>These small tutorials will walk through examples of each. The most likely use cases for doing
 this will be using the Flux Operator Python SDK (since we need to create multiple clusters)
 in a reasonable way) but for the purposes of explanation, minicluster.yaml files are provided
-as well.</p>
+as well. One important note is that since we cannot control the timing of a pod termination,
+while we can have Flux automatically load a saved archive, for the process to wait for
+jobs to finish and then dump the archive anew, we rely on issuing a command to the MiniCluster
+(done by a script or workflow tool). This can likely be improved upon.</p>
 <h2 id="saving-pending-jobs">Saving Pending Jobs<a class="headerlink" href="#saving-pending-jobs" title="Permalink to this heading">¶</a></h2>
 <blockquote>
 <div><p>Pausing scheduling and the queue in a populated queue</p>
@@ -778,6 +781,9 @@ flux<span class="w"> </span>queue<span class="w"> </span>stop
 
 <span class="c1"># This should wait for running jobs to finish</span>
 flux<span class="w"> </span>queue<span class="w"> </span>idle
+
+<span class="c1"># And then do the dump!</span>
+flux<span class="w"> </span>dump<span class="w"> </span>/state/archive.tar.gz
 </code></pre></div>
 </div>
 <p>And this means we will stop and wait for jobs to finish, and then this state is loaded
@@ -838,7 +844,7 @@ multiple jobs interactively, we will do it that way. Here is the first miniclust
 Since we are defining the archive path to <code class="docutils literal notranslate"><span class="pre">/state/archive.tar.gz</span></code>, this means that before Flux is started,
 we will load an archive from that path given that it exists with <code class="docutils literal notranslate"><span class="pre">flux</span> <span class="pre">resource</span> <span class="pre">reload</span></code>. This is done directly
 in the entrypoint. To have better control of the reverse sequence - saving the final state to that same location,
-we will run <code class="docutils literal notranslate"><span class="pre">flux</span> <span class="pre">dump</span></code> to that same archive via a Pre stop lifecycle hook. Note this is a simple approach
+we will run <code class="docutils literal notranslate"><span class="pre">flux</span> <span class="pre">dump</span></code> to that same archive as an interactive command. Note this is a simple approach
 that assumes we are OK replacing a previous state with a new one - for more complex workflows (where
 possibly we need to maintain an original state) we likely will need to do something differently. For
 the time being, let’s create this first minicluster to submit jobs to, and the plan will be
@@ -943,8 +949,7 @@ below with kubectl apply) or you can run a demo script that runs the commands on
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span>kubectl<span class="w"> </span>apply<span class="w"> </span>-f<span class="w"> </span>examples/state/basic-job-completion/minicluster.yaml<span class="w"> </span>
 </code></pre></div>
 </div>
-<p>At this point you can proceed to either <a class="reference internal" href="#interactive-submit"><span class="xref myst">Interactive Submit</span></a> or <a class="reference internal" href="#programmatic-submit"><span class="xref myst">Programmatic Submit</span></a>.
-We also have this example demonstrated <a class="reference external" href="https://github.com/flux-framework/flux-operator/tree/main/sdk/python/v1alpha1/examples/state-basic-job-completion-minicluster.py">entirely in Python</a> using the Flux Operator Python SDK.</p>
+<p>At this point you can proceed to either <a class="reference internal" href="#interactive-submit"><span class="xref myst">Interactive Submit</span></a> or <a class="reference internal" href="#programmatic-submit"><span class="xref myst">Programmatic Submit</span></a>.</p>
 <h3 id="interactive-submit">Interactive Submit<a class="headerlink" href="#interactive-submit" title="Permalink to this heading">¶</a></h3>
 <p>And now we need to submit a bunch of jobs to run to completion. We can do this by shelling in (and
 note this could be done by the Flux Restful API for a more proggrammatic example). First,
@@ -996,12 +1001,19 @@ $<span class="w"> </span>kubectl<span class="w"> </span><span class="nb">exec</s
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span>kubectl<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>-it<span class="w"> </span>-n<span class="w"> </span>flux-operator<span class="w"> </span>flux-sample-0-mbv54<span class="w"> </span>--<span class="w"> </span>sudo<span class="w"> </span>-u<span class="w"> </span>flux<span class="w"> </span>flux<span class="w"> </span>proxy<span class="w"> </span>local:///var/run/flux/local<span class="w"> </span>flux<span class="w"> </span><span class="nb">jobs</span><span class="w"> </span>-a
 </code></pre></div>
 </div>
-<p>Give the jobs a little bit of time to run, and after that, outside of the shell (if you didn’t already exit) let’s delete the Minicluster.</p>
+<p>Then you can stop the queue, wait for jobs to finish, and request the dump. Note that we do this
+as an interactive command and not automatically because (for large dumps 💩️) we cannot ensure that the time
+will be given for completion.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span>kubectl<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>-it<span class="w"> </span>-n<span class="w"> </span>flux-operator<span class="w"> </span>flux-sample-0-mbv54<span class="w"> </span>--<span class="w"> </span>sudo<span class="w"> </span>-u<span class="w"> </span>flux<span class="w"> </span>flux<span class="w"> </span>proxy<span class="w"> </span>local:///var/run/flux/local<span class="w"> </span>flux<span class="w"> </span>queue<span class="w"> </span>stop
+$<span class="w"> </span>kubectl<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>-it<span class="w"> </span>-n<span class="w"> </span>flux-operator<span class="w"> </span>flux-sample-0-mbv54<span class="w"> </span>--<span class="w"> </span>sudo<span class="w"> </span>-u<span class="w"> </span>flux<span class="w"> </span>flux<span class="w"> </span>proxy<span class="w"> </span>local:///var/run/flux/local<span class="w"> </span>flux<span class="w"> </span>queue<span class="w"> </span>idle
+$<span class="w"> </span>kubectl<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>-it<span class="w"> </span>-n<span class="w"> </span>flux-operator<span class="w"> </span>flux-sample-0-mbv54<span class="w"> </span>--<span class="w"> </span>sudo<span class="w"> </span>-u<span class="w"> </span>flux<span class="w"> </span>flux<span class="w"> </span>proxy<span class="w"> </span>local:///var/run/flux/local<span class="w"> </span>flux<span class="w"> </span>queue<span class="w"> </span>dump<span class="w"> </span>/state/archive.tar.gz
+</code></pre></div>
+</div>
+<p>After that, outside of the shell (if you didn’t already exit) let’s delete the Minicluster.</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span>kubectl<span class="w"> </span>delete<span class="w"> </span>-f<span class="w"> </span>examples/state/basic-job-completion/minicluster.yaml<span class="w"> </span>
 </code></pre></div>
 </div>
-<p>Since we have the lifecycle hook in place, it’s going to take slightly longer to be terminated than if we didn’t.
-At this point, it should be the case that the same flux state directory is dumped to the archive path we requested,
+<p>At this point, it should be the case that the same flux state directory is dumped to the archive path we requested,
 which is located at <code class="docutils literal notranslate"><span class="pre">/tmp/data/archive.tar.gz</span></code> in the MiniKube vm (<code class="docutils literal notranslate"><span class="pre">/tmp/data</span></code> is bound to <code class="docutils literal notranslate"><span class="pre">/state</span></code> and the
 archive inside the container is asked to be saved to <code class="docutils literal notranslate"><span class="pre">/state/archive.tar.gz</span></code>).</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span>minikube<span class="w"> </span>ssh<span class="w"> </span>--<span class="w"> </span>ls<span class="w"> </span>-l<span class="w"> </span>/tmp/data/
@@ -1040,7 +1052,7 @@ the Python SDK? I’m not sure - we will find out!</p>
   <small>
     
       Last update:
-      Mar 14, 2023
+      Mar 15, 2023
     
   </small>
 </div>
