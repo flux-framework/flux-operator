@@ -36,8 +36,12 @@ sleep 10
 printf "Jobs finished...\n"
 kubectl exec -it -n flux-operator ${broker_pod} -- sudo -u flux flux proxy local:///var/run/flux/local flux jobs -a
 
+kubectl exec -it -n flux-operator ${broker_pod} -- sudo -u flux flux proxy local:///var/run/flux/local flux queue stop
+kubectl exec -it -n flux-operator ${broker_pod} -- sudo -u flux flux proxy local:///var/run/flux/local flux queue idle
+kubectl exec -it -n flux-operator ${broker_pod} -- sudo -u flux flux proxy local:///var/run/flux/local flux dump /state/archive.tar.gz
+
 printf "\n🥱️ Wait a minute to be sure we have saved...\n"
-sleep 60
+sleep 30
 
 printf "\n🧊️ Current state directory at /var/lib/flux...\n"
 kubectl exec -it -n flux-operator ${broker_pod} -- ls -l /var/lib/flux

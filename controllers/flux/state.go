@@ -11,10 +11,6 @@ SPDX-License-Identifier: Apache-2.0
 package controllers
 
 import (
-	"fmt"
-	"path/filepath"
-	"strings"
-
 	corev1 "k8s.io/api/core/v1"
 
 	api "flux-framework/flux-operator/api/v1alpha1"
@@ -30,6 +26,7 @@ func (r *MiniClusterReconciler) createContainerLifecycle(
 
 	// Manual lifecycles from the user before container start
 	if container.LifeCycle.PostStartExec != "" {
+		r.log.Info("🌀 MiniCluster", "LifeCycle.PostStartExec", container.LifeCycle.PostStartExec)
 		lifecycle.PostStart = &corev1.LifecycleHandler{
 			Exec: &corev1.ExecAction{
 				Command: []string{container.LifeCycle.PostStartExec},
@@ -37,36 +34,13 @@ func (r *MiniClusterReconciler) createContainerLifecycle(
 		}
 	}
 
-	// If this logic needs to be shared can be moved external to the function
-	fluxuser := "flux"
-	if container.FluxUser.Name != "" {
-		fluxuser = container.FluxUser.Name
-	}
-
-	// Assemble the command
-	asSudo := "sudo -E PYTHONPATH=$PYTHONPATH -E PATH=$PATH"
-	asFlux := fmt.Sprintf("sudo -u %s -E PYTHONPATH=$PYTHONPATH -E PATH=$PATH -E HOME=/home/%s", fluxuser, fluxuser)
-	if container.Commands.RunFluxAsRoot {
-		asFlux = asSudo + fmt.Sprintf("-E HOME=/home/%s", fluxuser)
-	}
-
-	// If we have an archive path, we will need to save there
-	// Note that copy FROM archive TO container happens in wait.sh
-	if cluster.Spec.Archive.Path != "" {
-
-		dirname := filepath.Dir(cluster.Spec.Archive.Path)
-		preStop := []string{
-			"/bin/bash", "-c",
-			fmt.Sprintf("mkdir -p %s && %s flux proxy local:///var/run/flux/local flux dump %s",
-				dirname, asFlux, cluster.Spec.Archive.Path),
-		}
-		r.log.Info("🌀 MiniCluster", "LifeCycle.PreStopExec", strings.Join(preStop, " "))
+	if container.LifeCycle.PreStopExec != "" {
+		r.log.Info("🌀 MiniCluster", "LifeCycle.PreStopExec", container.LifeCycle.PreStopExec)
 		lifecycle.PreStop = &corev1.LifecycleHandler{
 			Exec: &corev1.ExecAction{
-				Command: preStop,
+				Command: []string{container.LifeCycle.PreStopExec},
 			},
 		}
-
 	}
 	return &lifecycle
 }

@@ -95,9 +95,9 @@ def _get_flux_restful_spec(restful):
     Get FluxRestful Spec
     """
     # Flux Restful pre-determined user and token
-    restful = restful or {}
-    if "username" in restful and "token" in restful:
-        flux_restful = models.FluxRestful(**restful)
+    flux_restful = restful or {}
+    if "username" in flux_restful and "token" in flux_restful:
+        flux_restful = models.FluxRestful(**flux_restful)
     return flux_restful
 
 

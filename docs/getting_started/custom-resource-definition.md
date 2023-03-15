@@ -759,6 +759,17 @@ we provide this argument on the level of the container. To enable this, set this
   diagnostics: false
 ```
 
+#### lifeCycle
+
+You can define postStartExec or preStopExec hooks.
+
+```yaml
+lifeCycle:
+  postStartExec: ...
+  preStopExec: ...
+```
+
+
 ### volumes
 
 Volumes that are defined on the level of the container must be defined at the top level of the MiniCluster.

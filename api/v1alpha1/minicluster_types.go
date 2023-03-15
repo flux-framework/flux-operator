@@ -402,6 +402,9 @@ type LifeCycle struct {
 
 	// +optional
 	PostStartExec string `json:"postStartExec"`
+
+	// +optional
+	PreStopExec string `json:"preStopExec"`
 }
 
 type FluxUser struct {

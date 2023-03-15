@@ -33,24 +33,29 @@ class LifeCycle(object):
                             and the value is json key in definition.
     """
     openapi_types = {
-        'post_start_exec': 'str'
+        'post_start_exec': 'str',
+        'pre_stop_exec': 'str'
     }
 
     attribute_map = {
-        'post_start_exec': 'postStartExec'
+        'post_start_exec': 'postStartExec',
+        'pre_stop_exec': 'preStopExec'
     }
 
-    def __init__(self, post_start_exec='', local_vars_configuration=None):  # noqa: E501
+    def __init__(self, post_start_exec='', pre_stop_exec='', local_vars_configuration=None):  # noqa: E501
         """LifeCycle - a model defined in OpenAPI"""  # noqa: E501
         if local_vars_configuration is None:
             local_vars_configuration = Configuration.get_default_copy()
         self.local_vars_configuration = local_vars_configuration
 
         self._post_start_exec = None
+        self._pre_stop_exec = None
         self.discriminator = None
 
         if post_start_exec is not None:
             self.post_start_exec = post_start_exec
+        if pre_stop_exec is not None:
+            self.pre_stop_exec = pre_stop_exec
 
     @property
     def post_start_exec(self):
@@ -72,6 +77,27 @@ class LifeCycle(object):
         """
 
         self._post_start_exec = post_start_exec
+
+    @property
+    def pre_stop_exec(self):
+        """Gets the pre_stop_exec of this LifeCycle.  # noqa: E501
+
+
+        :return: The pre_stop_exec of this LifeCycle.  # noqa: E501
+        :rtype: str
+        """
+        return self._pre_stop_exec
+
+    @pre_stop_exec.setter
+    def pre_stop_exec(self, pre_stop_exec):
+        """Sets the pre_stop_exec of this LifeCycle.
+
+
+        :param pre_stop_exec: The pre_stop_exec of this LifeCycle.  # noqa: E501
+        :type pre_stop_exec: str
+        """
+
+        self._pre_stop_exec = pre_stop_exec
 
     def to_dict(self, serialize=False):
         """Returns the model properties as a dict"""

@@ -28,7 +28,7 @@ jobs:
       matrix:
         # This is a matrix of test commands and containers, MiniKube is assumed to be running
         test: [["python ./sdk/python/v1alpha1/examples/port-forward.py", "ghcr.io/flux-framework/flux-restful-api:latest"],
-               ["python ./sdk/python/v1alpha1/examples/state-basic-job-completion-minicluster.py", "ghcr.io/flux-framework/flux-restful-api:latest"],
+               ["python ./sdk/python/v1alpha1/examples/state-pending-jobs-minicluster.py", "ghcr.io/flux-framework/flux-restful-api:latest"],
                ["python ./sdk/python/v1alpha1/examples/interactive-submit.py", "ghcr.io/flux-framework/flux-restful-api:latest"],
                ["pytest -xs ./tests/python/test_*.py", "ghcr.io/flux-framework/flux-restful-api:latest"]]
 
@@ -65,8 +65,15 @@ jobs:
         minikube ssh docker pull ${container}
         make
         make install
+        make docker-build
+        printf "Loading Flux Operator latest image...\n"
+        minikube image load ghcr.io/flux-framework/flux-operator:latest
+        kubectl apply -f ./examples/dist/flux-operator.yaml
 
     - name: Test ${{ matrix.test[0] }}
       env:
         command: ${{ matrix.test[0] }}
-      run: /bin/bash ./script/test-python.sh ${command}
+      run: |
+        make clean
+        echo "Running command: ${command}"
+        ${command}

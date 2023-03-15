@@ -122,6 +122,9 @@ time.sleep(5)
 print("\n🥱️ Waiting for running jobs...")
 cli.execute("flux queue idle")
 
+print('\n💩️ Dumping the archive...')
+cli.execute('flux dump /state/archive.tar.gz')
+
 print("\n🧐️ Inspecting jobs...")
 cli.execute("flux jobs -a")
 
