@@ -10,7 +10,10 @@ of difficulty:
 These small tutorials will walk through examples of each. The most likely use cases for doing
 this will be using the Flux Operator Python SDK (since we need to create multiple clusters)
 in a reasonable way) but for the purposes of explanation, minicluster.yaml files are provided
-as well.
+as well. One important note is that since we cannot control the timing of a pod termination,
+while we can have Flux automatically load a saved archive, for the process to wait for
+jobs to finish and then dump the archive anew, we rely on issuing a command to the MiniCluster
+(done by a script or workflow tool). This can likely be improved upon.
 
 ## Saving Pending Jobs
 
@@ -50,6 +53,9 @@ flux queue stop
 
 # This should wait for running jobs to finish
 flux queue idle
+
+# And then do the dump!
+flux dump /state/archive.tar.gz
 ```
 
 And this means we will stop and wait for jobs to finish, and then this state is loaded
@@ -307,13 +313,22 @@ When you are done, you can see all the jobs:
 $ kubectl exec -it -n flux-operator flux-sample-0-mbv54 -- sudo -u flux flux proxy local:///var/run/flux/local flux jobs -a
 ```
 
-Give the jobs a little bit of time to run, and after that, outside of the shell (if you didn't already exit) let's delete the Minicluster.
+Then you can stop the queue, wait for jobs to finish, and request the dump. Note that we do this
+as an interactive command and not automatically because (for large dumps 💩️) we cannot ensure that the time
+will be given for completion. 
+
+```bash
+$ kubectl exec -it -n flux-operator flux-sample-0-mbv54 -- sudo -u flux flux proxy local:///var/run/flux/local flux queue stop
+$ kubectl exec -it -n flux-operator flux-sample-0-mbv54 -- sudo -u flux flux proxy local:///var/run/flux/local flux queue idle
+$ kubectl exec -it -n flux-operator flux-sample-0-mbv54 -- sudo -u flux flux proxy local:///var/run/flux/local flux queue dump /state/archive.tar.gz
+```
+
+After that, outside of the shell (if you didn't already exit) let's delete the Minicluster.
 
 ```bash
 $ kubectl delete -f examples/state/basic-job-completion/minicluster.yaml 
 ```
 
-Since we have the lifecycle hook in place, it's going to take slightly longer to be terminated than if we didn't.
 At this point, it should be the case that the same flux state directory is dumped to the archive path we requested, 
 which is located at `/tmp/data/archive.tar.gz` in the MiniKube vm (`/tmp/data` is bound to `/state` and the
 archive inside the container is asked to be saved to `/state/archive.tar.gz`).

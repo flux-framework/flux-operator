@@ -81,6 +81,8 @@ brokerOptions="-Scron.directory=/etc/flux/system/cron.d \
   -Slog-stderr-mode=local"
 
 # if we are given an archive to use, load first, not required to exist
+# Note that we ask the user to dump in interactive mode - I am not
+# sure that doing it with a hook ensures the dump will be successful.
 {{if .Archive.Path }}
 if [[ -e "{{ .Archive.Path}}" ]]; then
 {{ if not .Logging.Quiet }}printf "🧊️ Found existing archive at {{ .Archive.Path}} loading into state directory\nBefore:\n"{{ end }}

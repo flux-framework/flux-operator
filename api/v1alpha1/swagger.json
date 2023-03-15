@@ -117,6 +117,10 @@
         "postStartExec": {
           "type": "string",
           "default": ""
+        },
+        "preStopExec": {
+          "type": "string",
+          "default": ""
         }
       }
     },

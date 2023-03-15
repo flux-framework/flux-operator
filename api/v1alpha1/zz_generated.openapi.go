@@ -245,6 +245,13 @@ func schema__api_v1alpha1__LifeCycle(ref common.ReferenceCallback) common.OpenAP
 							Format:  "",
 						},
 					},
+					"preStopExec": {
+						SchemaProps: spec.SchemaProps{
+							Default: "",
+							Type:    []string{"string"},
+							Format:  "",
+						},
+					},
 				},
 			},
 		},
