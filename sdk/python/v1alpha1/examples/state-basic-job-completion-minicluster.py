@@ -23,6 +23,23 @@ from fluxoperator.resource.pods import delete_minicluster
 namespace = "flux-operator"
 minicluster_name = "save-state"
 
+
+# Here is our custom class to "wrap" an exec
+class CommandExecutor(FluxOperator):
+    fluxuser = "flux"
+
+    def execute(self, command, print_result=True):
+        """
+        Wrap the kubectl_exec to add logic to issue to the broker instance.
+        """
+        res = self.kubectl_exec(
+            f"sudo -u {self.fluxuser} flux proxy local:///var/run/flux/local {command}"
+        )
+        if print_result:
+            print(res, end="")
+        return res
+
+
 # Here is our main container, we will use this for both clusters
 container = MiniClusterContainer(
     image="ghcr.io/flux-framework/flux-restful-api:latest",
@@ -73,7 +90,7 @@ crd_api.create_namespaced_custom_object(
 )
 
 # Now let's create a flux operator client to interact
-cli = FluxOperator(namespace)
+cli = CommandExecutor(namespace)
 
 # Just call this so we know to wait
 print("🥱️ Waiting for MiniCluster to be ready...")
@@ -85,34 +102,27 @@ cli.get_broker_pod()
 print("✨️ Submitting jobs!")
 time.sleep(5)
 for iter in range(0, 5):
-    res = cli.kubectl_exec(
-        "sudo -u flux flux proxy local:///var/run/flux/local flux submit sleep %s"
-        % iter
-    )
+    res = cli.execute("flux submit sleep %s" % iter)
     assert res.startswith("ƒ")
-    print(f"  {res}", end="")
-    res = cli.kubectl_exec(
-        "sudo -u flux flux proxy local:///var/run/flux/local flux submit whoami"
-    )
+    res = cli.execute("flux submit whoami")
     assert res.startswith("ƒ")
-    print(f"  {res}", end="")
 
 print("\n🥱️ Waiting for jobs...")
 print("Jobs finished...")
-print(
-    cli.kubectl_exec(
-        "sudo -u flux flux proxy local:///var/run/flux/local flux jobs -a"
-    ),
-    end="",
-)
-print("\n🥱️ Wait to be sure we have saved...")
-time.sleep(50)
+cli.execute("flux jobs -a")
 
-print("\n🧊️ Current state directory at /var/lib/flux...")
-print(cli.kubectl_exec("ls -l /var/lib/flux"), end="")
+print("\n🥱️ Asking flux to stop the queue...")
+cli.execute("flux queue stop")
+time.sleep(5)
+
+print("\n🥱️ Waiting for running jobs...")
+cli.execute("flux queue idle")
+
+print("\n🧐️ Inspecting jobs...")
+cli.execute("flux jobs -a")
 
 print("\n🧊️ Current archive directory at /state... should be empty, not saved yet")
-print(cli.kubectl_exec("ls -l /state"), end="")
+cli.execute("ls -l /state")
 
 print("Cleaning up...")
 delete_minicluster(minicluster_name, namespace)
@@ -126,19 +136,21 @@ crd_api.create_namespaced_custom_object(
     plural="miniclusters",
     body=minicluster,
 )
+print("Wait for MiniCluster...")
+time.sleep(120)
 
 # This also waits for the cluster to be running
 print("🧊️ Current archive directory at /state... should now be populated")
 print(cli.kubectl_exec("ls -l /state"), end="")
 time.sleep(10)
 
-print("\n😎️ Looking to see if old job history exists...")
-res = cli.kubectl_exec(
-    "sudo -u flux flux proxy local:///var/run/flux/local flux jobs -a"
-)
-print(res, end="")
-assert res.count("ƒ") == 10
-time.sleep(5)
+print("\n🤓️ Inspecting state directory in new cluster...")
+print(cli.kubectl_exec("ls -l /var/lib/flux"), end="")
+time.sleep(10)
 
-print("Cleaning up..")
+print("\n😎️ Looking to see if old job history exists...")
+res = cli.execute("flux jobs -a")
+print(res)
+assert res.count("ƒ") == 10
+
 delete_minicluster(minicluster_name, namespace)
