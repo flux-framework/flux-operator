@@ -29,7 +29,6 @@ jobs:
         # This is a matrix of test commands and containers, MiniKube is assumed to be running
         test: [["python ./sdk/python/v1alpha1/examples/port-forward.py", "ghcr.io/flux-framework/flux-restful-api:latest"],
                ["python ./sdk/python/v1alpha1/examples/state-pending-jobs-minicluster.py", "ghcr.io/flux-framework/flux-restful-api:latest"],
-               ["python ./sdk/python/v1alpha1/examples/state-basic-job-completion-minicluster.py", "ghcr.io/flux-framework/flux-restful-api:latest"],
                ["python ./sdk/python/v1alpha1/examples/interactive-submit.py", "ghcr.io/flux-framework/flux-restful-api:latest"],
                ["pytest -xs ./tests/python/test_*.py", "ghcr.io/flux-framework/flux-restful-api:latest"]]
 

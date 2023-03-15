@@ -243,7 +243,6 @@ $ kubectl apply -f examples/state/basic-job-completion/minicluster.yaml
 ```
 
 At this point you can proceed to either [Interactive Submit](#interactive-submit) or [Programmatic Submit](#programmatic-submit).
-We also have this example demonstrated [entirely in Python](https://github.com/flux-framework/flux-operator/tree/main/sdk/python/v1alpha1/examples/state-basic-job-completion-minicluster.py) using the Flux Operator Python SDK.
 
 ### Interactive Submit
 
