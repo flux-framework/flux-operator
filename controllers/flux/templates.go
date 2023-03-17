@@ -37,18 +37,9 @@ type WaitTemplate struct {
 	FluxUser  string // Username for Flux Restful API
 	MainHost  string // Main host identifier
 	Hosts     string // List of hosts
-
-	FluxRestful api.FluxRestful
-	Archive     api.MiniClusterArchive
-	Users       []api.MiniClusterUser
-	Container   api.MiniClusterContainer
-	Interactive bool
-	Cores       int32
-	Tasks       int32
-	Size        int32 // size of the Minicluster (nodes / pods in indexed jobs)
-
-	// Logging Modes (FluxLogLevel is per container)
-	Logging api.LoggingSpec
+	Cores     int32
+	Container api.MiniClusterContainer
+	Spec      api.MiniClusterSpec
 }
 
 // CertTemplate populates cert-generate.sh

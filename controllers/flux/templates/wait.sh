@@ -6,13 +6,13 @@
 # needs to be updated with the config map that has ips!
 
 # If we are not in strict, don't set strict mode
-{{ if .Logging.Strict }}set -eEu -o pipefail{{ end }}
+{{ if .Spec.Logging.Strict }}set -eEu -o pipefail{{ end }}
 
 # Set the flux user from the getgo
 fluxuser={{ if .Container.FluxUser.Name}}{{ .Container.FluxUser.Name }}{{ else }}flux{{ end }}
 fluxuid={{ if .Container.FluxUser.Uid}}{{ .Container.FluxUser.Uid }}{{ else }}1000{{ end }}
 
-{{ if not .Logging.Quiet }}# Show asFlux directive once
+{{ if not .Spec.Logging.Quiet }}# Show asFlux directive once
 printf "\nFlux username: ${fluxuser}\n"{{ end }}
 
 # Ensure pythonpath is set to something
@@ -48,21 +48,21 @@ which flux > /dev/null 2>&1 || (echo "flux is required to be installed" && exit 
 echo "${fluxuser} ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers
 
 # Add a flux user (required) that should exist before pre-command
-sudo adduser --disabled-password --uid ${fluxuid} --gecos "" ${fluxuser} > /dev/null 2>&1 || {{ if not .Logging.Quiet }} printf "${fluxuser} user is already added.\n"{{ else }}true{{ end }}
+sudo adduser --disabled-password --uid ${fluxuid} --gecos "" ${fluxuser} > /dev/null 2>&1 || {{ if not .Spec.Logging.Quiet }} printf "${fluxuser} user is already added.\n"{{ else }}true{{ end }}
 
-{{ if .Users }}{{range $username := .Users}}# Add additional users
+{{ if .Spec.Users }}{{range $username := .Spec.Users}}# Add additional users
 printf "Adding '{{.Name}}' with password '{{ .Password}}'\n"
 sudo useradd -m -p $(openssl passwd '{{ .Password }}') {{.Name}}
 {{ end }}{{ end }}
 
 # Show user permissions / ids
-{{ if not .Logging.Quiet }}printf "${fluxuser} user identifiers:\n$(id ${fluxuser})\n"{{ end }}
+{{ if not .Spec.Logging.Quiet }}printf "${fluxuser} user identifiers:\n$(id ${fluxuser})\n"{{ end }}
 
-{{ if not .Logging.Quiet }}# Show asFlux directive once
+{{ if not .Spec.Logging.Quiet }}# Show asFlux directive once
 printf "\nAs Flux prefix for flux commands: ${asFlux}\n"{{ end }}
 
 # We use the actual time command and not the wrapper, otherwise we get there is no argument -f
-{{ if .Logging.Timed }}which /usr/bin/time > /dev/null 2>&1 || (echo "/usr/bin/time is required to use logging.timed true" && exit 1);{{ end }}
+{{ if .Spec.Logging.Timed }}which /usr/bin/time > /dev/null 2>&1 || (echo "/usr/bin/time is required to use logging.timed true" && exit 1);{{ end }}
 
 # If the user wants to save/load archives, we set the state directory to that
 # The statedir similarly should exist and have plenty of available space.
@@ -76,19 +76,19 @@ mkdir -p ${STATE_DIR}
 #   or exposed as a variable
 brokerOptions="-Scron.directory=/etc/flux/system/cron.d \
   -Stbon.fanout=256 \
-  -Srundir=/run/flux {{ if .Interactive }}-Sbroker.rc2_none {{ end }} \
+  -Srundir=/run/flux {{ if .Spec.Interactive }}-Sbroker.rc2_none {{ end }} \
   -Sstatedir=${STATE_DIR} \
   -Slocal-uri=local:///run/flux/local \
-{{ if not .Logging.Quiet }} -Slog-stderr-level={{or .Container.FluxLogLevel 6}} {{ else }} -Slog-stderr-level=0 {{ end }} \
+{{ if not .Spec.Logging.Quiet }} -Slog-stderr-level={{or .Container.FluxLogLevel 6}} {{ else }} -Slog-stderr-level=0 {{ end }} \
   -Slog-stderr-mode=local"
 
 # if we are given an archive to use, load first, not required to exist
 # Note that we ask the user to dump in interactive mode - I am not
 # sure that doing it with a hook ensures the dump will be successful.
-{{if .Archive.Path }}
-if [[ -e "{{ .Archive.Path}}" ]]; then
-{{ if not .Logging.Quiet }}printf "🧊️ Found existing archive at {{ .Archive.Path}} loading into state directory\nBefore:\n"{{ end }}
-brokerOptions="${brokerOptions} -Scontent.restore={{ .Archive.Path}}"
+{{if .Spec.Archive.Path }}
+if [[ -e "{{ .Spec.Archive.Path}}" ]]; then
+{{ if not .Spec.Logging.Quiet }}printf "🧊️ Found existing archive at {{ .Spec.Archive.Path}} loading into state directory\nBefore:\n"{{ end }}
+brokerOptions="${brokerOptions} -Scontent.restore={{ .Spec.Archive.Path}}"
 fi{{ end }}
 
 # quorum settings influence how the instance treats missing ranks
@@ -126,7 +126,7 @@ mkdir -p ${workdir}
 # We always do a listing in case it's needed to "expose" object storage
 # Often this isn't enough and a list of the paths needed should be
 # added to containers[].commands.pre
-{{ if not .Logging.Quiet }}
+{{ if not .Spec.Logging.Quiet }}
 printf "\n👋 Hello, I'm $(hostname)\n"
 printf "The main host is ${mainHost}\n"
 printf "The working directory is ${workdir}, contents include:\n"
@@ -140,14 +140,14 @@ ls -R ${workdir} > /dev/null 2>&1
 mkdir -p /etc/flux/system
 
 # --cores=IDS Assign cores with IDS to each rank in R, so we  assign 0-(N-1) to each host
-{{ if not .Logging.Quiet }}echo "flux R encode --hosts={{ .Hosts}} {{if .Cores}}--cores=0-{{.Cores}}{{ end }}"{{ end }}
+{{ if not .Spec.Logging.Quiet }}echo "flux R encode --hosts={{ .Hosts}} {{if .Cores}}--cores=0-{{.Cores}}{{ end }}"{{ end }}
 flux R encode --hosts={{ .Hosts}} {{if .Cores}}--cores=0-{{.Cores}}{{ end }} > /etc/flux/system/R
-{{ if not .Logging.Quiet }}printf "\n📦 Resources\n"
+{{ if not .Spec.Logging.Quiet }}printf "\n📦 Resources\n"
 cat /etc/flux/system/R{{ end }}
 
 # Do we want to run diagnostics instead of regular entrypoint?
 diagnostics="{{ .Container.Diagnostics}}"
-{{ if not .Logging.Quiet }}printf "\n🐸 Diagnostics: ${diagnostics}\n"{{ end }}
+{{ if not .Spec.Logging.Quiet }}printf "\n🐸 Diagnostics: ${diagnostics}\n"{{ end }}
 
 # Flux option flags
 option_flags="{{ .Container.FluxOptionFlags}}"
@@ -161,7 +161,7 @@ if [ "${option_flags}" != "" ]; then
     else
         export FLUX_OPTION_FLAGS="${option_flags}"
     fi
-{{ if not .Logging.Quiet }}    echo "🚩️ Flux Option Flags defined"{{ end }}
+{{ if not .Spec.Logging.Quiet }}    echo "🚩️ Flux Option Flags defined"{{ end }}
 fi
 
 mkdir -p /etc/flux/imp/conf.d/
@@ -171,7 +171,7 @@ allowed-users = [ "${fluxuser}", "root" ]
 allowed-shells = [ "/usr/libexec/flux/flux-shell" ]
 EOT
 
-{{ if not .Logging.Quiet }}printf "\n🦊 Independent Minister of Privilege\n"
+{{ if not .Spec.Logging.Quiet }}printf "\n🦊 Independent Minister of Privilege\n"
 cat /etc/flux/imp/conf.d/imp.toml
 
 printf "\n🐸 Broker Configuration\n"
@@ -204,7 +204,7 @@ fluxuid=$(id -u ${fluxuser})
 # Make directory world read/writable
 chmod -R 0777 ${workdir}
 
-{{ if not .Logging.Quiet }}
+{{ if not .Spec.Logging.Quiet }}
 printf "\n🧊️ State Directory:\n$(ls -l ${STATE_DIR})\n\n"
 printf "\n🔒️ Working directory permissions:\n$(ls -l ${workdir})\n\n"
 printf "\n✨ Curve certificate generated by helper pod\n"
@@ -213,8 +213,8 @@ cat /etc/curve/curve.cert{{ end }}
 function run_flux_restful() {
 
     # Start restful API server
-    branch={{if .FluxRestful.Branch}}{{.FluxRestful.Branch}}{{else}}main{{end}}
-    startServer="uvicorn app.main:app --host=0.0.0.0 --port={{or .FluxRestful.Port 5000}}"
+    branch={{if .Spec.FluxRestful.Branch}}{{.Spec.FluxRestful.Branch}}{{else}}main{{end}}
+    startServer="uvicorn app.main:app --host=0.0.0.0 --port={{or .Spec.FluxRestful.Port 5000}}"
     printf "Cloning flux-framework/flux-restful-api branch ${branch}\n"
     git clone -b ${branch} --depth 1 https://github.com/flux-framework/flux-restful-api /flux-restful-api > /dev/null 2>&1
     cd /flux-restful-api
@@ -232,15 +232,15 @@ function run_flux_restful() {
     alembic upgrade head
     python3 app/db/init_db.py init || python app/db/init_db.py init
 
-    {{ if .Users }}{{range $username := .Users}}# Add additional users
+    {{ if .Spec.Users }}{{range $username := .Spec.Users}}# Add additional users
     printf "Adding '{{.Name}}' with password '{{ .Password}}'\n"
     python3 ./app/db/init_db.py add-user "{{.Name}}" "{{.Password}}" || python ./app/db/init_db.py add-user "{{.Name}}" "{{.Password}}"
     {{ end }}{{ end }}
 
     # Shared envars across user modes
     export FLUX_REQUIRE_AUTH=true
-    export FLUX_SECRET_KEY={{ .FluxRestful.SecretKey}}
-    export FLUX_NUMBER_NODES={{ .Size}}
+    export FLUX_SECRET_KEY={{ .Spec.FluxRestful.SecretKey}}
+    export FLUX_NUMBER_NODES={{ .Spec.Size}}
 
     printf "\n 🔑 Use your Flux user and token credentials to authenticate with the MiniCluster with flux-framework/flux-restful-api\n"
 
@@ -265,37 +265,37 @@ else
     if [ $(hostname) == "${mainHost}" ]; then
 
         # No command - use default to start server
-{{ if not .Logging.Quiet }}        echo "Extra command arguments are: $@"{{ end }}
+{{ if not .Spec.Logging.Quiet }}        echo "Extra command arguments are: $@"{{ end }}
         if [ "$@" == "" ]; then
 
             # An interactive job also doesn't require a command
-            {{ if .Interactive }}run_interactive_cluster
+            {{ if .Spec.Interactive }}run_interactive_cluster
             {{ else }}run_flux_restful{{ end }}
 
         # Case 2: Fall back to provided command
         else
-{{ if not .Logging.Quiet }} # if tasks >= size
+{{ if not .Spec.Logging.Quiet }} # if tasks >= size
             # Container launchers are snakemake, nextflow, that will launch their own jobs
             {{ if .Container.Launcher }}
             printf "\n🌀 Launcher Mode: flux start -o --config /etc/flux/config ${brokerOptions} {{.Container.Commands.Prefix}} $@\n"
             {{ else }}
-            printf "\n🌀 Submit Mode: flux start -o --config /etc/flux/config ${brokerOptions} {{.Container.Commands.Prefix}} flux submit {{ if ge .Tasks .Size }} -N {{.Size}}{{ end }} -n {{.Tasks}} --quiet {{ if .Container.FluxOptionFlags }}{{ .Container.FluxOptionFlags}}{{ end }} --watch{{ if .Logging.Debug }} -vvv{{ end }} $@\n"
+            printf "\n🌀 Submit Mode: flux start -o --config /etc/flux/config ${brokerOptions} {{.Container.Commands.Prefix}} flux submit {{ if ge .Spec.Tasks .Spec.Size }} -N {{.Spec.Size}}{{ end }} -n {{.Spec.Tasks}} --quiet {{ if .Container.FluxOptionFlags }}{{ .Container.FluxOptionFlags}}{{ end }} --watch{{ if .Spec.Logging.Debug }} -vvv{{ end }} $@\n"
             {{ end }}
 {{ end }}
             {{ if .Container.Launcher }}
-            {{ if .Logging.Timed }}/usr/bin/time -f "FLUXTIME fluxstart wall time %E" {{ end }}${asFlux} flux start -o --config /etc/flux/config ${brokerOptions} {{ if .Logging.Timed }}/usr/bin/time -f "FLUXTIME fluxsubmit wall time %E" {{ end }} {{.Container.Commands.Prefix}} $@
+            {{ if .Spec.Logging.Timed }}/usr/bin/time -f "FLUXTIME fluxstart wall time %E" {{ end }}${asFlux} flux start -o --config /etc/flux/config ${brokerOptions} {{ if .Spec.Logging.Timed }}/usr/bin/time -f "FLUXTIME fluxsubmit wall time %E" {{ end }} {{.Container.Commands.Prefix}} $@
             {{ else }}
-            {{ if .Logging.Timed }}/usr/bin/time -f "FLUXTIME fluxstart wall time %E" {{ end }}${asFlux} flux start -o --config /etc/flux/config ${brokerOptions} {{ if .Logging.Timed }}/usr/bin/time -f "FLUXTIME fluxsubmit wall time %E" {{ end }} {{.Container.Commands.Prefix}} flux submit {{ if ge .Tasks .Size }} -N {{.Size}}{{ end }} -n {{.Tasks}} --quiet {{ if .Container.FluxOptionFlags }}{{ .Container.FluxOptionFlags}}{{ end }} --watch{{ if .Logging.Debug }} -vvv{{ end }} $@
+            {{ if .Spec.Logging.Timed }}/usr/bin/time -f "FLUXTIME fluxstart wall time %E" {{ end }}${asFlux} flux start -o --config /etc/flux/config ${brokerOptions} {{ if .Spec.Logging.Timed }}/usr/bin/time -f "FLUXTIME fluxsubmit wall time %E" {{ end }} {{.Container.Commands.Prefix}} flux submit {{ if ge .Spec.Tasks .Spec.Size }} -N {{.Spec.Size}}{{ end }} -n {{.Spec.Tasks}} --quiet {{ if .Container.FluxOptionFlags }}{{ .Container.FluxOptionFlags}}{{ end }} --watch{{ if .Spec.Logging.Debug }} -vvv{{ end }} $@
             {{ end }}
         fi
     else
         # Sleep until the broker is ready
-{{ if not .Logging.Quiet }}
+{{ if not .Spec.Logging.Quiet }}
         printf "\n🌀 {{.Container.Commands.Prefix}} flux start -o --config /etc/flux/config ${brokerOptions}\n"{{ end }}
         while true
         do
-            {{ if .Logging.Timed }}/usr/bin/time -f "FLUXTIME fluxstart wall time %E" {{ end }}${asFlux} {{.Container.Commands.Prefix}} flux start -o --config /etc/flux/config ${brokerOptions}
-            {{ if not .Logging.Quiet }}printf "\n😪 Sleeping 15s until broker is ready..."{{ end }}
+            {{ if .Spec.Logging.Timed }}/usr/bin/time -f "FLUXTIME fluxstart wall time %E" {{ end }}${asFlux} {{.Container.Commands.Prefix}} flux start -o --config /etc/flux/config ${brokerOptions}
+            {{ if not .Spec.Logging.Quiet }}printf "\n😪 Sleeping 15s until broker is ready..."{{ end }}
             sleep 15
         done
     fi

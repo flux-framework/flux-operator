@@ -375,19 +375,13 @@ func generateWaitScript(cluster *api.MiniCluster, containerIndex int) (string, e
 	// The token uuid is the same across images
 	// TODO we could simplify the templating to just provide the cluster.Spec
 	wt := WaitTemplate{
-		FluxUser:    getFluxUser(cluster.Spec.FluxRestful.Username),
-		FluxToken:   getRandomToken(cluster.Spec.FluxRestful.Token),
-		MainHost:    mainHost,
-		Hosts:       hosts,
-		Container:   container,
-		Archive:     cluster.Spec.Archive,
-		Interactive: cluster.Spec.Interactive,
-		Users:       cluster.Spec.Users,
-		Size:        cluster.Spec.Size,
-		Tasks:       cluster.Spec.Tasks,
-		Cores:       cores,
-		FluxRestful: cluster.Spec.FluxRestful,
-		Logging:     cluster.Spec.Logging,
+		FluxUser:  getFluxUser(cluster.Spec.FluxRestful.Username),
+		FluxToken: getRandomToken(cluster.Spec.FluxRestful.Token),
+		MainHost:  mainHost,
+		Hosts:     hosts,
+		Cores:     cores,
+		Container: container,
+		Spec:      cluster.Spec,
 	}
 	t, err := template.New("wait-sh").Parse(waitToStartTemplate)
 	if err != nil {
