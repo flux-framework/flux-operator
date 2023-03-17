@@ -71,7 +71,7 @@ class Commands(object):
     def post(self):
         """Gets the post of this Commands.  # noqa: E501
 
-        post command is run by all pods on finish  # noqa: E501
+        post command is run in the entrypoint when the broker exits / finishes  # noqa: E501
 
         :return: The post of this Commands.  # noqa: E501
         :rtype: str
@@ -82,7 +82,7 @@ class Commands(object):
     def post(self, post):
         """Sets the post of this Commands.
 
-        post command is run by all pods on finish  # noqa: E501
+        post command is run in the entrypoint when the broker exits / finishes  # noqa: E501
 
         :param post: The post of this Commands.  # noqa: E501
         :type post: str

@@ -439,7 +439,7 @@ type Commands struct {
 	// +optional
 	Pre string `json:"pre"`
 
-	// post command is run by all pods on finish
+	// post command is run in the entrypoint when the broker exits / finishes
 	// +optional
 	Post string `json:"post"`
 }

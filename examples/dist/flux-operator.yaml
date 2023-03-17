@@ -63,7 +63,8 @@ spec:
                       description: More specific or detailed commands for just workers/broker
                       properties:
                         post:
-                          description: post command is run by all pods on finish
+                          description: post command is run in the entrypoint when
+                            the broker exits / finishes
                           type: string
                         pre:
                           description: pre command is run after global PreCommand,
