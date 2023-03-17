@@ -824,6 +824,13 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#post" class="md-nav__link">
+    <span title="/getting_started/custom-resource-definition.md#post (reference label)" class="md-ellipsis">post</span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#runfluxasroot" class="md-nav__link">
     <span title="/getting_started/custom-resource-definition.md#runfluxasroot (reference label)" class="md-ellipsis">run<wbr>Flux<wbr>As<wbr>Root</span>
   </a>
@@ -1642,6 +1649,15 @@ it will mangle the certificate output. Instead, you could write debug statements
 <span class="w">        </span><span class="no">ls /workdir</span>
 </code></pre></div>
 </div>
+<h5 id="post">post<a class="headerlink" href="#post" title="Permalink to this heading">¶</a></h5>
+<p>The “post” command is run for in the entrypoint after everything finishes up.</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><code><span class="nt">containers</span><span class="p">:</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">image</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">my-flux-image</span>
+<span class="w">    </span><span class="l l-Scalar l-Scalar-Plain">...</span>
+<span class="w">    </span><span class="nt">commands</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">post</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">echo &quot;Finishing up...&quot;</span>
+</code></pre></div>
+</div>
 <h5 id="runfluxasroot">runFluxAsRoot<a class="headerlink" href="#runfluxasroot" title="Permalink to this heading">¶</a></h5>
 <p>For different storage interfaces (e.g., CSI means “Container Storage Interface”) you might need to
 run flux as root (and not change permission of the mounted working directory) to be owned by the flux user. You
@@ -1769,7 +1785,7 @@ or define your own as follows:</p>
   <small>
     
       Last update:
-      Mar 15, 2023
+      Mar 17, 2023
     
   </small>
 </div>
