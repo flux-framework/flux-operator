@@ -438,6 +438,10 @@ type Commands struct {
 	// pre command is run after global PreCommand, before anything else
 	// +optional
 	Pre string `json:"pre"`
+
+	// post command is run in the entrypoint when the broker exits / finishes
+	// +optional
+	Post string `json:"post"`
 }
 
 // ContainerResources include limits and requests

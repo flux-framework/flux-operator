@@ -10,6 +10,11 @@
     "Commands": {
       "type": "object",
       "properties": {
+        "post": {
+          "description": "post command is run in the entrypoint when the broker exits / finishes",
+          "type": "string",
+          "default": ""
+        },
         "pre": {
           "description": "pre command is run after global PreCommand, before anything else",
           "type": "string",

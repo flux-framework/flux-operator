@@ -6,7 +6,7 @@
 # needs to be updated with the config map that has ips!
 
 # If we are not in strict, don't set strict mode
-{{ if not .Logging.Strict }}set -eEu -o pipefail{{ end }}
+{{ if .Logging.Strict }}set -eEu -o pipefail{{ end }}
 
 # Set the flux user from the getgo
 fluxuser={{ if .Container.FluxUser.Name}}{{ .Container.FluxUser.Name }}{{ else }}flux{{ end }}
@@ -19,6 +19,9 @@ printf "\nFlux username: ${fluxuser}\n"{{ end }}
 if [ -z ${PYTHONPATH+x} ]; then
   PYTHONPATH=""
 fi
+if [ -z ${LD_LIBRARY_PATH+x} ]; then
+  LD_LIBRARY_PATH=""
+fi
 
 # commands to be run as root
 asSudo="sudo -E PYTHONPATH=$PYTHONPATH -E PATH=$PATH"
@@ -28,8 +31,14 @@ asSudo="sudo -E PYTHONPATH=$PYTHONPATH -E PATH=$PATH"
 # Storage won't have write if we are the flux user
 asFlux="${asSudo} -E HOME=/home/${fluxuser}"{{ else }}
 # and ensure the home is targeted to be there too.
-asFlux="sudo -u ${fluxuser} -E PYTHONPATH=$PYTHONPATH -E PATH=$PATH -E HOME=/home/${fluxuser}"
+asFlux="sudo -u ${fluxuser} -E PYTHONPATH=$PYTHONPATH -E PATH=$PATH -E LD_LIBRARY_PATH=${LD_LIBRARY_PATH} -E HOME=/home/${fluxuser}"
 {{ end }}
+
+# If any preCommand logic is defined
+{{ .Container.PreCommand}}
+
+# And pre command logic that isn't passed to the certificate generator
+{{ .Container.Commands.Pre}}
 
 # We currently require sudo and an ubuntu base
 which sudo > /dev/null 2>&1 || (echo "sudo is required to be installed" && exit 1);
@@ -49,15 +58,8 @@ sudo useradd -m -p $(openssl passwd '{{ .Password }}') {{.Name}}
 # Show user permissions / ids
 {{ if not .Logging.Quiet }}printf "${fluxuser} user identifiers:\n$(id ${fluxuser})\n"{{ end }}
 
-# If any preCommand logic is defined
-{{ .Container.PreCommand}}
-
-# And pre command logic that isn't passed to the certificate generator
-{{ .Container.Commands.Pre}}
-
 {{ if not .Logging.Quiet }}# Show asFlux directive once
 printf "\nAs Flux prefix for flux commands: ${asFlux}\n"{{ end }}
-
 
 # We use the actual time command and not the wrapper, otherwise we get there is no argument -f
 {{ if .Logging.Timed }}which /usr/bin/time > /dev/null 2>&1 || (echo "/usr/bin/time is required to use logging.timed true" && exit 1);{{ end }}
@@ -297,4 +299,7 @@ else
             sleep 15
         done
     fi
+
+    {{ .Container.Commands.Post}}
 fi
+

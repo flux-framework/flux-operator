@@ -75,6 +75,14 @@ func schema__api_v1alpha1__Commands(ref common.ReferenceCallback) common.OpenAPI
 							Format:      "",
 						},
 					},
+					"post": {
+						SchemaProps: spec.SchemaProps{
+							Description: "post command is run in the entrypoint when the broker exits / finishes",
+							Default:     "",
+							Type:        []string{"string"},
+							Format:      "",
+						},
+					},
 				},
 			},
 		},

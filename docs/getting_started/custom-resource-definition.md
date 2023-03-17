@@ -697,6 +697,18 @@ containers:
         ls /workdir
 ```
 
+##### post
+
+The "post" command is run for in the entrypoint after everything finishes up.
+
+```yaml
+containers:
+  - image: my-flux-image
+    ...
+    commands:
+      post: echo "Finishing up..."
+```
+
 ##### runFluxAsRoot
 
 For different storage interfaces (e.g., CSI means "Container Storage Interface") you might need to

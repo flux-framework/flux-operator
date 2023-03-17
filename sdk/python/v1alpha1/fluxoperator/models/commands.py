@@ -33,34 +33,62 @@ class Commands(object):
                             and the value is json key in definition.
     """
     openapi_types = {
+        'post': 'str',
         'pre': 'str',
         'prefix': 'str',
         'run_flux_as_root': 'bool'
     }
 
     attribute_map = {
+        'post': 'post',
         'pre': 'pre',
         'prefix': 'prefix',
         'run_flux_as_root': 'runFluxAsRoot'
     }
 
-    def __init__(self, pre='', prefix='', run_flux_as_root=False, local_vars_configuration=None):  # noqa: E501
+    def __init__(self, post='', pre='', prefix='', run_flux_as_root=False, local_vars_configuration=None):  # noqa: E501
         """Commands - a model defined in OpenAPI"""  # noqa: E501
         if local_vars_configuration is None:
             local_vars_configuration = Configuration.get_default_copy()
         self.local_vars_configuration = local_vars_configuration
 
+        self._post = None
         self._pre = None
         self._prefix = None
         self._run_flux_as_root = None
         self.discriminator = None
 
+        if post is not None:
+            self.post = post
         if pre is not None:
             self.pre = pre
         if prefix is not None:
             self.prefix = prefix
         if run_flux_as_root is not None:
             self.run_flux_as_root = run_flux_as_root
+
+    @property
+    def post(self):
+        """Gets the post of this Commands.  # noqa: E501
+
+        post command is run in the entrypoint when the broker exits / finishes  # noqa: E501
+
+        :return: The post of this Commands.  # noqa: E501
+        :rtype: str
+        """
+        return self._post
+
+    @post.setter
+    def post(self, post):
+        """Sets the post of this Commands.
+
+        post command is run in the entrypoint when the broker exits / finishes  # noqa: E501
+
+        :param post: The post of this Commands.  # noqa: E501
+        :type post: str
+        """
+
+        self._post = post
 
     @property
     def pre(self):
