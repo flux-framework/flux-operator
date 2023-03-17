@@ -24,7 +24,7 @@ spec:
       launcher: true
 
       # Calculating workers as 4 nodes X 2 cpu
-      command: /bin/bash ./scripts/run_0.sh --outdir /tmp/data --workers 8
+      command: /bin/bash ./scripts/run_0.sh --outdir /data --workers 8
 
       # Custom flux user
       fluxUser: 
