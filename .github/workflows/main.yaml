@@ -61,6 +61,7 @@ jobs:
       fail-fast: false
       matrix:
         test: [["hello-world", "ghcr.io/flux-framework/flux-restful-api:latest", 30],
+               ["post", "ghcr.io/flux-framework/flux-restful-api:latest", 30],
                ["lammps", "ghcr.io/rse-ops/lammps:flux-sched-focal-v0.24.0", 30],
                ["pokemon", "ghcr.io/rse-ops/pokemon:app-latest", 30],
                ["timed", "ghcr.io/flux-framework/flux-restful-api:latest", 30],

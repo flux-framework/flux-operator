@@ -35,7 +35,7 @@ spec:
           export LD_LIBRARY_PATH=/opt/conda/lib
           sudo chown -R /data fluxuser
           rm -rf ./runinfo
-        postBroker: |
+        brokerPost: |
           cp /workflow/training-data-vs-time.svg /data/training-data-vs-time.svg
           cp /workflow/parsl-results.csv /data/parsl-results.csv
       volumes:

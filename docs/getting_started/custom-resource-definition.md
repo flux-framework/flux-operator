@@ -699,7 +699,7 @@ containers:
 
 ##### post
 
-The "post" command is run for all workers and the broker, and after everything finishes up.
+The "post" command is run for in the entrypoint after everything finishes up.
 
 ```yaml
 containers:
@@ -707,18 +707,6 @@ containers:
     ...
     commands:
       post: echo "Finishing up..."
-```
-
-##### brokerPost
-
-The "brokerPost" command is run for only the broker, and after everything finishes up.
-
-```yaml
-containers:
-  - image: my-flux-image
-    ...
-    commands:
-      postBroker: echo "I am the broker finishing up..."
 ```
 
 ##### runFluxAsRoot

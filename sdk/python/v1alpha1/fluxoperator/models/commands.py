@@ -33,7 +33,6 @@ class Commands(object):
                             and the value is json key in definition.
     """
     openapi_types = {
-        'broker_post': 'str',
         'post': 'str',
         'pre': 'str',
         'prefix': 'str',
@@ -41,28 +40,24 @@ class Commands(object):
     }
 
     attribute_map = {
-        'broker_post': 'brokerPost',
         'post': 'post',
         'pre': 'pre',
         'prefix': 'prefix',
         'run_flux_as_root': 'runFluxAsRoot'
     }
 
-    def __init__(self, broker_post='', post='', pre='', prefix='', run_flux_as_root=False, local_vars_configuration=None):  # noqa: E501
+    def __init__(self, post='', pre='', prefix='', run_flux_as_root=False, local_vars_configuration=None):  # noqa: E501
         """Commands - a model defined in OpenAPI"""  # noqa: E501
         if local_vars_configuration is None:
             local_vars_configuration = Configuration.get_default_copy()
         self.local_vars_configuration = local_vars_configuration
 
-        self._broker_post = None
         self._post = None
         self._pre = None
         self._prefix = None
         self._run_flux_as_root = None
         self.discriminator = None
 
-        if broker_post is not None:
-            self.broker_post = broker_post
         if post is not None:
             self.post = post
         if pre is not None:
@@ -71,29 +66,6 @@ class Commands(object):
             self.prefix = prefix
         if run_flux_as_root is not None:
             self.run_flux_as_root = run_flux_as_root
-
-    @property
-    def broker_post(self):
-        """Gets the broker_post of this Commands.  # noqa: E501
-
-        post command is run by the broker on finish  # noqa: E501
-
-        :return: The broker_post of this Commands.  # noqa: E501
-        :rtype: str
-        """
-        return self._broker_post
-
-    @broker_post.setter
-    def broker_post(self, broker_post):
-        """Sets the broker_post of this Commands.
-
-        post command is run by the broker on finish  # noqa: E501
-
-        :param broker_post: The broker_post of this Commands.  # noqa: E501
-        :type broker_post: str
-        """
-
-        self._broker_post = broker_post
 
     @property
     def post(self):

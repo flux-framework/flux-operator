@@ -442,10 +442,6 @@ type Commands struct {
 	// post command is run by all pods on finish
 	// +optional
 	Post string `json:"post"`
-
-	// post command is run by the broker on finish
-	// +optional
-	BrokerPost string `json:"brokerPost"`
 }
 
 // ContainerResources include limits and requests

@@ -83,14 +83,6 @@ func schema__api_v1alpha1__Commands(ref common.ReferenceCallback) common.OpenAPI
 							Format:      "",
 						},
 					},
-					"brokerPost": {
-						SchemaProps: spec.SchemaProps{
-							Description: "post command is run by the broker on finish",
-							Default:     "",
-							Type:        []string{"string"},
-							Format:      "",
-						},
-					},
 				},
 			},
 		},
