@@ -56,6 +56,12 @@ spec:
                     commands:
                       description: More specific or detailed commands for just workers/broker
                       properties:
+                        brokerPost:
+                          description: post command is run by the broker on finish
+                          type: string
+                        post:
+                          description: post command is run by all pods on finish
+                          type: string
                         pre:
                           description: pre command is run after global PreCommand,
                             before anything else

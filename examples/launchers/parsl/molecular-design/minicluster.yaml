@@ -24,7 +24,7 @@ spec:
       launcher: true
 
       # Calculating workers as 4 nodes X 2 cpu
-      command: /bin/bash ./scripts/run_0.sh --outdir /data --workers 8
+      command: /bin/bash ./scripts/run_0.sh --outdir /workflow --workers 8
 
       # Custom flux user
       fluxUser: 
@@ -35,6 +35,9 @@ spec:
           export LD_LIBRARY_PATH=/opt/conda/lib
           sudo chown -R /data fluxuser
           rm -rf ./runinfo
+        postBroker: |
+          cp /workflow/training-data-vs-time.svg /data/training-data-vs-time.svg
+          cp /workflow/parsl-results.csv /data/parsl-results.csv
       volumes:
         data:
           path: /data

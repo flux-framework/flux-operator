@@ -288,6 +288,7 @@ else
             {{ if .Logging.Timed }}/usr/bin/time -f "FLUXTIME fluxstart wall time %E" {{ end }}${asFlux} flux start -o --config /etc/flux/config ${brokerOptions} {{ if .Logging.Timed }}/usr/bin/time -f "FLUXTIME fluxsubmit wall time %E" {{ end }} {{.Container.Commands.Prefix}} flux submit {{ if ge .Tasks .Size }} -N {{.Size}}{{ end }} -n {{.Tasks}} --quiet {{ if .Container.FluxOptionFlags }}{{ .Container.FluxOptionFlags}}{{ end }} --watch{{ if .Logging.Debug }} -vvv{{ end }} $@
             {{ end }}
         fi
+        {{ .Container.Commands.BrokerPost}}
     else
         # Sleep until the broker is ready
 {{ if not .Logging.Quiet }}
@@ -299,4 +300,7 @@ else
             sleep 15
         done
     fi
+
+    {{ .Container.Commands.Post}}
 fi
+

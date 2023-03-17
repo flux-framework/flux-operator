@@ -438,6 +438,14 @@ type Commands struct {
 	// pre command is run after global PreCommand, before anything else
 	// +optional
 	Pre string `json:"pre"`
+
+	// post command is run by all pods on finish
+	// +optional
+	Post string `json:"post"`
+
+	// post command is run by the broker on finish
+	// +optional
+	BrokerPost string `json:"brokerPost"`
 }
 
 // ContainerResources include limits and requests

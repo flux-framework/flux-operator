@@ -4,6 +4,8 @@
 ## Properties
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
+**broker_post** | **str** | post command is run by the broker on finish | [optional] [default to '']
+**post** | **str** | post command is run by all pods on finish | [optional] [default to '']
 **pre** | **str** | pre command is run after global PreCommand, before anything else | [optional] [default to '']
 **prefix** | **str** | Prefix to flux start / submit / broker Typically used for a wrapper command to mount, etc. | [optional] [default to '']
 **run_flux_as_root** | **bool** | Run flux start as root - required for some storage binds | [optional] [default to False]

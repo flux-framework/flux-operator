@@ -697,6 +697,30 @@ containers:
         ls /workdir
 ```
 
+##### post
+
+The "post" command is run for all workers and the broker, and after everything finishes up.
+
+```yaml
+containers:
+  - image: my-flux-image
+    ...
+    commands:
+      post: echo "Finishing up..."
+```
+
+##### brokerPost
+
+The "brokerPost" command is run for only the broker, and after everything finishes up.
+
+```yaml
+containers:
+  - image: my-flux-image
+    ...
+    commands:
+      postBroker: echo "I am the broker finishing up..."
+```
+
 ##### runFluxAsRoot
 
 For different storage interfaces (e.g., CSI means "Container Storage Interface") you might need to

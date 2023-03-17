@@ -10,6 +10,16 @@
     "Commands": {
       "type": "object",
       "properties": {
+        "brokerPost": {
+          "description": "post command is run by the broker on finish",
+          "type": "string",
+          "default": ""
+        },
+        "post": {
+          "description": "post command is run by all pods on finish",
+          "type": "string",
+          "default": ""
+        },
         "pre": {
           "description": "pre command is run after global PreCommand, before anything else",
           "type": "string",
