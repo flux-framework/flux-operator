@@ -33,6 +33,7 @@ spec:
       commands:
         pre: |
           export LD_LIBRARY_PATH=/opt/conda/lib
+          sudo chown -R /data fluxuser
           rm -rf ./runinfo
       volumes:
         data:
