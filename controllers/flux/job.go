@@ -34,6 +34,7 @@ func (r *MiniClusterReconciler) newMiniClusterJob(
 	// Do we have additional pod labels?
 	podLabels := cluster.Spec.Pod.Labels
 	podLabels["namespace"] = cluster.Namespace
+	podLabels["app.kubernetes.io/name"] = cluster.Name
 
 	// This is an indexed-job
 	job := &batchv1.Job{
@@ -115,7 +116,7 @@ func (r *MiniClusterReconciler) getMiniClusterContainers(
 			// wait.sh path corresponds to container identifier
 			waitScript := fmt.Sprintf("/flux_operator/wait-%d.sh", i)
 			command = []string{"/bin/bash", waitScript, container.Command}
-			containerName = fmt.Sprintf("%s-%d", cluster.Name, i)
+			containerName = cluster.Name
 		}
 
 		// Prepare lifescycle commands for the container
@@ -193,7 +194,6 @@ func (r *MiniClusterReconciler) getMiniClusterContainers(
 			}
 			ports = append(ports, newPort)
 		}
-
 		// Add environment variables
 		for key, value := range container.Environment {
 			newEnvar := corev1.EnvVar{

@@ -62,6 +62,7 @@ jobs:
       matrix:
         test: [["hello-world", "ghcr.io/flux-framework/flux-restful-api:latest", 30],
                ["post", "ghcr.io/flux-framework/flux-restful-api:latest", 30],
+               ["nginx-service", "ghcr.io/flux-framework/flux-restful-api:latest", 40],
                ["lammps", "ghcr.io/rse-ops/lammps:flux-sched-focal-v0.24.0", 30],
                ["pokemon", "ghcr.io/rse-ops/pokemon:app-latest", 30],
                ["timed", "ghcr.io/flux-framework/flux-restful-api:latest", 30],
@@ -89,11 +90,15 @@ jobs:
     - name: Pull Docker Containers to MiniKube
       env:
         container: ${{ matrix.test[1] }}
+        test: ${{ matrix[0] }}
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: |
         export SHELL=/bin/bash
         eval $(minikube -p minikube docker-env)
         minikube ssh docker pull ${container}
+        if [[ "${test}" == "nginx-service" ]]; then
+            minikube ssh docker pull nginx
+        fi
         make
         make install
 

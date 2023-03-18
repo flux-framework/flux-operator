@@ -87,9 +87,26 @@ func (r *MiniClusterReconciler) ensureMiniCluster(
 	}
 
 	// Expose pod index 0 service
-	result, err = r.exposeServices(ctx, cluster)
+	selector := map[string]string{"job-name": cluster.Name}
+	result, err = r.exposeServices(ctx, cluster, restfulServiceName, selector)
 	if err != nil {
 		return result, err
+	}
+
+	// Expose other sidecar container services
+	for _, container := range cluster.Spec.Containers {
+
+		// Assume now services only available TO flux runner
+		if container.RunFlux || len(container.Ports) == 0 {
+			continue
+		}
+
+		// Service name corresponds to container, but selector is pod-specific
+		selector := map[string]string{"app.kubernetes.io/name": cluster.Name}
+		result, err = r.exposeService(ctx, cluster, container.Name, selector, container.Ports)
+		if err != nil {
+			return result, err
+		}
 	}
 
 	// If we get here, update the status to be ready
