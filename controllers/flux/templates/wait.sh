@@ -35,10 +35,10 @@ asFlux="sudo -u ${fluxuser} -E PYTHONPATH=$PYTHONPATH -E PATH=$PATH -E LD_LIBRAR
 {{ end }}
 
 # If any preCommand logic is defined
-{{ .Container.PreCommand}}
+{{ .Container.PreCommand}} {{ if .Spec.Logging.Quiet }}> /dev/null{{ end }}
 
 # And pre command logic that isn't passed to the certificate generator
-{{ .Container.Commands.Pre}}
+{{ .Container.Commands.Pre}} {{ if .Spec.Logging.Quiet }}> /dev/null{{ end }}
 
 # We currently require sudo and an ubuntu base
 which sudo > /dev/null 2>&1 || (echo "sudo is required to be installed" && exit 1);
