@@ -2,7 +2,7 @@
 # coding: utf-8
 
 # This is an example of creating a Lammps cluster using the native API models
-# directly (and not using the client.FluxOperator or client.MiniCluster classes)
+# directly (and not using the client.FluxOperator or client.FluxMiniCluster classes)
 
 from kubernetes import client, config
 from kubernetes.client import V1ObjectMeta
