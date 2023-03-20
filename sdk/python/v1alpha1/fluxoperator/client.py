@@ -6,8 +6,12 @@ from .resource.network import port_forward
 from .resource.pods import create_minicluster, delete_minicluster
 from .decorator import timed
 
+import logging
 import requests
 import time
+
+# This should be better exposed
+logger = logging.getLogger("fluxoperator")
 
 
 class FluxMiniCluster:
@@ -43,6 +47,7 @@ class FluxMiniCluster:
         Create (and time the creation of) the MiniCluster
         """
         self.metadata = create_minicluster(*args, **kwargs)
+        self._broker_pod = None
 
         # Save the pods upfront so we don't have to query for them again.
         return self.wait_pods()
@@ -52,7 +57,7 @@ class FluxMiniCluster:
         """
         Derive the name of the flux instance owner.
         """
-        return (self.metadata or {}).get('spec', {}).get('flux_user') or "flux"
+        return (self.metadata or {}).get("spec", {}).get("flux_user") or "flux"
 
     def wait_pods(self, retry_seconds=1, quiet=False):
         """
@@ -71,7 +76,7 @@ class FluxMiniCluster:
         """
         Get nodes metadata
         """
-        return self.ctrl.get_nods()
+        return self.ctrl.get_nodes()
 
     @property
     def broker_pod(self):
@@ -129,7 +134,6 @@ class FluxMiniCluster:
                 # There will be a few connection errors before everything is ready
                 except Exception:
                     pass
-                print(".", end="\r")
 
             print()
             yield url
@@ -139,10 +143,7 @@ class FluxMiniCluster:
         Stream output, optionally printing also to stdout.
         """
         return self.ctrl.stream_output(
-            filename=filename,
-            stdout=stdout,
-            namespace=self.namespace,
-            name=self.name
+            filename=filename, stdout=stdout, namespace=self.namespace, name=self.name
         )
 
     @timed
@@ -169,6 +170,7 @@ class FluxBrokerMiniCluster(FluxMiniCluster):
     """
     A MiniCluster with a broker can have commands exec'd to the socket.
     """
+
     def __init__(self, socket=None, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.socket = socket or "local:///var/run/flux/local"
@@ -194,7 +196,6 @@ class FluxBrokerMiniCluster(FluxMiniCluster):
         if print_result:
             print(res, end="")
         return res
-
 
 
 class FluxOperator:
@@ -361,15 +362,18 @@ class FluxOperator:
 
         ready = set()
         while len(ready) != size:
+            logger.debug(f"{len(ready)} pods are ready, out of {size}")
             pod_list = self.get_pods(name=name, namespace=namespace)
 
             for pod in pod_list.items:
+                logger.debug(f"{pod.metadata.name} is in phase {pod.status.phase}")
+
                 # Don't include the cert generator pod
                 if "cert-generator" in pod.metadata.name:
                     continue
                 if pod.status.phase not in states:
                     time.sleep(retry_seconds)
-                elif pod.status.phase not in ["Terminating"]:
+                elif pod.status.phase not in ["Terminating", "Succeeded"]:
                     ready.add(pod.metadata.name)
 
         if not quiet:
