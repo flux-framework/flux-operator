@@ -160,7 +160,7 @@ time.sleep(10)
 minicluster.spec.size = 3
 
 print("\n🌀️ Creating second MiniCluster")
-crd_api.create_namespaced_custom_object(
+result = crd_api.create_namespaced_custom_object(
     group="flux-framework.org",
     version="v1alpha1",
     namespace=namespace,
@@ -168,7 +168,7 @@ crd_api.create_namespaced_custom_object(
     body=minicluster,
 )
 print("Wait for MiniCluster...")
-time.sleep(120)
+cli.load(result)
 
 # This also waits for the cluster to be running
 print("🧊️ Current archive directory at /state... should now be populated")

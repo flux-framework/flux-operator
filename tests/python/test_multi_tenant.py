@@ -12,7 +12,7 @@ from fluxoperator.models import MiniClusterContainer
 from fluxoperator.models import FluxRestful
 from fluxoperator.models import MiniClusterUser
 from kubernetes.client import V1ObjectMeta
-from fluxoperator.client import FluxOperator
+from fluxoperator.client import FluxMiniCluster
 
 import time
 import sys
@@ -92,17 +92,15 @@ def test_multi_tenant():
     print("Creating the MiniCluster...")
     result = create_minicluster()
 
+    # Create a client to interact with FluxOperator MiniCluster
+    cli = FluxMiniCluster()
+    cli.load(result)
+
     # Get the secret key created for the server
     secret_key = result["spec"]["fluxRestful"]["secretKey"]
 
-    # Create a client to interact with FluxOperator MiniCluster
-    cli = FluxOperator("flux-operator")
-
-    # First find the broker pod. This also calls cli.wait_pods()
-    broker = cli.get_broker_pod()
-
     # And then port portfward to it - this waits until the server is ready
-    with cli.port_forward(broker) as forward_url:
+    with cli.port_forward() as forward_url:
         print(f"Port forward opened to {forward_url}")
 
         # This connection without auth should fail
@@ -166,4 +164,4 @@ def test_multi_tenant():
 
     # How to cleanup
     print("Cleaning up MiniCluster!")
-    delete_minicluster(result)
+    cli.delete()
