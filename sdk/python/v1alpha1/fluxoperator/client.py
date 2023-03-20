@@ -143,7 +143,11 @@ class FluxMiniCluster:
         Stream output, optionally printing also to stdout.
         """
         return self.ctrl.stream_output(
-            filename=filename, stdout=stdout, namespace=self.namespace, name=self.name
+            filename=filename,
+            stdout=stdout,
+            namespace=self.namespace,
+            name=self.name,
+            pod=self.broker_pod,
         )
 
     @timed
