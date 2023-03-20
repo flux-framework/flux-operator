@@ -32,17 +32,13 @@ class FluxUser(object):
       attribute_map (dict): The key is attribute name
                             and the value is json key in definition.
     """
-    openapi_types = {
-        'name': 'str',
-        'uid': 'int'
-    }
+    openapi_types = {"name": "str", "uid": "int"}
 
-    attribute_map = {
-        'name': 'name',
-        'uid': 'uid'
-    }
+    attribute_map = {"name": "name", "uid": "uid"}
 
-    def __init__(self, name='flux', uid=1000, local_vars_configuration=None):  # noqa: E501
+    def __init__(
+        self, name="flux", uid=1000, local_vars_configuration=None
+    ):  # noqa: E501
         """FluxUser - a model defined in OpenAPI"""  # noqa: E501
         if local_vars_configuration is None:
             local_vars_configuration = Configuration.get_default_copy()
@@ -121,15 +117,11 @@ class FluxUser(object):
             value = getattr(self, attr)
             attr = self.attribute_map.get(attr, attr) if serialize else attr
             if isinstance(value, list):
-                result[attr] = list(map(
-                    lambda x: convert(x),
-                    value
-                ))
+                result[attr] = list(map(lambda x: convert(x), value))
             elif isinstance(value, dict):
-                result[attr] = dict(map(
-                    lambda item: (item[0], convert(item[1])),
-                    value.items()
-                ))
+                result[attr] = dict(
+                    map(lambda item: (item[0], convert(item[1])), value.items())
+                )
             else:
                 result[attr] = convert(value)
 

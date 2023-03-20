@@ -14,7 +14,7 @@ from fluxoperator.models import (
     MiniClusterContainer,
     MiniClusterSpec,
 )
-from fluxoperator.client import FluxOperator
+from fluxoperator.client import FluxMiniCluster
 from fluxoperator.resource.pods import delete_minicluster
 
 # Set our namespace and name
@@ -23,15 +23,25 @@ minicluster_name = "interactive-submit"
 
 
 # Here is our custom class to "wrap" an exec
-class CommandExecutor(FluxOperator):
+class CommandExecutor(FluxMiniCluster):
+    """
+    A CommandExecutor wraps a FluxOperator controller. Note
+    that this class assumes we have one MiniCluster to interact with -
+    it will group all pods in the same namespace. If you intend to control
+    multiple MiniClusters as once, use the MiniClusterManager.
+    """
+
     fluxuser = "flux"
 
     def execute(self, command, print_result=True):
         """
         Wrap the kubectl_exec to add logic to issue to the broker instance.
         """
-        res = self.kubectl_exec(
-            f"sudo -u {self.fluxuser} flux proxy local:///var/run/flux/local {command}"
+        res = self.ctrl.kubectl_exec(
+            f"sudo -u {self.fluxuser} flux proxy local:///var/run/flux/local {command}",
+            name=self.name,
+            namespace=self.namespace,
+            pod=self.broker_pod,
         )
         if print_result:
             print(res, end="")
@@ -70,8 +80,8 @@ crd_api = client.CustomObjectsApi()
 
 # Note that you might want to do this first for minikube
 # minikube ssh docker pull ghcr.io/flux-framework/flux-restful-api:latest
-# And create the cluster
-crd_api.create_namespaced_custom_object(
+# And create the cluster. This can also be done with cli.create(**minicluster)
+result = crd_api.create_namespaced_custom_object(
     group="flux-framework.org",
     version="v1alpha1",
     namespace=namespace,
@@ -80,12 +90,12 @@ crd_api.create_namespaced_custom_object(
 )
 
 # Now let's create a flux operator client to interact
-cli = CommandExecutor(namespace)
+# This will wait for pods to be ready
+print("🥱️ Waiting for MiniCluster to be ready...")
+cli = CommandExecutor()
+cli.load(result)
 
 # Just call this so we know to wait
-print("🥱️ Waiting for MiniCluster to be ready...")
-cli.get_broker_pod()
-
 # Let's exec commands to run a bunch of jobs!
 # This is why we want interactive mod!
 # By default, this selects (and waits for) the broker pod
@@ -106,4 +116,4 @@ time.sleep(50)
 cli.execute("flux jobs -a")
 
 print("Cleaning up...")
-delete_minicluster(minicluster_name, namespace)
+cli.delete()

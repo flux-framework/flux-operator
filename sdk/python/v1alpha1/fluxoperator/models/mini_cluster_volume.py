@@ -33,36 +33,51 @@ class MiniClusterVolume(object):
                             and the value is json key in definition.
     """
     openapi_types = {
-        'annotations': 'dict(str, str)',
-        'attributes': 'dict(str, str)',
-        'capacity': 'str',
-        'claim_annotations': 'dict(str, str)',
-        'delete': 'bool',
-        'driver': 'str',
-        'labels': 'dict(str, str)',
-        'path': 'str',
-        'secret': 'str',
-        'secret_namespace': 'str',
-        'storage_class': 'str',
-        'volume_handle': 'str'
+        "annotations": "dict(str, str)",
+        "attributes": "dict(str, str)",
+        "capacity": "str",
+        "claim_annotations": "dict(str, str)",
+        "delete": "bool",
+        "driver": "str",
+        "labels": "dict(str, str)",
+        "path": "str",
+        "secret": "str",
+        "secret_namespace": "str",
+        "storage_class": "str",
+        "volume_handle": "str",
     }
 
     attribute_map = {
-        'annotations': 'annotations',
-        'attributes': 'attributes',
-        'capacity': 'capacity',
-        'claim_annotations': 'claimAnnotations',
-        'delete': 'delete',
-        'driver': 'driver',
-        'labels': 'labels',
-        'path': 'path',
-        'secret': 'secret',
-        'secret_namespace': 'secretNamespace',
-        'storage_class': 'storageClass',
-        'volume_handle': 'volumeHandle'
+        "annotations": "annotations",
+        "attributes": "attributes",
+        "capacity": "capacity",
+        "claim_annotations": "claimAnnotations",
+        "delete": "delete",
+        "driver": "driver",
+        "labels": "labels",
+        "path": "path",
+        "secret": "secret",
+        "secret_namespace": "secretNamespace",
+        "storage_class": "storageClass",
+        "volume_handle": "volumeHandle",
     }
 
-    def __init__(self, annotations=None, attributes=None, capacity='5Gi', claim_annotations=None, delete=True, driver='', labels=None, path='', secret='', secret_namespace='default', storage_class='hostpath', volume_handle='', local_vars_configuration=None):  # noqa: E501
+    def __init__(
+        self,
+        annotations=None,
+        attributes=None,
+        capacity="5Gi",
+        claim_annotations=None,
+        delete=True,
+        driver="",
+        labels=None,
+        path="",
+        secret="",
+        secret_namespace="default",
+        storage_class="hostpath",
+        volume_handle="",
+        local_vars_configuration=None,
+    ):  # noqa: E501
         """MiniClusterVolume - a model defined in OpenAPI"""  # noqa: E501
         if local_vars_configuration is None:
             local_vars_configuration = Configuration.get_default_copy()
@@ -283,8 +298,12 @@ class MiniClusterVolume(object):
         :param path: The path of this MiniClusterVolume.  # noqa: E501
         :type path: str
         """
-        if self.local_vars_configuration.client_side_validation and path is None:  # noqa: E501
-            raise ValueError("Invalid value for `path`, must not be `None`")  # noqa: E501
+        if (
+            self.local_vars_configuration.client_side_validation and path is None
+        ):  # noqa: E501
+            raise ValueError(
+                "Invalid value for `path`, must not be `None`"
+            )  # noqa: E501
 
         self._path = path
 
@@ -396,15 +415,11 @@ class MiniClusterVolume(object):
             value = getattr(self, attr)
             attr = self.attribute_map.get(attr, attr) if serialize else attr
             if isinstance(value, list):
-                result[attr] = list(map(
-                    lambda x: convert(x),
-                    value
-                ))
+                result[attr] = list(map(lambda x: convert(x), value))
             elif isinstance(value, dict):
-                result[attr] = dict(map(
-                    lambda item: (item[0], convert(item[1])),
-                    value.items()
-                ))
+                result[attr] = dict(
+                    map(lambda item: (item[0], convert(item[1])), value.items())
+                )
             else:
                 result[attr] = convert(value)
 

@@ -32,19 +32,13 @@ class MiniClusterExistingVolume(object):
       attribute_map (dict): The key is attribute name
                             and the value is json key in definition.
     """
-    openapi_types = {
-        'claim_name': 'str',
-        'path': 'str',
-        'read_only': 'bool'
-    }
+    openapi_types = {"claim_name": "str", "path": "str", "read_only": "bool"}
 
-    attribute_map = {
-        'claim_name': 'claimName',
-        'path': 'path',
-        'read_only': 'readOnly'
-    }
+    attribute_map = {"claim_name": "claimName", "path": "path", "read_only": "readOnly"}
 
-    def __init__(self, claim_name='', path='', read_only=False, local_vars_configuration=None):  # noqa: E501
+    def __init__(
+        self, claim_name="", path="", read_only=False, local_vars_configuration=None
+    ):  # noqa: E501
         """MiniClusterExistingVolume - a model defined in OpenAPI"""  # noqa: E501
         if local_vars_configuration is None:
             local_vars_configuration = Configuration.get_default_copy()
@@ -78,8 +72,12 @@ class MiniClusterExistingVolume(object):
         :param claim_name: The claim_name of this MiniClusterExistingVolume.  # noqa: E501
         :type claim_name: str
         """
-        if self.local_vars_configuration.client_side_validation and claim_name is None:  # noqa: E501
-            raise ValueError("Invalid value for `claim_name`, must not be `None`")  # noqa: E501
+        if (
+            self.local_vars_configuration.client_side_validation and claim_name is None
+        ):  # noqa: E501
+            raise ValueError(
+                "Invalid value for `claim_name`, must not be `None`"
+            )  # noqa: E501
 
         self._claim_name = claim_name
 
@@ -103,8 +101,12 @@ class MiniClusterExistingVolume(object):
         :param path: The path of this MiniClusterExistingVolume.  # noqa: E501
         :type path: str
         """
-        if self.local_vars_configuration.client_side_validation and path is None:  # noqa: E501
-            raise ValueError("Invalid value for `path`, must not be `None`")  # noqa: E501
+        if (
+            self.local_vars_configuration.client_side_validation and path is None
+        ):  # noqa: E501
+            raise ValueError(
+                "Invalid value for `path`, must not be `None`"
+            )  # noqa: E501
 
         self._path = path
 
@@ -147,15 +149,11 @@ class MiniClusterExistingVolume(object):
             value = getattr(self, attr)
             attr = self.attribute_map.get(attr, attr) if serialize else attr
             if isinstance(value, list):
-                result[attr] = list(map(
-                    lambda x: convert(x),
-                    value
-                ))
+                result[attr] = list(map(lambda x: convert(x), value))
             elif isinstance(value, dict):
-                result[attr] = dict(map(
-                    lambda item: (item[0], convert(item[1])),
-                    value.items()
-                ))
+                result[attr] = dict(
+                    map(lambda item: (item[0], convert(item[1])), value.items())
+                )
             else:
                 result[attr] = convert(value)
 

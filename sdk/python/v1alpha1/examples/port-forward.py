@@ -17,7 +17,7 @@ from fluxoperator.models import MiniClusterContainer
 from fluxoperator.models import MiniClusterUser
 from fluxoperator.models import FluxRestful
 from kubernetes.client import V1ObjectMeta
-from fluxoperator.client import FluxOperator
+from fluxoperator.client import FluxMiniCluster
 
 import requests
 import time
@@ -35,12 +35,10 @@ except ImportError:
 config.load_kube_config()
 crd_api = client.CustomObjectsApi()
 
-
 def create_minicluster():
     """
     Here is how to create the minicluster
     """
-
     # Here is our main container with Flux accounting
     # run_flux True is required here
     container = MiniClusterContainer(
@@ -54,6 +52,7 @@ def create_minicluster():
     ]
 
     flux_restful = FluxRestful(secret_key=str(uuid.uuid4()))
+
     # Create the MiniCluster
     minicluster = MiniCluster(
         kind="MiniCluster",
@@ -93,13 +92,14 @@ print("Creating the MiniCluster...")
 result = create_minicluster()
 
 # Create a client to interact with FluxOperator MiniCluster
-cli = FluxOperator("flux-operator")
+# This assumes one MiniCluster in the namespace. For controlling
+# multiple, use the MiniClusterManager class.
+cli = FluxMiniCluster()
+cli.load(result)
 
-# First find the broker pod. This also calls cli.wait_pods()
-broker = cli.get_broker_pod()
 
 # And then port portfward to it - this waits until the server is ready
-with cli.port_forward(broker) as forward_url:
+with cli.port_forward() as forward_url:
     print(f"Port forward opened to {forward_url}")
 
     # This would be the welcome page
@@ -120,6 +120,7 @@ with cli.port_forward(broker) as forward_url:
         res = restcli.submit("whoami")
         print(f"Jobid {res['id']} submit!")
         time.sleep(3)
+        # TODO check restful api
 
         # Here is how to get all jobs for peenut
         jobs = restcli.jobs()
@@ -131,4 +132,4 @@ with cli.port_forward(broker) as forward_url:
 
 # How to cleanup
 print("Cleaning up MiniCluster!")
-delete_minicluster(result)
+cli.delete()
