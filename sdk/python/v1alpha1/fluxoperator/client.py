@@ -34,6 +34,7 @@ class FluxMiniCluster:
         Load minicluster metadata
         """
         self.metadata = metadata
+        self._broker_pod = None
         return self.wait_pods()
 
     @timed
