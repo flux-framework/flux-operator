@@ -14,28 +14,12 @@ from fluxoperator.models import (
     MiniClusterContainer,
     MiniClusterSpec,
 )
-from fluxoperator.client import FluxOperator
+from fluxoperator.client import FluxBrokerMiniCluster
 from fluxoperator.resource.pods import delete_minicluster
 
 # Set our namespace and name
 namespace = "flux-operator"
 minicluster_name = "interactive-submit"
-
-
-# Here is our custom class to "wrap" an exec
-class CommandExecutor(FluxOperator):
-    fluxuser = "flux"
-
-    def execute(self, command, print_result=True):
-        """
-        Wrap the kubectl_exec to add logic to issue to the broker instance.
-        """
-        res = self.kubectl_exec(
-            f"sudo -u {self.fluxuser} flux proxy local:///var/run/flux/local {command}"
-        )
-        if print_result:
-            print(res, end="")
-        return res
 
 
 # Here is our main container, we will use this for both clusters
@@ -70,8 +54,8 @@ crd_api = client.CustomObjectsApi()
 
 # Note that you might want to do this first for minikube
 # minikube ssh docker pull ghcr.io/flux-framework/flux-restful-api:latest
-# And create the cluster
-crd_api.create_namespaced_custom_object(
+# And create the cluster. This can also be done with cli.create(**minicluster)
+result = crd_api.create_namespaced_custom_object(
     group="flux-framework.org",
     version="v1alpha1",
     namespace=namespace,
@@ -80,12 +64,12 @@ crd_api.create_namespaced_custom_object(
 )
 
 # Now let's create a flux operator client to interact
-cli = CommandExecutor(namespace)
+# This will wait for pods to be ready
+print("🥱️ Waiting for MiniCluster to be ready...")
+cli = FluxBrokerMiniCluster()
+cli.load(result)
 
 # Just call this so we know to wait
-print("🥱️ Waiting for MiniCluster to be ready...")
-cli.get_broker_pod()
-
 # Let's exec commands to run a bunch of jobs!
 # This is why we want interactive mod!
 # By default, this selects (and waits for) the broker pod
@@ -106,4 +90,4 @@ time.sleep(50)
 cli.execute("flux jobs -a")
 
 print("Cleaning up...")
-delete_minicluster(minicluster_name, namespace)
+cli.delete()

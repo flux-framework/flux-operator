@@ -14,6 +14,7 @@ and **Merged pull requests**. Critical items to know are:
 The versions coincide with releases on pip. Only major versions will be released as tags on Github.
 
 ## [0.0.x](https://github.com/flux-framework/flux-operator/tree/main/sdk/python/v2alpha1) (0.0.x)
+ - refactor of FluxOperator to include FluxMiniCluster to wrap it (0.0.19)
  - Support for post command (0.0.18)
  - Tweaks to client and pod resources (bugfix) for snakemake work (0.0.17)
  - Support for flux start / broker / submit commands->prefix (0.0.16)
