@@ -1,6 +1,9 @@
 from kubernetes import client, watch
 from kubernetes.stream import stream
 from kubernetes.client.api import core_v1_api
+from kubernetes.client.models.v1_pod_list import V1PodList
+
+import kubernetes.client.exceptions
 from contextlib import contextmanager
 from .resource.network import port_forward
 from .resource.pods import create_minicluster, delete_minicluster
@@ -294,6 +297,10 @@ class FluxOperator:
             if name is not None:
                 pods = self._filter_pods(pods, name)
             return pods
+
+        # Not found - it was deleted
+        except kubernetes.client.exceptions.ApiException:
+             return V1PodList(items=[])
         except:
             time.sleep(2)
             return self.get_pods(namespace, name)
