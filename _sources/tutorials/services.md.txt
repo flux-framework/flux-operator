@@ -1,7 +1,7 @@
 # Services
 
-This small tutorial will show you how to run a "sidecar" service container alongside your
-flux install. 
+These tutorials will show you how to run a "sidecar" service container (one per Flux node) alongside your
+flux install.
 
 ## Sidecar NGINX Container
 
@@ -254,3 +254,4 @@ $ kubectl delete -f examples/services/minicluster-registry.yaml
 ```
 
 That's it. Please do something more useful than my terrible example.
+
