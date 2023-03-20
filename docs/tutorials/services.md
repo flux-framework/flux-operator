@@ -1,6 +1,6 @@
 # Services
 
-These tutorials will show you how to run either a "sidecar" service container (one per Flux node) alongside your
+These tutorials will show you how to run a "sidecar" service container (one per Flux node) alongside your
 flux install.
 
 ## Sidecar NGINX Container
