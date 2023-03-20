@@ -47,6 +47,13 @@ class FluxMiniCluster:
         # Save the pods upfront so we don't have to query for them again.
         return self.wait_pods()
 
+    @property
+    def flux_user(self):
+        """
+        Derive the name of the flux instance owner.
+        """
+        return (self.metadata or {}).get('spec', {}).get('flux_user') or "flux"
+
     def wait_pods(self, retry_seconds=1, quiet=False):
         """
         A wrapper to wait for pods.
@@ -59,6 +66,12 @@ class FluxMiniCluster:
             quiet=quiet,
         )
         return self._pods
+
+    def get_nodes(self):
+        """
+        Get nodes metadata
+        """
+        return self.ctrl.get_nods()
 
     @property
     def broker_pod(self):
@@ -121,6 +134,17 @@ class FluxMiniCluster:
             print()
             yield url
 
+    def stream_output(self, filename, stdout=True):
+        """
+        Stream output, optionally printing also to stdout.
+        """
+        return self.ctrl.stream_output(
+            filename=filename,
+            stdout=stdout,
+            namespace=self.namespace,
+            name=self.name
+        )
+
     @timed
     def delete(self):
         """
@@ -139,6 +163,38 @@ class FluxMiniCluster:
     @property
     def size(self):
         return self.metadata["spec"]["size"]
+
+
+class FluxBrokerMiniCluster(FluxMiniCluster):
+    """
+    A MiniCluster with a broker can have commands exec'd to the socket.
+    """
+    def __init__(self, socket=None, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.socket = socket or "local:///var/run/flux/local"
+
+    def execute(self, command, print_result=True):
+        """
+        Wrap the kubectl_exec to add logic to issue to the broker instance.
+        """
+        res = self.ctrl.kubectl_exec(
+            f"sudo -u {self.flux_user} flux proxy {self.socket} {command}",
+            name=self.name,
+            namespace=self.namespace,
+            pod=self.broker_pod,
+        )
+        if print_result:
+            print(res, end="")
+        return res
+
+    def kubectl_exec(self, command, print_result=True):
+        res = self.ctrl.kubectl_exec(
+            command, name=self.name, namespace=self.namespace, pod=self.broker_pod
+        )
+        if print_result:
+            print(res, end="")
+        return res
+
 
 
 class FluxOperator:
@@ -167,10 +223,6 @@ class FluxOperator:
         client.Configuration.set_default(self.c)
         self._core_v1 = core_v1_api.CoreV1Api()
         return self._core_v1
-
-    # STOPPED HERE:
-    # test examples and prepare a branch / PR
-    # update flux cloud to use new SDK
 
     def stream_output(self, filename, name=None, namespace=None, pod=None, stdout=True):
         """

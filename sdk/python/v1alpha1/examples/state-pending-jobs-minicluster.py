@@ -22,46 +22,11 @@ from fluxoperator.models import (
 )
 
 # TODO this should have a different name to not confuse?
-from fluxoperator.client import FluxMiniCluster
-from fluxoperator.resource.pods import delete_minicluster
+from fluxoperator.client import FluxBrokerMiniCluster
 
 # Set our namespace and name
 namespace = "flux-operator"
 minicluster_name = "save-state"
-
-
-# Here is our custom class to "wrap" an exec
-class CommandExecutor(FluxMiniCluster):
-    """
-    A CommandExecutor wraps a FluxOperator controller. Note
-    that this class assumes we have one MiniCluster to interact with -
-    it will group all pods in the same namespace. If you intend to control
-    multiple MiniClusters as once, use the MiniClusterManager.
-    """
-
-    fluxuser = "flux"
-
-    def execute(self, command, print_result=True):
-        """
-        Wrap the kubectl_exec to add logic to issue to the broker instance.
-        """
-        res = self.ctrl.kubectl_exec(
-            f"sudo -u {self.fluxuser} flux proxy local:///var/run/flux/local {command}",
-            name=self.name,
-            namespace=self.namespace,
-            pod=self.broker_pod,
-        )
-        if print_result:
-            print(res, end="")
-        return res
-
-    def kubectl_exec(self, command, print_result=True):
-        res = self.ctrl.kubectl_exec(
-            command, name=self.name, namespace=self.namespace, pod=self.broker_pod
-        )
-        if print_result:
-            print(res, end="")
-        return res
 
 
 # Here is our main container, we will use this for both clusters
@@ -115,7 +80,7 @@ result = crd_api.create_namespaced_custom_object(
 
 # Now let's create a flux operator client to interact
 print("🥱️ Waiting for MiniCluster to be ready...")
-cli = CommandExecutor()
+cli = FluxBrokerMiniCluster()
 cli.load(result)
 
 # Let's exec commands to run a bunch of jobs!
