@@ -167,9 +167,9 @@ class FluxOperator:
         self._core_v1 = core_v1_api.CoreV1Api()
         return self._core_v1
 
-# STOPPED HERE:
-# test examples and prepare a branch / PR
-# update flux cloud to use new SDK
+    # STOPPED HERE:
+    # test examples and prepare a branch / PR
+    # update flux cloud to use new SDK
 
     def stream_output(self, filename, name=None, namespace=None, pod=None, stdout=True):
         """

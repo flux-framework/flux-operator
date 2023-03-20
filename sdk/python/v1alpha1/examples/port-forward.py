@@ -35,6 +35,7 @@ except ImportError:
 config.load_kube_config()
 crd_api = client.CustomObjectsApi()
 
+
 def create_minicluster():
     """
     Here is how to create the minicluster

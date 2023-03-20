@@ -20,6 +20,7 @@ from fluxoperator.models import (
     MiniClusterVolume,
     ContainerVolume,
 )
+
 # TODO this should have a different name to not confuse?
 from fluxoperator.client import FluxMiniCluster
 from fluxoperator.resource.pods import delete_minicluster
@@ -37,6 +38,7 @@ class CommandExecutor(FluxMiniCluster):
     it will group all pods in the same namespace. If you intend to control
     multiple MiniClusters as once, use the MiniClusterManager.
     """
+
     fluxuser = "flux"
 
     def execute(self, command, print_result=True):
@@ -54,7 +56,9 @@ class CommandExecutor(FluxMiniCluster):
         return res
 
     def kubectl_exec(self, command, print_result=True):
-        res = self.ctrl.kubectl_exec(command, name=self.name, namespace=self.namespace, pod=self.broker_pod)
+        res = self.ctrl.kubectl_exec(
+            command, name=self.name, namespace=self.namespace, pod=self.broker_pod
+        )
         if print_result:
             print(res, end="")
         return res
