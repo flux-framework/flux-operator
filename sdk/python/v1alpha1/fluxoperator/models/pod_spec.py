@@ -33,30 +33,22 @@ class PodSpec(object):
                             and the value is json key in definition.
     """
     openapi_types = {
-        "annotations": "dict(str, str)",
-        "labels": "dict(str, str)",
-        "node_selector": "dict(str, str)",
-        "resources": "dict(str, IntOrString)",
-        "service_account_name": "str",
+        'annotations': 'dict(str, str)',
+        'labels': 'dict(str, str)',
+        'node_selector': 'dict(str, str)',
+        'resources': 'dict(str, IntOrString)',
+        'service_account_name': 'str'
     }
 
     attribute_map = {
-        "annotations": "annotations",
-        "labels": "labels",
-        "node_selector": "nodeSelector",
-        "resources": "resources",
-        "service_account_name": "serviceAccountName",
+        'annotations': 'annotations',
+        'labels': 'labels',
+        'node_selector': 'nodeSelector',
+        'resources': 'resources',
+        'service_account_name': 'serviceAccountName'
     }
 
-    def __init__(
-        self,
-        annotations=None,
-        labels=None,
-        node_selector=None,
-        resources=None,
-        service_account_name=None,
-        local_vars_configuration=None,
-    ):  # noqa: E501
+    def __init__(self, annotations=None, labels=None, node_selector=None, resources=None, service_account_name=None, local_vars_configuration=None):  # noqa: E501
         """PodSpec - a model defined in OpenAPI"""  # noqa: E501
         if local_vars_configuration is None:
             local_vars_configuration = Configuration.get_default_copy()
@@ -213,11 +205,15 @@ class PodSpec(object):
             value = getattr(self, attr)
             attr = self.attribute_map.get(attr, attr) if serialize else attr
             if isinstance(value, list):
-                result[attr] = list(map(lambda x: convert(x), value))
+                result[attr] = list(map(
+                    lambda x: convert(x),
+                    value
+                ))
             elif isinstance(value, dict):
-                result[attr] = dict(
-                    map(lambda item: (item[0], convert(item[1])), value.items())
-                )
+                result[attr] = dict(map(
+                    lambda item: (item[0], convert(item[1])),
+                    value.items()
+                ))
             else:
                 result[attr] = convert(value)
 

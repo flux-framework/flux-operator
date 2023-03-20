@@ -33,27 +33,20 @@ class LoggingSpec(object):
                             and the value is json key in definition.
     """
     openapi_types = {
-        "debug": "bool",
-        "quiet": "bool",
-        "strict": "bool",
-        "timed": "bool",
+        'debug': 'bool',
+        'quiet': 'bool',
+        'strict': 'bool',
+        'timed': 'bool'
     }
 
     attribute_map = {
-        "debug": "debug",
-        "quiet": "quiet",
-        "strict": "strict",
-        "timed": "timed",
+        'debug': 'debug',
+        'quiet': 'quiet',
+        'strict': 'strict',
+        'timed': 'timed'
     }
 
-    def __init__(
-        self,
-        debug=False,
-        quiet=False,
-        strict=True,
-        timed=False,
-        local_vars_configuration=None,
-    ):  # noqa: E501
+    def __init__(self, debug=False, quiet=False, strict=True, timed=False, local_vars_configuration=None):  # noqa: E501
         """LoggingSpec - a model defined in OpenAPI"""  # noqa: E501
         if local_vars_configuration is None:
             local_vars_configuration = Configuration.get_default_copy()
@@ -184,11 +177,15 @@ class LoggingSpec(object):
             value = getattr(self, attr)
             attr = self.attribute_map.get(attr, attr) if serialize else attr
             if isinstance(value, list):
-                result[attr] = list(map(lambda x: convert(x), value))
+                result[attr] = list(map(
+                    lambda x: convert(x),
+                    value
+                ))
             elif isinstance(value, dict):
-                result[attr] = dict(
-                    map(lambda item: (item[0], convert(item[1])), value.items())
-                )
+                result[attr] = dict(map(
+                    lambda item: (item[0], convert(item[1])),
+                    value.items()
+                ))
             else:
                 result[attr] = convert(value)
 

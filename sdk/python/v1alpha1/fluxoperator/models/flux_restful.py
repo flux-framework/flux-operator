@@ -33,30 +33,22 @@ class FluxRestful(object):
                             and the value is json key in definition.
     """
     openapi_types = {
-        "branch": "str",
-        "port": "int",
-        "secret_key": "str",
-        "token": "str",
-        "username": "str",
+        'branch': 'str',
+        'port': 'int',
+        'secret_key': 'str',
+        'token': 'str',
+        'username': 'str'
     }
 
     attribute_map = {
-        "branch": "branch",
-        "port": "port",
-        "secret_key": "secretKey",
-        "token": "token",
-        "username": "username",
+        'branch': 'branch',
+        'port': 'port',
+        'secret_key': 'secretKey',
+        'token': 'token',
+        'username': 'username'
     }
 
-    def __init__(
-        self,
-        branch="main",
-        port=5000,
-        secret_key="",
-        token="",
-        username="",
-        local_vars_configuration=None,
-    ):  # noqa: E501
+    def __init__(self, branch='main', port=5000, secret_key='', token='', username='', local_vars_configuration=None):  # noqa: E501
         """FluxRestful - a model defined in OpenAPI"""  # noqa: E501
         if local_vars_configuration is None:
             local_vars_configuration = Configuration.get_default_copy()
@@ -213,11 +205,15 @@ class FluxRestful(object):
             value = getattr(self, attr)
             attr = self.attribute_map.get(attr, attr) if serialize else attr
             if isinstance(value, list):
-                result[attr] = list(map(lambda x: convert(x), value))
+                result[attr] = list(map(
+                    lambda x: convert(x),
+                    value
+                ))
             elif isinstance(value, dict):
-                result[attr] = dict(
-                    map(lambda item: (item[0], convert(item[1])), value.items())
-                )
+                result[attr] = dict(map(
+                    lambda item: (item[0], convert(item[1])),
+                    value.items()
+                ))
             else:
                 result[attr] = convert(value)
 
