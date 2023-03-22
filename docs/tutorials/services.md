@@ -617,7 +617,7 @@ $ kubectl delete -f ./examples/launchers/merlin/minicluster.yaml
 $ kubectl delete -f ./examples/launchers/merlin/services.yaml
 ```
 
-### Development Notes
+#### Development Notes
 
 I did some digging into the logic, and found that the underlying submission was a flux submit -> flux exec
 to start a celery worker:
