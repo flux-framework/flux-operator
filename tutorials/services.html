@@ -540,16 +540,62 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
+  <a href="#sidecar-tutorials" class="md-nav__link">
+    <span title="/tutorials/services.md#sidecar-tutorials (reference label)" class="md-ellipsis">Sidecar Tutorials</span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Sidecar Tutorials">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
   <a href="#sidecar-nginx-container" class="md-nav__link">
     <span title="/tutorials/services.md#sidecar-nginx-container (reference label)" class="md-ellipsis">Sidecar NGINX Container</span>
   </a>
   
 </li>
-      
-        <li class="md-nav__item">
+        
+          <li class="md-nav__item">
   <a href="#sidecar-registry-with-oras" class="md-nav__link">
     <span title="/tutorials/services.md#sidecar-registry-with-oras (reference label)" class="md-ellipsis">Sidecar Registry with ORAS</span>
   </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#service-containers-alongside-the-cluster" class="md-nav__link">
+    <span title="/tutorials/services.md#service-containers-alongside-the-cluster (reference label)" class="md-ellipsis">Service Containers Alongside the Cluster</span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Service Containers Alongside the Cluster">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#merlin-demo-workflow" class="md-nav__link">
+    <span title="/tutorials/services.md#merlin-demo-workflow (reference label)" class="md-ellipsis">Merlin Demo Workflow</span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Merlin Demo Workflow">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#development-notes" class="md-nav__link">
+    <span title="/tutorials/services.md#development-notes (reference label)" class="md-ellipsis">Development Notes</span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
   
 </li>
       
@@ -726,8 +772,9 @@
 
 <h1 id="services">Services<a class="headerlink" href="#services" title="Permalink to this heading">¶</a></h1>
 <p>These tutorials will show you how to run a “sidecar” service container (one per Flux node) alongside your
-flux install.</p>
-<h2 id="sidecar-nginx-container">Sidecar NGINX Container<a class="headerlink" href="#sidecar-nginx-container" title="Permalink to this heading">¶</a></h2>
+flux install, along with a service for the entire cluster (a deployment next to the cluster).</p>
+<h2 id="sidecar-tutorials">Sidecar Tutorials<a class="headerlink" href="#sidecar-tutorials" title="Permalink to this heading">¶</a></h2>
+<h3 id="sidecar-nginx-container">Sidecar NGINX Container<a class="headerlink" href="#sidecar-nginx-container" title="Permalink to this heading">¶</a></h3>
 <p><strong><a class="reference external" href="https://github.com/flux-framework/flux-operator/blob/main/examples/tests/nginx-service/minicluster.yaml">Tutorial File</a></strong></p>
 <p>This is one of the simplest examples, implemented as a test, to run a sidecar with NGINX and then curl localhost
 to get a response from flux.</p>
@@ -819,7 +866,7 @@ an analysis. Clean up:</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span>kubectl<span class="w"> </span>delete<span class="w"> </span>-f<span class="w"> </span>./examples/tests/nginx-service/minicluster.yaml
 </code></pre></div>
 </div>
-<h2 id="sidecar-registry-with-oras">Sidecar Registry with ORAS<a class="headerlink" href="#sidecar-registry-with-oras" title="Permalink to this heading">¶</a></h2>
+<h3 id="sidecar-registry-with-oras">Sidecar Registry with ORAS<a class="headerlink" href="#sidecar-registry-with-oras" title="Permalink to this heading">¶</a></h3>
 <blockquote>
 <div><p>Create an interactive MiniCluster with a sidecar registry container</p>
 </div></blockquote>
@@ -942,6 +989,330 @@ When you are done, exit from the instance, and exit from the pod, and then delet
 </code></pre></div>
 </div>
 <p>That’s it. Please do something more useful than my terrible example.</p>
+<h2 id="service-containers-alongside-the-cluster">Service Containers Alongside the Cluster<a class="headerlink" href="#service-containers-alongside-the-cluster" title="Permalink to this heading">¶</a></h2>
+<h3 id="merlin-demo-workflow">Merlin Demo Workflow<a class="headerlink" href="#merlin-demo-workflow" title="Permalink to this heading">¶</a></h3>
+<p><strong><a class="reference external" href="https://github.com/flux-framework/flux-operator/blob/main/examples/launchers/merlin/minicluster.yaml">Tutorial File</a></strong></p>
+<p>This example will run a small “hello world” tutorial bringing up a rabbitmq and redis container from Flux.
+This could (eventually) be part of a workflows tutorial, but for now can exemplify pod services alongside a MiniCluster.
+Note that we derive this example from <a class="reference external" href="https://github.com/rse-ops/flux-hpc/tree/main/merlin-demos">this repository</a>
+and use a <a class="reference external" href="https://github.com/rse-ops/flux-hpc/tree/main/merlin-demos-certs">customized set of containers</a> that have
+certificates built into the containers. This is obviously not recommended and only used here for an example.
+This assumes we have minikube running:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span>minikube<span class="w"> </span>start
+</code></pre></div>
+</div>
+<p>And the Flux Operator namespace created:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span>kubectl<span class="w"> </span>create<span class="w"> </span>-n<span class="w"> </span>flux-operator
+</code></pre></div>
+</div>
+<p>First, pull the containers to MiniKube:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span>minikube<span class="w"> </span>ssh<span class="w"> </span>docker<span class="w"> </span>pull<span class="w"> </span>ghcr.io/rse-ops/merlin-demos-certs:merlin
+$<span class="w"> </span>minikube<span class="w"> </span>ssh<span class="w"> </span>docker<span class="w"> </span>pull<span class="w"> </span>ghcr.io/rse-ops/merlin-demos-certs:rabbitmq
+$<span class="w"> </span>minikube<span class="w"> </span>ssh<span class="w"> </span>docker<span class="w"> </span>pull<span class="w"> </span>ghcr.io/rse-ops/merlin-demos-certs:redis
+</code></pre></div>
+</div>
+<p>And then generate the (separate) pods to run redis and rabbitmq in the flux-operator namespace.
+The containers already have shared certificates (just for this test case)!</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span>kubectl<span class="w"> </span>apply<span class="w"> </span>-f<span class="w"> </span>examples/launchers/merlin/services.yaml
+</code></pre></div>
+</div>
+<p>And create the MiniCluster to use them!</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span>kubectl<span class="w"> </span>apply<span class="w"> </span>-f<span class="w"> </span>examples/launchers/merlin/minicluster.yaml
+</code></pre></div>
+</div>
+<p>The MiniCluster is created in interactive mode, and we do this because merlin isn’t designed to
+run and hang until it’s done. If we don’t run in interactive mode we will miss the execution
+that is created via flux alloc. Look at pods running:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>kubectl<span class="w"> </span>get<span class="w"> </span>-n<span class="w"> </span>flux-operator<span class="w"> </span>pods
+</code></pre></div>
+</div>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><code><span class="go">NAME                         READY   STATUS      RESTARTS   AGE</span>
+<span class="go">flux-sample-0-774tg          1/1     Running     0          22s</span>
+<span class="go">flux-sample-1-k24tq          1/1     Running     0          22s</span>
+<span class="go">flux-sample-cert-generator   0/1     Completed   0          22s</span>
+<span class="go">rabbitmq-f8c84d986-262pg     1/1     Running     0          32m</span>
+<span class="go">redis-c9469b9c5-cnhgl        1/1     Running     0          32m</span>
+</code></pre></div>
+</div>
+<p>Check the logs of the broker - you should see that the merlin example and tasks were created:</p>
+<details>
+<summary>Expected merlin output at top of broker log</summary>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span>kubectl<span class="w"> </span>logs<span class="w"> </span>-n<span class="w"> </span>flux-operator<span class="w"> </span>flux-sample-0-f9ts7<span class="w"> </span>-f
+</code></pre></div>
+</div>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><code><span class="go">Flux username: fluxuser</span>
+<span class="go">  </span>
+<span class="go">                                                </span>
+<span class="go">       *      </span>
+<span class="go">   *~~~~~                                       </span>
+<span class="go">  *~~*~~~*      __  __           _ _       </span>
+<span class="go"> /   ~~~~~     |  \/  |         | (_)      </span>
+<span class="go">     ~~~~~     | \  / | ___ _ __| |_ _ __  </span>
+<span class="go">    ~~~~~*     | |\/| |/ _ \ &#39;__| | | &#39;_ \ </span>
+<span class="go">   *~~~~~~~    | |  | |  __/ |  | | | | | |</span>
+<span class="go">  ~~~~~~~~~~   |_|  |_|\___|_|  |_|_|_| |_|</span>
+<span class="go"> *~~~~~~~~~~~                                    </span>
+<span class="go">   ~~~*~~~*    Machine Learning for HPC Workflows                                 </span>
+<span class="go">              </span>
+
+
+<span class="go">[2023-03-22 20:32:25: INFO] Copying example &#39;flux_par&#39; to /workflow/flux</span>
+<span class="go">  </span>
+<span class="go">                                                </span>
+<span class="go">       *      </span>
+<span class="go">   *~~~~~                                       </span>
+<span class="go">  *~~*~~~*      __  __           _ _       </span>
+<span class="go"> /   ~~~~~     |  \/  |         | (_)      </span>
+<span class="go">     ~~~~~     | \  / | ___ _ __| |_ _ __  </span>
+<span class="go">    ~~~~~*     | |\/| |/ _ \ &#39;__| | | &#39;_ \ </span>
+<span class="go">   *~~~~~~~    | |  | |  __/ |  | | | | | |</span>
+<span class="go">  ~~~~~~~~~~   |_|  |_|\___|_|  |_|_|_| |_|</span>
+<span class="go"> *~~~~~~~~~~~                                    </span>
+<span class="go">   ~~~*~~~*    Machine Learning for HPC Workflows                                 </span>
+<span class="go">              </span>
+
+
+<span class="go">[2023-03-22 20:32:26: INFO] Loading specification from path: /workflow/flux/flux_par.yaml</span>
+<span class="go">[2023-03-22 20:32:26: INFO] Made dir(s) to output path &#39;/workflow/studies&#39;.</span>
+<span class="go">[2023-03-22 20:32:26: INFO] Study workspace is &#39;/workflow/studies/flux_par_20230322-203226&#39;.</span>
+<span class="go">[2023-03-22 20:32:26: INFO] Reading app config from file /home/fluxuser/.merlin/app.yaml</span>
+<span class="go">[2023-03-22 20:32:26: INFO] Generating samples...</span>
+<span class="go">[2023-03-22 20:32:26: INFO] Generating samples complete!</span>
+<span class="go">[2023-03-22 20:32:26: INFO] Loading samples from &#39;samples.npy&#39;...</span>
+<span class="go">[2023-03-22 20:32:26: INFO] 10 samples loaded.</span>
+<span class="go">[2023-03-22 20:32:26: INFO] Calculating task groupings from DAG.</span>
+<span class="go">[2023-03-22 20:32:26: INFO] Converting graph to tasks.</span>
+<span class="go">[2023-03-22 20:32:26: INFO] Launching tasks.</span>
+</code></pre></div>
+</div>
+</details>
+<p>At this point, we can interactively shell in to look around. This would also ideally be tweaked to
+be run automatically (if merlin had a “watch” or similar functionality):</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span>kubectl<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>-n<span class="w"> </span>flux-operator<span class="w">  </span>-it<span class="w"> </span>flux-sample-0-f9ts7<span class="w"> </span>--<span class="w"> </span>bash
+</code></pre></div>
+</div>
+<p>Connect to the flux broker:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span><span class="nb">export</span><span class="w"> </span><span class="nv">PYTHONPATH</span><span class="o">=</span><span class="nv">$PYTHONPATH</span>:/home/fluxuser/.local/lib/python3.10/site-packages
+$<span class="w"> </span>sudo<span class="w"> </span>-E<span class="w"> </span><span class="nv">LD_LIBRARY_PATH</span><span class="o">=</span><span class="nv">$LD_LIBRARY_PATH</span><span class="w"> </span>-E<span class="w"> </span><span class="nv">PATH</span><span class="o">=</span><span class="nv">$PATH</span><span class="w"> </span>-E<span class="w"> </span><span class="nv">HOME</span><span class="o">=</span>/home/fluxuser<span class="w"> </span>-E<span class="w"> </span><span class="nv">PYTHONPATH</span><span class="o">=</span><span class="nv">$PYTHONPATH</span><span class="w"> </span>-u<span class="w"> </span>fluxuser<span class="w"> </span>flux<span class="w"> </span>proxy<span class="w"> </span>local:///var/run/flux/local
+</code></pre></div>
+</div>
+<p>At this point, we are the fluxuser! We can test if merlin is connected to its services via <code class="docutils literal notranslate"><span class="pre">merlin</span> <span class="pre">info</span></code>:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span>whoami
+fluxuser
+</code></pre></div>
+</div>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span>merlin<span class="w"> </span>info
+</code></pre></div>
+</div>
+<details>
+<summary>Output of Merlin Info</summary>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><code><span class="go">[2023-03-22 20:41:45: INFO] Reading app config from file /home/fluxuser/.merlin/app.yaml</span>
+<span class="go">  </span>
+<span class="go">                                                </span>
+<span class="go">       *      </span>
+<span class="go">   *~~~~~                                       </span>
+<span class="go">  *~~*~~~*      __  __           _ _       </span>
+<span class="go"> /   ~~~~~     |  \/  |         | (_)      </span>
+<span class="go">     ~~~~~     | \  / | ___ _ __| |_ _ __  </span>
+<span class="go">    ~~~~~*     | |\/| |/ _ \ &#39;__| | | &#39;_ \ </span>
+<span class="go">   *~~~~~~~    | |  | |  __/ |  | | | | | |</span>
+<span class="go">  ~~~~~~~~~~   |_|  |_|\___|_|  |_|_|_| |_|</span>
+<span class="go"> *~~~~~~~~~~~                                    </span>
+<span class="go">   ~~~*~~~*    Machine Learning for HPC Workflows                                 </span>
+<span class="go">              </span>
+
+
+<span class="go">Merlin Configuration</span>
+<span class="go">-------------------------</span>
+
+<span class="go"> config_file        | /home/fluxuser/.merlin/app.yaml</span>
+<span class="go"> is_debug           | False</span>
+<span class="go"> merlin_home        | /home/fluxuser/.merlin</span>
+<span class="go"> merlin_home_exists | True</span>
+<span class="go"> broker server      | amqps://fluxuser:******@rabbitmq:5671//merlinu</span>
+<span class="go"> broker ssl         | {&#39;keyfile&#39;: &#39;/cert_rabbitmq/client_rabbitmq_key.pem&#39;, &#39;certfile&#39;: &#39;/cert_rabbitmq/client_rabbitmq_certificate.pem&#39;, &#39;ca_certs&#39;: &#39;/cert_rabbitmq/ca_certificate.pem&#39;, &#39;cert_reqs&#39;: &lt;VerifyMode.CERT_REQUIRED: 2&gt;}</span>
+<span class="go"> results server     | rediss://redis:6379/0</span>
+<span class="go"> results ssl        | {&#39;ssl_keyfile&#39;: &#39;/cert_redis/client_redis_key.pem&#39;, &#39;ssl_certfile&#39;: &#39;/cert_redis/client_redis_certificate.pem&#39;, &#39;ssl_ca_certs&#39;: &#39;/cert_redis/ca_certificate.pem&#39;, &#39;ssl_cert_reqs&#39;: &lt;VerifyMode.CERT_REQUIRED: 2&gt;}</span>
+
+<span class="go">Checking server connections:</span>
+<span class="go">----------------------------</span>
+<span class="go">broker server connection: OK</span>
+<span class="go">results server connection: OK</span>
+
+<span class="go">Python Configuration</span>
+<span class="go">-------------------------</span>
+
+<span class="gp"> $ </span>which<span class="w"> </span>python3
+<span class="go">/opt/conda/bin/python3</span>
+
+<span class="gp"> $ </span>python3<span class="w"> </span>--version
+<span class="go">Python 3.10.9</span>
+
+<span class="gp"> $ </span>which<span class="w"> </span>pip3
+<span class="go">/opt/conda/bin/pip3</span>
+
+<span class="gp"> $ </span>pip3<span class="w"> </span>--version
+<span class="go">pip 23.0 from /opt/conda/lib/python3.10/site-packages/pip (python 3.10)</span>
+
+<span class="go">&quot;echo $PYTHONPATH&quot;</span>
+<span class="go">/usr/lib/flux/python3.1:/home/fluxuser/.local/lib/python3.10/site-packages</span>
+</code></pre></div>
+</div>
+</details>
+<p>Now let’s queue our tasks (I guess we already did this, but I did it again)
+and run the workers! Note that this is a test - so I edited
+<code class="docutils literal notranslate"><span class="pre">vim</span> <span class="pre">/home/fluxuser/.local/lib/python3.10/site-packages/merlin/study/batch.py</span></code>
+to use <code class="docutils literal notranslate"><span class="pre">flux</span> <span class="pre">run</span></code> instead of <code class="docutils literal notranslate"><span class="pre">flux</span> <span class="pre">alloc</span></code>. E.g.,:</p>
+<div class="highlight-diff notranslate"><div class="highlight"><pre><span></span><code><span class="gd">- launch_command = f&quot;{flux_exe} mini alloc -o pty -N {nodes} --exclusive --job-name=merlin&quot;</span>
+<span class="gi">+ launch_command = f&quot;{flux_exe} run&quot;</span>
+</code></pre></div>
+</div>
+<p>(Yes, this isn’[t ready for production - we are figuring it out!])</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span>merlin<span class="w"> </span>run<span class="w"> </span>flux/flux_par.yaml
+$<span class="w"> </span>merlin<span class="w"> </span>run-workers<span class="w"> </span>flux/flux_par.yaml
+</code></pre></div>
+</div>
+<p>Note that if you need to re-run (or try again) you need to purge the queues:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code><span class="c1"># Do this until you see no messages</span>
+$<span class="w"> </span>merlin<span class="w"> </span>purge<span class="w"> </span>flux/flux_par.yaml<span class="w"> </span>-f
+
+<span class="c1"># This can be run once after the above</span>
+$<span class="w"> </span>flux<span class="w"> </span>job<span class="w"> </span>purge<span class="w"> </span>--force<span class="w"> </span>--num-limit<span class="o">=</span><span class="m">0</span>
+</code></pre></div>
+</div>
+<p>You’ll see the tasks pick up in celery and a huge stream of output! You can also
+look at the logs of redis and rabbitmq (the other containers) to see them receiving data.</p>
+<details>
+<summary>Redis receiving data</summary>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span>kubectl<span class="w"> </span>logs<span class="w"> </span>-n<span class="w"> </span>flux-operator<span class="w"> </span>redis-c9469b9c5-cnhgl<span class="w"> </span>-f
+</code></pre></div>
+</div>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><code><span class="go">7:C 22 Mar 2023 19:58:09.512 # oO0OoO0OoO0Oo Redis is starting oO0OoO0OoO0Oo</span>
+<span class="go">7:C 22 Mar 2023 19:58:09.512 # Redis version=7.0.10, bits=64, commit=00000000, modified=0, pid=7, just started</span>
+<span class="go">7:C 22 Mar 2023 19:58:09.512 # Configuration loaded</span>
+<span class="go">7:M 22 Mar 2023 19:58:09.514 * monotonic clock: POSIX clock_gettime</span>
+<span class="go">                _._                                                  </span>
+<span class="go">           _.-``__ &#39;&#39;-._                                             </span>
+<span class="go">      _.-``    `.  `_.  &#39;&#39;-._           Redis 7.0.10 (00000000/0) 64 bit</span>
+<span class="go">  .-`` .-```.  ```\/    _.,_ &#39;&#39;-._                                  </span>
+<span class="go"> (    &#39;      ,       .-`  | `,    )     Running in standalone mode</span>
+<span class="go"> |`-._`-...-` __...-.``-._|&#39;` _.-&#39;|     Port: 6379</span>
+<span class="go"> |    `-._   `._    /     _.-&#39;    |     PID: 7</span>
+<span class="go">  `-._    `-._  `-./  _.-&#39;    _.-&#39;                                   </span>
+<span class="go"> |`-._`-._    `-.__.-&#39;    _.-&#39;_.-&#39;|                                  </span>
+<span class="go"> |    `-._`-._        _.-&#39;_.-&#39;    |           https://redis.io       </span>
+<span class="go">  `-._    `-._`-.__.-&#39;_.-&#39;    _.-&#39;                                   </span>
+<span class="go"> |`-._`-._    `-.__.-&#39;    _.-&#39;_.-&#39;|                                  </span>
+<span class="go"> |    `-._`-._        _.-&#39;_.-&#39;    |                                  </span>
+<span class="go">  `-._    `-._`-.__.-&#39;_.-&#39;    _.-&#39;                                   </span>
+<span class="go">      `-._    `-.__.-&#39;    _.-&#39;                                       </span>
+<span class="go">          `-._        _.-&#39;                                           </span>
+<span class="go">              `-.__.-&#39;                                               </span>
+
+<span class="go">7:M 22 Mar 2023 19:58:09.516 # Server initialized</span>
+<span class="go">7:M 22 Mar 2023 19:58:09.517 * Ready to accept connections</span>
+<span class="go">7:M 22 Mar 2023 20:43:59.338 * 100 changes in 300 seconds. Saving...</span>
+<span class="go">7:M 22 Mar 2023 20:43:59.338 * Background saving started by pid 22</span>
+<span class="go">22:C 22 Mar 2023 20:43:59.341 * DB saved on disk</span>
+<span class="go">22:C 22 Mar 2023 20:43:59.342 * Fork CoW for RDB: current 0 MB, peak 0 MB, average 0 MB</span>
+<span class="go">7:M 22 Mar 2023 20:43:59.438 * Background saving terminated with success</span>
+</code></pre></div>
+</div>
+</details>
+<p>And for rabbitmq:</p>
+<details>
+<summary>Rabbitmq receiving data</summary>
+<p>This view is truncated to just show the bottom - the log was too big to reasonably include.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span>kubectl<span class="w"> </span>logs<span class="w"> </span>-n<span class="w"> </span>flux-operator<span class="w"> </span>rabbitmq-f8c84d986-262pg<span class="w"> </span>-f
+</code></pre></div>
+</div>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><code><span class="go">...</span>
+<span class="go">2023-03-22 20:45:07.927630+00:00 [info] &lt;0.2896.0&gt; connection &lt;0.2896.0&gt; (172.17.0.1:41672 -&gt; 172.17.0.5:5671): user &#39;fluxuser&#39; authenticated and granted access to vhost &#39;/merlinu&#39;</span>
+<span class="go">2023-03-22 20:45:07.929943+00:00 [info] &lt;0.2896.0&gt; closing AMQP connection &lt;0.2896.0&gt; (172.17.0.1:41672 -&gt; 172.17.0.5:5671, vhost: &#39;/merlinu&#39;, user: &#39;fluxuser&#39;)</span>
+<span class="go">2023-03-22 20:45:07.931598+00:00 [info] &lt;0.2882.0&gt; closing AMQP connection &lt;0.2882.0&gt; (172.17.0.1:13790 -&gt; 172.17.0.5:5671, vhost: &#39;/merlinu&#39;, user: &#39;fluxuser&#39;)</span>
+<span class="go">2023-03-22 20:45:09.052810+00:00 [info] &lt;0.1144.0&gt; closing AMQP connection &lt;0.1144.0&gt; (172.17.0.1:49018 -&gt; 172.17.0.5:5671, vhost: &#39;/merlinu&#39;, user: &#39;fluxuser&#39;)</span>
+<span class="go">2023-03-22 20:45:09.057481+00:00 [info] &lt;0.1133.0&gt; closing AMQP connection &lt;0.1133.0&gt; (172.17.0.1:50219 -&gt; 172.17.0.5:5671, vhost: &#39;/merlinu&#39;, user: &#39;fluxuser&#39;)</span>
+</code></pre></div>
+</div>
+</details>
+<p>We can look to see that flux job ran (and completed)</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span>flux<span class="w"> </span><span class="nb">jobs</span><span class="w"> </span>-a
+</code></pre></div>
+</div>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><code><span class="gp">$ </span>flux<span class="w"> </span><span class="nb">jobs</span><span class="w"> </span>-a
+<span class="go">       JOBID USER     NAME       ST NTASKS NNODES     TIME INFO</span>
+<span class="go">   ƒDJWS5XrX fluxuser merlin     CD      1      1    1.22m flux-sample-3</span>
+</code></pre></div>
+</div>
+<p>At this point we can look at output (I installed tree 🌲️)!</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span>tree<span class="w"> </span>studies
+</code></pre></div>
+</div>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><code><span class="go">studies</span>
+<span class="go">└── flux_par_20230322-213613</span>
+<span class="go">    ├── build</span>
+<span class="go">    │   ├── MERLIN_FINISHED</span>
+<span class="go">    │   ├── build.out</span>
+<span class="go">    │   ├── build.slurm.err</span>
+<span class="go">    │   ├── build.slurm.out</span>
+<span class="go">    │   ├── build.slurm.sh</span>
+<span class="go">    │   └── mpi_hello</span>
+<span class="go">    ├── merlin_info</span>
+<span class="go">    │   ├── cmd.err</span>
+<span class="go">    │   ├── cmd.out</span>
+<span class="go">    │   ├── cmd.sh</span>
+<span class="go">    │   ├── flux_par.expanded.yaml</span>
+<span class="go">    │   ├── flux_par.orig.yaml</span>
+<span class="go">    │   ├── flux_par.partial.yaml</span>
+<span class="go">    │   └── samples.npy</span>
+<span class="go">    └── runs</span>
+<span class="go">        ├── 03</span>
+<span class="go">        │   ├── MERLIN_FINISHED</span>
+<span class="go">        │   ├── flux_run.out</span>
+<span class="go">        │   ├── runs.slurm.err</span>
+<span class="go">        │   ├── runs.slurm.out</span>
+<span class="go">        │   └── runs.slurm.sh</span>
+<span class="go">        └── 07</span>
+<span class="go">            ├── flux_run.out</span>
+<span class="go">            ├── runs.slurm.err</span>
+<span class="go">            ├── runs.slurm.out</span>
+<span class="go">            └── runs.slurm.sh</span>
+
+<span class="go">6 directories, 22 files</span>
+</code></pre></div>
+</div>
+<p>And look at one of the runs to see flux output:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span>cat<span class="w"> </span>studies/flux_par_20230322-213613/runs/03/flux_run.out
+</code></pre></div>
+</div>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><code><span class="go">Hello world from processor flux-sample-0, rank 0 out of 1 processors</span>
+<span class="go">num args = 3</span>
+<span class="go">args = /workflow/studies/flux_par_20230322-213613/build/mpi_hello 0.7961944941912834 0.5904591175676233 </span>
+</code></pre></div>
+</div>
+<p>I’m not sure this is entirely correct (I was expecting more runs) but I’m fairly happy for
+a first shot. To clean up:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span>kubectl<span class="w"> </span>delete<span class="w"> </span>-f<span class="w"> </span>./examples/launchers/merlin/minicluster.yaml
+$<span class="w"> </span>kubectl<span class="w"> </span>delete<span class="w"> </span>-f<span class="w"> </span>./examples/launchers/merlin/services.yaml
+</code></pre></div>
+</div>
+<h4 id="development-notes">Development Notes<a class="headerlink" href="#development-notes" title="Permalink to this heading">¶</a></h4>
+<p>I did some digging into the logic, and found that the underlying submission was a flux submit -&gt; flux exec
+to start a celery worker:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span>flux<span class="w"> </span>mini<span class="w"> </span>alloc<span class="w"> </span>-N<span class="w"> </span><span class="m">2</span><span class="w"> </span>--exclusive<span class="w"> </span>--job-name<span class="o">=</span>merlin<span class="w"> </span>flux<span class="w"> </span><span class="nb">exec</span><span class="w"> </span><span class="sb">`</span>which<span class="w"> </span>/bin/bash<span class="sb">`</span><span class="w"> </span>-c<span class="w"> </span><span class="s2">&quot;celery -A merlin worker -l INFO --concurrency 1 --prefetch-multiplier 1 -Ofair -Q \&#39;[merlin]_flux_par\&#39;&quot;</span>
+</code></pre></div>
+</div>
+<p>I think this should be changed to:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span>flux<span class="w"> </span>alloc<span class="w"> </span>-N<span class="w"> </span><span class="m">2</span><span class="w"> </span>--exclusive<span class="w"> </span>--job-name<span class="o">=</span>merlin<span class="w"> </span>/bin/bash<span class="w"> </span>-c<span class="w"> </span><span class="s2">&quot;celery -A merlin worker -l INFO --concurrency 1 --prefetch-multiplier 1 -Ofair -Q \&#39;[merlin]_flux_par\&#39;&quot;</span>
+</code></pre></div>
+</div>
+<ul class="simple">
+<li><p>I don’t think we need flux exec</p></li>
+<li><p>Why would there be more than one /bin/bash?</p></li>
+</ul>
+<p>I don’t fully understand the relationship between the celery queue and Flux - I think Flux should be used to submit jobs directly to,
+as opposed to just using it to start a celery working. It also seems like there is one too many layers of complexity. If we have a Flux queue
+why do we also need a celery queue?</p>
 
 
   <hr>
@@ -949,7 +1320,7 @@ When you are done, exit from the instance, and exit from the pod, and then delet
   <small>
     
       Last update:
-      Mar 21, 2023
+      Mar 22, 2023
     
   </small>
 </div>
