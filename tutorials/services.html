@@ -1160,14 +1160,7 @@ fluxuser
 </div>
 </details>
 <p>Now let’s queue our tasks (I guess we already did this, but I did it again)
-and run the workers! Note that this is a test - so I edited
-<code class="docutils literal notranslate"><span class="pre">vim</span> <span class="pre">/home/fluxuser/.local/lib/python3.10/site-packages/merlin/study/batch.py</span></code>
-to use <code class="docutils literal notranslate"><span class="pre">flux</span> <span class="pre">run</span></code> instead of <code class="docutils literal notranslate"><span class="pre">flux</span> <span class="pre">alloc</span></code>. E.g.,:</p>
-<div class="highlight-diff notranslate"><div class="highlight"><pre><span></span><code><span class="gd">- launch_command = f&quot;{flux_exe} mini alloc -o pty -N {nodes} --exclusive --job-name=merlin&quot;</span>
-<span class="gi">+ launch_command = f&quot;{flux_exe} run&quot;</span>
-</code></pre></div>
-</div>
-<p>(Yes, this isn’[t ready for production - we are figuring it out!])</p>
+and run the workers!</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span>merlin<span class="w"> </span>run<span class="w"> </span>flux/flux_par.yaml
 $<span class="w"> </span>merlin<span class="w"> </span>run-workers<span class="w"> </span>flux/flux_par.yaml
 </code></pre></div>
