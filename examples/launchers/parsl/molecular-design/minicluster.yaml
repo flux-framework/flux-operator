@@ -14,11 +14,10 @@ spec:
     data:
       storageClass: hostpath
       path: /tmp/data
-      labels:
-        type: "local"
 
+  # kubectl apply -f ./examples/launchers/parsl/molecular-design/minicluster.yaml
   containers:
-    - image: vanessa/molecular-design-parsl:latest
+    - image: ghcr.io/rse-ops/molecular-design-parsl:tag-mamba
       cores: 2
       workingDir: /workflow
       launcher: true
