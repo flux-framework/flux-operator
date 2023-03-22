@@ -457,16 +457,7 @@ pip 23.0 from /opt/conda/lib/python3.10/site-packages/pip (python 3.10)
 </details>
 
 Now let's queue our tasks (I guess we already did this, but I did it again)
-and run the workers! Note that this is a test - so I edited 
-`vim /home/fluxuser/.local/lib/python3.10/site-packages/merlin/study/batch.py`
-to use `flux run` instead of `flux alloc`. E.g.,:
-
-```diff
-- launch_command = f"{flux_exe} mini alloc -o pty -N {nodes} --exclusive --job-name=merlin"
-+ launch_command = f"{flux_exe} run"
-```
-
-(Yes, this isn'[t ready for production - we are figuring it out!])
+and run the workers! 
 
 ```bash
 $ merlin run flux/flux_par.yaml
