@@ -1,0 +1,120 @@
+apiVersion: v1
+items:
+  - apiVersion: v1
+    kind: Service
+    metadata:
+      labels:
+        io.kompose.service: rabbitmq
+      name: rabbitmq
+      namespace: flux-operator
+    spec:
+      ports:
+        - name: "15672"
+          port: 15672
+          targetPort: 15672
+        - name: "15671"
+          port: 15671
+          targetPort: 15671
+        - name: "5672"
+          port: 5672
+          targetPort: 5672
+        - name: "5671"
+          port: 5671
+          targetPort: 5671
+      selector:
+        io.kompose.service: rabbitmq
+    status:
+      loadBalancer: {}
+  - apiVersion: v1
+    kind: Service
+    metadata:
+      labels:
+        io.kompose.service: redis
+      name: redis
+      namespace: flux-operator
+    spec:
+      ports:
+        - name: "6379"
+          port: 6379
+          targetPort: 6379
+      selector:
+        io.kompose.service: redis
+    status:
+      loadBalancer: {}
+  - apiVersion: networking.k8s.io/v1
+    kind: NetworkPolicy
+    metadata:
+      namespace: flux-operator
+      name: rabbitmq
+    spec:
+      ingress:
+        - from:
+            - podSelector:
+                matchLabels:
+                  io.kompose.network/rabbitmq: "true"
+      podSelector:
+        matchLabels:
+          io.kompose.network/rabbitmq: "true"
+  - apiVersion: apps/v1
+    kind: Deployment
+    metadata:
+      labels:
+        io.kompose.service: rabbitmq
+      namespace: flux-operator
+      name: rabbitmq
+    spec:
+      replicas: 1
+      selector:
+        matchLabels:
+          io.kompose.service: rabbitmq
+      strategy: {}
+      template:
+        metadata:
+          labels:
+            io.kompose.network/rabbitmq: "true"
+            io.kompose.service: rabbitmq
+        spec:
+          containers:
+            - image: ghcr.io/rse-ops/merlin-demos-certs:rabbitmq
+              name: rabbitmq
+              ports:
+                - containerPort: 15672
+                - containerPort: 15671
+                - containerPort: 5672
+                - containerPort: 5671
+              resources: {}
+              tty: true
+          hostname: rabbitmq
+          restartPolicy: Always
+    status: {}
+  - apiVersion: apps/v1
+    kind: Deployment
+    metadata:
+      labels:
+        io.kompose.service: redis
+      name: redis
+      namespace: flux-operator
+    spec:
+      replicas: 1
+      selector:
+        matchLabels:
+          io.kompose.service: redis
+      strategy: {}
+      template:
+        metadata:
+          labels:
+            io.kompose.network/rabbitmq: "true"
+            io.kompose.service: redis
+        spec:
+          containers:
+            - image: ghcr.io/rse-ops/merlin-demos-certs:redis
+              name: redis
+              ports:
+                - containerPort: 6379
+              resources: {}
+              tty: true
+          hostname: redis
+          restartPolicy: Always
+    status: {}
+kind: List
+metadata: {}
