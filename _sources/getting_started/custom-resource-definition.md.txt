@@ -682,9 +682,24 @@ A special "commands" section is available for commands that you want to run in t
 but not during certificate generation. As an example, if you print extra output to the certificate generator,
 it will mangle the certificate output. Instead, you could write debug statements in this section.
 
+##### init
+
+Init happens before everything - at the very beginning of the entrypoint. If you want to customize
+the `PATH`, `PYTHONPATH`, or `LD_LIBRARY_PATH` handed to asFlux you can do that here.
+
+```yaml
+containers:
+  - image: my-flux-image
+    ...
+    commands:
+      init: export LD_LIBRARY_PATH=/opt/conda/lib
+```
+
+
 ##### pre
 
-The "pre" command is akin to `preCommand` but only run for the Flux workers and broker. Here is an example:
+The "pre" command is akin to `preCommand` but only run for the Flux workers and broker. It is run after a few
+early environment variables are set (e.g., asFlux). Here is an example:
 
 ```yaml
 containers:

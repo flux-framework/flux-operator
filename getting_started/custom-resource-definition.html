@@ -817,6 +817,13 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
+  <a href="#init" class="md-nav__link">
+    <span title="/getting_started/custom-resource-definition.md#init (reference label)" class="md-ellipsis">init</span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#pre" class="md-nav__link">
     <span title="/getting_started/custom-resource-definition.md#pre (reference label)" class="md-ellipsis">pre</span>
   </a>
@@ -1637,8 +1644,19 @@ assets to a home directory, so we need to customize the entrypoint for that.</p>
 <p>A special “commands” section is available for commands that you want to run in the broker and workers containers,
 but not during certificate generation. As an example, if you print extra output to the certificate generator,
 it will mangle the certificate output. Instead, you could write debug statements in this section.</p>
+<h5 id="init">init<a class="headerlink" href="#init" title="Permalink to this heading">¶</a></h5>
+<p>Init happens before everything - at the very beginning of the entrypoint. If you want to customize
+the <code class="docutils literal notranslate"><span class="pre">PATH</span></code>, <code class="docutils literal notranslate"><span class="pre">PYTHONPATH</span></code>, or <code class="docutils literal notranslate"><span class="pre">LD_LIBRARY_PATH</span></code> handed to asFlux you can do that here.</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><code><span class="nt">containers</span><span class="p">:</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">image</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">my-flux-image</span>
+<span class="w">    </span><span class="l l-Scalar l-Scalar-Plain">...</span>
+<span class="w">    </span><span class="nt">commands</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">init</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">export LD_LIBRARY_PATH=/opt/conda/lib</span>
+</code></pre></div>
+</div>
 <h5 id="pre">pre<a class="headerlink" href="#pre" title="Permalink to this heading">¶</a></h5>
-<p>The “pre” command is akin to <code class="docutils literal notranslate"><span class="pre">preCommand</span></code> but only run for the Flux workers and broker. Here is an example:</p>
+<p>The “pre” command is akin to <code class="docutils literal notranslate"><span class="pre">preCommand</span></code> but only run for the Flux workers and broker. It is run after a few
+early environment variables are set (e.g., asFlux). Here is an example:</p>
 <div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><code><span class="nt">containers</span><span class="p">:</span>
 <span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">image</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">my-flux-image</span>
 <span class="w">    </span><span class="l l-Scalar l-Scalar-Plain">...</span>
