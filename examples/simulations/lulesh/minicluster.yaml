@@ -40,7 +40,6 @@ spec:
       fluxUser:
         name: fluxuser
 
-      # Not ideal, but makes it easier to have storage
       commands:
         init: export LD_LIBRARY_PATH=/opt/conda/lib
         pre: |
