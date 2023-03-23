@@ -17,7 +17,7 @@ spec:
 
   # suppress all output except for test run
   logging:
-    quiet: false
+    quiet: true
 
   # kubectl apply -f ./examples/simulations/lulesh/minicluster.yaml
   # kubectl logs -n flux-operator flux-sample-0-xxx -f
