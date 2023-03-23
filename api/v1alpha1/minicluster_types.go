@@ -435,7 +435,11 @@ type Commands struct {
 	// +optional
 	Prefix string `json:"prefix"`
 
-	// pre command is run after global PreCommand, before anything else
+	// init command is run before anything
+	// +optional
+	Init string `json:"init"`
+
+	// pre command is run after global PreCommand, after asFlux is set (can override)
 	// +optional
 	Pre string `json:"pre"`
 

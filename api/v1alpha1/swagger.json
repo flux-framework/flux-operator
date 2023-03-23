@@ -10,13 +10,18 @@
     "Commands": {
       "type": "object",
       "properties": {
+        "init": {
+          "description": "init command is run before anything",
+          "type": "string",
+          "default": ""
+        },
         "post": {
           "description": "post command is run in the entrypoint when the broker exits / finishes",
           "type": "string",
           "default": ""
         },
         "pre": {
-          "description": "pre command is run after global PreCommand, before anything else",
+          "description": "pre command is run after global PreCommand, after asFlux is set (can override)",
           "type": "string",
           "default": ""
         },

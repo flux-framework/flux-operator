@@ -62,13 +62,16 @@ spec:
                     commands:
                       description: More specific or detailed commands for just workers/broker
                       properties:
+                        init:
+                          description: init command is run before anything
+                          type: string
                         post:
                           description: post command is run in the entrypoint when
                             the broker exits / finishes
                           type: string
                         pre:
                           description: pre command is run after global PreCommand,
-                            before anything else
+                            after asFlux is set (can override)
                           type: string
                         prefix:
                           description: Prefix to flux start / submit / broker Typically

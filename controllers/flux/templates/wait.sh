@@ -5,6 +5,9 @@
 # update_hosts.sh has been populated. This means the pod usually
 # needs to be updated with the config map that has ips!
 
+# If any initCommand logic is defined
+{{ .Container.Commands.Init}} {{ if .Spec.Logging.Quiet }}> /dev/null{{ end }}
+
 # If we are not in strict, don't set strict mode
 {{ if .Spec.Logging.Strict }}set -eEu -o pipefail{{ end }}
 
@@ -24,7 +27,7 @@ if [ -z ${LD_LIBRARY_PATH+x} ]; then
 fi
 
 # commands to be run as root
-asSudo="sudo -E PYTHONPATH=$PYTHONPATH -E PATH=$PATH"
+asSudo="sudo -E PYTHONPATH=$PYTHONPATH -E PATH=$PATH -E LD_LIBRARY_PATH=${LD_LIBRARY_PATH}"
 
 # Always run flux commands (and the broker) as flux user, unless requested otherwise (e.g., for storage)
 {{ if .Container.Commands.RunFluxAsRoot }}
@@ -44,19 +47,21 @@ asFlux="sudo -u ${fluxuser} -E PYTHONPATH=$PYTHONPATH -E PATH=$PATH -E LD_LIBRAR
 which sudo > /dev/null 2>&1 || (echo "sudo is required to be installed" && exit 1);
 which flux > /dev/null 2>&1 || (echo "flux is required to be installed" && exit 1);
 
-# Add fluxuser to sudoers
+# Add fluxuser to sudoers, only if not running as root
+{{ if not .Container.Commands.RunFluxAsRoot }}
 echo "${fluxuser} ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers
 
 # Add a flux user (required) that should exist before pre-command
 sudo adduser --disabled-password --uid ${fluxuid} --gecos "" ${fluxuser} > /dev/null 2>&1 || {{ if not .Spec.Logging.Quiet }} printf "${fluxuser} user is already added.\n"{{ else }}true{{ end }}
 
+# Show user permissions / ids
+{{ if not .Spec.Logging.Quiet }}printf "${fluxuser} user identifiers:\n$(id ${fluxuser})\n"{{ end }}
+{{ end }}
+
 {{ if .Spec.Users }}{{range $username := .Spec.Users}}# Add additional users
 printf "Adding '{{.Name}}' with password '{{ .Password}}'\n"
 sudo useradd -m -p $(openssl passwd '{{ .Password }}') {{.Name}}
 {{ end }}{{ end }}
-
-# Show user permissions / ids
-{{ if not .Spec.Logging.Quiet }}printf "${fluxuser} user identifiers:\n$(id ${fluxuser})\n"{{ end }}
 
 {{ if not .Spec.Logging.Quiet }}# Show asFlux directive once
 printf "\nAs Flux prefix for flux commands: ${asFlux}\n"{{ end }}
@@ -165,11 +170,20 @@ if [ "${option_flags}" != "" ]; then
 fi
 
 mkdir -p /etc/flux/imp/conf.d/
+
+{{ if .Container.Commands.RunFluxAsRoot }}
+cat <<EOT >> /etc/flux/imp/conf.d/imp.toml
+[exec]
+allowed-users = [ "root" ]
+allowed-shells = [ "/usr/libexec/flux/flux-shell" ]
+EOT
+{{ else }}
 cat <<EOT >> /etc/flux/imp/conf.d/imp.toml
 [exec]
 allowed-users = [ "${fluxuser}", "root" ]
 allowed-shells = [ "/usr/libexec/flux/flux-shell" ]
 EOT
+{{ end }}
 
 {{ if not .Spec.Logging.Quiet }}printf "\n🦊 Independent Minister of Privilege\n"
 cat /etc/flux/imp/conf.d/imp.toml
@@ -194,12 +208,14 @@ cp /mnt/curve/curve.cert /etc/curve/curve.cert
 chmod o-r /etc/curve/curve.cert
 chmod g-r /etc/curve/curve.cert
 
+# Either the flux user owns the instance, or root
+{{ if not .Container.Commands.RunFluxAsRoot }}
+
 # We must get the correct flux user id - this user needs to own
 # the run directory and these others
 fluxuid=$(id -u ${fluxuser})
 
-# Either the flux user owns the instance, or root
-{{ if not .Container.Commands.RunFluxAsRoot }}chown -R ${fluxuid} /run/flux ${STATE_DIR} /etc/curve/curve.cert ${workdir}{{ end }}
+chown -R ${fluxuid} /run/flux ${STATE_DIR} /etc/curve/curve.cert ${workdir}{{ end }}
 
 # Make directory world read/writable
 chmod -R 0777 ${workdir}

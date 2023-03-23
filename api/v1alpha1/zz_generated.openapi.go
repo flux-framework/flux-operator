@@ -67,9 +67,17 @@ func schema__api_v1alpha1__Commands(ref common.ReferenceCallback) common.OpenAPI
 							Format:      "",
 						},
 					},
+					"init": {
+						SchemaProps: spec.SchemaProps{
+							Description: "init command is run before anything",
+							Default:     "",
+							Type:        []string{"string"},
+							Format:      "",
+						},
+					},
 					"pre": {
 						SchemaProps: spec.SchemaProps{
-							Description: "pre command is run after global PreCommand, before anything else",
+							Description: "pre command is run after global PreCommand, after asFlux is set (can override)",
 							Default:     "",
 							Type:        []string{"string"},
 							Format:      "",

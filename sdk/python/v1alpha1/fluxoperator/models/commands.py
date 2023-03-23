@@ -33,6 +33,7 @@ class Commands(object):
                             and the value is json key in definition.
     """
     openapi_types = {
+        'init': 'str',
         'post': 'str',
         'pre': 'str',
         'prefix': 'str',
@@ -40,24 +41,28 @@ class Commands(object):
     }
 
     attribute_map = {
+        'init': 'init',
         'post': 'post',
         'pre': 'pre',
         'prefix': 'prefix',
         'run_flux_as_root': 'runFluxAsRoot'
     }
 
-    def __init__(self, post='', pre='', prefix='', run_flux_as_root=False, local_vars_configuration=None):  # noqa: E501
+    def __init__(self, init='', post='', pre='', prefix='', run_flux_as_root=False, local_vars_configuration=None):  # noqa: E501
         """Commands - a model defined in OpenAPI"""  # noqa: E501
         if local_vars_configuration is None:
             local_vars_configuration = Configuration.get_default_copy()
         self.local_vars_configuration = local_vars_configuration
 
+        self._init = None
         self._post = None
         self._pre = None
         self._prefix = None
         self._run_flux_as_root = None
         self.discriminator = None
 
+        if init is not None:
+            self.init = init
         if post is not None:
             self.post = post
         if pre is not None:
@@ -66,6 +71,29 @@ class Commands(object):
             self.prefix = prefix
         if run_flux_as_root is not None:
             self.run_flux_as_root = run_flux_as_root
+
+    @property
+    def init(self):
+        """Gets the init of this Commands.  # noqa: E501
+
+        init command is run before anything  # noqa: E501
+
+        :return: The init of this Commands.  # noqa: E501
+        :rtype: str
+        """
+        return self._init
+
+    @init.setter
+    def init(self, init):
+        """Sets the init of this Commands.
+
+        init command is run before anything  # noqa: E501
+
+        :param init: The init of this Commands.  # noqa: E501
+        :type init: str
+        """
+
+        self._init = init
 
     @property
     def post(self):
@@ -94,7 +122,7 @@ class Commands(object):
     def pre(self):
         """Gets the pre of this Commands.  # noqa: E501
 
-        pre command is run after global PreCommand, before anything else  # noqa: E501
+        pre command is run after global PreCommand, after asFlux is set (can override)  # noqa: E501
 
         :return: The pre of this Commands.  # noqa: E501
         :rtype: str
@@ -105,7 +133,7 @@ class Commands(object):
     def pre(self, pre):
         """Sets the pre of this Commands.
 
-        pre command is run after global PreCommand, before anything else  # noqa: E501
+        pre command is run after global PreCommand, after asFlux is set (can override)  # noqa: E501
 
         :param pre: The pre of this Commands.  # noqa: E501
         :type pre: str

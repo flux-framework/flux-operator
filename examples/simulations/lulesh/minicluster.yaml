@@ -1,0 +1,48 @@
+apiVersion: flux-framework.org/v1alpha1
+kind: MiniCluster
+metadata:
+  name: flux-sample
+  namespace: flux-operator
+spec:
+  # Number of pods to create for MiniCluster
+  size: 4
+
+  # Workers need a shared filesystem
+  # minikube ssh -- sudo mkdir -p /tmp/data
+  # minikube mount /tmp/data:/tmp/data
+  volumes:
+    data:
+      storageClass: hostpath
+      path: /tmp/data
+
+  # suppress all output except for test run
+  logging:
+    quiet: true
+
+  # kubectl apply -f ./examples/simulations/lulesh/minicluster.yaml
+  # kubectl logs -n flux-operator flux-sample-0-xxx -f
+  containers:
+    - image: ghcr.io/rse-ops/maestro-lulesh:tag-mamba
+
+      # You can set the working directory if your container WORKDIR is not correct.
+      workingDir: /workflow/shared
+      command: maestro run -fg ./lulesh-flux.yaml -y
+
+      # Will serve as a laucher to run Flux submits
+      launcher: true
+
+      # We are saying to mount the "data" volume defined above to "/workflow/shared"
+      volumes:
+        data:
+          path: /workflow/shared
+
+      # This container has fluxuser as the main flux instance owner
+      fluxUser:
+        name: fluxuser
+
+      commands:
+        init: export LD_LIBRARY_PATH=/opt/conda/lib
+        pre: |
+          sudo chown -R fluxuser /workflow/shared
+          cp /workflow/study/lulesh-flux.yaml /workflow/shared
+ 
