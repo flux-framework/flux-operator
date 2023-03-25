@@ -34,7 +34,7 @@ jobs:
       run: make helm
       
     - name: Login to Helm
-      #if: (github.event_name != 'pull_request')
+      if: (github.event_name != 'pull_request')
       env:
         registry: ghcr.io
         username: ${{ github.actor }}
