@@ -453,6 +453,13 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#helm-install" class="md-nav__link">
+    <span title="/getting_started/user-guide.md#helm-install (reference label)" class="md-ellipsis">Helm Install</span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#development-install" class="md-nav__link">
     <span title="/getting_started/user-guide.md#development-install (reference label)" class="md-ellipsis">Development Install</span>
   </a>
@@ -755,6 +762,34 @@ kubectl<span class="w"> </span>apply<span class="w"> </span>-f<span class="w"> <
 </code></pre></div>
 </div>
 <p>and then saved to the main branch where you retrieve it from.</p>
+<h3 id="helm-install">Helm Install<a class="headerlink" href="#helm-install" title="Permalink to this heading">¶</a></h3>
+<p>We optionally provide an install with helm, which you can do either from the charts in the repository:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span>git<span class="w"> </span>clone<span class="w"> </span>https://github.com/flux-framework/flux-operator<span class="w"> </span>
+$<span class="w"> </span><span class="nb">cd</span><span class="w"> </span>flux-operator
+$<span class="w"> </span>helm<span class="w"> </span>install<span class="w"> </span>./chart
+</code></pre></div>
+</div>
+<p>Or directly from GitHub packages (an OCI registry):</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><code># helm prior to v3.8.0
+$ export HELM_EXPERIMENTAL_OCI=1
+$ helm pull oci://ghcr.io/flux-framework/flux-operator-helm/chart
+</code></pre></div>
+</div>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><code><span class="go">Pulled: ghcr.io/flux-framework/flux-operator-helm/chart:0.1.0</span>
+</code></pre></div>
+</div>
+<p>And install!</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span>helm<span class="w"> </span>install<span class="w"> </span>chart-0.1.0.tgz<span class="w"> </span>
+</code></pre></div>
+</div>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><code><span class="go">NAME: flux-operator</span>
+<span class="go">LAST DEPLOYED: Fri Mar 24 18:36:18 2023</span>
+<span class="go">NAMESPACE: default</span>
+<span class="go">STATUS: deployed</span>
+<span class="go">REVISION: 1</span>
+<span class="go">TEST SUITE: None</span>
+</code></pre></div>
+</div>
 <h3 id="development-install">Development Install<a class="headerlink" href="#development-install" title="Permalink to this heading">¶</a></h3>
 <p>If you are trying this out on your own, here is a quick start to getting the operator installed on MiniKube (or similar),
 and installing directly from the repository (with the development use case in mind).
@@ -888,7 +923,7 @@ Next, you might be interested in <a class="reference internal" href="#jobs.md"><
   <small>
     
       Last update:
-      Mar 23, 2023
+      Mar 25, 2023
     
   </small>
 </div>
