@@ -31,6 +31,41 @@ $ make build-config
 
 and then saved to the main branch where you retrieve it from.
 
+### Helm Install
+
+We optionally provide an install with helm, which you can do either from the charts in the repository:
+
+```bash
+$ git clone https://github.com/flux-framework/flux-operator 
+$ cd flux-operator
+$ helm install ./chart
+```
+
+Or directly from GitHub packages (an OCI registry):
+
+```
+# helm prior to v3.8.0
+$ export HELM_EXPERIMENTAL_OCI=1
+$ helm pull oci://ghcr.io/flux-framework/flux-operator-helm/chart
+```
+```console
+Pulled: ghcr.io/flux-framework/flux-operator-helm/chart:0.1.0
+```
+
+And install!
+
+```bash
+$ helm install chart-0.1.0.tgz 
+```
+```console
+NAME: flux-operator
+LAST DEPLOYED: Fri Mar 24 18:36:18 2023
+NAMESPACE: default
+STATUS: deployed
+REVISION: 1
+TEST SUITE: None
+```
+
 ### Development Install
 
 If you are trying this out on your own, here is a quick start to getting the operator installed on MiniKube (or similar),

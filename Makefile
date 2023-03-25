@@ -67,6 +67,9 @@ else
 GOBIN=$(shell go env GOBIN)
 endif
 
+HELMIFY ?= $(LOCALBIN)/helmify
+
+
 # Setting SHELL to bash allows bash commands to be executed by recipes.
 # This is a requirement for 'setup-envtest.sh' in the test target.
 # Options are set to exit when a recipe line exits non-zero or a piped command fails.
@@ -115,8 +118,16 @@ api: generate api
 # These were needed for the python (not python-legacy)
 # cp ./hack/python-sdk/fluxoperator/* ./sdk/python/${API_VERSION}/fluxoperator/model/
 
+.PHONY: helmify
+helmify: $(HELMIFY) ## Download helmify locally if necessary.
+$(HELMIFY): $(LOCALBIN)
+	test -s $(LOCALBIN)/helmify || GOBIN=$(LOCALBIN) go install github.com/arttor/helmify/cmd/helmify@latest
+    
+helm: manifests kustomize helmify
+	$(KUSTOMIZE) build config/default | $(HELMIFY)
+
 .PHONY: pre-push
-pre-push: generate api build-config
+pre-push: generate api build-config helm
 	git status
 
 .PHONY: fmt
