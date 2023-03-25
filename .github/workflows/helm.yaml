@@ -44,4 +44,4 @@ jobs:
         PKG_RESPONSE=$(helm package ./chart)
         echo "$PKG_RESPONSE"
         CHART_TAR_GZ=$(basename "$PKG_RESPONSE") 
-        helm push "$CHART_TAR_GZ" oci://ghcr.io/flux-framework/flux-operator:helm-chart
+        helm push "$CHART_TAR_GZ" oci://ghcr.io/flux-framework/flux-operator-helm
