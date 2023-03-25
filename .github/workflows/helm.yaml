@@ -41,7 +41,7 @@ jobs:
         password: ${{ secrets.GITHUB_TOKEN }}
       run: |
         echo "${password}" | helm registry login -u ${username} --password-stdin ${registry} 
-        PKG_RESPONSE=$(helm package $CHART_FOLDER $UPDATE_DEPENDENCIES)
+        PKG_RESPONSE=$(helm package ./chart)
         echo "$PKG_RESPONSE"
         CHART_TAR_GZ=$(basename "$PKG_RESPONSE") 
         helm push "$CHART_TAR_GZ" ghcr.io/flux-framework/flux-operator:helm-chart
