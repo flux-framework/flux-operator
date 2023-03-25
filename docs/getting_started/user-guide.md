@@ -45,10 +45,26 @@ Or directly from GitHub packages (an OCI registry):
 
 ```
 # helm prior to v3.8.0
-export HELM_EXPERIMENTAL_OCI=1
-helm install oci://ghcr.io/flux-framework/flux-operator:helm-chart
+$ export HELM_EXPERIMENTAL_OCI=1
+$ helm pull oci://ghcr.io/flux-framework/flux-operator-helm/chart
+```
+```console
+Pulled: ghcr.io/flux-framework/flux-operator-helm/chart:0.1.0
 ```
 
+And install!
+
+```bash
+$ helm install chart-0.1.0.tgz 
+```
+```console
+NAME: flux-operator
+LAST DEPLOYED: Fri Mar 24 18:36:18 2023
+NAMESPACE: default
+STATUS: deployed
+REVISION: 1
+TEST SUITE: None
+```
 
 ### Development Install
 
