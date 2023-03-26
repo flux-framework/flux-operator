@@ -62,7 +62,7 @@ jobs:
       matrix:
         test: [["hello-world", "ghcr.io/flux-framework/flux-restful-api:latest", 30],
                ["post", "ghcr.io/flux-framework/flux-restful-api:latest", 30],
-               ["singularity", "ghcr.io/rse-ops/flux-singularity:tag-mamba", 30],
+               ["singularity", "ghcr.io/rse-ops/flux-singularity:tag-mamba", 40],
                ["nginx-service", "ghcr.io/flux-framework/flux-restful-api:latest", 40],
                ["lammps", "ghcr.io/rse-ops/lammps:flux-sched-focal-v0.24.0", 30],
                ["pokemon", "ghcr.io/rse-ops/pokemon:app-latest", 30],
