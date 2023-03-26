@@ -59,7 +59,7 @@ $ kubectl logs -n flux-operator flux-sample-0-p5xls -f
 
 But we can take a better approach. Ideally we can pull the container once to be shared by
 all workers. We can do this with a `brokerPre` commands block shown in
-[this tutorial file](https://github.com/flux-framework/flux-operator/blob/main/examples/singularity/minicluster-prepull.yaml)**
+[this tutorial file](https://github.com/flux-framework/flux-operator/blob/main/examples/singularity/minicluster-prepull.yaml).
 
 ```yaml
 kind: MiniCluster
