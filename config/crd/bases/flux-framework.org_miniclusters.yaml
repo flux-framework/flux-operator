@@ -56,6 +56,9 @@ spec:
                     commands:
                       description: More specific or detailed commands for just workers/broker
                       properties:
+                        brokerPre:
+                          description: A single command for only the broker to run
+                          type: string
                         init:
                           description: init command is run before anything
                           type: string

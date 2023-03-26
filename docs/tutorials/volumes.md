@@ -3,6 +3,125 @@
 These short examples will describe advanced functionality for volumes. For examples,
 see our [storage examples directory](https://github.com/flux-framework/flux-operator/tree/main/examples/storage).
 
+
+## Local Volumes
+
+For testing it's helpful to use a local volume, or basically a path on your host that is bound to either
+the MiniKube Virtual Machine, or to a kind cluster container as a volume. We will show you how to do both here.
+
+### Kind
+
+I would first recommend kind, as I've had better luck using it. With kind, the control plane
+is run as a container, and so a local volume is a simple bind to your host. You need to create
+the cluster and ask for the bind. Here is a yaml file example for how to do that, binding
+`/tmp/workflow` from the path on your host to the same path in the container.
+
+```yaml
+apiVersion: kind.x-k8s.io/v1alpha4
+kind: Cluster
+nodes:
+   - role: control-plane
+     extraMounts:
+      - hostPath: /tmp/workflow
+        containerPath: /tmp/workflow
+```
+You'd create this as follows:
+
+```bash
+$ kind create cluster --config kind-config.yaml
+```
+
+<details>
+
+<summary>Output of kind create cluster</summary>
+
+```console
+Creating cluster "kind" ...
+ ✓ Ensuring node image (kindest/node:v1.24.0) 🖼 
+ ✓ Preparing nodes 📦  
+ ✓ Writing configuration 📜 
+ ✓ Starting control-plane 🕹️ 
+ ✓ Installing CNI 🔌 
+ ✓ Installing StorageClass 💾 
+Set kubectl context to "kind-kind"
+You can now use your cluster with:
+
+kubectl cluster-info --context kind-kind
+
+Not sure what to do next? 😅  Check out https://kind.sigs.k8s.io/docs/user/quick-start/
+```
+
+Don't worry, there are plenty of emojis, as you can see.
+
+</details>
+
+You can then use `/tmp/workflow` as a local volume. An example workflow is provided as 
+[our volumes test](https://github.com/flux-framework/flux-operator/blob/main/examples/tests/volumes/minicluster.yaml).
+
+### MiniKube
+
+For minikube, the design is different, so a local volume comes down to a directory inside of the virtual
+machine. For data that needs to be read and written (and not executed) I've found that defining the local volume
+works fine - it will exist in the VM and be shared by the pods. In this case, you might just want to create
+the volume and copy over some small data file(s):
+
+```bash
+$ minikube ssh -- mkdir -p /tmp/data
+$ minikube cp ./data/pancakes.txt /tmp/data/pancakes.txt
+$ minikube ssh ls /tmp/data
+```
+
+However, if you are going to execute binaries,
+I've run into trouble not actually binding the path to the host. In this case, we need to do:
+
+```console
+[host]                [vm]              [pod]
+
+/tmp/workflow   ->    /tmp/workflow  -> /data
+```
+
+And the easiest way to do this is (in another terminal) run `minikube mount`
+
+```bash
+$ minikube mount /tmp/workflow:/tmp/workflow
+```
+
+The above mounts your hostpath `/tmp/workflow` to `/tmp/workflow` in the virtual machine,
+and then pods will access it via a named volume in the minicluster.yaml:
+
+```yaml
+apiVersion: flux-framework.org/v1alpha1
+kind: MiniCluster
+metadata:
+  name: flux-sample
+  namespace: flux-operator
+spec:
+
+  # Number of pods to create for MiniCluster
+  size: 2
+
+  # Make this kind of persistent volume and claim available to pods
+  # This is a path in minikube (e.g., minikube ssh or minikube mount)
+  volumes:
+    data:
+      storageClass: hostpath
+      path: /tmp/workflow
+
+  containers:
+    - image: ghcr.io/flux-framework/flux-restful-api:latest
+      command: ls /data
+
+      # The name (key) "data" corresponds to the one in "volumes" above
+      # so /data in the container is bound to /tmp/workflow in the VM, and this
+      # is the path you might have done minikube mount from your host
+      volumes:
+        data:
+          path: /data
+```
+
+Beyond these simple use cases, you likely want to use an existing persistent volume / claim,
+or a container storage interface.
+
 ## Existing Persistent Volume
 
 It might be the case that you've already defined a persistent volume claim, and you simply want to use it.

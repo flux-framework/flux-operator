@@ -446,6 +446,10 @@ type Commands struct {
 	// post command is run in the entrypoint when the broker exits / finishes
 	// +optional
 	Post string `json:"post"`
+
+	// A single command for only the broker to run
+	// +optional
+	BrokerPre string `json:"brokerPre"`
 }
 
 // ContainerResources include limits and requests

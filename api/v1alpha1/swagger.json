@@ -10,6 +10,11 @@
     "Commands": {
       "type": "object",
       "properties": {
+        "brokerPre": {
+          "description": "A single command for only the broker to run",
+          "type": "string",
+          "default": ""
+        },
         "init": {
           "description": "init command is run before anything",
           "type": "string",

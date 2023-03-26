@@ -38,10 +38,10 @@ asFlux="sudo -u ${fluxuser} -E PYTHONPATH=$PYTHONPATH -E PATH=$PATH -E LD_LIBRAR
 {{ end }}
 
 # If any preCommand logic is defined
-{{ .Container.PreCommand}} {{ if .Spec.Logging.Quiet }}> /dev/null{{ end }}
+{{ .Container.PreCommand}} {{ if .Spec.Logging.Quiet }}> /dev/null 2>&1{{ end }}
 
 # And pre command logic that isn't passed to the certificate generator
-{{ .Container.Commands.Pre}} {{ if .Spec.Logging.Quiet }}> /dev/null{{ end }}
+{{ .Container.Commands.Pre}} {{ if .Spec.Logging.Quiet }}> /dev/null 2>&1{{ end }}
 
 # We currently require sudo and an ubuntu base
 which sudo > /dev/null 2>&1 || (echo "sudo is required to be installed" && exit 1);
@@ -279,6 +279,9 @@ else
 
     # Start flux with the original entrypoint
     if [ $(hostname) == "${mainHost}" ]; then
+
+       # Commands only run by the broker
+       {{ .Container.Commands.BrokerPre}} {{ if .Spec.Logging.Quiet }}> /dev/null 2>&1{{ end }}
 
         # No command - use default to start server
 {{ if not .Spec.Logging.Quiet }}        echo "Extra command arguments are: $@"{{ end }}
