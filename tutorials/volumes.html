@@ -479,6 +479,21 @@
   
   
     <li class="md-nav__item">
+      <a href="singularity.html" class="md-nav__link">
+        <span title="/tutorials/singularity.md (reference label)" class="md-ellipsis">Singularity</span>
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="multi-tenancy.html" class="md-nav__link">
         <span title="/tutorials/multi-tenancy.md (reference label)" class="md-ellipsis">Multi-<wbr>tenancy</span>
       </a>
@@ -553,6 +568,33 @@
       Table of contents
     </label>
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#local-volumes" class="md-nav__link">
+    <span title="/tutorials/volumes.md#local-volumes (reference label)" class="md-ellipsis">Local Volumes</span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Local Volumes">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#kind" class="md-nav__link">
+    <span title="/tutorials/volumes.md#kind (reference label)" class="md-ellipsis">Kind</span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#minikube" class="md-nav__link">
+    <span title="/tutorials/volumes.md#minikube (reference label)" class="md-ellipsis">Mini<wbr>Kube</span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
       
         <li class="md-nav__item">
   <a href="#existing-persistent-volume" class="md-nav__link">
@@ -733,6 +775,102 @@
 <h1 id="volumes">Volumes<a class="headerlink" href="#volumes" title="Permalink to this heading">¶</a></h1>
 <p>These short examples will describe advanced functionality for volumes. For examples,
 see our <a class="reference external" href="https://github.com/flux-framework/flux-operator/tree/main/examples/storage">storage examples directory</a>.</p>
+<h2 id="local-volumes">Local Volumes<a class="headerlink" href="#local-volumes" title="Permalink to this heading">¶</a></h2>
+<p>For testing it’s helpful to use a local volume, or basically a path on your host that is bound to either
+the MiniKube Virtual Machine, or to a kind cluster container as a volume. We will show you how to do both here.</p>
+<h3 id="kind">Kind<a class="headerlink" href="#kind" title="Permalink to this heading">¶</a></h3>
+<p>I would first recommend kind, as I’ve had better luck using it. With kind, the control plane
+is run as a container, and so a local volume is a simple bind to your host. You need to create
+the cluster and ask for the bind. Here is a yaml file example for how to do that, binding
+<code class="docutils literal notranslate"><span class="pre">/tmp/workflow</span></code> from the path on your host to the same path in the container.</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><code><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">kind.x-k8s.io/v1alpha4</span>
+<span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Cluster</span>
+<span class="nt">nodes</span><span class="p">:</span>
+<span class="w">   </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">role</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">control-plane</span>
+<span class="w">     </span><span class="nt">extraMounts</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">hostPath</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">/tmp/workflow</span>
+<span class="w">        </span><span class="nt">containerPath</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">/tmp/workflow</span>
+</code></pre></div>
+</div>
+<p>You’d create this as follows:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span>kind<span class="w"> </span>create<span class="w"> </span>cluster<span class="w"> </span>--config<span class="w"> </span>kind-config.yaml
+</code></pre></div>
+</div>
+<details>
+<summary>Output of kind create cluster</summary>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><code><span class="go">Creating cluster &quot;kind&quot; ...</span>
+<span class="go"> ✓ Ensuring node image (kindest/node:v1.24.0) 🖼 </span>
+<span class="go"> ✓ Preparing nodes 📦  </span>
+<span class="go"> ✓ Writing configuration 📜 </span>
+<span class="go"> ✓ Starting control-plane 🕹️ </span>
+<span class="go"> ✓ Installing CNI 🔌 </span>
+<span class="go"> ✓ Installing StorageClass 💾 </span>
+<span class="go">Set kubectl context to &quot;kind-kind&quot;</span>
+<span class="go">You can now use your cluster with:</span>
+
+<span class="go">kubectl cluster-info --context kind-kind</span>
+
+<span class="go">Not sure what to do next? 😅  Check out https://kind.sigs.k8s.io/docs/user/quick-start/</span>
+</code></pre></div>
+</div>
+<p>Don’t worry, there are plenty of emojis, as you can see.</p>
+</details>
+<p>You can then use <code class="docutils literal notranslate"><span class="pre">/tmp/workflow</span></code> as a local volume. An example workflow is provided as
+<a class="reference external" href="https://github.com/flux-framework/flux-operator/blob/main/examples/tests/volumes/minicluster.yaml">our volumes test</a>.</p>
+<h3 id="minikube">MiniKube<a class="headerlink" href="#minikube" title="Permalink to this heading">¶</a></h3>
+<p>For minikube, the design is different, so a local volume comes down to a directory inside of the virtual
+machine. For data that needs to be read and written (and not executed) I’ve found that defining the local volume
+works fine - it will exist in the VM and be shared by the pods. In this case, you might just want to create
+the volume and copy over some small data file(s):</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span>minikube<span class="w"> </span>ssh<span class="w"> </span>--<span class="w"> </span>mkdir<span class="w"> </span>-p<span class="w"> </span>/tmp/data
+$<span class="w"> </span>minikube<span class="w"> </span>cp<span class="w"> </span>./data/pancakes.txt<span class="w"> </span>/tmp/data/pancakes.txt
+$<span class="w"> </span>minikube<span class="w"> </span>ssh<span class="w"> </span>ls<span class="w"> </span>/tmp/data
+</code></pre></div>
+</div>
+<p>However, if you are going to execute binaries,
+I’ve run into trouble not actually binding the path to the host. In this case, we need to do:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><code><span class="go">[host]                [vm]              [pod]</span>
+
+<span class="go">/tmp/workflow   -&gt;    /tmp/workflow  -&gt; /data</span>
+</code></pre></div>
+</div>
+<p>And the easiest way to do this is (in another terminal) run <code class="docutils literal notranslate"><span class="pre">minikube</span> <span class="pre">mount</span></code></p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span>minikube<span class="w"> </span>mount<span class="w"> </span>/tmp/workflow:/tmp/workflow
+</code></pre></div>
+</div>
+<p>The above mounts your hostpath <code class="docutils literal notranslate"><span class="pre">/tmp/workflow</span></code> to <code class="docutils literal notranslate"><span class="pre">/tmp/workflow</span></code> in the virtual machine,
+and then pods will access it via a named volume in the minicluster.yaml:</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><code><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">flux-framework.org/v1alpha1</span>
+<span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">MiniCluster</span>
+<span class="nt">metadata</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">flux-sample</span>
+<span class="w">  </span><span class="nt">namespace</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">flux-operator</span>
+<span class="nt">spec</span><span class="p">:</span>
+
+<span class="w">  </span><span class="c1"># Number of pods to create for MiniCluster</span>
+<span class="w">  </span><span class="nt">size</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">2</span>
+
+<span class="w">  </span><span class="c1"># Make this kind of persistent volume and claim available to pods</span>
+<span class="w">  </span><span class="c1"># This is a path in minikube (e.g., minikube ssh or minikube mount)</span>
+<span class="w">  </span><span class="nt">volumes</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">data</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">storageClass</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">hostpath</span>
+<span class="w">      </span><span class="nt">path</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">/tmp/workflow</span>
+
+<span class="w">  </span><span class="nt">containers</span><span class="p">:</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">image</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ghcr.io/flux-framework/flux-restful-api:latest</span>
+<span class="w">      </span><span class="nt">command</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ls /data</span>
+
+<span class="w">      </span><span class="c1"># The name (key) &quot;data&quot; corresponds to the one in &quot;volumes&quot; above</span>
+<span class="w">      </span><span class="c1"># so /data in the container is bound to /tmp/workflow in the VM, and this</span>
+<span class="w">      </span><span class="c1"># is the path you might have done minikube mount from your host</span>
+<span class="w">      </span><span class="nt">volumes</span><span class="p">:</span>
+<span class="w">        </span><span class="nt">data</span><span class="p">:</span>
+<span class="w">          </span><span class="nt">path</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">/data</span>
+</code></pre></div>
+</div>
+<p>Beyond these simple use cases, you likely want to use an existing persistent volume / claim,
+or a container storage interface.</p>
 <h2 id="existing-persistent-volume">Existing Persistent Volume<a class="headerlink" href="#existing-persistent-volume" title="Permalink to this heading">¶</a></h2>
 <p>It might be the case that you’ve already defined a persistent volume claim, and you simply want to use it.
 We currently support this, and require that you manage both the PVC and the PV (in our testing,
@@ -884,7 +1022,7 @@ $<span class="w"> </span>kubectl<span class="w"> </span>delete<span class="w"> <
   <small>
     
       Last update:
-      Mar 25, 2023
+      Mar 26, 2023
     
   </small>
 </div>

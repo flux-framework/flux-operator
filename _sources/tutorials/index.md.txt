@@ -8,6 +8,7 @@ If you have any questions or issues, please [let us know](https://github.com/flu
 ```{toctree}
 :maxdepth: 3
 jobs
+singularity
 multi-tenancy
 interactive
 services
