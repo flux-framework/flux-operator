@@ -5,8 +5,8 @@ complex workflows. The reason is because we can run containers without requiring
 container with Flux Framework and your software. Note that the examples here are simple - other examples
 include:
 
- - [Singularity + Tensorflow mnist](https://github.com/flux-framework/flux-operator/blob/main/examples/machine-learning/mnist) [view asciinema](https://asciinema.org/a/570458?speed=2)
- - [MPI Hello World](https://github.com/flux-framework/flux-operator/blob/main/examples/singularity/mpi-hello-world) [view asciinema](https://asciinema.org/a/570467?speed=2)
+ - [Singularity + Tensorflow mnist](https://github.com/flux-framework/flux-operator/blob/main/examples/machine-learning/mnist) ([view asciinema](https://asciinema.org/a/570458?speed=2))
+ - [MPI Hello World](https://github.com/flux-framework/flux-operator/blob/main/examples/singularity/mpi-hello-world) ([view asciinema](https://asciinema.org/a/570467?speed=2))
 
 
 ## Singularity Hello World
