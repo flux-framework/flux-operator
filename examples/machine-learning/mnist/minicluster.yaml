@@ -1,0 +1,42 @@
+apiVersion: flux-framework.org/v1alpha1
+kind: MiniCluster
+metadata:
+  name: flux-sample
+  namespace: flux-operator
+spec:
+
+  # This example technically runs on one node -
+  # flux isn't internally supported by tensorflow
+  size: 2
+
+  # This is created with the kind-config.yaml
+  # You should only need to pull once (the container is pulled to bound volume)
+  volumes:
+    data:
+      storageClass: hostpath
+      path: /tmp/workflow
+
+  # This is a list because a pod can support multiple containers
+  containers:
+    - image: ghcr.io/rse-ops/singularity:tag-mamba
+      command: singularity exec --bind /data:/data ./tensorflow.sif python /data/classify.py
+      workingDir: /data
+
+      # This pulls the container (once) by the broker to workingDir /data
+      commands:
+        brokerPre: |
+          if [[ ! -f "tensorflow.sif" ]]; then
+              singularity pull tensorflow.sif docker://nvcr.io/nvidia/tensorflow:22.09-tf2-py3
+          fi
+
+      fluxUser:
+        name: fluxuser
+
+      # Container will be pre-pulled here only by the broker
+      volumes:
+        data:
+          path: /data
+       
+      # Running a container in a container
+      securityContext:
+        privileged: true
