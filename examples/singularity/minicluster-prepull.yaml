@@ -1,0 +1,41 @@
+apiVersion: flux-framework.org/v1alpha1
+kind: MiniCluster
+metadata:
+  name: flux-sample
+  namespace: flux-operator
+spec:
+  # suppress all output except for test run
+  logging:
+    quiet: true
+
+  # Number of pods to create for MiniCluster
+  size: 2
+
+  # Make this kind of persistent volume and claim available to pods
+  # This is a path in minikube (e.g., minikube ssh)
+  volumes:
+    data:
+      storageClass: hostpath
+      path: /tmp/pulls
+
+  # This is a list because a pod can support multiple containers
+  containers:
+    - image: ghcr.io/rse-ops/singularity:tag-mamba
+      command: singularity exec ./ubuntu_latest.sif echo hello world
+      workingDir: /data
+
+      # This pulls the container (once) by the broker to workingDir /data
+      commands:
+        brokerPre: singularity pull docker://ubuntu
+
+      fluxUser:
+        name: fluxuser
+
+      # Container will be pre-pulled here only by the broker
+      volumes:
+        data:
+          path: /data
+       
+      # Running a container in a container
+      securityContext:
+        privileged: true

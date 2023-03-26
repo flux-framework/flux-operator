@@ -91,6 +91,14 @@ func schema__api_v1alpha1__Commands(ref common.ReferenceCallback) common.OpenAPI
 							Format:      "",
 						},
 					},
+					"brokerPre": {
+						SchemaProps: spec.SchemaProps{
+							Description: "A single command for only the broker to run",
+							Default:     "",
+							Type:        []string{"string"},
+							Format:      "",
+						},
+					},
 				},
 			},
 		},

@@ -33,6 +33,7 @@ class Commands(object):
                             and the value is json key in definition.
     """
     openapi_types = {
+        'broker_pre': 'str',
         'init': 'str',
         'post': 'str',
         'pre': 'str',
@@ -41,6 +42,7 @@ class Commands(object):
     }
 
     attribute_map = {
+        'broker_pre': 'brokerPre',
         'init': 'init',
         'post': 'post',
         'pre': 'pre',
@@ -48,12 +50,13 @@ class Commands(object):
         'run_flux_as_root': 'runFluxAsRoot'
     }
 
-    def __init__(self, init='', post='', pre='', prefix='', run_flux_as_root=False, local_vars_configuration=None):  # noqa: E501
+    def __init__(self, broker_pre='', init='', post='', pre='', prefix='', run_flux_as_root=False, local_vars_configuration=None):  # noqa: E501
         """Commands - a model defined in OpenAPI"""  # noqa: E501
         if local_vars_configuration is None:
             local_vars_configuration = Configuration.get_default_copy()
         self.local_vars_configuration = local_vars_configuration
 
+        self._broker_pre = None
         self._init = None
         self._post = None
         self._pre = None
@@ -61,6 +64,8 @@ class Commands(object):
         self._run_flux_as_root = None
         self.discriminator = None
 
+        if broker_pre is not None:
+            self.broker_pre = broker_pre
         if init is not None:
             self.init = init
         if post is not None:
@@ -71,6 +76,29 @@ class Commands(object):
             self.prefix = prefix
         if run_flux_as_root is not None:
             self.run_flux_as_root = run_flux_as_root
+
+    @property
+    def broker_pre(self):
+        """Gets the broker_pre of this Commands.  # noqa: E501
+
+        A single command for only the broker to run  # noqa: E501
+
+        :return: The broker_pre of this Commands.  # noqa: E501
+        :rtype: str
+        """
+        return self._broker_pre
+
+    @broker_pre.setter
+    def broker_pre(self, broker_pre):
+        """Sets the broker_pre of this Commands.
+
+        A single command for only the broker to run  # noqa: E501
+
+        :param broker_pre: The broker_pre of this Commands.  # noqa: E501
+        :type broker_pre: str
+        """
+
+        self._broker_pre = broker_pre
 
     @property
     def init(self):

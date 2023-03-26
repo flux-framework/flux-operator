@@ -4,6 +4,7 @@
 ## Properties
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
+**broker_pre** | **str** | A single command for only the broker to run | [optional] [default to '']
 **init** | **str** | init command is run before anything | [optional] [default to '']
 **post** | **str** | post command is run in the entrypoint when the broker exits / finishes | [optional] [default to '']
 **pre** | **str** | pre command is run after global PreCommand, after asFlux is set (can override) | [optional] [default to '']
