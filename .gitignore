@@ -5,6 +5,7 @@
 *.dll
 *.so
 *.dylib
+*.sif
 bin
 testbin/*
 config/samples/secrets
