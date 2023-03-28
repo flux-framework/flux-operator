@@ -7,7 +7,7 @@ flux install, along with a service for the entire cluster (a deployment next to 
 
 ### Sidecar NGINX Container
 
- **[Tutorial File](https://github.com/flux-framework/flux-operator/blob/main/examples/tests/nginx-service/minicluster.yaml)**
+ **[Tutorial File](https://github.com/flux-framework/flux-operator/blob/main/examples/tests/nginx-sidecar-service/minicluster.yaml)**
 
 This is one of the simplest examples, implemented as a test, to run a sidecar with NGINX and then curl localhost
 to get a response from flux.
@@ -42,7 +42,7 @@ spec:
 Create it (after you have the flux-operator namespace):
 
 ```bash
-$ kubectl create -f ./examples/tests/nginx-service/minicluster.yaml
+$ kubectl create -f ./examples/tests/nginx-sidecar-service/minicluster.yaml
 ```
 
 See nginx is running:
@@ -106,7 +106,7 @@ And that's it! In a real world use case, you'd have some service running alongsi
 an analysis. Clean up:
 
 ```bash
-$ kubectl delete -f ./examples/tests/nginx-service/minicluster.yaml
+$ kubectl delete -f ./examples/tests/nginx-sidecar-service/minicluster.yaml
 ```
 
 ### Sidecar Registry with ORAS

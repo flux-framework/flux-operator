@@ -11,17 +11,14 @@ spec:
   # Number of pods to create for MiniCluster
   size: 2
 
+  # This is a list because a pod can support multiple containers
   containers:
+    - image: ghcr.io/flux-framework/flux-restful-api:latest
+      runFlux: true
+      command: curl -s localhost
+      commands:
+        pre: apt-get update > /dev/null && apt-get install -y curl > /dev/null
     - image: nginx
       name: nginx
       ports:
         - 80
-
-  # This is a list because a pod can support multiple containers
-  containers:
-    - image: ghcr.io/flux-framework/flux-restful-api:latest
-      environment:
-          NGINX: flux-sample-services.flux-service.flux-operator.svc.cluster.local
-      command: curl -s ${NGINX}
-      commands:
-        pre: apt-get update > /dev/null && apt-get install -y curl > /dev/null
