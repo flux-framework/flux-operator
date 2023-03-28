@@ -6,7 +6,7 @@ metadata:
 spec:
   # Number of pods to create for MiniCluster
   size: 4
-  tasks: 2
+  tasks: 4
 
   # Single pod services running ALONGSIDE the cluster
   services:
@@ -42,7 +42,7 @@ spec:
             while [ ! -f lammps.sif ]
               do
                 oras pull $REGISTRY:5000/flux/lammps:latest --plain-http || echo "LAMMPS image is not ready for pull yet..."
-                sleep 15
+                sleep 30
               done
 
         # This is going to install oras to pull from our registry
