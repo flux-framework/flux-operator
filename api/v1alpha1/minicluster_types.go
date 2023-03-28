@@ -518,6 +518,15 @@ func (f *MiniCluster) Validate() bool {
 	valid := true
 	fluxRunners := 0
 
+	// Commands and PreCommand not supported for services
+	for _, service := range f.Spec.Services {
+		if service.PreCommand != "" || service.Commands.Pre != "" ||
+			service.Commands.BrokerPre != "" || service.Commands.WorkerPre != "" {
+			fmt.Printf("😥️ Services do not support Commands.\n")
+			return false
+		}
+	}
+
 	// If we only have one container, assume we want to run flux with it
 	// This makes it easier for the user to not require the flag
 	if len(f.Spec.Containers) == 1 {
