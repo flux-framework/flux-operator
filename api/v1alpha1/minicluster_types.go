@@ -28,6 +28,12 @@ type MiniClusterSpec struct {
 	// +listType=atomic
 	Containers []MiniClusterContainer `json:"containers"`
 
+	// Services are one or more service containers to bring up
+	// alongside the MiniCluster.
+	// +optional
+	// +listType=atomic
+	Services []MiniClusterContainer `json:"services"`
+
 	// Users of the MiniCluster
 	// +optional
 	// +listType=atomic
@@ -446,6 +452,10 @@ type Commands struct {
 	// post command is run in the entrypoint when the broker exits / finishes
 	// +optional
 	Post string `json:"post"`
+
+	// A command only for workers to run
+	// +optional
+	WorkerPre string `json:"workerPre"`
 
 	// A single command for only the broker to run
 	// +optional

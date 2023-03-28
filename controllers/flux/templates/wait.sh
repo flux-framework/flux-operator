@@ -308,6 +308,10 @@ else
             {{ end }}
         fi
     else
+
+       # Commands only run by the workers
+       {{ .Container.Commands.WorkerPre}} {{ if .Spec.Logging.Quiet }}> /dev/null 2>&1{{ end }}
+
         # Sleep until the broker is ready
 {{ if not .Spec.Logging.Quiet }}
         printf "\n🌀 {{.Container.Commands.Prefix}} flux start -o --config /etc/flux/config ${brokerOptions}\n"{{ end }}

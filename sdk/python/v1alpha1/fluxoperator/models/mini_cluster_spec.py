@@ -42,6 +42,7 @@ class MiniClusterSpec(object):
         'job_labels': 'dict(str, str)',
         'logging': 'LoggingSpec',
         'pod': 'PodSpec',
+        'services': 'list[MiniClusterContainer]',
         'size': 'int',
         'tasks': 'int',
         'users': 'list[MiniClusterUser]',
@@ -58,13 +59,14 @@ class MiniClusterSpec(object):
         'job_labels': 'jobLabels',
         'logging': 'logging',
         'pod': 'pod',
+        'services': 'services',
         'size': 'size',
         'tasks': 'tasks',
         'users': 'users',
         'volumes': 'volumes'
     }
 
-    def __init__(self, archive=None, cleanup=False, containers=None, deadline_seconds=31500000, flux_restful=None, interactive=False, job_labels=None, logging=None, pod=None, size=1, tasks=1, users=None, volumes=None, local_vars_configuration=None):  # noqa: E501
+    def __init__(self, archive=None, cleanup=False, containers=None, deadline_seconds=31500000, flux_restful=None, interactive=False, job_labels=None, logging=None, pod=None, services=None, size=1, tasks=1, users=None, volumes=None, local_vars_configuration=None):  # noqa: E501
         """MiniClusterSpec - a model defined in OpenAPI"""  # noqa: E501
         if local_vars_configuration is None:
             local_vars_configuration = Configuration.get_default_copy()
@@ -79,6 +81,7 @@ class MiniClusterSpec(object):
         self._job_labels = None
         self._logging = None
         self._pod = None
+        self._services = None
         self._size = None
         self._tasks = None
         self._users = None
@@ -102,6 +105,8 @@ class MiniClusterSpec(object):
             self.logging = logging
         if pod is not None:
             self.pod = pod
+        if services is not None:
+            self.services = services
         if size is not None:
             self.size = size
         if tasks is not None:
@@ -311,6 +316,29 @@ class MiniClusterSpec(object):
         """
 
         self._pod = pod
+
+    @property
+    def services(self):
+        """Gets the services of this MiniClusterSpec.  # noqa: E501
+
+        Services are one or more service containers to bring up alongside the MiniCluster.  # noqa: E501
+
+        :return: The services of this MiniClusterSpec.  # noqa: E501
+        :rtype: list[MiniClusterContainer]
+        """
+        return self._services
+
+    @services.setter
+    def services(self, services):
+        """Sets the services of this MiniClusterSpec.
+
+        Services are one or more service containers to bring up alongside the MiniCluster.  # noqa: E501
+
+        :param services: The services of this MiniClusterSpec.  # noqa: E501
+        :type services: list[MiniClusterContainer]
+        """
+
+        self._services = services
 
     @property
     def size(self):

@@ -305,6 +305,13 @@ func (in *MiniClusterSpec) DeepCopyInto(out *MiniClusterSpec) {
 			(*in)[i].DeepCopyInto(&(*out)[i])
 		}
 	}
+	if in.Services != nil {
+		in, out := &in.Services, &out.Services
+		*out = make([]MiniClusterContainer, len(*in))
+		for i := range *in {
+			(*in)[i].DeepCopyInto(&(*out)[i])
+		}
+	}
 	if in.Users != nil {
 		in, out := &in.Users, &out.Users
 		*out = make([]MiniClusterUser, len(*in))

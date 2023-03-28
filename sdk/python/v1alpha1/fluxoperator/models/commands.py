@@ -38,7 +38,8 @@ class Commands(object):
         'post': 'str',
         'pre': 'str',
         'prefix': 'str',
-        'run_flux_as_root': 'bool'
+        'run_flux_as_root': 'bool',
+        'worker_pre': 'str'
     }
 
     attribute_map = {
@@ -47,10 +48,11 @@ class Commands(object):
         'post': 'post',
         'pre': 'pre',
         'prefix': 'prefix',
-        'run_flux_as_root': 'runFluxAsRoot'
+        'run_flux_as_root': 'runFluxAsRoot',
+        'worker_pre': 'workerPre'
     }
 
-    def __init__(self, broker_pre='', init='', post='', pre='', prefix='', run_flux_as_root=False, local_vars_configuration=None):  # noqa: E501
+    def __init__(self, broker_pre='', init='', post='', pre='', prefix='', run_flux_as_root=False, worker_pre='', local_vars_configuration=None):  # noqa: E501
         """Commands - a model defined in OpenAPI"""  # noqa: E501
         if local_vars_configuration is None:
             local_vars_configuration = Configuration.get_default_copy()
@@ -62,6 +64,7 @@ class Commands(object):
         self._pre = None
         self._prefix = None
         self._run_flux_as_root = None
+        self._worker_pre = None
         self.discriminator = None
 
         if broker_pre is not None:
@@ -76,6 +79,8 @@ class Commands(object):
             self.prefix = prefix
         if run_flux_as_root is not None:
             self.run_flux_as_root = run_flux_as_root
+        if worker_pre is not None:
+            self.worker_pre = worker_pre
 
     @property
     def broker_pre(self):
@@ -214,6 +219,29 @@ class Commands(object):
         """
 
         self._run_flux_as_root = run_flux_as_root
+
+    @property
+    def worker_pre(self):
+        """Gets the worker_pre of this Commands.  # noqa: E501
+
+        A command only for workers to run  # noqa: E501
+
+        :return: The worker_pre of this Commands.  # noqa: E501
+        :rtype: str
+        """
+        return self._worker_pre
+
+    @worker_pre.setter
+    def worker_pre(self, worker_pre):
+        """Sets the worker_pre of this Commands.
+
+        A command only for workers to run  # noqa: E501
+
+        :param worker_pre: The worker_pre of this Commands.  # noqa: E501
+        :type worker_pre: str
+        """
+
+        self._worker_pre = worker_pre
 
     def to_dict(self, serialize=False):
         """Returns the model properties as a dict"""

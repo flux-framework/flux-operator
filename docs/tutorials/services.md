@@ -118,7 +118,7 @@ with ORAS. I don't know why, I just like ORAS :) In all seriousness, you could
 imagine interesting use cases like needing an API to save and get artifacts 
 for your analysis.
 
- **[Tutorial File](https://github.com/flux-framework/flux-operator/blob/main/examples/services/minicluster-registry.yaml)**
+ **[Tutorial File](https://github.com/flux-framework/flux-operator/blob/main/examples/services/sidecar/minicluster-registry.yaml)**
 
 This example demonstrates bringing up a MiniCluster and then interacting with a service (a registry)
 to push / pull artifacts. Here is our example custom resource definition:
@@ -180,7 +180,7 @@ $ kubectl create namespace flux-operator
 
 And apply the MiniCluster CRD:
 ```bash
-$ kubectl apply -f examples/services/minicluster-registry.yaml
+$ kubectl apply -f examples/services/sidecar/minicluster-registry.yaml
 ```
 
 If you are curious, the entrypoint for the service sidecar container is `registry serve /etc/docker/registry/config.yml`
@@ -252,12 +252,92 @@ in the Flux instance. Feel free to play with oras outside of that context!
 When you are done, exit from the instance, and exit from the pod, and then delete the MiniCluster.
 
 ```bash
-$ kubectl delete -f examples/services/minicluster-registry.yaml
+$ kubectl delete -f examples/services/sidecar/minicluster-registry.yaml
 ```
 
 That's it. Please do something more useful than my terrible example.
 
 ## Service Containers Alongside the Cluster
+
+### Registry Service
+
+ **[Tutorial File](https://github.com/flux-framework/flux-operator/blob/main/examples/services/single/minicluster-registry.yaml)**
+
+Unlike the example above, it's more reasonable that you would want a single registry that your pods can access. E.g., perhaps
+you use it like a pull-through cache - first pulling to this service node (or pushing from another pod) and then having
+your worker pods pull from there. Let's do that now. If you are using MiniKube, remember to pull large
+containers first. Create the namespace:
+
+```bash
+$ kubectl create namespace flux-operator
+```
+
+And apply the MiniCluster CRD:
+
+```bash
+$ kubectl apply -f examples/services/single/minicluster-registry.yaml
+```
+
+You'll see a services pod! The current design deploys one pod to share your services,
+and the services share the same cluster networking space.
+
+```bash
+$ kubectl get -n flux-operator pods
+NAME                         READY   STATUS      RESTARTS   AGE
+flux-sample-0-4wt26          1/1     Running     0          38s
+flux-sample-1-sr5zx          1/1     Running     0          38s
+flux-sample-cert-generator   0/1     Completed   0          38s
+flux-sample-services         1/1     Running     0          38s
+```
+
+And then shell into the broker pod, index 0, which is "flux-sample"
+
+```bash
+$ kubectl exec -it  -n flux-operator flux-sample-0-d5jbb -- bash
+```
+
+The registry hostname should be in the environment (it's defined in the CRD):
+
+```bash
+# echo $REGISTRY 
+flux-sample-services.flux-service.flux-operator.svc.cluster.local
+```
+
+Both oras and Singularity are installed. Conceptually, we should be able to pull a container
+with Singularity, and push it to the registry with oras.  This is a relatively small container
+and should be quick:
+
+```bash
+$ singularity pull docker://vanessa/salad
+```
+Give it a run!
+
+```bash
+$ singularity run salad_latest.sif 
+```
+```console
+ In Go an array is a slice. Utensil discrimination!  
+
+          _________________  .========
+         [_________________>< :======
+                             '======== 
+```
+
+Now let's push to the oras registry
+
+```bash
+$ oras push $REGISTRY:5000/vanessa/salad:latest --artifact-type appliciation/vnd.sylabs.sif.layer.tar ./salad_latest.sif  --plain-http
+```
+
+Great! Now you could, theoretically, push a single SIF to your registry (as a local cache) and have the other nodes pull it!
+Here is an example, shelling in to the second worker:
+
+```bash
+$ oras pull $REGISTRY:5000/vanessa/salad:latest --plain-http
+```
+
+Super cool! We will have more examples in the `examples` folder of how this can be used for workflow containers.
+
 
 ### Merlin Demo Workflow
 
