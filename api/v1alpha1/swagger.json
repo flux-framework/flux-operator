@@ -39,6 +39,11 @@
           "description": "Run flux start as root - required for some storage binds",
           "type": "boolean",
           "default": false
+        },
+        "workerPre": {
+          "description": "A command only for workers to run",
+          "type": "string",
+          "default": ""
         }
       }
     },
@@ -438,6 +443,15 @@
           "description": "Pod spec details",
           "default": {},
           "$ref": "#/definitions/PodSpec"
+        },
+        "services": {
+          "description": "Services are one or more service containers to bring up alongside the MiniCluster.",
+          "type": "array",
+          "items": {
+            "default": {},
+            "$ref": "#/definitions/MiniClusterContainer"
+          },
+          "x-kubernetes-list-type": "atomic"
         },
         "size": {
           "description": "Size (number of job pods to run, size of minicluster in pods)",

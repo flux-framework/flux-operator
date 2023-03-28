@@ -13,6 +13,7 @@ Name | Type | Description | Notes
 **job_labels** | **dict(str, str)** | Labels for the job | [optional] 
 **logging** | [**LoggingSpec**](LoggingSpec.md) |  | [optional] 
 **pod** | [**PodSpec**](PodSpec.md) |  | [optional] 
+**services** | [**list[MiniClusterContainer]**](MiniClusterContainer.md) | Services are one or more service containers to bring up alongside the MiniCluster. | [optional] 
 **size** | **int** | Size (number of job pods to run, size of minicluster in pods) | [optional] [default to 1]
 **tasks** | **int** | Total number of CPUs being run across entire cluster | [optional] [default to 1]
 **users** | [**list[MiniClusterUser]**](MiniClusterUser.md) | Users of the MiniCluster | [optional] 

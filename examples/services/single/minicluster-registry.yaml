@@ -1,0 +1,42 @@
+apiVersion: flux-framework.org/v1alpha1
+kind: MiniCluster
+metadata:
+  name: flux-sample
+  namespace: flux-operator
+spec:
+
+  # Number of pods to create for MiniCluster
+  size: 2
+  interactive: true
+
+  # Single pod services running ALONGSIDE the cluster
+  services:
+    - image: ghcr.io/oras-project/registry:latest
+      name: registry
+      ports:
+        - 5000
+
+  # This is a list because a pod can support multiple containers
+  containers:
+    - image: ghcr.io/rse-ops/singularity:tag-mamba
+      environment:
+        REGISTRY: flux-sample-services.flux-service.flux-operator.svc.cluster.local
+
+      commands:
+        
+        # This is going to install oras to push / pull containers with singularity
+        pre: |
+          apt-get update && apt-get install -y curl
+          VERSION="1.0.0-rc.2"
+          curl -LO "https://github.com/oras-project/oras/releases/download/v${VERSION}/oras_${VERSION}_linux_amd64.tar.gz"
+          mkdir -p oras-install/
+          tar -zxf oras_${VERSION}_*.tar.gz -C oras-install/
+          sudo mv oras-install/oras /usr/local/bin/
+          rm -rf oras_${VERSION}_*.tar.gz oras-install/
+
+      fluxUser:
+        name: fluxuser
+       
+      # Running a container in a container
+      securityContext:
+        privileged: true

@@ -61,7 +61,6 @@ func (r *MiniClusterReconciler) getResourceGroup(
 
 // getContainerResources determines if any resources are requested via the spec
 func (r *MiniClusterReconciler) getContainerResources(
-	cluster *api.MiniCluster,
 	container *api.MiniClusterContainer,
 ) (corev1.ResourceRequirements, error) {
 

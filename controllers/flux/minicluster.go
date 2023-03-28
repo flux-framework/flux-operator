@@ -79,6 +79,15 @@ func (r *MiniClusterReconciler) ensureMiniCluster(
 		}
 	}
 
+	// Any extra service containers (running alongside the cluster)
+	// For now run these in the same pod, one service pod
+	if len(cluster.Spec.Services) > 0 {
+		_, result, err = r.ensureServicePod(ctx, cluster)
+		if err != nil {
+			return result, err
+		}
+	}
+
 	// Create the batch job that brings it all together!
 	// A batchv1.Job can hold a spec for containers that use the configs we just made
 	_, result, err = r.getMiniCluster(ctx, cluster)

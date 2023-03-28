@@ -79,6 +79,9 @@ spec:
                           description: Run flux start as root - required for some storage
                             binds
                           type: boolean
+                        workerPre:
+                          description: A command only for workers to run
+                          type: string
                       type: object
                     cores:
                       description: Cores the container should use
@@ -321,6 +324,193 @@ spec:
                     description: Service account name for the pod
                     type: string
                 type: object
+              services:
+                description: Services are one or more service containers to bring up
+                  alongside the MiniCluster.
+                items:
+                  properties:
+                    command:
+                      description: Single user executable to provide to flux start
+                      type: string
+                    commands:
+                      description: More specific or detailed commands for just workers/broker
+                      properties:
+                        brokerPre:
+                          description: A single command for only the broker to run
+                          type: string
+                        init:
+                          description: init command is run before anything
+                          type: string
+                        post:
+                          description: post command is run in the entrypoint when the
+                            broker exits / finishes
+                          type: string
+                        pre:
+                          description: pre command is run after global PreCommand, after
+                            asFlux is set (can override)
+                          type: string
+                        prefix:
+                          description: Prefix to flux start / submit / broker Typically
+                            used for a wrapper command to mount, etc.
+                          type: string
+                        runFluxAsRoot:
+                          default: false
+                          description: Run flux start as root - required for some storage
+                            binds
+                          type: boolean
+                        workerPre:
+                          description: A command only for workers to run
+                          type: string
+                      type: object
+                    cores:
+                      description: Cores the container should use
+                      format: int32
+                      type: integer
+                    diagnostics:
+                      description: Run flux diagnostics on start instead of command
+                      type: boolean
+                    environment:
+                      additionalProperties:
+                        type: string
+                      description: Key/value pairs for the environment
+                      type: object
+                    existingVolumes:
+                      additionalProperties:
+                        description: Mini Cluster local volumes available to mount (these
+                          are on the host)
+                        properties:
+                          claimName:
+                            type: string
+                          path:
+                            description: Path and claim name are always required
+                            type: string
+                          readOnly:
+                            default: false
+                            type: boolean
+                        required:
+                        - claimName
+                        - path
+                        type: object
+                      description: Existing Volumes to add to the containers
+                      type: object
+                    fluxLogLevel:
+                      default: 6
+                      description: Log level to use for flux logging (only in non TestMode)
+                      format: int32
+                      type: integer
+                    fluxOptionFlags:
+                      description: Flux option flags, usually provided with -o optional
+                        - if needed, default option flags for the server These can also
+                        be set in the user interface to override here. This is only
+                        valid for a FluxRunner "runFlux" true
+                      type: string
+                    fluxUser:
+                      description: Flux User, if created in the container
+                      properties:
+                        name:
+                          default: flux
+                          description: Flux user name
+                          type: string
+                        uid:
+                          default: 1000
+                          description: UID for the FluxUser
+                          type: integer
+                      type: object
+                    image:
+                      default: ghcr.io/rse-ops/accounting:app-latest
+                      description: Container image must contain flux and flux-sched
+                        install
+                      type: string
+                    imagePullSecret:
+                      description: Allow the user to pull authenticated images By default
+                        no secret is selected. Setting this with the name of an already
+                        existing imagePullSecret will specify that secret in the pod
+                        spec.
+                      type: string
+                    launcher:
+                      description: Indicate that the command is a launcher that will
+                        ask for its own jobs (and provided directly to flux start)
+                      type: boolean
+                    lifeCycle:
+                      description: Lifecycle can handle post start commands, etc.
+                      properties:
+                        postStartExec:
+                          type: string
+                        preStopExec:
+                          type: string
+                      type: object
+                    name:
+                      description: Container name is only required for non flux runners
+                      type: string
+                    ports:
+                      description: Ports to be exposed to other containers in the cluster
+                        We take a single list of integers and map to the same
+                      items:
+                        format: int32
+                        type: integer
+                      type: array
+                      x-kubernetes-list-type: atomic
+                    preCommand:
+                      description: Special command to run at beginning of script, directly
+                        after asFlux is defined as sudo -u flux -E (so you can change
+                        that if desired.) This is only valid if FluxRunner is set (that
+                        writes a wait.sh script) This is for the indexed job pods and
+                        the certificate generation container.
+                      type: string
+                    pullAlways:
+                      default: false
+                      description: Allow the user to dictate pulling By default we pull
+                        if not present. Setting this to true will indicate to pull always
+                      type: boolean
+                    resources:
+                      description: Resources include limits and requests
+                      properties:
+                        limits:
+                          additionalProperties:
+                            anyOf:
+                            - type: integer
+                            - type: string
+                            x-kubernetes-int-or-string: true
+                          type: object
+                        requests:
+                          additionalProperties:
+                            anyOf:
+                            - type: integer
+                            - type: string
+                            x-kubernetes-int-or-string: true
+                          type: object
+                      type: object
+                    runFlux:
+                      description: Main container to run flux (only should be one)
+                      type: boolean
+                    securityContext:
+                      description: Security Context https://kubernetes.io/docs/tasks/configure-pod-container/security-context/
+                      properties:
+                        privileged:
+                          description: Privileged container
+                          type: boolean
+                      type: object
+                    volumes:
+                      additionalProperties:
+                        description: A Container volume must reference one defined for
+                          the MiniCluster The path here is in the container
+                        properties:
+                          path:
+                            type: string
+                          readOnly:
+                            default: false
+                            type: boolean
+                        required:
+                        - path
+                        type: object
+                      description: Volumes that can be mounted (must be defined in volumes)
+                      type: object
+                    workingDir:
+                      description: Working directory to run command from
+                      type: string
+                  type: object
+                type: array
+                x-kubernetes-list-type: atomic
               size:
                 default: 1
                 description: Size (number of job pods to run, size of minicluster in

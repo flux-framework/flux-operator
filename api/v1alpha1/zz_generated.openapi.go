@@ -91,6 +91,14 @@ func schema__api_v1alpha1__Commands(ref common.ReferenceCallback) common.OpenAPI
 							Format:      "",
 						},
 					},
+					"workerPre": {
+						SchemaProps: spec.SchemaProps{
+							Description: "A command only for workers to run",
+							Default:     "",
+							Type:        []string{"string"},
+							Format:      "",
+						},
+					},
 					"brokerPre": {
 						SchemaProps: spec.SchemaProps{
 							Description: "A single command for only the broker to run",
@@ -709,6 +717,25 @@ func schema__api_v1alpha1__MiniClusterSpec(ref common.ReferenceCallback) common.
 						},
 						SchemaProps: spec.SchemaProps{
 							Description: "Containers is one or more containers to be created in a pod. There should only be one container to run flux with runFlux",
+							Type:        []string{"array"},
+							Items: &spec.SchemaOrArray{
+								Schema: &spec.Schema{
+									SchemaProps: spec.SchemaProps{
+										Default: map[string]interface{}{},
+										Ref:     ref("./api/v1alpha1/.MiniClusterContainer"),
+									},
+								},
+							},
+						},
+					},
+					"services": {
+						VendorExtensible: spec.VendorExtensible{
+							Extensions: spec.Extensions{
+								"x-kubernetes-list-type": "atomic",
+							},
+						},
+						SchemaProps: spec.SchemaProps{
+							Description: "Services are one or more service containers to bring up alongside the MiniCluster.",
 							Type:        []string{"array"},
 							Items: &spec.SchemaOrArray{
 								Schema: &spec.Schema{

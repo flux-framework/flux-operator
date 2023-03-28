@@ -18,7 +18,6 @@ import (
 
 // createContainerLifecycle adds lifecycle commands to help with moving cluster state
 func (r *MiniClusterReconciler) createContainerLifecycle(
-	cluster *api.MiniCluster,
 	container api.MiniClusterContainer) *corev1.Lifecycle {
 
 	// Empty Lifecycle by default

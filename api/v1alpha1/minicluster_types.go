@@ -28,6 +28,12 @@ type MiniClusterSpec struct {
 	// +listType=atomic
 	Containers []MiniClusterContainer `json:"containers"`
 
+	// Services are one or more service containers to bring up
+	// alongside the MiniCluster.
+	// +optional
+	// +listType=atomic
+	Services []MiniClusterContainer `json:"services"`
+
 	// Users of the MiniCluster
 	// +optional
 	// +listType=atomic
@@ -447,6 +453,10 @@ type Commands struct {
 	// +optional
 	Post string `json:"post"`
 
+	// A command only for workers to run
+	// +optional
+	WorkerPre string `json:"workerPre"`
+
 	// A single command for only the broker to run
 	// +optional
 	BrokerPre string `json:"brokerPre"`
@@ -507,6 +517,15 @@ func (f *MiniCluster) Validate() bool {
 	// We should have only one flux runner
 	valid := true
 	fluxRunners := 0
+
+	// Commands and PreCommand not supported for services
+	for _, service := range f.Spec.Services {
+		if service.PreCommand != "" || service.Commands.Pre != "" ||
+			service.Commands.BrokerPre != "" || service.Commands.WorkerPre != "" {
+			fmt.Printf("😥️ Services do not support Commands.\n")
+			return false
+		}
+	}
 
 	// If we only have one container, assume we want to run flux with it
 	// This makes it easier for the user to not require the flag
