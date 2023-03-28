@@ -590,6 +590,13 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
+  <a href="#registry-service" class="md-nav__link">
+    <span title="/tutorials/services.md#registry-service (reference label)" class="md-ellipsis">Registry Service</span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#merlin-demo-workflow" class="md-nav__link">
     <span title="/tutorials/services.md#merlin-demo-workflow (reference label)" class="md-ellipsis">Merlin Demo Workflow</span>
   </a>
@@ -790,7 +797,7 @@
 flux install, along with a service for the entire cluster (a deployment next to the cluster).</p>
 <h2 id="sidecar-tutorials">Sidecar Tutorials<a class="headerlink" href="#sidecar-tutorials" title="Permalink to this heading">¶</a></h2>
 <h3 id="sidecar-nginx-container">Sidecar NGINX Container<a class="headerlink" href="#sidecar-nginx-container" title="Permalink to this heading">¶</a></h3>
-<p><strong><a class="reference external" href="https://github.com/flux-framework/flux-operator/blob/main/examples/tests/nginx-service/minicluster.yaml">Tutorial File</a></strong></p>
+<p><strong><a class="reference external" href="https://github.com/flux-framework/flux-operator/blob/main/examples/tests/nginx-sidecar-service/minicluster.yaml">Tutorial File</a></strong></p>
 <p>This is one of the simplest examples, implemented as a test, to run a sidecar with NGINX and then curl localhost
 to get a response from flux.</p>
 <div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><code><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">flux-framework.org/v1alpha1</span>
@@ -820,7 +827,7 @@ to get a response from flux.</p>
 </code></pre></div>
 </div>
 <p>Create it (after you have the flux-operator namespace):</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span>kubectl<span class="w"> </span>create<span class="w"> </span>-f<span class="w"> </span>./examples/tests/nginx-service/minicluster.yaml
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span>kubectl<span class="w"> </span>create<span class="w"> </span>-f<span class="w"> </span>./examples/tests/nginx-sidecar-service/minicluster.yaml
 </code></pre></div>
 </div>
 <p>See nginx is running:</p>
@@ -878,7 +885,7 @@ to get a response from flux.</p>
 </div>
 <p>And that’s it! In a real world use case, you’d have some service running alongside
 an analysis. Clean up:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span>kubectl<span class="w"> </span>delete<span class="w"> </span>-f<span class="w"> </span>./examples/tests/nginx-service/minicluster.yaml
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span>kubectl<span class="w"> </span>delete<span class="w"> </span>-f<span class="w"> </span>./examples/tests/nginx-sidecar-service/minicluster.yaml
 </code></pre></div>
 </div>
 <h3 id="sidecar-registry-with-oras">Sidecar Registry with ORAS<a class="headerlink" href="#sidecar-registry-with-oras" title="Permalink to this heading">¶</a></h3>
@@ -889,7 +896,7 @@ an analysis. Clean up:</p>
 with ORAS. I don’t know why, I just like ORAS :) In all seriousness, you could
 imagine interesting use cases like needing an API to save and get artifacts
 for your analysis.</p>
-<p><strong><a class="reference external" href="https://github.com/flux-framework/flux-operator/blob/main/examples/services/minicluster-registry.yaml">Tutorial File</a></strong></p>
+<p><strong><a class="reference external" href="https://github.com/flux-framework/flux-operator/blob/main/examples/services/sidecar/minicluster-registry.yaml">Tutorial File</a></strong></p>
 <p>This example demonstrates bringing up a MiniCluster and then interacting with a service (a registry)
 to push / pull artifacts. Here is our example custom resource definition:</p>
 <div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><code><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">flux-framework.org/v1alpha1</span>
@@ -942,7 +949,7 @@ Given a running cluster, we can create the namespace and the MiniCluster as foll
 </code></pre></div>
 </div>
 <p>And apply the MiniCluster CRD:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span>kubectl<span class="w"> </span>apply<span class="w"> </span>-f<span class="w"> </span>examples/services/minicluster-registry.yaml
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span>kubectl<span class="w"> </span>apply<span class="w"> </span>-f<span class="w"> </span>examples/services/sidecar/minicluster-registry.yaml
 </code></pre></div>
 </div>
 <p>If you are curious, the entrypoint for the service sidecar container is <code class="docutils literal notranslate"><span class="pre">registry</span> <span class="pre">serve</span> <span class="pre">/etc/docker/registry/config.yml</span></code>
@@ -1000,11 +1007,70 @@ cat<span class="w"> </span>artifact.txt
 <p>We did this under the broker (and flux user) assuming your actual use case will be running
 in the Flux instance. Feel free to play with oras outside of that context!
 When you are done, exit from the instance, and exit from the pod, and then delete the MiniCluster.</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span>kubectl<span class="w"> </span>delete<span class="w"> </span>-f<span class="w"> </span>examples/services/minicluster-registry.yaml
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span>kubectl<span class="w"> </span>delete<span class="w"> </span>-f<span class="w"> </span>examples/services/sidecar/minicluster-registry.yaml
 </code></pre></div>
 </div>
 <p>That’s it. Please do something more useful than my terrible example.</p>
 <h2 id="service-containers-alongside-the-cluster">Service Containers Alongside the Cluster<a class="headerlink" href="#service-containers-alongside-the-cluster" title="Permalink to this heading">¶</a></h2>
+<h3 id="registry-service">Registry Service<a class="headerlink" href="#registry-service" title="Permalink to this heading">¶</a></h3>
+<p><strong><a class="reference external" href="https://github.com/flux-framework/flux-operator/blob/main/examples/services/single/minicluster-registry.yaml">Tutorial File</a></strong></p>
+<p>Unlike the example above, it’s more reasonable that you would want a single registry that your pods can access. E.g., perhaps
+you use it like a pull-through cache - first pulling to this service node (or pushing from another pod) and then having
+your worker pods pull from there. Let’s do that now. If you are using MiniKube, remember to pull large
+containers first. Create the namespace:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span>kubectl<span class="w"> </span>create<span class="w"> </span>namespace<span class="w"> </span>flux-operator
+</code></pre></div>
+</div>
+<p>And apply the MiniCluster CRD:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span>kubectl<span class="w"> </span>apply<span class="w"> </span>-f<span class="w"> </span>examples/services/single/minicluster-registry.yaml
+</code></pre></div>
+</div>
+<p>You’ll see a services pod! The current design deploys one pod to share your services,
+and the services share the same cluster networking space.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span>kubectl<span class="w"> </span>get<span class="w"> </span>-n<span class="w"> </span>flux-operator<span class="w"> </span>pods
+NAME<span class="w">                         </span>READY<span class="w">   </span>STATUS<span class="w">      </span>RESTARTS<span class="w">   </span>AGE
+flux-sample-0-4wt26<span class="w">          </span><span class="m">1</span>/1<span class="w">     </span>Running<span class="w">     </span><span class="m">0</span><span class="w">          </span>38s
+flux-sample-1-sr5zx<span class="w">          </span><span class="m">1</span>/1<span class="w">     </span>Running<span class="w">     </span><span class="m">0</span><span class="w">          </span>38s
+flux-sample-cert-generator<span class="w">   </span><span class="m">0</span>/1<span class="w">     </span>Completed<span class="w">   </span><span class="m">0</span><span class="w">          </span>38s
+flux-sample-services<span class="w">         </span><span class="m">1</span>/1<span class="w">     </span>Running<span class="w">     </span><span class="m">0</span><span class="w">          </span>38s
+</code></pre></div>
+</div>
+<p>And then shell into the broker pod, index 0, which is “flux-sample”</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span>kubectl<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>-it<span class="w">  </span>-n<span class="w"> </span>flux-operator<span class="w"> </span>flux-sample-0-d5jbb<span class="w"> </span>--<span class="w"> </span>bash
+</code></pre></div>
+</div>
+<p>The registry hostname should be in the environment (it’s defined in the CRD):</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code><span class="c1"># echo $REGISTRY </span>
+flux-sample-services.flux-service.flux-operator.svc.cluster.local
+</code></pre></div>
+</div>
+<p>Both oras and Singularity are installed. Conceptually, we should be able to pull a container
+with Singularity, and push it to the registry with oras.  This is a relatively small container
+and should be quick:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span>singularity<span class="w"> </span>pull<span class="w"> </span>docker://vanessa/salad
+</code></pre></div>
+</div>
+<p>Give it a run!</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span>singularity<span class="w"> </span>run<span class="w"> </span>salad_latest.sif<span class="w"> </span>
+</code></pre></div>
+</div>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><code><span class="go"> In Go an array is a slice. Utensil discrimination!  </span>
+
+<span class="go">          _________________  .========</span>
+<span class="go">         [_________________&gt;&lt; :======</span>
+<span class="go">                             &#39;======== </span>
+</code></pre></div>
+</div>
+<p>Now let’s push to the oras registry</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span>oras<span class="w"> </span>push<span class="w"> </span><span class="nv">$REGISTRY</span>:5000/vanessa/salad:latest<span class="w"> </span>--artifact-type<span class="w"> </span>appliciation/vnd.sylabs.sif.layer.tar<span class="w"> </span>./salad_latest.sif<span class="w">  </span>--plain-http
+</code></pre></div>
+</div>
+<p>Great! Now you could, theoretically, push a single SIF to your registry (as a local cache) and have the other nodes pull it!
+Here is an example, shelling in to the second worker:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span>oras<span class="w"> </span>pull<span class="w"> </span><span class="nv">$REGISTRY</span>:5000/vanessa/salad:latest<span class="w"> </span>--plain-http
+</code></pre></div>
+</div>
+<p>Super cool! We will have more examples in the <code class="docutils literal notranslate"><span class="pre">examples</span></code> folder of how this can be used for workflow containers.</p>
 <h3 id="merlin-demo-workflow">Merlin Demo Workflow<a class="headerlink" href="#merlin-demo-workflow" title="Permalink to this heading">¶</a></h3>
 <p><strong><a class="reference external" href="https://github.com/flux-framework/flux-operator/blob/main/examples/launchers/merlin/minicluster.yaml">Tutorial File</a></strong></p>
 <p>This example will run a small “hello world” tutorial bringing up a rabbitmq and redis container from Flux.
@@ -1328,7 +1394,7 @@ why do we also need a celery queue?</p>
   <small>
     
       Last update:
-      Mar 26, 2023
+      Mar 28, 2023
     
   </small>
 </div>
