@@ -50,6 +50,10 @@ spec:
                   pod. There should only be one container to run flux with runFlux
                 items:
                   properties:
+                    batch:
+                      description: Indicate that the command is a batch job that will
+                        be written to a file to submit
+                      type: boolean
                     command:
                       description: Single user executable to provide to flux start
                       type: string
@@ -160,6 +164,9 @@ spec:
                         preStopExec:
                           type: string
                       type: object
+                    logs:
+                      description: Log output directory
+                      type: string
                     name:
                       description: Container name is only required for non flux runners
                       type: string
@@ -329,6 +336,10 @@ spec:
                   alongside the MiniCluster.
                 items:
                   properties:
+                    batch:
+                      description: Indicate that the command is a batch job that will
+                        be written to a file to submit
+                      type: boolean
                     command:
                       description: Single user executable to provide to flux start
                       type: string
@@ -439,6 +450,9 @@ spec:
                         preStopExec:
                           type: string
                       type: object
+                    logs:
+                      description: Log output directory
+                      type: string
                     name:
                       description: Container name is only required for non flux runners
                       type: string

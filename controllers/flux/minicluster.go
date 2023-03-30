@@ -398,8 +398,11 @@ func generateWaitScript(cluster *api.MiniCluster, containerIndex int) (string, e
 	if container.Cores > 1 {
 		cores = container.Cores - 1
 	}
+
+	// Ensure if we have a batch command, it gets split up
+	batchCommand := strings.Split(container.Command, "\n")
+
 	// The token uuid is the same across images
-	// TODO we could simplify the templating to just provide the cluster.Spec
 	wt := WaitTemplate{
 		FluxUser:  getFluxUser(cluster.Spec.FluxRestful.Username),
 		FluxToken: getRandomToken(cluster.Spec.FluxRestful.Token),
@@ -408,6 +411,7 @@ func generateWaitScript(cluster *api.MiniCluster, containerIndex int) (string, e
 		Cores:     cores,
 		Container: container,
 		Spec:      cluster.Spec,
+		Batch:     batchCommand,
 	}
 	t, err := template.New("wait-sh").Parse(waitToStartTemplate)
 	if err != nil {

@@ -773,6 +773,53 @@ containers:
 Note that if the "flux" user already exists in your container, the uid will be discovered and you don't need
 to set this. These parameters are only if you want the flux user to be created with a different unique id.
 
+#### batch
+
+If you are submitting many jobs, you are better off providing them to flux at once as a batch submission.
+This way, we won't stress any Kubernetes APIs to submit multiple. To do this, you can define a command as before,
+but then set batch to true:
+
+```yaml
+containers:
+  - image: ghcr.io/flux-framework/flux-restful-api:latest
+
+    # Indicate this should be a batch job
+    batch: true
+
+    # This command, as a batch command, will be written to a script and given to flux batch
+    command: |
+      echo hello world 1
+      echo hello world 2
+      echo hello world 3
+      echo hello world 4
+      echo hello world 5
+      echo hello world 6
+```
+
+By default, output will be written to "/tmp/fluxout" for each of .out and .err files, and the
+jobs are numbered by the order you provide above. To change this path:
+
+```yaml
+containers:
+  - image: ghcr.io/flux-framework/flux-restful-api:latest
+
+    # Indicate this should be a batch job
+    batch: true
+    logs: /tmp/another-out
+
+    # This command, as a batch command, will be written to a script and given to flux batch
+    command: |
+      echo hello world 1
+      echo hello world 2
+      echo hello world 3
+      echo hello world 4
+      echo hello world 5
+      echo hello world 6
+```
+
+Note that the output is recommended to be a shared volume so all pods can write to it.
+If you can't use the filesystem for saving output, it's recommended to have some other
+service used in your jobs to send output.
 
 #### diagnostics
 

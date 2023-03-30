@@ -72,7 +72,8 @@ printf "\nAs Flux prefix for flux commands: ${asFlux}\n"{{ end }}
 # If the user wants to save/load archives, we set the state directory to that
 # The statedir similarly should exist and have plenty of available space.
 export STATE_DIR=/var/lib/flux
-mkdir -p ${STATE_DIR}
+export FLUX_OUTPUT_DIR={{ if .Container.Logs }}{{.Container.Logs}}{{ else }}/tmp/fluxout{{ end }}
+mkdir -p ${STATE_DIR} ${FLUX_OUTPUT_DIR}
 
 # Broker Options: important!
 # The local-uri setting places the unix domain socket in rundir
@@ -215,7 +216,7 @@ chmod g-r /etc/curve/curve.cert
 # the run directory and these others
 fluxuid=$(id -u ${fluxuser})
 
-chown -R ${fluxuid} /run/flux ${STATE_DIR} /etc/curve/curve.cert ${workdir}{{ end }}
+chown -R ${fluxuid} /run/flux ${STATE_DIR} /etc/curve/curve.cert ${workdir} ${FLUX_OUTPUT_DIR}{{ end }}
 
 # Make directory world read/writable
 chmod -R 0777 ${workdir}
@@ -277,6 +278,17 @@ if [ "${diagnostics}" == "true" ]; then
     run_diagnostics
 else
 
+    # If it's a batch job, we write the script for brokers and workers
+    {{ if .Container.Batch }}echo "#!/bin/bash
+{{range $index, $line := .Batch}}{{ if $line }}flux submit --flags waitable --error=${FLUX_OUTPUT_DIR}/job-{{$index}}.err --output=${FLUX_OUTPUT_DIR}/job-{{$index}}.out {{$line}}{{ end }}
+{{end}}
+flux queue idle
+flux jobs -a
+" >> flux-job.batch
+    chmod +x flux-job.batch
+    {{ if not .Container.Commands.RunFluxAsRoot }}chown -R ${fluxuid} flux-job.batch{{ end }}
+    {{ end }} # end if container batch
+
     # Start flux with the original entrypoint
     if [ $(hostname) == "${mainHost}" ]; then
 
@@ -293,7 +305,21 @@ else
 
         # Case 2: Fall back to provided command
         else
-{{ if not .Spec.Logging.Quiet }} # if tasks >= size
+
+            # If we are running a batch job, no launcher mode
+            {{ if .Container.Batch }}
+            {{ if not .Spec.Logging.Quiet }}printf "✨️ Prepared Batch Job:\n"
+            cat flux-job.batch
+            {{ end }}
+
+            flags="{{ if ge .Spec.Tasks .Spec.Size }} -N {{.Spec.Size}}{{ end }} -n {{.Spec.Tasks}} {{ if .Container.FluxOptionFlags }}{{ .Container.FluxOptionFlags}}{{ end }} {{ if .Spec.Logging.Debug }} -vvv{{ end }}"
+            {{ if not .Spec.Logging.Quiet }}          
+            printf "\n🌀 Batch Mode: flux start -o --config /etc/flux/config ${brokerOptions} {{.Container.Commands.Prefix}} sh -c 'flux batch ${flags} --flags waitable ./flux-job.batch && flux job wait --all'\n"
+            {{ end }}
+            {{ if .Spec.Logging.Timed }}/usr/bin/time -f "FLUXTIME fluxstart wall time %E" {{ end }}${asFlux} flux start -o --config /etc/flux/config ${brokerOptions} {{ if .Spec.Logging.Timed }}/usr/bin/time -f "FLUXTIME fluxsubmit wall time %E" {{ end }} {{.Container.Commands.Prefix}} sh -c "flux batch ${flags} --flags waitable ./flux-job.batch && flux job wait --all" {{ if .Spec.Logging.Quiet }}> /dev/null 2>&1{{ end }}
+
+            {{ else }} # else for if container.batch
+            {{ if not .Spec.Logging.Quiet }} # if tasks >= size
             # Container launchers are snakemake, nextflow, that will launch their own jobs
             {{ if .Container.Launcher }}
             printf "\n🌀 Launcher Mode: flux start -o --config /etc/flux/config ${brokerOptions} {{.Container.Commands.Prefix}} $@\n"
@@ -305,7 +331,8 @@ else
             {{ if .Spec.Logging.Timed }}/usr/bin/time -f "FLUXTIME fluxstart wall time %E" {{ end }}${asFlux} flux start -o --config /etc/flux/config ${brokerOptions} {{ if .Spec.Logging.Timed }}/usr/bin/time -f "FLUXTIME fluxsubmit wall time %E" {{ end }} {{.Container.Commands.Prefix}} $@
             {{ else }}
             {{ if .Spec.Logging.Timed }}/usr/bin/time -f "FLUXTIME fluxstart wall time %E" {{ end }}${asFlux} flux start -o --config /etc/flux/config ${brokerOptions} {{ if .Spec.Logging.Timed }}/usr/bin/time -f "FLUXTIME fluxsubmit wall time %E" {{ end }} {{.Container.Commands.Prefix}} flux submit {{ if ge .Spec.Tasks .Spec.Size }} -N {{.Spec.Size}}{{ end }} -n {{.Spec.Tasks}} --quiet {{ if .Container.FluxOptionFlags }}{{ .Container.FluxOptionFlags}}{{ end }} --watch{{ if .Spec.Logging.Debug }} -vvv{{ end }} $@
-            {{ end }}
+            {{ end }} # end if container.launcher
+            {{ end }} # end if container.batch
         fi
     else
 
