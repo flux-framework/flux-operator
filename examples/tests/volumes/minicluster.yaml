@@ -12,13 +12,11 @@ spec:
   size: 2
 
   # Make this kind of persistent volume and claim available to pods
-  # This is a path in minikube (e.g., minikube ssh)
+  # This is a path in minikube or kind (e.g., minikube ssh)
   volumes:
     data:
       storageClass: hostpath
       path: /tmp/data
-      labels:
-        type: "local"
 
   # This is a list because a pod can support multiple containers
   containers:
