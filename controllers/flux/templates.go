@@ -40,6 +40,9 @@ type WaitTemplate struct {
 	Cores     int32
 	Container api.MiniClusterContainer
 	Spec      api.MiniClusterSpec
+
+	// Batch commands split up
+	Batch []string
 }
 
 // CertTemplate populates cert-generate.sh

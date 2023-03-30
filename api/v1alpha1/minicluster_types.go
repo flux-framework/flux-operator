@@ -339,6 +339,16 @@ type MiniClusterContainer struct {
 	// +optional
 	Launcher bool `json:"launcher"`
 
+	// Indicate that the command is a batch job that will be written to a file to submit
+	// +optional
+	Batch bool `json:"batch"`
+
+	// Log output directory
+	// +optional
+	// +kubebuilder:default="/tmp/fluxout"
+	// +default="/tmp/fluxout"
+	Logs string `json:"logs"`
+
 	// Allow the user to dictate pulling
 	// By default we pull if not present. Setting
 	// this to true will indicate to pull always
@@ -556,6 +566,12 @@ func (f *MiniCluster) Validate() bool {
 		fmt.Printf("🤓 %s.Image %s\n", name, container.Image)
 		fmt.Printf("🤓 %s.Command %s\n", name, container.Command)
 		fmt.Printf("🤓 %s.FluxRunner %t\n", name, container.RunFlux)
+
+		// Launcher mode does not work with batch
+		if container.Launcher && container.Batch {
+			fmt.Printf("😥️ %s is indicated for batch and launcher, choose one.\n", name)
+			return false
+		}
 
 		// Count the FluxRunners
 		if container.RunFlux {

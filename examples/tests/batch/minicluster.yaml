@@ -1,0 +1,45 @@
+apiVersion: flux-framework.org/v1alpha1
+kind: MiniCluster
+metadata:
+  name: flux-sample
+  namespace: flux-operator
+spec:
+  # suppress all output except for test run
+  logging:
+    quiet: true
+
+  # Mount a volume where the output will be
+  volumes:
+    data:
+      storageClass: hostpath
+      path: /tmp/data
+
+  # Number of pods to create for MiniCluster
+  size: 2
+
+  # This is a list because a pod can support multiple containers
+  containers:
+    - image: ghcr.io/flux-framework/flux-restful-api:latest
+
+      # Commands should be submit as batch
+      batch: true
+
+      # List the contents before exiting
+      commands:
+        post: |
+          ls /tmp/fluxout
+          cat /tmp/fluxout/job-0.out
+
+      # Flux batch will write output here
+      volumes:
+        data:
+          path: /tmp/fluxout
+
+      # This command, as a batch command, will be written to a script and given to flux batch
+      command: |
+          echo hello world 1
+          echo hello world 2
+          echo hello world 3
+          echo hello world 4
+          echo hello world 5
+          echo hello world 6
