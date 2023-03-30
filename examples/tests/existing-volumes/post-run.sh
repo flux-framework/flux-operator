@@ -4,7 +4,7 @@ HERE=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 
 echo "Cleaning up /tmp/data"
 
-sudo rm -rf /tmp/data/*
+rm -rf /tmp/data/*
 
 # pods usually need to be deleted before the pvc/pv
 kubectl delete -f ${HERE}/minicluster.yaml

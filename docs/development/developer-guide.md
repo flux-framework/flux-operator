@@ -174,7 +174,13 @@ examples/tests/
     └── minicluster.yaml
 ```
 
-Thus, to run the full example for hello-world you can do:
+You'll first want to create a kind cluster that mounts `/tmp/data`:
+
+```bash
+$ kind create cluster --config ./script/kind-config.yaml
+```
+
+Then, to run the full example for hello-world you can do:
 
 ```bash
 $ bash script/test.sh hello-world
