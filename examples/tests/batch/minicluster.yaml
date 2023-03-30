@@ -27,7 +27,7 @@ spec:
       # List the contents before exiting
       commands:
         post: |
-          ls /tmp/fluxout
+          ls /tmp/fluxout -1
           cat /tmp/fluxout/job-0.out
 
       # Flux batch will write output here
