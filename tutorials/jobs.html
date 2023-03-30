@@ -583,6 +583,13 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#submit-batch-jobs" class="md-nav__link">
+    <span title="/tutorials/jobs.md#submit-batch-jobs (reference label)" class="md-ellipsis">5.<wbr> Submit batch jobs</span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -843,6 +850,10 @@
 </li>
 <li><ol class="arabic simple" start="5">
 <li><p>Submit jobs interacting with Flux via ssh-ing to the pod (advanced) (<a href="#submit-jobs-directly-to-flux-via-ssh">#ref</a>)</p></li>
+</ol>
+</li>
+<li><ol class="arabic simple" start="6">
+<li><p>Submit batch jobs</p></li>
 </ol>
 </li>
 </ul>
@@ -1143,6 +1154,55 @@ advanced, and is good for debugging. As you did before, get your pod listing:</p
 <p>Note that if you have more than one container, you’ll need to include it’s name with <code class="docutils literal notranslate"><span class="pre">-c</span> <span class="pre">&lt;container&gt;</span></code>.
 Also note that if you need to load any custom environments (e.g., something you’d define in the preCommand for a container)
 you’ll likely need to do that when you shell in.</p>
+<h2 id="submit-batch-jobs">5. Submit batch jobs<a class="headerlink" href="#submit-batch-jobs" title="Permalink to this heading">¶</a></h2>
+<p>If you are submitting many jobs, you are better off providing them to flux at once as a batch submission.
+This way, we won’t stress any Kubernetes APIs to submit multiple. To do this, you can define a command as before,
+but then set batch to true. Here is the “containers” section of a MiniCluster crd:</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><code><span class="nt">containers</span><span class="p">:</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">image</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ghcr.io/flux-framework/flux-restful-api:latest</span>
+
+<span class="w">    </span><span class="c1"># Indicate this should be a batch job</span>
+<span class="w">    </span><span class="nt">batch</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+
+<span class="w">    </span><span class="c1"># This command, as a batch command, will be written to a script and given to flux batch</span>
+<span class="w">    </span><span class="nt">command</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">|</span>
+<span class="w">      </span><span class="no">echo hello world 1</span>
+<span class="w">      </span><span class="no">echo hello world 2</span>
+<span class="w">      </span><span class="no">echo hello world 3</span>
+<span class="w">      </span><span class="no">echo hello world 4</span>
+<span class="w">      </span><span class="no">echo hello world 5</span>
+<span class="w">      </span><span class="no">echo hello world 6</span>
+</code></pre></div>
+</div>
+<p>By default, output will be written to “/tmp/fluxout” for each of .out and .err files, and the
+jobs are numbered by the order you provide above.</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><code><span class="go">&gt; /tmp/fluxout</span>
+<span class="go">job-0.err  job-1.out  job-3.err  job-4.out  job-6.err  job-7.out  job-9.err</span>
+<span class="go">job-0.out  job-2.err  job-3.out  job-5.err  job-6.out  job-8.err  job-9.out</span>
+<span class="go">job-1.err  job-2.out  job-4.err  job-5.out  job-7.err  job-8.out</span>
+</code></pre></div>
+</div>
+<p>To change this path:</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><code><span class="nt">containers</span><span class="p">:</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">image</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ghcr.io/flux-framework/flux-restful-api:latest</span>
+
+<span class="w">    </span><span class="c1"># Indicate this should be a batch job</span>
+<span class="w">    </span><span class="nt">batch</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+<span class="w">    </span><span class="nt">logs</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">/tmp/another-out</span>
+
+<span class="w">    </span><span class="c1"># This command, as a batch command, will be written to a script and given to flux batch</span>
+<span class="w">    </span><span class="nt">command</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">|</span>
+<span class="w">      </span><span class="no">echo hello world 1</span>
+<span class="w">      </span><span class="no">echo hello world 2</span>
+<span class="w">      </span><span class="no">echo hello world 3</span>
+<span class="w">      </span><span class="no">echo hello world 4</span>
+<span class="w">      </span><span class="no">echo hello world 5</span>
+<span class="w">      </span><span class="no">echo hello world 6</span>
+</code></pre></div>
+</div>
+<p>Note that the output is recommended to be a shared volume so all pods can write to it.
+If you can’t use the filesystem for saving output, it’s recommended to have some other
+service used in your jobs to send output.</p>
 
 
   <hr>
@@ -1150,7 +1210,7 @@ you’ll likely need to do that when you shell in.</p>
   <small>
     
       Last update:
-      Mar 28, 2023
+      Mar 30, 2023
     
   </small>
 </div>
