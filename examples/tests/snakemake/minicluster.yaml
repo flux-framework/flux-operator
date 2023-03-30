@@ -21,8 +21,6 @@ spec:
     data:
       storageClass: hostpath
       path: /tmp/data
-      labels:
-        type: "local"
 
   # This is a list because a pod can support multiple containers
   containers:
@@ -35,11 +33,11 @@ spec:
       # in the container
       volumes:
         data:
-          path: /workflow
+          path: /tmp/data
           # readOnly defaults to false
 
       # This is the directory we will bind the data to
-      workingDir: /workflow
+      workingDir: /tmp/data
       command: snakemake --cores 1 --flux --jobs 1
 
       # Give the command directly to flux start, instead of wrapping in flux submit

@@ -60,20 +60,20 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        test: [["hello-world", "ghcr.io/flux-framework/flux-restful-api:latest", 30],
-               ["post", "ghcr.io/flux-framework/flux-restful-api:latest", 30],
-               ["batch", "ghcr.io/flux-framework/flux-restful-api:latest", 30],
-               ["singularity", "ghcr.io/rse-ops/singularity:tag-mamba", 40],
-               ["nginx-sidecar-service", "ghcr.io/flux-framework/flux-restful-api:latest", 40],
-               ["nginx-service", "ghcr.io/flux-framework/flux-restful-api:latest", 40],
-               ["lammps", "ghcr.io/rse-ops/lammps:flux-sched-focal-v0.24.0", 30],
-               ["pokemon", "ghcr.io/rse-ops/pokemon:app-latest", 30],
-               ["timed", "ghcr.io/flux-framework/flux-restful-api:latest", 30],
-               ["debug", "ghcr.io/flux-framework/flux-restful-api:latest", 30],
-               ["flux-resource-list", "ghcr.io/flux-framework/flux-restful-api:latest", 30],
-               ["existing-volumes", "ghcr.io/flux-framework/flux-restful-api:latest", 30],
-               ["volumes", "ghcr.io/flux-framework/flux-restful-api:latest", 30],
-               ["snakemake", "ghcr.io/rse-ops/atacseq:app-latest", 30]]
+        test: [["hello-world", "ghcr.io/flux-framework/flux-restful-api:latest", 40],
+               ["post", "ghcr.io/flux-framework/flux-restful-api:latest", 40],
+               ["batch", "ghcr.io/flux-framework/flux-restful-api:latest", 40],
+               ["singularity", "ghcr.io/rse-ops/singularity:tag-mamba", 50],
+               ["nginx-sidecar-service", "ghcr.io/flux-framework/flux-restful-api:latest", 50],
+               ["nginx-service", "ghcr.io/flux-framework/flux-restful-api:latest", 50],
+               ["lammps", "ghcr.io/rse-ops/lammps:flux-sched-focal-v0.24.0", 40],
+               ["pokemon", "ghcr.io/rse-ops/pokemon:app-latest", 40],
+               ["timed", "ghcr.io/flux-framework/flux-restful-api:latest", 40],
+               ["debug", "ghcr.io/flux-framework/flux-restful-api:latest", 40],
+               ["flux-resource-list", "ghcr.io/flux-framework/flux-restful-api:latest", 40],
+               ["existing-volumes", "ghcr.io/flux-framework/flux-restful-api:latest", 50],
+               ["volumes", "ghcr.io/flux-framework/flux-restful-api:latest", 50],
+               ["snakemake", "ghcr.io/rse-ops/atacseq:app-latest", 40]]
 
     steps:
     - name: Clone the code
@@ -84,23 +84,28 @@ jobs:
       with:
         go-version: ^1.18
 
-    - name: Start minikube
-      uses: medyagh/setup-minikube@697f2b7aaed5f70bf2a94ee21a4ec3dde7b12f92 # v0.0.9
+    - name: Create k8s Kind Cluster
+      run: |
+        curl -Lo ./kind "https://kind.sigs.k8s.io/dl/v0.17.0/kind-$(uname)-amd64"
+        chmod +x ./kind
+        sudo mv ./kind /usr/local/bin/kind      
+        # prepares host mount at /tmp/data
+        kind create cluster --config ./script/kind-config.yaml
 
     - name: Create the namespace
       run: kubectl create namespace flux-operator
 
-    - name: Pull Docker Containers to MiniKube
+    - name: Pull Docker Containers
       env:
         container: ${{ matrix.test[1] }}
         test: ${{ matrix[0] }}
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: |
-        export SHELL=/bin/bash
-        eval $(minikube -p minikube docker-env)
-        minikube ssh docker pull ${container}
+        docker pull ${container}
+        kind load docker-image ${container}
         if [[ "${test}" == "nginx-service" ]]; then
-            minikube ssh docker pull nginx
+            docker pull nginx
+            kind load docker-image nginx
         fi
         make
         make install

@@ -8,7 +8,7 @@ cd ${ROOT}
 set -eEu -o pipefail
 
 name=${1}
-jobtime=${2:-30}
+jobtime=${2:-40}
 
 echo "   Name: ${name}"
 echo "Jobtime: ${jobtime}"
