@@ -4,6 +4,7 @@
 ## Properties
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
+**batch** | **bool** | Indicate that the command is a batch job that will be written to a file to submit | [optional] [default to False]
 **command** | **str** | Single user executable to provide to flux start | [optional] [default to '']
 **commands** | [**Commands**](Commands.md) |  | [optional] 
 **cores** | **int** | Cores the container should use | [optional] [default to 0]
@@ -17,6 +18,7 @@ Name | Type | Description | Notes
 **image_pull_secret** | **str** | Allow the user to pull authenticated images By default no secret is selected. Setting this with the name of an already existing imagePullSecret will specify that secret in the pod spec. | [optional] [default to '']
 **launcher** | **bool** | Indicate that the command is a launcher that will ask for its own jobs (and provided directly to flux start) | [optional] [default to False]
 **life_cycle** | [**LifeCycle**](LifeCycle.md) |  | [optional] 
+**logs** | **str** | Log output directory | [optional] [default to '']
 **name** | **str** | Container name is only required for non flux runners | [optional] [default to '']
 **ports** | **list[int]** | Ports to be exposed to other containers in the cluster We take a single list of integers and map to the same | [optional] 
 **pre_command** | **str** | Special command to run at beginning of script, directly after asFlux is defined as sudo -u flux -E (so you can change that if desired.) This is only valid if FluxRunner is set (that writes a wait.sh script) This is for the indexed job pods and the certificate generation container. | [optional] [default to '']

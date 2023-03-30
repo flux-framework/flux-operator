@@ -345,8 +345,6 @@ type MiniClusterContainer struct {
 
 	// Log output directory
 	// +optional
-	// +kubebuilder:default="/tmp/fluxout"
-	// +default="/tmp/fluxout"
 	Logs string `json:"logs"`
 
 	// Allow the user to dictate pulling

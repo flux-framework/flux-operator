@@ -206,6 +206,11 @@
     "MiniClusterContainer": {
       "type": "object",
       "properties": {
+        "batch": {
+          "description": "Indicate that the command is a batch job that will be written to a file to submit",
+          "type": "boolean",
+          "default": false
+        },
         "command": {
           "description": "Single user executable to provide to flux start",
           "type": "string",
@@ -278,6 +283,11 @@
           "description": "Lifecycle can handle post start commands, etc.",
           "default": {},
           "$ref": "#/definitions/LifeCycle"
+        },
+        "logs": {
+          "description": "Log output directory",
+          "type": "string",
+          "default": ""
         },
         "name": {
           "description": "Container name is only required for non flux runners",

@@ -33,6 +33,7 @@ class MiniClusterContainer(object):
                             and the value is json key in definition.
     """
     openapi_types = {
+        'batch': 'bool',
         'command': 'str',
         'commands': 'Commands',
         'cores': 'int',
@@ -46,6 +47,7 @@ class MiniClusterContainer(object):
         'image_pull_secret': 'str',
         'launcher': 'bool',
         'life_cycle': 'LifeCycle',
+        'logs': 'str',
         'name': 'str',
         'ports': 'list[int]',
         'pre_command': 'str',
@@ -58,6 +60,7 @@ class MiniClusterContainer(object):
     }
 
     attribute_map = {
+        'batch': 'batch',
         'command': 'command',
         'commands': 'commands',
         'cores': 'cores',
@@ -71,6 +74,7 @@ class MiniClusterContainer(object):
         'image_pull_secret': 'imagePullSecret',
         'launcher': 'launcher',
         'life_cycle': 'lifeCycle',
+        'logs': 'logs',
         'name': 'name',
         'ports': 'ports',
         'pre_command': 'preCommand',
@@ -82,12 +86,13 @@ class MiniClusterContainer(object):
         'working_dir': 'workingDir'
     }
 
-    def __init__(self, command='', commands=None, cores=0, diagnostics=False, environment=None, existing_volumes=None, flux_log_level=6, flux_option_flags='', flux_user=None, image='ghcr.io/rse-ops/accounting:app-latest', image_pull_secret='', launcher=False, life_cycle=None, name='', ports=None, pre_command='', pull_always=False, resources=None, run_flux=False, security_context=None, volumes=None, working_dir='', local_vars_configuration=None):  # noqa: E501
+    def __init__(self, batch=False, command='', commands=None, cores=0, diagnostics=False, environment=None, existing_volumes=None, flux_log_level=6, flux_option_flags='', flux_user=None, image='ghcr.io/rse-ops/accounting:app-latest', image_pull_secret='', launcher=False, life_cycle=None, logs='', name='', ports=None, pre_command='', pull_always=False, resources=None, run_flux=False, security_context=None, volumes=None, working_dir='', local_vars_configuration=None):  # noqa: E501
         """MiniClusterContainer - a model defined in OpenAPI"""  # noqa: E501
         if local_vars_configuration is None:
             local_vars_configuration = Configuration.get_default_copy()
         self.local_vars_configuration = local_vars_configuration
 
+        self._batch = None
         self._command = None
         self._commands = None
         self._cores = None
@@ -101,6 +106,7 @@ class MiniClusterContainer(object):
         self._image_pull_secret = None
         self._launcher = None
         self._life_cycle = None
+        self._logs = None
         self._name = None
         self._ports = None
         self._pre_command = None
@@ -112,6 +118,8 @@ class MiniClusterContainer(object):
         self._working_dir = None
         self.discriminator = None
 
+        if batch is not None:
+            self.batch = batch
         if command is not None:
             self.command = command
         if commands is not None:
@@ -138,6 +146,8 @@ class MiniClusterContainer(object):
             self.launcher = launcher
         if life_cycle is not None:
             self.life_cycle = life_cycle
+        if logs is not None:
+            self.logs = logs
         if name is not None:
             self.name = name
         if ports is not None:
@@ -156,6 +166,29 @@ class MiniClusterContainer(object):
             self.volumes = volumes
         if working_dir is not None:
             self.working_dir = working_dir
+
+    @property
+    def batch(self):
+        """Gets the batch of this MiniClusterContainer.  # noqa: E501
+
+        Indicate that the command is a batch job that will be written to a file to submit  # noqa: E501
+
+        :return: The batch of this MiniClusterContainer.  # noqa: E501
+        :rtype: bool
+        """
+        return self._batch
+
+    @batch.setter
+    def batch(self, batch):
+        """Sets the batch of this MiniClusterContainer.
+
+        Indicate that the command is a batch job that will be written to a file to submit  # noqa: E501
+
+        :param batch: The batch of this MiniClusterContainer.  # noqa: E501
+        :type batch: bool
+        """
+
+        self._batch = batch
 
     @property
     def command(self):
@@ -449,6 +482,29 @@ class MiniClusterContainer(object):
         """
 
         self._life_cycle = life_cycle
+
+    @property
+    def logs(self):
+        """Gets the logs of this MiniClusterContainer.  # noqa: E501
+
+        Log output directory  # noqa: E501
+
+        :return: The logs of this MiniClusterContainer.  # noqa: E501
+        :rtype: str
+        """
+        return self._logs
+
+    @logs.setter
+    def logs(self, logs):
+        """Sets the logs of this MiniClusterContainer.
+
+        Log output directory  # noqa: E501
+
+        :param logs: The logs of this MiniClusterContainer.  # noqa: E501
+        :type logs: str
+        """
+
+        self._logs = logs
 
     @property
     def name(self):

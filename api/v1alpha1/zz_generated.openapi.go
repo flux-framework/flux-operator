@@ -512,6 +512,22 @@ func schema__api_v1alpha1__MiniClusterContainer(ref common.ReferenceCallback) co
 							Format:      "",
 						},
 					},
+					"batch": {
+						SchemaProps: spec.SchemaProps{
+							Description: "Indicate that the command is a batch job that will be written to a file to submit",
+							Default:     false,
+							Type:        []string{"boolean"},
+							Format:      "",
+						},
+					},
+					"logs": {
+						SchemaProps: spec.SchemaProps{
+							Description: "Log output directory",
+							Default:     "",
+							Type:        []string{"string"},
+							Format:      "",
+						},
+					},
 					"pullAlways": {
 						SchemaProps: spec.SchemaProps{
 							Description: "Allow the user to dictate pulling By default we pull if not present. Setting this to true will indicate to pull always",
