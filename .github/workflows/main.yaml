@@ -71,8 +71,8 @@ jobs:
                ["timed", "ghcr.io/flux-framework/flux-restful-api:latest", 40],
                ["debug", "ghcr.io/flux-framework/flux-restful-api:latest", 40],
                ["flux-resource-list", "ghcr.io/flux-framework/flux-restful-api:latest", 40],
-               ["existing-volumes", "ghcr.io/flux-framework/flux-restful-api:latest", 40],
-               ["volumes", "ghcr.io/flux-framework/flux-restful-api:latest", 40],
+               ["existing-volumes", "ghcr.io/flux-framework/flux-restful-api:latest", 50],
+               ["volumes", "ghcr.io/flux-framework/flux-restful-api:latest", 50],
                ["snakemake", "ghcr.io/rse-ops/atacseq:app-latest", 40]]
 
     steps:
