@@ -54,6 +54,10 @@ spec:
                       description: Indicate that the command is a batch job that will
                         be written to a file to submit
                       type: boolean
+                    batchRaw:
+                      description: Don't wrap batch commands in flux submit (provide
+                        custom logic myself)
+                      type: boolean
                     command:
                       description: Single user executable to provide to flux start
                       type: string
@@ -343,6 +347,10 @@ spec:
                     batch:
                       description: Indicate that the command is a batch job that will
                         be written to a file to submit
+                      type: boolean
+                    batchRaw:
+                      description: Don't wrap batch commands in flux submit (provide
+                        custom logic myself)
                       type: boolean
                     command:
                       description: Single user executable to provide to flux start

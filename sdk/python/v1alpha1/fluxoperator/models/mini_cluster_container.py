@@ -34,6 +34,7 @@ class MiniClusterContainer(object):
     """
     openapi_types = {
         'batch': 'bool',
+        'batch_raw': 'bool',
         'command': 'str',
         'commands': 'Commands',
         'cores': 'int',
@@ -61,6 +62,7 @@ class MiniClusterContainer(object):
 
     attribute_map = {
         'batch': 'batch',
+        'batch_raw': 'batchRaw',
         'command': 'command',
         'commands': 'commands',
         'cores': 'cores',
@@ -86,13 +88,14 @@ class MiniClusterContainer(object):
         'working_dir': 'workingDir'
     }
 
-    def __init__(self, batch=False, command='', commands=None, cores=0, diagnostics=False, environment=None, existing_volumes=None, flux_log_level=6, flux_option_flags='', flux_user=None, image='ghcr.io/rse-ops/accounting:app-latest', image_pull_secret='', launcher=False, life_cycle=None, logs='', name='', ports=None, pre_command='', pull_always=False, resources=None, run_flux=False, security_context=None, volumes=None, working_dir='', local_vars_configuration=None):  # noqa: E501
+    def __init__(self, batch=False, batch_raw=False, command='', commands=None, cores=0, diagnostics=False, environment=None, existing_volumes=None, flux_log_level=6, flux_option_flags='', flux_user=None, image='ghcr.io/rse-ops/accounting:app-latest', image_pull_secret='', launcher=False, life_cycle=None, logs='', name='', ports=None, pre_command='', pull_always=False, resources=None, run_flux=False, security_context=None, volumes=None, working_dir='', local_vars_configuration=None):  # noqa: E501
         """MiniClusterContainer - a model defined in OpenAPI"""  # noqa: E501
         if local_vars_configuration is None:
             local_vars_configuration = Configuration.get_default_copy()
         self.local_vars_configuration = local_vars_configuration
 
         self._batch = None
+        self._batch_raw = None
         self._command = None
         self._commands = None
         self._cores = None
@@ -120,6 +123,8 @@ class MiniClusterContainer(object):
 
         if batch is not None:
             self.batch = batch
+        if batch_raw is not None:
+            self.batch_raw = batch_raw
         if command is not None:
             self.command = command
         if commands is not None:
@@ -189,6 +194,29 @@ class MiniClusterContainer(object):
         """
 
         self._batch = batch
+
+    @property
+    def batch_raw(self):
+        """Gets the batch_raw of this MiniClusterContainer.  # noqa: E501
+
+        Don't wrap batch commands in flux submit (provide custom logic myself)  # noqa: E501
+
+        :return: The batch_raw of this MiniClusterContainer.  # noqa: E501
+        :rtype: bool
+        """
+        return self._batch_raw
+
+    @batch_raw.setter
+    def batch_raw(self, batch_raw):
+        """Sets the batch_raw of this MiniClusterContainer.
+
+        Don't wrap batch commands in flux submit (provide custom logic myself)  # noqa: E501
+
+        :param batch_raw: The batch_raw of this MiniClusterContainer.  # noqa: E501
+        :type batch_raw: bool
+        """
+
+        self._batch_raw = batch_raw
 
     @property
     def command(self):

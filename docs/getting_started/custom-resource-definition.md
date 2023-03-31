@@ -821,6 +821,27 @@ Note that the output is recommended to be a shared volume so all pods can write 
 If you can't use the filesystem for saving output, it's recommended to have some other
 service used in your jobs to send output.
 
+#### batchRaw
+
+By default, the commands you provide to batch will be wrapped in flux submit, and with `--output` and `--flags waitable` added.
+This works for a set of commands that are intended to be launched as such, but if you want custom logic in your script (such
+as using flux exec or flux filemap) you can set batchRaw to true, and then provide the full flux directives in your
+minicluster.yaml. As an example, here is using [flux filemap](https://flux-framework.readthedocs.io/projects/flux-core/en/latest/man1/flux-filemap.html) 
+to copy data from the broker to all nodes in a batch job, and run the job.
+
+```yaml
+command: |
+  flux filemap map -C /data mpi.sif
+  flux exec -x 0 -r all flux filemap get -C /data
+  flux submit singularity exec /data/mpi.sif /opt/mpitest
+  flux exec -x 0 -r all rm -rf /data
+  flux queue idle
+  flux filemap unmap
+```
+
+See our [staging tutorial](../tutorials/staging.md) for more details on how this works! You could use it for a Singularity container (that needs to be seen by 
+all nodes) or for data.
+
 #### diagnostics
 
 Flux has a command that makes it easy to run diagnostics on a cluster, and we expose a boolean that makes it possible

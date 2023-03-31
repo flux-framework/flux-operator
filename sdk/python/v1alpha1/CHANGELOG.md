@@ -14,6 +14,7 @@ and **Merged pull requests**. Critical items to know are:
 The versions coincide with releases on pip. Only major versions will be released as tags on Github.
 
 ## [0.0.x](https://github.com/flux-framework/flux-operator/tree/main/sdk/python/v2alpha1) (0.0.x)
+ - support for staging (batchRaw) and batch submit (0.0.21)
  - tweak deletion logic to allow 404 response from get pods (0.0.2)
  - refactor of FluxOperator to include FluxMiniCluster to wrap it (0.0.19)
  - Support for post command (0.0.18)
