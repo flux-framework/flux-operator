@@ -116,3 +116,6 @@ all workers can access the binary. Finally, note that in order for this to work,
 Singularity should be installed in the container, the MiniCluster is run in privileged mode, 
 and `tzdata` is also needed so there is an `/etc/localtime` to bind. We could likely improve this
 to cut down permissions, if/when someone wants to work on that!
+
+Finally, another approach is to stage the container first, and this would work with shared files too.
+You can read more about this in the [staging tutorial](staging.md).

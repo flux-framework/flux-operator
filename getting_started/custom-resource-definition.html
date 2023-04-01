@@ -871,6 +871,13 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#batchraw" class="md-nav__link">
+    <span title="/getting_started/custom-resource-definition.md#batchraw (reference label)" class="md-ellipsis">batch<wbr>Raw</span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#diagnostics" class="md-nav__link">
     <span title="/getting_started/custom-resource-definition.md#diagnostics (reference label)" class="md-ellipsis">diagnostics</span>
   </a>
@@ -1763,6 +1770,23 @@ jobs are numbered by the order you provide above. To change this path:</p>
 <p>Note that the output is recommended to be a shared volume so all pods can write to it.
 If you can’t use the filesystem for saving output, it’s recommended to have some other
 service used in your jobs to send output.</p>
+<h4 id="batchraw">batchRaw<a class="headerlink" href="#batchraw" title="Permalink to this heading">¶</a></h4>
+<p>By default, the commands you provide to batch will be wrapped in flux submit, and with <code class="docutils literal notranslate"><span class="pre">--output</span></code> and <code class="docutils literal notranslate"><span class="pre">--flags</span> <span class="pre">waitable</span></code> added.
+This works for a set of commands that are intended to be launched as such, but if you want custom logic in your script (such
+as using flux exec or flux filemap) you can set batchRaw to true, and then provide the full flux directives in your
+minicluster.yaml. As an example, here is using <a class="reference external" href="https://flux-framework.readthedocs.io/projects/flux-core/en/latest/man1/flux-filemap.html">flux filemap</a>
+to copy data from the broker to all nodes in a batch job, and run the job.</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><code><span class="nt">command</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">|</span>
+<span class="w">  </span><span class="no">flux filemap map -C /data mpi.sif</span>
+<span class="w">  </span><span class="no">flux exec -x 0 -r all flux filemap get -C /data</span>
+<span class="w">  </span><span class="no">flux submit singularity exec /data/mpi.sif /opt/mpitest</span>
+<span class="w">  </span><span class="no">flux exec -x 0 -r all rm -rf /data</span>
+<span class="w">  </span><span class="no">flux queue idle</span>
+<span class="w">  </span><span class="no">flux filemap unmap</span>
+</code></pre></div>
+</div>
+<p>See our <a class="reference internal" href="../tutorials/staging.html"><span class="std std-doc">staging tutorial</span></a> for more details on how this works! You could use it for a Singularity container (that needs to be seen by
+all nodes) or for data.</p>
 <h4 id="diagnostics">diagnostics<a class="headerlink" href="#diagnostics" title="Permalink to this heading">¶</a></h4>
 <p>Flux has a command that makes it easy to run diagnostics on a cluster, and we expose a boolean that makes it possible
 to run that (instead of your job or starting the server). Since you might only want this for a specific container,

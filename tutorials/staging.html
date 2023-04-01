@@ -14,7 +14,7 @@
     
     
       
-        <title>Singularity - Flux Operator</title>
+        <title>Staging - Flux Operator</title>
       
     
     
@@ -138,7 +138,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Singularity
+              Staging
             
           </span>
         </div>
@@ -523,50 +523,12 @@
               
   
   
-    
-  
-    
   
   
-    <li class="md-nav__item md-nav__item--active">
-      
-      
-      <input class="md-nav__toggle md-toggle" data-md-toggle="toc" type="checkbox" id="__toc">
-      
-        <label class="md-nav__link md-nav__link--active" for="__toc">
-          <span title="/tutorials/singularity.md (reference label)" class="md-ellipsis">Singularity</span>
-          <span class="md-nav__icon md-icon"></span>
-        </label>
-      
-      <a href="#" class="md-nav__link md-nav__link--active">
+    <li class="md-nav__item">
+      <a href="singularity.html" class="md-nav__link">
         <span title="/tutorials/singularity.md (reference label)" class="md-ellipsis">Singularity</span>
       </a>
-      
-        
-
-<nav class="md-nav md-nav--secondary">
-  
-  
-    
-  
-  
-    <label class="md-nav__title" for="__toc">
-      <span class="md-nav__icon md-icon"></span>
-      Table of contents
-    </label>
-    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#singularity-hello-world" class="md-nav__link">
-    <span title="/tutorials/singularity.md#singularity-hello-world (reference label)" class="md-ellipsis">Singularity Hello World</span>
-  </a>
-  
-</li>
-      
-    </ul>
-  
-</nav>
-      
     </li>
   
 
@@ -621,12 +583,84 @@
               
   
   
+    
+  
+    
   
   
-    <li class="md-nav__item">
-      <a href="staging.html" class="md-nav__link">
+    <li class="md-nav__item md-nav__item--active">
+      
+      
+      <input class="md-nav__toggle md-toggle" data-md-toggle="toc" type="checkbox" id="__toc">
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          <span title="/tutorials/staging.md (reference label)" class="md-ellipsis">Staging</span>
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="#" class="md-nav__link md-nav__link--active">
         <span title="/tutorials/staging.md (reference label)" class="md-ellipsis">Staging</span>
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary">
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#singularity-container-staging" class="md-nav__link">
+    <span title="/tutorials/staging.md#singularity-container-staging (reference label)" class="md-ellipsis">Singularity Container Staging</span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Singularity Container Staging">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#id1" class="md-nav__link">
+    <span title="/tutorials/staging.md#id1 (reference label)" class="md-ellipsis">Staging</span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#volumes" class="md-nav__link">
+    <span title="/tutorials/staging.md#volumes (reference label)" class="md-ellipsis">Volumes</span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#commands" class="md-nav__link">
+    <span title="/tutorials/staging.md#commands (reference label)" class="md-ellipsis">Commands</span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#running-the-workflow" class="md-nav__link">
+    <span title="/tutorials/staging.md#running-the-workflow (reference label)" class="md-ellipsis">Running the Workflow</span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
     </li>
   
 
@@ -797,118 +831,158 @@
                   
 
 
-  <a href="https://github.com/flux-framework/flux-operator/blob/main/docs/tutorials/singularity.md" title="Edit this page" class="md-content__button md-icon">
+  <a href="https://github.com/flux-framework/flux-operator/blob/main/docs/tutorials/staging.md" title="Edit this page" class="md-content__button md-icon">
     
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10 20H6V4h7v5h5v3.1l2-2V8l-6-6H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h4v-2m10.2-7c.1 0 .3.1.4.2l1.3 1.3c.2.2.2.6 0 .8l-1 1-2.1-2.1 1-1c.1-.1.2-.2.4-.2m0 3.9L14.1 23H12v-2.1l6.1-6.1 2.1 2.1Z"/></svg>
   </a>
 
-<h1 id="singularity">Singularity<a class="headerlink" href="#singularity" title="Permalink to this heading">¶</a></h1>
-<p>We are exploring using Singularity containers as a reasonable way to (much more easily) package
-complex workflows. The reason is because we can run containers without requiring you to build a
-container with Flux Framework and your software. Note that the examples here are simple - other examples
-include:</p>
-<ul class="simple">
-<li><p><a class="reference external" href="https://github.com/flux-framework/flux-operator/blob/main/examples/machine-learning/mnist">Singularity + Tensorflow mnist</a> (<a class="reference external" href="https://asciinema.org/a/570458?speed=2">view asciinema</a>)</p></li>
-<li><p><a class="reference external" href="https://github.com/flux-framework/flux-operator/blob/main/examples/singularity/mpi-hello-world">MPI Hello World</a> (<a class="reference external" href="https://asciinema.org/a/570467?speed=2">view asciinema</a>)</p></li>
-</ul>
-<h2 id="singularity-hello-world">Singularity Hello World<a class="headerlink" href="#singularity-hello-world" title="Permalink to this heading">¶</a></h2>
+<h1 id="staging">Staging<a class="headerlink" href="#staging" title="Permalink to this heading">¶</a></h1>
+<p>If you have data (or a Singularity container or similar) that you want all nodes to have access to before starting your job,
+Flux comes with a utility called <a class="reference external" href="https://flux-framework.readthedocs.io/projects/flux-core/en/latest/man1/flux-filemap.html">filemap</a>
+that can make this easy to do! Note that staging will ensure the content in <em>unshared</em> directories
+across nodes (e.g., /data on all nodes which isn’t a shared volume) has the same contents. These contents are not further updated or
+synced. The staging (and running of these commands) must happen in a batch script, so all of these examples will use the batch: true
+directive.</p>
+<h2 id="singularity-container-staging">Singularity Container Staging<a class="headerlink" href="#singularity-container-staging" title="Permalink to this heading">¶</a></h2>
 <blockquote>
-<div><p>This example is to pull and run a “hello world” example.</p>
+<div><p>Stage a singularity container for all nodes to access</p>
 </div></blockquote>
-<p><strong><a class="reference external" href="https://github.com/flux-framework/flux-operator/blob/main/examples/singularity/minicluster-hello-world.yaml">Tutorial File</a></strong></p>
-<p>This example demonstrates pulling a Singularity container to all nodes prior to executing the SIF binary.</p>
+<p><strong><a class="reference external" href="https://github.com/flux-framework/flux-operator/blob/main/examples/singularity/staging/minicluster.yaml">Tutorial File</a></strong></p>
+<p>This example demonstrates pulling a Singularity container to the broker pod, and having it staged across all nodes before running
+a job.</p>
 <div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><code><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">flux-framework.org/v1alpha1</span>
 <span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">MiniCluster</span>
 <span class="nt">metadata</span><span class="p">:</span>
 <span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">flux-sample</span>
 <span class="w">  </span><span class="nt">namespace</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">flux-operator</span>
 <span class="nt">spec</span><span class="p">:</span>
-
 <span class="w">  </span><span class="c1"># Number of pods to create for MiniCluster</span>
-<span class="w">  </span><span class="nt">size</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">2</span>
+<span class="w">  </span><span class="nt">size</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">4</span>
+<span class="w">  </span><span class="nt">tasks</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">4</span>
 
+<span class="w">  </span><span class="c1"># Job output files will be written here</span>
+<span class="w">  </span><span class="nt">volumes</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">data</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">storageClass</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">hostpath</span>
+<span class="w">      </span><span class="nt">path</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">/tmp/data</span>
+
+<span class="w">  </span><span class="c1"># This is a list because a pod can support multiple containers</span>
 <span class="w">  </span><span class="nt">containers</span><span class="p">:</span>
 <span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">image</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ghcr.io/rse-ops/singularity:tag-mamba</span>
+
+<span class="w">      </span><span class="c1"># original command: mpirun -n 4 singularity exec ./mpi.sif /opt/mpitest    </span>
+<span class="w">      </span><span class="nt">command</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">|</span>
+<span class="w">        </span><span class="no">flux filemap map -C /data mpi.sif</span>
+<span class="w">        </span><span class="no">flux exec -x 0 -r all flux filemap get -C /data</span>
+<span class="w">        </span><span class="no">flux submit -n 4 --output /tmp/fluxout/job.out --error /tmp/fluxout/job.out --flags waitable singularity exec /data/mpi.sif /opt/mpitest</span>
+<span class="w">        </span><span class="no">flux queue idle</span>
+<span class="w">        </span><span class="no">flux filemap unmap</span>
+
+<span class="w">      </span><span class="nt">commands</span><span class="p">:</span>
+<span class="w">        </span><span class="nt">post</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">sleep infinity</span>
+<span class="w">        </span><span class="nt">brokerPre</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">|</span>
+<span class="w">          </span><span class="no">if [[ ! -e &quot;mpi.sif&quot; ]]; then</span>
+<span class="w">              </span><span class="no">singularity pull mpi.sif oras://ghcr.io/rse-ops/singularity-mpi:mpich</span>
+<span class="w">          </span><span class="no">fi</span>
+
+<span class="w">      </span><span class="nt">workingDir</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">/data</span>
+<span class="w">      </span><span class="nt">cores</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1</span>
+
+<span class="w">      </span><span class="c1"># Output files written here</span>
+<span class="w">      </span><span class="nt">volumes</span><span class="p">:</span>
+<span class="w">        </span><span class="nt">data</span><span class="p">:</span>
+<span class="w">          </span><span class="nt">path</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">/tmp/fluxout</span>
+
+<span class="w">      </span><span class="c1"># Batch, and don&#39;t wrap in flux submit (we will do this)</span>
+<span class="w">      </span><span class="nt">batch</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+<span class="w">      </span><span class="nt">batchRaw</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+
 <span class="w">      </span><span class="nt">fluxUser</span><span class="p">:</span>
 <span class="w">        </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">fluxuser</span>
-<span class="w">      </span><span class="nt">command</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">singularity exec ubuntu_latest.sif echo hello world</span>
-
-<span class="w">      </span><span class="c1"># This pulls the container (separately) to each worker</span>
-<span class="w">      </span><span class="nt">commands</span><span class="p">:</span>
-<span class="w">        </span><span class="nt">pre</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">singularity pull docker://ubuntu</span>
 <span class="w">       </span>
 <span class="w">      </span><span class="c1"># Running a container in a container</span>
 <span class="w">      </span><span class="nt">securityContext</span><span class="p">:</span>
 <span class="w">        </span><span class="nt">privileged</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
 </code></pre></div>
 </div>
-<p>You would run the example as follows:</p>
+<p>Let’s break down the above!</p>
+<h3 id="id1">Staging<a class="headerlink" href="#id1" title="Permalink to this heading">¶</a></h3>
+<p>The staging (and then running a subsequent job) happens in the batch script. Note that we have also set “batchRaw” to true,
+which tells the Flux operator “Don’t wrap our commands in submits.” This means we need to write the entire batch script
+on our own. It’s a bit like an expert mode! Let’s go through it in detail:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code><span class="c1"># Make mpi.sif in /data available to other nodes via mmap</span>
+flux<span class="w"> </span>filemap<span class="w"> </span>map<span class="w"> </span>-C<span class="w"> </span>/data<span class="w"> </span>mpi.sif
+
+<span class="c1"># Map the file to all nodes, but skip rank 0, since the file is already there</span>
+flux<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>-x<span class="w"> </span><span class="m">0</span><span class="w"> </span>-r<span class="w"> </span>all<span class="w"> </span>flux<span class="w"> </span>filemap<span class="w"> </span>get<span class="w"> </span>-C<span class="w"> </span>/data
+
+<span class="c1"># When it&#39;s done, submit the job (also to 4 nodes) and ensure the output/error files are written to the shared mounted volume /tmp/fluxout</span>
+<span class="c1"># The waitable flag ensures the next command will wait for this job</span>
+flux<span class="w"> </span>submit<span class="w"> </span>-n<span class="w"> </span><span class="m">4</span><span class="w"> </span>--output<span class="w"> </span>/tmp/fluxout/job.out<span class="w"> </span>--error<span class="w"> </span>/tmp/fluxout/job.out<span class="w"> </span>--flags<span class="w"> </span>waitable<span class="w"> </span>singularity<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>/data/mpi.sif<span class="w"> </span>/opt/mpitest
+
+<span class="c1"># This is important to have so we wait for jobs to finish!</span>
+flux<span class="w"> </span>queue<span class="w"> </span>idle
+
+<span class="c1"># Clean up the filemap</span>
+flux<span class="w"> </span>filemap<span class="w"> </span>unmap
+</code></pre></div>
+</div>
+<h3 id="volumes">Volumes<a class="headerlink" href="#volumes" title="Permalink to this heading">¶</a></h3>
+<p>Since we want the output file to be written to in a single location by all workers, we write that to the shared mount <code class="docutils literal notranslate"><span class="pre">/tmp/fluxout</span></code>,
+which is the default output location. Finally, since we are running a Singularity container, we run with privileged true.</p>
+<h3 id="commands">Commands<a class="headerlink" href="#commands" title="Permalink to this heading">¶</a></h3>
+<p>The broker pre command is going to pull the container <em>once</em> from an OCI registry (GitHub packages, ghcr.io) via ORAS (OCI Registry
+as Storage) to its local filesystem. This SIF binary is going to be mapped to the other workers before running it.
+Since we want to keep the cluster running after it finishes, we create a “post” command with “sleep infinity.” This will
+allow us to shell inside and look at output, etc. More realistically if you run a batch job it’s suggested to send output
+to some kind of service, and not put a dependency on the cluster running.</p>
+<h3 id="running-the-workflow">Running the Workflow<a class="headerlink" href="#running-the-workflow" title="Permalink to this heading">¶</a></h3>
+<p>Okay let’s run the example!</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span>kubectl<span class="w"> </span>create<span class="w"> </span>namespace<span class="w"> </span>flux-operator
-$<span class="w"> </span>kubectl<span class="w"> </span>apply<span class="w"> </span>-f<span class="w"> </span>examples/singularity/minicluster-hello-world.yaml
+$<span class="w"> </span>kubectl<span class="w"> </span>apply<span class="w"> </span>-f<span class="w"> </span>examples/singularity/staging/minicluster.yaml
 </code></pre></div>
 </div>
 <p>We can then wait for our pods to be running</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span>kubectl<span class="w"> </span>get<span class="w"> </span>-n<span class="w"> </span>flux-operator<span class="w"> </span>pods
 </code></pre></div>
 </div>
-<p>And then look at the logs to see the print of “hello world”</p>
+<p>And then look at the logs to see the container being pulled:</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span>kubectl<span class="w"> </span>logs<span class="w"> </span>-n<span class="w"> </span>flux-operator<span class="w"> </span>flux-sample-0-p5xls<span class="w"> </span>-f
 </code></pre></div>
 </div>
-<p>But we can take a better approach. Ideally we can pull the container once to be shared by
-all workers. We can do this with a <code class="docutils literal notranslate"><span class="pre">brokerPre</span></code> commands block shown in
-<a class="reference external" href="https://github.com/flux-framework/flux-operator/blob/main/examples/singularity/minicluster-prepull.yaml">this tutorial file</a>.</p>
-<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><code><span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">MiniCluster</span>
-<span class="nt">metadata</span><span class="p">:</span>
-<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">flux-sample</span>
-<span class="w">  </span><span class="nt">namespace</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">flux-operator</span>
-<span class="nt">spec</span><span class="p">:</span>
-<span class="w">  </span><span class="c1"># suppress all output except for test run</span>
-<span class="w">  </span><span class="nt">logging</span><span class="p">:</span>
-<span class="w">    </span><span class="nt">quiet</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
-
-<span class="w">  </span><span class="c1"># Number of pods to create for MiniCluster</span>
-<span class="w">  </span><span class="nt">size</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">2</span>
-
-<span class="w">  </span><span class="c1"># Make this kind of persistent volume and claim available to pods</span>
-<span class="w">  </span><span class="c1"># This is a path in minikube (e.g., minikube ssh)</span>
-<span class="w">  </span><span class="nt">volumes</span><span class="p">:</span>
-<span class="w">    </span><span class="nt">data</span><span class="p">:</span>
-<span class="w">      </span><span class="nt">storageClass</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">hostpath</span>
-<span class="w">      </span><span class="nt">path</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">/tmp/pulls</span>
-
-<span class="w">  </span><span class="c1"># This is a list because a pod can support multiple containers</span>
-<span class="w">  </span><span class="nt">containers</span><span class="p">:</span>
-<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">image</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ghcr.io/rse-ops/singularity:tag-mamba</span>
-<span class="w">      </span><span class="nt">command</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">singularity exec ./ubuntu_latest.sif echo hello world</span>
-<span class="w">      </span><span class="nt">workingDir</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">/data</span>
-
-<span class="w">      </span><span class="c1"># This pulls the container (once) by the broker to workingDir /data</span>
-<span class="w">      </span><span class="nt">commands</span><span class="p">:</span>
-<span class="w">        </span><span class="nt">brokerPre</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">singularity pull docker://ubuntu</span>
-
-<span class="w">      </span><span class="nt">fluxUser</span><span class="p">:</span>
-<span class="w">        </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">fluxuser</span>
-
-<span class="w">      </span><span class="c1"># Container will be pre-pulled here only by the broker</span>
-<span class="w">      </span><span class="nt">volumes</span><span class="p">:</span>
-<span class="w">        </span><span class="nt">data</span><span class="p">:</span>
-<span class="w">          </span><span class="nt">path</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">/data</span>
-<span class="w">       </span>
-<span class="w">      </span><span class="c1"># Running a container in a container</span>
-<span class="w">      </span><span class="nt">securityContext</span><span class="p">:</span>
-<span class="w">        </span><span class="nt">privileged</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+<p>Next, let’s shell into the broker to look at the output log. This will show the job running.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span>kubectl<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>-it<span class="w"> </span>-n<span class="w"> </span>flux-operator<span class="w"> </span>flux-sample-0-8rlps<span class="w"> </span>bash
 </code></pre></div>
 </div>
-<p>Notice that we’ve added a local volume, and this is the (shared) working directory for the broker
-and all workers. Since the workers wait for the broker, there is no issue with however much
-time the broker needs for the pull. Since the pull is done to a shared, writable space,
-all workers can access the binary. Finally, note that in order for this to work,
-Singularity should be installed in the container, the MiniCluster is run in privileged mode,
-and <code class="docutils literal notranslate"><span class="pre">tzdata</span></code> is also needed so there is an <code class="docutils literal notranslate"><span class="pre">/etc/localtime</span></code> to bind. We could likely improve this
-to cut down permissions, if/when someone wants to work on that!</p>
-<p>Finally, another approach is to stage the container first, and this would work with shared files too.
-You can read more about this in the <a class="reference internal" href="staging.html"><span class="std std-doc">staging tutorial</span></a>.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span>cat<span class="w"> </span>/tmp/fluxout/job.out<span class="w"> </span>
+</code></pre></div>
+</div>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><code><span class="go">INFO:    Converting SIF file to temporary sandbox...</span>
+<span class="go">INFO:    Converting SIF file to temporary sandbox...</span>
+<span class="go">INFO:    Converting SIF file to temporary sandbox...</span>
+<span class="go">INFO:    Converting SIF file to temporary sandbox...</span>
+<span class="go">WARNING: underlay of /etc/localtime required more than 50 (81) bind mounts</span>
+<span class="go">WARNING: underlay of /etc/localtime required more than 50 (81) bind mounts</span>
+<span class="go">WARNING: underlay of /etc/localtime required more than 50 (81) bind mounts</span>
+<span class="go">WARNING: underlay of /etc/localtime required more than 50 (81) bind mounts</span>
+<span class="go">Hello, I am rank 0/4</span>
+<span class="go">INFO:    Cleaning up image...</span>
+<span class="go">Hello, I am rank 3/4</span>
+<span class="go">Hello, I am rank 1/4</span>
+<span class="go">Hello, I am rank 2/4</span>
+<span class="go">INFO:    Cleaning up image...</span>
+<span class="go">INFO:    Cleaning up image...</span>
+<span class="go">INFO:    Cleaning up image...</span>
+</code></pre></div>
+</div>
+<p>The above only works because we used mmap to share the SIF with the other workers! If we don’t
+do the unmap command, you could also shell into any of the other workers and see it in <code class="docutils literal notranslate"><span class="pre">/data</span></code>.
+Remember the mapping will only work if the directory is not shared. You could also share a directory
+(with read/write) between the workers, and then pull once if you are able to.</p>
+<p>When you are done, clean up:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span>kubectl<span class="w"> </span>delete<span class="w"> </span>-f<span class="w"> </span>examples/singularity/staging/minicluster.yaml
+</code></pre></div>
+</div>
 
 
   <hr>
@@ -947,7 +1021,7 @@ You can read more about this in the <a class="reference internal" href="staging.
     <nav class="md-footer__inner md-grid" aria-label="Footer" >
       
         
-        <a href="jobs.html" class="md-footer__link md-footer__link--prev" aria-label="Previous: Submit Jobs" rel="prev">
+        <a href="services.html" class="md-footer__link md-footer__link--prev" aria-label="Previous: Services" rel="prev">
           <div class="md-footer__button md-icon">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
           </div>
@@ -956,20 +1030,20 @@ You can read more about this in the <a class="reference internal" href="staging.
               <span class="md-footer__direction">
                 Previous
               </span>
-              Submit Jobs
+              Services
             </div>
           </div>
         </a>
       
       
         
-        <a href="multi-tenancy.html" class="md-footer__link md-footer__link--next" aria-label="Next: Multi-tenancy" rel="next">
+        <a href="volumes.html" class="md-footer__link md-footer__link--next" aria-label="Next: Volumes" rel="next">
           <div class="md-footer__title">
             <div class="md-ellipsis">
               <span class="md-footer__direction">
                 Next
               </span>
-              Multi-tenancy
+              Volumes
             </div>
           </div>
           <div class="md-footer__button md-icon">
