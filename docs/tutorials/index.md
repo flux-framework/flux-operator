@@ -5,6 +5,25 @@ For these tutorials, we assume using a generic cluster. For cloud-specific tutor
 [Deployment](https://flux-framework.org/flux-operator/deployment/index.html) tutorials.
 If you have any questions or issues, please [let us know](https://github.com/flux-framework/flux-operator/issues)
 
+## Isolated Tutorials
+
+The following tutorials have a README.md in their respective directories (and are not documented here):
+
+### Machine Learning
+
+ - [Foundry ML](https://github.com/flux-framework/flux-operator/tree/main/examples/machine-learning/foundry)
+
+### Simulations
+
+ - [Laghos](https://github.com/flux-framework/flux-operator/tree/main/examples/simulations/laghos)
+ - [Lulesh](https://github.com/flux-framework/flux-operator/tree/main/examples/simulations/lulesh)
+ - [Qmcpack](https://github.com/flux-framework/flux-operator/tree/main/examples/simulations/qmcpack)
+
+### Launchers
+
+ - [Parsl](https://github.com/flux-framework/flux-operator/tree/main/examples/launchers/parsl)
+
+
 ```{toctree}
 :maxdepth: 3
 jobs
@@ -15,3 +34,4 @@ services
 volumes
 state
 ```
+
