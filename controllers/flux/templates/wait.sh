@@ -280,10 +280,12 @@ else
 
     # If it's a batch job, we write the script for brokers and workers
     {{ if .Container.Batch }}echo "#!/bin/bash
-{{range $index, $line := .Batch}}{{ if $line }}flux submit --flags waitable --error=${FLUX_OUTPUT_DIR}/job-{{$index}}.err --output=${FLUX_OUTPUT_DIR}/job-{{$index}}.out {{$line}}{{ end }}
-{{end}}
+{{ if .Container.BatchRaw }}{{range $index, $line := .Batch}}{{ if $line }}{{$line}}
+{{ end }}{{ end }}
+{{ else }}{{range $index, $line := .Batch}}{{ if $line }}flux submit --flags waitable --error=${FLUX_OUTPUT_DIR}/job-{{$index}}.err --output=${FLUX_OUTPUT_DIR}/job-{{$index}}.out {{$line}}{{ end }}
+{{ end }}
 flux queue idle
-flux jobs -a
+flux jobs -a{{ end }}
 " >> flux-job.batch
     chmod +x flux-job.batch
     {{ if not .Container.Commands.RunFluxAsRoot }}chown -R ${fluxuid} flux-job.batch{{ end }}

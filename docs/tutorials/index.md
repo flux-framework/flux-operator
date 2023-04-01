@@ -30,6 +30,7 @@ singularity
 multi-tenancy
 interactive
 services
+staging
 volumes
 state
 ```

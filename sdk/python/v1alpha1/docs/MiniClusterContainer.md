@@ -5,6 +5,7 @@
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
 **batch** | **bool** | Indicate that the command is a batch job that will be written to a file to submit | [optional] [default to False]
+**batch_raw** | **bool** | Don&#39;t wrap batch commands in flux submit (provide custom logic myself) | [optional] [default to False]
 **command** | **str** | Single user executable to provide to flux start | [optional] [default to '']
 **commands** | [**Commands**](Commands.md) |  | [optional] 
 **cores** | **int** | Cores the container should use | [optional] [default to 0]

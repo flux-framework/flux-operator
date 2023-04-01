@@ -211,6 +211,11 @@
           "type": "boolean",
           "default": false
         },
+        "batchRaw": {
+          "description": "Don't wrap batch commands in flux submit (provide custom logic myself)",
+          "type": "boolean",
+          "default": false
+        },
         "command": {
           "description": "Single user executable to provide to flux start",
           "type": "string",
