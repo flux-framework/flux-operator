@@ -281,7 +281,7 @@ else
     # If it's a batch job, we write the script for brokers and workers
     {{ if .Container.Batch }}echo "#!/bin/bash
 {{ if .Container.BatchRaw }}{{range $index, $line := .Batch}}{{ if $line }}{{$line}}
-{{ end }}{{ end f}}
+{{ end }}{{ end }}
 {{ else }}{{range $index, $line := .Batch}}{{ if $line }}flux submit --flags waitable --error=${FLUX_OUTPUT_DIR}/job-{{$index}}.err --output=${FLUX_OUTPUT_DIR}/job-{{$index}}.out {{$line}}{{ end }}
 {{ end }}
 flux queue idle
