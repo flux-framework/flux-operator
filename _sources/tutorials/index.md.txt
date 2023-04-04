@@ -19,6 +19,12 @@ The following tutorials are provided from their respective directories (and are 
 
  - [Parsl](https://github.com/flux-framework/flux-operator/tree/main/examples/launchers/parsl)
 
+### Services
+
+ - [Merlin Basic](https://github.com/flux-framework/flux-operator/blob/main/examples/launchers/merlin/basic)
+ - [Merlin Singularity Openfoam](https://github.com/flux-framework/flux-operator/blob/main/examples/launchers/merlin/singularity-openfoam)
+
+
 ## Integrated Tutorials
 
 The following tutorials are included in the rendered documentation here.
