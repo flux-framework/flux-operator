@@ -1,0 +1,50 @@
+apiVersion: flux-framework.org/v1alpha1
+kind: MiniCluster
+metadata:
+  name: flux-sample
+  namespace: flux-operator
+spec:
+  size: 4
+
+  # Job output files will be written here
+  # Run this from this present working directory
+  # kind create cluster --config ../../../kind-config.yaml
+  # kubectl create namespace flux-operator
+  # kubectl apply -f ../services.yaml
+  # kubectl apply -f minicluster.yaml
+  interactive: true
+
+  volumes:
+    data:
+      storageClass: hostpath
+      path: /tmp/workflow
+
+  containers:
+    - image: ghcr.io/rse-ops/merlin-demos-certs:merlin
+      workingDir: /workflow
+
+      # Container flux owner is "fluxuser"
+      fluxUser:
+        name: fluxuser
+
+      commands:
+        brokerPre: |
+          if [[ ! -e "/workflow/openfoam6.sif" ]]; then
+              singularity build /workflow/openfoam6.sif docker://cfdengine/openfoam
+          fi
+        post: sleep infinity
+        pre: |
+          export LD_LIBRARY_PATH=/opt/conda/lib
+          export PYTHONPATH=/home/fluxuser/.local/lib/python3.10/site-packages:/opt/conda/lib/python3.10
+          sudo chown -R fluxuser .
+          # Previously in requirements.txt
+          mamba install scikit-learn -y
+          pip install matplotlib Ofpp
+
+      # Output files written here
+      volumes:
+        data:
+          path: /workflow
+
+      securityContext:
+        privileged: true

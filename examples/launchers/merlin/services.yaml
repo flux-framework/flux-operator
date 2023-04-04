@@ -60,6 +60,8 @@ items:
     metadata:
       labels:
         io.kompose.service: rabbitmq
+        # Selector for cluster headless service
+        job-name: flux-sample
       namespace: flux-operator
       name: rabbitmq
     spec:
@@ -73,6 +75,7 @@ items:
           labels:
             io.kompose.network/rabbitmq: "true"
             io.kompose.service: rabbitmq
+            job-name: flux-sample
         spec:
           containers:
             - image: ghcr.io/rse-ops/merlin-demos-certs:rabbitmq
@@ -92,6 +95,8 @@ items:
     metadata:
       labels:
         io.kompose.service: redis
+        # Selector for cluster headless service
+        job-name: flux-sample
       name: redis
       namespace: flux-operator
     spec:
@@ -105,6 +110,7 @@ items:
           labels:
             io.kompose.network/rabbitmq: "true"
             io.kompose.service: redis
+            job-name: flux-sample
         spec:
           containers:
             - image: ghcr.io/rse-ops/merlin-demos-certs:redis
