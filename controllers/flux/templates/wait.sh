@@ -278,24 +278,25 @@ if [ "${diagnostics}" == "true" ]; then
     run_diagnostics
 else
 
-    # If it's a batch job, we write the script for brokers and workers
-    {{ if .Container.Batch }}echo "#!/bin/bash
-{{ if .Container.BatchRaw }}{{range $index, $line := .Batch}}{{ if $line }}{{$line}}
-{{ end }}{{ end }}
+    # Start flux with the original entrypoint
+    if [ $(hostname) == "${mainHost}" ]; then
+
+        # If it's a batch job, we write the script for the broker to run
+        {{ if .Container.Batch }}rm -rf flux-job.batch
+        echo "#!/bin/bash
+{{ if .Container.BatchRaw }}{{range $index, $line := .Batch}}{{ if $line }}{{$line}}{{ end }}
+{{ end }}
 {{ else }}{{range $index, $line := .Batch}}{{ if $line }}flux submit --flags waitable --error=${FLUX_OUTPUT_DIR}/job-{{$index}}.err --output=${FLUX_OUTPUT_DIR}/job-{{$index}}.out {{$line}}{{ end }}
 {{ end }}
 flux queue idle
 flux jobs -a{{ end }}
 " >> flux-job.batch
-    chmod +x flux-job.batch
-    {{ if not .Container.Commands.RunFluxAsRoot }}chown -R ${fluxuid} flux-job.batch{{ end }}
-    {{ end }} # end if container batch
+        chmod +x flux-job.batch
+        {{ if not .Container.Commands.RunFluxAsRoot }}chown -R ${fluxuid} flux-job.batch{{ end }}
+        {{ end }} # end if container batch
 
-    # Start flux with the original entrypoint
-    if [ $(hostname) == "${mainHost}" ]; then
-
-       # Commands only run by the broker
-       {{ .Container.Commands.BrokerPre}} {{ if .Spec.Logging.Quiet }}> /dev/null 2>&1{{ end }}
+        # Commands only run by the broker
+        {{ .Container.Commands.BrokerPre}} {{ if .Spec.Logging.Quiet }}> /dev/null 2>&1{{ end }}
 
         # No command - use default to start server
 {{ if not .Spec.Logging.Quiet }}        echo "Extra command arguments are: $@"{{ end }}
