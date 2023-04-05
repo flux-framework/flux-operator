@@ -14,6 +14,7 @@ The following tutorials are provided from their respective directories (and are 
  - [Laghos](https://github.com/flux-framework/flux-operator/tree/main/examples/simulations/laghos)
  - [Lulesh](https://github.com/flux-framework/flux-operator/tree/main/examples/simulations/lulesh)
  - [Qmcpack](https://github.com/flux-framework/flux-operator/tree/main/examples/simulations/qmcpack)
+ - [Exaworks Ball Bounce](https://github.com/flux-framework/flux-operator/tree/main/examples/simulations/exaworks-ball-bounce)
 
 ### Launchers
 
