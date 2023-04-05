@@ -1,0 +1,24 @@
+apiVersion: flux-framework.org/v1alpha1
+kind: MiniCluster
+metadata:
+  name: flux-sample
+  namespace: flux-operator
+spec:
+  # Number of pods to create for MiniCluster
+  size: 2
+
+  # suppress all output except for test run
+  logging:
+    quiet: true
+    strict: false
+
+  # kubectl apply -f ./examples/simulations/qmcpack/minicluster.yaml
+  # Then watch logs of the broker pod: kubectl logs -n flux-operator <pod> -f
+  # If you want to save output, create a volume at the working directory
+  # to get it.
+  containers:
+    - image: ghcr.io/rse-ops/weave-demos:app-latest
+      launcher: true
+
+      # You can set the working directory if your container WORKDIR is not correct.
+      command: maestro run ball_bounce_suite.yaml --pgen pgen.py -y -fg
