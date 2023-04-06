@@ -25,9 +25,3 @@ spec:
         data:
           path: /workflow
           claimName: data 
-
-      # Commands just for workers / broker
-      # commands:
-
-        # This is currently required for the storage driver to work
-        # runFluxAsRoot: true
