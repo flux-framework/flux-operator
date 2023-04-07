@@ -1,5 +1,7 @@
 # Filestore (NFS)
 
+ **[MiniCluster YAML](https://github.com/flux-framework/flux-operator/blob/main/examples/storage/google/filestore/minicluster.yaml)**
+
 This tutorial will walk through creating a more persistent MiniCluster on Google Cloud
 using Filestore. We will be following the guidance [here](https://cloud.google.com/filestore/docs/csi-driver).
 First, make sure you have the Filestore and GKE (Google Kubernetes Engine) APIs enabled,

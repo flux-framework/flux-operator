@@ -1,5 +1,7 @@
 # CSI for Cloud Storage
 
+ **[MiniCluster YAML](https://github.com/flux-framework/flux-operator/blob/main/examples/storage/google/gcs-csi/minicluster.yaml)**
+
 This basic tutorial will walk through creating a MiniCluster to run a Snakemake workflow! 
 We will use a "Container Storage Interface" (CSI) to connect to Snakemake assets in Google Cloud Storage.
 You should have already [setup your workspace](setup.md), including preparing the Snakemake data in
