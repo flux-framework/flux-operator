@@ -1,4 +1,4 @@
-# Snakemake with Fusion Storage
+# Fusion Storage
 
 This basic tutorial will walk through creating a MiniCluster to run a Snakemake workflow! You should have
 already [setup your workspace](setup.md), including preparing the Snakemake data in
