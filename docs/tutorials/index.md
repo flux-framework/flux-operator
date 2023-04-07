@@ -7,7 +7,7 @@ If you have any questions or issues, please [let us know](https://github.com/flu
 
 ## Isolated Tutorials
 
-The following tutorials have a README.md in their respective directories (and are not documented here):
+The following tutorials are provided from their respective directories (and are not documented here):
 
 ### Machine Learning
 
@@ -18,20 +18,30 @@ The following tutorials have a README.md in their respective directories (and ar
  - [Laghos](https://github.com/flux-framework/flux-operator/tree/main/examples/simulations/laghos)
  - [Lulesh](https://github.com/flux-framework/flux-operator/tree/main/examples/simulations/lulesh)
  - [Qmcpack](https://github.com/flux-framework/flux-operator/tree/main/examples/simulations/qmcpack)
+ - [Exaworks Ball Bounce](https://github.com/flux-framework/flux-operator/tree/main/examples/simulations/exaworks-ball-bounce)
 
 ### Launchers
 
  - [Parsl](https://github.com/flux-framework/flux-operator/tree/main/examples/launchers/parsl)
 
+### Services
+
+ - [Merlin Basic](https://github.com/flux-framework/flux-operator/blob/main/examples/launchers/merlin/basic)
+ - [Merlin Singularity Openfoam](https://github.com/flux-framework/flux-operator/blob/main/examples/launchers/merlin/singularity-openfoam)
+
+
+## Integrated Tutorials
+
+The following tutorials are included in the rendered documentation here.
 
 ```{toctree}
-:maxdepth: 3
+:maxdepth: 2
 jobs
 singularity
 multi-tenancy
 interactive
 services
+staging
 volumes
 state
 ```
-

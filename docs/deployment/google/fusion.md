@@ -1,4 +1,6 @@
-# Snakemake with Fusion Storage
+# Fusion Storage
+
+ **[MiniCluster YAML](https://github.com/flux-framework/flux-operator/blob/main/examples/storage/google/fusion/minicluster.yaml)**
 
 This basic tutorial will walk through creating a MiniCluster to run a Snakemake workflow! You should have
 already [setup your workspace](setup.md), including preparing the Snakemake data in

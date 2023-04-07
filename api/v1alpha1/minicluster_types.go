@@ -343,6 +343,10 @@ type MiniClusterContainer struct {
 	// +optional
 	Batch bool `json:"batch"`
 
+	// Don't wrap batch commands in flux submit (provide custom logic myself)
+	// +optional
+	BatchRaw bool `json:"batchRaw"`
+
 	// Log output directory
 	// +optional
 	Logs string `json:"logs"`

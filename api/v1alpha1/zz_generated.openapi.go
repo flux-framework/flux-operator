@@ -520,6 +520,14 @@ func schema__api_v1alpha1__MiniClusterContainer(ref common.ReferenceCallback) co
 							Format:      "",
 						},
 					},
+					"batchRaw": {
+						SchemaProps: spec.SchemaProps{
+							Description: "Don't wrap batch commands in flux submit (provide custom logic myself)",
+							Default:     false,
+							Type:        []string{"boolean"},
+							Format:      "",
+						},
+					},
 					"logs": {
 						SchemaProps: spec.SchemaProps{
 							Description: "Log output directory",
