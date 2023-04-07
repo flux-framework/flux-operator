@@ -1,7 +1,8 @@
-# Snakemake (requiring storage) on Google Kubernetes Engine
+# CSI for Cloud Storage
 
-This basic tutorial will walk through creating a MiniCluster to run a Snakemake workflow! You should have
-already [setup your workspace](setup.md), including preparing the Snakemake data in
+This basic tutorial will walk through creating a MiniCluster to run a Snakemake workflow! 
+We will use a "Container Storage Interface" (CSI) to connect to Snakemake assets in Google Cloud Storage.
+You should have already [setup your workspace](setup.md), including preparing the Snakemake data in
 Google Storage.
 
 

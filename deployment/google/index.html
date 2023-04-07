@@ -603,15 +603,22 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="filestore.html" class="md-nav__link">
+    <span title="/deployment/google/filestore.md (reference label)" class="md-ellipsis">Filestore <wbr>(NFS)</span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="csi.html" class="md-nav__link">
-    <span title="/deployment/google/csi.md (reference label)" class="md-ellipsis">Snakemake <wbr>(requiring storage) on Google Kubernetes Engine</span>
+    <span title="/deployment/google/csi.md (reference label)" class="md-ellipsis">CSI for Cloud Storage</span>
   </a>
   
 </li>
       
         <li class="md-nav__item">
   <a href="fusion.html" class="md-nav__link">
-    <span title="/deployment/google/fusion.md (reference label)" class="md-ellipsis">Snakemake with Fusion Storage</span>
+    <span title="/deployment/google/fusion.md (reference label)" class="md-ellipsis">Fusion Storage</span>
   </a>
   
 </li>
@@ -730,7 +737,15 @@ different types of container storage interfaces.  If you have a question, please
 <li class="toctree-l2"><a class="reference internal" href="basic.html#customization-and-debugging">Customization and Debugging</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="csi.html">Snakemake (requiring storage) on Google Kubernetes Engine</a><ul>
+<li class="toctree-l1"><a class="reference internal" href="filestore.html">Filestore (NFS)</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="filestore.html#create-the-cluster">Create the Cluster</a></li>
+<li class="toctree-l2"><a class="reference internal" href="filestore.html#install-the-flux-operator">Install the Flux Operator</a></li>
+<li class="toctree-l2"><a class="reference internal" href="filestore.html#test-your-storage">Test your Storage</a></li>
+<li class="toctree-l2"><a class="reference internal" href="filestore.html#run-snakemake">Run Snakemake</a></li>
+<li class="toctree-l2"><a class="reference internal" href="filestore.html#clean-up">Clean Up</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="csi.html">CSI for Cloud Storage</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="csi.html#create-cluster">Create Cluster</a></li>
 <li class="toctree-l2"><a class="reference internal" href="csi.html#get-credentials">Get Credentials</a></li>
 <li class="toctree-l2"><a class="reference internal" href="csi.html#install-the-csi">Install the CSI</a></li>
@@ -739,7 +754,7 @@ different types of container storage interfaces.  If you have a question, please
 <li class="toctree-l2"><a class="reference internal" href="csi.html#clean-up">Clean up</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="fusion.html">Snakemake with Fusion Storage</a><ul>
+<li class="toctree-l1"><a class="reference internal" href="fusion.html">Fusion Storage</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="fusion.html#create-cluster">Create Cluster</a></li>
 <li class="toctree-l2"><a class="reference internal" href="fusion.html#running-snakemake">Running Snakemake</a></li>
 <li class="toctree-l2"><a class="reference internal" href="fusion.html#clean-up">Clean up</a></li>
@@ -755,7 +770,7 @@ different types of container storage interfaces.  If you have a question, please
   <small>
     
       Last update:
-      Apr 05, 2023
+      Apr 07, 2023
     
   </small>
 </div>

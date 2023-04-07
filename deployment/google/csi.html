@@ -14,7 +14,7 @@
     
     
       
-        <title>Snakemake (requiring storage) on Google Kubernetes Engine - Flux Operator</title>
+        <title>CSI for Cloud Storage - Flux Operator</title>
       
     
     
@@ -138,7 +138,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Snakemake (requiring storage) on Google Kubernetes Engine
+              CSI for Cloud Storage
             
           </span>
         </div>
@@ -617,6 +617,21 @@
               
   
   
+  
+  
+    <li class="md-nav__item">
+      <a href="filestore.html" class="md-nav__link">
+        <span title="/deployment/google/filestore.md (reference label)" class="md-ellipsis">Filestore <wbr>(NFS)</span>
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
     
   
     
@@ -628,12 +643,12 @@
       <input class="md-nav__toggle md-toggle" data-md-toggle="toc" type="checkbox" id="__toc">
       
         <label class="md-nav__link md-nav__link--active" for="__toc">
-          <span title="/deployment/google/csi.md (reference label)" class="md-ellipsis">Snakemake <wbr>(requiring storage) on Google Kubernetes Engine</span>
+          <span title="/deployment/google/csi.md (reference label)" class="md-ellipsis">CSI for Cloud Storage</span>
           <span class="md-nav__icon md-icon"></span>
         </label>
       
       <a href="#" class="md-nav__link md-nav__link--active">
-        <span title="/deployment/google/csi.md (reference label)" class="md-ellipsis">Snakemake <wbr>(requiring storage) on Google Kubernetes Engine</span>
+        <span title="/deployment/google/csi.md (reference label)" class="md-ellipsis">CSI for Cloud Storage</span>
       </a>
       
         
@@ -729,7 +744,7 @@
   
     <li class="md-nav__item">
       <a href="fusion.html" class="md-nav__link">
-        <span title="/deployment/google/fusion.md (reference label)" class="md-ellipsis">Snakemake with Fusion Storage</span>
+        <span title="/deployment/google/fusion.md (reference label)" class="md-ellipsis">Fusion Storage</span>
       </a>
     </li>
   
@@ -827,9 +842,10 @@
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10 20H6V4h7v5h5v3.1l2-2V8l-6-6H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h4v-2m10.2-7c.1 0 .3.1.4.2l1.3 1.3c.2.2.2.6 0 .8l-1 1-2.1-2.1 1-1c.1-.1.2-.2.4-.2m0 3.9L14.1 23H12v-2.1l6.1-6.1 2.1 2.1Z"/></svg>
   </a>
 
-<h1 id="snakemake-requiring-storage-on-google-kubernetes-engine">Snakemake (requiring storage) on Google Kubernetes Engine<a class="headerlink" href="#snakemake-requiring-storage-on-google-kubernetes-engine" title="Permalink to this heading">¶</a></h1>
-<p>This basic tutorial will walk through creating a MiniCluster to run a Snakemake workflow! You should have
-already <a class="reference internal" href="setup.html"><span class="std std-doc">setup your workspace</span></a>, including preparing the Snakemake data in
+<h1 id="csi-for-cloud-storage">CSI for Cloud Storage<a class="headerlink" href="#csi-for-cloud-storage" title="Permalink to this heading">¶</a></h1>
+<p>This basic tutorial will walk through creating a MiniCluster to run a Snakemake workflow!
+We will use a “Container Storage Interface” (CSI) to connect to Snakemake assets in Google Cloud Storage.
+You should have already <a class="reference internal" href="setup.html"><span class="std std-doc">setup your workspace</span></a>, including preparing the Snakemake data in
 Google Storage.</p>
 <h2 id="create-cluster">Create Cluster<a class="headerlink" href="#create-cluster" title="Permalink to this heading">¶</a></h2>
 <p>Let’s use gcloud to create a cluster, and we are purposefully going to choose
@@ -1314,7 +1330,7 @@ $<span class="w"> </span>kubectl<span class="w"> </span>delete<span class="w"> <
   <small>
     
       Last update:
-      Apr 05, 2023
+      Apr 07, 2023
     
   </small>
 </div>
@@ -1345,7 +1361,7 @@ $<span class="w"> </span>kubectl<span class="w"> </span>delete<span class="w"> <
     <nav class="md-footer__inner md-grid" aria-label="Footer" >
       
         
-        <a href="basic.html" class="md-footer__link md-footer__link--prev" aria-label="Previous: Lammps on Google Cloud" rel="prev">
+        <a href="filestore.html" class="md-footer__link md-footer__link--prev" aria-label="Previous: Filestore (NFS)" rel="prev">
           <div class="md-footer__button md-icon">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
           </div>
@@ -1354,20 +1370,20 @@ $<span class="w"> </span>kubectl<span class="w"> </span>delete<span class="w"> <
               <span class="md-footer__direction">
                 Previous
               </span>
-              Lammps on Google Cloud
+              Filestore (NFS)
             </div>
           </div>
         </a>
       
       
         
-        <a href="fusion.html" class="md-footer__link md-footer__link--next" aria-label="Next: Snakemake with Fusion Storage" rel="next">
+        <a href="fusion.html" class="md-footer__link md-footer__link--next" aria-label="Next: Fusion Storage" rel="next">
           <div class="md-footer__title">
             <div class="md-ellipsis">
               <span class="md-footer__direction">
                 Next
               </span>
-              Snakemake with Fusion Storage
+              Fusion Storage
             </div>
           </div>
           <div class="md-footer__button md-icon">
