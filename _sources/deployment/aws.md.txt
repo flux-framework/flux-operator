@@ -316,6 +316,8 @@ You should obviously create a policy that would be associated with your user or 
 
 #### Prepare the OIDC Provider for EKS
 
+ **[MiniCluster YAML](https://github.com/flux-framework/flux-operator/blob/main/examples/storage/aws/oidc/minicluster.yaml)**
+
 We will be following [this guide](https://dev.to/otomato_io/mount-s3-objects-to-kubernetes-pods-12f5).
 First, [create an OIDC role for the cluster](https://docs.aws.amazon.com/eks/latest/userguide/enable-iam-roles-for-service-accounts.html):
 

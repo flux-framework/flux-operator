@@ -1057,6 +1057,7 @@ $<span class="w"> </span>aws<span class="w"> </span>s3<span class="w"> </span>cp
 </div>
 <p>You should obviously create a policy that would be associated with your user or credential (IAM) account.</p>
 <h4 id="prepare-the-oidc-provider-for-eks">Prepare the OIDC Provider for EKS<a class="headerlink" href="#prepare-the-oidc-provider-for-eks" title="Permalink to this heading">¶</a></h4>
+<p><strong><a class="reference external" href="https://github.com/flux-framework/flux-operator/blob/main/examples/storage/aws/oidc/minicluster.yaml">MiniCluster YAML</a></strong></p>
 <p>We will be following <a class="reference external" href="https://dev.to/otomato_io/mount-s3-objects-to-kubernetes-pods-12f5">this guide</a>.
 First, <a class="reference external" href="https://docs.aws.amazon.com/eks/latest/userguide/enable-iam-roles-for-service-accounts.html">create an OIDC role for the cluster</a>:</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span>aws<span class="w"> </span>eks<span class="w"> </span>describe-cluster<span class="w"> </span>--name<span class="w"> </span>flux-operator<span class="w"> </span>--query<span class="w"> </span><span class="s2">&quot;cluster.identity.oidc.issuer&quot;</span><span class="w"> </span>--output<span class="w"> </span>text

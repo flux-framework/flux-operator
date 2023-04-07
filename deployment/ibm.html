@@ -1251,6 +1251,7 @@ the service instance id should be <code class="docutils literal notranslate"><sp
 <p>At this point we have the storage driver running, along with the storage class and secret, and we should
 attempt to use it with the Flux Operator.</p>
 <h3 id="example-minicluster">Example MiniCluster<a class="headerlink" href="#example-minicluster" title="Permalink to this heading">¶</a></h3>
+<p><strong><a class="reference external" href="https://github.com/flux-framework/flux-operator/blob/main/examples/storage/ibm/minicluster.yaml">MiniCluster YAML</a></strong></p>
 <p>Note that we are setting the <code class="docutils literal notranslate"><span class="pre">commands:</span> <span class="pre">-&gt;</span> <span class="pre">runFluxAsRoot</span></code> to true. This isn’t ideal, but it was the
 only way I could get the storage to both be seen and have permission to write there. Let’s create the job!
 Since the storage plugin uses a FlexDriver, and this is being deprecated, we need to create the persistent

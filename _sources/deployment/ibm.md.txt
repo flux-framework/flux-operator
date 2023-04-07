@@ -625,6 +625,8 @@ attempt to use it with the Flux Operator.
 
 ### Example MiniCluster
 
+ **[MiniCluster YAML](https://github.com/flux-framework/flux-operator/blob/main/examples/storage/ibm/minicluster.yaml)**
+
 Note that we are setting the `commands: -> runFluxAsRoot` to true. This isn't ideal, but it was the
 only way I could get the storage to both be seen and have permission to write there. Let's create the job!
 Since the storage plugin uses a FlexDriver, and this is being deprecated, we need to create the persistent
