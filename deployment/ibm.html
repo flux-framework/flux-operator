@@ -1178,30 +1178,30 @@ s3fsVersion: current
 </code></pre></div>
 </div>
 <p>Of the values we can set, we likely want to set the following:</p>
-<div class="highlight-diff notranslate"><div class="highlight"><pre><span></span><code><span class="w"># Change license to true to indicate have read and agreed to license agreement</span>
-<span class="w"># https://www.apache.org/licenses/LICENSE-2.0</span>
+<div class="highlight-diff notranslate"><div class="highlight"><pre><span></span><code># Change license to true to indicate have read and agreed to license agreement
+# https://www.apache.org/licenses/LICENSE-2.0
 <span class="gd">- license: false</span>
 <span class="gi">+ license: true</span>
 
-<span class="w"># IBMC || IBMC-VPC || RHOCP || SATELLITE</span>
+# IBMC || IBMC-VPC || RHOCP || SATELLITE
 <span class="gd">- provider: RHOCP</span>
 <span class="gi">+ provider: IBMC</span>
 
-<span class="w"># Container platform [ K8S vs OpenShift ]</span>
+# Container platform [ K8S vs OpenShift ]
 <span class="gd">- platform: OpenShift</span>
 <span class="gi">+ platform: K8S</span>
 
-<span class="w"># Worker node&#39;s OS [ redhat || debian ]</span>
+# Worker node&#39;s OS [ redhat || debian ]
 <span class="gd">- workerOS: redhat</span>
 <span class="gi">+ workerOS: debian</span>
 
-<span class="w"># COS endpoints and COS storageClass configuration</span>
-<span class="w"># For satellite clusters, to use aws, wasabi or ibm object storage, please provide the s3Provider(aws/wasabi/ibm) and respective storageClass(region) values.</span>
-<span class="w"># If user provides all 3 values endpoint, storageClass and s3Provider, precedence is given to storageClass and s3Provider.</span>
-<span class="w"># To input endpoint explicitly, input only endpoint and storageClass and skip s3Provider.</span>
-<span class="w"># For non-satellite rhocp clusters, please provide cos endpoint and cos storageclass.</span>
+# COS endpoints and COS storageClass configuration
+# For satellite clusters, to use aws, wasabi or ibm object storage, please provide the s3Provider(aws/wasabi/ibm) and respective storageClass(region) values.
+# If user provides all 3 values endpoint, storageClass and s3Provider, precedence is given to storageClass and s3Provider.
+# To input endpoint explicitly, input only endpoint and storageClass and skip s3Provider.
+# For non-satellite rhocp clusters, please provide cos endpoint and cos storageclass.
 
-<span class="w">cos:</span>
+cos:
 <span class="w"> </span> # The s3 endpoint url for the targeted object storage service; format - https://&lt;Endpoint URL&gt;
 <span class="gd">-  endpoint: &quot;NA&quot;</span>
 <span class="gi">+ endpoint: &quot;https://s3.us-east.cloud-object-storage.appdomain.cloud/&quot;</span>
@@ -1329,7 +1329,7 @@ $<span class="w"> </span>ibmcloud<span class="w"> </span>cos<span class="w"> </s
   <small>
     
       Last update:
-      Apr 07, 2023
+      Apr 10, 2023
     
   </small>
 </div>

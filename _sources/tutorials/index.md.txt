@@ -11,10 +11,10 @@ The following tutorials are provided from their respective directories (and are 
 
 ### Simulations
 
- - [Laghos](https://github.com/flux-framework/flux-operator/tree/main/examples/simulations/laghos)
- - [Lulesh](https://github.com/flux-framework/flux-operator/tree/main/examples/simulations/lulesh)
- - [Qmcpack](https://github.com/flux-framework/flux-operator/tree/main/examples/simulations/qmcpack)
- - [Exaworks Ball Bounce](https://github.com/flux-framework/flux-operator/tree/main/examples/simulations/exaworks-ball-bounce)
+ - [Laghos](https://github.com/flux-framework/flux-operator/blob/main/examples/simulations/laghos-demos/minicluster.yaml)
+ - [Lulesh](https://github.com/flux-framework/flux-operator/tree/main/examples/simulations/lulesh/minicluster.yaml)
+ - [Qmcpack](https://github.com/flux-framework/flux-operator/tree/main/examples/simulations/qmcpack/minicluster.yaml)
+ - [Exaworks Ball Bounce](https://github.com/flux-framework/flux-operator/tree/main/examples/simulations/exaworks-ball-bounce/minicluster.yaml)
 
 ### Launchers
 
