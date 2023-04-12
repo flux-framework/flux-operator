@@ -23,6 +23,34 @@ $ kubectl create namespace flux-operator
 $ kubectl apply ./minicluster.yaml
 ```
 
+You can then inspect logs, and see the training happening! Note that we adjusted 1000 epochs (takes a long time)
+to 2 (is very quick)!
+
+```bash
+$ kubectl logs -n flux-operator flux-sample-0-7tx7s -f
+```
+```console
+208 2 1.3872336 0.515625
+209 0 1.3110054 0.5625
+209 1 1.2829641 0.5234375
+209 2 1.496664 0.4296875
+210 1 1.3997178 0.4375
+210 0 1.4337707 0.484375
+210 2 1.2814229 0.5703125
+211 0 1.2377738 0.5078125
+211 1 1.497496 0.515625
+211 2 1.2085061 0.5625
+212 1 1.4642732 0.484375
+212 2 1.2024314 0.5859375
+212 0 1.6061184 0.453125
+...
+```
+
+In the above, you are looking at a row of `step task_number loss accuracy` where the task number corresponds
+to different flux cluster nodes. 2 epochs likely isn't enough to get a good result, but this is just an example.
+It's intended to get you started. If you have a tensorflow example to share,
+we hope you [let us know](https://github.com/flux-framework/flux-operator/issues).
+
 ## Example
 
 A complete usage example using the CIFAR-10 dataset is included in the examples directory,

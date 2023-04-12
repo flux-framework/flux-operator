@@ -4,6 +4,8 @@ metadata:
   name: flux-sample
   namespace: flux-operator
 spec:
+
+  # This ensures we launch the main script on all the nodes
   size: 4
   tasks: 4
   volumes:
@@ -13,36 +15,29 @@ spec:
 
   # This is a list because a pod can support multiple containers
   containers:
-    - image: ghcr.io/rse-ops/singularity:tag-mamba
+      # This has tensorflow 2.11.1
+    - image: ghcr.io/rse-ops/singularity-tensorflow:tag-mamba
       workingDir: /tmp/workflow/examples/cifar-10
       command: python3 ./main.py
 
-      # Where flux is
+      # Where is flux? There he is!
       environment:
         PYTHONPATH: /usr/lib/python3.10/site-packages
 
-      # Tensorflow 2.11.1 was used for this example
       commands:
         brokerPre: |
           cd /tmp/workflow
-          mamba install -y tensorflow ipython
           pip install .
           cd /tmp/workflow/examples/cifar-10
           ./download_data.sh          
         workerPre: |
           cd /tmp/workflow
-          mamba install -y tensorflow ipython
           pip install .
           cd -
           
       fluxUser:
         name: fluxuser
 
-      # Container will be pre-pulled here only by the broker
       volumes:
         data:
           path: /tmp/workflow
-       
-      # Running a container in a container
-      securityContext:
-        privileged: true

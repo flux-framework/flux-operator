@@ -4,6 +4,9 @@ from __future__ import division
 
 import pickle
 import os
+
+# We have v2 installed, but the cifar-10 example
+# was (I think) developed with v1 in mind, so I did this
 import tensorflow.compat.v1 as tf
 
 tf.disable_v2_behavior()
@@ -13,13 +16,14 @@ import sys
 from tensorflow_flux import tf_config_from_flux
 
 # ** Modify parameters here for your Minicluster **
+# ps number is the number of parameter servers to run. The rest are workers
 cluster, my_job_name, my_task_index = tf_config_from_flux(
     ps_number=1, cluster_size=4, job_name="flux-sample", port_number=2222
 )
 
 # original epochs was 1000, would take a few hours!
-# I adjusted to 10
-epochs = 10
+# I adjusted to 2, because we have things to do! :)
+epochs = 2
 
 cluster_spec = tf.train.ClusterSpec(cluster)
 server = tf.distribute.Server(
