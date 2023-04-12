@@ -1,0 +1,43 @@
+apiVersion: flux-framework.org/v1alpha1
+kind: MiniCluster
+metadata:
+  name: flux-sample
+  namespace: flux-operator
+spec:
+
+  # This ensures we launch the main script on all the nodes
+  size: 4
+  tasks: 4
+  volumes:
+    data:
+      storageClass: hostpath
+      path: /tmp/workflow
+
+  # This is a list because a pod can support multiple containers
+  containers:
+      # This has tensorflow 2.11.1
+    - image: ghcr.io/rse-ops/singularity-tensorflow:tag-mamba
+      workingDir: /tmp/workflow/examples/cifar-10
+      command: python3 ./main.py
+
+      # Where is flux? There he is!
+      environment:
+        PYTHONPATH: /usr/lib/python3.10/site-packages
+
+      commands:
+        brokerPre: |
+          cd /tmp/workflow
+          pip install .
+          cd /tmp/workflow/examples/cifar-10
+          ./download_data.sh          
+        workerPre: |
+          cd /tmp/workflow
+          pip install .
+          cd -
+          
+      fluxUser:
+        name: fluxuser
+
+      volumes:
+        data:
+          path: /tmp/workflow

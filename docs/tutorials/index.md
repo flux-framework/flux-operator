@@ -20,11 +20,14 @@ The following tutorials are provided from their respective directories (and are 
 
  - [Parsl](https://github.com/flux-framework/flux-operator/tree/main/examples/launchers/parsl)
 
+### Machine Learning
+
+ - [Tensorflow cifar-10](https://github.com/flux-framework/flux-operator/blob/main/examples/machine-learning/tensorflow)
+
 ### Services
 
  - [Merlin Basic](https://github.com/flux-framework/flux-operator/blob/main/examples/launchers/merlin/basic)
  - [Merlin Singularity Openfoam](https://github.com/flux-framework/flux-operator/blob/main/examples/launchers/merlin/singularity-openfoam)
-
 
 ## Integrated Tutorials
 
