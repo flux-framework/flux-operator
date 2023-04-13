@@ -532,6 +532,10 @@ func (f *MiniCluster) Validate() bool {
 
 	// Commands and PreCommand not supported for services
 	for _, service := range f.Spec.Services {
+		if service.Name == "" {
+			fmt.Printf("😥️ Service containers always require a name.\n")
+			return false
+		}
 		if service.PreCommand != "" || service.Commands.Pre != "" ||
 			service.Commands.BrokerPre != "" || service.Commands.WorkerPre != "" {
 			fmt.Printf("😥️ Services do not support Commands.\n")
