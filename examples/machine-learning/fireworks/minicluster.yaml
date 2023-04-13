@@ -1,0 +1,46 @@
+apiVersion: flux-framework.org/v1alpha1
+kind: MiniCluster
+metadata:
+  name: flux-sample
+  namespace: flux-operator
+spec:
+
+  # Note that the demo is hard coded for a size of 10
+  size: 10
+  tasks: 10
+  volumes:
+    data:
+      storageClass: hostpath
+      path: /tmp/workflow
+
+  services:
+    - image: mongo
+      name: mongo
+
+      # Default Mongo port
+      ports:
+        - 27017
+      environment:
+        MONGO_INITDB_ROOT_USERNAME: admin
+        MONGO_INITDB_ROOT_PASSWORD: password
+
+  containers:
+    - image: ghcr.io/rse-ops/fireworks:tag-mamba
+      workingDir: /tmp/workflow
+      command: python3 /tmp/workflow/run-workflow.py
+      launcher: true
+      environment:
+        MONGODB_URI: "mongodb://admin:password@flux-sample-services.flux-service.flux-operator.svc.cluster.local:27017/test?authSource=admin"
+        PYTHONPATH: /opt/conda/lib/python3.10/site-packages:/usr/lib/python3.10/site-packages
+        DEMO_DIR: /tmp/workflow
+
+      # This submits tasks to mongodb
+      commands:
+        brokerPre: python3 /tmp/workflow/submit-workflow.py
+
+      fluxUser:
+        name: fluxuser
+
+      volumes:
+        data:
+          path: /tmp/workflow
