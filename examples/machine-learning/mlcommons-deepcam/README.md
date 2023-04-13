@@ -8,10 +8,18 @@ The workflow is provided from [mlcommons/deepcam](https://github.com/mlcommons/h
 
 ## Create MiniCluster
 
-First, cd to the directory here, and create the kind cluster:
+First, cd to the directory here, and create the minikube cluster (kind did not work to create a sandbox for the SIF):
 
 ```bash
-$ kind create cluster --config ../../kind-config.yaml
+$ minikube start
+```
+
+If you use minikube, you'll want to create a mount:
+
+```bash
+$ minikube mount $PWD/:/tmp/workflow
+$ docker pull ghcr.io/rse-ops/singularity:tag-mamba
+$ minikube image load ghcr.io/rse-ops/singularity:tag-mamba
 ```
 
 And the Flux Operator namespace created:
@@ -71,4 +79,4 @@ Then create the MiniCluster to use them! Let's hope your computer doesn't run ou
 $ kubectl apply -f minicluster.yaml
 ```
 
-**WIP** need larger computer...
+**WIP** this likely will work, but needs to be tested on a machine with GPU, etc. It will not work on a CPU.

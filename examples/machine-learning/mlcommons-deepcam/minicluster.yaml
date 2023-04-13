@@ -8,7 +8,7 @@ spec:
   # IMPORTANT: see the README.md to see how to prepare data first!
   # You should have a local ./data folder with training and stats
   # Number of pods to create for MiniCluster
-  size: 4
+  size: 2
   tasks: 2
   interactive: true
 
@@ -26,7 +26,7 @@ spec:
       cores: 4
 
       # This will run with the defaults, targeting our ./data directory
-      command: singularity exec --pwd /opt/deepCam/run_scripts ./deepcam.sif /bin/bash ./run_training.sh 
+      command: singularity exec --pwd /opt/deepCam ./deepcam.sif /bin/bash /tmp/workflow/run_training.sh
       workingDir: /tmp/workflow
 
       # This pulls the container (once) by the broker to workingDir /data

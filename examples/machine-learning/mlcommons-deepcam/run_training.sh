@@ -22,19 +22,19 @@
 # CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 # parameters
+# IMPORTANT: use absolute paths
 data_dir="/tmp/workflow/data"
 output_dir="/tmp/workflow/output"
 run_tag="test_run"
 local_batch_size=2
 
-python ./train.py \
+python /tmp/workflow/train.py \
        --wireup_method "dummy" \
        --run_tag ${run_tag} \
        --data_dir_prefix ${data_dir} \
        --output_dir ${output_dir} \
        --model_prefix "segmentation" \
        --optimizer "LAMB" \
-       --adam_eps 1e-6 \
        --start_lr 0.0055 \
        --lr_schedule type="multistep",milestones="800",decay_rate="0.1" \
        --lr_warmup_steps 400 \
@@ -47,3 +47,6 @@ python ./train.py \
        --seed $(date +%s) \
        --batchnorm_group_size 1 \
        --local_batch_size ${local_batch_size}
+
+# Removed (not an argument)
+#       --adam_eps 1e-6 \
