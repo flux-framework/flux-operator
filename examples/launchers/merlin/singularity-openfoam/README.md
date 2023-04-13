@@ -20,6 +20,13 @@ And the Flux Operator namespace created:
 $ kubectl create namespace flux-operator
 ```
 
+And then generate the (separate) pods to run redis and rabbitmq in the flux-operator namespace.
+The containers already have shared certificates (just for this test case)!
+
+```bash
+$ kubectl create -f ../services.yaml
+```
+
 And create the MiniCluster to use them!
 
 ```bash
