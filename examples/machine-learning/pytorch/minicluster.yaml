@@ -1,0 +1,48 @@
+apiVersion: flux-framework.org/v1alpha1
+kind: MiniCluster
+metadata:
+  name: flux-sample
+  namespace: flux-operator
+spec:
+
+  # This ensures we launch the main script on all the nodes
+  size: 2
+  tasks: 2
+  volumes:
+    data:
+      storageClass: hostpath
+      path: /tmp/workflow
+
+  # This is a list because a pod can support multiple containers
+  containers:
+    - image: ghcr.io/rse-ops/singularity:tag-mamba
+      workingDir: /tmp/workflow
+      cores: 2
+
+      # Where is flux? There he is!
+      environment:
+        PYTHONPATH: /usr/lib/python3.10/site-packages
+
+      # Main pytorch "master" should be running on this port
+      ports:
+        - 8080
+                                                            # job name, port, nodes
+      command: singularity exec ./pytorch.sif /bin/bash ./launch.sh flux-sample 8080 2
+
+      # This pulls the container (once) by the broker to workingDir /tmp/workflow
+      commands:
+        brokerPre: |           
+           if [[ ! -e "/tmp/workflow/pytorch.sif" ]]; then
+               singularity pull /tmp/workflow/pytorch.sif docker://gcr.io/deeplearning-platform-release/pytorch-gpu.1-12
+           fi
+           # TODO convert to single sandbox so all workers don't need to!
+
+      fluxUser:
+        name: fluxuser
+
+      volumes:
+        data:
+          path: /tmp/workflow
+      
+      securityContext:
+        privileged: true

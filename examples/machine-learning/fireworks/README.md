@@ -18,12 +18,13 @@ And then install the operator, create the namespace, and apply the MiniCluster Y
 ```bash
 $ kubectl apply -f ../../dist/flux-operator.yaml
 $ kubectl create namespace flux-operator
-$ kubectl apply ./minicluster.yaml
+$ kubectl apply -f ./minicluster.yaml
 ```
 
 You can watch the broker pod (0) to see (first) the submit of the tasks to the MongoDB, this part:
 
 ```bash
+$ kubectl logs -n flux-operator flux-sample-xxxx -f
 ```
 ```console
 ...
