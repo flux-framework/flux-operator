@@ -13,7 +13,6 @@ spec:
   tasks: 4
 
   # Make this kind of persistent volume and claim available to pods
-  # This is a path in minikube (e.g., minikube ssh)
   volumes:
     data:
       storageClass: hostpath
