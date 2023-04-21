@@ -31,6 +31,15 @@ The following tutorials are provided from their respective directories (and are 
  - [Merlin Basic](https://github.com/flux-framework/flux-operator/blob/main/examples/launchers/merlin/basic)
  - [Merlin Singularity Openfoam](https://github.com/flux-framework/flux-operator/blob/main/examples/launchers/merlin/singularity-openfoam)
 
+### Workflows
+
+Although some of the others above are also workflows, these examples are going to use `flux tree` (in various contexts) to
+submit different job hierarchies and get around the etcd bottleneck in Kubernetes. 
+
+ - [Basic Tree](https://github.com/flux-framework/flux-operator/blob/main/examples/workflows/tree)
+
+We have just started this arm of our experiments and you can expect more as we go!
+
 ## Integrated Tutorials
 
 The following tutorials are included in the rendered documentation here.
