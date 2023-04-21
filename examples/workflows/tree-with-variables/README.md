@@ -34,18 +34,18 @@ And when it's done, the tree.out (written to `/tmp/workflow` in the cluster) wil
 In here you will see:
 
 ```bash
-$ flux tree -T2x2 -J 4 -N 1 -c 4 -o /tmp/workflow/tree.out -Q easy:fcfs /bin/bash ./run-on-instance.sh
+$ flux tree -T2x2 -J 4 -N 4 -c 4 -o /tmp/workflow/tree.out -Q easy:fcfs /bin/bash ./run-on-instance.sh
 ```
 ```console
 $ cat tree.out 
 TreeID                  Elapsed(sec)         Begin(Epoch)           End(Epoch)     Match(usec)           NJobs NNodes  CPN  GPN
-tree                        3.991870    1682087575.879316    1682087579.871187        0.000000               4     1    4    0
-tree.2                      2.411760    1682087576.793974    1682087579.205738        0.000000               2     1    2    0
-tree.2.2                    0.169759    1682087578.215127    1682087578.384886        0.000000               1     1    1    0
-tree.2.1                    0.194736    1682087577.883810    1682087578.078545        0.000000               1     1    1    0
-tree.1                      2.441270    1682087576.675884    1682087579.117153        0.000000               2     1    2    0
-tree.1.2                    0.125315    1682087578.105583    1682087578.230898        0.000000               1     1    1    0
-tree.1.1                    0.228343    1682087577.736250    1682087577.964592        0.000000               1     1    1    0
+tree                        3.646440    1682094481.024492    1682094484.670933        0.000000               4     4    4    0
+tree.2                      1.847760    1682094482.167398    1682094484.015160        0.000000               2     2    4    0
+tree.2.2                    0.146933    1682094483.195491    1682094483.342424        0.000000               1     1    4    0
+tree.2.1                    0.098842    1682094483.068877    1682094483.167719        0.000000               1     1    4    0
+tree.1                      1.789910    1682094482.071364    1682094483.861272        0.000000               2     2    4    0
+tree.1.2                    0.102510    1682094483.056029    1682094483.158540        0.000000               1     1    4    0
+tree.1.1                    0.119904    1682094482.937050    1682094483.056954        0.000000               1     1    4    0
 ```
 
 This information is repeated from the [basic tree](../tree) example, and you can look there for details about what the above means.
@@ -54,6 +54,8 @@ should be able to see them in the present working directory:
 
 ```bash
 $ ls
+```
+```console
 minicluster.yaml  README.md  run-on-instance.sh  tree.1.1-output.txt  tree.1.2-output.txt  tree.2.1-output.txt  tree.2.2-output.txt  tree.out
 ```
 
@@ -70,7 +72,8 @@ FLUX_TREE_NCORES_PER_NODE 1
 FLUX_TREE_NGPUS_PER_NODE 0
 ```
 
-You would direct custom logic in this little script to control execution of your job, likely with different instances using different resources.
+Note that for this example we are only running the scripts on the leaves, hence why we only see one `NNODES` above. The table above
+that shows we go from `4 > 2 > 1`. You would direct custom logic in this little script to control execution of your job, likely with different instances using different resources.
 It's super cool!
 
 ```bash

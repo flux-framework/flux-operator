@@ -28,7 +28,7 @@ spec:
       cores: 4
 
       # provide the /tmp/workflow as an output directory for each tree to write to!
-      command: flux tree -T2x2 -J 4 -N 1 -c 4 -o /tmp/workflow/tree.out -Q easy:fcfs /bin/bash /tmp/workflow/run-on-instance.sh /tmp/workflow
+      command: flux tree -T2x2 -J 4 -N 4 -c 4 -o /tmp/workflow/tree.out -Q easy:fcfs /bin/bash /tmp/workflow/run-on-instance.sh /tmp/workflow
       volumes:
         data:
           path: /tmp/workflow
