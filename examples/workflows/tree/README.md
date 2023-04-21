@@ -54,7 +54,7 @@ What is happening is that the `flux tree` command is creating a hierarchy of ins
  - `tree.1` is the first instance
  - `tree.2` is the second instance
  - `tree.1.1` and `tree.1.2` refer to the nested instances under `tree.1`
- - `tree.2.1` and `tree.2.1` refer to the nested instances under `tree.2`
+ - `tree.2.1` and `tree.2.2` refer to the nested instances under `tree.2`
  
 And we provided the command `hostname` to this script, but a more complex example would generate more interested hierarchies,
 and with different functionality for each. When you are done, please clean up:
