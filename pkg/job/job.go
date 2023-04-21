@@ -1,6 +1,7 @@
 /*
 Copyright 2022 Lawrence Livermore National Security, LLC
- (c.f. AUTHORS, NOTICE.LLNS, COPYING)
+
+	(c.f. AUTHORS, NOTICE.LLNS, COPYING)
 
 This is part of the Flux resource manager framework.
 For details, see https://github.com/flux-framework.

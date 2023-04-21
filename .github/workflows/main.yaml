@@ -62,6 +62,7 @@ jobs:
       matrix:
         test: [["hello-world", "ghcr.io/flux-framework/flux-restful-api:latest", 30],
                ["post", "ghcr.io/flux-framework/flux-restful-api:latest", 30],
+               ["tree", "ghcr.io/flux-framework/flux-restful-api:latest", 30],
                ["batch", "ghcr.io/flux-framework/flux-restful-api:latest", 30],
                ["singularity", "ghcr.io/rse-ops/singularity:tag-mamba", 40],
                ["nginx-sidecar-service", "ghcr.io/flux-framework/flux-restful-api:latest", 40],
