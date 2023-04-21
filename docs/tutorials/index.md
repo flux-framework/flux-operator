@@ -37,6 +37,7 @@ Although some of the others above are also workflows, these examples are going t
 submit different job hierarchies and get around the etcd bottleneck in Kubernetes. 
 
  - [Basic Tree](https://github.com/flux-framework/flux-operator/blob/main/examples/workflows/tree)
+ - [Instance Variables](https://github.com/flux-framework/flux-operator/blob/main/examples/workflows/tree-with-variables)
 
 We have just started this arm of our experiments and you can expect more as we go!
 
