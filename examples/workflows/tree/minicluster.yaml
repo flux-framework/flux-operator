@@ -1,0 +1,32 @@
+apiVersion: flux-framework.org/v1alpha1
+kind: MiniCluster
+metadata:
+  name: flux-sample
+  namespace: flux-operator
+spec:
+  # suppress all output except for test run
+  logging:
+    quiet: false
+
+  # Number of pods to create for MiniCluster
+  size: 4
+  tasks: 4
+
+  # Make this kind of persistent volume and claim available to pods
+  volumes:
+    data:
+      storageClass: hostpath
+      path: /tmp/workflow
+
+  # See examples in this test file:
+  # https://github.com/flux-framework/flux-sched/blob/master/t/t2001-tree-real.t#L43-L51
+  # And documentation here:
+  # https://github.com/flux-framework/flux-sched/blob/master/resource/utilities/README.md
+  containers:
+    - image: ghcr.io/flux-framework/flux-restful-api:latest
+      launcher: true
+      cores: 4
+      command: flux tree -T2x2 -J 4 -N 1 -c 4 -o /tmp/workflow/tree.out -Q easy:fcfs hostname
+      volumes:
+        data:
+          path: /tmp/workflow

@@ -55,7 +55,6 @@ jobs:
         diff examples/dist/flux-operator.yaml /tmp/flux-operator.yaml
 
   test-jobs:
-    needs: [unit-tests]
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
