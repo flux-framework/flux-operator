@@ -30,7 +30,7 @@ spec:
         pre: |
            pip install scikit-learn numpy
            # Install my branch of dask distributed with flux integration
-           pip install git+https://github.com/researchapps/dask-jobqueue.git@add/flux-no-cleanup
+           pip install git+https://github.com/researchapps/dask-jobqueue.git@add/flux
            pip install dask-ml
 
       fluxUser:
