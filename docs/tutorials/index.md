@@ -25,6 +25,7 @@ The following tutorials are provided from their respective directories (and are 
  - [Fireworks](https://github.com/flux-framework/flux-operator/blob/main/examples/machine-learning/fireworks)
  - [Pytorch MNIST](https://github.com/flux-framework/flux-operator/blob/main/examples/machine-learning/pytorch)
  - [Tensorflow cifar-10](https://github.com/flux-framework/flux-operator/blob/main/examples/machine-learning/tensorflow)
+ - [Dask with Scikit-Learn](https://github.com/flux-framework/flux-operator/blob/main/examples/machine-learning/dask/scikit-learn)
 
 ### Services
 
