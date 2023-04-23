@@ -22,9 +22,9 @@ def get_parser():
         formatter_class=argparse.RawTextHelpFormatter,
     )
     parser.add_argument("--workers", help="number of worker nodes in the cluster", type=int, default=4)
-    parser.add_argument("--cores", help="cores to give to flux cluster spec", type=int, default=2)
+    parser.add_argument("--cores", help="cores to give to flux cluster spec", type=int, default=1)
     parser.add_argument('--memory', help='dummy memory variable (is not used)', default="2GB")
-    parser.add_argument('--timeout', help='default timeout to wait for workers (20 seconds)', type=int, default=20)
+    parser.add_argument('--timeout', help='default timeout to wait for workers (60 seconds)', type=int, default=60)
     return parser
 
 
@@ -41,16 +41,13 @@ def main():
 
     # For flux, memory doesn't matter (it's ignored) and processes are the number of workers
     # (at least I think!)
-    with FluxCluster(cores=args.cores, processes=args.workers, memory=args.memory) as cluster:
+    with FluxCluster(cores=args.cores, processes=1, memory=args.memory) as cluster:
         cluster.adapt()
 
         # This creates the cluster (but we don't need to further interact with the client)
         with Client(cluster) as client:
             cluster.scale(args.workers)
-
-            # When I tested this, it seemed to just launch one job on a node, so 
-            # I would guess waiting for workers means waiting for local workers?
-            client.wait_for_workers(args.cores, timeout=args.timeout)
+            client.wait_for_workers(args.workers, timeout=args.timeout)
             digits = load_digits()
 
             param_space = {

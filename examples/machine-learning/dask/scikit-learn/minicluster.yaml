@@ -11,7 +11,7 @@ spec:
       path: /tmp/workflow
 
   containers:
-    - image: ghcr.io/rse-ops/singularity:tag-mamba
+    - image: ghcr.io/rse-ops/dask-scikit-learn:tag-mamba
       workingDir: /tmp/workflow
 
       environment:
@@ -24,18 +24,8 @@ spec:
 
       # Dask will be submitting flux jobs for us
       launcher: true
-
-      # Start the servers as the flux user so they own it
-      commands:
-        pre: |
-           pip install scikit-learn numpy
-           # Install my branch of dask distributed with flux integration
-           pip install git+https://github.com/researchapps/dask-jobqueue.git@add/flux
-           pip install dask-ml
-
       fluxUser:
         name: fluxuser
-
       volumes:
         data:
           path: /tmp/workflow
