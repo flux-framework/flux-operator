@@ -39,12 +39,9 @@ def main():
     print("     cores: %s" % args.cores)
     print("   timeout: %s" % args.timeout)
 
-    # For flux, memory doesn't matter (it's ignored) and processes are the number of workers
-    # (at least I think!)
+    # For flux, memory doesn't matter (it's ignored)
     with FluxCluster(cores=args.cores, processes=1, memory=args.memory) as cluster:
         cluster.adapt()
-
-        # This creates the cluster (but we don't need to further interact with the client)
         with Client(cluster) as client:
             cluster.scale(args.workers)
             client.wait_for_workers(args.workers, timeout=args.timeout)
