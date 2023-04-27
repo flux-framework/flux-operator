@@ -166,7 +166,7 @@ func (r *MiniClusterReconciler) brokerIsReady(
 			for _, worker := range pods.Items {
 
 				// Don't exec to the broker, pods that aren't for the job, or the certificate generator pod!
-				if worker.Name == pod.Name || !strings.HasPrefix(worker.Name, cluster.Name) || strings.Contains(worker.Name, certGenSuffix) {
+				if worker.Name == pod.Name || !strings.HasPrefix(worker.Name, cluster.Name) {
 					continue
 				}
 				_, err := r.podExec(ctx, worker, cluster, makeReadyCommand)

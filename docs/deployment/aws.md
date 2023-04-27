@@ -474,8 +474,7 @@ $ kubectl create -f ./examples/storage/aws/oidc/minicluster.yaml
 The biggest factor of whether your mount will work (with permission to read and write)
 is determined by the S3 storage policy and rules. For testing, we were irresponsible
 and made the bucket public, but you likely don't want to do that. Next,
-get pods - you'll see the containers creating and then running - first the cert-generator
-and then the MiniCluster pods:
+get pods - you'll see the containers creating and then running:
 
 ```bash
 $ kubectl get -n flux-operator pods
@@ -484,7 +483,6 @@ $ kubectl get -n flux-operator pods
 NAME                         READY   STATUS              RESTARTS   AGE
 flux-sample-0-f5znt          0/1     ContainerCreating   0          100s
 flux-sample-1-th589          0/1     ContainerCreating   0          100s
-flux-sample-cert-generator   0/1     Completed           0          100s
 ```
 
 You can get the output file in the terminal (and don't worry about saving it too much, as it will save to storage).

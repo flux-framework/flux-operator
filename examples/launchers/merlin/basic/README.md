@@ -49,7 +49,6 @@ kubectl get -n flux-operator pods
 NAME                         READY   STATUS      RESTARTS   AGE
 flux-sample-0-774tg          1/1     Running     0          22s
 flux-sample-1-k24tq          1/1     Running     0          22s
-flux-sample-cert-generator   0/1     Completed   0          22s
 rabbitmq-f8c84d986-262pg     1/1     Running     0          32m
 redis-c9469b9c5-cnhgl        1/1     Running     0          32m
 ```
