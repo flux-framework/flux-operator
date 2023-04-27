@@ -222,10 +222,9 @@ images:
 
 .PHONY: build
 build: generate fmt vet ## Build manager binary.
-	mv ./controllers/flux/keygen.go ./controllers/flux/keygen.go.backup
 	cp ./controllers/flux/keygen.go.template ./controllers/flux/keygen.go
 	$(BUILDENVVAR) go build -o bin/manager main.go
-	mv ./controllers/flux/keygen.go.backup ./controllers/flux/keygen.go
+	cp ./controllers/flux/keygen.go.backup ./controllers/flux/keygen.go
 
 .PHONY: build-container
 build-container: generate fmt vet
