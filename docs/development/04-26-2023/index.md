@@ -71,8 +71,18 @@ Mean: 11.425610291957856
 Std: 0.2796793262007871
 ```
 
+And then testing using an alpine base (and different include libs):
+
+```bash
+[15.733325958251953, 11.791539907455444, 10.994275331497192, 10.878877401351929, 10.947747707366943, 10.95516324043274, 11.246216058731079, 10.905624389648438, 11.034036874771118, 10.875369310379028, 11.294852495193481, 12.074318885803223, 13.340802192687988, 11.800190925598145, 11.111106872558594, 10.85048532485962, 10.78402853012085, 11.890284538269043, 10.852944374084473, 11.295825719833374]
+Mean: 11.532850801944733
+Std: 1.1653285584152895
+```
+
 So yay! We can see with the (working) curve certificate, the pod generation (mean) is about 3 seconds faster. That's pretty great!
-And the fact that without a hostname the networking doesn't happen is really interesting.
+And the fact that without a hostname the networking doesn't happen is really interesting. I think there is still some variability
+that happens because of the broker needing to wait for pods (or them starting and not syncing up) and maybe we can better address
+that another way.
 
 - [Link on Excalidraw](https://excalidraw.com/#json=_F0hUUB9knFEry2FykSS4,MaGmgcsyq_JZ2_MrZ3XRIQ)
 
