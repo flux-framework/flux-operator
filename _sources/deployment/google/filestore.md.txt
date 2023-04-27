@@ -112,7 +112,6 @@ flux-sample-0-vb59t          1/1     Running     0          3m22s
 flux-sample-1-xnf56          1/1     Running     0          3m21s
 flux-sample-2-7ws6d          1/1     Running     0          3m21s
 flux-sample-3-tw8m2          1/1     Running     0          3m21s
-flux-sample-cert-generator   0/1     Completed   0          3m22s
 ```
 Note that I saw this error at first:
 

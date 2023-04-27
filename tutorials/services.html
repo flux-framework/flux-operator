@@ -1022,7 +1022,6 @@ entrypoint. We can then wait for our pods to be running</p>
 NAME<span class="w">                         </span>READY<span class="w">   </span>STATUS<span class="w">      </span>RESTARTS<span class="w">   </span>AGE
 flux-sample-0-p5xls<span class="w">          </span><span class="m">1</span>/1<span class="w">     </span>Running<span class="w">     </span><span class="m">0</span><span class="w">          </span>7s
 flux-sample-1-nmtt7<span class="w">          </span><span class="m">1</span>/1<span class="w">     </span>Running<span class="w">     </span><span class="m">0</span><span class="w">          </span>7s
-flux-sample-cert-generator<span class="w">   </span><span class="m">0</span>/1<span class="w">     </span>Completed<span class="w">   </span><span class="m">0</span><span class="w">          </span>7s
 </code></pre></div>
 </div>
 <p>To see logs, since we have 2 containers per pod, you can either leave out the pod (and get the first or default)
@@ -1094,7 +1093,6 @@ and the services share the same cluster networking space.</p>
 NAME<span class="w">                         </span>READY<span class="w">   </span>STATUS<span class="w">      </span>RESTARTS<span class="w">   </span>AGE
 flux-sample-0-4wt26<span class="w">          </span><span class="m">1</span>/1<span class="w">     </span>Running<span class="w">     </span><span class="m">0</span><span class="w">          </span>38s
 flux-sample-1-sr5zx<span class="w">          </span><span class="m">1</span>/1<span class="w">     </span>Running<span class="w">     </span><span class="m">0</span><span class="w">          </span>38s
-flux-sample-cert-generator<span class="w">   </span><span class="m">0</span>/1<span class="w">     </span>Completed<span class="w">   </span><span class="m">0</span><span class="w">          </span>38s
 flux-sample-services<span class="w">         </span><span class="m">1</span>/1<span class="w">     </span>Running<span class="w">     </span><span class="m">0</span><span class="w">          </span>38s
 </code></pre></div>
 </div>
@@ -1158,7 +1156,7 @@ why do we also need a celery queue?</p>
   <small>
     
       Last update:
-      Apr 23, 2023
+      Apr 27, 2023
     
   </small>
 </div>

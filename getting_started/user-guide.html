@@ -749,6 +749,7 @@ on new functionality or features for the Flux Operator, see our <a class="refere
 and we provide the other pinned containers in case you want a previous version:</p>
 <ul class="simple">
 <li><p><a class="reference external" href="https://github.com/flux-framework/flux-operator/pkgs/container/flux-operator">ghcr.io/flux-framework/flux-operator:feb-2023</a>: the version used for Kubecon experiments, and before storage (minikube and Google Cloud example) were added.</p></li>
+<li><p><a class="reference external" href="https://github.com/flux-framework/flux-operator/pkgs/container/flux-operator">ghcr.io/flux-framework/flux-operator:april-2023</a>: the version directly before the refactor to remove the certificate generator pod (3.3)</p></li>
 </ul>
 <h2 id="install">Install<a class="headerlink" href="#install" title="Permalink to this heading">¶</a></h2>
 <h3 id="quick-install">Quick Install<a class="headerlink" href="#quick-install" title="Permalink to this heading">¶</a></h3>
@@ -815,16 +816,11 @@ namespace/flux-operator<span class="w"> </span>created
 </code></pre></div>
 </div>
 <p>If you haven’t ever installed minkube, you can see <a class="reference external" href="https://minikube.sigs.k8s.io/docs/start/">install instructions here</a>.
-And then officially build the operator,</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span>make
-</code></pre></div>
-</div>
-<p>(optionally) to make your manifests:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span>make<span class="w"> </span>manifests
-</code></pre></div>
-</div>
-<p>And install. Note that this places an executable <code class="docutils literal notranslate"><span class="pre">bin/kustomize</span></code> that you’ll need to delete first if you make install again.</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span>make<span class="w"> </span>install
+And then we recommend that you use a local development container to build and install the operator. Note
+that we are also loading into MiniKube:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span>make<span class="w"> </span>deploy-local
+$<span class="w"> </span>minikube<span class="w"> </span>image<span class="w"> </span>load<span class="w"> </span>ghcr.io/flux-framework/flux-operator:test
+$<span class="w"> </span>kubectl<span class="w"> </span>apply<span class="w"> </span>-f<span class="w"> </span>examples/dist/flux-operator-local.yaml
 </code></pre></div>
 </div>
 <p>At this point, you can kubectl apply your custom resource definition to define your MiniCluster to your cluster to
@@ -833,13 +829,15 @@ either run a job or start a Flux Mini Cluster.</p>
 </code></pre></div>
 </div>
 <p>Note that we have other examples (using the web interface in <a class="reference external" href="https://github.com/flux-framework/flux-operator/tree/main/examples/flux-restful">examples/flux-restful</a>
-and headless examples for testing in <a class="reference external" href="https://github.com/flux-framework/flux-operator/tree/main/examples/tests">examples/tests</a>).
+and headless examples for testing in <a class="reference external" href="https://github.com/flux-framework/flux-operator/tree/main/examples/tests">examples/tests</a>) along with
+general (category-specific) examples in <a class="reference external" href="https://github.com/flux-framework/flux-operator/tree/main/examples/">the examples root</a>.
 When you are all done, cleanup with <code class="docutils literal notranslate"><span class="pre">kubectl</span> <span class="pre">delete</span></code> commands and/or!</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span>make<span class="w"> </span>clean
 </code></pre></div>
 </div>
 <p>And to stop MiniKube.</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span>minikube<span class="w"> </span>stop
+$<span class="w"> </span>minikube<span class="w"> </span>delete
 </code></pre></div>
 </div>
 <h3 id="tool-install">Tool Install<a class="headerlink" href="#tool-install" title="Permalink to this heading">¶</a></h3>
@@ -923,7 +921,7 @@ Next, you might be interested in <a class="reference internal" href="#jobs.md"><
   <small>
     
       Last update:
-      Apr 23, 2023
+      Apr 27, 2023
     
   </small>
 </div>

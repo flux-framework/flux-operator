@@ -925,7 +925,13 @@ $<span class="w"> </span><span class="nb">cd</span><span class="w"> </span>flux-
 <span class="go">namespace/flux-operator created</span>
 </code></pre></div>
 </div>
-<p>Here is how to build and install the operator:</p>
+<p>Here is how to build and install the operator - we recommend you build and load into MiniKube with this command:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span>make<span class="w"> </span>deploy-local
+$<span class="w"> </span>minikube<span class="w"> </span>image<span class="w"> </span>load<span class="w"> </span>ghcr.io/flux-framework/flux-operator:test
+$<span class="w"> </span>kubectl<span class="w"> </span>apply<span class="w"> </span>-f<span class="w"> </span>examples/dist/flux-operator-local.yaml
+</code></pre></div>
+</div>
+<p>But you can also try the manual steps:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><code># Build the operator
 $ make
 
@@ -936,6 +942,11 @@ $ make manifests
 $ make install
 </code></pre></div>
 </div>
+<p>Note that the local build required you to have external libraries to generate the curve certificate:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>sudo<span class="w"> </span>apt-get<span class="w"> </span>install<span class="w"> </span>-y<span class="w"> </span>libsodium-dev<span class="w"> </span>libzmq3-dev<span class="w"> </span>libczmq-dev
+</code></pre></div>
+</div>
+<p>If you are unable to install zeromq locally, we recommend the <code class="docutils literal notranslate"><span class="pre">make</span> <span class="pre">deploy-local</span></code> command shown above.</p>
 <h4 id="configs">2. Configs<a class="headerlink" href="#configs" title="Permalink to this heading">¶</a></h4>
 <h5 id="default-config">Default Config<a class="headerlink" href="#default-config" title="Permalink to this heading">¶</a></h5>
 <p>Our “default” job config, or custom resource definition “CRD” can be found in <a class="reference external" href="https://github.com/flux-framework/flux-operator/tree/main/config/samples">config/samples</a>.
@@ -1243,7 +1254,7 @@ server to preview:</p>
   <small>
     
       Last update:
-      Apr 23, 2023
+      Apr 27, 2023
     
   </small>
 </div>

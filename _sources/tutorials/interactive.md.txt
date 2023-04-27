@@ -47,7 +47,6 @@ $ kubectl get -n flux-operator pods
 NAME                         READY   STATUS      RESTARTS   AGE
 flux-sample-0-p5xls          1/1     Running     0          7s
 flux-sample-1-nmtt7          1/1     Running     0          7s
-flux-sample-cert-generator   0/1     Completed   0          7s
 ```
 
 And then shell into the broker pod, index 0:

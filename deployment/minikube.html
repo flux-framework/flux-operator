@@ -778,17 +778,8 @@ already in the <a class="reference external" href="https://github.com/rse-ops/fl
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span>minikube<span class="w"> </span>start
 </code></pre></div>
 </div>
-<p>If you are working from the repository, you can install and run the operator via developer commands:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span>make
-$<span class="w"> </span>make<span class="w"> </span>install
-$<span class="w"> </span>make<span class="w"> </span>run
-</code></pre></div>
-</div>
-<p>Or external to that, you can install the latest version:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span>wget<span class="w"> </span>https://raw.githubusercontent.com/flux-framework/flux-operator/main/examples/dist/flux-operator.yaml
-$<span class="w"> </span>kubectl<span class="w"> </span>apply<span class="w"> </span>-f<span class="w"> </span>flux-operator.yaml
-</code></pre></div>
-</div>
+<p>See the <a class="reference external" href="https://flux-framework.org/flux-operator/development/developer-guide.html#local-development">developer guide</a> for installing the operator.
+or the <a class="reference external" href="https://flux-framework.org/flux-operator/getting_started/user-guide.html#install">main install guide</a>.</p>
 <h3 id="prepare-data">Prepare Data<a class="headerlink" href="#prepare-data" title="Permalink to this heading">¶</a></h3>
 <p>Let’s first clone the required data to our local machine. We are going to bind this to the pods.</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span>git<span class="w"> </span>clone<span class="w"> </span>--depth<span class="w"> </span><span class="m">1</span><span class="w"> </span>https://github.com/snakemake/snakemake-tutorial-data<span class="w"> </span>/tmp/workflow
@@ -870,7 +861,6 @@ minicluster.flux-framework.org/flux-sample<span class="w"> </span>created
 NAME<span class="w">                         </span>READY<span class="w">   </span>STATUS<span class="w">      </span>RESTARTS<span class="w">   </span>AGE
 flux-sample-0-sk72j<span class="w">          </span><span class="m">1</span>/1<span class="w">     </span>Running<span class="w">     </span><span class="m">0</span><span class="w">          </span>35s
 flux-sample-1-6tw4z<span class="w">          </span><span class="m">1</span>/1<span class="w">     </span>Running<span class="w">     </span><span class="m">0</span><span class="w">          </span>35s
-flux-sample-cert-generator<span class="w">   </span><span class="m">0</span>/1<span class="w">     </span>Completed<span class="w">   </span><span class="m">0</span><span class="w">          </span>35s
 </code></pre></div>
 </div>
 <p>Keep watching for when the job is finished! You can see logs (and snakemake output) as follows:</p>
@@ -1067,7 +1057,7 @@ the Operator should handle this for you.</p>
   <small>
     
       Last update:
-      Apr 23, 2023
+      Apr 27, 2023
     
   </small>
 </div>

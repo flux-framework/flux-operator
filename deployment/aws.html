@@ -1178,15 +1178,13 @@ Then (assuming you’ve already installed the operator and created the flux-oper
 <p>The biggest factor of whether your mount will work (with permission to read and write)
 is determined by the S3 storage policy and rules. For testing, we were irresponsible
 and made the bucket public, but you likely don’t want to do that. Next,
-get pods - you’ll see the containers creating and then running - first the cert-generator
-and then the MiniCluster pods:</p>
+get pods - you’ll see the containers creating and then running:</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span>kubectl<span class="w"> </span>get<span class="w"> </span>-n<span class="w"> </span>flux-operator<span class="w"> </span>pods
 </code></pre></div>
 </div>
 <div class="highlight-console notranslate"><div class="highlight"><pre><span></span><code><span class="go">NAME                         READY   STATUS              RESTARTS   AGE</span>
 <span class="go">flux-sample-0-f5znt          0/1     ContainerCreating   0          100s</span>
 <span class="go">flux-sample-1-th589          0/1     ContainerCreating   0          100s</span>
-<span class="go">flux-sample-cert-generator   0/1     Completed           0          100s</span>
 </code></pre></div>
 </div>
 <p>You can get the output file in the terminal (and don’t worry about saving it too much, as it will save to storage).
@@ -1227,7 +1225,7 @@ $<span class="w"> </span>eksctl<span class="w"> </span>delete<span class="w"> </
   <small>
     
       Last update:
-      Apr 23, 2023
+      Apr 27, 2023
     
   </small>
 </div>

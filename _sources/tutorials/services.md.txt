@@ -192,7 +192,6 @@ $ kubectl get -n flux-operator pods
 NAME                         READY   STATUS      RESTARTS   AGE
 flux-sample-0-p5xls          1/1     Running     0          7s
 flux-sample-1-nmtt7          1/1     Running     0          7s
-flux-sample-cert-generator   0/1     Completed   0          7s
 ```
 
 To see logs, since we have 2 containers per pod, you can either leave out the pod (and get the first or default)
@@ -286,7 +285,6 @@ $ kubectl get -n flux-operator pods
 NAME                         READY   STATUS      RESTARTS   AGE
 flux-sample-0-4wt26          1/1     Running     0          38s
 flux-sample-1-sr5zx          1/1     Running     0          38s
-flux-sample-cert-generator   0/1     Completed   0          38s
 flux-sample-services         1/1     Running     0          38s
 ```
 
