@@ -10,6 +10,9 @@ jobs:
     - name: Checkout the code
       uses: actions/checkout@v3
 
+    - name: Install zeromq
+      run: sudo apt-get update && sudo apt-get install -y libsodium-dev libzmq3-dev libczmq-dev
+
     - name: Install fluxoperator python sdk
       run: |
         cd ./sdk/python/v1alpha1
@@ -35,6 +38,9 @@ jobs:
     steps:
     - name: Checkout the code
       uses: actions/checkout@v3
+
+    - name: Install zeromq
+      run: sudo apt-get update && sudo apt-get install -y libsodium-dev libzmq3-dev libczmq-dev
 
     - name: Install fluxoperator python sdk
       run: |
@@ -63,12 +69,9 @@ jobs:
         export SHELL=/bin/bash
         eval $(minikube -p minikube docker-env)
         minikube ssh docker pull ${container}
-        make
-        make install
-        make docker-build
-        printf "Loading Flux Operator latest image...\n"
-        minikube image load ghcr.io/flux-framework/flux-operator:latest
-        kubectl apply -f ./examples/dist/flux-operator.yaml
+        make deploy-local
+        minikube image load ghcr.io/flux-framework/flux-operator:test
+        kubectl apply -f examples/dist/flux-operator-local.yaml
 
     - name: Test ${{ matrix.test[0] }}
       env:

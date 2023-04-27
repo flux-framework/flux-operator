@@ -47,7 +47,6 @@ flux-sample-0-q22pt          1/1     Running     0          20s
 flux-sample-1-nmqsc          1/1     Running     0          20s
 flux-sample-2-49gv6          1/1     Running     0          20s
 flux-sample-3-tvvg9          1/1     Running     0          20s
-flux-sample-cert-generator   0/1     Completed   0          20s
 rabbitmq-f8c84d986-2dff6     1/1     Running     0          32s
 redis-c9469b9c5-hvkdr        1/1     Running     0          32
 ```

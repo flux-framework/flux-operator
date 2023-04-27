@@ -2,27 +2,42 @@
 FROM golang:1.18 as builder
 
 WORKDIR /workspace
+
+# Install libzmq to generate certificate (build takes longer, slightly larger image)
+RUN apt-get update && apt-get install -y libsodium-dev libzmq3-dev libczmq-dev
+
 # Copy the Go Modules manifests
 COPY go.mod go.mod
 COPY go.sum go.sum
-# cache deps before building and copying source so that we don't need to re-download as much
-# and so that source changes don't invalidate our downloaded layer
 RUN go mod download
+
+# Copy the go source
+# This used to copy specific directories, now we
+# want to reproduce the local build environment
+# COPY . /workspace
 
 # Copy the go source
 COPY main.go main.go
 COPY api/ api/
 COPY controllers/ controllers/
 COPY pkg pkg/
+COPY hack hack
+COPY Makefile Makefile
 
-# Build
-RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -a -o manager main.go
+# CGO_ENABLED=0 GOOS=linux GOARCH=amd64 
+# Build, ensuring we use the correct keygen
+# Note that the original build command did not work here, so updated to mimic the Makefile logic
+#CGO_ENABLED=0 GOOS=linux GOARCH=amd64 CGO_CFLAGS="-I/usr/include" CGO_LDFLAGS="-L/usr/lib -lstdc++ -lczmq -lzmq" go build -a -o manager main.go
+RUN make build-container && chmod +x ./manager
 
-# Use distroless as minimal base image to package the manager binary
-# Refer to https://github.com/GoogleContainerTools/distroless for more details
-FROM gcr.io/distroless/static:nonroot
+# We can't use distroless https://github.com/GoogleContainerTools/distroless
+# now that we need the external libraries
+FROM debian:stable-slim
 WORKDIR /
-COPY --from=builder /workspace/manager .
+COPY --from=builder /workspace/manager /manager
+RUN apt-get update && apt-get install -y libsodium-dev libzmq3-dev libczmq-dev && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/*
 USER 65532:65532
 
 ENTRYPOINT ["/manager"]

@@ -8,6 +8,7 @@ Our goal is to do this simply, and eventually extend this to a more complex hier
 First, let's create a kind cluster.
 
 ```bash
+$ mkdir -p ./tmp
 $ kind create cluster --config ../../../kind-config.yaml
 ```
 

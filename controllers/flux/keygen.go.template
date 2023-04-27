@@ -1,0 +1,65 @@
+package controllers
+
+/*
+#include <unistd.h>
+#include <czmq.h>
+#include <sodium.h>
+#include <stddef.h>
+#include <stdlib.h>
+#include "cgo_helpers.h"
+
+void flux_zcert_set_meta (zcert_t *cert, const char *field, const char *name) {
+    zcert_set_meta (cert, field, "%s", name);
+}
+*/
+import "C"
+import (
+	"fmt"
+	"unsafe"
+)
+var (
+    curveTemplate = `#   ****  Generated on 2023-04-26 22:54:42 by CZMQ  ****
+#   ZeroMQ CURVE **Secret** Certificate
+#   DO NOT PROVIDE THIS FILE TO OTHER USERS nor change its permissions.
+    
+metadata
+    name = "%s"
+    keygen.hostname = "%s"
+curve
+    public-key = "%s"
+    secret-key = "%s"
+`
+)
+
+// Keygen uses zeromq to generate a curve certificate for a given hostname.
+func KeyGen(name string, hostname string) (string, error) {
+
+	// Create the new certificate (likely want to check for error here)
+	cert := C.zcert_new()
+
+	// Use wrapper to set the cert metadata
+	// Name (typically the hostname but doesn't need to be)
+	// used in overlay logging
+	nameValue := C.CString(name)
+	nameField := C.CString("name")
+	defer C.free(unsafe.Pointer(nameValue))
+	defer C.free(unsafe.Pointer(nameField))
+	C.flux_zcert_set_meta(cert, nameField, nameValue)
+
+	// Hostname
+	hostnameValue := C.CString(hostname)
+	hostnameField := C.CString("keygen.hostname")
+	defer C.free(unsafe.Pointer(hostnameValue))
+	defer C.free(unsafe.Pointer(hostnameField))
+	C.flux_zcert_set_meta(cert, hostnameField, hostnameValue)
+
+	// Retrieve the keys and manually populate the file
+	publicKey := C.zcert_public_txt(cert)
+	secretKey := C.zcert_secret_txt(cert)
+	public := C.GoString((*C.char)(unsafe.Pointer(publicKey)))
+	secret := C.GoString((*C.char)(unsafe.Pointer(secretKey)))
+	curveCert := fmt.Sprintf(curveTemplate, name, hostname, public, secret)
+
+	C.zcert_destroy(&cert)	
+	return curveCert, nil
+}

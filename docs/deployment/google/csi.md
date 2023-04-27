@@ -154,9 +154,7 @@ hosts = [
 
 metadata
     name = "flux-sample-cert-generator"
-    time = "2023-02-17T21:05:10"
-    userid = "0"
-    hostname = "flux-sample-cert-generator"
+    hostname = "flux-sample-0"
 curve
     public-key = ".!?zfo10Ew)m=+J:j^zehs&{Ayy#BGSV0Eets5Ne"
     secret-key = "vmk%8&dl7ICTfgx?*+0wgPb=@kFA>djvZU-Sl[T6"
@@ -178,9 +176,7 @@ drwxrwxr-x 1 root 63147    0 Feb 17 21:05 scripts
 
 metadata
     name = "flux-sample-cert-generator"
-    time = "2023-02-17T21:05:10"
-    userid = "0"
-    hostname = "flux-sample-cert-generator"
+    hostname = "flux-sample-0"
 curve
     public-key = ".!?zfo10Ew)m=+J:j^zehs&{Ayy#BGSV0Eets5Ne"
     secret-key = "vmk%8&dl7ICTfgx?*+0wgPb=@kFA>djvZU-Sl[T6"
