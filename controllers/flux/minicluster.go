@@ -47,20 +47,20 @@ func (r *MiniClusterReconciler) ensureMiniCluster(
 ) (ctrl.Result, error) {
 
 	// Ensure the configs are created (for volume sources)
-	_, result, err := r.getConfigMap(ctx, cluster, "flux-config", cluster.Name+fluxConfigSuffix)
-	if err != nil {
+	created, _, result, err := r.getConfigMap(ctx, cluster, "flux-config", cluster.Name+fluxConfigSuffix)
+	if err != nil || created {
 		return result, err
 	}
 
 	// Add initial config map with entrypoint scripts (wait.sh, start.sh, empty update_hosts.sh)
-	_, result, err = r.getConfigMap(ctx, cluster, "entrypoint", cluster.Name+entrypointSuffix)
-	if err != nil {
+	created, _, result, err = r.getConfigMap(ctx, cluster, "entrypoint", cluster.Name+entrypointSuffix)
+	if err != nil || created {
 		return result, err
 	}
 
 	// Generate the curve certificate config map.
-	_, result, err = r.getConfigMap(ctx, cluster, "cert", cluster.Name+curveVolumeSuffix)
-	if err != nil {
+	created, _, result, err = r.getConfigMap(ctx, cluster, "cert", cluster.Name+curveVolumeSuffix)
+	if err != nil || created {
 		return result, err
 	}
 
@@ -85,16 +85,16 @@ func (r *MiniClusterReconciler) ensureMiniCluster(
 		}
 	}
 
-	// Create the batch job that brings it all together!
-	// A batchv1.Job can hold a spec for containers that use the configs we just made
-	_, result, err = r.getMiniCluster(ctx, cluster)
+	// Expose pod index 0 service
+	selector := map[string]string{"job-name": cluster.Name}
+	result, err = r.exposeServices(ctx, cluster, restfulServiceName, selector)
 	if err != nil {
 		return result, err
 	}
 
-	// Expose pod index 0 service
-	selector := map[string]string{"job-name": cluster.Name}
-	result, err = r.exposeServices(ctx, cluster, restfulServiceName, selector)
+	// Create the batch job that brings it all together!
+	// A batchv1.Job can hold a spec for containers that use the configs we just made
+	_, result, err = r.getMiniCluster(ctx, cluster)
 	if err != nil {
 		return result, err
 	}
@@ -266,7 +266,10 @@ func (r *MiniClusterReconciler) getConfigMap(
 	cluster *api.MiniCluster,
 	configName string,
 	configFullName string,
-) (*corev1.ConfigMap, ctrl.Result, error) {
+) (bool, *corev1.ConfigMap, ctrl.Result, error) {
+
+	// Determine if it was created (to resolve)
+	created := false
 
 	// Look for the config map by name
 	existing := &corev1.ConfigMap{}
@@ -284,6 +287,9 @@ func (r *MiniClusterReconciler) getConfigMap(
 		// Case 1: not found yet, and hostfile is ready (recreate)
 		if errors.IsNotFound(err) {
 
+			// We are creating it
+			created = true
+
 			// Data for the config map
 			data := map[string]string{}
 
@@ -296,7 +302,7 @@ func (r *MiniClusterReconciler) getConfigMap(
 				// Use zeromq to generate the curve certificate
 				curveCert, err := r.getCurveCert(ctx, cluster)
 				if err != nil || curveCert == "" {
-					return existing, ctrl.Result{Requeue: true}, err
+					return created, existing, ctrl.Result{Requeue: true}, err
 				}
 				data[curveCertKey] = curveCert
 
@@ -310,7 +316,7 @@ func (r *MiniClusterReconciler) getConfigMap(
 						waitScriptID := fmt.Sprintf("wait-%d", i)
 						waitScript, err := generateWaitScript(cluster, i)
 						if err != nil {
-							return existing, ctrl.Result{}, err
+							return created, existing, ctrl.Result{}, err
 						}
 						data[waitScriptID] = waitScript
 					}
@@ -333,14 +339,14 @@ func (r *MiniClusterReconciler) getConfigMap(
 					"Namespace", dep.Namespace,
 					"Name", (*dep).Name,
 				)
-				return existing, ctrl.Result{}, err
+				return created, existing, ctrl.Result{}, err
 			}
 			// Successful - return and requeue
-			return dep, ctrl.Result{Requeue: true}, nil
+			return created, dep, ctrl.Result{Requeue: true}, nil
 
 		} else if err != nil {
 			r.log.Error(err, "Failed to get MiniCluster ConfigMap")
-			return existing, ctrl.Result{}, err
+			return created, existing, ctrl.Result{}, err
 		}
 
 	} else {
@@ -351,7 +357,7 @@ func (r *MiniClusterReconciler) getConfigMap(
 			"Name", existing.Name,
 		)
 	}
-	return existing, ctrl.Result{}, err
+	return created, existing, ctrl.Result{}, err
 }
 
 // generateFluxConfig creates the broker.toml file used to boostrap flux

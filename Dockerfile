@@ -28,15 +28,18 @@ COPY Makefile Makefile
 # Build, ensuring we use the correct keygen
 # Note that the original build command did not work here, so updated to mimic the Makefile logic
 #CGO_ENABLED=0 GOOS=linux GOARCH=amd64 CGO_CFLAGS="-I/usr/include" CGO_LDFLAGS="-L/usr/lib -lstdc++ -lczmq -lzmq" go build -a -o manager main.go
-RUN make build-container && chmod +x ./manager
+RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -a -o manager main.go
+#RUN make build-container && chmod +x ./manager
 RUN apt-get clean && rm -rf -rf /var/lib/apt/lists/*
 
 # We can't use distroless https://github.com/GoogleContainerTools/distroless
 # now that we need the external libraries
-FROM alpine
+FROM debian:stable-slim
 WORKDIR /
-RUN apk update && apk add libsodium libzmq
 COPY --from=builder /workspace/manager /manager
+RUN apt-get update && apt-get install -y libsodium-dev libzmq3-dev libczmq-dev && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/*
 USER 65532:65532
 
 ENTRYPOINT ["/manager"]
