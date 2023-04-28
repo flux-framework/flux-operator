@@ -28,8 +28,7 @@ COPY Makefile Makefile
 # Build, ensuring we use the correct keygen
 # Note that the original build command did not work here, so updated to mimic the Makefile logic
 #CGO_ENABLED=0 GOOS=linux GOARCH=amd64 CGO_CFLAGS="-I/usr/include" CGO_LDFLAGS="-L/usr/lib -lstdc++ -lczmq -lzmq" go build -a -o manager main.go
-RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -a -o manager main.go
-#RUN make build-container && chmod +x ./manager
+RUN make build-container && chmod +x ./manager
 RUN apt-get clean && rm -rf -rf /var/lib/apt/lists/*
 
 # We can't use distroless https://github.com/GoogleContainerTools/distroless
