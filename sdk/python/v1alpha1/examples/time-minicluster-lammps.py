@@ -12,7 +12,7 @@ import json
 
 # Here is our main container
 container = {
-    "image": "ghcr.io/rse-ops/lammps:ping",
+    "image": "ghcr.io/rse-ops/lammps:flux-sched-focal",
     "working_dir": "/home/flux/examples/reaxff/HNS",
     "command": "lmp -v x 1 -v y 1 -v z 1 -in in.reaxc.hns -nocite",
 }
