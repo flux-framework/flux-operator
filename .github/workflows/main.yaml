@@ -31,8 +31,13 @@ jobs:
     - name: fmt check
       run: make fmt
 
-    - name: Install zeromq
-      run: sudo apt-get update && sudo apt-get install -y libsodium-dev libzmq3-dev libczmq-dev
+    - name: Build and Install Operator
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      run: |
+        make
+        make manifests
+        make kustomize
 
     # These aren't written yet
     - name: Run Unit tests
@@ -78,9 +83,6 @@ jobs:
       with:
         go-version: ^1.18
 
-    - name: Install zeromq
-      run: sudo apt-get update && sudo apt-get install -y libsodium-dev libzmq3-dev libczmq-dev
-
     - name: Start minikube
       uses: medyagh/setup-minikube@697f2b7aaed5f70bf2a94ee21a4ec3dde7b12f92 # v0.0.9
 
@@ -99,9 +101,8 @@ jobs:
         if [[ "${test}" == "nginx-service" ]]; then
             minikube ssh docker pull nginx
         fi
-        make deploy-local
-        minikube image load ghcr.io/flux-framework/flux-operator:test
-        kubectl apply -f examples/dist/flux-operator-local.yaml
+        make
+        make install
 
     - name: Test ${{ matrix.test[0] }}
       env:

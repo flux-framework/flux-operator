@@ -11,8 +11,6 @@ All containers are provided under [ghcr.io/flux-framework/flux-operator](https:/
 and we provide the other pinned containers in case you want a previous version:
 
  - [ghcr.io/flux-framework/flux-operator:feb-2023](https://github.com/flux-framework/flux-operator/pkgs/container/flux-operator): the version used for Kubecon experiments, and before storage (minikube and Google Cloud example) were added.
- - [ghcr.io/flux-framework/flux-operator:april-2023](https://github.com/flux-framework/flux-operator/pkgs/container/flux-operator): the version directly before the refactor to remove the certificate generator pod (3.3)
-
 
 ## Install
 
@@ -102,13 +100,22 @@ $ kubectl config set-context --current --namespace=flux-operator
 ```
 
 If you haven't ever installed minkube, you can see [install instructions here](https://minikube.sigs.k8s.io/docs/start/).
-And then we recommend that you use a local development container to build and install the operator. Note
-that we are also loading into MiniKube:
+And then officially build the operator,
 
 ```bash
-$ make deploy-local
-$ minikube image load ghcr.io/flux-framework/flux-operator:test
-$ kubectl apply -f examples/dist/flux-operator-local.yaml
+$ make
+```
+
+(optionally) to make your manifests:
+
+```bash
+$ make manifests
+```
+
+And install. Note that this places an executable `bin/kustomize` that you'll need to delete first if you make install again.
+
+```bash
+$ make install
 ```
 
 At this point, you can kubectl apply your custom resource definition to define your MiniCluster to your cluster to
@@ -119,8 +126,7 @@ $ kubectl apply -f config/samples/flux-framework.org_v1alpha1_minicluster.yaml
 ```
 
 Note that we have other examples (using the web interface in [examples/flux-restful](https://github.com/flux-framework/flux-operator/tree/main/examples/flux-restful)
-and headless examples for testing in [examples/tests](https://github.com/flux-framework/flux-operator/tree/main/examples/tests)) along with
-general (category-specific) examples in [the examples root](https://github.com/flux-framework/flux-operator/tree/main/examples/).
+and headless examples for testing in [examples/tests](https://github.com/flux-framework/flux-operator/tree/main/examples/tests)).
 When you are all done, cleanup with `kubectl delete` commands and/or!
 
 ```bash
@@ -131,7 +137,6 @@ And to stop MiniKube.
 
 ```bash
 $ minikube stop
-$ minikube delete
 ```
 
 ### Tool Install

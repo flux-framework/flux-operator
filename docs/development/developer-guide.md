@@ -45,15 +45,7 @@ $ kubectl create namespace flux-operator
 namespace/flux-operator created
 ```
 
-Here is how to build and install the operator - we recommend you build and load into MiniKube with this command:
-
-```bash
-$ make deploy-local
-$ minikube image load ghcr.io/flux-framework/flux-operator:test
-$ kubectl apply -f examples/dist/flux-operator-local.yaml
-```
-
-But you can also try the manual steps:
+Here is how to build and install the operator:
 
 ```
 # Build the operator
@@ -65,14 +57,6 @@ $ make manifests
 # And install. This places an executable "bin/kustomize"
 $ make install
 ```
-
-Note that the local build required you to have external libraries to generate the curve certificate:
-
-```bash
-sudo apt-get install -y libsodium-dev libzmq3-dev libczmq-dev
-```
-
-If you are unable to install zeromq locally, we recommend the `make deploy-local` command shown above.
 
 #### 2. Configs
 

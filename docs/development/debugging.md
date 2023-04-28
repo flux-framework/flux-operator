@@ -36,6 +36,7 @@ You need to remove the previous kustomize and install the CRD again:
 
 ```bash
 $ rm bin/kustomize
+$ make install
 ```
 
 ### Configs not taking

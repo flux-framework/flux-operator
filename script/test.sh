@@ -18,7 +18,7 @@ out="${ROOT}/examples/tests/${name}/${name}-log.out"
 err="${ROOT}/examples/tests/${name}/${name}-log.err"
 
 # Quick helper script to run a test
-make clean >> /dev/null 2>&1
+make clean >> /dev/null
 make run > ${out} 2> ${err} &
 pid=$!
 echo "PID for running cluster is ${pid}"

@@ -22,9 +22,20 @@ Bring up your MiniKube cluster!
 ```bash
 $ minikube start
 ```
+If you are working from the repository, you can install and run the operator via developer commands:
 
-See the [developer guide](https://flux-framework.org/flux-operator/development/developer-guide.html#local-development) for installing the operator.
-or the [main install guide](https://flux-framework.org/flux-operator/getting_started/user-guide.html#install).
+```bash
+$ make
+$ make install
+$ make run
+```
+
+Or external to that, you can install the latest version:
+
+```bash
+$ wget https://raw.githubusercontent.com/flux-framework/flux-operator/main/examples/dist/flux-operator.yaml
+$ kubectl apply -f flux-operator.yaml
+```
 
 ### Prepare Data
 
@@ -129,6 +140,7 @@ $ kubectl get -n flux-operator pods
 NAME                         READY   STATUS      RESTARTS   AGE
 flux-sample-0-sk72j          1/1     Running     0          35s
 flux-sample-1-6tw4z          1/1     Running     0          35s
+flux-sample-cert-generator   0/1     Completed   0          35s
 ```
 
 Keep watching for when the job is finished! You can see logs (and snakemake output) as follows:

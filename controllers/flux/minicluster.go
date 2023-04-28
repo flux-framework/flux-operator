@@ -32,8 +32,10 @@ import (
 )
 
 var (
-	hostfileName = "hostfile"
-	curveCertKey = "curve-cert"
+	hostfileName      = "hostfile"
+	certGeneratorName = "cert-generate"
+	curveCertKey      = "curve-cert"
+	curveCert         = ""
 )
 
 // This is a MiniCluster! A MiniCluster is associated with a running MiniCluster and include:
@@ -58,7 +60,8 @@ func (r *MiniClusterReconciler) ensureMiniCluster(
 		return result, err
 	}
 
-	// Generate the curve certificate config map.
+	// Generate the curve certificate config map. This creates a container to get
+	// the curve certificate from
 	_, result, err = r.getConfigMap(ctx, cluster, "cert", cluster.Name+curveVolumeSuffix)
 	if err != nil {
 		return result, err
@@ -293,12 +296,15 @@ func (r *MiniClusterReconciler) getConfigMap(
 
 			} else if configName == "cert" {
 
-				// Use zeromq to generate the curve certificate
-				curveCert, err := r.getCurveCert(ctx, cluster)
-				if err != nil || curveCert == "" {
-					return existing, ctrl.Result{Requeue: true}, err
+				// So we don't require read write many, we use an emphemeral pod to generate
+				// the curve certificate. We don't care about this pod, we just want the cert!
+				if curveCert == "" {
+					curveCert, err := r.getCurveCert(ctx, cluster)
+					if err != nil || curveCert == "" {
+						return existing, ctrl.Result{Requeue: true}, err
+					}
+					data[curveCertKey] = curveCert
 				}
-				data[curveCertKey] = curveCert
 
 			} else if configName == "entrypoint" {
 

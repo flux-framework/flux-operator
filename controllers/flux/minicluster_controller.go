@@ -1,5 +1,3 @@
-package controllers
-
 /*
 Copyright 2022-2023 Lawrence Livermore National Security, LLC
  (c.f. AUTHORS, NOTICE.LLNS, COPYING)
@@ -9,6 +7,8 @@ For details, see https://github.com/flux-framework.
 
 SPDX-License-Identifier: Apache-2.0
 */
+
+package controllers
 
 import (
 	"context"

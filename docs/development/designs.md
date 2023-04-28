@@ -2,27 +2,18 @@
 
 ## Active Design
 
-> 3.4
+> 3.3
 
-![04-26-2023/the-operator.png](04-26-2023/the-operator.png)
+![01-06-2023/the-operator-3.3.png](01-06-2023/the-operator-3.3.png)
 
- - [See the Design](04-26-2023/index.md)
+ - [See the Design](01-06-2023/index.md)
 
 ## Early Designs
 
 It is often useful to think about many different designs, and iterate quickly before deciding on a direction
-to take, and this is what we did in the first days of the Flux Operator. The final design (at the top)
+to take, and this is what we did in the first days of the Flux Operator.  The final design (at the top)
 is what we decided to focus on, and the others are described (and illustrated) in detail at their respective
 links. This is a review of various early designs we've thought about, presented in reverse order (newest to latest).
-
-### Design 3.3
-
-> Active from January 6, 2023 to April 26 2023
-
-This design used an external "one off" pod to generate the curve certificate.
-
- - [See the Design](01-06-2023/index.md)
-
 
 ### Design 3.2
 

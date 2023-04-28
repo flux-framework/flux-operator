@@ -34,7 +34,6 @@ IMAGE_TAG_BASE ?= ghcr.io/flux-framework/flux-operator
 KIND_VERSION=v0.11.1
 # This kubectl version supports -k for kustomization, taken from mpi
 KUBECTL_VERSION=v1.21.4
-BUILDENVVAR=CGO_CFLAGS="-I/usr/include" CGO_LDFLAGS="-L/usr/lib -lstdc++ -lczmq -lzmq"
 
 # BUNDLE_IMG defines the image:tag used for the bundle.
 # You can use it as an arg. (E.g make bundle-build BUNDLE_IMG=<some-registry>/<project-name-bundle>:<tag>)
@@ -222,15 +221,7 @@ images:
 
 .PHONY: build
 build: generate fmt vet ## Build manager binary.
-	mv ./controllers/flux/keygen.go ./controllers/flux/keygen.go.backup
-	cp ./controllers/flux/keygen.go.template ./controllers/flux/keygen.go
-	$(BUILDENVVAR) go build -o bin/manager main.go
-	mv ./controllers/flux/keygen.go.backup ./controllers/flux/keygen.go
-
-.PHONY: build-container
-build-container: generate fmt vet
-	cp ./controllers/flux/keygen.go.template ./controllers/flux/keygen.go
-	$(BUILDENVVAR) go build -a -o ./manager main.go
+	go build -o bin/manager main.go
 
 .PHONY: run
 run: manifests generate fmt vet ## Run a controller from your host.
@@ -275,15 +266,6 @@ test-deploy: manifests kustomize
 	docker push ${DEVIMG}
 	cd config/manager && $(KUSTOMIZE) edit set image controller=${DEVIMG}
 	$(KUSTOMIZE) build config/default > examples/dist/flux-operator-dev.yaml
-
-# Build a local test image, load into minikube or kind and apply the build-config
-.PHONY: deploy-local
-deploy-local: manifests kustomize build
-	kubectl delete -f examples/dist/flux-operator-local.yaml || true
-	docker build -t ${DEVIMG} .
-	cd config/manager && $(KUSTOMIZE) edit set image controller=${DEVIMG}
-	$(KUSTOMIZE) build config/default > examples/dist/flux-operator-local.yaml
-	sed -i 's/        imagePullPolicy: Always/        imagePullPolicy: Never/' examples/dist/flux-operator-local.yaml
 
 .PHONY: undeploy
 undeploy: ## Undeploy controller from the K8s cluster specified in ~/.kube/config. Call with ignore-not-found=true to ignore resource not found errors during deletion.
