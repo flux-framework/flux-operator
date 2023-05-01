@@ -1,9 +1,9 @@
-# Mini Cluster
+# MiniCluster
 
-> The CRD "Custom Resource Definition" defines a Mini Cluster
+> The CRD "Custom Resource Definition" defines a MiniCluster
 
 A CRD is a yaml file that you can apply to your cluster (with the Flux Operator
-installed) to ask for a Mini Cluster. Kubernetes has these [custom resources](https://kubernetes.io/docs/concepts/extend-kubernetes/api-extension/custom-resources/)
+installed) to ask for a MiniCluster. Kubernetes has these [custom resources](https://kubernetes.io/docs/concepts/extend-kubernetes/api-extension/custom-resources/)
 to make it easy to automate tasks, and in fact this is the goal of an operator!
 A Kubernetes operator is conceptually like a human operator that takes your CRD,
 looks at the cluster state, and does whatever is necessary to get your cluster state

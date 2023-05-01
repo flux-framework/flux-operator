@@ -660,7 +660,7 @@ persistentvolumeclaim/data   Bound    pvc-8cd3cbb8-d0d4-4310-bc9d-748bb70ab8ca  
 ```
 
 The volume and claim should both be "Bound" and not "Lost" or anything like that. If this isn't the case, use `kubectl describe` to see details
-of why it might be. Importantly, we need to get the name of the claim for the minicluster. It should be the one that you provided in your
+of why it might be. Importantly, we need to get the name of the claim for the MiniCluster. It should be the one that you provided in your
 spec, but just in case, here is how to check with jq:
 
 ```bash

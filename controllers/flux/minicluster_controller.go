@@ -136,9 +136,9 @@ func (r *MiniClusterReconciler) Reconcile(
 		r.log.Info("🌀 Your MiniCluster config did not validate! see the sad faces above for details. Canceling!")
 		return ctrl.Result{}, nil
 	}
-	r.log.Info("🌀 Reconciling Mini Cluster", "Containers: ", len(cluster.Spec.Containers))
+	r.log.Info("🌀 Reconciling MiniCluster", "Containers: ", len(cluster.Spec.Containers))
 
-	// Ensure we have the minicluster (get or create!)
+	// Ensure we have the MiniCluster (get or create!)
 	result, err := r.ensureMiniCluster(ctx, &cluster)
 	if err != nil {
 		return result, err
@@ -146,7 +146,7 @@ func (r *MiniClusterReconciler) Reconcile(
 
 	// By the time we get here we have a Job + pods + config maps!
 	// What else do we want to do?
-	r.log.Info("🌀 Mini Cluster is Ready!")
+	r.log.Info("🌀 MiniCluster is Ready!")
 
 	// Check until the job finishes to clean up volumes if needed
 	if cluster.Spec.Cleanup {

@@ -12,7 +12,7 @@ Now let's run a short experiment with LAMMPS!
 
 ## Custom Resource Definition
 
-The Custom Resource Definition (CRD) defines our Mini Cluster, and is what we hand to the flux
+The Custom Resource Definition (CRD) defines our MiniCluster, and is what we hand to the flux
 operator to create it.  Here is the CRD for a small lammps run.
 
 ```yaml
@@ -43,7 +43,7 @@ You can save the above file as `minicluster-lammps.yaml` to get started.
 
 ## Create the Lammps Job
 
-Now let's apply the custom resource definition to create the lammps mini cluster!
+Now let's apply the custom resource definition to create the lammps MiniCluster!
 The file we generated above should be in your present working directory.
 Importantly, we have set `localDeploy` to false because we need to create volume
 claims and not local host mounts for shared resources.

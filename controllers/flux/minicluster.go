@@ -40,7 +40,7 @@ var (
 // 1. An indexed job with some number of pods
 // 2. Config maps for secrets and other things.
 // 3. We "launch" a job by starting the Indexed job on the connected nodes
-// newMiniCluster creates a new mini cluster, a stateful set for running flux!
+// newMiniCluster creates a new MiniCluster, a stateful set for running flux!
 func (r *MiniClusterReconciler) ensureMiniCluster(
 	ctx context.Context,
 	cluster *api.MiniCluster,
@@ -155,7 +155,7 @@ func (r *MiniClusterReconciler) cleanupPodsStorage(
 	}
 	r.log.Info("MiniCluster", "Job Status", "Completed")
 
-	// Delete the mini cluster first
+	// Delete the MiniCluster first
 	// If we don't, it will keep re-creating the assets and loop forever :)
 	r.Client.Delete(ctx, cluster)
 
