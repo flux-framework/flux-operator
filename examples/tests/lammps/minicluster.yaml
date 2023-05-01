@@ -5,7 +5,7 @@ metadata:
   namespace: flux-operator
 spec:
   # Number of pods to create for MiniCluster
-  size: 4
+  size: 2
   tasks: 2
 
   # suppress all output except for test run
@@ -16,7 +16,6 @@ spec:
   containers:
     # The container URI to pull (currently needs to be public)
     - image: ghcr.io/rse-ops/lammps:flux-sched-focal
-      cores: 2
 
       # You can set the working directory if your container WORKDIR is not correct.
       workingDir: /home/flux/examples/reaxff/HNS
