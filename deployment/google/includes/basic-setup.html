@@ -571,6 +571,12 @@ to be cheaper (and closer to me). First, here is our project for easy access:</p
 <span class="w">    </span>--num-nodes<span class="o">=</span><span class="m">4</span><span class="w"> </span>--enable-network-policy<span class="w"> </span>--tags<span class="o">=</span>flux-cluster<span class="w"> </span>--enable-intra-node-visibility
 </code></pre></div>
 </div>
+<p>As an example to use <code class="docutils literal notranslate"><span class="pre">core-dns</span></code>:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span>gcloud<span class="w"> </span>container<span class="w"> </span>clusters<span class="w"> </span>create<span class="w"> </span>flux-operator<span class="w"> </span>--cluster-dns<span class="o">=</span>clouddns<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--cluster-dns-scope<span class="o">=</span>cluster<span class="w"> </span>--region<span class="o">=</span>us-central1-a<span class="w"> </span>--project<span class="w"> </span><span class="nv">$GOOGLE_PROJECT</span><span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--machine-type<span class="w"> </span>n1-standard-2<span class="w"> </span>--num-nodes<span class="o">=</span><span class="m">4</span><span class="w"> </span>--enable-network-policy<span class="w"> </span>--tags<span class="o">=</span>flux-cluster<span class="w"> </span>--enable-intra-node-visibility
+</code></pre></div>
+</div>
 <p>If you need a particular Kubernetes version:</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span>gcloud<span class="w"> </span>container<span class="w"> </span>clusters<span class="w"> </span>create<span class="w"> </span>flux-cluster<span class="w"> </span>--project<span class="w"> </span><span class="nv">$GOOGLE_PROJECT</span><span class="w"> </span><span class="se">\</span>
 <span class="w">    </span>--zone<span class="w"> </span>us-central1-a<span class="w"> </span>--cluster-version<span class="w"> </span><span class="m">1</span>.23<span class="w"> </span>--machine-type<span class="w"> </span>n1-standard-1<span class="w"> </span><span class="se">\</span>
@@ -695,7 +701,7 @@ No<span class="w"> </span>LimitRange<span class="w"> </span>resource.
   <small>
     
       Last update:
-      Apr 27, 2023
+      May 02, 2023
     
   </small>
 </div>

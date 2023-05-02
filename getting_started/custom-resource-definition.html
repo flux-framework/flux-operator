@@ -635,6 +635,13 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#zeromq" class="md-nav__link">
+    <span title="/getting_started/custom-resource-definition.md#zeromq (reference label)" class="md-ellipsis">zeromq</span>
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -1401,6 +1408,25 @@ and the worker pods flux start will have <code class="docutils literal notransla
 <span class="w">  </span><span class="nt">debug</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
 </code></pre></div>
 </div>
+<h4 id="zeromq">zeromq<a class="headerlink" href="#zeromq" title="Permalink to this heading">¶</a></h4>
+<p>ZeroMQ has logging explicitly for it, and you can enable it for the operator as follows:</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><code><span class="nt">logging</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">zeromq</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+</code></pre></div>
+</div>
+<p>As an example, when the cluster workers are connecting to the broker, they will retry every
+so often until the headless service is ready. That looks like this:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>broker.debug<span class="o">[</span><span class="m">1</span><span class="o">]</span>:<span class="w"> </span>parent<span class="w"> </span>sockevent<span class="w"> </span>tcp://lammps-0.flux-service.flux-operator.svc.cluster.local:8050<span class="w"> </span>connect<span class="w"> </span>delayed
+broker.debug<span class="o">[</span><span class="m">1</span><span class="o">]</span>:<span class="w"> </span>parent<span class="w"> </span>sockevent<span class="w"> </span>tcp://lammps-0.flux-service.flux-operator.svc.cluster.local:8050<span class="w"> </span>closed
+broker.debug<span class="o">[</span><span class="m">1</span><span class="o">]</span>:<span class="w"> </span>parent<span class="w"> </span>sockevent<span class="w"> </span>tcp://lammps-0.flux-service.flux-operator.svc.cluster.local:8050<span class="w"> </span>connect<span class="w"> </span>retried
+broker.debug<span class="o">[</span><span class="m">1</span><span class="o">]</span>:<span class="w"> </span>parent<span class="w"> </span>sockevent<span class="w"> </span>tcp://lammps-0.flux-service.flux-operator.svc.cluster.local:8050<span class="w"> </span>connect<span class="w"> </span>delayed
+broker.debug<span class="o">[</span><span class="m">1</span><span class="o">]</span>:<span class="w"> </span>parent<span class="w"> </span>sockevent<span class="w"> </span>tcp://lammps-0.flux-service.flux-operator.svc.cluster.local:8050<span class="w"> </span>connected
+broker.debug<span class="o">[</span><span class="m">1</span><span class="o">]</span>:<span class="w"> </span>parent<span class="w"> </span>sockevent<span class="w"> </span>tcp://lammps-0.flux-service.flux-operator.svc.cluster.local:8050<span class="w"> </span>handshake<span class="w"> </span>succeeded
+</code></pre></div>
+</div>
+<p>This parameter is currently unset in Flux (so the wait can be slow) and we will have an update to Flux
+soon to make the check more frequent. If you find that your cluster creation times are slower than
+you expected, this is the probably cause, and it will be resolved with this update to Flux.</p>
 <h3 id="archive">archive<a class="headerlink" href="#archive" title="Permalink to this heading">¶</a></h3>
 <p>If you want to save state between MiniClusters, you can set an archive path for
 the MiniCluster to load and save to. Given that the path exists, in the entrypoint
@@ -1876,7 +1902,7 @@ or define your own as follows:</p>
   <small>
     
       Last update:
-      Apr 27, 2023
+      May 02, 2023
     
   </small>
 </div>
