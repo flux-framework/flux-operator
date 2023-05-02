@@ -81,7 +81,7 @@ If you are unable to install zeromq locally, we recommend the `make deploy-local
 Our "default" job config, or custom resource definition "CRD" can be found in [config/samples](https://github.com/flux-framework/flux-operator/tree/main/config/samples).
 We will walk through how to deploy this one, and then any of the ones in our examples gallery.
 When you've built and installed the operator, here is how to "launch"
-the Mini Cluster (or if providing a command, an ephemeral job):
+the MiniCluster (or if providing a command, an ephemeral job):
 
 ```bash
 $ kubectl apply -f config/samples/flux-framework.org_v1alpha1_minicluster.yaml
@@ -151,7 +151,7 @@ or not (for the Flux Restful). To make it easy to clean up your cluster and appl
 
 ###### Flux Restful
 
-We call this the main set of "examples." To clean up Minikube, apply a named config, and run the example via a Mini Cluster, first match the name of the yaml
+We call this the main set of "examples." To clean up Minikube, apply a named config, and run the example via a MiniCluster, first match the name of the yaml
 file to a variable name. E.g., for the following files, the names would be:
 
 ```console
@@ -360,7 +360,7 @@ Testing is underway! From a high level, we want three kinds of testing:
 
 For the integration testing outside of Go, we currently have basic tests written that allow the following:
 
-1. Write a custom resource definition (CRD) for a named mini cluster under `examples/tests/${name}` as `minicluster.yaml`.
+1. Write a custom resource definition (CRD) for a named MiniCluster under `examples/tests/${name}` as `minicluster.yaml`.
 2. The CRD should set `test:true` and include a command to run, and a container to do it.
 3. Add your test name, container, and estimated running time to `.github/workflows/main.yaml`
 4. If your tests require a working directory, it must be set in the CRD for the headless test.

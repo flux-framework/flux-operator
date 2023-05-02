@@ -12,7 +12,7 @@ This design is an extended 3, updated for the new year (and work TBA).
  - As the pods use the same base container with Flux, the munge key should already be equivalent.
  - A 'test' mode available in the CRD is provided to quiet all output except for the job.
  - Networking of the pods works by way of exposing a service that includes the Pod subdomain. We add fully qualified domain names to the pods so that the `hostname` command matches the full name, and Flux is given the full names in its broker.toml.
- - The main pod either runs `flux start` with a web service (creating a persistent "Mini Cluster" or `flux start` with a specific command (if provided in the CRD) in which case the command runs, and the jobs finish and the cluster goes away.
+ - The main pod either runs `flux start` with a web service (creating a persistent "MiniCluster" or `flux start` with a specific command (if provided in the CRD) in which case the command runs, and the jobs finish and the cluster goes away.
 
 This means that:
 

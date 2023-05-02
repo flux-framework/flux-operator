@@ -50,7 +50,7 @@ func (r *MiniClusterReconciler) exposeServices(
 	return ctrl.Result{}, err
 }
 
-// createHeadlessService creates the service for the minicluster
+// createHeadlessService creates the service for the MiniCluster
 func (r *MiniClusterReconciler) createHeadlessService(
 	ctx context.Context,
 	cluster *api.MiniCluster,
@@ -74,7 +74,7 @@ func (r *MiniClusterReconciler) createHeadlessService(
 	return service, err
 }
 
-// exposeService creates a port-specific service for the minicluster
+// exposeService creates a port-specific service for the MiniCluster
 func (r *MiniClusterReconciler) exposeService(
 	ctx context.Context,
 	cluster *api.MiniCluster,

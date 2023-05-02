@@ -112,7 +112,7 @@ $ kubectl apply -f examples/dist/flux-operator-local.yaml
 ```
 
 At this point, you can kubectl apply your custom resource definition to define your MiniCluster to your cluster to
-either run a job or start a Flux Mini Cluster.
+either run a job or start a Flux MiniCluster.
 
 ```bash
 $ kubectl apply -f config/samples/flux-framework.org_v1alpha1_minicluster.yaml

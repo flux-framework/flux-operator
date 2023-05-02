@@ -18,7 +18,7 @@ Each of the strategies above will be discussed here.
 
 ## 1. Single Job MiniCluster CRD
 
-### a. Submit a minicluster yaml via kubectl
+### a. Submit a MiniCluster yaml via kubectl
 
 When you define a command in a MiniCluster CRD, this will submit and run one job using that command, and clean up.
 You can find many examples for doing this under our [tests](https://github.com/flux-framework/flux-operator/tree/main/examples/tests)

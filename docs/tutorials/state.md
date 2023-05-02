@@ -127,8 +127,8 @@ in the entrypoint. To have better control of the reverse sequence - saving the f
 we will run `flux dump` to that same archive as an interactive command. Note this is a simple approach
 that assumes we are OK replacing a previous state with a new one - for more complex workflows (where
 possibly we need to maintain an original state) we likely will need to do something differently. For
-the time being, let's create this first minicluster to submit jobs to, and the plan will be
-that the second minicluster can load previous job history. If you are using
+the time being, let's create this first MiniCluster to submit jobs to, and the plan will be
+that the second MiniCluster can load previous job history. If you are using
 Minikube, make sure to pull first:
 
 ```bash
@@ -338,8 +338,8 @@ total 7
 -rw-rw-r-- 1 docker docker 6231 Mar 12 07:44 archive.tar.gz
 ```
 
-Next, let's bring up a second minicluster! This time, in the entry point it should find the existing archive,
-load into the broker, and then we will see them. We can use the same minicluster file!
+Next, let's bring up a second MiniCluster! This time, in the entry point it should find the existing archive,
+load into the broker, and then we will see them. We can use the same MiniCluster file!
 
 ```bash
 $ kubectl apply -f examples/state/basic-job-completion/minicluster.yaml 
