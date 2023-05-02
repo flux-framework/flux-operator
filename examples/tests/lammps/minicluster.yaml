@@ -5,7 +5,7 @@ metadata:
   namespace: flux-operator
 spec:
   # Number of pods to create for MiniCluster
-  size: 2
+  size: 4
   tasks: 2
 
   # suppress all output except for test run

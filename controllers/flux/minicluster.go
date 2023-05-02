@@ -92,7 +92,7 @@ func (r *MiniClusterReconciler) ensureMiniCluster(
 		return result, err
 	}
 
-	// Expose pod index 0 service
+	// Create headless service for the MiniCluster
 	selector := map[string]string{"job-name": cluster.Name}
 	result, err = r.exposeServices(ctx, cluster, restfulServiceName, selector)
 	if err != nil {

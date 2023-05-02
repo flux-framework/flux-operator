@@ -121,7 +121,7 @@ run_diagnostics() {
 # Cron directory
 mkdir -p /etc/flux/system/cron.d
 
-# Main host <name>-0
+# Main host <name>-0 and the fully qualified domain name
 mainHost="{{ .MainHost}}"
 
 # The working directory should be set by the CRD or the container

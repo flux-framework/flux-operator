@@ -331,6 +331,32 @@ logging:
   debug: true
 ```
 
+#### zeromq
+
+ZeroMQ has logging explicitly for it, and you can enable it for the operator as follows:
+
+```yaml
+logging:
+  zeromq: true
+```
+
+As an example, when the cluster workers are connecting to the broker, they will retry every
+so often until the headless service is ready. That looks like this:
+
+```bash
+broker.debug[1]: parent sockevent tcp://lammps-0.flux-service.flux-operator.svc.cluster.local:8050 connect delayed
+broker.debug[1]: parent sockevent tcp://lammps-0.flux-service.flux-operator.svc.cluster.local:8050 closed
+broker.debug[1]: parent sockevent tcp://lammps-0.flux-service.flux-operator.svc.cluster.local:8050 connect retried
+broker.debug[1]: parent sockevent tcp://lammps-0.flux-service.flux-operator.svc.cluster.local:8050 connect delayed
+broker.debug[1]: parent sockevent tcp://lammps-0.flux-service.flux-operator.svc.cluster.local:8050 connected
+broker.debug[1]: parent sockevent tcp://lammps-0.flux-service.flux-operator.svc.cluster.local:8050 handshake succeeded
+```
+
+This parameter is currently unset in Flux (so the wait can be slow) and we will have an update to Flux
+soon to make the check more frequent. If you find that your cluster creation times are slower than
+you expected, this is the probably cause, and it will be resolved with this update to Flux.
+
+
 ### archive
 
 If you want to save state between MiniClusters, you can set an archive path for
