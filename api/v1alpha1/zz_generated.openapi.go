@@ -320,6 +320,14 @@ func schema__api_v1alpha1__LoggingSpec(ref common.ReferenceCallback) common.Open
 							Format:      "",
 						},
 					},
+					"zeromq": {
+						SchemaProps: spec.SchemaProps{
+							Description: "Enable Zeromq logging",
+							Default:     false,
+							Type:        []string{"boolean"},
+							Format:      "",
+						},
+					},
 					"timed": {
 						SchemaProps: spec.SchemaProps{
 							Description: "Timed mode adds timing to Flux commands",

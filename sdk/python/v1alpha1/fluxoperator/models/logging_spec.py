@@ -36,17 +36,19 @@ class LoggingSpec(object):
         'debug': 'bool',
         'quiet': 'bool',
         'strict': 'bool',
-        'timed': 'bool'
+        'timed': 'bool',
+        'zeromq': 'bool'
     }
 
     attribute_map = {
         'debug': 'debug',
         'quiet': 'quiet',
         'strict': 'strict',
-        'timed': 'timed'
+        'timed': 'timed',
+        'zeromq': 'zeromq'
     }
 
-    def __init__(self, debug=False, quiet=False, strict=True, timed=False, local_vars_configuration=None):  # noqa: E501
+    def __init__(self, debug=False, quiet=False, strict=True, timed=False, zeromq=False, local_vars_configuration=None):  # noqa: E501
         """LoggingSpec - a model defined in OpenAPI"""  # noqa: E501
         if local_vars_configuration is None:
             local_vars_configuration = Configuration.get_default_copy()
@@ -56,6 +58,7 @@ class LoggingSpec(object):
         self._quiet = None
         self._strict = None
         self._timed = None
+        self._zeromq = None
         self.discriminator = None
 
         if debug is not None:
@@ -66,6 +69,8 @@ class LoggingSpec(object):
             self.strict = strict
         if timed is not None:
             self.timed = timed
+        if zeromq is not None:
+            self.zeromq = zeromq
 
     @property
     def debug(self):
@@ -158,6 +163,29 @@ class LoggingSpec(object):
         """
 
         self._timed = timed
+
+    @property
+    def zeromq(self):
+        """Gets the zeromq of this LoggingSpec.  # noqa: E501
+
+        Enable Zeromq logging  # noqa: E501
+
+        :return: The zeromq of this LoggingSpec.  # noqa: E501
+        :rtype: bool
+        """
+        return self._zeromq
+
+    @zeromq.setter
+    def zeromq(self, zeromq):
+        """Sets the zeromq of this LoggingSpec.
+
+        Enable Zeromq logging  # noqa: E501
+
+        :param zeromq: The zeromq of this LoggingSpec.  # noqa: E501
+        :type zeromq: bool
+        """
+
+        self._zeromq = zeromq
 
     def to_dict(self, serialize=False):
         """Returns the model properties as a dict"""

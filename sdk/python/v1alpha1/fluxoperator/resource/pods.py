@@ -13,7 +13,13 @@ def _get_logging_spec(logging):
     """
     Return models.Logging
     """
-    logging_defaults = {"debug": False, "quiet": False, "strict": True, "timed": False}
+    logging_defaults = {
+        "debug": False,
+        "quiet": False,
+        "strict": True,
+        "timed": False,
+        "zeromq": False,
+    }
 
     for k, v in (logging or {}).items():
         if k in logging_defaults and v in [True, False]:
@@ -49,7 +55,6 @@ def _get_container_spec(container):
             container_kwargs[k] = _get_container_volumes(container[k])
         elif k in container and k == "resources":
             container_kwargs["resources"] = _get_container_resources_spec(container[k])
-
     return models.MiniClusterContainer(**container_kwargs)
 
 

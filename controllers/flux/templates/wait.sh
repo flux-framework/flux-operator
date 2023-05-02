@@ -85,6 +85,7 @@ brokerOptions="-Scron.directory=/etc/flux/system/cron.d \
   -Srundir=/run/flux {{ if .Spec.Interactive }}-Sbroker.rc2_none {{ end }} \
   -Sstatedir=${STATE_DIR} \
   -Slocal-uri=local:///run/flux/local \
+{{ if .Spec.Logging.Zeromq }}-Stbon.zmqdebug=1{{ end }} \
 {{ if not .Spec.Logging.Quiet }} -Slog-stderr-level={{or .Container.FluxLogLevel 6}} {{ else }} -Slog-stderr-level=0 {{ end }} \
   -Slog-stderr-mode=local"
 
@@ -120,7 +121,7 @@ run_diagnostics() {
 # Cron directory
 mkdir -p /etc/flux/system/cron.d
 
-# Main host <name>-0
+# Main host <name>-0 and the fully qualified domain name
 mainHost="{{ .MainHost}}"
 
 # The working directory should be set by the CRD or the container
@@ -343,11 +344,16 @@ flux jobs -a{{ end }}
        {{ .Container.Commands.WorkerPre}} {{ if .Spec.Logging.Quiet }}> /dev/null 2>&1{{ end }}
 
         # Sleep until the broker is ready
-{{ if not .Spec.Logging.Quiet }}
-        printf "\n🌀 {{.Container.Commands.Prefix}} flux start -o --config /etc/flux/config ${brokerOptions}\n"{{ end }}
+        {{ if not .Spec.Logging.Quiet }}printf "\n🌀 {{.Container.Commands.Prefix}} flux start -o --config /etc/flux/config ${brokerOptions}\n"{{ end }}
         while true
         do
             {{ if .Spec.Logging.Timed }}/usr/bin/time -f "FLUXTIME fluxstart wall time %E" {{ end }}${asFlux} {{.Container.Commands.Prefix}} flux start -o --config /etc/flux/config ${brokerOptions}
+            retval=$?
+            {{ if not .Spec.Logging.Quiet }}printf "Return value for follower worker is ${retval}\n"{{ end }}
+            if [[ "${retval}" -eq 0 ]]; then
+                {{ if not .Spec.Logging.Quiet }}printf "The follower worker exited cleanly. Goodbye!\n"{{ end }}
+                break
+            fi
             {{ if not .Spec.Logging.Quiet }}printf "\n😪 Sleeping 15s until broker is ready..."{{ end }}
             sleep 15
         done

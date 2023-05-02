@@ -16,7 +16,6 @@ spec:
   containers:
     # The container URI to pull (currently needs to be public)
     - image: ghcr.io/rse-ops/lammps:flux-sched-focal
-      cores: 2
 
       # You can set the working directory if your container WORKDIR is not correct.
       workingDir: /home/flux/examples/reaxff/HNS

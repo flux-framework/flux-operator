@@ -10,6 +10,19 @@ Read more, including user and developer guides, and project background in our �
 
 🚧️ Under Construction! 🚧️
 
+**Important!** We recently removed a one-off container that ran before the MiniCluster creation to generate a certificate.
+We have found [through testing](https://github.com/kubernetes-sigs/jobset/issues/104) that this somehow served as a warmup
+for networking, and this means if you use the latest operator here, you may see slow times in creating the initial
+broker setup. We have two sets of bugfixes to go in that should resolve this:
+
+ - An update to set the zeromq timeout (TBA soon)
+ - a TBA update to resolve whatever the noticed bug is above (TBA unknown)
+
+With the bug, you might see creation times between 40-140 seconds for a single MiniCluster, which is abysmal.
+With the fix to zeromq, this goes does to 19-20. With the further addition of adding the warmup service, it goes
+down to ~16. With the service plus a better networking setup than kube-dns, it returns to the original 11-12 seconds.
+Thank you for your patience as we work on this - we will hopefully get everything resolved soon!
+
 ## Organization
 
 The basic idea is that we present the idea of a **MiniCluster** that is a custom resource definition (CRD)

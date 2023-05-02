@@ -85,16 +85,16 @@ func (r *MiniClusterReconciler) ensureMiniCluster(
 		}
 	}
 
-	// Create the batch job that brings it all together!
-	// A batchv1.Job can hold a spec for containers that use the configs we just made
-	_, result, err = r.getMiniCluster(ctx, cluster)
+	// Create headless service for the MiniCluster
+	selector := map[string]string{"job-name": cluster.Name}
+	result, err = r.exposeServices(ctx, cluster, restfulServiceName, selector)
 	if err != nil {
 		return result, err
 	}
 
-	// Expose pod index 0 service
-	selector := map[string]string{"job-name": cluster.Name}
-	result, err = r.exposeServices(ctx, cluster, restfulServiceName, selector)
+	// Create the batch job that brings it all together!
+	// A batchv1.Job can hold a spec for containers that use the configs we just made
+	_, result, err = r.getMiniCluster(ctx, cluster)
 	if err != nil {
 		return result, err
 	}

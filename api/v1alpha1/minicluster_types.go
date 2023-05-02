@@ -132,6 +132,12 @@ type LoggingSpec struct {
 	// +optional
 	Debug bool `json:"debug,omitempty"`
 
+	// Enable Zeromq logging
+	// +kubebuilder:default=false
+	// +default=false
+	// +optional
+	Zeromq bool `json:"zeromq,omitempty"`
+
 	// Timed mode adds timing to Flux commands
 	// +kubebuilder:default=false
 	// +default=false

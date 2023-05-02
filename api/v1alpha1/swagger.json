@@ -166,6 +166,11 @@
           "description": "Timed mode adds timing to Flux commands",
           "type": "boolean",
           "default": false
+        },
+        "zeromq": {
+          "description": "Enable Zeromq logging",
+          "type": "boolean",
+          "default": false
         }
       }
     },
