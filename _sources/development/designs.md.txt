@@ -26,7 +26,7 @@ This design used an external "one off" pod to generate the curve certificate.
 
 ### Design 3.2
 
-This design extends and improves the Mini Cluster to better handle networking.
+This design extends and improves the MiniCluster to better handle networking.
 
  - [See the Design](09-16-2022/index.md)
 

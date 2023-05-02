@@ -947,8 +947,8 @@ in the entrypoint. To have better control of the reverse sequence - saving the f
 we will run <code class="docutils literal notranslate"><span class="pre">flux</span> <span class="pre">dump</span></code> to that same archive as an interactive command. Note this is a simple approach
 that assumes we are OK replacing a previous state with a new one - for more complex workflows (where
 possibly we need to maintain an original state) we likely will need to do something differently. For
-the time being, let’s create this first minicluster to submit jobs to, and the plan will be
-that the second minicluster can load previous job history. If you are using
+the time being, let’s create this first MiniCluster to submit jobs to, and the plan will be
+that the second MiniCluster can load previous job history. If you are using
 Minikube, make sure to pull first:</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span>minikube<span class="w"> </span>ssh<span class="w"> </span>docker<span class="w"> </span>pull<span class="w"> </span>ghcr.io/flux-framework/flux-restful-api:latest
 </code></pre></div>
@@ -1121,8 +1121,8 @@ total<span class="w"> </span><span class="m">7</span>
 -rw-rw-r--<span class="w"> </span><span class="m">1</span><span class="w"> </span>docker<span class="w"> </span>docker<span class="w"> </span><span class="m">6231</span><span class="w"> </span>Mar<span class="w"> </span><span class="m">12</span><span class="w"> </span><span class="m">07</span>:44<span class="w"> </span>archive.tar.gz
 </code></pre></div>
 </div>
-<p>Next, let’s bring up a second minicluster! This time, in the entry point it should find the existing archive,
-load into the broker, and then we will see them. We can use the same minicluster file!</p>
+<p>Next, let’s bring up a second MiniCluster! This time, in the entry point it should find the existing archive,
+load into the broker, and then we will see them. We can use the same MiniCluster file!</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span>kubectl<span class="w"> </span>apply<span class="w"> </span>-f<span class="w"> </span>examples/state/basic-job-completion/minicluster.yaml<span class="w"> </span>
 </code></pre></div>
 </div>

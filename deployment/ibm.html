@@ -1279,7 +1279,7 @@ You can first verify there are no PVs or PVs on the cluster:</p>
 </code></pre></div>
 </div>
 <p>The volume and claim should both be “Bound” and not “Lost” or anything like that. If this isn’t the case, use <code class="docutils literal notranslate"><span class="pre">kubectl</span> <span class="pre">describe</span></code> to see details
-of why it might be. Importantly, we need to get the name of the claim for the minicluster. It should be the one that you provided in your
+of why it might be. Importantly, we need to get the name of the claim for the MiniCluster. It should be the one that you provided in your
 spec, but just in case, here is how to check with jq:</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span>kubectl<span class="w"> </span>get<span class="w"> </span>-n<span class="w"> </span>flux-operator<span class="w"> </span>pvc<span class="w"> </span>-o<span class="w"> </span>json<span class="w"> </span><span class="p">|</span><span class="w"> </span>jq<span class="w"> </span><span class="s2">&quot;.items[].metadata.name&quot;</span>
 <span class="s2">&quot;data&quot;</span>

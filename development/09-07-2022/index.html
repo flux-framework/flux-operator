@@ -583,7 +583,7 @@ written to <code class="docutils literal notranslate"><span class="pre">/tmp</sp
 <p>The first time the pods are created, they won’t have ips (yet) so you’ll see an empty list in the logs.
 As they are creating and getting ips, after that is finished you’ll see the same output but with a
 lookup of hostnames to ip addresses, and after it will tell you the cluster is ready.</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><code>1.6629325562267003e+09  INFO    minicluster-reconciler  🌀 Mini Cluster is Ready!
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><code>1.6629325562267003e+09  INFO    minicluster-reconciler  🌀 MiniCluster is Ready!
 </code></pre></div>
 </div>
 <p>When you are waiting and run <code class="docutils literal notranslate"><span class="pre">make</span> <span class="pre">log</span></code> in a separate terminal you’ll see output from one of the pods
@@ -644,7 +644,7 @@ will be your CRD name plus index of the container:</p>
 </code></pre></div>
 </div>
 <p>This functionality will depend on whether you are running a single command,
-or a persistent Mini Cluster.</p>
+or a persistent MiniCluster.</p>
 
 
   <hr>

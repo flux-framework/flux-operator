@@ -996,7 +996,7 @@ No<span class="w"> </span>LimitRange<span class="w"> </span>resource.
 </div>
 <p>Now let’s run a short experiment with LAMMPS!</p>
 <h2 id="custom-resource-definition">Custom Resource Definition<a class="headerlink" href="#custom-resource-definition" title="Permalink to this heading">¶</a></h2>
-<p>The Custom Resource Definition (CRD) defines our Mini Cluster, and is what we hand to the flux
+<p>The Custom Resource Definition (CRD) defines our MiniCluster, and is what we hand to the flux
 operator to create it.  Here is the CRD for a small lammps run.</p>
 <div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><code><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">flux-framework.org/v1alpha1</span>
 <span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">MiniCluster</span>
@@ -1023,7 +1023,7 @@ operator to create it.  Here is the CRD for a small lammps run.</p>
 </div>
 <p>You can save the above file as <code class="docutils literal notranslate"><span class="pre">minicluster-lammps.yaml</span></code> to get started.</p>
 <h2 id="create-the-lammps-job">Create the Lammps Job<a class="headerlink" href="#create-the-lammps-job" title="Permalink to this heading">¶</a></h2>
-<p>Now let’s apply the custom resource definition to create the lammps mini cluster!
+<p>Now let’s apply the custom resource definition to create the lammps MiniCluster!
 The file we generated above should be in your present working directory.
 Importantly, we have set <code class="docutils literal notranslate"><span class="pre">localDeploy</span></code> to false because we need to create volume
 claims and not local host mounts for shared resources.</p>

@@ -952,7 +952,7 @@ $ make install
 <p>Our “default” job config, or custom resource definition “CRD” can be found in <a class="reference external" href="https://github.com/flux-framework/flux-operator/tree/main/config/samples">config/samples</a>.
 We will walk through how to deploy this one, and then any of the ones in our examples gallery.
 When you’ve built and installed the operator, here is how to “launch”
-the Mini Cluster (or if providing a command, an ephemeral job):</p>
+the MiniCluster (or if providing a command, an ephemeral job):</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span>kubectl<span class="w"> </span>apply<span class="w"> </span>-f<span class="w"> </span>config/samples/flux-framework.org_v1alpha1_minicluster.yaml
 </code></pre></div>
 </div>
@@ -1000,7 +1000,7 @@ $<span class="w"> </span>make<span class="w"> </span>run<span class="w">    </sp
 <p>Generally these sets of configs are the same (e.g., same container bases and other options) and only vary in providing a command entrypoint (for the headless)
 or not (for the Flux Restful). To make it easy to clean up your cluster and apply a named config, you have two options:</p>
 <h6 id="flux-restful">Flux Restful<a class="headerlink" href="#flux-restful" title="Permalink to this heading">¶</a></h6>
-<p>We call this the main set of “examples.” To clean up Minikube, apply a named config, and run the example via a Mini Cluster, first match the name of the yaml
+<p>We call this the main set of “examples.” To clean up Minikube, apply a named config, and run the example via a MiniCluster, first match the name of the yaml
 file to a variable name. E.g., for the following files, the names would be:</p>
 <div class="highlight-console notranslate"><div class="highlight"><pre><span></span><code><span class="gp">$ </span>tree<span class="w"> </span>examples/flux-restful/
 <span class="go">├── minicluster-conveyorlc.yaml       (- name=conveyorlc</span>
@@ -1158,7 +1158,7 @@ install to <code class="docutils literal notranslate"><span class="pre">/home/fl
 <h3 id="integration">Integration<a class="headerlink" href="#integration" title="Permalink to this heading">¶</a></h3>
 <p>For the integration testing outside of Go, we currently have basic tests written that allow the following:</p>
 <ol class="arabic simple">
-<li><p>Write a custom resource definition (CRD) for a named mini cluster under <code class="docutils literal notranslate"><span class="pre">examples/tests/${name}</span></code> as <code class="docutils literal notranslate"><span class="pre">minicluster.yaml</span></code>.</p></li>
+<li><p>Write a custom resource definition (CRD) for a named MiniCluster under <code class="docutils literal notranslate"><span class="pre">examples/tests/${name}</span></code> as <code class="docutils literal notranslate"><span class="pre">minicluster.yaml</span></code>.</p></li>
 <li><p>The CRD should set <code class="docutils literal notranslate"><span class="pre">test:true</span></code> and include a command to run, and a container to do it.</p></li>
 <li><p>Add your test name, container, and estimated running time to <code class="docutils literal notranslate"><span class="pre">.github/workflows/main.yaml</span></code></p></li>
 <li><p>If your tests require a working directory, it must be set in the CRD for the headless test.</p></li>

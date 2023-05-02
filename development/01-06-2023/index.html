@@ -570,7 +570,7 @@
 <li><p>As the pods use the same base container with Flux, the munge key should already be equivalent.</p></li>
 <li><p>A ‘test’ mode available in the CRD is provided to quiet all output except for the job.</p></li>
 <li><p>Networking of the pods works by way of exposing a service that includes the Pod subdomain. We add fully qualified domain names to the pods so that the <code class="docutils literal notranslate"><span class="pre">hostname</span></code> command matches the full name, and Flux is given the full names in its broker.toml.</p></li>
-<li><p>The main pod either runs <code class="docutils literal notranslate"><span class="pre">flux</span> <span class="pre">start</span></code> with a web service (creating a persistent “Mini Cluster” or <code class="docutils literal notranslate"><span class="pre">flux</span> <span class="pre">start</span></code> with a specific command (if provided in the CRD) in which case the command runs, and the jobs finish and the cluster goes away.</p></li>
+<li><p>The main pod either runs <code class="docutils literal notranslate"><span class="pre">flux</span> <span class="pre">start</span></code> with a web service (creating a persistent “MiniCluster” or <code class="docutils literal notranslate"><span class="pre">flux</span> <span class="pre">start</span></code> with a specific command (if provided in the CRD) in which case the command runs, and the jobs finish and the cluster goes away.</p></li>
 </ul>
 <p>This means that:</p>
 <ol class="arabic simple">

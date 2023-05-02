@@ -220,7 +220,7 @@ spec:
       storage: 1Gi
 ```
 
-Given our minicluster defined to use the claim named "data":
+Given our MiniCluster defined to use the claim named "data":
 
 ```yaml
 apiVersion: flux-framework.org/v1alpha1
@@ -273,7 +273,7 @@ $ kubectl apply -f ./pv.yaml
 $ kubectl apply -f ./pvc.yam
 ```
 
-And then we are ready to create the minicluster!
+And then we are ready to create the MiniCluster!
 
 ```bash
 $ kubectl apply -f minicluster.yaml

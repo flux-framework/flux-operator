@@ -11,7 +11,7 @@ This design is a simple design based around a single custom resource definition
    - The container for the flux runner is expected to already have a munge.key in `/etc/munge/munge.key`. This will be the same across pods generated given generation from the same container.
  - To generate the curve certificate (`/etc/curve/curve.cert`) we use the flux runner container in a one-off pod to run `flux-keygen` and retrieve the output in the log. We then write this curve.cert as a Config Map to the indexed job pods. We do this beceause generating it natively in Go would require other libraries on the host for ZeroMQ.
  - Networking of the pods works by way of exposing a service that includes the Pod subdomain. We add fully qualified domain names to the pods so that the `hostname` command matches the full name, and Flux is given the full names in its broker.toml.
- - The main pod either runs `flux start` with a web service (creating a persistent "Mini Cluster" or `flux start` with a specific command (if provided in the CRD) in which case the command runs, and the jobs finish and the cluster goes away.
+ - The main pod either runs `flux start` with a web service (creating a persistent "MiniCluster" or `flux start` with a specific command (if provided in the CRD) in which case the command runs, and the jobs finish and the cluster goes away.
 
 This means that:
 

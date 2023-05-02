@@ -1028,7 +1028,7 @@ we have the following object manifest for the persistent volume:</p>
 <span class="w">      </span><span class="nt">storage</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1Gi</span>
 </code></pre></div>
 </div>
-<p>Given our minicluster defined to use the claim named “data”:</p>
+<p>Given our MiniCluster defined to use the claim named “data”:</p>
 <div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><code><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">flux-framework.org/v1alpha1</span>
 <span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">MiniCluster</span>
 <span class="nt">metadata</span><span class="p">:</span>
@@ -1071,7 +1071,7 @@ $<span class="w"> </span>minikube<span class="w"> </span>ssh<span class="w"> </s
 $<span class="w"> </span>kubectl<span class="w"> </span>apply<span class="w"> </span>-f<span class="w"> </span>./pvc.yam
 </code></pre></div>
 </div>
-<p>And then we are ready to create the minicluster!</p>
+<p>And then we are ready to create the MiniCluster!</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span>kubectl<span class="w"> </span>apply<span class="w"> </span>-f<span class="w"> </span>minicluster.yaml
 </code></pre></div>
 </div>

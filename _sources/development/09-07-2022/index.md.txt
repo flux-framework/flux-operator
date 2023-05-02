@@ -30,7 +30,7 @@ As they are creating and getting ips, after that is finished you'll see the same
 lookup of hostnames to ip addresses, and after it will tell you the cluster is ready.
 
 ```
-1.6629325562267003e+09  INFO    minicluster-reconciler  🌀 Mini Cluster is Ready!
+1.6629325562267003e+09  INFO    minicluster-reconciler  🌀 MiniCluster is Ready!
 ```
 When you are waiting and run `make log` in a separate terminal you'll see output from one of the pods
 in the job. Typically the first bit of time you'll be waiting:
@@ -98,4 +98,4 @@ flux-sample-4-fzxgf   1/1     Running     0          11m
 flux-sample-5-9pnwf   1/1     Running     0          11m
 ```
 This functionality will depend on whether you are running a single command,
-or a persistent Mini Cluster.
+or a persistent MiniCluster.
