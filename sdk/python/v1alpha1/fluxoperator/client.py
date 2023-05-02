@@ -141,7 +141,7 @@ class FluxMiniCluster:
             print()
             yield url
 
-    def stream_output(self, filename, stdout=True):
+    def stream_output(self, filename, stdout=True, timestamps=False):
         """
         Stream output, optionally printing also to stdout.
         """
@@ -149,6 +149,7 @@ class FluxMiniCluster:
             filename=filename,
             stdout=stdout,
             namespace=self.namespace,
+            timestamps=timestamps,
             name=self.name,
             pod=self.broker_pod,
         )
@@ -232,7 +233,7 @@ class FluxOperator:
         self._core_v1 = core_v1_api.CoreV1Api()
         return self._core_v1
 
-    def stream_output(self, filename, name=None, namespace=None, pod=None, stdout=True):
+    def stream_output(self, filename, name=None, namespace=None, pod=None, stdout=True, timestamps=False):
         """
         Stream output, optionally printing also to stdout.
         """
@@ -246,6 +247,7 @@ class FluxOperator:
                 self.core_v1.read_namespaced_pod_log,
                 name=pod,
                 namespace=namespace,
+                timestamps=timestamps,
                 follow=True,
             ):
                 # Lines end with /r and we need to strip and add a newline
@@ -381,6 +383,10 @@ class FluxOperator:
 
                 # Don't include the cert generator pod
                 if "cert-generator" in pod.metadata.name:
+                    continue
+
+                # Ignore services pod
+                if pod.metadata.name.endswith('-services'):
                     continue
                 if pod.status.phase not in states:
                     time.sleep(retry_seconds)

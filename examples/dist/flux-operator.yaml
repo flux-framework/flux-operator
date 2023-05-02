@@ -314,6 +314,10 @@ spec:
                     default: false
                     description: Timed mode adds timing to Flux commands
                     type: boolean
+                  zeromq:
+                    default: false
+                    description: Enable Zeromq logging
+                    type: boolean
                 type: object
               pod:
                 description: Pod spec details
