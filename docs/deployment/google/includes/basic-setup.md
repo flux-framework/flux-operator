@@ -16,6 +16,14 @@ $ gcloud container clusters create flux-cluster --project $GOOGLE_PROJECT \
     --num-nodes=4 --enable-network-policy --tags=flux-cluster --enable-intra-node-visibility
 ```
 
+As an example to use `core-dns`:
+
+```bash
+$ gcloud container clusters create flux-operator --cluster-dns=clouddns \
+    --cluster-dns-scope=cluster --region=us-central1-a --project $GOOGLE_PROJECT \
+    --machine-type n1-standard-2 --num-nodes=4 --enable-network-policy --tags=flux-cluster --enable-intra-node-visibility
+```
+
 If you need a particular Kubernetes version:
 
 ```bash

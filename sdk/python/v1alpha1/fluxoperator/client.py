@@ -384,6 +384,10 @@ class FluxOperator:
                 # Don't include the cert generator pod
                 if "cert-generator" in pod.metadata.name:
                     continue
+
+                # Ignore services pod
+                if pod.metadata.name.endswith('-services'):
+                    continue
                 if pod.status.phase not in states:
                     time.sleep(retry_seconds)
                 elif pod.status.phase not in ["Terminating", "Succeeded"]:

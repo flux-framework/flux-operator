@@ -13,7 +13,7 @@ import json
 # Here is our main container
 container = {
     "image": "vanessa/lammps:test-zeromq",
-#    "image": "ghcr.io/rse-ops/lammps:flux-sched-focal",
+    #    "image": "ghcr.io/rse-ops/lammps:flux-sched-focal",
     "working_dir": "/home/flux/examples/reaxff/HNS",
     "command": "lmp -v x 1 -v y 1 -v z 1 -in in.reaxc.hns -nocite",
     "flux_log_level": 7,
@@ -30,6 +30,13 @@ crd_api = client.CustomObjectsApi()
 
 # Interact with the Flux Operator Python SDK
 minicluster = {
+    # Note that when you enable a service pod, the indexed job can come up 3-4 seconds faster
+    # it seems like a bug, unfortunatly
+    #    "services": [{
+    #        "image": "nginx",
+    #        "name": "nginx",
+    #        "ports": [80],
+    #    }],
     "size": 2,
     "namespace": "flux-operator",
     "name": "lammps",
