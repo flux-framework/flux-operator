@@ -47,6 +47,9 @@ the set of containers that you describe.
   size: 4
 ```
 
+The size will always be the minimum number of pods that the Flux broker is required to see online
+in order to start (meaning for the time being, all of them).
+
 ### tasks
 
 The `tasks` variable under the spec is the number of tasks that each pod in the MiniCluster should be given.

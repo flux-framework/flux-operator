@@ -547,7 +547,7 @@ spec:
               size:
                 default: 1
                 description: Size (number of job pods to run, size of minicluster
-                  in pods)
+                  in pods) This is also the minimum number required to start Flux
                 format: int32
                 type: integer
               tasks:
@@ -709,8 +709,14 @@ spec:
                 description: The Jobid is set internally to associate to a miniCluster
                   This isn't currently in use, we only have one!
                 type: string
+              size:
+                description: We keep the original size of the MiniCluster request
+                  as this is the absolute maximum
+                format: int32
+                type: integer
             required:
             - jobid
+            - size
             type: object
         type: object
     served: true

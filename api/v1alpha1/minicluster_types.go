@@ -73,6 +73,7 @@ type MiniClusterSpec struct {
 	Cleanup bool `json:"cleanup,omitempty"`
 
 	// Size (number of job pods to run, size of minicluster in pods)
+	// This is also the minimum number required to start Flux
 	// +kubebuilder:default=1
 	// +default=1
 	// +optional
@@ -175,6 +176,10 @@ type MiniClusterStatus struct {
 	// The Jobid is set internally to associate to a miniCluster
 	// This isn't currently in use, we only have one!
 	Jobid string `json:"jobid"`
+
+	// We keep the original size of the MiniCluster request as
+	// this is the absolute maximum
+	MaximumSize int32 `json:"size"`
 
 	// conditions hold the latest Flux Job and MiniCluster states
 	// +listType=atomic
@@ -531,6 +536,12 @@ func (f *MiniCluster) Validate() bool {
 	// Global (entire cluster) settings
 	fmt.Printf("🤓 MiniCluster.DeadlineSeconds %d\n", f.Spec.DeadlineSeconds)
 	fmt.Printf("🤓 MiniCluster.Size %s\n", fmt.Sprint(f.Spec.Size))
+
+	// If we haven't seen a MaxSize (in the status) yet, set it
+	if f.Status.MaximumSize == 0 {
+		f.Status.MaximumSize = f.Spec.Size
+	}
+	fmt.Printf("🤓 MiniCluster.MaximumSize %s\n", fmt.Sprint(f.Status.MaximumSize))
 
 	// We should have only one flux runner
 	valid := true
