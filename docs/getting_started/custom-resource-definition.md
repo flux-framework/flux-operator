@@ -303,8 +303,8 @@ set the flags just as you would to the command, starting with `-o`:
 
 ```yaml
 flux:
-  # optional - if needed, default option flags for the server (e.g., -ompi=openmpi@5)
-	optionFlags: "-ompi=openmpi@5"
+    # optional - if needed, default option flags for the server (e.g., -ompi=openmpi@5)
+    optionFlags: "-ompi=openmpi@5"
 ```
 
 Note that if you run with the user interface, setting a flag in the interface
@@ -326,7 +326,13 @@ flux:
 #### connectTimeout
 
 For Flux versions 0.50.0 and later, you can customize the zeromq timeout. This is done
-in the broker.toml as follows:
+via an extra broker option provided on the command line:
+
+```bash
+-Stbon.connect_timeout=5s
+```
+
+But note that (if you are interested) you could provide it in the broker.toml as well:
 
 ```toml
 [tbon]
@@ -346,6 +352,8 @@ To disable adding this parameter, period, set it to an empty string:
 flux:
   connextTimeout: ""
 ```
+
+A timeout of 0s will not be honored, and will default to the empty string (this is done internal in Flux).
 
 > Why is this important?
 
