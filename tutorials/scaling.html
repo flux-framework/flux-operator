@@ -657,6 +657,26 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#expand-example" class="md-nav__link">
+    <span title="/tutorials/scaling.md#expand-example (reference label)" class="md-ellipsis">Expand Example</span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Expand Example">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#create-the-cluster" class="md-nav__link">
+    <span title="/tutorials/scaling.md#create-the-cluster (reference label)" class="md-ellipsis">Create the cluster</span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -860,7 +880,31 @@ with the Flux Operator to enable it! Specifically:</p>
 <ul class="simple">
 <li><p>We tell Flux to create a cluster at the maximum size that is possible (and the broker config sees this many nodes)</p></li>
 <li><p>We update the resource spec to reflect that.</p></li>
+<li><p>The cluster cannot be smaller than 1 node, meaning only a broker.</p></li>
+<li><p>A cluster defined with an initial <code class="docutils literal notranslate"><span class="pre">size</span></code> can be scaled down (and back up) (see the <a class="reference internal" href="#basic-example"><span class="xref myst">basic example</span></a>)</p></li>
+<li><p>A cluster cannot be larger than it’s original <code class="docutils literal notranslate"><span class="pre">size</span></code> or <code class="docutils literal notranslate"><span class="pre">maxSize</span></code></p></li>
+<li><p>You are allowed to start smaller and specify a maxSize (see the <a class="reference internal" href="#expand-example"><span class="xref myst">expand example</span></a>)</p>
+<ul>
+<li><p>Your cluster will start at <code class="docutils literal notranslate"><span class="pre">size</span></code> and can go up to <code class="docutils literal notranslate"><span class="pre">maxSize</span></code></p></li>
+<li><p>The cluster will start with the minimum number of nodes <code class="docutils literal notranslate"><span class="pre">size</span></code></p></li>
+<li><p>You can go below the original size.</p></li>
 </ul>
+</li>
+</ul>
+<div class="result docutils container">
+<div class="info admonition">
+<p class="admonition-title">Note</p>
+    <p>This setup works most effectively in the container->launcher or interactive:true mode,
+where the broker is started without setting it to a scoped number of tasks for a specific command.  When you provide
+a command (not using interactive or launcher mode) the operator will prepare a "flux submit" with 
+the number of tasks available (the smaller size) and this will be the number of tasks allocated to your
+command. If you then scaled the cluster up, although the added resources might be seen by the broker or available
+for you to interact with otherwise, they won't be magically added to the command you initially ran. 
+For this reason, we suggest that scaling is done in launcher or interactive mode, or with a strategy in
+mind for what to do with the new resources.
+</p>
+</div>
+</div>
 <h2 id="basic-example">Basic Example<a class="headerlink" href="#basic-example" title="Permalink to this heading">¶</a></h2>
 <blockquote>
 <div><p>Starting with a cluster at a maximum size and scaling it up and down</p>
@@ -986,6 +1030,115 @@ And that’s it!</p>
 </div>
 <p>We will have a tutorial for expanding a cluster size soon. Flux doesn’t allow
 the hosts to be greater than nodes currently, so we haven’t added this yet.</p>
+<h2 id="expand-example">Expand Example<a class="headerlink" href="#expand-example" title="Permalink to this heading">¶</a></h2>
+<blockquote>
+<div><p>Starting with a small cluster that is able to grow to a maximum size</p>
+</div></blockquote>
+<p><strong><a class="reference external" href="https://github.com/flux-framework/flux-operator/blob/main/examples/scaling/expand/minicluster.yaml">Tutorial File</a></strong></p>
+<p>To run this example:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span>minikube<span class="w"> </span>start<span class="w"> </span>--kubernetes-version<span class="o">=</span><span class="m">1</span>.27.
+</code></pre></div>
+</div>
+<p>Install the operator, create the namespace, and create the MiniCluster:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span>kubectl<span class="w"> </span>apply<span class="w"> </span>-f<span class="w"> </span>./examples/dist/flux-operator.yaml
+$<span class="w"> </span>kubectl<span class="w"> </span>create<span class="w"> </span>namespace<span class="w"> </span>flux-operator
+$<span class="w"> </span>kubectl<span class="w"> </span>apply<span class="w"> </span>-f<span class="w"> </span>examples/scaling/basic/minicluster.yaml
+</code></pre></div>
+</div>
+<h3 id="create-the-cluster">Create the cluster<a class="headerlink" href="#create-the-cluster" title="Permalink to this heading">¶</a></h3>
+<p>First, apply the CRD to create the MiniCluster. Note that we are asking for a size of 2, but allowing
+for a maximum size of 4.</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><code><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">flux-framework.org/v1alpha1</span>
+<span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">MiniCluster</span>
+<span class="nt">metadata</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">flux-sample</span>
+<span class="w">  </span><span class="nt">namespace</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">flux-operator</span>
+<span class="nt">spec</span><span class="p">:</span>
+<span class="w">  </span><span class="c1"># Number of pods to create for MiniCluster to start</span>
+<span class="w">  </span><span class="nt">size</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">2</span>
+
+<span class="w">  </span><span class="c1"># Number of pods to allow scaling to (the number that flux will see)</span>
+<span class="w">  </span><span class="nt">maxSize</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">4</span>
+
+<span class="w">  </span><span class="c1"># This needs to be in interactive or launcher mode to work</span>
+<span class="w">  </span><span class="c1"># otherwise we submit as a job (and it will be running under the smaller size number of tasks)</span>
+<span class="w">  </span><span class="nt">interactive</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+
+<span class="w">  </span><span class="c1"># This is a list because a pod can support multiple containers</span>
+<span class="w">  </span><span class="nt">containers</span><span class="p">:</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">image</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ghcr.io/flux-framework/flux-restful-api:latest</span>
+</code></pre></div>
+</div>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span>kubectl<span class="w"> </span>apply<span class="w"> </span>-f<span class="w"> </span>./examples/scaling/expand/minicluster.yaml
+</code></pre></div>
+</div>
+<p>Since our initial size is 2, you’ll see two pods creating:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>kubectl<span class="w"> </span>get<span class="w"> </span>-n<span class="w"> </span>flux-operator<span class="w"> </span>pods
+NAME<span class="w">                  </span>READY<span class="w">   </span>STATUS<span class="w">              </span>RESTARTS<span class="w">   </span>AGE
+flux-sample-0-r2cxt<span class="w">   </span><span class="m">0</span>/1<span class="w">     </span>ContainerCreating<span class="w">   </span><span class="m">0</span><span class="w">          </span>1s
+flux-sample-1-bxwbw<span class="w">   </span><span class="m">0</span>/1<span class="w">     </span>ContainerCreating<span class="w">   </span><span class="m">0</span><span class="w">          </span>1s
+</code></pre></div>
+</div>
+<p>And then running!</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>kubectl<span class="w"> </span>get<span class="w"> </span>-n<span class="w"> </span>flux-operator<span class="w"> </span>pods
+NAME<span class="w">                  </span>READY<span class="w">   </span>STATUS<span class="w">    </span>RESTARTS<span class="w">   </span>AGE
+flux-sample-0-77tnb<span class="w">   </span><span class="m">1</span>/1<span class="w">     </span>Running<span class="w">   </span><span class="m">0</span><span class="w">          </span>102s
+flux-sample-1-vfg7x<span class="w">   </span><span class="m">1</span>/1<span class="w">     </span>Running<span class="w">   </span><span class="m">0</span><span class="w">          </span>102s
+</code></pre></div>
+</div>
+<p>Theoretically, we can pretend that we brought up a small cluster, ran some smaller
+part of a workflow, and then needed to scale larger. Let’s pretend to do that now, and change
+the size up to 4 (the MaxSize):</p>
+<div class="highlight-diff notranslate"><div class="highlight"><pre><span></span><code><span class="gd">-  size: 2</span>
+<span class="gi">+  size: 4</span>
+</code></pre></div>
+</div>
+<p>Apply again:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span>kubectl<span class="w"> </span>apply<span class="w"> </span>-f<span class="w"> </span>./examples/scaling/expand/minicluster.yaml
+</code></pre></div>
+</div>
+<p>You’ll see the pods create very quickly, and come online to connect to the broker:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>NAME<span class="w">                  </span>READY<span class="w">   </span>STATUS<span class="w">              </span>RESTARTS<span class="w">   </span>AGE
+flux-sample-0-fq4kn<span class="w">   </span><span class="m">1</span>/1<span class="w">     </span>Running<span class="w">             </span><span class="m">0</span><span class="w">          </span>34s
+flux-sample-1-hx745<span class="w">   </span><span class="m">1</span>/1<span class="w">     </span>Running<span class="w">             </span><span class="m">0</span><span class="w">          </span>34s
+flux-sample-2-gt4hs<span class="w">   </span><span class="m">0</span>/1<span class="w">     </span>ContainerCreating<span class="w">   </span><span class="m">0</span><span class="w">          </span>2s
+flux-sample-3-ndqvm<span class="w">   </span><span class="m">1</span>/1<span class="w">     </span>Running<span class="w">             </span><span class="m">0</span><span class="w">          </span>2s
+</code></pre></div>
+</div>
+<p>We can again exec into the broker pod to inspect what resources Flux sees:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span>kubectl<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>-it<span class="w"> </span>-n<span class="w"> </span>flux-operator<span class="w"> </span>flux-sample-0-xd2gc<span class="w"> </span>--<span class="w"> </span>bash
+root@flux-sample-0:/code#<span class="w"> </span>sudo<span class="w"> </span>-E<span class="w"> </span><span class="k">$(</span>env<span class="k">)</span><span class="w"> </span>-E<span class="w"> </span><span class="nv">HOME</span><span class="o">=</span>/home/flux<span class="w"> </span>-u<span class="w"> </span>flux<span class="w"> </span>flux<span class="w"> </span>proxy<span class="w"> </span>local:///var/run/flux/local<span class="w"> </span>
+</code></pre></div>
+</div>
+<p>And just like they had been there all along, we have four nodes!</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span>flux<span class="w"> </span>resource<span class="w"> </span>list
+<span class="w">     </span>STATE<span class="w"> </span>NNODES<span class="w">   </span>NCORES<span class="w"> </span>NODELIST
+<span class="w">      </span>free<span class="w">      </span><span class="m">4</span><span class="w">       </span><span class="m">16</span><span class="w"> </span>flux-sample-<span class="o">[</span><span class="m">0</span>-3<span class="o">]</span>
+<span class="w"> </span>allocated<span class="w">      </span><span class="m">0</span><span class="w">        </span><span class="m">0</span><span class="w"> </span>
+<span class="w">      </span>down<span class="w">      </span><span class="m">0</span><span class="w">        </span><span class="m">0</span><span class="w"> </span>
+</code></pre></div>
+</div>
+<p>You can then try scaling down, as we did before. The pods will terminate, and Flux will show
+the pods as down again. If you are curious, you can actually scale <em>lower</em> than the original minimum
+size. As an example, we can change the size to 1:</p>
+<div class="highlight-diff notranslate"><div class="highlight"><pre><span></span><code><span class="gd">-  size: 4</span>
+<span class="gi">+  size: 1</span>
+</code></pre></div>
+</div>
+<p>Apply again:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span>kubectl<span class="w"> </span>apply<span class="w"> </span>-f<span class="w"> </span>./examples/scaling/expand/minicluster.yaml
+</code></pre></div>
+</div>
+<p>The broker is resilient and will actually keep running! I found this cool and surprising.</p>
+<div class="highlight-diff notranslate"><div class="highlight"><pre><span></span><code>$ flux resource list
+<span class="w"> </span>    STATE NNODES   NCORES NODELIST
+<span class="w"> </span>     free      1        4 flux-sample-0
+<span class="w"> </span>allocated      0        0 
+<span class="w"> </span>     down      3       12 flux-sample-[1-3]
+</code></pre></div>
+</div>
+<p>Of course, the operator will not let you scale to a size 0, as that would be deleting the jobs.
+if you want to delete the MiniCluster, just do that. :)</p>
 
 
   <hr>
