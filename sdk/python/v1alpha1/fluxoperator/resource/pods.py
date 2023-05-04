@@ -6,7 +6,7 @@ import fluxoperator.defaults as defaults
 import sys
 
 # These are known objects we will parse
-_objects = ["logging", "volumes", "resources", "flux_restful", "container", "resources"]
+_objects = ["logging", "volumes", "resources", "flux_restful", "container", "resources", "flux"]
 
 
 def _get_logging_spec(logging):
@@ -41,6 +41,16 @@ def _get_container_volumes(volumes):
         volumeset[name] = models.ContainerVolume(**volume_spec)
     return volumeset
 
+
+def _get_flux_spec(flux):
+    """
+    Get flux spec
+    """
+    fluxspec = {}
+    for k in models.FluxSpec.attribute_map:
+        if k in flux:
+            fluxspec[k] = flux[k]
+    return models.FluxSpec(**fluxspec)
 
 def _get_container_spec(container):
     """
@@ -134,7 +144,7 @@ def create_minicluster(*args, **kwargs):
     # TODO when requested, add pod resources
     container = _get_container_spec(container)
 
-    # Logging spec with pre-defined defaults
+    flux_spec = _get_flux_spec(kwargs.get("flux"))
     logging_spec = _get_logging_spec(kwargs.get("logging"))
     flux_restful = _get_flux_restful_spec(kwargs.get("flux_restful"))
     volumes = _get_volumes_spec(kwargs.get("volumes"))
@@ -147,6 +157,7 @@ def create_minicluster(*args, **kwargs):
         metadata=V1ObjectMeta(name=name, namespace=namespace),
         spec=models.MiniClusterSpec(
             **minicluster_kwargs,
+            flux=flux_spec,
             logging=logging_spec,
             containers=[container],
             flux_restful=flux_restful,

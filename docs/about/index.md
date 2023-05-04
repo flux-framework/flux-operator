@@ -15,6 +15,10 @@ for the future, and running
 experiments, and hope to be able to share with you some early results soon.
 If you have any questions, please [let us know](https://github.com/flux-framework/flux-operator/issues)
 
+## Talks and Presentations
+
+ - [Kubecon 2023](https://t.co/vjRydPx1rb)
+
 ```{toctree}
 :maxdepth: 3
 contributing

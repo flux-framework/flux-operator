@@ -128,18 +128,6 @@ spec:
                         type: object
                       description: Existing Volumes to add to the containers
                       type: object
-                    fluxLogLevel:
-                      default: 6
-                      description: Log level to use for flux logging (only in non
-                        TestMode)
-                      format: int32
-                      type: integer
-                    fluxOptionFlags:
-                      description: Flux option flags, usually provided with -o optional
-                        - if needed, default option flags for the server These can
-                        also be set in the user interface to override here. This is
-                        only valid for a FluxRunner "runFlux" true
-                      type: string
                     fluxUser:
                       description: Flux User, if created in the container
                       properties:
@@ -258,6 +246,25 @@ spec:
                   Approximately one year. This cannot be zero or job won't start
                 format: int64
                 type: integer
+              flux:
+                description: Flux options for the broker, shared across cluster
+                properties:
+                  connectTimeout:
+                    default: 5s
+                    description: Single user executable to provide to flux start
+                    type: string
+                  logLevel:
+                    default: 6
+                    description: Log level to use for flux logging (only in non TestMode)
+                    format: int32
+                    type: integer
+                  optionFlags:
+                    description: Flux option flags, usually provided with -o optional
+                      - if needed, default option flags for the server These can also
+                      be set in the user interface to override here. This is only
+                      valid for a FluxRunner "runFlux" true
+                    type: string
+                type: object
               fluxRestful:
                 description: Customization to Flux Restful API There should only be
                   one container to run flux with runFlux
@@ -430,18 +437,6 @@ spec:
                         type: object
                       description: Existing Volumes to add to the containers
                       type: object
-                    fluxLogLevel:
-                      default: 6
-                      description: Log level to use for flux logging (only in non
-                        TestMode)
-                      format: int32
-                      type: integer
-                    fluxOptionFlags:
-                      description: Flux option flags, usually provided with -o optional
-                        - if needed, default option flags for the server These can
-                        also be set in the user interface to override here. This is
-                        only valid for a FluxRunner "runFlux" true
-                      type: string
                     fluxUser:
                       description: Flux User, if created in the container
                       properties:

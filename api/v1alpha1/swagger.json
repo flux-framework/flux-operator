@@ -115,6 +115,27 @@
         }
       }
     },
+    "FluxSpec": {
+      "type": "object",
+      "properties": {
+        "connectTimeout": {
+          "description": "Single user executable to provide to flux start",
+          "type": "string",
+          "default": "5s"
+        },
+        "logLevel": {
+          "description": "Log level to use for flux logging (only in non TestMode)",
+          "type": "integer",
+          "format": "int32",
+          "default": 6
+        },
+        "optionFlags": {
+          "description": "Flux option flags, usually provided with -o optional - if needed, default option flags for the server These can also be set in the user interface to override here. This is only valid for a FluxRunner \"runFlux\" true",
+          "type": "string",
+          "default": ""
+        }
+      }
+    },
     "FluxUser": {
       "type": "object",
       "properties": {
@@ -257,17 +278,6 @@
             "default": {},
             "$ref": "#/definitions/MiniClusterExistingVolume"
           }
-        },
-        "fluxLogLevel": {
-          "description": "Log level to use for flux logging (only in non TestMode)",
-          "type": "integer",
-          "format": "int32",
-          "default": 6
-        },
-        "fluxOptionFlags": {
-          "description": "Flux option flags, usually provided with -o optional - if needed, default option flags for the server These can also be set in the user interface to override here. This is only valid for a FluxRunner \"runFlux\" true",
-          "type": "string",
-          "default": ""
         },
         "fluxUser": {
           "description": "Flux User, if created in the container",
@@ -435,6 +445,11 @@
           "type": "integer",
           "format": "int64",
           "default": 31500000
+        },
+        "flux": {
+          "description": "Flux options for the broker, shared across cluster",
+          "default": {},
+          "$ref": "#/definitions/FluxSpec"
         },
         "fluxRestful": {
           "description": "Customization to Flux Restful API There should only be one container to run flux with runFlux",

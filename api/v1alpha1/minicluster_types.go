@@ -48,6 +48,10 @@ type MiniClusterSpec struct {
 	// +optional
 	Interactive bool `json:"interactive"`
 
+	// Flux options for the broker, shared across cluster
+	// +optional
+	Flux FluxSpec `json:"flux"`
+
 	// Volumes accessible to containers from a host
 	// Not all containers are required to use them
 	// +optional
@@ -300,6 +304,27 @@ type ContainerVolume struct {
 	ReadOnly bool `json:"readOnly,omitempty"`
 }
 
+type FluxSpec struct {
+
+	// Single user executable to provide to flux start
+	// +kubebuilder:default="5s"
+	// +default="5s"
+	ConnectTimeout string `json:"connectTimeout,omitempty"`
+
+	// Flux option flags, usually provided with -o
+	// optional - if needed, default option flags for the server
+	// These can also be set in the user interface to override here.
+	// This is only valid for a FluxRunner "runFlux" true
+	// +optional
+	OptionFlags string `json:"optionFlags"`
+
+	// Log level to use for flux logging (only in non TestMode)
+	// +kubebuilder:default=6
+	// +default=6
+	// +optional
+	LogLevel int32 `json:"logLevel,omitempty"`
+}
+
 type MiniClusterContainer struct {
 
 	// Container image must contain flux and flux-sched install
@@ -385,19 +410,6 @@ type MiniClusterContainer struct {
 	// Existing Volumes to add to the containers
 	// +optional
 	ExistingVolumes map[string]MiniClusterExistingVolume `json:"existingVolumes"`
-
-	// Flux option flags, usually provided with -o
-	// optional - if needed, default option flags for the server
-	// These can also be set in the user interface to override here.
-	// This is only valid for a FluxRunner "runFlux" true
-	// +optional
-	FluxOptionFlags string `json:"fluxOptionFlags"`
-
-	// Log level to use for flux logging (only in non TestMode)
-	// +kubebuilder:default=6
-	// +default=6
-	// +optional
-	FluxLogLevel int32 `json:"fluxLogLevel,omitempty"`
 
 	// Special command to run at beginning of script, directly after asFlux
 	// is defined as sudo -u flux -E (so you can change that if desired.)

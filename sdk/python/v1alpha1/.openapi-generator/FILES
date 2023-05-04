@@ -6,6 +6,7 @@ docs/Commands.md
 docs/ContainerResources.md
 docs/ContainerVolume.md
 docs/FluxRestful.md
+docs/FluxSpec.md
 docs/FluxUser.md
 docs/LifeCycle.md
 docs/LoggingSpec.md
@@ -30,6 +31,7 @@ fluxoperator/models/commands.py
 fluxoperator/models/container_resources.py
 fluxoperator/models/container_volume.py
 fluxoperator/models/flux_restful.py
+fluxoperator/models/flux_spec.py
 fluxoperator/models/flux_user.py
 fluxoperator/models/life_cycle.py
 fluxoperator/models/logging_spec.py
@@ -51,4 +53,8 @@ setup.cfg
 setup.py
 test-requirements.txt
 test/__init__.py
+test/test_mini_cluster.py
+test/test_mini_cluster_container.py
+test/test_mini_cluster_list.py
+test/test_mini_cluster_spec.py
 tox.ini
