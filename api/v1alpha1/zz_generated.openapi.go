@@ -28,6 +28,7 @@ func GetOpenAPIDefinitions(ref common.ReferenceCallback) map[string]common.OpenA
 		"./api/v1alpha1/.ContainerResources":        schema__api_v1alpha1__ContainerResources(ref),
 		"./api/v1alpha1/.ContainerVolume":           schema__api_v1alpha1__ContainerVolume(ref),
 		"./api/v1alpha1/.FluxRestful":               schema__api_v1alpha1__FluxRestful(ref),
+		"./api/v1alpha1/.FluxSpec":                  schema__api_v1alpha1__FluxSpec(ref),
 		"./api/v1alpha1/.FluxUser":                  schema__api_v1alpha1__FluxUser(ref),
 		"./api/v1alpha1/.LifeCycle":                 schema__api_v1alpha1__LifeCycle(ref),
 		"./api/v1alpha1/.LoggingSpec":               schema__api_v1alpha1__LoggingSpec(ref),
@@ -225,6 +226,34 @@ func schema__api_v1alpha1__FluxRestful(ref common.ReferenceCallback) common.Open
 					"token": {
 						SchemaProps: spec.SchemaProps{
 							Description: "Token to use for RestFul API",
+							Default:     "",
+							Type:        []string{"string"},
+							Format:      "",
+						},
+					},
+				},
+			},
+		},
+	}
+}
+
+func schema__api_v1alpha1__FluxSpec(ref common.ReferenceCallback) common.OpenAPIDefinition {
+	return common.OpenAPIDefinition{
+		Schema: spec.Schema{
+			SchemaProps: spec.SchemaProps{
+				Type: []string{"object"},
+				Properties: map[string]spec.Schema{
+					"connectTimeout": {
+						SchemaProps: spec.SchemaProps{
+							Description: "Single user executable to provide to flux start",
+							Default:     "5s",
+							Type:        []string{"string"},
+							Format:      "",
+						},
+					},
+					"optionFlags": {
+						SchemaProps: spec.SchemaProps{
+							Description: "Flux option flags, usually provided with -o optional - if needed, default option flags for the server These can also be set in the user interface to override here. This is only valid for a FluxRunner \"runFlux\" true",
 							Default:     "",
 							Type:        []string{"string"},
 							Format:      "",
@@ -590,14 +619,6 @@ func schema__api_v1alpha1__MiniClusterContainer(ref common.ReferenceCallback) co
 							},
 						},
 					},
-					"fluxOptionFlags": {
-						SchemaProps: spec.SchemaProps{
-							Description: "Flux option flags, usually provided with -o optional - if needed, default option flags for the server These can also be set in the user interface to override here. This is only valid for a FluxRunner \"runFlux\" true",
-							Default:     "",
-							Type:        []string{"string"},
-							Format:      "",
-						},
-					},
 					"fluxLogLevel": {
 						SchemaProps: spec.SchemaProps{
 							Description: "Log level to use for flux logging (only in non TestMode)",
@@ -822,6 +843,13 @@ func schema__api_v1alpha1__MiniClusterSpec(ref common.ReferenceCallback) common.
 							Format:      "",
 						},
 					},
+					"flux": {
+						SchemaProps: spec.SchemaProps{
+							Description: "Flux options for the broker, shared across cluster",
+							Default:     map[string]interface{}{},
+							Ref:         ref("./api/v1alpha1/.FluxSpec"),
+						},
+					},
 					"volumes": {
 						SchemaProps: spec.SchemaProps{
 							Description: "Volumes accessible to containers from a host Not all containers are required to use them",
@@ -909,7 +937,7 @@ func schema__api_v1alpha1__MiniClusterSpec(ref common.ReferenceCallback) common.
 			},
 		},
 		Dependencies: []string{
-			"./api/v1alpha1/.FluxRestful", "./api/v1alpha1/.LoggingSpec", "./api/v1alpha1/.MiniClusterArchive", "./api/v1alpha1/.MiniClusterContainer", "./api/v1alpha1/.MiniClusterUser", "./api/v1alpha1/.MiniClusterVolume", "./api/v1alpha1/.PodSpec"},
+			"./api/v1alpha1/.FluxRestful", "./api/v1alpha1/.FluxSpec", "./api/v1alpha1/.LoggingSpec", "./api/v1alpha1/.MiniClusterArchive", "./api/v1alpha1/.MiniClusterContainer", "./api/v1alpha1/.MiniClusterUser", "./api/v1alpha1/.MiniClusterVolume", "./api/v1alpha1/.PodSpec"},
 	}
 }
 

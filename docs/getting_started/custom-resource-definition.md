@@ -284,6 +284,54 @@ If you want to disable this cleanup:
 If you are streaming the logs with `kubectl logs` the steam would stop when the broker pod is completed,
 so typically you will get the logs as long as you are streaming when the job starts running.
 
+### flux
+
+Settings under the Flux directive typically refer to flux options, e.g., for the broker or similar.
+
+#### connectTimeout
+
+For Flux versions 0.50.0 and later, you can customize the zeromq timeout. This is done
+in the broker.toml as follows:
+
+```toml
+[tbon]
+connect_timeout = "10s"
+```
+
+Note the above is a string, so the default for this value (if you leave it unset is):
+
+```yaml
+flux:
+  connectTimeout: 5s
+```
+
+To disable adding this parameter, period, set it to an empty string:
+
+```yaml
+flux:
+  connextTimeout: ""
+```
+
+> Why is this important?
+
+When the Flux network is coming online (the headless service for the pods) zeromq will immediately try
+to connect, and then (by default if we don't set it) start an exponential backoff of retry. Since we've
+changed the design to not have a certificate generation pod, we've found that the network is not reliably
+up by the time the broker starts, which, combined with this backoff, can lead to slow startup times.
+Part of our strategy to help with that is to set the connect timeout (as shown above) to a set value.
+In our experiments using [this script](https://github.com/flux-framework/flux-operator/blob/main/sdk/python/v1alpha1/examples/time-minicluster-lammps.py)
+with a LAMMPS image, we found an optimal connect timeout to be lower between 1s and 5s ([see this work](https://github.com/converged-computing/operator-experiments/tree/main/google/service-timing)). 
+Note that this could vary depending on your setup, and we recommend you run the script with your MiniCluster setup in the Python script to test.
+As another option, you can add an arbitrary service container, which seems to "warmup" the network
+and skip most of this delay. This service combined with the connect timeout seems to be the optimal way
+to minimize the startup time - for LAMMPS, this means going back to the original 11-12 seconds we saw
+with our original Flux Operator experiments for Kubecon 2023.
+More details are available in [this post](https://github.com/converged-computing/operator-experiments/tree/main/google/service-timing).
+Although we have fixed the zeromq timeout bug, there still seems to be some underlying issue in Kubernetes.
+
+Note that we think this higher level networking bug is still an issue, and are going to be creating a dummy case
+to reproduce it and share with the Kubernetes networking team.
+
 ### logging
 
 We provide simple types of "logging" within the main script that is run for the job.
@@ -652,7 +700,7 @@ ports:
 Often when you run flux, you need to provide an option flag. E.g.,:
 
 ```bash
-$ flux mini submit -ompi=openmpi@5
+$ flux submit -ompi=openmpi@5
 ```
 
 While these can be provided in the user interface of the Flux RESTFul API,

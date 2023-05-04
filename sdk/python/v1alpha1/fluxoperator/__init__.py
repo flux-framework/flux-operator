@@ -32,6 +32,7 @@ from fluxoperator.models.commands import Commands
 from fluxoperator.models.container_resources import ContainerResources
 from fluxoperator.models.container_volume import ContainerVolume
 from fluxoperator.models.flux_restful import FluxRestful
+from fluxoperator.models.flux_spec import FluxSpec
 from fluxoperator.models.flux_user import FluxUser
 from fluxoperator.models.life_cycle import LifeCycle
 from fluxoperator.models.logging_spec import LoggingSpec

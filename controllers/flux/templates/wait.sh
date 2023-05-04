@@ -78,13 +78,12 @@ mkdir -p ${STATE_DIR} ${FLUX_OUTPUT_DIR}
 # Broker Options: important!
 # The local-uri setting places the unix domain socket in rundir
 #   if FLUX_URI is not set, tools know where to connect.
-#   -Slog-stderr-level= can be set to 7 for larger debug level
-#   or exposed as a variable
 brokerOptions="-Scron.directory=/etc/flux/system/cron.d \
   -Stbon.fanout=256 \
   -Srundir=/run/flux {{ if .Spec.Interactive }}-Sbroker.rc2_none {{ end }} \
   -Sstatedir=${STATE_DIR} \
   -Slocal-uri=local:///run/flux/local \
+{{ if .Spec.Flux.ConnectTimeout }}-Stbon.connect_timeout={{ .Spec.Flux.ConnectTimeout }}{{ end }} \
 {{ if .RequiredRanks }}-Sbroker.quorum={{ .RequiredRanks }}{{ end }} \
 {{ if .Spec.Logging.Zeromq }}-Stbon.zmqdebug=1{{ end }} \
 {{ if not .Spec.Logging.Quiet }} -Slog-stderr-level={{or .Container.FluxLogLevel 6}} {{ else }} -Slog-stderr-level=0 {{ end }} \
@@ -158,7 +157,7 @@ diagnostics="{{ .Container.Diagnostics}}"
 {{ if not .Spec.Logging.Quiet }}printf "\n🐸 Diagnostics: ${diagnostics}\n"{{ end }}
 
 # Flux option flags
-option_flags="{{ .Container.FluxOptionFlags}}"
+option_flags="{{ .Spec.Flux.OptionFlags}}"
 if [ "${option_flags}" != "" ]; then
     # Make sure we don't get rid of any already defined flags
     existing_flags="${FLUX_OPTION_FLAGS:-}"
@@ -318,7 +317,7 @@ flux jobs -a{{ end }}
             cat flux-job.batch
             {{ end }}
 
-            flags="{{ if ge .Spec.Tasks .Spec.Size }} -N {{.Spec.Size}}{{ end }} -n {{.Spec.Tasks}} {{ if .Container.FluxOptionFlags }}{{ .Container.FluxOptionFlags}}{{ end }} {{ if .Spec.Logging.Debug }} -vvv{{ end }}"
+            flags="{{ if ge .Spec.Tasks .Spec.Size }} -N {{.Spec.Size}}{{ end }} -n {{.Spec.Tasks}} {{ if .Spec.Flux.OptionFlags }}{{ .Spec.Flux.OptionFlags}}{{ end }} {{ if .Spec.Logging.Debug }} -vvv{{ end }}"
             {{ if not .Spec.Logging.Quiet }}          
             printf "\n🌀 Batch Mode: flux start -o --config /etc/flux/config ${brokerOptions} {{.Container.Commands.Prefix}} sh -c 'flux batch ${flags} --flags waitable ./flux-job.batch && flux job wait --all'\n"
             {{ end }}
@@ -330,13 +329,13 @@ flux jobs -a{{ end }}
             {{ if .Container.Launcher }}
             printf "\n🌀 Launcher Mode: flux start -o --config /etc/flux/config ${brokerOptions} {{.Container.Commands.Prefix}} $@\n"
             {{ else }}
-            printf "\n🌀 Submit Mode: flux start -o --config /etc/flux/config ${brokerOptions} {{.Container.Commands.Prefix}} flux submit {{ if ge .Spec.Tasks .Spec.Size }} -N {{.Spec.Size}}{{ end }} -n {{.Spec.Tasks}} --quiet {{ if .Container.FluxOptionFlags }}{{ .Container.FluxOptionFlags}}{{ end }} --watch{{ if .Spec.Logging.Debug }} -vvv{{ end }} $@\n"
+            printf "\n🌀 Submit Mode: flux start -o --config /etc/flux/config ${brokerOptions} {{.Container.Commands.Prefix}} flux submit {{ if ge .Spec.Tasks .Spec.Size }} -N {{.Spec.Size}}{{ end }} -n {{.Spec.Tasks}} --quiet {{ if .Spec.Flux.OptionFlags }}{{ .Spec.Flux.OptionFlags}}{{ end }} --watch{{ if .Spec.Logging.Debug }} -vvv{{ end }} $@\n"
             {{ end }}
 {{ end }}
             {{ if .Container.Launcher }}
             {{ if .Spec.Logging.Timed }}/usr/bin/time -f "FLUXTIME fluxstart wall time %E" {{ end }}${asFlux} flux start -o --config /etc/flux/config ${brokerOptions} {{ if .Spec.Logging.Timed }}/usr/bin/time -f "FLUXTIME fluxsubmit wall time %E" {{ end }} {{.Container.Commands.Prefix}} $@
             {{ else }}
-            {{ if .Spec.Logging.Timed }}/usr/bin/time -f "FLUXTIME fluxstart wall time %E" {{ end }}${asFlux} flux start -o --config /etc/flux/config ${brokerOptions} {{ if .Spec.Logging.Timed }}/usr/bin/time -f "FLUXTIME fluxsubmit wall time %E" {{ end }} {{.Container.Commands.Prefix}} flux submit {{ if ge .Spec.Tasks .Spec.Size }} -N {{.Spec.Size}}{{ end }} -n {{.Spec.Tasks}} --quiet {{ if .Container.FluxOptionFlags }}{{ .Container.FluxOptionFlags}}{{ end }} --watch{{ if .Spec.Logging.Debug }} -vvv{{ end }} $@
+            {{ if .Spec.Logging.Timed }}/usr/bin/time -f "FLUXTIME fluxstart wall time %E" {{ end }}${asFlux} flux start -o --config /etc/flux/config ${brokerOptions} {{ if .Spec.Logging.Timed }}/usr/bin/time -f "FLUXTIME fluxsubmit wall time %E" {{ end }} {{.Container.Commands.Prefix}} flux submit {{ if ge .Spec.Tasks .Spec.Size }} -N {{.Spec.Size}}{{ end }} -n {{.Spec.Tasks}} --quiet {{ if .Spec.Flux.OptionFlags }}{{ .Spec.Flux.OptionFlags}}{{ end }} --watch{{ if .Spec.Logging.Debug }} -vvv{{ end }} $@
             {{ end }} # end if container.launcher
             {{ end }} # end if container.batch
         fi

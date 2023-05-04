@@ -13,7 +13,6 @@ Name | Type | Description | Notes
 **environment** | **dict(str, str)** | Key/value pairs for the environment | [optional] 
 **existing_volumes** | [**dict(str, MiniClusterExistingVolume)**](MiniClusterExistingVolume.md) | Existing Volumes to add to the containers | [optional] 
 **flux_log_level** | **int** | Log level to use for flux logging (only in non TestMode) | [optional] [default to 6]
-**flux_option_flags** | **str** | Flux option flags, usually provided with -o optional - if needed, default option flags for the server These can also be set in the user interface to override here. This is only valid for a FluxRunner \&quot;runFlux\&quot; true | [optional] [default to '']
 **flux_user** | [**FluxUser**](FluxUser.md) |  | [optional] 
 **image** | **str** | Container image must contain flux and flux-sched install | [optional] [default to 'ghcr.io/rse-ops/accounting:app-latest']
 **image_pull_secret** | **str** | Allow the user to pull authenticated images By default no secret is selected. Setting this with the name of an already existing imagePullSecret will specify that secret in the pod spec. | [optional] [default to '']

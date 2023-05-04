@@ -60,6 +60,7 @@ from pprint import pprint
  - [ContainerResources](dContainerResources.md)
  - [ContainerVolume](ContainerVolume.md)
  - [FluxRestful](FluxRestful.md)
+ - [FluxSpec](FluxSpec.md)
  - [FluxUser](FluxUser.md)
  - [LifeCycle](LifeCycle.md)
  - [LoggingSpec](LoggingSpec.md)
