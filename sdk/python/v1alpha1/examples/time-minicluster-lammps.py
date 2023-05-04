@@ -16,7 +16,6 @@ container = {
     "image": "ghcr.io/rse-ops/lammps:flux-sched-focal",
     "working_dir": "/home/flux/examples/reaxff/HNS",
     "command": "lmp -v x 1 -v y 1 -v z 1 -in in.reaxc.hns -nocite",
-    "flux_log_level": 7,
 }
 
 # Make sure your cluster or minikube is running
@@ -36,7 +35,7 @@ mc = {
     "namespace": "flux-operator",
     "name": "lammps",
     "logging": {"zeromq": True},
-    "flux": {"connect_timeout": "5s"},
+    "flux": {"connect_timeout": "5s", "log_level": 7},
 }
 
 
