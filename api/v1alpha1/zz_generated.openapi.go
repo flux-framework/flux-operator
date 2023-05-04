@@ -868,7 +868,7 @@ func schema__api_v1alpha1__MiniClusterSpec(ref common.ReferenceCallback) common.
 					},
 					"size": {
 						SchemaProps: spec.SchemaProps{
-							Description: "Size (number of job pods to run, size of minicluster in pods)",
+							Description: "Size (number of job pods to run, size of minicluster in pods) This is also the minimum number required to start Flux",
 							Default:     1,
 							Type:        []string{"integer"},
 							Format:      "int32",
@@ -921,6 +921,14 @@ func schema__api_v1alpha1__MiniClusterStatus(ref common.ReferenceCallback) commo
 							Format:      "",
 						},
 					},
+					"size": {
+						SchemaProps: spec.SchemaProps{
+							Description: "We keep the original size of the MiniCluster request as this is the absolute maximum",
+							Default:     0,
+							Type:        []string{"integer"},
+							Format:      "int32",
+						},
+					},
 					"conditions": {
 						VendorExtensible: spec.VendorExtensible{
 							Extensions: spec.Extensions{
@@ -941,7 +949,7 @@ func schema__api_v1alpha1__MiniClusterStatus(ref common.ReferenceCallback) commo
 						},
 					},
 				},
-				Required: []string{"jobid"},
+				Required: []string{"jobid", "size"},
 			},
 		},
 		Dependencies: []string{

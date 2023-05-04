@@ -344,7 +344,7 @@ class MiniClusterSpec(object):
     def size(self):
         """Gets the size of this MiniClusterSpec.  # noqa: E501
 
-        Size (number of job pods to run, size of minicluster in pods)  # noqa: E501
+        Size (number of job pods to run, size of minicluster in pods) This is also the minimum number required to start Flux  # noqa: E501
 
         :return: The size of this MiniClusterSpec.  # noqa: E501
         :rtype: int
@@ -355,7 +355,7 @@ class MiniClusterSpec(object):
     def size(self, size):
         """Sets the size of this MiniClusterSpec.
 
-        Size (number of job pods to run, size of minicluster in pods)  # noqa: E501
+        Size (number of job pods to run, size of minicluster in pods) This is also the minimum number required to start Flux  # noqa: E501
 
         :param size: The size of this MiniClusterSpec.  # noqa: E501
         :type size: int

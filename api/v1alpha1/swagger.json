@@ -474,7 +474,7 @@
           "x-kubernetes-list-type": "atomic"
         },
         "size": {
-          "description": "Size (number of job pods to run, size of minicluster in pods)",
+          "description": "Size (number of job pods to run, size of minicluster in pods) This is also the minimum number required to start Flux",
           "type": "integer",
           "format": "int32",
           "default": 1
@@ -508,7 +508,8 @@
       "description": "MiniClusterStatus defines the observed state of Flux",
       "type": "object",
       "required": [
-        "jobid"
+        "jobid",
+        "size"
       ],
       "properties": {
         "conditions": {
@@ -524,6 +525,12 @@
           "description": "The Jobid is set internally to associate to a miniCluster This isn't currently in use, we only have one!",
           "type": "string",
           "default": ""
+        },
+        "size": {
+          "description": "We keep the original size of the MiniCluster request as this is the absolute maximum",
+          "type": "integer",
+          "format": "int32",
+          "default": 0
         }
       }
     },
