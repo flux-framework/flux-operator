@@ -402,13 +402,26 @@ func generateHostlist(cluster *api.MiniCluster, size int) string {
 // generateFluxConfig creates the broker.toml file used to boostrap flux
 func generateFluxConfig(cluster *api.MiniCluster) string {
 
-	// The hosts will eventually be generated through the max size, so the cluster can expand
-	// This is currently not supported as flux will not allow hosts >> nodes
+	// The hosts are generated through the max size, so the cluster can expand
 	fqdn := fmt.Sprintf("%s.%s.svc.cluster.local", restfulServiceName, cluster.Namespace)
-	hosts := fmt.Sprintf("[%s]", generateRange(int(cluster.Spec.Size)))
+	hosts := fmt.Sprintf("[%s]", generateRange(int(cluster.Spec.MaxSize)))
 	fluxConfig := fmt.Sprintf(brokerConfigTemplate, fqdn, cluster.Name, hosts)
 	fluxConfig += "\n" + brokerArchiveSection
 	return fluxConfig
+}
+
+// getRequiredRanks figures out the quorum that should be online for the cluster to start
+func getRequiredRanks(cluster *api.MiniCluster) string {
+
+	// Use the Flux default - all ranks must be online
+	// Because our maximum size is == our starting size
+	requiredRanks := ""
+	if cluster.Spec.MaxSize == cluster.Spec.Size {
+		return requiredRanks
+	}
+	// This is the quorum - the nodes required to be online - so we can start
+	// This can be less than the MaxSize
+	return generateRange(int(cluster.Spec.Size))
 }
 
 // generateWaitScript generates the main script to start everything up!
@@ -441,6 +454,9 @@ func generateWaitScript(cluster *api.MiniCluster, containerIndex int) (string, e
 	// Ensure if we have a batch command, it gets split up
 	batchCommand := strings.Split(container.Command, "\n")
 
+	// Required quorum - might be smaller than initial list if size != maxsize
+	requiredRanks := getRequiredRanks(cluster)
+
 	// The token uuid is the same across images
 	wt := WaitTemplate{
 		FluxUser:      getFluxUser(cluster.Spec.FluxRestful.Username),
@@ -451,7 +467,7 @@ func generateWaitScript(cluster *api.MiniCluster, containerIndex int) (string, e
 		Container:     container,
 		Spec:          cluster.Spec,
 		Batch:         batchCommand,
-		RequiredRanks: "",
+		RequiredRanks: requiredRanks,
 	}
 	t, err := template.New("wait-sh").Parse(waitToStartTemplate)
 	if err != nil {

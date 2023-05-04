@@ -42,7 +42,7 @@ type WaitTemplate struct {
 	Spec      api.MiniClusterSpec
 
 	// Broker initial quorum that must be online to start
-	// This will be used when the cluster MaxSize > Size, which is not supported yet
+	// This is used if the cluster MaxSize > Size
 	RequiredRanks string
 
 	// Batch commands split up

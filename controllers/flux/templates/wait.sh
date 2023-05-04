@@ -88,7 +88,7 @@ brokerOptions="-Scron.directory=/etc/flux/system/cron.d \
 {{ if .RequiredRanks }}-Sbroker.quorum={{ .RequiredRanks }}{{ end }} \
 {{ if .Spec.Logging.Zeromq }}-Stbon.zmqdebug=1{{ end }} \
 {{ if not .Spec.Logging.Quiet }} -Slog-stderr-level={{or .Container.FluxLogLevel 6}} {{ else }} -Slog-stderr-level=0 {{ end }} \
-  -Slog-stderr-mode=local"
+-Slog-stderr-mode=local"
 
 # if we are given an archive to use, load first, not required to exist
 # Note that we ask the user to dump in interactive mode - I am not
@@ -257,6 +257,7 @@ function run_flux_restful() {
     {{ end }}{{ end }}
 
     # Shared envars across user modes
+    # For the RestFul API, we can't easily scale this up so MaxSize is largely ignored
     export FLUX_REQUIRE_AUTH=true
     export FLUX_SECRET_KEY={{ .Spec.FluxRestful.SecretKey}}
     export FLUX_NUMBER_NODES={{ .Spec.Size}}

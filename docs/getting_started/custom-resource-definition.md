@@ -50,6 +50,19 @@ the set of containers that you describe.
 The size will always be the minimum number of pods that the Flux broker is required to see online
 in order to start (meaning for the time being, all of them).
 
+### maxSize
+
+The `maxSize` variable is typically used when you want elasticity. E.g., it is the largest size of cluster that
+you would be able to scale to. This works by way of registering this many workers (fully qualified domain names)
+with the broker.toml. If you don't set this value, the maxsize will be set to the size.
+
+```yaml
+  # Number of pods to allow the MiniCluster to scale to
+  maxSize: 10
+```
+
+The `maxSize` must always be greater than the size, if set. 
+
 ### tasks
 
 The `tasks` variable under the spec is the number of tasks that each pod in the MiniCluster should be given.
