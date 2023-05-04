@@ -53,6 +53,7 @@ singularity
 multi-tenancy
 interactive
 services
+scaling
 staging
 volumes
 state
