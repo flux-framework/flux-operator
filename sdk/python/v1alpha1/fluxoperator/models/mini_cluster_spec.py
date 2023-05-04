@@ -41,6 +41,7 @@ class MiniClusterSpec(object):
         'interactive': 'bool',
         'job_labels': 'dict(str, str)',
         'logging': 'LoggingSpec',
+        'max_size': 'int',
         'pod': 'PodSpec',
         'services': 'list[MiniClusterContainer]',
         'size': 'int',
@@ -58,6 +59,7 @@ class MiniClusterSpec(object):
         'interactive': 'interactive',
         'job_labels': 'jobLabels',
         'logging': 'logging',
+        'max_size': 'maxSize',
         'pod': 'pod',
         'services': 'services',
         'size': 'size',
@@ -66,7 +68,7 @@ class MiniClusterSpec(object):
         'volumes': 'volumes'
     }
 
-    def __init__(self, archive=None, cleanup=False, containers=None, deadline_seconds=31500000, flux_restful=None, interactive=False, job_labels=None, logging=None, pod=None, services=None, size=1, tasks=1, users=None, volumes=None, local_vars_configuration=None):  # noqa: E501
+    def __init__(self, archive=None, cleanup=False, containers=None, deadline_seconds=31500000, flux_restful=None, interactive=False, job_labels=None, logging=None, max_size=None, pod=None, services=None, size=1, tasks=1, users=None, volumes=None, local_vars_configuration=None):  # noqa: E501
         """MiniClusterSpec - a model defined in OpenAPI"""  # noqa: E501
         if local_vars_configuration is None:
             local_vars_configuration = Configuration.get_default_copy()
@@ -80,6 +82,7 @@ class MiniClusterSpec(object):
         self._interactive = None
         self._job_labels = None
         self._logging = None
+        self._max_size = None
         self._pod = None
         self._services = None
         self._size = None
@@ -103,6 +106,8 @@ class MiniClusterSpec(object):
             self.job_labels = job_labels
         if logging is not None:
             self.logging = logging
+        if max_size is not None:
+            self.max_size = max_size
         if pod is not None:
             self.pod = pod
         if services is not None:
@@ -295,6 +300,29 @@ class MiniClusterSpec(object):
         """
 
         self._logging = logging
+
+    @property
+    def max_size(self):
+        """Gets the max_size of this MiniClusterSpec.  # noqa: E501
+
+        MaxSize (maximum number of pods to allow scaling to)  # noqa: E501
+
+        :return: The max_size of this MiniClusterSpec.  # noqa: E501
+        :rtype: int
+        """
+        return self._max_size
+
+    @max_size.setter
+    def max_size(self, max_size):
+        """Sets the max_size of this MiniClusterSpec.
+
+        MaxSize (maximum number of pods to allow scaling to)  # noqa: E501
+
+        :param max_size: The max_size of this MiniClusterSpec.  # noqa: E501
+        :type max_size: int
+        """
+
+        self._max_size = max_size
 
     @property
     def pod(self):

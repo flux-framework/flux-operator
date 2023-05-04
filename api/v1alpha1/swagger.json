@@ -459,6 +459,11 @@
           "default": {},
           "$ref": "#/definitions/LoggingSpec"
         },
+        "maxSize": {
+          "description": "MaxSize (maximum number of pods to allow scaling to)",
+          "type": "integer",
+          "format": "int32"
+        },
         "pod": {
           "description": "Pod spec details",
           "default": {},

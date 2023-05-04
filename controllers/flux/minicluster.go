@@ -220,6 +220,18 @@ func (r *MiniClusterReconciler) resizeCluster(
 	cluster *api.MiniCluster,
 ) (ctrl.Result, error) {
 
+	// We absolutely don't allow a size less than 1
+	// If this happens, restore to current / original size
+	if cluster.Spec.Size < 1 {
+		r.log.Info("MiniCluster", "PatchSize", cluster.Spec.Size, "Status", "Denied")
+		patch := client.MergeFrom(cluster.DeepCopy())
+		cluster.Spec.Size = *job.Spec.Parallelism
+
+		// Apply the patch to restore to the original size
+		err := r.Client.Patch(ctx, cluster, patch)
+		return ctrl.Result{Requeue: true}, err
+	}
+
 	// ensure we don't go above the max original size, which should be saved on init
 	// If we do, we need to patch it back down to the maximum - this isn't allowed
 	if cluster.Spec.Size > cluster.Status.MaximumSize {
@@ -430,7 +442,9 @@ func generateWaitScript(cluster *api.MiniCluster, containerIndex int) (string, e
 	// The first pod (0) should always generate the curve certificate
 	container := cluster.Spec.Containers[containerIndex]
 	mainHost := fmt.Sprintf("%s-0", cluster.Name)
-	hosts := generateHostlist(cluster, int(cluster.Spec.Size))
+
+	// The resources size must also match the max size in the cluster
+	hosts := generateHostlist(cluster, int(cluster.Spec.MaxSize))
 
 	// Ensure our requested users each each have a password
 	for i, user := range cluster.Spec.Users {

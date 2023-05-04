@@ -88,7 +88,7 @@ brokerOptions="-Scron.directory=/etc/flux/system/cron.d \
 {{ if .RequiredRanks }}-Sbroker.quorum={{ .RequiredRanks }}{{ end }} \
 {{ if .Spec.Logging.Zeromq }}-Stbon.zmqdebug=1{{ end }} \
 {{ if not .Spec.Logging.Quiet }} -Slog-stderr-level={{or .Container.FluxLogLevel 6}} {{ else }} -Slog-stderr-level=0 {{ end }} \
--Slog-stderr-mode=local"
+  -Slog-stderr-mode=local"
 
 # if we are given an archive to use, load first, not required to exist
 # Note that we ask the user to dump in interactive mode - I am not

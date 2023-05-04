@@ -553,8 +553,12 @@ func (f *MiniCluster) Validate() bool {
 	}
 
 	// If we haven't seen a MaxSize (in the status) yet, set it
+	// This needs to be the absolute max that is allowed
 	if f.Status.MaximumSize == 0 {
 		f.Status.MaximumSize = f.Spec.Size
+		if f.Spec.MaxSize > f.Spec.Size {
+			f.Status.MaximumSize = f.Spec.MaxSize
+		}
 	}
 	fmt.Printf("🤓 MiniCluster.MaximumSize %s\n", fmt.Sprint(f.Status.MaximumSize))
 
