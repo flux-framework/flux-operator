@@ -24,6 +24,7 @@ import (
 	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	ctrl "sigs.k8s.io/controller-runtime"
+	"sigs.k8s.io/controller-runtime/pkg/client"
 
 	"k8s.io/apimachinery/pkg/api/errors"
 	"k8s.io/apimachinery/pkg/types"
@@ -94,9 +95,18 @@ func (r *MiniClusterReconciler) ensureMiniCluster(
 
 	// Create the batch job that brings it all together!
 	// A batchv1.Job can hold a spec for containers that use the configs we just made
-	_, result, err = r.getMiniCluster(ctx, cluster)
+	mc, result, err := r.getMiniCluster(ctx, cluster)
 	if err != nil {
 		return result, err
+	}
+
+	// If the sizes are different, we patch to update.
+	if *mc.Spec.Parallelism != cluster.Spec.Size {
+		r.log.Info("MiniCluster", "Size", mc.Spec.Parallelism, "Requested Size", cluster.Spec.Size)
+		result, err := r.resizeCluster(ctx, mc, cluster)
+		if err != nil {
+			return result, err
+		}
 	}
 
 	// Expose other sidecar container services
@@ -201,6 +211,34 @@ func (r *MiniClusterReconciler) getExistingJob(
 		existing,
 	)
 	return existing, err
+}
+
+// resizeCluster will patch the cluster to make a larger (or smaller) size
+func (r *MiniClusterReconciler) resizeCluster(
+	ctx context.Context,
+	job *batchv1.Job,
+	cluster *api.MiniCluster,
+) (ctrl.Result, error) {
+
+	// ensure we don't go above the max original size, which should be saved on init
+	// If we do, we need to patch it back down to the maximum - this isn't allowed
+	if cluster.Spec.Size > cluster.Status.MaximumSize {
+		r.log.Info("MiniCluster", "PatchSize", cluster.Spec.Size, "Status", "Denied")
+		patch := client.MergeFrom(cluster.DeepCopy())
+		cluster.Spec.Size = cluster.Status.MaximumSize
+
+		// Apply the patch to restore to the original size
+		err := r.Client.Patch(ctx, cluster, patch)
+		return ctrl.Result{}, err
+	}
+
+	// If we get here, the size is smaller
+	r.log.Info("MiniCluster", "PatchSize", cluster.Spec.Size, "Status", "Accepted")
+	patch := client.MergeFrom(job.DeepCopy())
+	job.Spec.Parallelism = &cluster.Spec.Size
+	job.Spec.Completions = &cluster.Spec.Size
+	err := r.Client.Patch(ctx, job, patch)
+	return ctrl.Result{Requeue: true}, err
 }
 
 // getMiniCluster does an actual check if we have a batch job in the namespace
@@ -354,25 +392,45 @@ func (r *MiniClusterReconciler) getConfigMap(
 	return existing, ctrl.Result{}, err
 }
 
+// generateHostlist for a specific size given the cluster namespace and a size
+func generateHostlist(cluster *api.MiniCluster, size int) string {
+
+	// The hosts are generated through the max size, so the cluster can expand
+	return fmt.Sprintf("%s-[%s]", cluster.Name, generateRange(size))
+}
+
 // generateFluxConfig creates the broker.toml file used to boostrap flux
 func generateFluxConfig(cluster *api.MiniCluster) string {
 
-	// Prepare suffix of fully qualified domain name
+	// The hosts are generated through the max size, so the cluster can expand
 	fqdn := fmt.Sprintf("%s.%s.svc.cluster.local", restfulServiceName, cluster.Namespace)
-	hosts := fmt.Sprintf("[%s]", generateRange(int(cluster.Spec.Size)))
+	hosts := fmt.Sprintf("[%s]", generateRange(int(cluster.Spec.MaxSize)))
 	fluxConfig := fmt.Sprintf(brokerConfigTemplate, fqdn, cluster.Name, hosts)
 	fluxConfig += "\n" + brokerArchiveSection
 	return fluxConfig
 }
 
+// getRequiredRanks figures out the quorum that should be online for the cluster to start
+func getRequiredRanks(cluster *api.MiniCluster) string {
+
+	// Use the Flux default - all ranks must be online
+	// Because our maximum size is == our starting size
+	requiredRanks := ""
+	if cluster.Spec.MaxSize == cluster.Spec.Size {
+		return requiredRanks
+	}
+	// This is the quorum - the nodes required to be online - so we can start
+	// This can be less than the MaxSize
+	return generateRange(int(cluster.Spec.Size))
+}
+
 // generateWaitScript generates the main script to start everything up!
-// TODO try removing the extra wait logic and just sleep/retry
 func generateWaitScript(cluster *api.MiniCluster, containerIndex int) (string, error) {
 
 	// The first pod (0) should always generate the curve certificate
 	container := cluster.Spec.Containers[containerIndex]
 	mainHost := fmt.Sprintf("%s-0", cluster.Name)
-	hosts := fmt.Sprintf("%s-[%s]", cluster.Name, generateRange(int(cluster.Spec.Size)))
+	hosts := generateHostlist(cluster, int(cluster.Spec.Size))
 
 	// Ensure our requested users each each have a password
 	for i, user := range cluster.Spec.Users {
@@ -396,16 +454,20 @@ func generateWaitScript(cluster *api.MiniCluster, containerIndex int) (string, e
 	// Ensure if we have a batch command, it gets split up
 	batchCommand := strings.Split(container.Command, "\n")
 
+	// Required quorum - might be smaller than initial list if size != maxsize
+	requiredRanks := getRequiredRanks(cluster)
+
 	// The token uuid is the same across images
 	wt := WaitTemplate{
-		FluxUser:  getFluxUser(cluster.Spec.FluxRestful.Username),
-		FluxToken: getRandomToken(cluster.Spec.FluxRestful.Token),
-		MainHost:  mainHost,
-		Hosts:     hosts,
-		Cores:     cores,
-		Container: container,
-		Spec:      cluster.Spec,
-		Batch:     batchCommand,
+		FluxUser:      getFluxUser(cluster.Spec.FluxRestful.Username),
+		FluxToken:     getRandomToken(cluster.Spec.FluxRestful.Token),
+		MainHost:      mainHost,
+		Hosts:         hosts,
+		Cores:         cores,
+		Container:     container,
+		Spec:          cluster.Spec,
+		Batch:         batchCommand,
+		RequiredRanks: requiredRanks,
 	}
 	t, err := template.New("wait-sh").Parse(waitToStartTemplate)
 	if err != nil {
