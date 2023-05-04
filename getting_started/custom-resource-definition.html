@@ -1200,6 +1200,8 @@ the set of containers that you describe.</p>
 <span class="w">  </span><span class="nt">size</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">4</span>
 </code></pre></div>
 </div>
+<p>The size will always be the minimum number of pods that the Flux broker is required to see online
+in order to start (meaning for the time being, all of them).</p>
 <h3 id="tasks">tasks<a class="headerlink" href="#tasks" title="Permalink to this heading">¶</a></h3>
 <p>The <code class="docutils literal notranslate"><span class="pre">tasks</span></code> variable under the spec is the number of tasks that each pod in the MiniCluster should be given.</p>
 <div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><code><span class="w">  </span><span class="nt">tasks</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">4</span>
@@ -1902,7 +1904,7 @@ or define your own as follows:</p>
   <small>
     
       Last update:
-      May 02, 2023
+      May 04, 2023
     
   </small>
 </div>

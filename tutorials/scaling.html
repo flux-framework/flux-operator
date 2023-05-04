@@ -14,7 +14,7 @@
     
     
       
-        <title>Development - Flux Operator</title>
+        <title>Scaling - Flux Operator</title>
       
     
     
@@ -138,7 +138,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Development
+              Scaling
             
           </span>
         </div>
@@ -238,12 +238,10 @@
         
   
   
-    
-  
 
 
   <li class="md-tabs__item">
-    <a href="../getting_started/index.html" class="md-tabs__link md-tabs__link--active">
+    <a href="../getting_started/index.html" class="md-tabs__link">
       <span class="md-ellipsis">Getting Started</span>
     </a>
   </li>
@@ -255,7 +253,7 @@
 
 
   <li class="md-tabs__item">
-    <a href="../tutorials/index.html" class="md-tabs__link">
+    <a href="index.html" class="md-tabs__link">
       <span class="md-ellipsis">Tutorials</span>
     </a>
   </li>
@@ -336,14 +334,12 @@
 
   
   
-    
-  
   
     
-    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--nested">
       
       
-        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_1" type="checkbox" id="__nav_1" checked>
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" data-md-toggle="__nav_1" type="checkbox" id="__nav_1" checked>
       
       
       
@@ -378,78 +374,12 @@
               
   
   
-    
-  
-    
   
   
-    <li class="md-nav__item md-nav__item--active">
-      
-      
-      <input class="md-nav__toggle md-toggle" data-md-toggle="toc" type="checkbox" id="__toc">
-      
-        <label class="md-nav__link md-nav__link--active" for="__toc">
-          <span title="/development/index.md (reference label)" class="md-ellipsis">Development</span>
-          <span class="md-nav__icon md-icon"></span>
-        </label>
-      
-      <a href="#" class="md-nav__link md-nav__link--active">
+    <li class="md-nav__item">
+      <a href="../development/index.html" class="md-nav__link">
         <span title="/development/index.md (reference label)" class="md-ellipsis">Development</span>
       </a>
-      
-        
-
-<nav class="md-nav md-nav--secondary">
-  
-  
-    
-  
-  
-    <label class="md-nav__title" for="__toc">
-      <span class="md-nav__icon md-icon"></span>
-      Table of contents
-    </label>
-    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="developer-guide.html" class="md-nav__link">
-    <span title="/development/developer-guide.md (reference label)" class="md-ellipsis">Developer Guide</span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="designs.html" class="md-nav__link">
-    <span title="/development/designs.md (reference label)" class="md-ellipsis">Designs</span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="debugging.html" class="md-nav__link">
-    <span title="/development/debugging.md (reference label)" class="md-ellipsis">Debugging</span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="sdks.html" class="md-nav__link">
-    <span title="/development/sdks.md (reference label)" class="md-ellipsis">Language SDKs</span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="creation.html" class="md-nav__link">
-    <span title="/development/creation.md (reference label)" class="md-ellipsis">Operator Creation</span>
-  </a>
-  
-</li>
-      
-    </ul>
-  
-</nav>
-      
     </li>
   
 
@@ -496,7 +426,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../tutorials/index.html" class="md-nav__link">
+      <a href="index.html" class="md-nav__link">
         <span title="/tutorials/index.md (reference label)" class="md-ellipsis">Tutorials</span>
       </a>
     </li>
@@ -623,91 +553,146 @@
                   
 
 
-  <a href="https://github.com/flux-framework/flux-operator/blob/main/docs/development/index.md" title="Edit this page" class="md-content__button md-icon">
+  <a href="https://github.com/flux-framework/flux-operator/blob/main/docs/tutorials/scaling.md" title="Edit this page" class="md-content__button md-icon">
     
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10 20H6V4h7v5h5v3.1l2-2V8l-6-6H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h4v-2m10.2-7c.1 0 .3.1.4.2l1.3 1.3c.2.2.2.6 0 .8l-1 1-2.1-2.1 1-1c.1-.1.2-.2.4-.2m0 3.9L14.1 23H12v-2.1l6.1-6.1 2.1 2.1Z"/></svg>
   </a>
 
-<h1 id="development">Development<a class="headerlink" href="#development" title="Permalink to this heading">¶</a></h1>
-<p>These pages include development and background for the process of creating
-the Flux Operator. If you have
-any questions, please <a class="reference external" href="https://github.com/flux-framework/flux-operator/issues">let us know</a></p>
-<div class="toctree-wrapper compound">
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="developer-guide.html">Developer Guide</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="developer-guide.html#setup">Setup</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="developer-guide.html#local-development">Local Development</a></li>
-<li class="toctree-l3"><a class="reference internal" href="developer-guide.html#interacting-with-services">Interacting with Services</a></li>
+<h1 id="scaling">Scaling<a class="headerlink" href="#scaling" title="Permalink to this heading">¶</a></h1>
+<blockquote>
+<div><p>This functionality requires <a class="reference external" href="https://github.com/kubernetes/enhancements/tree/master/keps/sig-apps/3715-elastic-indexed-job#motivation">Kubernetes 1.27 and later</a>.</p>
+</div></blockquote>
+<p>While Flux does not natively support scaling or elasticity (yet) we can do some tricks
+with the Flux Operator to enable it! Specifically:</p>
+<ul class="simple">
+<li><p>We tell Flux to create a cluster at the maximum size that is possible (and the broker config sees this many nodes)</p></li>
+<li><p>We update the resource spec to reflect that.</p></li>
 </ul>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="developer-guide.html#build-images">Build Images</a></li>
-<li class="toctree-l2"><a class="reference internal" href="developer-guide.html#other-developer-commands">Other Developer Commands</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="developer-guide.html#build-operator-yaml">Build Operator Yaml</a></li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="developer-guide.html#build-api">Build API</a></li>
-<li class="toctree-l2"><a class="reference internal" href="developer-guide.html#pre-push">Pre-push</a></li>
-<li class="toctree-l2"><a class="reference internal" href="developer-guide.html#container-requirements">Container Requirements</a></li>
-<li class="toctree-l2"><a class="reference internal" href="developer-guide.html#testing">Testing</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="developer-guide.html#integration">Integration</a></li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="developer-guide.html#documentation">Documentation</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="developer-guide.html#install-dependencies-and-build">Install Dependencies and Build</a></li>
-<li class="toctree-l3"><a class="reference internal" href="developer-guide.html#preview-documentation">Preview Documentation</a></li>
-</ul>
-</li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="designs.html">Designs</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="designs.html#active-design">Active Design</a></li>
-<li class="toctree-l2"><a class="reference internal" href="designs.html#early-designs">Early Designs</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="designs.html#design-3-3">Design 3.3</a></li>
-<li class="toctree-l3"><a class="reference internal" href="designs.html#design-3-2">Design 3.2</a></li>
-<li class="toctree-l3"><a class="reference internal" href="designs.html#design-3-1">Design 3.1</a></li>
-<li class="toctree-l3"><a class="reference internal" href="designs.html#design-2-2">Design 2.2</a></li>
-<li class="toctree-l3"><a class="reference internal" href="designs.html#design-2-1">Design 2.1</a></li>
-<li class="toctree-l3"><a class="reference internal" href="designs.html#design-1">Design 1</a></li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="designs.html#wisdom">Wisdom</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="designs.html#learned-knowledge">Learned Knowledge</a></li>
-<li class="toctree-l3"><a class="reference internal" href="designs.html#what-is-a-workspace">What is a workspace?</a></li>
-</ul>
-</li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="debugging.html">Debugging</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="debugging.html#errors">Errors</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="debugging.html#pull-errors">Pull Errors</a></li>
-<li class="toctree-l3"><a class="reference internal" href="debugging.html#service-already-on-port-8080">Service Already on Port 8080</a></li>
-<li class="toctree-l3"><a class="reference internal" href="debugging.html#crd-should-be-installed">CRD should be installed</a></li>
-<li class="toctree-l3"><a class="reference internal" href="debugging.html#configs-not-taking">Configs not taking</a></li>
-<li class="toctree-l3"><a class="reference internal" href="debugging.html#fields-not-showing-up">Fields not showing up</a></li>
-<li class="toctree-l3"><a class="reference internal" href="debugging.html#yaml">Yaml</a></li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="debugging.html#troubleshooting">Troubleshooting</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="sdks.html">Language SDKs</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="sdks.html#python">Python</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="sdks.html#setup">Setup</a></li>
-<li class="toctree-l3"><a class="reference internal" href="sdks.html#file-generation">File Generation</a></li>
-<li class="toctree-l3"><a class="reference internal" href="sdks.html#practical-steps">Practical Steps</a></li>
-</ul>
-</li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="creation.html">Operator Creation</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="creation.html#installation">1. Installation</a></li>
-<li class="toctree-l2"><a class="reference internal" href="creation.html#start-a-development-cluster">2. Start A Development Cluster</a></li>
-<li class="toctree-l2"><a class="reference internal" href="creation.html#local-workspace">3. Local Workspace</a></li>
-<li class="toctree-l2"><a class="reference internal" href="creation.html#create-controller">4. Create Controller</a></li>
-</ul>
-</li>
-</ul>
+<h2 id="basic-example">Basic Example<a class="headerlink" href="#basic-example" title="Permalink to this heading">¶</a></h2>
+<blockquote>
+<div><p>Starting with a cluster at a maximum size and scaling it up and down</p>
+</div></blockquote>
+<p><strong><a class="reference external" href="https://github.com/flux-framework/flux-operator/blob/main/examples/scaling/basic/minicluster.yaml">Tutorial File</a></strong></p>
+<p>To run this example:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span>minikube<span class="w"> </span>start<span class="w"> </span>--kubernetes-version<span class="o">=</span><span class="m">1</span>.27.
+</code></pre></div>
 </div>
+<p>Install the operator, create the namespace, and create the MiniCluster:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span>kubectl<span class="w"> </span>apply<span class="w"> </span>-f<span class="w"> </span>./examples/dist/flux-operator.yaml
+$<span class="w"> </span>kubectl<span class="w"> </span>create<span class="w"> </span>namespace<span class="w"> </span>flux-operator
+$<span class="w"> </span>kubectl<span class="w"> </span>apply<span class="w"> </span>-f<span class="w"> </span>examples/scaling/basic/minicluster.yaml
+</code></pre></div>
+</div>
+<p>You’ll need to wait for the containers to create (the image is pulling) and you can
+help the pull via:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span>minikube<span class="w"> </span>ssh<span class="w"> </span>docker<span class="w"> </span>pull<span class="w"> </span>ghcr.io/flux-framework/flux-restful-api:latest
+</code></pre></div>
+</div>
+<h3 id="check-initial-size">Check Initial Size<a class="headerlink" href="#check-initial-size" title="Permalink to this heading">¶</a></h3>
+<p>Wait until the cluster finishes, and you see the pods are ready to go (Running state):</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>kubectl<span class="w"> </span>get<span class="w"> </span>-n<span class="w"> </span>flux-operator<span class="w"> </span>pods
+NAME<span class="w">                  </span>READY<span class="w">   </span>STATUS<span class="w">    </span>RESTARTS<span class="w">   </span>AGE
+flux-sample-0-kfl7p<span class="w">   </span><span class="m">1</span>/1<span class="w">     </span>Running<span class="w">   </span><span class="m">0</span><span class="w">          </span>76s
+flux-sample-1-2v57b<span class="w">   </span><span class="m">1</span>/1<span class="w">     </span>Running<span class="w">   </span><span class="m">0</span><span class="w">          </span>76s
+flux-sample-2-m7n85<span class="w">   </span><span class="m">1</span>/1<span class="w">     </span>Running<span class="w">   </span><span class="m">0</span><span class="w">          </span>76s
+flux-sample-3-zkmvq<span class="w">   </span><span class="m">1</span>/1<span class="w">     </span>Running<span class="w">   </span><span class="m">0</span><span class="w">          </span>76s
+</code></pre></div>
+</div>
+<p>We recommend (in another terminal) shelling into the broker pod and connecting to the broker’s Flux instance
+so that you can follow the changes.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span>kubectl<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>-it<span class="w"> </span>-n<span class="w"> </span>flux-operator<span class="w"> </span>flux-sample-0-xd2gc<span class="w"> </span>--<span class="w"> </span>bash
+root@flux-sample-0:/code#<span class="w"> </span>sudo<span class="w"> </span>-E<span class="w"> </span><span class="k">$(</span>env<span class="k">)</span><span class="w"> </span>-E<span class="w"> </span><span class="nv">HOME</span><span class="o">=</span>/home/flux<span class="w"> </span>-u<span class="w"> </span>flux<span class="w"> </span>flux<span class="w"> </span>proxy<span class="w"> </span>local:///var/run/flux/local<span class="w"> </span>
+</code></pre></div>
+</div>
+<p>Here is how to look at the state of the cluster. When you first create it, we will have 4 pods, and all of them
+are up.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>flux@flux-sample-0:/code$<span class="w"> </span>flux<span class="w"> </span>resource<span class="w"> </span>list
+<span class="w">     </span>STATE<span class="w"> </span>NNODES<span class="w">   </span>NCORES<span class="w"> </span>NODELIST
+<span class="w">      </span>free<span class="w">      </span><span class="m">4</span><span class="w">       </span><span class="m">16</span><span class="w"> </span>flux-sample-<span class="o">[</span><span class="m">0</span>-3<span class="o">]</span>
+<span class="w"> </span>allocated<span class="w">      </span><span class="m">0</span><span class="w">        </span><span class="m">0</span><span class="w"> </span>
+<span class="w">      </span>down<span class="w">      </span><span class="m">0</span><span class="w">        </span><span class="m">0</span><span class="w"> </span>
+</code></pre></div>
+</div>
+<p>At this point we want to try changing the size.</p>
+<h3 id="ask-for-a-larger-size">Ask for a Larger Size<a class="headerlink" href="#ask-for-a-larger-size" title="Permalink to this heading">¶</a></h3>
+<div class="highlight-diff notranslate"><div class="highlight"><pre><span></span><code><span class="gd">-  size: 4</span>
+<span class="gi">+  size: 5</span>
+</code></pre></div>
+</div>
+<p>Let’s first try asking for something the operator can’t give us - a larger size. After the change above, do:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span>kubectl<span class="w"> </span>apply<span class="w"> </span>-f<span class="w"> </span>examples/scaling/basic/minicluster.yaml
+</code></pre></div>
+</div>
+<p>The reason a larger size isn’t supported is because the Flux broker already has registered N nodes, known by their fully qualified
+domain name, and we would need to do some tricks to update that configuration to add another
+one. While this might be possible (and likely will be in the future) for now we don’t support it.
+Thus, if you do a request for a size that is larger than the originally created maximum size,
+you’ll see this in the operator logs:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><code><span class="go">1.6831543179369373e+09  INFO    minicluster-reconciler  MiniCluster     {&quot;Size&quot;: 4, &quot;Requested Size&quot;: 5}</span>
+<span class="go">1.6831543179369428e+09  INFO    minicluster-reconciler  MiniCluster     {&quot;PatchSize&quot;: 5, &quot;Status&quot;: &quot;Denied&quot;}</span>
+</code></pre></div>
+</div>
+<h3 id="ask-for-smaller-size">Ask for Smaller Size<a class="headerlink" href="#ask-for-smaller-size" title="Permalink to this heading">¶</a></h3>
+<p>Asking for a smaller size will work! Let’s decrease the original CRD from 4 to 3:</p>
+<div class="highlight-diff notranslate"><div class="highlight"><pre><span></span><code><span class="gd">-  size: 4</span>
+<span class="gi">+  size: 3</span>
+</code></pre></div>
+</div>
+<p>Apply the CRD again:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span>kubectl<span class="w"> </span>apply<span class="w"> </span>-f<span class="w"> </span>examples/scaling/basic/minicluster.yaml
+</code></pre></div>
+</div>
+<p>The first thing you will notice is that a pod is terminating</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><code> <span class="n">make</span> <span class="nb">list</span>
+<span class="n">kubectl</span> <span class="n">get</span> <span class="o">-</span><span class="n">n</span> <span class="n">flux</span><span class="o">-</span><span class="n">operator</span> <span class="n">pods</span>
+<span class="n">NAME</span>                  <span class="n">READY</span>   <span class="n">STATUS</span>        <span class="n">RESTARTS</span>   <span class="n">AGE</span>
+<span class="n">flux</span><span class="o">-</span><span class="n">sample</span><span class="o">-</span><span class="mi">0</span><span class="o">-</span><span class="n">xd2gc</span>   <span class="mi">1</span><span class="o">/</span><span class="mi">1</span>     <span class="n">Running</span>       <span class="mi">0</span>          <span class="mi">30</span><span class="n">m</span>
+<span class="n">flux</span><span class="o">-</span><span class="n">sample</span><span class="o">-</span><span class="mi">1</span><span class="o">-</span><span class="n">tbj7c</span>   <span class="mi">1</span><span class="o">/</span><span class="mi">1</span>     <span class="n">Running</span>       <span class="mi">0</span>          <span class="mi">30</span><span class="n">m</span>
+<span class="n">flux</span><span class="o">-</span><span class="n">sample</span><span class="o">-</span><span class="mi">2</span><span class="o">-</span><span class="n">wbpf9</span>   <span class="mi">1</span><span class="o">/</span><span class="mi">1</span>     <span class="n">Running</span>       <span class="mi">0</span>          <span class="mi">30</span><span class="n">m</span>
+<span class="n">flux</span><span class="o">-</span><span class="n">sample</span><span class="o">-</span><span class="mi">3</span><span class="o">-</span><span class="n">cfs6c</span>   <span class="mi">1</span><span class="o">/</span><span class="mi">1</span>     <span class="n">Terminating</span>   <span class="mi">0</span>          <span class="mi">26</span><span class="n">m</span>
+</code></pre></div>
+</div>
+<p>When the pod is gone, if (in your second terminal) you look at the resource status, Flux
+will now report this pod as down.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>flux@flux-sample-0:/code$<span class="w"> </span>flux<span class="w"> </span>resource<span class="w"> </span>list
+<span class="w">     </span>STATE<span class="w"> </span>NNODES<span class="w">   </span>NCORES<span class="w"> </span>NODELIST
+<span class="w">      </span>free<span class="w">      </span><span class="m">3</span><span class="w">       </span><span class="m">12</span><span class="w"> </span>flux-sample-<span class="o">[</span><span class="m">0</span>-2<span class="o">]</span>
+<span class="w"> </span>allocated<span class="w">      </span><span class="m">0</span><span class="w">        </span><span class="m">0</span><span class="w"> </span>
+<span class="w">      </span>down<span class="w">      </span><span class="m">1</span><span class="w">        </span><span class="m">4</span><span class="w"> </span>flux-sample-3
+</code></pre></div>
+</div>
+<p>And importantly, the rest of the cluster keeps running smoothly! We haven’t interrupted the Flux broker or
+install by changing the size, at least superficially and not running any jobs on the pod that was terminated.</p>
+<h3 id="ask-for-larger-size">Ask for Larger Size<a class="headerlink" href="#ask-for-larger-size" title="Permalink to this heading">¶</a></h3>
+<p>Finally, let’s scale back up! Restore the original CRD size to 4:</p>
+<div class="highlight-diff notranslate"><div class="highlight"><pre><span></span><code><span class="gd">-  size: 3</span>
+<span class="gi">+  size: 4</span>
+</code></pre></div>
+</div>
+<p>Apply again:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span>kubectl<span class="w"> </span>apply<span class="w"> </span>-f<span class="w"> </span>examples/scaling/basic/minicluster.yaml
+</code></pre></div>
+</div>
+<p>And time time you’ll see the container creating:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span>kubectl<span class="w"> </span>get<span class="w"> </span>-n<span class="w"> </span>flux-operator<span class="w"> </span>pods
+NAME<span class="w">                  </span>READY<span class="w">   </span>STATUS<span class="w">              </span>RESTARTS<span class="w">   </span>AGE
+flux-sample-0-xd2gc<span class="w">   </span><span class="m">1</span>/1<span class="w">     </span>Running<span class="w">             </span><span class="m">0</span><span class="w">          </span>35m
+flux-sample-1-tbj7c<span class="w">   </span><span class="m">1</span>/1<span class="w">     </span>Running<span class="w">             </span><span class="m">0</span><span class="w">          </span>35m
+flux-sample-2-wbpf9<span class="w">   </span><span class="m">1</span>/1<span class="w">     </span>Running<span class="w">             </span><span class="m">0</span><span class="w">          </span>35m
+flux-sample-3-ll76s<span class="w">   </span><span class="m">0</span>/1<span class="w">     </span>ContainerCreating<span class="w">   </span><span class="m">0</span><span class="w">          </span>1s
+</code></pre></div>
+</div>
+<p>And when it’s running, Flux will notice it online again. Your full cluster is online again.
+And that’s it!</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span>flux<span class="w"> </span>resource<span class="w"> </span>list
+<span class="w">     </span>STATE<span class="w"> </span>NNODES<span class="w">   </span>NCORES<span class="w"> </span>NODELIST
+<span class="w">      </span>free<span class="w">      </span><span class="m">4</span><span class="w">       </span><span class="m">16</span><span class="w"> </span>flux-sample-<span class="o">[</span><span class="m">0</span>-3<span class="o">]</span>
+<span class="w"> </span>allocated<span class="w">      </span><span class="m">0</span><span class="w">        </span><span class="m">0</span><span class="w"> </span>
+<span class="w">      </span>down<span class="w">      </span><span class="m">0</span><span class="w">        </span><span class="m">0</span><span class="w"> </span>
+</code></pre></div>
+</div>
+<p>We will have a tutorial for expanding a cluster size soon. Flux doesn’t allow
+the hosts to be greater than nodes currently, so we haven’t added this yet.</p>
 
 
   <hr>
@@ -741,42 +726,6 @@ any questions, please <a class="reference external" href="https://github.com/flu
       </main>
       
         <footer class="md-footer">
-  
-    
-    <nav class="md-footer__inner md-grid" aria-label="Footer" >
-      
-        
-        <a href="../getting_started/custom-resource-definition.html" class="md-footer__link md-footer__link--prev" aria-label="Previous: MiniCluster" rel="prev">
-          <div class="md-footer__button md-icon">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
-          </div>
-          <div class="md-footer__title">
-            <div class="md-ellipsis">
-              <span class="md-footer__direction">
-                Previous
-              </span>
-              MiniCluster
-            </div>
-          </div>
-        </a>
-      
-      
-        
-        <a href="developer-guide.html" class="md-footer__link md-footer__link--next" aria-label="Next: Developer Guide" rel="next">
-          <div class="md-footer__title">
-            <div class="md-ellipsis">
-              <span class="md-footer__direction">
-                Next
-              </span>
-              Developer Guide
-            </div>
-          </div>
-          <div class="md-footer__button md-icon">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11H4Z"/></svg>
-          </div>
-        </a>
-      
-    </nav>
   
   
   
