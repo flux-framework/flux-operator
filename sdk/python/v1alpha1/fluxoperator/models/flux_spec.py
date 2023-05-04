@@ -34,26 +34,31 @@ class FluxSpec(object):
     """
     openapi_types = {
         'connect_timeout': 'str',
+        'log_level': 'int',
         'option_flags': 'str'
     }
 
     attribute_map = {
         'connect_timeout': 'connectTimeout',
+        'log_level': 'logLevel',
         'option_flags': 'optionFlags'
     }
 
-    def __init__(self, connect_timeout='5s', option_flags='', local_vars_configuration=None):  # noqa: E501
+    def __init__(self, connect_timeout='5s', log_level=6, option_flags='', local_vars_configuration=None):  # noqa: E501
         """FluxSpec - a model defined in OpenAPI"""  # noqa: E501
         if local_vars_configuration is None:
             local_vars_configuration = Configuration.get_default_copy()
         self.local_vars_configuration = local_vars_configuration
 
         self._connect_timeout = None
+        self._log_level = None
         self._option_flags = None
         self.discriminator = None
 
         if connect_timeout is not None:
             self.connect_timeout = connect_timeout
+        if log_level is not None:
+            self.log_level = log_level
         if option_flags is not None:
             self.option_flags = option_flags
 
@@ -79,6 +84,29 @@ class FluxSpec(object):
         """
 
         self._connect_timeout = connect_timeout
+
+    @property
+    def log_level(self):
+        """Gets the log_level of this FluxSpec.  # noqa: E501
+
+        Log level to use for flux logging (only in non TestMode)  # noqa: E501
+
+        :return: The log_level of this FluxSpec.  # noqa: E501
+        :rtype: int
+        """
+        return self._log_level
+
+    @log_level.setter
+    def log_level(self, log_level):
+        """Sets the log_level of this FluxSpec.
+
+        Log level to use for flux logging (only in non TestMode)  # noqa: E501
+
+        :param log_level: The log_level of this FluxSpec.  # noqa: E501
+        :type log_level: int
+        """
+
+        self._log_level = log_level
 
     @property
     def option_flags(self):

@@ -317,6 +317,12 @@ type FluxSpec struct {
 	// This is only valid for a FluxRunner "runFlux" true
 	// +optional
 	OptionFlags string `json:"optionFlags"`
+
+	// Log level to use for flux logging (only in non TestMode)
+	// +kubebuilder:default=6
+	// +default=6
+	// +optional
+	LogLevel int32 `json:"logLevel,omitempty"`
 }
 
 type MiniClusterContainer struct {
@@ -404,12 +410,6 @@ type MiniClusterContainer struct {
 	// Existing Volumes to add to the containers
 	// +optional
 	ExistingVolumes map[string]MiniClusterExistingVolume `json:"existingVolumes"`
-
-	// Log level to use for flux logging (only in non TestMode)
-	// +kubebuilder:default=6
-	// +default=6
-	// +optional
-	FluxLogLevel int32 `json:"fluxLogLevel,omitempty"`
 
 	// Special command to run at beginning of script, directly after asFlux
 	// is defined as sudo -u flux -E (so you can change that if desired.)

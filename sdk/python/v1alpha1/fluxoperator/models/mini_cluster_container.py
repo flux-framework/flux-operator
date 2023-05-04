@@ -41,7 +41,6 @@ class MiniClusterContainer(object):
         'diagnostics': 'bool',
         'environment': 'dict(str, str)',
         'existing_volumes': 'dict(str, MiniClusterExistingVolume)',
-        'flux_log_level': 'int',
         'flux_user': 'FluxUser',
         'image': 'str',
         'image_pull_secret': 'str',
@@ -68,7 +67,6 @@ class MiniClusterContainer(object):
         'diagnostics': 'diagnostics',
         'environment': 'environment',
         'existing_volumes': 'existingVolumes',
-        'flux_log_level': 'fluxLogLevel',
         'flux_user': 'fluxUser',
         'image': 'image',
         'image_pull_secret': 'imagePullSecret',
@@ -86,7 +84,7 @@ class MiniClusterContainer(object):
         'working_dir': 'workingDir'
     }
 
-    def __init__(self, batch=False, batch_raw=False, command='', commands=None, cores=0, diagnostics=False, environment=None, existing_volumes=None, flux_log_level=6, flux_user=None, image='ghcr.io/rse-ops/accounting:app-latest', image_pull_secret='', launcher=False, life_cycle=None, logs='', name='', ports=None, pre_command='', pull_always=False, resources=None, run_flux=False, security_context=None, volumes=None, working_dir='', local_vars_configuration=None):  # noqa: E501
+    def __init__(self, batch=False, batch_raw=False, command='', commands=None, cores=0, diagnostics=False, environment=None, existing_volumes=None, flux_user=None, image='ghcr.io/rse-ops/accounting:app-latest', image_pull_secret='', launcher=False, life_cycle=None, logs='', name='', ports=None, pre_command='', pull_always=False, resources=None, run_flux=False, security_context=None, volumes=None, working_dir='', local_vars_configuration=None):  # noqa: E501
         """MiniClusterContainer - a model defined in OpenAPI"""  # noqa: E501
         if local_vars_configuration is None:
             local_vars_configuration = Configuration.get_default_copy()
@@ -100,7 +98,6 @@ class MiniClusterContainer(object):
         self._diagnostics = None
         self._environment = None
         self._existing_volumes = None
-        self._flux_log_level = None
         self._flux_user = None
         self._image = None
         self._image_pull_secret = None
@@ -134,8 +131,6 @@ class MiniClusterContainer(object):
             self.environment = environment
         if existing_volumes is not None:
             self.existing_volumes = existing_volumes
-        if flux_log_level is not None:
-            self.flux_log_level = flux_log_level
         if flux_user is not None:
             self.flux_user = flux_user
         if image is not None:
@@ -348,29 +343,6 @@ class MiniClusterContainer(object):
         """
 
         self._existing_volumes = existing_volumes
-
-    @property
-    def flux_log_level(self):
-        """Gets the flux_log_level of this MiniClusterContainer.  # noqa: E501
-
-        Log level to use for flux logging (only in non TestMode)  # noqa: E501
-
-        :return: The flux_log_level of this MiniClusterContainer.  # noqa: E501
-        :rtype: int
-        """
-        return self._flux_log_level
-
-    @flux_log_level.setter
-    def flux_log_level(self, flux_log_level):
-        """Sets the flux_log_level of this MiniClusterContainer.
-
-        Log level to use for flux logging (only in non TestMode)  # noqa: E501
-
-        :param flux_log_level: The flux_log_level of this MiniClusterContainer.  # noqa: E501
-        :type flux_log_level: int
-        """
-
-        self._flux_log_level = flux_log_level
 
     @property
     def flux_user(self):

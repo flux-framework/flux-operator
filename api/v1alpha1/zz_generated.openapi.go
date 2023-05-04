@@ -259,6 +259,14 @@ func schema__api_v1alpha1__FluxSpec(ref common.ReferenceCallback) common.OpenAPI
 							Format:      "",
 						},
 					},
+					"logLevel": {
+						SchemaProps: spec.SchemaProps{
+							Description: "Log level to use for flux logging (only in non TestMode)",
+							Default:     6,
+							Type:        []string{"integer"},
+							Format:      "int32",
+						},
+					},
 				},
 			},
 		},
@@ -617,14 +625,6 @@ func schema__api_v1alpha1__MiniClusterContainer(ref common.ReferenceCallback) co
 									},
 								},
 							},
-						},
-					},
-					"fluxLogLevel": {
-						SchemaProps: spec.SchemaProps{
-							Description: "Log level to use for flux logging (only in non TestMode)",
-							Default:     6,
-							Type:        []string{"integer"},
-							Format:      "int32",
 						},
 					},
 					"preCommand": {

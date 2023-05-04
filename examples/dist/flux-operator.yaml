@@ -128,12 +128,6 @@ spec:
                         type: object
                       description: Existing Volumes to add to the containers
                       type: object
-                    fluxLogLevel:
-                      default: 6
-                      description: Log level to use for flux logging (only in non
-                        TestMode)
-                      format: int32
-                      type: integer
                     fluxUser:
                       description: Flux User, if created in the container
                       properties:
@@ -259,6 +253,11 @@ spec:
                     default: 5s
                     description: Single user executable to provide to flux start
                     type: string
+                  logLevel:
+                    default: 6
+                    description: Log level to use for flux logging (only in non TestMode)
+                    format: int32
+                    type: integer
                   optionFlags:
                     description: Flux option flags, usually provided with -o optional
                       - if needed, default option flags for the server These can also
@@ -438,12 +437,6 @@ spec:
                         type: object
                       description: Existing Volumes to add to the containers
                       type: object
-                    fluxLogLevel:
-                      default: 6
-                      description: Log level to use for flux logging (only in non
-                        TestMode)
-                      format: int32
-                      type: integer
                     fluxUser:
                       description: Flux User, if created in the container
                       properties:
