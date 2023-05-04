@@ -343,7 +343,7 @@ I did some digging into the logic, and found that the underlying submission was 
 to start a celery worker:
 
 ```bash
-$ flux mini alloc -N 2 --exclusive --job-name=merlin flux exec `which /bin/bash` -c "celery -A merlin worker -l INFO --concurrency 1 --prefetch-multiplier 1 -Ofair -Q \'[merlin]_flux_par\'"
+$ flux alloc -N 2 --exclusive --job-name=merlin flux exec `which /bin/bash` -c "celery -A merlin worker -l INFO --concurrency 1 --prefetch-multiplier 1 -Ofair -Q \'[merlin]_flux_par\'"
 ```
 I think this should be changed to:
 

@@ -1131,7 +1131,7 @@ $<span class="w"> </span>kubectl<span class="w"> </span>logs<span class="w"> </s
 <span class="go">    secret-key = &quot;vmk%8&amp;dl7ICTfgx?*+0wgPb=@kFA&gt;djvZU-Sl[T6&quot;</span>
 <span class="go">Extra arguments are: snakemake --cores 1 --flux</span>
 
-<span class="go">🌀 flux start -o --config /etc/flux/config -Scron.directory=/etc/flux/system/cron.d   -Stbon.fanout=256   -Srundir=/run/flux   -Sstatedir=/var/lib/flux   -Slocal-uri=local:///run/flux/local   -Slog-stderr-level=6    -Slog-stderr-mode=local flux mini submit  -n 1 --quiet  --watch snakemake --cores 1 --flux</span>
+<span class="go">🌀 flux start -o --config /etc/flux/config -Scron.directory=/etc/flux/system/cron.d   -Stbon.fanout=256   -Srundir=/run/flux   -Sstatedir=/var/lib/flux   -Slocal-uri=local:///run/flux/local   -Slog-stderr-level=6    -Slog-stderr-mode=local flux submit  -n 1 --quiet  --watch snakemake --cores 1 --flux</span>
 <span class="go">broker.info[0]: start: none-&gt;join 10.6371ms</span>
 <span class="go">broker.info[0]: parent-none: join-&gt;init 0.051043ms</span>
 <span class="go">cron.info[0]: synchronizing cron tasks to event heartbeat.pulse</span>
@@ -1285,7 +1285,7 @@ $<span class="w"> </span>kubectl<span class="w"> </span>logs<span class="w"> </s
 <span class="go">Finished job 0.</span>
 <span class="go">9 of 9 steps (100%) done</span>
 <span class="go">Complete log: .snakemake/log/2023-02-17T210519.114509.snakemake.log</span>
-<span class="go">broker.info[0]: rc2.0: flux mini submit -n 1 --quiet --watch snakemake --cores 1 --flux Exited (rc=0) 115.1s</span>
+<span class="go">broker.info[0]: rc2.0: flux submit -n 1 --quiet --watch snakemake --cores 1 --flux Exited (rc=0) 115.1s</span>
 <span class="go">broker.info[0]: rc2-success: run-&gt;cleanup 1.91796m</span>
 <span class="go">broker.info[0]: cleanup.0: flux queue stop --quiet --all --nocheckpoint Exited (rc=0) 0.0s</span>
 <span class="go">broker.info[0]: cleanup.1: flux job cancelall --user=all --quiet -f --states RUN Exited (rc=0) 0.0s</span>

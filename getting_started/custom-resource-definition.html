@@ -607,6 +607,40 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#flux" class="md-nav__link">
+    <span title="/getting_started/custom-resource-definition.md#flux (reference label)" class="md-ellipsis">flux</span>
+  </a>
+  
+    <nav class="md-nav" aria-label="flux">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#optionflags" class="md-nav__link">
+    <span title="/getting_started/custom-resource-definition.md#optionflags (reference label)" class="md-ellipsis">option<wbr>Flags</span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#loglevel" class="md-nav__link">
+    <span title="/getting_started/custom-resource-definition.md#loglevel (reference label)" class="md-ellipsis">log<wbr>Level</span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#connecttimeout" class="md-nav__link">
+    <span title="/getting_started/custom-resource-definition.md#connecttimeout (reference label)" class="md-ellipsis">connect<wbr>Timeout</span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#logging" class="md-nav__link">
     <span title="/getting_started/custom-resource-definition.md#logging (reference label)" class="md-ellipsis">logging</span>
   </a>
@@ -797,20 +831,6 @@
           <li class="md-nav__item">
   <a href="#ports" class="md-nav__link">
     <span title="/getting_started/custom-resource-definition.md#ports (reference label)" class="md-ellipsis">ports</span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#fluxoptionflags" class="md-nav__link">
-    <span title="/getting_started/custom-resource-definition.md#fluxoptionflags (reference label)" class="md-ellipsis">flux<wbr>Option<wbr>Flags</span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#fluxloglevel" class="md-nav__link">
-    <span title="/getting_started/custom-resource-definition.md#fluxloglevel (reference label)" class="md-ellipsis">flux<wbr>Log<wbr>Level</span>
   </a>
   
 </li>
@@ -1380,6 +1400,75 @@ If you want to disable this cleanup:</p>
 </div>
 <p>If you are streaming the logs with <code class="docutils literal notranslate"><span class="pre">kubectl</span> <span class="pre">logs</span></code> the steam would stop when the broker pod is completed,
 so typically you will get the logs as long as you are streaming when the job starts running.</p>
+<h3 id="flux">flux<a class="headerlink" href="#flux" title="Permalink to this heading">¶</a></h3>
+<p>Settings under the Flux directive typically refer to flux options, e.g., for the broker or similar.</p>
+<h4 id="optionflags">optionFlags<a class="headerlink" href="#optionflags" title="Permalink to this heading">¶</a></h4>
+<p>Often when you run flux, you need to provide an option flag. E.g.,:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span>flux<span class="w"> </span>submit<span class="w"> </span>-ompi<span class="o">=</span>openmpi@5
+</code></pre></div>
+</div>
+<p>While these can be provided in the user interface of the Flux RESTFul API,
+depending on your container image you might want to set some flags as default.
+You can do this by setting this particular config parameter, and you should
+set the flags just as you would to the command, starting with <code class="docutils literal notranslate"><span class="pre">-o</span></code>:</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><code><span class="nt">flux</span><span class="p">:</span>
+<span class="w">    </span><span class="c1"># optional - if needed, default option flags for the server (e.g., -ompi=openmpi@5)</span>
+<span class="w">    </span><span class="nt">optionFlags</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;-ompi=openmpi@5&quot;</span>
+</code></pre></div>
+</div>
+<p>Note that if you run with the user interface, setting a flag in the interface
+that is defined for the server will override it here. These options are
+currently defined for your entire cluster and cannot be provided to specific containers.
+Also remember that your base container can equally provide these flags (and you
+could equally override them, but if they are set and you don’t define them here
+they should not be touched).</p>
+<h4 id="loglevel">logLevel<a class="headerlink" href="#loglevel" title="Permalink to this heading">¶</a></h4>
+<p>The log level to provide to flux, given that test mode is not on.</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><code><span class="nt">flux</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">logLevel</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">7</span>
+</code></pre></div>
+</div>
+<h4 id="connecttimeout">connectTimeout<a class="headerlink" href="#connecttimeout" title="Permalink to this heading">¶</a></h4>
+<p>For Flux versions 0.50.0 and later, you can customize the zeromq timeout. This is done
+via an extra broker option provided on the command line:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>-Stbon.connect_timeout<span class="o">=</span>5s
+</code></pre></div>
+</div>
+<p>But note that (if you are interested) you could provide it in the broker.toml as well:</p>
+<div class="highlight-toml notranslate"><div class="highlight"><pre><span></span><code><span class="k">[tbon]</span>
+<span class="n">connect_timeout</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;10s&quot;</span>
+</code></pre></div>
+</div>
+<p>Note the above is a string, so the default for this value (if you leave it unset is):</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><code><span class="nt">flux</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">connectTimeout</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">5s</span>
+</code></pre></div>
+</div>
+<p>To disable adding this parameter, period, set it to an empty string:</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><code><span class="nt">flux</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">connextTimeout</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;&quot;</span>
+</code></pre></div>
+</div>
+<p>A timeout of 0s will not be honored, and will default to the empty string (this is done internal in Flux).</p>
+<blockquote>
+<div><p>Why is this important?</p>
+</div></blockquote>
+<p>When the Flux network is coming online (the headless service for the pods) zeromq will immediately try
+to connect, and then (by default if we don’t set it) start an exponential backoff of retry. Since we’ve
+changed the design to not have a certificate generation pod, we’ve found that the network is not reliably
+up by the time the broker starts, which, combined with this backoff, can lead to slow startup times.
+Part of our strategy to help with that is to set the connect timeout (as shown above) to a set value.
+In our experiments using <a class="reference external" href="https://github.com/flux-framework/flux-operator/blob/main/sdk/python/v1alpha1/examples/time-minicluster-lammps.py">this script</a>
+with a LAMMPS image, we found an optimal connect timeout to be lower between 1s and 5s (<a class="reference external" href="https://github.com/converged-computing/operator-experiments/tree/main/google/service-timing">see this work</a>).
+Note that this could vary depending on your setup, and we recommend you run the script with your MiniCluster setup in the Python script to test.
+As another option, you can add an arbitrary service container, which seems to “warmup” the network
+and skip most of this delay. This service combined with the connect timeout seems to be the optimal way
+to minimize the startup time - for LAMMPS, this means going back to the original 11-12 seconds we saw
+with our original Flux Operator experiments for Kubecon 2023.
+More details are available in <a class="reference external" href="https://github.com/converged-computing/operator-experiments/tree/main/google/service-timing">this post</a>.
+Although we have fixed the zeromq timeout bug, there still seems to be some underlying issue in Kubernetes.</p>
+<p>Note that we think this higher level networking bug is still an issue, and are going to be creating a dummy case
+to reproduce it and share with the Kubernetes networking team.</p>
 <h3 id="logging">logging<a class="headerlink" href="#logging" title="Permalink to this heading">¶</a></h3>
 <p>We provide simple types of “logging” within the main script that is run for the job.
 If you don’t set any variables, you’ll get the most verbosity with timing of the main
@@ -1644,30 +1733,6 @@ be assigned this number (and you can forward to your host however you like):</p>
 <span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">15672</span>
 <span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">5671</span>
 <span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">5672</span>
-</code></pre></div>
-</div>
-<h4 id="fluxoptionflags">fluxOptionFlags<a class="headerlink" href="#fluxoptionflags" title="Permalink to this heading">¶</a></h4>
-<p>Often when you run flux, you need to provide an option flag. E.g.,:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span>flux<span class="w"> </span>mini<span class="w"> </span>submit<span class="w"> </span>-ompi<span class="o">=</span>openmpi@5
-</code></pre></div>
-</div>
-<p>While these can be provided in the user interface of the Flux RESTFul API,
-depending on your container image you might want to set some flags as default.
-You can do this by setting this particular config parameter, and you should
-set the flags just as you would to the command, starting with <code class="docutils literal notranslate"><span class="pre">-o</span></code>:</p>
-<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><code>	# optional - if needed, default option flags for the server (e.g., -ompi=openmpi@5)
-	fluxOptionFlags: &quot;-ompi=openmpi@5&quot;
-</code></pre></div>
-</div>
-<p>Note that if you run with the user interface, setting a flag in the interface
-that is defined for the server will override it here. These options are
-currently defined for your entire cluster and cannot be provided to specific containers.
-Also remember that your base container can equally provide these flags (and you
-could equally override them, but if they are set and you don’t define them here
-they should not be touched).</p>
-<h4 id="fluxloglevel">fluxLogLevel<a class="headerlink" href="#fluxloglevel" title="Permalink to this heading">¶</a></h4>
-<p>The log level to provide to flux, given that test mode is not on.</p>
-<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><code>	fluxLogLevel: 7
 </code></pre></div>
 </div>
 <h4 id="precommand">preCommand<a class="headerlink" href="#precommand" title="Permalink to this heading">¶</a></h4>

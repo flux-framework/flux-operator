@@ -182,7 +182,7 @@ curve
     secret-key = "vmk%8&dl7ICTfgx?*+0wgPb=@kFA>djvZU-Sl[T6"
 Extra arguments are: snakemake --cores 1 --flux
 
-🌀 flux start -o --config /etc/flux/config -Scron.directory=/etc/flux/system/cron.d   -Stbon.fanout=256   -Srundir=/run/flux   -Sstatedir=/var/lib/flux   -Slocal-uri=local:///run/flux/local   -Slog-stderr-level=6    -Slog-stderr-mode=local flux mini submit  -n 1 --quiet  --watch snakemake --cores 1 --flux
+🌀 flux start -o --config /etc/flux/config -Scron.directory=/etc/flux/system/cron.d   -Stbon.fanout=256   -Srundir=/run/flux   -Sstatedir=/var/lib/flux   -Slocal-uri=local:///run/flux/local   -Slog-stderr-level=6    -Slog-stderr-mode=local flux submit  -n 1 --quiet  --watch snakemake --cores 1 --flux
 broker.info[0]: start: none->join 10.6371ms
 broker.info[0]: parent-none: join->init 0.051043ms
 cron.info[0]: synchronizing cron tasks to event heartbeat.pulse
@@ -336,7 +336,7 @@ localrule all:
 Finished job 0.
 9 of 9 steps (100%) done
 Complete log: .snakemake/log/2023-02-17T210519.114509.snakemake.log
-broker.info[0]: rc2.0: flux mini submit -n 1 --quiet --watch snakemake --cores 1 --flux Exited (rc=0) 115.1s
+broker.info[0]: rc2.0: flux submit -n 1 --quiet --watch snakemake --cores 1 --flux Exited (rc=0) 115.1s
 broker.info[0]: rc2-success: run->cleanup 1.91796m
 broker.info[0]: cleanup.0: flux queue stop --quiet --all --nocheckpoint Exited (rc=0) 0.0s
 broker.info[0]: cleanup.1: flux job cancelall --user=all --quiet -f --states RUN Exited (rc=0) 0.0s
