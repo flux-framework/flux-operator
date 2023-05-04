@@ -48,7 +48,24 @@ the set of containers that you describe.
 ```
 
 The size will always be the minimum number of pods that the Flux broker is required to see online
-in order to start (meaning for the time being, all of them).
+in order to start (meaning for the time being, all of them). If you've set a `maxSize` or you want to
+scale smaller, you can re-apply the CRD to scale down. Flux will see the nodes as going offline, and 
+of course you will want to be careful about the state of your cluster when you do this. If you scale
+down, you cannot go below 1 node, and if you scale up, you cannot exceed the maximum of the `size` or
+`maxsize`.
+
+### maxSize
+
+The `maxSize` variable is typically used when you want elasticity. E.g., it is the largest size of cluster that
+you would be able to scale to. This works by way of registering this many workers (fully qualified domain names)
+with the broker.toml. If you don't set this value, the maxsize will be set to the size.
+
+```yaml
+  # Number of pods to allow the MiniCluster to scale to
+  maxSize: 10
+```
+
+The `maxSize` must always be greater than the size, if set. 
 
 ### tasks
 

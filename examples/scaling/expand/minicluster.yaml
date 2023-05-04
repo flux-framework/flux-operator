@@ -1,0 +1,19 @@
+apiVersion: flux-framework.org/v1alpha1
+kind: MiniCluster
+metadata:
+  name: flux-sample
+  namespace: flux-operator
+spec:
+  # Number of pods to create for MiniCluster to start
+  size: 2
+
+  # Number of pods to allow scaling to (the number that flux will see)
+  maxSize: 4
+
+  # This needs to be in interactive or launcher mode to work
+  # otherwise we submit as a job (and it will be running under the smaller size number of tasks)
+  interactive: true
+
+  # This is a list because a pod can support multiple containers
+  containers:
+    - image: ghcr.io/flux-framework/flux-restful-api:latest

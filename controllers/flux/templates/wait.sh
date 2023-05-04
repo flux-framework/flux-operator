@@ -257,6 +257,7 @@ function run_flux_restful() {
     {{ end }}{{ end }}
 
     # Shared envars across user modes
+    # For the RestFul API, we can't easily scale this up so MaxSize is largely ignored
     export FLUX_REQUIRE_AUTH=true
     export FLUX_SECRET_KEY={{ .Spec.FluxRestful.SecretKey}}
     export FLUX_NUMBER_NODES={{ .Spec.Size}}

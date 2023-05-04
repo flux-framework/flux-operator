@@ -12,6 +12,7 @@ Name | Type | Description | Notes
 **interactive** | **bool** | Run a single-user, interactive minicluster | [optional] [default to False]
 **job_labels** | **dict(str, str)** | Labels for the job | [optional] 
 **logging** | [**LoggingSpec**](LoggingSpec.md) |  | [optional] 
+**max_size** | **int** | MaxSize (maximum number of pods to allow scaling to) | [optional] 
 **pod** | [**PodSpec**](PodSpec.md) |  | [optional] 
 **services** | [**list[MiniClusterContainer]**](MiniClusterContainer.md) | Services are one or more service containers to bring up alongside the MiniCluster. | [optional] 
 **size** | **int** | Size (number of job pods to run, size of minicluster in pods) This is also the minimum number required to start Flux | [optional] [default to 1]

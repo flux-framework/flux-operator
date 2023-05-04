@@ -874,6 +874,13 @@ func schema__api_v1alpha1__MiniClusterSpec(ref common.ReferenceCallback) common.
 							Format:      "int32",
 						},
 					},
+					"maxSize": {
+						SchemaProps: spec.SchemaProps{
+							Description: "MaxSize (maximum number of pods to allow scaling to)",
+							Type:        []string{"integer"},
+							Format:      "int32",
+						},
+					},
 					"tasks": {
 						SchemaProps: spec.SchemaProps{
 							Description: "Total number of CPUs being run across entire cluster",

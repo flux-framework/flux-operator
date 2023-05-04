@@ -79,6 +79,10 @@ type MiniClusterSpec struct {
 	// +optional
 	Size int32 `json:"size,omitempty"`
 
+	// MaxSize (maximum number of pods to allow scaling to)
+	// +optional
+	MaxSize int32 `json:"maxSize,omitempty"`
+
 	// Total number of CPUs being run across entire cluster
 	// +kubebuilder:default=1
 	// +default=1
@@ -537,9 +541,24 @@ func (f *MiniCluster) Validate() bool {
 	fmt.Printf("🤓 MiniCluster.DeadlineSeconds %d\n", f.Spec.DeadlineSeconds)
 	fmt.Printf("🤓 MiniCluster.Size %s\n", fmt.Sprint(f.Spec.Size))
 
+	// If MaxSize is set, it must be greater than size
+	if f.Spec.MaxSize != 0 && f.Spec.MaxSize < f.Spec.Size {
+		fmt.Printf("😥️ MaxSize of cluster must be greater than size.\n")
+		return false
+	}
+
+	// If the MaxSize isn't set, ensure it's equal to the size
+	if f.Spec.MaxSize == 0 {
+		f.Spec.MaxSize = f.Spec.Size
+	}
+
 	// If we haven't seen a MaxSize (in the status) yet, set it
+	// This needs to be the absolute max that is allowed
 	if f.Status.MaximumSize == 0 {
 		f.Status.MaximumSize = f.Spec.Size
+		if f.Spec.MaxSize > f.Spec.Size {
+			f.Status.MaximumSize = f.Spec.MaxSize
+		}
 	}
 	fmt.Printf("🤓 MiniCluster.MaximumSize %s\n", fmt.Sprint(f.Status.MaximumSize))
 

@@ -309,6 +309,10 @@ spec:
                     description: Enable Zeromq logging
                     type: boolean
                 type: object
+              maxSize:
+                description: MaxSize (maximum number of pods to allow scaling to)
+                format: int32
+                type: integer
               pod:
                 description: Pod spec details
                 properties:
