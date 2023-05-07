@@ -53,8 +53,4 @@ setup.cfg
 setup.py
 test-requirements.txt
 test/__init__.py
-test/test_mini_cluster.py
-test/test_mini_cluster_container.py
-test/test_mini_cluster_list.py
-test/test_mini_cluster_spec.py
 tox.ini
