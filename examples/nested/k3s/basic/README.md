@@ -68,10 +68,20 @@ flux-sample-0   Ready    control-plane,master   3m44s   v1.27.1+k3s-b32bf495
 flux-sample-1   Ready    <none>                 3m38s   v1.27.1+k3s-b32bf495
 ```
 
-This feels really weird because I'm looking at the same pods that I'm running on my machine as they
-are seen in the container... but they are different! They were created after, and they don't have
-the indexed job hostname, they have the hostnames of the pods. Here are the pods from the outside
-(on my local machine):
+And you can sanity check it's not hitting the local machine!
+
+```bash
+# kubectl get -n flux-operator pods
+No resources found in flux-operator namespace.
+```
+
+Note that it would show this message even for namespaces that don't exist.
+This still feels really weird because I'm looking at the same pods that I'm running on my machine as they
+are seen in the container... but they are Kubernetes pods running a Flux node, and the Flux node running
+another Kubernetes agent (kubelet). So they are [same, same, but different, but still same](https://youtu.be/7tTfL-DtpXk)! 😂️ 
+An easy indicator is looking at the timestamps andn node names - they were created after, and they don't have the indexed job 
+random letters after the hostname, they are just the hostnames seen by Flux. Here are the pods from the outside
+(on my local machine) for comparison:
 
 ```bash
 kubectl get -n flux-operator pods
@@ -82,28 +92,36 @@ flux-sample-2-bfwkr   1/1     Running   0          109s
 flux-sample-3-kktlk   1/1     Running   0          109s
 ```
 
-I noticed that despite changing the cluster IP in the kubeconfig.yaml to the fully qualified domain
-I also ran into a weird bug I couldn't explain - it wanted me to create the flux-operator namespace. 
-I think what might be happening is the two (my local kubectl and the cluster one) are getting mixed -
-even if it's just one API endpoint. I saw error messages about not being able to kill processes attached to
-a cgroup, and I kind of wonder if this is on my local machine too. :D I'm not super worried because
-We likely won't be dealing with this on an actual Flux cluster (that doesn't have a second layer of Kubectl) 
-and this is where I'd like to test it next. Despite that error,
-everything actually works (after you artificially create this namespace for it):
+I also ran into a weird bug I couldn't explain - it had the default namespace as "flux-operator"
+and this is probably inherited somewhere (and I didn't look into it) but instead I decided
+to just set it back to be default:
 
 ```bash
-$ kubectl create namespace flux-operator
+kubectl --kubeconfig=./kubeconfig.yaml config set-context --current --namespace=default
 ```
+
+I'm not super worried because We likely won't be dealing with this on an actual Flux cluster (that doesn't have a second layer of Kubernetes) 
+and this is where I'd like to test it next. Despite that weirdness,
+everything actually works:
 
 ```bash
 $ kubectl --kubeconfig=./kubeconfig.yaml apply -f my-echo.yaml
 until kubectl --kubeconfig=./kubeconfig.yaml rollout status deployment my-echo; do sleep 1; done
 deployment "my-echo" successfully rolled out
 ```
+
+And I actually found I don't need to target the kubeconfig.yaml, it seems to hit the right cluster
+either way:
+
 ```bash
 root@flux-sample-0:/workflow# kubectl get deploy
 NAME      READY   UP-TO-DATE   AVAILABLE   AGE
 my-echo   1/1     1            1           29s
+```
+```bash
+$ kubectl get pods
+NAME                       READY   STATUS    RESTARTS   AGE
+my-echo-74dc6c4f7b-lh89p   1/1     Running   0          27s
 ```
 
 But not on my local machine! So we are getting somewhere:
@@ -113,10 +131,42 @@ $ kubectl get deploy
 No resources found in default namespace.
 ```
 
+I don't know how an echoserver is supposed to work, but we would need to
+expose the port to see the service. For now we can inspect that the server is running:
+
+```bash
+$ curl http://127.0.0.1:8080
+```
+```console
+Hostname: my-echo-74dc6c4f7b-lh89p
+
+Pod Information:
+        -no pod information available-
+
+Server values:
+        server_version=nginx: 1.13.3 - lua: 10008
+
+Request Information:
+        client_address=10.42.0.4
+        method=GET
+        real path=/
+        query=
+        request_version=1.1
+        request_uri=http://127.0.0.1:8080/
+
+Request Headers:
+        accept=*/*
+        host=127.0.0.1:8080
+        user-agent=curl/7.68.0
+
+Request Body:
+        -no body in request-
+```
+
 To step back - we have Flux running inside Kubernetes, and now a dummy Kubernetes
 running inside Flux. The four nodes in the cluster are registered, with one control
 plane and three agents. We will want to test this next on a Flux cluster that doesn't
-have an external Kubernetes wrapper, and then debug the issues we are seeing with the namespace.
+have an external Kubernetes wrapper, and then likely run something that is more like an HPC job.
 Once that is working, we will want to slowly step back and figure out the steps necessary
 to run this entirely rootless. I've gotten [k3s working with rootless](https://github.com/converged-computing/operator-experiments/tree/main/google/rootless-kubernetes/k3s) 
 but it has a few more steps! You can then run kubernetes commands as you please! 
