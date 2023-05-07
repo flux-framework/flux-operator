@@ -20,6 +20,13 @@ The following tutorials are provided from their respective directories (and are 
 
  - [Parsl](https://github.com/flux-framework/flux-operator/tree/main/examples/launchers/parsl)
 
+### Experimental
+
+#### Nested
+
+ - [K3s](https://github.com/flux-framework/flux-operator/tree/main/examples/nested/k3s/basic): instiatiate k3s inside Flux, and deploy an app.
+
+
 ### Machine Learning
 
  - [Fireworks](https://github.com/flux-framework/flux-operator/blob/main/examples/machine-learning/fireworks)
