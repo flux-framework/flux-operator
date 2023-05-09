@@ -15,3 +15,5 @@ spec:
   containers:
     - image: ghcr.io/flux-framework/flux-restful-api:latest
       command: echo hello world
+      commands:
+        post: sleep infinity
