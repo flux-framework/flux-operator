@@ -31,6 +31,8 @@ import (
 
 	api "flux-framework/flux-operator/api/v1alpha1"
 
+	jobset "sigs.k8s.io/jobset/api/v1alpha1"
+
 	"flux-framework/flux-operator/controllers/core"
 	//+kubebuilder:scaffold:imports
 )
@@ -44,6 +46,8 @@ func init() {
 	utilruntime.Must(clientgoscheme.AddToScheme(scheme))
 
 	utilruntime.Must(api.AddToScheme(scheme))
+	utilruntime.Must(jobset.AddToScheme(scheme))
+
 	//+kubebuilder:scaffold:scheme
 }
 

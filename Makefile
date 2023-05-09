@@ -165,6 +165,7 @@ clean:
 	kubectl delete -n flux-operator pods --all --grace-period=0 --force
 	kubectl delete -n flux-operator pvc --all --grace-period=0 --force
 	kubectl delete -n flux-operator pv --all --grace-period=0 --force
+	kubectl delete -n flux-operator jobset --all --grace-period=0 --force
 	kubectl delete -n flux-operator jobs --all --grace-period=0 --force
 	kubectl delete -n flux-operator MiniCluster --all --grace-period=0 --force
 

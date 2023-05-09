@@ -71,6 +71,8 @@ jobs:
         minikube ssh docker pull ${container}
         make deploy-local
         minikube image load ghcr.io/flux-framework/flux-operator:test
+        VERSION=v0.1.3
+        kubectl apply --server-side -f https://github.com/kubernetes-sigs/jobset/releases/download/$VERSION/manifests.yaml
         kubectl apply -f examples/dist/flux-operator-local.yaml
 
     - name: Test ${{ matrix.test[0] }}

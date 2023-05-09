@@ -89,13 +89,11 @@ func (r *MiniClusterReconciler) ensureMiniCluster(
 	}
 
 	// Create headless service for the MiniCluster
-	// We should not technically need this anymore.
-	// TODO I need to test the cluster, but I can't get the JobSet working
-	//selector := map[string]string{"job-name": cluster.Name}
-	//result, err = r.exposeServices(ctx, cluster, restfulServiceName, selector)
-	//if err != nil {
-	//	return result, err
-	//}
+	selector := map[string]string{"job-group": cluster.Name}
+	result, err = r.exposeServices(ctx, cluster, restfulServiceName, selector)
+	if err != nil {
+		return result, err
+	}
 
 	// Create the batch job that brings it all together!
 	// A batchv1.Job can hold a spec for containers that use the configs we just made
@@ -452,16 +450,19 @@ func (r *MiniClusterReconciler) getConfigMap(
 func generateHostlist(cluster *api.MiniCluster, size int) string {
 
 	// The hosts are generated through the max size, so the cluster can expand
-	return fmt.Sprintf("%s-[%s]", cluster.Name, generateRange(size))
+	// minicluster-flux-sample-broker-0-0
+	// minicluster-flux-sample-worker-0-1 through 0-3 for a size 4 cluster
+	return fmt.Sprintf("minicluster-%s-broker-0-0,minicluster-%s-worker-0-[%s]", cluster.Name, cluster.Name, generateRange(size-1))
 }
 
 // generateFluxConfig creates the broker.toml file used to boostrap flux
 func generateFluxConfig(cluster *api.MiniCluster) string {
 
 	// The hosts are generated through the max size, so the cluster can expand
+	brokerFqdn := fmt.Sprintf("minicluster-%s-broker-0-0", cluster.Name)
 	fqdn := fmt.Sprintf("%s.%s.svc.cluster.local", restfulServiceName, cluster.Namespace)
-	hosts := fmt.Sprintf("[%s]", generateRange(int(cluster.Spec.MaxSize)))
-	fluxConfig := fmt.Sprintf(brokerConfigTemplate, fqdn, cluster.Name, hosts)
+	hosts := fmt.Sprintf("%s, minicluster-%s-worker-0-[%s]", brokerFqdn, cluster.Name, generateRange(int(cluster.Spec.MaxSize-1)))
+	fluxConfig := fmt.Sprintf(brokerConfigTemplate, fqdn, hosts)
 	fluxConfig += "\n" + brokerArchiveSection
 	return fluxConfig
 }

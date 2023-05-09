@@ -17,6 +17,7 @@ import (
 
 	api "flux-framework/flux-operator/api/v1alpha1"
 
+	ctrl "sigs.k8s.io/controller-runtime"
 	jobset "sigs.k8s.io/jobset/api/v1alpha1"
 )
 
@@ -24,16 +25,18 @@ func (r *MiniClusterReconciler) newJobSet(
 	cluster *api.MiniCluster,
 ) (*jobset.JobSet, error) {
 
-	suspend := true
+	// When suspend is true we have a hard time debugging jobs, so keep false
+	suspend := false
 	jobs := jobset.JobSet{
 		ObjectMeta: metav1.ObjectMeta{
-			Name:      cluster.Name,
+			Name:      "minicluster",
 			Namespace: cluster.Namespace,
 			Labels:    cluster.Spec.JobLabels,
 		},
 		Spec: jobset.JobSetSpec{
 
-			// Suspend child jobs (the worker pods) when broker finishes
+			// This might be the control for child jobs (worker)
+			// But I don't think we need this anymore.
 			Suspend: &suspend,
 			// TODO decide on FailurePolicy here
 			// default is to fail if all jobs in jobset fail
@@ -41,8 +44,10 @@ func (r *MiniClusterReconciler) newJobSet(
 	}
 
 	// Get leader broker job, the parent in the JobSet (worker or follower pods)
+	// Both are required to be in indexed completion mode to have a service!
+	// I'm not sure that totally makes sense, will suggest a change.
 	//                    cluster, size, entrypoint, indexed
-	leaderJob, err := r.getJob(cluster, 1, "broker", false)
+	leaderJob, err := r.getJob(cluster, 1, "broker", true)
 	if err != nil {
 		return &jobs, err
 	}
@@ -51,10 +56,11 @@ func (r *MiniClusterReconciler) newJobSet(
 		return &jobs, err
 	}
 	jobs.Spec.ReplicatedJobs = []jobset.ReplicatedJob{leaderJob, workerJob}
+	ctrl.SetControllerReference(cluster, &jobs, r.Scheme)
 	return &jobs, nil
 }
 
-// getBrokerJob creates the job for the main leader broker
+// getJob creates a job for a main leader (broker) or worker (followers)
 func (r *MiniClusterReconciler) getJob(
 	cluster *api.MiniCluster,
 	size int32,
@@ -64,18 +70,19 @@ func (r *MiniClusterReconciler) getJob(
 
 	backoffLimit := int32(100)
 	podLabels := r.getPodLabels(cluster)
-	enableDNSHostnames := true
+	enableDNSHostnames := false
 	completionMode := batchv1.NonIndexedCompletion
 
 	if indexed {
 		completionMode = batchv1.IndexedCompletion
 	}
 
-	// TODO how are these named
 	job := jobset.ReplicatedJob{
 		Name: cluster.Name + "-" + entrypoint,
 
-		// Allow pods to be reached by their hostnames! A simple boolean! Chef's kiss!
+		// This would allow pods to be reached by their hostnames!
+		// It doesn't work for the Flux broker config at the moment,
+		// but could if we are allowed to specify the service name.
 		// <jobSet.name>-<spec.replicatedJob.name>-<job-index>-<pod-index>.<jobSet.name>-<spec.replicatedJob.name>
 		Network: &jobset.Network{
 			EnableDNSHostnames: &enableDNSHostnames,
@@ -110,7 +117,7 @@ func (r *MiniClusterReconciler) getJob(
 			},
 			Spec: corev1.PodSpec{
 				// matches the service
-				//				Subdomain:          restfulServiceName,
+				Subdomain:          restfulServiceName,
 				Volumes:            getVolumes(cluster, entrypoint),
 				RestartPolicy:      corev1.RestartPolicyOnFailure,
 				ImagePullSecrets:   getImagePullSecrets(cluster),
@@ -130,7 +137,12 @@ func (r *MiniClusterReconciler) getJob(
 
 	// Get volume mounts, add on container specific ones
 	mounts := getVolumeMounts(cluster)
-	containers, err := r.getContainers(cluster.Spec.Containers, cluster.Name, mounts)
+	containers, err := r.getContainers(
+		cluster.Spec.Containers,
+		cluster.Name,
+		mounts,
+		entrypoint,
+	)
 	jobspec.Template.Spec.Containers = containers
 	job.Template.Spec = jobspec
 	return job, err
