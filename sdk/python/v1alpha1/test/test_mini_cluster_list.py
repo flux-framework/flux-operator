@@ -182,7 +182,7 @@ class TestMiniClusterList(unittest.TestCase):
                                 None
                                 ], 
                             jobid = '', 
-                            size = 56, ), )
+                            maximum_size = 56, ), )
                     ], 
                 kind = '', 
                 metadata = None
@@ -334,7 +334,7 @@ class TestMiniClusterList(unittest.TestCase):
                                 None
                                 ], 
                             jobid = '', 
-                            size = 56, ), )
+                            maximum_size = 56, ), )
                     ],
         )
 
