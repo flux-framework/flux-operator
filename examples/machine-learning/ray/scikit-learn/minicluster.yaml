@@ -1,0 +1,36 @@
+apiVersion: flux-framework.org/v1alpha1
+kind: MiniCluster
+metadata:
+  name: flux-sample
+  namespace: flux-operator
+spec:
+  # It is important to launch with tasks == nodes, so that the main start
+  # command is told to run across nodes (and start.sh given to workers and leader)
+  size: 4
+  tasks: 4
+  volumes:
+    data:
+      storageClass: hostpath
+      path: /tmp/workflow
+
+  containers:
+    - image: ghcr.io/rse-ops/ray-scikit-learn:tag-mamba
+      workingDir: /tmp/workflow
+      commands:
+        pre: mkdir -p /tmp/workflow/tmp
+
+      environment:
+        PYTHONPATH: /usr/lib/python3.10/site-packages
+        TMPDIR: /tmp/workflow/tmp
+
+      ports:
+        - 8786
+        - 6379
+      command: /bin/bash /tmp/workflow/start.sh
+
+      #launcher: true
+      fluxUser:
+        name: fluxuser
+      volumes:
+        data:
+          path: /tmp/workflow
