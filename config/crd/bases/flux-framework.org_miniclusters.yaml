@@ -708,14 +708,14 @@ spec:
                 description: The Jobid is set internally to associate to a miniCluster
                   This isn't currently in use, we only have one!
                 type: string
-              size:
+              maximumSize:
                 description: We keep the original size of the MiniCluster request
                   as this is the absolute maximum
                 format: int32
                 type: integer
             required:
             - jobid
-            - size
+            - maximumSize
             type: object
         type: object
     served: true

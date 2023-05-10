@@ -35,16 +35,16 @@ class MiniClusterStatus(object):
     openapi_types = {
         'conditions': 'list[V1Condition]',
         'jobid': 'str',
-        'size': 'int'
+        'maximum_size': 'int'
     }
 
     attribute_map = {
         'conditions': 'conditions',
         'jobid': 'jobid',
-        'size': 'size'
+        'maximum_size': 'maximumSize'
     }
 
-    def __init__(self, conditions=None, jobid='', size=0, local_vars_configuration=None):  # noqa: E501
+    def __init__(self, conditions=None, jobid='', maximum_size=0, local_vars_configuration=None):  # noqa: E501
         """MiniClusterStatus - a model defined in OpenAPI"""  # noqa: E501
         if local_vars_configuration is None:
             local_vars_configuration = Configuration.get_default_copy()
@@ -52,13 +52,13 @@ class MiniClusterStatus(object):
 
         self._conditions = None
         self._jobid = None
-        self._size = None
+        self._maximum_size = None
         self.discriminator = None
 
         if conditions is not None:
             self.conditions = conditions
         self.jobid = jobid
-        self.size = size
+        self.maximum_size = maximum_size
 
     @property
     def conditions(self):
@@ -109,29 +109,29 @@ class MiniClusterStatus(object):
         self._jobid = jobid
 
     @property
-    def size(self):
-        """Gets the size of this MiniClusterStatus.  # noqa: E501
+    def maximum_size(self):
+        """Gets the maximum_size of this MiniClusterStatus.  # noqa: E501
 
         We keep the original size of the MiniCluster request as this is the absolute maximum  # noqa: E501
 
-        :return: The size of this MiniClusterStatus.  # noqa: E501
+        :return: The maximum_size of this MiniClusterStatus.  # noqa: E501
         :rtype: int
         """
-        return self._size
+        return self._maximum_size
 
-    @size.setter
-    def size(self, size):
-        """Sets the size of this MiniClusterStatus.
+    @maximum_size.setter
+    def maximum_size(self, maximum_size):
+        """Sets the maximum_size of this MiniClusterStatus.
 
         We keep the original size of the MiniCluster request as this is the absolute maximum  # noqa: E501
 
-        :param size: The size of this MiniClusterStatus.  # noqa: E501
-        :type size: int
+        :param maximum_size: The maximum_size of this MiniClusterStatus.  # noqa: E501
+        :type maximum_size: int
         """
-        if self.local_vars_configuration.client_side_validation and size is None:  # noqa: E501
-            raise ValueError("Invalid value for `size`, must not be `None`")  # noqa: E501
+        if self.local_vars_configuration.client_side_validation and maximum_size is None:  # noqa: E501
+            raise ValueError("Invalid value for `maximum_size`, must not be `None`")  # noqa: E501
 
-        self._size = size
+        self._maximum_size = maximum_size
 
     def to_dict(self, serialize=False):
         """Returns the model properties as a dict"""

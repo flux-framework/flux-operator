@@ -529,7 +529,7 @@
       "type": "object",
       "required": [
         "jobid",
-        "size"
+        "maximumSize"
       ],
       "properties": {
         "conditions": {
@@ -546,7 +546,7 @@
           "type": "string",
           "default": ""
         },
-        "size": {
+        "maximumSize": {
           "description": "We keep the original size of the MiniCluster request as this is the absolute maximum",
           "type": "integer",
           "format": "int32",
