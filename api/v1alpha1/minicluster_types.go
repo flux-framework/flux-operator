@@ -187,7 +187,7 @@ type MiniClusterStatus struct {
 
 	// We keep the original size of the MiniCluster request as
 	// this is the absolute maximum
-	MaximumSize int32 `json:"size"`
+	MaximumSize int32 `json:"maximumSize"`
 
 	// conditions hold the latest Flux Job and MiniCluster states
 	// +listType=atomic

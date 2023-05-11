@@ -19,7 +19,6 @@ import fluxoperator
 from fluxoperator.models.mini_cluster_archive import MiniClusterArchive  # noqa: E501
 from fluxoperator.rest import ApiException
 
-
 class TestMiniClusterArchive(unittest.TestCase):
     """MiniClusterArchive unit test stubs"""
 
@@ -31,20 +30,22 @@ class TestMiniClusterArchive(unittest.TestCase):
 
     def make_instance(self, include_optional):
         """Test MiniClusterArchive
-        include_option is a boolean, when False only required
-        params are included, when True both required and
-        optional params are included"""
+            include_option is a boolean, when False only required
+            params are included, when True both required and
+            optional params are included """
         # model = fluxoperator.models.mini_cluster_archive.MiniClusterArchive()  # noqa: E501
-        if include_optional:
-            return MiniClusterArchive(path="")
-        else:
-            return MiniClusterArchive()
+        if include_optional :
+            return MiniClusterArchive(
+                path = ''
+            )
+        else :
+            return MiniClusterArchive(
+        )
 
     def testMiniClusterArchive(self):
         """Test MiniClusterArchive"""
         inst_req_only = self.make_instance(include_optional=False)
         inst_req_and_optional = self.make_instance(include_optional=True)
 
-
-if __name__ == "__main__":
+if __name__ == '__main__':
     unittest.main()

@@ -54,20 +54,20 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        test: [["hello-world", "ghcr.io/flux-framework/flux-restful-api:latest", 30],
-               ["post", "ghcr.io/flux-framework/flux-restful-api:latest", 30],
-               ["batch", "ghcr.io/flux-framework/flux-restful-api:latest", 30],
-               ["singularity", "ghcr.io/rse-ops/singularity:tag-mamba", 40],
-               ["nginx-sidecar-service", "ghcr.io/flux-framework/flux-restful-api:latest", 40],
-               ["nginx-service", "ghcr.io/flux-framework/flux-restful-api:latest", 40],
-               ["lammps", "ghcr.io/rse-ops/lammps:flux-sched-focal-v0.24.0", 30],
-               ["pokemon", "ghcr.io/rse-ops/pokemon:app-latest", 30],
-               ["timed", "ghcr.io/flux-framework/flux-restful-api:latest", 30],
-               ["debug", "ghcr.io/flux-framework/flux-restful-api:latest", 30],
-               ["flux-resource-list", "ghcr.io/flux-framework/flux-restful-api:latest", 30],
-               ["existing-volumes", "ghcr.io/flux-framework/flux-restful-api:latest", 30],
-               ["volumes", "ghcr.io/flux-framework/flux-restful-api:latest", 30],
-               ["snakemake", "ghcr.io/rse-ops/atacseq:app-latest", 30]]
+        test: [["hello-world", "ghcr.io/flux-framework/flux-restful-api:latest", 60],
+               ["post", "ghcr.io/flux-framework/flux-restful-api:latest", 60],
+               ["batch", "ghcr.io/flux-framework/flux-restful-api:latest", 60],
+               ["singularity", "ghcr.io/rse-ops/singularity:tag-mamba", 60],
+               ["nginx-sidecar-service", "ghcr.io/flux-framework/flux-restful-api:latest", 60],
+               ["nginx-service", "ghcr.io/flux-framework/flux-restful-api:latest", 60],
+               ["lammps", "ghcr.io/rse-ops/lammps:flux-sched-focal-v0.24.0", 60],
+               ["pokemon", "ghcr.io/rse-ops/pokemon:app-latest", 60],
+               ["timed", "ghcr.io/flux-framework/flux-restful-api:latest", 60],
+               ["debug", "ghcr.io/flux-framework/flux-restful-api:latest", 60],
+               ["flux-resource-list", "ghcr.io/flux-framework/flux-restful-api:latest", 60],
+               ["existing-volumes", "ghcr.io/flux-framework/flux-restful-api:latest", 60],
+               ["volumes", "ghcr.io/flux-framework/flux-restful-api:latest", 60],
+               ["snakemake", "ghcr.io/rse-ops/atacseq:app-latest", 60]]
 
     steps:
     - name: Clone the code

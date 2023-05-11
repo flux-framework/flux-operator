@@ -956,7 +956,7 @@ func schema__api_v1alpha1__MiniClusterStatus(ref common.ReferenceCallback) commo
 							Format:      "",
 						},
 					},
-					"size": {
+					"maximumSize": {
 						SchemaProps: spec.SchemaProps{
 							Description: "We keep the original size of the MiniCluster request as this is the absolute maximum",
 							Default:     0,
@@ -984,7 +984,7 @@ func schema__api_v1alpha1__MiniClusterStatus(ref common.ReferenceCallback) commo
 						},
 					},
 				},
-				Required: []string{"jobid", "size"},
+				Required: []string{"jobid", "maximumSize"},
 			},
 		},
 		Dependencies: []string{

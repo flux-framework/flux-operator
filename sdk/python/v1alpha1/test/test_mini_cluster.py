@@ -179,7 +179,7 @@ class TestMiniCluster(unittest.TestCase):
                         None
                         ], 
                     jobid = '', 
-                    size = 56, )
+                    maximum_size = 56, )
             )
         else :
             return MiniCluster(

@@ -16,11 +16,8 @@ import unittest
 import datetime
 
 import fluxoperator
-from fluxoperator.models.mini_cluster_existing_volume import (
-    MiniClusterExistingVolume,
-)  # noqa: E501
+from fluxoperator.models.mini_cluster_existing_volume import MiniClusterExistingVolume  # noqa: E501
 from fluxoperator.rest import ApiException
-
 
 class TestMiniClusterExistingVolume(unittest.TestCase):
     """MiniClusterExistingVolume unit test stubs"""
@@ -33,23 +30,26 @@ class TestMiniClusterExistingVolume(unittest.TestCase):
 
     def make_instance(self, include_optional):
         """Test MiniClusterExistingVolume
-        include_option is a boolean, when False only required
-        params are included, when True both required and
-        optional params are included"""
+            include_option is a boolean, when False only required
+            params are included, when True both required and
+            optional params are included """
         # model = fluxoperator.models.mini_cluster_existing_volume.MiniClusterExistingVolume()  # noqa: E501
-        if include_optional:
-            return MiniClusterExistingVolume(claim_name="", path="", read_only=True)
-        else:
+        if include_optional :
             return MiniClusterExistingVolume(
-                claim_name="",
-                path="",
+                claim_name = '', 
+                path = '', 
+                read_only = True
             )
+        else :
+            return MiniClusterExistingVolume(
+                claim_name = '',
+                path = '',
+        )
 
     def testMiniClusterExistingVolume(self):
         """Test MiniClusterExistingVolume"""
         inst_req_only = self.make_instance(include_optional=False)
         inst_req_and_optional = self.make_instance(include_optional=True)
 
-
-if __name__ == "__main__":
+if __name__ == '__main__':
     unittest.main()
