@@ -34,29 +34,34 @@ class FluxSpec(object):
     """
     openapi_types = {
         'connect_timeout': 'str',
+        'install_root': 'str',
         'log_level': 'int',
         'option_flags': 'str'
     }
 
     attribute_map = {
         'connect_timeout': 'connectTimeout',
+        'install_root': 'installRoot',
         'log_level': 'logLevel',
         'option_flags': 'optionFlags'
     }
 
-    def __init__(self, connect_timeout='5s', log_level=6, option_flags='', local_vars_configuration=None):  # noqa: E501
+    def __init__(self, connect_timeout='5s', install_root='/usr', log_level=6, option_flags='', local_vars_configuration=None):  # noqa: E501
         """FluxSpec - a model defined in OpenAPI"""  # noqa: E501
         if local_vars_configuration is None:
             local_vars_configuration = Configuration.get_default_copy()
         self.local_vars_configuration = local_vars_configuration
 
         self._connect_timeout = None
+        self._install_root = None
         self._log_level = None
         self._option_flags = None
         self.discriminator = None
 
         if connect_timeout is not None:
             self.connect_timeout = connect_timeout
+        if install_root is not None:
+            self.install_root = install_root
         if log_level is not None:
             self.log_level = log_level
         if option_flags is not None:
@@ -84,6 +89,29 @@ class FluxSpec(object):
         """
 
         self._connect_timeout = connect_timeout
+
+    @property
+    def install_root(self):
+        """Gets the install_root of this FluxSpec.  # noqa: E501
+
+        Install root location  # noqa: E501
+
+        :return: The install_root of this FluxSpec.  # noqa: E501
+        :rtype: str
+        """
+        return self._install_root
+
+    @install_root.setter
+    def install_root(self, install_root):
+        """Sets the install_root of this FluxSpec.
+
+        Install root location  # noqa: E501
+
+        :param install_root: The install_root of this FluxSpec.  # noqa: E501
+        :type install_root: str
+        """
+
+        self._install_root = install_root
 
     @property
     def log_level(self):

@@ -1,6 +1,6 @@
 # Flux needs to know the path to the IMP executable
 [exec]
-imp = "/usr/libexec/flux/flux-imp"
+imp = "%s/libexec/flux/flux-imp"
 
 [access]
 allow-guest-user = true

@@ -243,6 +243,14 @@ func schema__api_v1alpha1__FluxSpec(ref common.ReferenceCallback) common.OpenAPI
 			SchemaProps: spec.SchemaProps{
 				Type: []string{"object"},
 				Properties: map[string]spec.Schema{
+					"installRoot": {
+						SchemaProps: spec.SchemaProps{
+							Description: "Install root location",
+							Default:     "/usr",
+							Type:        []string{"string"},
+							Format:      "",
+						},
+					},
 					"connectTimeout": {
 						SchemaProps: spec.SchemaProps{
 							Description: "Single user executable to provide to flux start",
