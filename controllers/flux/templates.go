@@ -12,6 +12,8 @@ package controllers
 
 import (
 	api "flux-framework/flux-operator/api/v1alpha1"
+	"fmt"
+	"text/template"
 
 	_ "embed"
 )
@@ -22,17 +24,20 @@ var brokerConfigTemplate string
 //go:embed templates/job-manager.toml
 var brokerConfigJobManagerPlugin string
 
+//go:embed templates/components.sh
+var startComponents string
+
 //go:embed templates/archive.toml
 var brokerArchiveSection string
 
-//go:embed templates/wait.sh
-var waitToStartTemplate string
+//go:embed templates/broker.sh
+var brokerStartTemplate string
 
-//go:embed templates/cert-generate.sh
-var generateCertTemplate string
+//go:embed templates/worker.sh
+var workerStartTemplate string
 
-// WaitTemplate populates wait.sh
-type WaitTemplate struct {
+// StartTemplate populates broker.sh or worker.sh
+type StartTemplate struct {
 	FluxToken string // Token to log into the UI, should be consistent across containers
 	FluxUser  string // Username for Flux Restful API
 	MainHost  string // Main host identifier
@@ -49,7 +54,15 @@ type WaitTemplate struct {
 	Batch []string
 }
 
-// CertTemplate populates cert-generate.sh
-type CertTemplate struct {
-	PreCommand string
+// combineTemplates into one "start"
+func combineTemplates(listing ...string) (t *template.Template, err error) {
+	t = template.New("start")
+
+	for i, templ := range listing {
+		_, err = t.New(fmt.Sprint("_", i)).Parse(templ)
+		if err != nil {
+			return t, err
+		}
+	}
+	return t, nil
 }

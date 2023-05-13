@@ -23,6 +23,7 @@ func (r *MiniClusterReconciler) getContainers(
 	specs []api.MiniClusterContainer,
 	defaultName string,
 	mounts []corev1.VolumeMount,
+	entrypoint string,
 ) ([]corev1.Container, error) {
 
 	// Create the containers for the pod
@@ -45,7 +46,7 @@ func (r *MiniClusterReconciler) getContainers(
 		if container.RunFlux {
 
 			// wait.sh path corresponds to container identifier
-			waitScript := fmt.Sprintf("/flux_operator/wait-%d.sh", i)
+			waitScript := fmt.Sprintf("/flux_operator/%s-%d.sh", entrypoint, i)
 			command = []string{"/bin/bash", waitScript, container.Command}
 			containerName = defaultName
 		}

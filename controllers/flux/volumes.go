@@ -53,20 +53,21 @@ func getVolumeMounts(cluster *api.MiniCluster) []corev1.VolumeMount {
 }
 
 // getVolumes that are shared between MiniCluster and statefulset
-func getVolumes(cluster *api.MiniCluster) []corev1.Volume {
+func getVolumes(cluster *api.MiniCluster, entrypoint string) []corev1.Volume {
 
 	// Runner start scripts
 	makeExecutable := int32(0777)
 	runnerStartScripts := []corev1.KeyToPath{}
 
-	// Prepare a custom "wait.sh" for each container based on index
+	// Prepare a custom "broker.sh" or "worker.sh" entrypoint
+	// for each container based on index
 	for i, container := range cluster.Spec.Containers {
 
 		// For now, only Flux runners get the custom wait.sh script
 		if container.RunFlux {
 			startScript := corev1.KeyToPath{
-				Key:  fmt.Sprintf("wait-%d", i),
-				Path: fmt.Sprintf("wait-%d.sh", i),
+				Key:  fmt.Sprintf("%s-%d", entrypoint, i),
+				Path: fmt.Sprintf("%s-%d.sh", entrypoint, i),
 				Mode: &makeExecutable,
 			}
 			runnerStartScripts = append(runnerStartScripts, startScript)

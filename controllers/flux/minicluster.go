@@ -15,16 +15,15 @@ import (
 	"context"
 	"fmt"
 	"strings"
-	"text/template"
 
 	jobctrl "flux-framework/flux-operator/pkg/job"
 
 	"github.com/google/uuid"
-	batchv1 "k8s.io/api/batch/v1"
 	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	ctrl "sigs.k8s.io/controller-runtime"
 	"sigs.k8s.io/controller-runtime/pkg/client"
+	jobset "sigs.k8s.io/jobset/api/v1alpha1"
 
 	"k8s.io/apimachinery/pkg/api/errors"
 	"k8s.io/apimachinery/pkg/types"
@@ -46,6 +45,9 @@ func (r *MiniClusterReconciler) ensureMiniCluster(
 	ctx context.Context,
 	cluster *api.MiniCluster,
 ) (ctrl.Result, error) {
+
+	// Setup users for the cluster, if necessary
+	r.clusterAccounts(cluster)
 
 	// Ensure the configs are created (for volume sources)
 	_, result, err := r.getConfigMap(ctx, cluster, "flux-config", cluster.Name+fluxConfigSuffix)
@@ -87,7 +89,7 @@ func (r *MiniClusterReconciler) ensureMiniCluster(
 	}
 
 	// Create headless service for the MiniCluster
-	selector := map[string]string{"job-name": cluster.Name}
+	selector := map[string]string{"job-group": cluster.Name}
 	result, err = r.exposeServices(ctx, cluster, restfulServiceName, selector)
 	if err != nil {
 		return result, err
@@ -101,8 +103,10 @@ func (r *MiniClusterReconciler) ensureMiniCluster(
 	}
 
 	// If the sizes are different, we patch to update.
-	if *mc.Spec.Parallelism != cluster.Spec.Size {
-		r.log.Info("MiniCluster", "Size", mc.Spec.Parallelism, "Requested Size", cluster.Spec.Size)
+	// The second index (1) is always the worker spec, add 1 for the leader
+	currentSize := *mc.Spec.ReplicatedJobs[1].Template.Spec.Parallelism + 1
+	if currentSize != cluster.Spec.Size {
+		r.log.Info("MiniCluster", "Size", currentSize, "Requested Size", cluster.Spec.Size)
 		result, err := r.resizeCluster(ctx, mc, cluster)
 		if err != nil {
 			return result, err
@@ -135,6 +139,27 @@ func (r *MiniClusterReconciler) ensureMiniCluster(
 
 	// And we re-queue so the Ready condition triggers next steps!
 	return ctrl.Result{Requeue: true}, nil
+}
+
+// clusterAccounts sets up the secret key / user passwords if needed
+func (r *MiniClusterReconciler) clusterAccounts(cluster *api.MiniCluster) {
+
+	// Ensure our requested users each each have a password
+	for i, user := range cluster.Spec.Users {
+		if cluster.Spec.Users[i].Password == "" {
+			cluster.Spec.Users[i].Password = getRandomToken(user.Password)
+		}
+
+		// Passwords will be truncated to 8
+		if len(cluster.Spec.Users[i].Password) > 8 {
+			cluster.Spec.Users[i].Password = cluster.Spec.Users[i].Password[:8]
+		}
+	}
+
+	// Ensure Flux Restful has a secret key
+	if cluster.Spec.FluxRestful.SecretKey == "" {
+		cluster.Spec.FluxRestful.SecretKey = getRandomToken(cluster.Spec.FluxRestful.SecretKey)
+	}
 }
 
 // cleanupPodsStorage looks for the existing job, and cleans up if completed
@@ -199,9 +224,9 @@ func (r *MiniClusterReconciler) cleanupPodsStorage(
 func (r *MiniClusterReconciler) getExistingJob(
 	ctx context.Context,
 	cluster *api.MiniCluster,
-) (*batchv1.Job, error) {
+) (*jobset.JobSet, error) {
 
-	existing := &batchv1.Job{}
+	existing := &jobset.JobSet{}
 	err := r.Client.Get(
 		ctx,
 		types.NamespacedName{
@@ -216,16 +241,22 @@ func (r *MiniClusterReconciler) getExistingJob(
 // resizeCluster will patch the cluster to make a larger (or smaller) size
 func (r *MiniClusterReconciler) resizeCluster(
 	ctx context.Context,
-	job *batchv1.Job,
+	job *jobset.JobSet,
 	cluster *api.MiniCluster,
 ) (ctrl.Result, error) {
 
+	// The Jobset is ONLY the workers, so it's the size of the
+	// cluster -1. We don't allow the user to delete the leader
+	workerSize := cluster.Spec.Size - 1
+	currentSize := *job.Spec.ReplicatedJobs[1].Template.Spec.Parallelism + 1
+
 	// We absolutely don't allow a size less than 1
+	// This is the user asking to delete the entire cluster, so
 	// If this happens, restore to current / original size
 	if cluster.Spec.Size < 1 {
 		r.log.Info("MiniCluster", "PatchSize", cluster.Spec.Size, "Status", "Denied")
 		patch := client.MergeFrom(cluster.DeepCopy())
-		cluster.Spec.Size = *job.Spec.Parallelism
+		cluster.Spec.Size = currentSize
 
 		// Apply the patch to restore to the original size
 		err := r.Client.Patch(ctx, cluster, patch)
@@ -247,8 +278,8 @@ func (r *MiniClusterReconciler) resizeCluster(
 	// If we get here, the size is smaller
 	r.log.Info("MiniCluster", "PatchSize", cluster.Spec.Size, "Status", "Accepted")
 	patch := client.MergeFrom(job.DeepCopy())
-	job.Spec.Parallelism = &cluster.Spec.Size
-	job.Spec.Completions = &cluster.Spec.Size
+	job.Spec.ReplicatedJobs[1].Template.Spec.Parallelism = &workerSize
+	job.Spec.ReplicatedJobs[1].Template.Spec.Completions = &workerSize
 	err := r.Client.Patch(ctx, job, patch)
 	return ctrl.Result{Requeue: true}, err
 }
@@ -257,7 +288,7 @@ func (r *MiniClusterReconciler) resizeCluster(
 func (r *MiniClusterReconciler) getMiniCluster(
 	ctx context.Context,
 	cluster *api.MiniCluster,
-) (*batchv1.Job, ctrl.Result, error) {
+) (*jobset.JobSet, ctrl.Result, error) {
 
 	// Look for an existing job
 	existing, err := r.getExistingJob(ctx, cluster)
@@ -266,7 +297,7 @@ func (r *MiniClusterReconciler) getMiniCluster(
 	if err != nil {
 
 		if errors.IsNotFound(err) {
-			job, err := r.newMiniClusterJob(cluster)
+			job, err := r.newJobSet(cluster)
 			if err != nil {
 				r.log.Error(
 					err, "Failed to create new MiniCluster Batch Job",
@@ -353,16 +384,27 @@ func (r *MiniClusterReconciler) getConfigMap(
 			} else if configName == "entrypoint" {
 
 				// The main logic for generating the Curve certificate, start commands, is here
-				// We create a custom script for each container that warrants one,
-				// meaning a Flux Runner.
+				// We create custom scripts for each container that warrants one,
+				// meaning a Flux Runner. The custom scripts include both a broker (leader)
+				// and worker entrypoint
 				for i, container := range cluster.Spec.Containers {
 					if container.RunFlux {
-						waitScriptID := fmt.Sprintf("wait-%d", i)
-						waitScript, err := generateWaitScript(cluster, i)
+
+						// Main broker script
+						scriptID := fmt.Sprintf("broker-%d", i)
+						script, err := generateStartScript(cluster, i, brokerStartTemplate)
 						if err != nil {
 							return existing, ctrl.Result{}, err
 						}
-						data[waitScriptID] = waitScript
+						data[scriptID] = script
+
+						// Worker config maps
+						scriptID = fmt.Sprintf("worker-%d", i)
+						script, err = generateStartScript(cluster, i, workerStartTemplate)
+						if err != nil {
+							return existing, ctrl.Result{}, err
+						}
+						data[scriptID] = script
 					}
 				}
 			}
@@ -408,16 +450,19 @@ func (r *MiniClusterReconciler) getConfigMap(
 func generateHostlist(cluster *api.MiniCluster, size int) string {
 
 	// The hosts are generated through the max size, so the cluster can expand
-	return fmt.Sprintf("%s-[%s]", cluster.Name, generateRange(size))
+	// minicluster-flux-sample-broker-0-0
+	// minicluster-flux-sample-worker-0-1 through 0-3 for a size 4 cluster
+	return fmt.Sprintf("minicluster-%s-broker-0-0,minicluster-%s-worker-0-[%s]", cluster.Name, cluster.Name, generateRange(size-1))
 }
 
 // generateFluxConfig creates the broker.toml file used to boostrap flux
 func generateFluxConfig(cluster *api.MiniCluster) string {
 
 	// The hosts are generated through the max size, so the cluster can expand
+	brokerFqdn := fmt.Sprintf("minicluster-%s-broker-0-0", cluster.Name)
 	fqdn := fmt.Sprintf("%s.%s.svc.cluster.local", restfulServiceName, cluster.Namespace)
-	hosts := fmt.Sprintf("[%s]", generateRange(int(cluster.Spec.MaxSize)))
-	fluxConfig := fmt.Sprintf(brokerConfigTemplate, fqdn, cluster.Name, hosts)
+	hosts := fmt.Sprintf("%s, minicluster-%s-worker-0-[%s]", brokerFqdn, cluster.Name, generateRange(int(cluster.Spec.MaxSize-1)))
+	fluxConfig := fmt.Sprintf(brokerConfigTemplate, fqdn, hosts)
 	fluxConfig += "\n" + brokerArchiveSection
 	return fluxConfig
 }
@@ -436,8 +481,8 @@ func getRequiredRanks(cluster *api.MiniCluster) string {
 	return generateRange(int(cluster.Spec.Size))
 }
 
-// generateWaitScript generates the main script to start everything up!
-func generateWaitScript(cluster *api.MiniCluster, containerIndex int) (string, error) {
+// generateStartScript generates a start script for a broker or a worker
+func generateStartScript(cluster *api.MiniCluster, containerIndex int, startTemplate string) (string, error) {
 
 	// The first pod (0) should always generate the curve certificate
 	container := cluster.Spec.Containers[containerIndex]
@@ -445,19 +490,6 @@ func generateWaitScript(cluster *api.MiniCluster, containerIndex int) (string, e
 
 	// The resources size must also match the max size in the cluster
 	hosts := generateHostlist(cluster, int(cluster.Spec.MaxSize))
-
-	// Ensure our requested users each each have a password
-	for i, user := range cluster.Spec.Users {
-		cluster.Spec.Users[i].Password = getRandomToken(user.Password)
-
-		// Passwords will be truncated to 8
-		if len(cluster.Spec.Users[i].Password) > 8 {
-			cluster.Spec.Users[i].Password = cluster.Spec.Users[i].Password[:8]
-		}
-	}
-
-	// Ensure Flux Restful has a secret key
-	cluster.Spec.FluxRestful.SecretKey = getRandomToken(cluster.Spec.FluxRestful.SecretKey)
 
 	// Only derive cores if > 1
 	var cores int32
@@ -472,7 +504,7 @@ func generateWaitScript(cluster *api.MiniCluster, containerIndex int) (string, e
 	requiredRanks := getRequiredRanks(cluster)
 
 	// The token uuid is the same across images
-	wt := WaitTemplate{
+	wt := StartTemplate{
 		FluxUser:      getFluxUser(cluster.Spec.FluxRestful.Username),
 		FluxToken:     getRandomToken(cluster.Spec.FluxRestful.Token),
 		MainHost:      mainHost,
@@ -483,13 +515,17 @@ func generateWaitScript(cluster *api.MiniCluster, containerIndex int) (string, e
 		Batch:         batchCommand,
 		RequiredRanks: requiredRanks,
 	}
-	t, err := template.New("wait-sh").Parse(waitToStartTemplate)
+
+	// Wrap the named template to identify it later
+	startTemplate = `{{define "start"}}` + startTemplate + "{{end}}"
+
+	// We assemble different strings (including the components) into one!
+	t, err := combineTemplates(startComponents, startTemplate)
 	if err != nil {
 		return "", err
 	}
-
 	var output bytes.Buffer
-	if err := t.Execute(&output, wt); err != nil {
+	if err := t.ExecuteTemplate(&output, "start", wt); err != nil {
 		return "", err
 	}
 

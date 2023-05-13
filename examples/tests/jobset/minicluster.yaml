@@ -4,14 +4,10 @@ metadata:
   name: flux-sample
   namespace: flux-operator
 spec:
-  # suppress all output except for test run
-  logging:
-    quiet: true
-
   # Number of pods to create for MiniCluster
   size: 4
 
   # This is a list because a pod can support multiple containers
   containers:
     - image: ghcr.io/flux-framework/flux-restful-api:latest
-      command: echo hello world
+      command: sleep infinity

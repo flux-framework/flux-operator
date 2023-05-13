@@ -28,6 +28,8 @@ func (r *MiniClusterReconciler) getPodLabels(cluster *api.MiniCluster) map[strin
 	podLabels := cluster.Spec.Pod.Labels
 	podLabels["namespace"] = cluster.Namespace
 	podLabels["app.kubernetes.io/name"] = cluster.Name
+	// This will select the service
+	podLabels["job-group"] = cluster.Name
 	return podLabels
 }
 
@@ -109,9 +111,6 @@ func (r *MiniClusterReconciler) newServicePod(
 	podLabels := r.getPodLabels(cluster)
 	podServiceName := cluster.Name + "-services"
 
-	// service selector?
-	podLabels["job-name"] = cluster.Name
-
 	// This is an indexed-job
 	pod := &corev1.Pod{
 		ObjectMeta: metav1.ObjectMeta{
@@ -132,11 +131,27 @@ func (r *MiniClusterReconciler) newServicePod(
 		},
 	}
 	mounts := []corev1.VolumeMount{}
-	containers, err := r.getContainers(cluster.Spec.Services, podServiceName, mounts)
+
+	// A service container has no entrypoint for a flux runner (empty string)
+	containers, err := r.getContainers(cluster.Spec.Services, podServiceName, mounts, "")
 	if err != nil {
 		return pod, err
 	}
 	pod.Spec.Containers = containers
 	ctrl.SetControllerReference(cluster, pod, r.Scheme)
 	return pod, err
+}
+
+// getImagePullSecrets returns a list of secret object references for each container.
+func getImagePullSecrets(cluster *api.MiniCluster) []corev1.LocalObjectReference {
+	pullSecrets := []corev1.LocalObjectReference{}
+	for _, container := range cluster.Spec.Containers {
+		if container.ImagePullSecret != "" {
+			newSecret := corev1.LocalObjectReference{
+				Name: container.ImagePullSecret,
+			}
+			pullSecrets = append(pullSecrets, newSecret)
+		}
+	}
+	return pullSecrets
 }
