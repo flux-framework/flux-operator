@@ -1,0 +1,29 @@
+apiVersion: flux-framework.org/v1alpha1
+kind: MiniCluster
+metadata:
+  name: flux-sample
+  namespace: flux-operator
+spec:
+  # Number of pods to create for MiniCluster
+  size: 4
+  tasks: 4
+
+  # suppress all output except for test run
+  logging:
+    quiet: false
+
+  # This is a list because a pod can support multiple containers
+  containers:
+    # The container URI to pull (currently needs to be public)
+    - image: ghcr.io/rse-ops/ompi:flux-sched-focal
+
+      # Note that there are many examples here!
+      # flux run -n 4 ./hello_c
+      # flux run -n 4 ./hello_cxx
+      # flux run -n 4 ./connectivity_c
+      # flux run -n 4 ./hello_usempi
+      # flux run -n 4 ./ring_c
+      # flux run -n 4 ./ring_usempi
+      # flux run -n 4 ./ring_mpifh
+      workingDir: /opt/ompi
+      command: ./hello_cxx
