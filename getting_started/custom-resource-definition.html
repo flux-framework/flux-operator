@@ -629,6 +629,13 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#installroot" class="md-nav__link">
+    <span title="/getting_started/custom-resource-definition.md#installroot (reference label)" class="md-ellipsis">install<wbr>Root</span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#connecttimeout" class="md-nav__link">
     <span title="/getting_started/custom-resource-definition.md#connecttimeout (reference label)" class="md-ellipsis">connect<wbr>Timeout</span>
   </a>
@@ -1428,6 +1435,20 @@ they should not be touched).</p>
 <span class="w">  </span><span class="nt">logLevel</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">7</span>
 </code></pre></div>
 </div>
+<h4 id="installroot">installRoot<a class="headerlink" href="#installroot" title="Permalink to this heading">¶</a></h4>
+<p>We traditionally install flux to <code class="docutils literal notranslate"><span class="pre">/usr</span></code>, however you might have a container
+with a non-traditional install location! You can edit this with the flux-&gt;installRoot
+directive:</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><code><span class="nt">flux</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">installRoot</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">/usr/local</span>
+</code></pre></div>
+</div>
+<p>Or for a spack container, with a view at <code class="docutils literal notranslate"><span class="pre">/opt/view</span></code>:</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><code><span class="nt">flux</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">installRoot</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">/opt/view</span>
+</code></pre></div>
+</div>
+<p>Note that the operator will still create assets for flux at <code class="docutils literal notranslate"><span class="pre">/etc/flux</span></code>.</p>
 <h4 id="connecttimeout">connectTimeout<a class="headerlink" href="#connecttimeout" title="Permalink to this heading">¶</a></h4>
 <p>For Flux versions 0.50.0 and later, you can customize the zeromq timeout. This is done
 via an extra broker option provided on the command line:</p>
@@ -1989,7 +2010,7 @@ or define your own as follows:</p>
   <small>
     
       Last update:
-      May 11, 2023
+      May 14, 2023
     
   </small>
 </div>

@@ -323,6 +323,26 @@ flux:
   logLevel: 7
 ```
 
+#### installRoot
+
+We traditionally install flux to `/usr`, however you might have a container
+with a non-traditional install location! You can edit this with the flux->installRoot
+directive:
+
+```yaml
+flux:
+  installRoot: /usr/local
+```
+
+Or for a spack container, with a view at `/opt/view`:
+
+```yaml
+flux:
+  installRoot: /opt/view
+```
+
+Note that the operator will still create assets for flux at `/etc/flux`.
+
 #### connectTimeout
 
 For Flux versions 0.50.0 and later, you can customize the zeromq timeout. This is done
