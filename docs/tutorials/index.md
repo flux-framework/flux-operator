@@ -35,6 +35,12 @@ The following tutorials are provided from their respective directories (and are 
  - [Dask with Scikit-Learn](https://github.com/flux-framework/flux-operator/blob/main/examples/machine-learning/dask/scikit-learn)
  - [Ray with Scikit-Learn](https://github.com/flux-framework/flux-operator/blob/main/examples/machine-learning/ray/scikit-learn)
 
+### Message Passing Interface (MPI)
+
+ - [openmpi](https://github.com/flux-framework/flux-operator/blob/main/examples/mpi/ompi)
+ - [mpich](https://github.com/flux-framework/flux-operator/blob/main/examples/mpi/mpich)
+
+
 ### Services
 
  - [Merlin Basic](https://github.com/flux-framework/flux-operator/blob/main/examples/launchers/merlin/basic)
