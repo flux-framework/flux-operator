@@ -417,7 +417,7 @@ func generateFluxConfig(cluster *api.MiniCluster) string {
 	// The hosts are generated through the max size, so the cluster can expand
 	fqdn := fmt.Sprintf("%s.%s.svc.cluster.local", restfulServiceName, cluster.Namespace)
 	hosts := fmt.Sprintf("[%s]", generateRange(int(cluster.Spec.MaxSize)))
-	fluxConfig := fmt.Sprintf(brokerConfigTemplate, fqdn, cluster.Name, hosts)
+	fluxConfig := fmt.Sprintf(brokerConfigTemplate, cluster.FluxInstallRoot(), fqdn, cluster.Name, hosts)
 	fluxConfig += "\n" + brokerArchiveSection
 	return fluxConfig
 }

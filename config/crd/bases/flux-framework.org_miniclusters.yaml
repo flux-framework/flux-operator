@@ -247,6 +247,10 @@ spec:
                     default: 5s
                     description: Single user executable to provide to flux start
                     type: string
+                  installRoot:
+                    default: /usr
+                    description: Install root location
+                    type: string
                   logLevel:
                     default: 6
                     description: Log level to use for flux logging (only in non TestMode)

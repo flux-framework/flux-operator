@@ -123,6 +123,11 @@
           "type": "string",
           "default": "5s"
         },
+        "installRoot": {
+          "description": "Install root location",
+          "type": "string",
+          "default": "/usr"
+        },
         "logLevel": {
           "description": "Log level to use for flux logging (only in non TestMode)",
           "type": "integer",

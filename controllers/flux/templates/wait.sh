@@ -14,6 +14,10 @@
 # Set the flux user from the getgo
 fluxuser={{ if .Container.FluxUser.Name}}{{ .Container.FluxUser.Name }}{{ else }}flux{{ end }}
 fluxuid={{ if .Container.FluxUser.Uid}}{{ .Container.FluxUser.Uid }}{{ else }}1000{{ end }}
+fluxroot={{ if .Spec.Flux.InstallRoot }}{{ .Spec.Flux.InstallRoot }}{{ else }}/usr{{ end }}
+if [ "${fluxroot}" == "" ]; then
+  fluxroot="/usr"
+fi
 
 {{ if not .Spec.Logging.Quiet }}# Show asFlux directive once
 printf "\nFlux username: ${fluxuser}\n"{{ end }}
@@ -25,6 +29,10 @@ fi
 if [ -z ${LD_LIBRARY_PATH+x} ]; then
   LD_LIBRARY_PATH=""
 fi
+
+# Set the flux root
+{{ if not .Spec.Logging.Quiet }}printf "\nFlux install root: ${fluxroot}\n"{{ end }}
+export fluxroot
 
 # commands to be run as root
 asSudo="sudo -E PYTHONPATH=$PYTHONPATH -E PATH=$PATH -E LD_LIBRARY_PATH=${LD_LIBRARY_PATH}"
@@ -177,13 +185,13 @@ mkdir -p /etc/flux/imp/conf.d/
 cat <<EOT >> /etc/flux/imp/conf.d/imp.toml
 [exec]
 allowed-users = [ "root" ]
-allowed-shells = [ "/usr/libexec/flux/flux-shell" ]
+allowed-shells = [ "${fluxroot}/libexec/flux/flux-shell" ]
 EOT
 {{ else }}
 cat <<EOT >> /etc/flux/imp/conf.d/imp.toml
 [exec]
 allowed-users = [ "${fluxuser}", "root" ]
-allowed-shells = [ "/usr/libexec/flux/flux-shell" ]
+allowed-shells = [ "${fluxroot}/libexec/flux/flux-shell" ]
 EOT
 {{ end }}
 
@@ -194,8 +202,8 @@ printf "\n🐸 Broker Configuration\n"
 cat /etc/flux/config/broker.toml{{ end }}
 
 # If we are communicating via the flux uri this service needs to be started
-chmod u+s /usr/libexec/flux/flux-imp
-chmod 4755 /usr/libexec/flux/flux-imp
+chmod u+s ${fluxroot}/libexec/flux/flux-imp
+chmod 4755 ${fluxroot}/libexec/flux/flux-imp
 chmod 0644 /etc/flux/imp/conf.d/imp.toml
 sudo service munge start > /dev/null 2>&1
 

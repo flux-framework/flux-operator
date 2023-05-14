@@ -306,6 +306,11 @@ type ContainerVolume struct {
 
 type FluxSpec struct {
 
+	// Install root location
+	// +kubebuilder:default="/usr"
+	// +default="/usr"
+	InstallRoot string `json:"installRoot,omitempty"`
+
 	// Single user executable to provide to flux start
 	// +kubebuilder:default="5s"
 	// +default="5s"
@@ -545,6 +550,15 @@ func (f *MiniCluster) ExistingVolumes() map[string]MiniClusterExistingVolume {
 	return volumes
 }
 
+// fluxInstallRoot returns the flux install root
+func (f *MiniCluster) FluxInstallRoot() string {
+	root := f.Spec.Flux.InstallRoot
+	if root == "" {
+		root = "/usr"
+	}
+	return root
+}
+
 // Validate ensures we have data that is needed, and sets defaults if needed
 func (f *MiniCluster) Validate() bool {
 	fmt.Println()
@@ -557,6 +571,11 @@ func (f *MiniCluster) Validate() bool {
 	if f.Spec.MaxSize != 0 && f.Spec.MaxSize < f.Spec.Size {
 		fmt.Printf("😥️ MaxSize of cluster must be greater than size.\n")
 		return false
+	}
+
+	// Set the Flux install root
+	if f.Spec.Flux.InstallRoot == "" {
+		f.Spec.Flux.InstallRoot = "/usr"
 	}
 
 	// If the MaxSize isn't set, ensure it's equal to the size
