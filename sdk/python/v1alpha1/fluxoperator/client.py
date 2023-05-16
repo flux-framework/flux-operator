@@ -233,15 +233,27 @@ class FluxOperator:
         self._core_v1 = core_v1_api.CoreV1Api()
         return self._core_v1
 
-    def stream_output(self, filename, name=None, namespace=None, pod=None, stdout=True, timestamps=False):
+    def stream_output(
+        self,
+        filename,
+        name=None,
+        namespace=None,
+        pod=None,
+        stdout=True,
+        return_output=True,
+        timestamps=False,
+    ):
         """
         Stream output, optionally printing also to stdout.
+
+        Also return the output to the user.
         """
         namespace = namespace or self.namespace
         pod = pod or self.get_broker_pod(name=name, namespace=namespace).metadata.name
         watcher = watch.Watch()
 
-        # Stream output to file (should we return output too?)
+        # Stream output to file and return it if desired!
+        lines = []
         with open(filename, "w") as fd:
             for line in watcher.stream(
                 self.core_v1.read_namespaced_pod_log,
@@ -254,6 +266,12 @@ class FluxOperator:
                 fd.write(line.strip() + "\n")
                 if stdout:
                     print(line)
+                if return_output:
+                    lines.append(line)
+
+        # I can imagine cases where we wouldn't want to keep it
+        if return_output:
+            return lines
 
     def kubectl_exec(self, command, pod=None, quiet=False, namespace=None, name=None):
         """
@@ -302,7 +320,7 @@ class FluxOperator:
 
         # Not found - it was deleted
         except kubernetes.client.exceptions.ApiException:
-             return V1PodList(items=[])
+            return V1PodList(items=[])
         except:
             time.sleep(2)
             return self.get_pods(namespace, name)
@@ -379,18 +397,20 @@ class FluxOperator:
             pod_list = self.get_pods(name=name, namespace=namespace)
 
             for pod in pod_list.items:
-                logger.debug(f"{pod.metadata.name} is in phase {pod.status.phase}")
+                print(f"{pod.metadata.name} is in phase {pod.status.phase}")
 
                 # Don't include the cert generator pod
                 if "cert-generator" in pod.metadata.name:
                     continue
 
                 # Ignore services pod
-                if pod.metadata.name.endswith('-services'):
+                if pod.metadata.name.endswith("-services"):
                     continue
                 if pod.status.phase not in states:
                     time.sleep(retry_seconds)
-                elif pod.status.phase not in ["Terminating", "Succeeded"]:
+                    continue
+
+                if pod.status.phase not in ["Terminating"]:
                     ready.add(pod.metadata.name)
 
         if not quiet:

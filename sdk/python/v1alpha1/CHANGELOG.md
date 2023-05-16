@@ -14,6 +14,7 @@ and **Merged pull requests**. Critical items to know are:
 The versions coincide with releases on pip. Only major versions will be released as tags on Github.
 
 ## [0.0.x](https://github.com/flux-framework/flux-operator/tree/main/sdk/python/v2alpha1) (0.0.x)
+ - stream output should return lines too, if desired (0.0.24)
  - custom installRoot for flux (0.0.23)
  - add status size variable (0.0.22)
    - support maxSize to allow cluster scaling
