@@ -77,8 +77,10 @@ print("✨️ Submitting jobs!")
 time.sleep(5)
 for iter in range(0, 5):
     res = cli.execute("flux submit sleep %s" % iter)
+    print(res)
     assert res.startswith("ƒ")
     res = cli.execute("flux submit whoami")
+    print(res)
     assert res.startswith("ƒ")
 
 print("\n🥱️ Waiting for jobs...")

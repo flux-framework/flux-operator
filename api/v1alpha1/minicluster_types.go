@@ -311,6 +311,10 @@ type FluxSpec struct {
 	// +default="/usr"
 	InstallRoot string `json:"installRoot,omitempty"`
 
+	// Commands for flux start --wrap
+	// +optional
+	Wrap string `json:"wrap,omitempty"`
+
 	// Single user executable to provide to flux start
 	// +kubebuilder:default="5s"
 	// +default="5s"

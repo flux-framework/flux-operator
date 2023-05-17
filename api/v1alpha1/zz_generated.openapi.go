@@ -251,6 +251,13 @@ func schema__api_v1alpha1__FluxSpec(ref common.ReferenceCallback) common.OpenAPI
 							Format:      "",
 						},
 					},
+					"wrap": {
+						SchemaProps: spec.SchemaProps{
+							Description: "Commands for flux start --wrap",
+							Type:        []string{"string"},
+							Format:      "",
+						},
+					},
 					"connectTimeout": {
 						SchemaProps: spec.SchemaProps{
 							Description: "Single user executable to provide to flux start",

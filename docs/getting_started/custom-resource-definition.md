@@ -343,6 +343,18 @@ flux:
 
 Note that the operator will still create assets for flux at `/etc/flux`.
 
+#### wrap
+
+If you want to use the flux `--wrap` directive, which will add an additional `--wrap`
+with some listing of arguments, you can specify it as follows:
+
+```yaml
+flux:
+  wrap: "strace,-e,network,-tt"
+```
+
+In the above, we would add `--wrap=strace,-e,network,-tt` to flux start commands.
+
 #### connectTimeout
 
 For Flux versions 0.50.0 and later, you can customize the zeromq timeout. This is done

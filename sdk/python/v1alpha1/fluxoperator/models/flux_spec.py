@@ -36,17 +36,19 @@ class FluxSpec(object):
         'connect_timeout': 'str',
         'install_root': 'str',
         'log_level': 'int',
-        'option_flags': 'str'
+        'option_flags': 'str',
+        'wrap': 'str'
     }
 
     attribute_map = {
         'connect_timeout': 'connectTimeout',
         'install_root': 'installRoot',
         'log_level': 'logLevel',
-        'option_flags': 'optionFlags'
+        'option_flags': 'optionFlags',
+        'wrap': 'wrap'
     }
 
-    def __init__(self, connect_timeout='5s', install_root='/usr', log_level=6, option_flags='', local_vars_configuration=None):  # noqa: E501
+    def __init__(self, connect_timeout='5s', install_root='/usr', log_level=6, option_flags='', wrap=None, local_vars_configuration=None):  # noqa: E501
         """FluxSpec - a model defined in OpenAPI"""  # noqa: E501
         if local_vars_configuration is None:
             local_vars_configuration = Configuration.get_default_copy()
@@ -56,6 +58,7 @@ class FluxSpec(object):
         self._install_root = None
         self._log_level = None
         self._option_flags = None
+        self._wrap = None
         self.discriminator = None
 
         if connect_timeout is not None:
@@ -66,6 +69,8 @@ class FluxSpec(object):
             self.log_level = log_level
         if option_flags is not None:
             self.option_flags = option_flags
+        if wrap is not None:
+            self.wrap = wrap
 
     @property
     def connect_timeout(self):
@@ -158,6 +163,29 @@ class FluxSpec(object):
         """
 
         self._option_flags = option_flags
+
+    @property
+    def wrap(self):
+        """Gets the wrap of this FluxSpec.  # noqa: E501
+
+        Commands for flux start --wrap  # noqa: E501
+
+        :return: The wrap of this FluxSpec.  # noqa: E501
+        :rtype: str
+        """
+        return self._wrap
+
+    @wrap.setter
+    def wrap(self, wrap):
+        """Sets the wrap of this FluxSpec.
+
+        Commands for flux start --wrap  # noqa: E501
+
+        :param wrap: The wrap of this FluxSpec.  # noqa: E501
+        :type wrap: str
+        """
+
+        self._wrap = wrap
 
     def to_dict(self, serialize=False):
         """Returns the model properties as a dict"""
