@@ -141,17 +141,20 @@ class FluxMiniCluster:
             print()
             yield url
 
-    def stream_output(self, filename, stdout=True, timestamps=False):
+    def stream_output(self, filename, stdout=True, timestamps=False, pod=None):
         """
         Stream output, optionally printing also to stdout.
+
+        We allow specifying the pod if we don't want output from the broker.
         """
+        pod = pod or self.broker_pod
         return self.ctrl.stream_output(
             filename=filename,
             stdout=stdout,
             namespace=self.namespace,
             timestamps=timestamps,
             name=self.name,
-            pod=self.broker_pod,
+            pod=pod,
         )
 
     @timed

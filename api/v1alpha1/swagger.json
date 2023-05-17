@@ -138,6 +138,10 @@
           "description": "Flux option flags, usually provided with -o optional - if needed, default option flags for the server These can also be set in the user interface to override here. This is only valid for a FluxRunner \"runFlux\" true",
           "type": "string",
           "default": ""
+        },
+        "wrap": {
+          "description": "Commands for flux start --wrap",
+          "type": "string"
         }
       }
     },

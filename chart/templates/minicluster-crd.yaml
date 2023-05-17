@@ -260,6 +260,9 @@ spec:
                       be set in the user interface to override here. This is only valid
                       for a FluxRunner "runFlux" true
                     type: string
+                  wrap:
+                    description: Commands for flux start --wrap
+                    type: string
                 type: object
               fluxRestful:
                 description: Customization to Flux Restful API There should only be
