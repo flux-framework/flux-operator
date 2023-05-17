@@ -141,17 +141,20 @@ class FluxMiniCluster:
             print()
             yield url
 
-    def stream_output(self, filename, stdout=True, timestamps=False):
+    def stream_output(self, filename, stdout=True, timestamps=False, pod=None):
         """
         Stream output, optionally printing also to stdout.
+
+        We allow specifying the pod if we don't want output from the broker.
         """
+        pod = pod or self.broker_pod
         return self.ctrl.stream_output(
             filename=filename,
             stdout=stdout,
             namespace=self.namespace,
             timestamps=timestamps,
             name=self.name,
-            pod=self.broker_pod,
+            pod=pod,
         )
 
     @timed
@@ -233,10 +236,19 @@ class FluxOperator:
         self._core_v1 = core_v1_api.CoreV1Api()
         return self._core_v1
 
-    def stream_output(self, filename, name=None, namespace=None, pod=None, stdout=True, return_output=True, timestamps=False):
+    def stream_output(
+        self,
+        filename,
+        name=None,
+        namespace=None,
+        pod=None,
+        stdout=True,
+        return_output=True,
+        timestamps=False,
+    ):
         """
         Stream output, optionally printing also to stdout.
-        
+
         Also return the output to the user.
         """
         namespace = namespace or self.namespace
@@ -259,7 +271,6 @@ class FluxOperator:
                     print(line)
                 if return_output:
                     lines.append(line)
-        
         # I can imagine cases where we wouldn't want to keep it
         if return_output:
             return lines
@@ -311,7 +322,7 @@ class FluxOperator:
 
         # Not found - it was deleted
         except kubernetes.client.exceptions.ApiException:
-             return V1PodList(items=[])
+            return V1PodList(items=[])
         except:
             time.sleep(2)
             return self.get_pods(namespace, name)
@@ -395,7 +406,7 @@ class FluxOperator:
                     continue
 
                 # Ignore services pod
-                if pod.metadata.name.endswith('-services'):
+                if pod.metadata.name.endswith("-services"):
                     continue
                 if pod.status.phase not in states:
                     time.sleep(retry_seconds)
