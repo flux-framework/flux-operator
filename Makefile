@@ -271,7 +271,7 @@ build-config: manifests kustomize ## Deploy controller to the K8s cluster specif
 # Build a test image, push to the registry at test, and apply the build-config
 .PHONY: test-deploy
 test-deploy: manifests kustomize
-	docker build -t ${DEVIMG} .
+	docker build --no-cache -t ${DEVIMG} .
 	docker push ${DEVIMG}
 	cd config/manager && $(KUSTOMIZE) edit set image controller=${DEVIMG}
 	$(KUSTOMIZE) build config/default > examples/dist/flux-operator-dev.yaml
