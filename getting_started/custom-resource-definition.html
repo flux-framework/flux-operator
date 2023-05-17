@@ -636,6 +636,13 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#wrap" class="md-nav__link">
+    <span title="/getting_started/custom-resource-definition.md#wrap (reference label)" class="md-ellipsis">wrap</span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#connecttimeout" class="md-nav__link">
     <span title="/getting_started/custom-resource-definition.md#connecttimeout (reference label)" class="md-ellipsis">connect<wbr>Timeout</span>
   </a>
@@ -1449,6 +1456,14 @@ directive:</p>
 </code></pre></div>
 </div>
 <p>Note that the operator will still create assets for flux at <code class="docutils literal notranslate"><span class="pre">/etc/flux</span></code>.</p>
+<h4 id="wrap">wrap<a class="headerlink" href="#wrap" title="Permalink to this heading">¶</a></h4>
+<p>If you want to use the flux <code class="docutils literal notranslate"><span class="pre">--wrap</span></code> directive, which will add an additional <code class="docutils literal notranslate"><span class="pre">--wrap</span></code>
+with some listing of arguments, you can specify it as follows:</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><code><span class="nt">flux</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">wrap</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;strace,-e,network,-tt&quot;</span>
+</code></pre></div>
+</div>
+<p>In the above, we would add <code class="docutils literal notranslate"><span class="pre">--wrap=strace,-e,network,-tt</span></code> to flux start commands.</p>
 <h4 id="connecttimeout">connectTimeout<a class="headerlink" href="#connecttimeout" title="Permalink to this heading">¶</a></h4>
 <p>For Flux versions 0.50.0 and later, you can customize the zeromq timeout. This is done
 via an extra broker option provided on the command line:</p>
@@ -2010,7 +2025,7 @@ or define your own as follows:</p>
   <small>
     
       Last update:
-      May 16, 2023
+      May 17, 2023
     
   </small>
 </div>
