@@ -62,6 +62,14 @@ func getVolumes(cluster *api.MiniCluster) []corev1.Volume {
 	// Prepare a custom "wait.sh" for each container based on index
 	for i, container := range cluster.Spec.Containers {
 
+		// Ensure the container has the update hosts script
+		updateScript := corev1.KeyToPath{
+			Key:  "update-hosts",
+			Path: "update_hosts.sh",
+			Mode: &makeExecutable,
+		}
+		runnerStartScripts = append(runnerStartScripts, updateScript)
+
 		// For now, only Flux runners get the custom wait.sh script
 		if container.RunFlux {
 			startScript := corev1.KeyToPath{
