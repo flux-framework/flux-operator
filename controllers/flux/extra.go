@@ -17,6 +17,7 @@ import (
 	corev1 "k8s.io/api/core/v1"
 	networkv1 "k8s.io/api/networking/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	"k8s.io/apimachinery/pkg/types"
 	"k8s.io/client-go/kubernetes"
 	"k8s.io/client-go/kubernetes/scheme"
 	"k8s.io/client-go/tools/remotecommand"
@@ -180,6 +181,63 @@ func (r *MiniClusterReconciler) brokerIsReady(
 		}
 	}
 	return false, fmt.Errorf("broker is not ready")
+}
+
+// getHostfileConfig gets an existing configmap, if it's done
+func (r *MiniClusterReconciler) addDiscoveryHostsFile(ctx context.Context, cluster *api.MiniCluster) (*corev1.ConfigMap, ctrl.Result, error) {
+
+	configName := cluster.Name + entrypointSuffix
+	cm := &corev1.ConfigMap{}
+	err := r.Client.Get(ctx, types.NamespacedName{Name: configName, Namespace: cluster.Namespace}, cm)
+
+	// This is a bit redundant, but probably ok
+	pods := r.getMiniClusterPods(ctx, cluster)
+	ips := r.getMiniClusterIPS(ctx, cluster)
+
+	// To update it we need to have found it
+	if err == nil {
+
+		cmCopy := cm.DeepCopy()
+		cmCopy.Data["update-hosts"] = r.generateDiscoverHostsFile(cluster, pods, ips)
+		err = r.Client.Update(ctx, cmCopy)
+		if err != nil {
+			r.log.Error(err, "❌ Error Adding Discovery Hosts File", "Namespace", cmCopy.Namespace, "Name", (*cmCopy).Name)
+			return cmCopy, ctrl.Result{}, err
+		}
+		return cmCopy, ctrl.Result{Requeue: true}, nil
+	}
+	return cm, ctrl.Result{}, err
+}
+
+// discoverHosts generates a file that the pod can use to discover hosts.
+// We assume the pods are sorted by name for a consistent output!
+func (r *MiniClusterReconciler) generateDiscoverHostsFile(cluster *api.MiniCluster, pods *corev1.PodList, ips map[string]string) string {
+	content := "#!/bin/sh"
+
+	// NOTE: host will is duplicated, if that makes things wonky.
+	for _, pod := range pods.Items {
+
+		// flux-sample-N-xxxx -> flux-sample-N
+		hostname := strings.Join(strings.SplitN(pod.Name, "-", 4)[0:3], "-")
+		ip_address := ips[pod.Name]
+
+		// flux-sample-0.flux-service.flux-operator.svc.cluster.local
+		// STOPPED HERE - make sure job is the same in terms of FDQN etc
+		// can't ensure headless service thing working?
+		fqdn := fmt.Sprintf("%s.flux-service.%s.svc.cluster.local", hostname, cluster.Namespace)
+		if ip_address == "" {
+			continue
+		}
+		content = fmt.Sprintf("%s\necho %s 	%s	%s >> /etc/hosts", content, ip_address, fqdn, hostname)
+	}
+
+	// Add one more newline for better readability
+	content += "\n"
+
+	// This is wrapping the entrypoint, so the last command needs to take args and start flux
+	// The last set of arguments from the call should be the container entrypoint
+	r.log.Info("🌀 MiniCluster Discover Hosts", "/flux_operator/update_hosts.sh", content)
+	return content
 }
 
 // getMiniClusterIPS was used when we needed to write /etc/hosts and is no longer used

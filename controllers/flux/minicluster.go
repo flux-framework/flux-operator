@@ -87,15 +87,36 @@ func (r *MiniClusterReconciler) ensureMiniCluster(
 	}
 
 	// Create headless service for the MiniCluster
-	selector := map[string]string{"job-name": cluster.Name}
-	result, err = r.exposeServices(ctx, cluster, restfulServiceName, selector)
-	if err != nil {
-		return result, err
-	}
+	// This is commented out so we don't deal with DNS
+	// selector := map[string]string{"job-name": cluster.Name}
+	//result, err = r.exposeServices(ctx, cluster, restfulServiceName, selector)
+	//if err != nil {
+	//	return result, err
+	//}
 
 	// Create the batch job that brings it all together!
 	// A batchv1.Job can hold a spec for containers that use the configs we just made
 	mc, result, err := r.getMiniCluster(ctx, cluster)
+	if err != nil {
+		return result, err
+	}
+
+	// Reconcile until pods ips are ready
+	// This is considered a bad design, but added back to test without DNS
+	// In the pods, it's waiting to see the update_hosts.sh file to be written.
+	// We can do this because ips are written on the first creation and don't change
+	ips := r.getMiniClusterIPS(ctx, cluster)
+	r.log.Info("MiniCluster", "ips", ips)
+
+	// Continue reconciling until we have pod ips
+	if len(ips) != int(cluster.Spec.Size) {
+		return ctrl.Result{Requeue: true}, fmt.Errorf("IPs are not ready yet! Only found %d", len(ips))
+	}
+
+	// At this point we've created job pods that have a waiting entrypoint for the update_hosts.sh
+	// to exist. This is where we update the ConfigMap so it exists
+	// Yes, this is a hack. Better ideas appreciated!
+	_, result, err = r.addDiscoveryHostsFile(ctx, cluster)
 	if err != nil {
 		return result, err
 	}
@@ -365,6 +386,8 @@ func (r *MiniClusterReconciler) getConfigMap(
 						data[waitScriptID] = waitScript
 					}
 				}
+				// This will be updated after initial creation and we have host ips!
+				data["update-hosts"] = ""
 			}
 
 			// Finally create the config map

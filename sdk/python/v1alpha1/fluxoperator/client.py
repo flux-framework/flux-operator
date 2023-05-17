@@ -271,7 +271,6 @@ class FluxOperator:
                     print(line)
                 if return_output:
                     lines.append(line)
-
         # I can imagine cases where we wouldn't want to keep it
         if return_output:
             return lines

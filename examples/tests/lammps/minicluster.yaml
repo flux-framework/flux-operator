@@ -10,7 +10,7 @@ spec:
 
   # suppress all output except for test run
   logging:
-    quiet: true
+    quiet: false
 
   # This is a list because a pod can support multiple containers
   containers:
