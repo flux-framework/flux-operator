@@ -1,0 +1,68 @@
+# NOTE: this likely can be refined! I was in "get it working!" mode!
+---
+kind: ClusterRole
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: pods-cluster-list
+  namespace: flux-operator
+rules:
+- apiGroups: 
+  - ""
+  - flux-framework.org
+  resources: ["pods", "miniclusters", "customresourcedefinitions"]
+  verbs: ["list", "get", "patch"]
+---
+kind: Role
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: pods-list
+  namespace: flux-operator
+rules:
+- apiGroups: 
+  - ""
+  - flux-framework.org
+  resources: ["pods", "miniclusters", "customresourcedefinitions"]
+  verbs: ["list", "get", "patch"]
+---
+kind: ClusterRoleBinding
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: pods-list
+  namespace: flux-operator
+subjects:
+- kind: ServiceAccount
+  name: default
+  namespace: default
+- kind: ServiceAccount
+  name: default
+  namespace: flux-operator
+- kind: ServiceAccount
+  name: flux-operator
+  namespace: flux-operator
+roleRef:
+  kind: ClusterRole
+  name: pods-cluster-list
+  apiGroup: rbac.authorization.k8s.io
+---
+kind: RoleBinding
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: pods-list
+  namespace: flux-operator
+subjects:
+- kind: ServiceAccount
+  name: default
+  namespace: default
+- kind: ServiceAccount
+  name: flux-operator
+  namespace: flux-operator
+- kind: ServiceAccount
+  name: default
+  namespace: flux-operator
+roleRef:
+  kind: Role
+  name: pods-list
+  apiGroup: rbac.authorization.k8s.io
+
+
+
