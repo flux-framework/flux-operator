@@ -68,6 +68,7 @@ multi-tenancy
 interactive
 services
 scaling
+elasticity
 staging
 volumes
 state
