@@ -40,7 +40,7 @@ mind for what to do with the new resources.
 To run this example:
 
 ```bash
-$ minikube start --kubernetes-version=1.27.
+$ minikube start --kubernetes-version=1.27.0
 ```
 
 Install the operator, create the namespace, and create the MiniCluster:
