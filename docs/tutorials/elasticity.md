@@ -184,7 +184,7 @@ $ kind delete cluster
 
 ## Horizontal Autoscaler Example
 
-> Using the horizontal autoscaler (HSA) API to scale instead
+> Using the horizontal pod autoscaler (HPA) API to scale instead
 
 The rbac permissions required above might be a bit much, and this was suggested as an alternative approach.
 For this approach we are going to use the [HPA + Scale sub-resource](https://book.kubebuilder.io/reference/generating-crd.html#scale) in our custom resource definition to scale resources automatically,
