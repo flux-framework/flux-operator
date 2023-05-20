@@ -9,7 +9,7 @@ or down.
 
 ## Basic Example
 
-> Starting with a cluster at a maximum size and scaling it up and down
+> An application interacting with the custom resource API to scale up and down
 
  **[Tutorial File](https://github.com/flux-framework/flux-operator/blob/main/examples/elasticity/basic/minicluster.yaml)**
 
@@ -177,6 +177,223 @@ You can watch the asciinema too:
 And that's it! Note that there are other ways to scale using the Horizontal Auto Scaler that I'm going
 to also look into, although at brief glance it seems like this would require the application to serve
 an endpoint. Make sure to cleanup when you finish:
+
+```bash
+$ kind delete cluster
+```
+
+## Horizontal Autoscaler Example
+
+> Using the horizontal pod autoscaler (HPA) API to scale instead
+
+The rbac permissions required above might be a bit much, and this was suggested as an alternative approach.
+For this approach we are going to use the [HPA + Scale sub-resource](https://book.kubebuilder.io/reference/generating-crd.html#scale) in our custom resource definition to scale resources automatically,
+and our application running in the MiniCluster can then provide custom metrics based on which we set up the scaling. 
+Note that right now we are just scaling based on size, but in the future it is possible to [autoscale on multiple metrics](https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale-walkthrough/#autoscaling-on-multiple-metrics-and-custom-metrics). Note that we are interested in this technique because the requests can [come from an external service](https://cloud.google.com/kubernetes-engine/docs/concepts/horizontalpodautoscaler), meaning we could have a single service (paired with application logic, optionally) to handle scaling both node and MiniClusters, and coordinating the two.
+
+ **[Tutorial File](https://github.com/flux-framework/flux-operator/blob/main/examples/elasticity/horizontal-autoscaler/minicluster.yaml)**
+
+
+### How does it work?
+
+I think what happens is that our operator provides the autoscaler with a field (the size) and selector for pods (the `job-name`) and then:
+
+1. It pings the API endpoint for our CRD to get the current selector and size
+2. It retrieves the pods based on the selector
+3. It compares the actual vs. desired metrics
+4. If scaling is needed, it applies a change to the field indicated, directly to the CRD
+5. The change request comes into our operator!
+
+The above could be wrong - this is my best effort guess after an afternoon of poking around.
+This means that, to the Flux Operator, a request to scale coming from a user applying an updated
+YAML vs. the autoscaler looks the same (and we can use the same functions). It also means that
+if an autoscaler isn't installed to the cluster, we have those fields but nothing happens /
+no action is taken. This means that:
+
+### What do you need?
+
+You'll need to ensure that:
+
+- The version of the autoscaler expected by its endpoint matches the version you deploy
+- Your minicluster.yaml has resources defined for CPU (or the metrics you are interested in)
+- You've set at maxSize in your minicluster.yaml to give Flux a heads up
+- Your cluster will need a metrics server
+- If it's a local metrics server, you'll want to disable ssl ([see our example](https://github.com/flux-framework/flux-operator/blob/main/examples/elasticity/horizontal-autoscaler/metrics-server.yaml))
+
+Details for how to inspect the above (and sample files) are provided below.
+
+### Running the Example
+
+To run this example, you'll want to first cd to the example directory:
+
+```bash
+$ cd examples/elasticity/horizontal-autoscaler
+```
+
+Create a kind cluster with Kubernetes version 1.27.0
+
+```bash
+$ kind create cluster --config ./kind-config.yaml
+```
+
+Create the flux-operator namespace and install the operator:
+
+```bash
+$ kubectl create namespace flux-operator
+$ kubectl apply -f ../../dist/flux-operator-dev.yaml
+```
+
+And then create a very simply interactive cluster (it's small, 2 pods, but importantly has a maxsize of 10):
+
+```bash
+$ kubectl apply -f ./minicluster.yaml
+```
+
+You'll need to wait for the container to pull (status `ContainerCreating` to `Running`).
+At this point, wait until the containers go from creating to running.
+
+```bash
+$ kubectl get -n flux-operator pods
+NAME                  READY   STATUS    RESTARTS   AGE
+flux-sample-0-4wmmp   1/1     Running   0          6m50s
+flux-sample-1-mjj7b   1/1     Running   0          6m50s
+```
+
+Okay here is the cool part - you can look at the scale endpoint of the MiniCluster
+with `kubectl` directly! Remember that we haven't installed a horizontal auto-scaler yet:
+
+```bash
+$ kubectl get --raw /apis/flux-framework.org/v1alpha1/namespaces/flux-operator/miniclusters/flux-sample/scale | jq
+```
+```console
+{
+  "kind": "Scale",
+  "apiVersion": "autoscaling/v1",
+  "metadata": {
+    "name": "flux-sample",
+    "namespace": "flux-operator",
+    "uid": "581c708a-0eb2-48da-84b1-3da7679d349d",
+    "resourceVersion": "3579",
+    "creationTimestamp": "2023-05-20T05:11:28Z"
+  },
+  "spec": {
+    "replicas": 2
+  },
+  "status": {
+    "replicas": 0,
+    "selector": "job-name=flux-sample"
+  }
+}
+```
+
+The above knows the selector to use to get pods (and look at current resource usage).
+The output above is also telling us the `autoscaler/v1` is being used, so we will apply that.
+The [APIs for v1 and v2 are subtly different](https://www.pulumi.com/registry/packages/kubernetes/api-docs/autoscaling/v1/horizontalpodautoscaler/).
+So let's now install the autoscaler. Take a look at the file [hpa-v1.yaml](https://github.com/flux-framework/flux-operator/blob/main/examples/elasticity/horizontal-autoscaler/hpa-v1.yaml). It's going to create the auto scaler specifically for our MiniCluster, and it's going to allow us to scale up to a maximum size of 4. Since we want to see the scale happen, we've set the CPU metric really low.
+
+Before we deploy the autoscaler, we need a metrics server! This doesn't come out of the box with kind so
+we install it:
+
+```bash
+$ kubectl apply -f metrics-server.yaml
+```
+
+I found this suggestion [here](https://gist.github.com/sanketsudake/a089e691286bf2189bfedf295222bd43). Ensure
+it's running:
+
+```bash
+$ kubectl get deploy,svc -n kube-system | egrep metrics-server
+```
+
+Now create the autoscaler!
+
+```bash
+$ kubectl apply -f hpa-v1.yaml
+```
+```console
+horizontalpodautoscaler.autoscaling/flux-sample-hpa created
+```
+
+Remember that when you first created your cluster, your size was two, and we had two?
+
+```bash
+$ kubectl get -n flux-operator pods
+NAME                  READY   STATUS    RESTARTS   AGE
+flux-sample-0-4wmmp   1/1     Running   0          6m50s
+flux-sample-1-mjj7b   1/1     Running   0          6m50s
+```
+
+If you watch your pods (and your autoscaler and your endpoint) you'll
+see first that the resource usage changes (just by way of Flux starting):
+
+```
+$ kubectl get -n flux-operator hpa -w
+NAME              REFERENCE                 TARGETS   MINPODS   MAXPODS   REPLICAS   AGE
+flux-sample-hpa   MiniCluster/flux-sample   0%/2%     2         4         2          33m
+flux-sample-hpa   MiniCluster/flux-sample   0%/2%     2         4         2          34m
+flux-sample-hpa   MiniCluster/flux-sample   3%/2%     2         4         2          34m
+flux-sample-hpa   MiniCluster/flux-sample   0%/2%     2         4         3          34m
+```
+
+And you'll see the cluster increase in size accordingly!
+
+```bash
+kubectl get -n flux-operator pods
+NAME                  READY   STATUS    RESTARTS   AGE
+flux-sample-0-blgsw   1/1     Running   0          56s
+flux-sample-1-k4m6s   1/1     Running   0          56s
+flux-sample-2-z64n9   1/1     Running   0          17s
+```
+
+Also note that the autoscaler age is 33 minutes, but the job pods under a minute!
+This is because we can install the autoscaler once, and then use it for the same
+namespace and job name, even if you wind up deleting and re-creating. That's pretty
+cool because it means you can create different HPAs for different job types (organized by name).
+Depending on how you stress the pods, it can easily go up to the max:
+
+```bash
+kubectl get --raw /apis/flux-framework.org/v1alpha1/namespaces/flux-operator/miniclusters/flux-sample/scale | jq
+```
+```console
+{
+  "kind": "Scale",
+  "apiVersion": "autoscaling/v1",
+  "metadata": {
+    "name": "flux-sample",
+    "namespace": "flux-operator",
+    "uid": "31a02984-d47c-4d96-bd7e-ab7f381ec660",
+    "resourceVersion": "8735",
+    "creationTimestamp": "2023-05-20T05:50:56Z"
+  },
+  "spec": {
+    "replicas": 4
+  },
+  "status": {
+    "replicas": 4,
+    "selector": "job-name=flux-sample"
+  }
+}
+```
+
+And you see the autoscaler reflect that. Since we set the maxSize to 4, it won't ever go above that.
+
+```bash
+$ kubectl get -n flux-operator hpa -w
+NAME              REFERENCE                 TARGETS   MINPODS   MAXPODS   REPLICAS   AGE
+flux-sample-hpa   MiniCluster/flux-sample   0%/2%     2         4         2          49m
+flux-sample-hpa   MiniCluster/flux-sample   0%/2%     2         4         2          49m
+flux-sample-hpa   MiniCluster/flux-sample   0%/2%     2         4         2          50m
+flux-sample-hpa   MiniCluster/flux-sample   0%/2%     2         4         4          50m
+flux-sample-hpa   MiniCluster/flux-sample   9%/2%     2         4         4          50m
+```
+
+Also note that if the load goes down (e.g., to zero again) the cluster will scale down.
+I saw this when I set `interactive: true` and manually shelled in to increase load,
+and then exited and let it sit. 
+
+And that's it! This is really cool because it's an early step toward a totally automated,
+self-scaling workflow. The next step is combining that with logic to scale the Kubernetes
+cluster itself. When you are done:
 
 ```bash
 $ kind delete cluster

@@ -638,6 +638,40 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#horizontal-autoscaler-example" class="md-nav__link">
+    <span title="/tutorials/elasticity.md#horizontal-autoscaler-example (reference label)" class="md-ellipsis">Horizontal Autoscaler Example</span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Horizontal Autoscaler Example">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#how-does-it-work" class="md-nav__link">
+    <span title="/tutorials/elasticity.md#how-does-it-work (reference label)" class="md-ellipsis">How does it work?</span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#what-do-you-need" class="md-nav__link">
+    <span title="/tutorials/elasticity.md#what-do-you-need (reference label)" class="md-ellipsis">What do you need?</span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#running-the-example" class="md-nav__link">
+    <span title="/tutorials/elasticity.md#running-the-example (reference label)" class="md-ellipsis">Running the Example</span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -842,7 +876,7 @@ works. This will add the ability for the application to communicate with the API
 or down.</p>
 <h2 id="basic-example">Basic Example<a class="headerlink" href="#basic-example" title="Permalink to this heading">¶</a></h2>
 <blockquote>
-<div><p>Starting with a cluster at a maximum size and scaling it up and down</p>
+<div><p>An application interacting with the custom resource API to scale up and down</p>
 </div></blockquote>
 <p><strong><a class="reference external" href="https://github.com/flux-framework/flux-operator/blob/main/examples/elasticity/basic/minicluster.yaml">Tutorial File</a></strong></p>
 <p>To run this example, you’ll want to first cd to the example directory:</p>
@@ -991,6 +1025,183 @@ an endpoint. Make sure to cleanup when you finish:</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span>kind<span class="w"> </span>delete<span class="w"> </span>cluster
 </code></pre></div>
 </div>
+<h2 id="horizontal-autoscaler-example">Horizontal Autoscaler Example<a class="headerlink" href="#horizontal-autoscaler-example" title="Permalink to this heading">¶</a></h2>
+<blockquote>
+<div><p>Using the horizontal pod autoscaler (HPA) API to scale instead</p>
+</div></blockquote>
+<p>The rbac permissions required above might be a bit much, and this was suggested as an alternative approach.
+For this approach we are going to use the <a class="reference external" href="https://book.kubebuilder.io/reference/generating-crd.html#scale">HPA + Scale sub-resource</a> in our custom resource definition to scale resources automatically,
+and our application running in the MiniCluster can then provide custom metrics based on which we set up the scaling.
+Note that right now we are just scaling based on size, but in the future it is possible to <a class="reference external" href="https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale-walkthrough/#autoscaling-on-multiple-metrics-and-custom-metrics">autoscale on multiple metrics</a>. Note that we are interested in this technique because the requests can <a class="reference external" href="https://cloud.google.com/kubernetes-engine/docs/concepts/horizontalpodautoscaler">come from an external service</a>, meaning we could have a single service (paired with application logic, optionally) to handle scaling both node and MiniClusters, and coordinating the two.</p>
+<p><strong><a class="reference external" href="https://github.com/flux-framework/flux-operator/blob/main/examples/elasticity/horizontal-autoscaler/minicluster.yaml">Tutorial File</a></strong></p>
+<h3 id="how-does-it-work">How does it work?<a class="headerlink" href="#how-does-it-work" title="Permalink to this heading">¶</a></h3>
+<p>I think what happens is that our operator provides the autoscaler with a field (the size) and selector for pods (the <code class="docutils literal notranslate"><span class="pre">job-name</span></code>) and then:</p>
+<ol class="arabic simple">
+<li><p>It pings the API endpoint for our CRD to get the current selector and size</p></li>
+<li><p>It retrieves the pods based on the selector</p></li>
+<li><p>It compares the actual vs. desired metrics</p></li>
+<li><p>If scaling is needed, it applies a change to the field indicated, directly to the CRD</p></li>
+<li><p>The change request comes into our operator!</p></li>
+</ol>
+<p>The above could be wrong - this is my best effort guess after an afternoon of poking around.
+This means that, to the Flux Operator, a request to scale coming from a user applying an updated
+YAML vs. the autoscaler looks the same (and we can use the same functions). It also means that
+if an autoscaler isn’t installed to the cluster, we have those fields but nothing happens /
+no action is taken. This means that:</p>
+<h3 id="what-do-you-need">What do you need?<a class="headerlink" href="#what-do-you-need" title="Permalink to this heading">¶</a></h3>
+<p>You’ll need to ensure that:</p>
+<ul class="simple">
+<li><p>The version of the autoscaler expected by its endpoint matches the version you deploy</p></li>
+<li><p>Your minicluster.yaml has resources defined for CPU (or the metrics you are interested in)</p></li>
+<li><p>You’ve set at maxSize in your minicluster.yaml to give Flux a heads up</p></li>
+<li><p>Your cluster will need a metrics server</p></li>
+<li><p>If it’s a local metrics server, you’ll want to disable ssl (<a class="reference external" href="https://github.com/flux-framework/flux-operator/blob/main/examples/elasticity/horizontal-autoscaler/metrics-server.yaml">see our example</a>)</p></li>
+</ul>
+<p>Details for how to inspect the above (and sample files) are provided below.</p>
+<h3 id="running-the-example">Running the Example<a class="headerlink" href="#running-the-example" title="Permalink to this heading">¶</a></h3>
+<p>To run this example, you’ll want to first cd to the example directory:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span><span class="nb">cd</span><span class="w"> </span>examples/elasticity/horizontal-autoscaler
+</code></pre></div>
+</div>
+<p>Create a kind cluster with Kubernetes version 1.27.0</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span>kind<span class="w"> </span>create<span class="w"> </span>cluster<span class="w"> </span>--config<span class="w"> </span>./kind-config.yaml
+</code></pre></div>
+</div>
+<p>Create the flux-operator namespace and install the operator:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span>kubectl<span class="w"> </span>create<span class="w"> </span>namespace<span class="w"> </span>flux-operator
+$<span class="w"> </span>kubectl<span class="w"> </span>apply<span class="w"> </span>-f<span class="w"> </span>../../dist/flux-operator-dev.yaml
+</code></pre></div>
+</div>
+<p>And then create a very simply interactive cluster (it’s small, 2 pods, but importantly has a maxsize of 10):</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span>kubectl<span class="w"> </span>apply<span class="w"> </span>-f<span class="w"> </span>./minicluster.yaml
+</code></pre></div>
+</div>
+<p>You’ll need to wait for the container to pull (status <code class="docutils literal notranslate"><span class="pre">ContainerCreating</span></code> to <code class="docutils literal notranslate"><span class="pre">Running</span></code>).
+At this point, wait until the containers go from creating to running.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span>kubectl<span class="w"> </span>get<span class="w"> </span>-n<span class="w"> </span>flux-operator<span class="w"> </span>pods
+NAME<span class="w">                  </span>READY<span class="w">   </span>STATUS<span class="w">    </span>RESTARTS<span class="w">   </span>AGE
+flux-sample-0-4wmmp<span class="w">   </span><span class="m">1</span>/1<span class="w">     </span>Running<span class="w">   </span><span class="m">0</span><span class="w">          </span>6m50s
+flux-sample-1-mjj7b<span class="w">   </span><span class="m">1</span>/1<span class="w">     </span>Running<span class="w">   </span><span class="m">0</span><span class="w">          </span>6m50s
+</code></pre></div>
+</div>
+<p>Okay here is the cool part - you can look at the scale endpoint of the MiniCluster
+with <code class="docutils literal notranslate"><span class="pre">kubectl</span></code> directly! Remember that we haven’t installed a horizontal auto-scaler yet:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span>kubectl<span class="w"> </span>get<span class="w"> </span>--raw<span class="w"> </span>/apis/flux-framework.org/v1alpha1/namespaces/flux-operator/miniclusters/flux-sample/scale<span class="w"> </span><span class="p">|</span><span class="w"> </span>jq
+</code></pre></div>
+</div>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><code><span class="go">{</span>
+<span class="go">  &quot;kind&quot;: &quot;Scale&quot;,</span>
+<span class="go">  &quot;apiVersion&quot;: &quot;autoscaling/v1&quot;,</span>
+<span class="go">  &quot;metadata&quot;: {</span>
+<span class="go">    &quot;name&quot;: &quot;flux-sample&quot;,</span>
+<span class="go">    &quot;namespace&quot;: &quot;flux-operator&quot;,</span>
+<span class="go">    &quot;uid&quot;: &quot;581c708a-0eb2-48da-84b1-3da7679d349d&quot;,</span>
+<span class="go">    &quot;resourceVersion&quot;: &quot;3579&quot;,</span>
+<span class="go">    &quot;creationTimestamp&quot;: &quot;2023-05-20T05:11:28Z&quot;</span>
+<span class="go">  },</span>
+<span class="go">  &quot;spec&quot;: {</span>
+<span class="go">    &quot;replicas&quot;: 2</span>
+<span class="go">  },</span>
+<span class="go">  &quot;status&quot;: {</span>
+<span class="go">    &quot;replicas&quot;: 0,</span>
+<span class="go">    &quot;selector&quot;: &quot;job-name=flux-sample&quot;</span>
+<span class="go">  }</span>
+<span class="go">}</span>
+</code></pre></div>
+</div>
+<p>The above knows the selector to use to get pods (and look at current resource usage).
+The output above is also telling us the <code class="docutils literal notranslate"><span class="pre">autoscaler/v1</span></code> is being used, so we will apply that.
+The <a class="reference external" href="https://www.pulumi.com/registry/packages/kubernetes/api-docs/autoscaling/v1/horizontalpodautoscaler/">APIs for v1 and v2 are subtly different</a>.
+So let’s now install the autoscaler. Take a look at the file <a class="reference external" href="https://github.com/flux-framework/flux-operator/blob/main/examples/elasticity/horizontal-autoscaler/hpa-v1.yaml">hpa-v1.yaml</a>. It’s going to create the auto scaler specifically for our MiniCluster, and it’s going to allow us to scale up to a maximum size of 4. Since we want to see the scale happen, we’ve set the CPU metric really low.</p>
+<p>Before we deploy the autoscaler, we need a metrics server! This doesn’t come out of the box with kind so
+we install it:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span>kubectl<span class="w"> </span>apply<span class="w"> </span>-f<span class="w"> </span>metrics-server.yaml
+</code></pre></div>
+</div>
+<p>I found this suggestion <a class="reference external" href="https://gist.github.com/sanketsudake/a089e691286bf2189bfedf295222bd43">here</a>. Ensure
+it’s running:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span>kubectl<span class="w"> </span>get<span class="w"> </span>deploy,svc<span class="w"> </span>-n<span class="w"> </span>kube-system<span class="w"> </span><span class="p">|</span><span class="w"> </span>egrep<span class="w"> </span>metrics-server
+</code></pre></div>
+</div>
+<p>Now create the autoscaler!</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span>kubectl<span class="w"> </span>apply<span class="w"> </span>-f<span class="w"> </span>hpa-v1.yaml
+</code></pre></div>
+</div>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><code><span class="go">horizontalpodautoscaler.autoscaling/flux-sample-hpa created</span>
+</code></pre></div>
+</div>
+<p>Remember that when you first created your cluster, your size was two, and we had two?</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span>kubectl<span class="w"> </span>get<span class="w"> </span>-n<span class="w"> </span>flux-operator<span class="w"> </span>pods
+NAME<span class="w">                  </span>READY<span class="w">   </span>STATUS<span class="w">    </span>RESTARTS<span class="w">   </span>AGE
+flux-sample-0-4wmmp<span class="w">   </span><span class="m">1</span>/1<span class="w">     </span>Running<span class="w">   </span><span class="m">0</span><span class="w">          </span>6m50s
+flux-sample-1-mjj7b<span class="w">   </span><span class="m">1</span>/1<span class="w">     </span>Running<span class="w">   </span><span class="m">0</span><span class="w">          </span>6m50s
+</code></pre></div>
+</div>
+<p>If you watch your pods (and your autoscaler and your endpoint) you’ll
+see first that the resource usage changes (just by way of Flux starting):</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><code>$ kubectl get -n flux-operator hpa -w
+NAME              REFERENCE                 TARGETS   MINPODS   MAXPODS   REPLICAS   AGE
+flux-sample-hpa   MiniCluster/flux-sample   0%/2%     2         4         2          33m
+flux-sample-hpa   MiniCluster/flux-sample   0%/2%     2         4         2          34m
+flux-sample-hpa   MiniCluster/flux-sample   3%/2%     2         4         2          34m
+flux-sample-hpa   MiniCluster/flux-sample   0%/2%     2         4         3          34m
+</code></pre></div>
+</div>
+<p>And you’ll see the cluster increase in size accordingly!</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>kubectl<span class="w"> </span>get<span class="w"> </span>-n<span class="w"> </span>flux-operator<span class="w"> </span>pods
+NAME<span class="w">                  </span>READY<span class="w">   </span>STATUS<span class="w">    </span>RESTARTS<span class="w">   </span>AGE
+flux-sample-0-blgsw<span class="w">   </span><span class="m">1</span>/1<span class="w">     </span>Running<span class="w">   </span><span class="m">0</span><span class="w">          </span>56s
+flux-sample-1-k4m6s<span class="w">   </span><span class="m">1</span>/1<span class="w">     </span>Running<span class="w">   </span><span class="m">0</span><span class="w">          </span>56s
+flux-sample-2-z64n9<span class="w">   </span><span class="m">1</span>/1<span class="w">     </span>Running<span class="w">   </span><span class="m">0</span><span class="w">          </span>17s
+</code></pre></div>
+</div>
+<p>Also note that the autoscaler age is 33 minutes, but the job pods under a minute!
+This is because we can install the autoscaler once, and then use it for the same
+namespace and job name, even if you wind up deleting and re-creating. That’s pretty
+cool because it means you can create different HPAs for different job types (organized by name).
+Depending on how you stress the pods, it can easily go up to the max:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>kubectl<span class="w"> </span>get<span class="w"> </span>--raw<span class="w"> </span>/apis/flux-framework.org/v1alpha1/namespaces/flux-operator/miniclusters/flux-sample/scale<span class="w"> </span><span class="p">|</span><span class="w"> </span>jq
+</code></pre></div>
+</div>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><code><span class="go">{</span>
+<span class="go">  &quot;kind&quot;: &quot;Scale&quot;,</span>
+<span class="go">  &quot;apiVersion&quot;: &quot;autoscaling/v1&quot;,</span>
+<span class="go">  &quot;metadata&quot;: {</span>
+<span class="go">    &quot;name&quot;: &quot;flux-sample&quot;,</span>
+<span class="go">    &quot;namespace&quot;: &quot;flux-operator&quot;,</span>
+<span class="go">    &quot;uid&quot;: &quot;31a02984-d47c-4d96-bd7e-ab7f381ec660&quot;,</span>
+<span class="go">    &quot;resourceVersion&quot;: &quot;8735&quot;,</span>
+<span class="go">    &quot;creationTimestamp&quot;: &quot;2023-05-20T05:50:56Z&quot;</span>
+<span class="go">  },</span>
+<span class="go">  &quot;spec&quot;: {</span>
+<span class="go">    &quot;replicas&quot;: 4</span>
+<span class="go">  },</span>
+<span class="go">  &quot;status&quot;: {</span>
+<span class="go">    &quot;replicas&quot;: 4,</span>
+<span class="go">    &quot;selector&quot;: &quot;job-name=flux-sample&quot;</span>
+<span class="go">  }</span>
+<span class="go">}</span>
+</code></pre></div>
+</div>
+<p>And you see the autoscaler reflect that. Since we set the maxSize to 4, it won’t ever go above that.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span>kubectl<span class="w"> </span>get<span class="w"> </span>-n<span class="w"> </span>flux-operator<span class="w"> </span>hpa<span class="w"> </span>-w
+NAME<span class="w">              </span>REFERENCE<span class="w">                 </span>TARGETS<span class="w">   </span>MINPODS<span class="w">   </span>MAXPODS<span class="w">   </span>REPLICAS<span class="w">   </span>AGE
+flux-sample-hpa<span class="w">   </span>MiniCluster/flux-sample<span class="w">   </span><span class="m">0</span>%/2%<span class="w">     </span><span class="m">2</span><span class="w">         </span><span class="m">4</span><span class="w">         </span><span class="m">2</span><span class="w">          </span>49m
+flux-sample-hpa<span class="w">   </span>MiniCluster/flux-sample<span class="w">   </span><span class="m">0</span>%/2%<span class="w">     </span><span class="m">2</span><span class="w">         </span><span class="m">4</span><span class="w">         </span><span class="m">2</span><span class="w">          </span>49m
+flux-sample-hpa<span class="w">   </span>MiniCluster/flux-sample<span class="w">   </span><span class="m">0</span>%/2%<span class="w">     </span><span class="m">2</span><span class="w">         </span><span class="m">4</span><span class="w">         </span><span class="m">2</span><span class="w">          </span>50m
+flux-sample-hpa<span class="w">   </span>MiniCluster/flux-sample<span class="w">   </span><span class="m">0</span>%/2%<span class="w">     </span><span class="m">2</span><span class="w">         </span><span class="m">4</span><span class="w">         </span><span class="m">4</span><span class="w">          </span>50m
+flux-sample-hpa<span class="w">   </span>MiniCluster/flux-sample<span class="w">   </span><span class="m">9</span>%/2%<span class="w">     </span><span class="m">2</span><span class="w">         </span><span class="m">4</span><span class="w">         </span><span class="m">4</span><span class="w">          </span>50m
+</code></pre></div>
+</div>
+<p>Also note that if the load goes down (e.g., to zero again) the cluster will scale down.
+I saw this when I set <code class="docutils literal notranslate"><span class="pre">interactive:</span> <span class="pre">true</span></code> and manually shelled in to increase load,
+and then exited and let it sit.</p>
+<p>And that’s it! This is really cool because it’s an early step toward a totally automated,
+self-scaling workflow. The next step is combining that with logic to scale the Kubernetes
+cluster itself. When you are done:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span>kind<span class="w"> </span>delete<span class="w"> </span>cluster
+</code></pre></div>
+</div>
 
 
   <hr>
@@ -998,7 +1209,7 @@ an endpoint. Make sure to cleanup when you finish:</p>
   <small>
     
       Last update:
-      May 19, 2023
+      May 20, 2023
     
   </small>
 </div>
