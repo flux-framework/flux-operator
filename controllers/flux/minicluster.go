@@ -102,8 +102,8 @@ func (r *MiniClusterReconciler) ensureMiniCluster(
 
 	// If the sizes are different, we patch to update.
 	// This would be an explicit update from a user or application via the CRD to scale up/down
-	// This check is done first because it enforces max size, unlike the horizontal pod autoscaler
-	// which might allow a size greater than what Flux could handle!
+	// The Flux Operator can't tell the difference between these two, but honors maxSize
+	// (the size the Flux broker leader knows about) and updates both Spec.Size and Status.Size
 	if *mc.Spec.Parallelism != cluster.Spec.Size {
 		r.log.Info("MiniCluster", "Size", mc.Spec.Parallelism, "Requested Size", cluster.Spec.Size)
 		result, err := r.resizeCluster(ctx, mc, cluster)
