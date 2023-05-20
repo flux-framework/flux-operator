@@ -10,8 +10,10 @@ spec:
 
   # This starts the flux broker without a command (interactive)
   interactive: true
+  flux:
+    optionFlags: "-ompi=openmpi@5"
 
   # This is a list because a pod can support multiple containers
   containers:
     - image: ghcr.io/rse-ops/pokemon:app-latest
-      fluxOptionFlags: "-ompi=openmpi@5"
+      

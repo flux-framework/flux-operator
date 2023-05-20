@@ -23,8 +23,8 @@ import (
 	batchv1 "k8s.io/api/batch/v1"
 	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+
 	ctrl "sigs.k8s.io/controller-runtime"
-	"sigs.k8s.io/controller-runtime/pkg/client"
 
 	"k8s.io/apimachinery/pkg/api/errors"
 	"k8s.io/apimachinery/pkg/types"
@@ -101,12 +101,24 @@ func (r *MiniClusterReconciler) ensureMiniCluster(
 	}
 
 	// If the sizes are different, we patch to update.
+	// This would be an explicit update from a user or application via the CRD to scale up/down
+	// The Flux Operator can't tell the difference between these two, but honors maxSize
+	// (the size the Flux broker leader knows about) and updates both Spec.Size and Status.Size
 	if *mc.Spec.Parallelism != cluster.Spec.Size {
 		r.log.Info("MiniCluster", "Size", mc.Spec.Parallelism, "Requested Size", cluster.Spec.Size)
 		result, err := r.resizeCluster(ctx, mc, cluster)
 		if err != nil {
 			return result, err
 		}
+	}
+
+	// Add selector to allow horizontal pod autoscaler
+	// This would be done via a request to a running metrics server
+	// If there is no autoscaler, has no impact. The .Status.Size
+	// should already be updated via the function above.
+	result, err = r.addScaleSelector(ctx, selector, cluster)
+	if err != nil {
+		return result, err
 	}
 
 	// Expose other sidecar container services
@@ -211,46 +223,6 @@ func (r *MiniClusterReconciler) getExistingJob(
 		existing,
 	)
 	return existing, err
-}
-
-// resizeCluster will patch the cluster to make a larger (or smaller) size
-func (r *MiniClusterReconciler) resizeCluster(
-	ctx context.Context,
-	job *batchv1.Job,
-	cluster *api.MiniCluster,
-) (ctrl.Result, error) {
-
-	// We absolutely don't allow a size less than 1
-	// If this happens, restore to current / original size
-	if cluster.Spec.Size < 1 {
-		r.log.Info("MiniCluster", "PatchSize", cluster.Spec.Size, "Status", "Denied")
-		patch := client.MergeFrom(cluster.DeepCopy())
-		cluster.Spec.Size = *job.Spec.Parallelism
-
-		// Apply the patch to restore to the original size
-		err := r.Client.Patch(ctx, cluster, patch)
-		return ctrl.Result{Requeue: true}, err
-	}
-
-	// ensure we don't go above the max original size, which should be saved on init
-	// If we do, we need to patch it back down to the maximum - this isn't allowed
-	if cluster.Spec.Size > cluster.Status.MaximumSize {
-		r.log.Info("MiniCluster", "PatchSize", cluster.Spec.Size, "Status", "Denied")
-		patch := client.MergeFrom(cluster.DeepCopy())
-		cluster.Spec.Size = cluster.Status.MaximumSize
-
-		// Apply the patch to restore to the original size
-		err := r.Client.Patch(ctx, cluster, patch)
-		return ctrl.Result{Requeue: true}, err
-	}
-
-	// If we get here, the size is smaller
-	r.log.Info("MiniCluster", "PatchSize", cluster.Spec.Size, "Status", "Accepted")
-	patch := client.MergeFrom(job.DeepCopy())
-	job.Spec.Parallelism = &cluster.Spec.Size
-	job.Spec.Completions = &cluster.Spec.Size
-	err := r.Client.Patch(ctx, job, patch)
-	return ctrl.Result{Requeue: true}, err
 }
 
 // getMiniCluster does an actual check if we have a batch job in the namespace

@@ -1,5 +1,6 @@
 # MiniClusterSpec
 
+MiniCluster is an HPC cluster in Kubernetes you can control Either to submit a single job (and go away) or for a persistent single- or multi- user cluster
 
 ## Properties
 Name | Type | Description | Notes

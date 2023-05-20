@@ -205,6 +205,7 @@
       }
     },
     "MiniCluster": {
+      "description": "MiniCluster is the Schema for a Flux job launcher on K8s",
       "type": "object",
       "properties": {
         "apiVersion": {
@@ -425,6 +426,7 @@
       }
     },
     "MiniClusterSpec": {
+      "description": "MiniCluster is an HPC cluster in Kubernetes you can control Either to submit a single job (and go away) or for a persistent single- or multi- user cluster",
       "type": "object",
       "required": [
         "containers"
@@ -537,6 +539,8 @@
       "description": "MiniClusterStatus defines the observed state of Flux",
       "type": "object",
       "required": [
+        "size",
+        "selector",
         "jobid",
         "maximumSize"
       ],
@@ -557,6 +561,16 @@
         },
         "maximumSize": {
           "description": "We keep the original size of the MiniCluster request as this is the absolute maximum",
+          "type": "integer",
+          "format": "int32",
+          "default": 0
+        },
+        "selector": {
+          "type": "string",
+          "default": ""
+        },
+        "size": {
+          "description": "These are for the sub-resource scale functionality",
           "type": "integer",
           "format": "int32",
           "default": 0

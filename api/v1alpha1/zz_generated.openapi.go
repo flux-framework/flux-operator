@@ -398,7 +398,8 @@ func schema__api_v1alpha1__MiniCluster(ref common.ReferenceCallback) common.Open
 	return common.OpenAPIDefinition{
 		Schema: spec.Schema{
 			SchemaProps: spec.SchemaProps{
-				Type: []string{"object"},
+				Description: "MiniCluster is the Schema for a Flux job launcher on K8s",
+				Type:        []string{"object"},
 				Properties: map[string]spec.Schema{
 					"kind": {
 						SchemaProps: spec.SchemaProps{
@@ -775,7 +776,8 @@ func schema__api_v1alpha1__MiniClusterSpec(ref common.ReferenceCallback) common.
 	return common.OpenAPIDefinition{
 		Schema: spec.Schema{
 			SchemaProps: spec.SchemaProps{
-				Type: []string{"object"},
+				Description: "MiniCluster is an HPC cluster in Kubernetes you can control Either to submit a single job (and go away) or for a persistent single- or multi- user cluster",
+				Type:        []string{"object"},
 				Properties: map[string]spec.Schema{
 					"containers": {
 						VendorExtensible: spec.VendorExtensible{
@@ -963,6 +965,21 @@ func schema__api_v1alpha1__MiniClusterStatus(ref common.ReferenceCallback) commo
 				Description: "MiniClusterStatus defines the observed state of Flux",
 				Type:        []string{"object"},
 				Properties: map[string]spec.Schema{
+					"size": {
+						SchemaProps: spec.SchemaProps{
+							Description: "These are for the sub-resource scale functionality",
+							Default:     0,
+							Type:        []string{"integer"},
+							Format:      "int32",
+						},
+					},
+					"selector": {
+						SchemaProps: spec.SchemaProps{
+							Default: "",
+							Type:    []string{"string"},
+							Format:  "",
+						},
+					},
 					"jobid": {
 						SchemaProps: spec.SchemaProps{
 							Description: "The Jobid is set internally to associate to a miniCluster This isn't currently in use, we only have one!",
@@ -999,7 +1016,7 @@ func schema__api_v1alpha1__MiniClusterStatus(ref common.ReferenceCallback) commo
 						},
 					},
 				},
-				Required: []string{"jobid", "maximumSize"},
+				Required: []string{"size", "selector", "jobid", "maximumSize"},
 			},
 		},
 		Dependencies: []string{

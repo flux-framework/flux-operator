@@ -18,6 +18,7 @@ spec:
   - name: v1alpha1
     schema:
       openAPIV3Schema:
+        description: MiniCluster is the Schema for a Flux job launcher on K8s
         properties:
           apiVersion:
             description: 'APIVersion defines the versioned schema of this representation
@@ -32,6 +33,9 @@ spec:
           metadata:
             type: object
           spec:
+            description: MiniCluster is an HPC cluster in Kubernetes you can control
+              Either to submit a single job (and go away) or for a persistent single-
+              or multi- user cluster
             properties:
               archive:
                 description: Archive to load or save
@@ -720,12 +724,24 @@ spec:
                   as this is the absolute maximum
                 format: int32
                 type: integer
+              selector:
+                type: string
+              size:
+                description: These are for the sub-resource scale functionality
+                format: int32
+                type: integer
             required:
             - jobid
             - maximumSize
+            - selector
+            - size
             type: object
         type: object
     served: true
     storage: true
     subresources:
+      scale:
+        labelSelectorPath: .status.selector
+        specReplicasPath: .spec.size
+        statusReplicasPath: .status.size
       status: {}
