@@ -1,5 +1,6 @@
 # MiniCluster
 
+MiniCluster is the Schema for a Flux job launcher on K8s
 
 ## Properties
 Name | Type | Description | Notes

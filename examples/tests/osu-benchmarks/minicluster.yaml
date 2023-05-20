@@ -11,13 +11,14 @@ spec:
   logging:
     quiet: true
 
+  # Option Flags for this flux runner wait.sh entrypoint
+  flux:
+    optionFlags: "-ompi=openmpi@5"
+
   # This is a list because a pod can support multiple containers
   containers:
     # The container URI to pull (currently needs to be public)
     - image: ghcr.io/rse-ops/osu-microbench:app-latest
-
-      # Option Flags for this flux runner wait.sh entrypoint
-      fluxOptionFlags: "-ompi=openmpi@5"
 
       # custom preCommand logic (run at start of script)
       preCommand: |

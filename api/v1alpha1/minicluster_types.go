@@ -19,7 +19,6 @@ import (
 
 // MiniCluster is an HPC cluster in Kubernetes you can control
 // Either to submit a single job (and go away) or for a persistent single- or multi- user cluster
-
 type MiniClusterSpec struct {
 	// Important: Run "make" and "make manifests" to regenerate code after modifying this file
 
@@ -180,6 +179,10 @@ type PodSpec struct {
 
 // MiniClusterStatus defines the observed state of Flux
 type MiniClusterStatus struct {
+
+	// These are for the sub-resource scale functionality
+	Size     int32  `json:"size"`
+	Selector string `json:"selector"`
 
 	// The Jobid is set internally to associate to a miniCluster
 	// This isn't currently in use, we only have one!
@@ -523,11 +526,11 @@ type ContainerResources struct {
 type ContainerResource map[string]intstr.IntOrString
 
 // MiniCluster is the Schema for a Flux job launcher on K8s
-
 // +genclient
 // +k8s:deepcopy-gen:interfaces=k8s.io/apimachinery/pkg/runtime.Object
 // +kubebuilder:object:root=true
 // +kubebuilder:subresource:status
+// +kubebuilder:subresource:scale:specpath=.spec.size,statuspath=.status.size,selectorpath=.status.selector
 type MiniCluster struct {
 	metav1.TypeMeta   `json:",inline"`
 	metav1.ObjectMeta `json:"metadata,omitempty"`
