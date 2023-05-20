@@ -25,6 +25,9 @@ func (r *MiniClusterReconciler) newJobSet(
 	cluster *api.MiniCluster,
 ) (*jobset.JobSet, error) {
 
+	// Name for the broker job for the failure policy
+	brokerJobName := cluster.Name + "-broker"
+
 	// When suspend is true we have a hard time debugging jobs, so keep false
 	suspend := false
 	jobs := jobset.JobSet{
@@ -35,6 +38,12 @@ func (r *MiniClusterReconciler) newJobSet(
 		},
 		Spec: jobset.JobSetSpec{
 
+			// The job is successful when the broker job finishes with completed (0)
+			SuccessPolicy: &jobset.SuccessPolicy{
+				Operator:             jobset.OperatorAny,
+				TargetReplicatedJobs: []string{brokerJobName},
+			},
+
 			// This might be the control for child jobs (worker)
 			// But I don't think we need this anymore.
 			Suspend: &suspend,
@@ -44,8 +53,7 @@ func (r *MiniClusterReconciler) newJobSet(
 	}
 
 	// Get leader broker job, the parent in the JobSet (worker or follower pods)
-	// Both are required to be in indexed completion mode to have a service!
-	// I'm not sure that totally makes sense, will suggest a change.
+	// We have to do this as indexed for the predictable hostname
 	//                    cluster, size, entrypoint, indexed
 	leaderJob, err := r.getJob(cluster, 1, "broker", true)
 	if err != nil {
