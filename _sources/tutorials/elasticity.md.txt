@@ -196,7 +196,7 @@ Note that right now we are just scaling based on size, but in the future it is p
 
 ### How does it work?
 
-I think what happens is that our operator provides the autoscaler with a field (the size) and selector for pods (the `job-name`) and then:
+I think what happens is that our operator provides the autoscaler with a field (the size) and selector for pods (the `hpa-selector`) and then:
 
 1. It pings the API endpoint for our CRD to get the current selector and size
 2. It retrieves the pods based on the selector
@@ -243,7 +243,9 @@ $ kubectl create namespace flux-operator
 $ kubectl apply -f ../../dist/flux-operator-dev.yaml
 ```
 
-And then create a very simply interactive cluster (it's small, 2 pods, but importantly has a maxsize of 10):
+And then create a very simply interactive cluster (it's small, 2 pods, but importantly has a maxsize of 10).
+Note that we are going to limit the HPA to a size of 4, because we assume you are running on an average desktop computer
+with 1000 browser tabs open, probably a slack, a coding editor, and don't want 10 containers running!
 
 ```bash
 $ kubectl apply -f ./minicluster.yaml
@@ -281,7 +283,7 @@ $ kubectl get --raw /apis/flux-framework.org/v1alpha1/namespaces/flux-operator/m
   },
   "status": {
     "replicas": 0,
-    "selector": "job-name=flux-sample"
+    "selector": "hpa-selector=flux-sample"
   }
 }
 ```
@@ -325,6 +327,16 @@ flux-sample-1-mjj7b   1/1     Running   0          6m50s
 
 If you watch your pods (and your autoscaler and your endpoint) you'll
 see first that the resource usage changes (just by way of Flux starting):
+And to get it to change more, try shelling into your broker leader pod, connecting
+to the broker, and issuing commands:
+
+```bash
+$ kubectl exec -it -n flux-operator flux-sample-0-p85cj bash
+$ sudo -u fluxuser -E $(env) -E HOME=/home/fluxuser flux proxy local:///run/flux/local bash
+$ openssl speed -multi 4
+```
+
+You'll see it change (with updates between 15 seconds and 1.5 minutes!):
 
 ```
 $ kubectl get -n flux-operator hpa -w
@@ -335,7 +347,17 @@ flux-sample-hpa   MiniCluster/flux-sample   3%/2%     2         4         2     
 flux-sample-hpa   MiniCluster/flux-sample   0%/2%     2         4         3          34m
 ```
 
-And you'll see the cluster increase in size accordingly!
+With the openssl command above, I got it to hit a much higher load:
+
+```bash
+flux-sample-hpa   MiniCluster/flux-sample   0%/2%          2         4         4          7m30s
+flux-sample-hpa   MiniCluster/flux-sample   21%/2%         2         4         4          8m30s
+flux-sample-hpa   MiniCluster/flux-sample   25%/2%         2         4         4          8m46s
+flux-sample-hpa   MiniCluster/flux-sample   25%/2%         2         4         4          9m1s
+```
+
+So basically, we are seeing the cluster increase in size accordingly! Note that another way to achieve this is just to set `interactive: true` to
+the minicluster.yaml. 
 
 ```bash
 kubectl get -n flux-operator pods
@@ -370,7 +392,7 @@ kubectl get --raw /apis/flux-framework.org/v1alpha1/namespaces/flux-operator/min
   },
   "status": {
     "replicas": 4,
-    "selector": "job-name=flux-sample"
+    "selector": "hpa-selector=flux-sample"
   }
 }
 ```

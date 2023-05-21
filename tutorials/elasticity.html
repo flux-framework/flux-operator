@@ -1035,7 +1035,7 @@ and our application running in the MiniCluster can then provide custom metrics b
 Note that right now we are just scaling based on size, but in the future it is possible to <a class="reference external" href="https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale-walkthrough/#autoscaling-on-multiple-metrics-and-custom-metrics">autoscale on multiple metrics</a>. Note that we are interested in this technique because the requests can <a class="reference external" href="https://cloud.google.com/kubernetes-engine/docs/concepts/horizontalpodautoscaler">come from an external service</a>, meaning we could have a single service (paired with application logic, optionally) to handle scaling both node and MiniClusters, and coordinating the two.</p>
 <p><strong><a class="reference external" href="https://github.com/flux-framework/flux-operator/blob/main/examples/elasticity/horizontal-autoscaler/minicluster.yaml">Tutorial File</a></strong></p>
 <h3 id="how-does-it-work">How does it work?<a class="headerlink" href="#how-does-it-work" title="Permalink to this heading">¶</a></h3>
-<p>I think what happens is that our operator provides the autoscaler with a field (the size) and selector for pods (the <code class="docutils literal notranslate"><span class="pre">job-name</span></code>) and then:</p>
+<p>I think what happens is that our operator provides the autoscaler with a field (the size) and selector for pods (the <code class="docutils literal notranslate"><span class="pre">hpa-selector</span></code>) and then:</p>
 <ol class="arabic simple">
 <li><p>It pings the API endpoint for our CRD to get the current selector and size</p></li>
 <li><p>It retrieves the pods based on the selector</p></li>
@@ -1072,7 +1072,9 @@ no action is taken. This means that:</p>
 $<span class="w"> </span>kubectl<span class="w"> </span>apply<span class="w"> </span>-f<span class="w"> </span>../../dist/flux-operator-dev.yaml
 </code></pre></div>
 </div>
-<p>And then create a very simply interactive cluster (it’s small, 2 pods, but importantly has a maxsize of 10):</p>
+<p>And then create a very simply interactive cluster (it’s small, 2 pods, but importantly has a maxsize of 10).
+Note that we are going to limit the HPA to a size of 4, because we assume you are running on an average desktop computer
+with 1000 browser tabs open, probably a slack, a coding editor, and don’t want 10 containers running!</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span>kubectl<span class="w"> </span>apply<span class="w"> </span>-f<span class="w"> </span>./minicluster.yaml
 </code></pre></div>
 </div>
@@ -1104,7 +1106,7 @@ with <code class="docutils literal notranslate"><span class="pre">kubectl</span>
 <span class="go">  },</span>
 <span class="go">  &quot;status&quot;: {</span>
 <span class="go">    &quot;replicas&quot;: 0,</span>
-<span class="go">    &quot;selector&quot;: &quot;job-name=flux-sample&quot;</span>
+<span class="go">    &quot;selector&quot;: &quot;hpa-selector=flux-sample&quot;</span>
 <span class="go">  }</span>
 <span class="go">}</span>
 </code></pre></div>
@@ -1138,7 +1140,15 @@ flux-sample-1-mjj7b<span class="w">   </span><span class="m">1</span>/1<span cla
 </code></pre></div>
 </div>
 <p>If you watch your pods (and your autoscaler and your endpoint) you’ll
-see first that the resource usage changes (just by way of Flux starting):</p>
+see first that the resource usage changes (just by way of Flux starting):
+And to get it to change more, try shelling into your broker leader pod, connecting
+to the broker, and issuing commands:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span>kubectl<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>-it<span class="w"> </span>-n<span class="w"> </span>flux-operator<span class="w"> </span>flux-sample-0-p85cj<span class="w"> </span>bash
+$<span class="w"> </span>sudo<span class="w"> </span>-u<span class="w"> </span>fluxuser<span class="w"> </span>-E<span class="w"> </span><span class="k">$(</span>env<span class="k">)</span><span class="w"> </span>-E<span class="w"> </span><span class="nv">HOME</span><span class="o">=</span>/home/fluxuser<span class="w"> </span>flux<span class="w"> </span>proxy<span class="w"> </span>local:///run/flux/local<span class="w"> </span>bash
+$<span class="w"> </span>openssl<span class="w"> </span>speed<span class="w"> </span>-multi<span class="w"> </span><span class="m">4</span>
+</code></pre></div>
+</div>
+<p>You’ll see it change (with updates between 15 seconds and 1.5 minutes!):</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><code>$ kubectl get -n flux-operator hpa -w
 NAME              REFERENCE                 TARGETS   MINPODS   MAXPODS   REPLICAS   AGE
 flux-sample-hpa   MiniCluster/flux-sample   0%/2%     2         4         2          33m
@@ -1147,7 +1157,15 @@ flux-sample-hpa   MiniCluster/flux-sample   3%/2%     2         4         2     
 flux-sample-hpa   MiniCluster/flux-sample   0%/2%     2         4         3          34m
 </code></pre></div>
 </div>
-<p>And you’ll see the cluster increase in size accordingly!</p>
+<p>With the openssl command above, I got it to hit a much higher load:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>flux-sample-hpa<span class="w">   </span>MiniCluster/flux-sample<span class="w">   </span><span class="m">0</span>%/2%<span class="w">          </span><span class="m">2</span><span class="w">         </span><span class="m">4</span><span class="w">         </span><span class="m">4</span><span class="w">          </span>7m30s
+flux-sample-hpa<span class="w">   </span>MiniCluster/flux-sample<span class="w">   </span><span class="m">21</span>%/2%<span class="w">         </span><span class="m">2</span><span class="w">         </span><span class="m">4</span><span class="w">         </span><span class="m">4</span><span class="w">          </span>8m30s
+flux-sample-hpa<span class="w">   </span>MiniCluster/flux-sample<span class="w">   </span><span class="m">25</span>%/2%<span class="w">         </span><span class="m">2</span><span class="w">         </span><span class="m">4</span><span class="w">         </span><span class="m">4</span><span class="w">          </span>8m46s
+flux-sample-hpa<span class="w">   </span>MiniCluster/flux-sample<span class="w">   </span><span class="m">25</span>%/2%<span class="w">         </span><span class="m">2</span><span class="w">         </span><span class="m">4</span><span class="w">         </span><span class="m">4</span><span class="w">          </span>9m1s
+</code></pre></div>
+</div>
+<p>So basically, we are seeing the cluster increase in size accordingly! Note that another way to achieve this is just to set <code class="docutils literal notranslate"><span class="pre">interactive:</span> <span class="pre">true</span></code> to
+the minicluster.yaml.</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>kubectl<span class="w"> </span>get<span class="w"> </span>-n<span class="w"> </span>flux-operator<span class="w"> </span>pods
 NAME<span class="w">                  </span>READY<span class="w">   </span>STATUS<span class="w">    </span>RESTARTS<span class="w">   </span>AGE
 flux-sample-0-blgsw<span class="w">   </span><span class="m">1</span>/1<span class="w">     </span>Running<span class="w">   </span><span class="m">0</span><span class="w">          </span>56s
@@ -1178,7 +1196,7 @@ Depending on how you stress the pods, it can easily go up to the max:</p>
 <span class="go">  },</span>
 <span class="go">  &quot;status&quot;: {</span>
 <span class="go">    &quot;replicas&quot;: 4,</span>
-<span class="go">    &quot;selector&quot;: &quot;job-name=flux-sample&quot;</span>
+<span class="go">    &quot;selector&quot;: &quot;hpa-selector=flux-sample&quot;</span>
 <span class="go">  }</span>
 <span class="go">}</span>
 </code></pre></div>
@@ -1209,7 +1227,7 @@ cluster itself. When you are done:</p>
   <small>
     
       Last update:
-      May 20, 2023
+      May 21, 2023
     
   </small>
 </div>
