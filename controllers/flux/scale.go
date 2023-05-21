@@ -26,12 +26,11 @@ import (
 // is updated later.
 func (r *MiniClusterReconciler) addScaleSelector(
 	ctx context.Context,
-	labels map[string]string,
 	cluster *api.MiniCluster,
 ) (ctrl.Result, error) {
 
 	// Update the pod selector to allow horizontal autoscaling
-	selector := "job-name=" + labels["job-name"]
+	selector := "hpa-selector=" + cluster.Name
 	if cluster.Status.Selector == selector {
 		r.log.Info("MiniCluster", "ScaleSelector", selector, "Status", "Ready")
 		return ctrl.Result{}, nil

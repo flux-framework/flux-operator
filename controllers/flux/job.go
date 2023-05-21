@@ -30,6 +30,11 @@ func (r *MiniClusterReconciler) newMiniClusterJob(
 	podLabels := r.getPodLabels(cluster)
 	setAsFQDN := false
 
+	// We add the selector for the horizontal auto scaler, if active
+	// We can't use the job-name selector, as this would include the
+	// external sidecar service!
+	podLabels["hpa-selector"] = cluster.Name
+
 	// This is an indexed-job
 	job := &batchv1.Job{
 		ObjectMeta: metav1.ObjectMeta{
