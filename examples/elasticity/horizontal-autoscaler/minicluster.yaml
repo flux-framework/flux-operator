@@ -14,10 +14,9 @@ spec:
       workingDir: /data
 
       # We will use launcher here to just run the command
+      # You can shell in to connect to the broker and issue commands that use CPU
       launcher: true
-
-      # This is me making bad life choices
-      command: /bin/bash -c "sleep 10 && openssl speed -multi 2"
+      command: sleep infinity
 
       # Important! We need to have resource requests for the horizonal autoscaler
       # The Flux Operator doesn't know you want to use it, so it's up to you

@@ -116,7 +116,7 @@ func (r *MiniClusterReconciler) ensureMiniCluster(
 	// This would be done via a request to a running metrics server
 	// If there is no autoscaler, has no impact. The .Status.Size
 	// should already be updated via the function above.
-	result, err = r.addScaleSelector(ctx, selector, cluster)
+	result, err = r.addScaleSelector(ctx, cluster)
 	if err != nil {
 		return result, err
 	}
