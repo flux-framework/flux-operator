@@ -86,9 +86,15 @@ func (r *MiniClusterReconciler) ensureMiniCluster(
 		}
 	}
 
-	// Create headless service for the MiniCluster
-	selector := map[string]string{"job-name": cluster.Name}
-	result, err = r.exposeServices(ctx, cluster, restfulServiceName, selector)
+	// Create headless service for the MiniCluster. But...
+	// If we are expecting to connect to another one, use the service name
+	selector := map[string]string{"job-group": cluster.Name}
+	if cluster.Spec.JobSelector != "" {
+		selector["job-group"] = cluster.Spec.JobSelector
+	}
+	r.log.Info("MiniCluster", "ServiceSelector", selector["job-group"])
+
+	result, err = r.exposeServices(ctx, cluster, cluster.Spec.ServiceName, selector)
 	if err != nil {
 		return result, err
 	}
@@ -377,19 +383,32 @@ func (r *MiniClusterReconciler) getConfigMap(
 }
 
 // generateHostlist for a specific size given the cluster namespace and a size
-func generateHostlist(cluster *api.MiniCluster, size int) string {
+func generateHostlist(name string, size int) string {
 
 	// The hosts are generated through the max size, so the cluster can expand
-	return fmt.Sprintf("%s-[%s]", cluster.Name, generateRange(size))
+	return fmt.Sprintf("%s-[%s]", name, generateRange(size))
 }
 
 // generateFluxConfig creates the broker.toml file used to boostrap flux
 func generateFluxConfig(cluster *api.MiniCluster) string {
 
 	// The hosts are generated through the max size, so the cluster can expand
-	fqdn := fmt.Sprintf("%s.%s.svc.cluster.local", restfulServiceName, cluster.Namespace)
+	fqdn := fmt.Sprintf("%s.%s.svc.cluster.local", cluster.Spec.ServiceName, cluster.Namespace)
 	hosts := fmt.Sprintf("[%s]", generateRange(int(cluster.Spec.MaxSize)))
-	fluxConfig := fmt.Sprintf(brokerConfigTemplate, cluster.FluxInstallRoot(), fqdn, cluster.Name, hosts)
+
+	// If we are connecting another cluster, we need to register the hostnames here
+	connectedHosts := ""
+	if cluster.Spec.Flux.Connection != "" {
+		connectedRange := fmt.Sprintf("[%s]", generateRange(int(cluster.Spec.Flux.ConnectionSize)))
+		connectedHosts = fmt.Sprintf(",%s-%s", cluster.Spec.Flux.Connection, connectedRange)
+	}
+
+	// TODO: clean this up and make into template
+	fluxConfig := fmt.Sprintf(brokerConfigTemplate,
+		cluster.FluxInstallRoot(),
+		fqdn, cluster.Name, hosts,
+		connectedHosts)
+
 	fluxConfig += "\n" + brokerArchiveSection
 	return fluxConfig
 }
@@ -416,7 +435,14 @@ func generateWaitScript(cluster *api.MiniCluster, containerIndex int) (string, e
 	mainHost := fmt.Sprintf("%s-0", cluster.Name)
 
 	// The resources size must also match the max size in the cluster
-	hosts := generateHostlist(cluster, int(cluster.Spec.MaxSize))
+	hosts := generateHostlist(cluster.Name, int(cluster.Spec.MaxSize))
+
+	// And if we are adding external connected hosts (from a different MiniCluster)
+	// We need to account for them too.
+	if cluster.Spec.Flux.Connection != "" {
+		connectedHosts := generateHostlist(cluster.Spec.Flux.Connection, int(cluster.Spec.Flux.ConnectionSize))
+		hosts = fmt.Sprintf("%s,%s", hosts, connectedHosts)
+	}
 
 	// Ensure our requested users each each have a password
 	for i, user := range cluster.Spec.Users {
@@ -445,9 +471,11 @@ func generateWaitScript(cluster *api.MiniCluster, containerIndex int) (string, e
 
 	// The token uuid is the same across images
 	wt := WaitTemplate{
+		TotalSize:     cluster.Spec.MaxSize + int32(cluster.Spec.Flux.ConnectionSize),
 		FluxUser:      getFluxUser(cluster.Spec.FluxRestful.Username),
 		FluxToken:     getRandomToken(cluster.Spec.FluxRestful.Token),
 		MainHost:      mainHost,
+		Namespace:     cluster.Namespace,
 		Hosts:         hosts,
 		Cores:         cores,
 		Container:     container,

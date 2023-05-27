@@ -47,6 +47,18 @@ type MiniClusterSpec struct {
 	// +optional
 	Interactive bool `json:"interactive"`
 
+	// Specify the name of the cluster service
+	// +kubebuilder:default="flux-service"
+	// +default="flux-service"
+	// +optional
+	ServiceName string `json:"serviceName,omitempty"`
+
+	// Specify the name of the job selector.
+	// You would want to do this if you intend to connect miniclusters
+	// Multiple jobs can be selected under a single services
+	// +optional
+	JobSelector string `json:"jobSelector"`
+
 	// Flux options for the broker, shared across cluster
 	// +optional
 	Flux FluxSpec `json:"flux"`
@@ -318,6 +330,16 @@ type FluxSpec struct {
 	// +optional
 	Wrap string `json:"wrap,omitempty"`
 
+	// Connect to this job in the same namespace (akin to BootServer but within cluster)
+	// +optional
+	Connection string `json:"connection,omitempty"`
+
+	// Additional number of nodes to allow from external boot-server
+	// This currently only allows local MiniCluster but could be
+	// extended to any general URI
+	// +optional
+	ConnectionSize int `json:"connectionSize,omitempty"`
+
 	// Single user executable to provide to flux start
 	// +kubebuilder:default="5s"
 	// +default="5s"
@@ -583,6 +605,17 @@ func (f *MiniCluster) Validate() bool {
 	// Set the Flux install root
 	if f.Spec.Flux.InstallRoot == "" {
 		f.Spec.Flux.InstallRoot = "/usr"
+	}
+
+	// If connected host or size is defined, both must be defined!
+	if f.Spec.Flux.Connection != "" && f.Spec.Flux.ConnectionSize <= 0 {
+		fmt.Printf("😥️ A Connection is defined by no nodes. Please define the size.\n")
+		return false
+	}
+	// Inverse of that...
+	if f.Spec.Flux.Connection == "" && f.Spec.Flux.ConnectionSize > 0 {
+		fmt.Printf("😥️ A Connection size is defined, but no MiniCluster name. Please define the flux->connection.\n")
+		return false
 	}
 
 	// If the MaxSize isn't set, ensure it's equal to the size

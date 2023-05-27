@@ -123,6 +123,15 @@
           "type": "string",
           "default": "5s"
         },
+        "connection": {
+          "description": "Connect to this job in the same namespace (akin to BootServer but within cluster)",
+          "type": "string"
+        },
+        "connectionSize": {
+          "description": "Additional number of nodes to allow from external boot-server This currently only allows local MiniCluster but could be extended to any general URI",
+          "type": "integer",
+          "format": "int32"
+        },
         "installRoot": {
           "description": "Install root location",
           "type": "string",
@@ -480,6 +489,11 @@
             "default": ""
           }
         },
+        "jobSelector": {
+          "description": "Specify the name of the job selector. You would want to do this if you intend to connect miniclusters Multiple jobs can be selected under a single services",
+          "type": "string",
+          "default": ""
+        },
         "logging": {
           "description": "Logging modes determine the output you see in the job log",
           "default": {},
@@ -494,6 +508,11 @@
           "description": "Pod spec details",
           "default": {},
           "$ref": "#/definitions/PodSpec"
+        },
+        "serviceName": {
+          "description": "Specify the name of the cluster service",
+          "type": "string",
+          "default": "flux-service"
         },
         "services": {
           "description": "Services are one or more service containers to bring up alongside the MiniCluster.",

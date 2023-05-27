@@ -31,9 +31,13 @@ func (r *MiniClusterReconciler) newMiniClusterJob(
 	setAsFQDN := false
 
 	// We add the selector for the horizontal auto scaler, if active
-	// We can't use the job-name selector, as this would include the
-	// external sidecar service!
+	// We can't use the job-name or job-group selector, as this
+	// would include the external sidecar service!
 	podLabels["hpa-selector"] = cluster.Name
+	podLabels["job-group"] = cluster.Name
+	if cluster.Spec.JobSelector != "" {
+		podLabels["job-group"] = cluster.Spec.JobSelector
+	}
 
 	// This is an indexed-job
 	job := &batchv1.Job{
@@ -61,7 +65,7 @@ func (r *MiniClusterReconciler) newMiniClusterJob(
 				},
 				Spec: corev1.PodSpec{
 					// matches the service
-					Subdomain:          restfulServiceName,
+					Subdomain:          cluster.Spec.ServiceName,
 					SetHostnameAsFQDN:  &setAsFQDN,
 					Volumes:            getVolumes(cluster),
 					RestartPolicy:      corev1.RestartPolicyOnFailure,

@@ -1,0 +1,45 @@
+apiVersion: flux-framework.org/v1alpha1
+kind: MiniCluster
+metadata:
+  name: flux-sample-2
+  namespace: flux-operator
+spec:
+  # Number of pods to create for MiniCluster
+  size: 2
+
+  # This tells the MiniCluster to be on a specific named network.
+  # Giving the same selector name to two different MiniClusters will
+  # put them under this same network
+  jobSelector: connected-service
+  
+  # Broker options for connecting to another MiniCluster - both of these are required!
+  flux:
+
+    # Allow connection to the minicluster-1st brokers
+    connection: flux-sample-1
+
+    # The number of nodes the first server has
+    connectionSize: 2
+
+  # We don't actually need this, but it gives the two MiniCluster a shared filesystem
+  volumes:
+    data:
+      storageClass: hostpath
+      path: /tmp/workflow
+
+  # Make this interactive so we can launch a bunch of jobs!
+  interactive: true
+
+  # This is a list because a pod can support multiple containers
+  containers:
+    - image: ghcr.io/rse-ops/flub:flux-sched-bionic
+      workingDir: /tmp/workflow
+
+      # Container will be pre-pulled here only by the broker
+      volumes:
+        data:
+          path: /tmp/workflow
+
+      # I forgot to add the flux user, oups
+      commands:
+        pre: useradd -ms /bin/bash -u 1234 flux

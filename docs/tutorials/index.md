@@ -22,9 +22,18 @@ The following tutorials are provided from their respective directories (and are 
 
 ### Experimental
 
+These are experimental setups, either testing a feature not yet fully supported in Flux, or via
+a custom container base build.
+
 #### Nested
 
- - [K3s](https://github.com/flux-framework/flux-operator/tree/main/examples/nested/k3s/basic): instiatiate k3s inside Flux, and deploy an app.
+ - [K3s](https://github.com/flux-framework/flux-operator/tree/main/examples/experimental/nested/k3s/basic): instiatiate k3s inside Flux, and deploy an app.
+
+
+#### Trees
+
+ - [Basic Tree](https://github.com/flux-framework/flux-operator/blob/main/examples/experimental/workflows/tree)
+ - [Instance Variables](https://github.com/flux-framework/flux-operator/blob/main/examples/experimental/workflows/tree-with-variables)
 
 
 ### Machine Learning
@@ -46,15 +55,6 @@ The following tutorials are provided from their respective directories (and are 
  - [Merlin Basic](https://github.com/flux-framework/flux-operator/blob/main/examples/launchers/merlin/basic)
  - [Merlin Singularity Openfoam](https://github.com/flux-framework/flux-operator/blob/main/examples/launchers/merlin/singularity-openfoam)
 
-### Workflows
-
-Although some of the others above are also workflows, these examples are going to use `flux tree` (in various contexts) to
-submit different job hierarchies and get around the etcd bottleneck in Kubernetes. 
-
- - [Basic Tree](https://github.com/flux-framework/flux-operator/blob/main/examples/workflows/tree)
- - [Instance Variables](https://github.com/flux-framework/flux-operator/blob/main/examples/workflows/tree-with-variables)
-
-We have just started this arm of our experiments and you can expect more as we go!
 
 ## Integrated Tutorials
 

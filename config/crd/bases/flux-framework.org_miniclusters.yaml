@@ -251,6 +251,15 @@ spec:
                     default: 5s
                     description: Single user executable to provide to flux start
                     type: string
+                  connection:
+                    description: Connect to this job in the same namespace (akin to
+                      BootServer but within cluster)
+                    type: string
+                  connectionSize:
+                    description: Additional number of nodes to allow from external
+                      boot-server This currently only allows local MiniCluster but
+                      could be extended to any general URI
+                    type: integer
                   installRoot:
                     default: /usr
                     description: Install root location
@@ -304,6 +313,11 @@ spec:
                   type: string
                 description: Labels for the job
                 type: object
+              jobSelector:
+                description: Specify the name of the job selector. You would want
+                  to do this if you intend to connect miniclusters Multiple jobs can
+                  be selected under a single services
+                type: string
               logging:
                 description: Logging modes determine the output you see in the job
                   log
@@ -365,6 +379,10 @@ spec:
                     description: Service account name for the pod
                     type: string
                 type: object
+              serviceName:
+                default: flux-service
+                description: Specify the name of the cluster service
+                type: string
               services:
                 description: Services are one or more service containers to bring
                   up alongside the MiniCluster.

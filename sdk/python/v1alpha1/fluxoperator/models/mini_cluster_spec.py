@@ -41,9 +41,11 @@ class MiniClusterSpec(object):
         'flux_restful': 'FluxRestful',
         'interactive': 'bool',
         'job_labels': 'dict(str, str)',
+        'job_selector': 'str',
         'logging': 'LoggingSpec',
         'max_size': 'int',
         'pod': 'PodSpec',
+        'service_name': 'str',
         'services': 'list[MiniClusterContainer]',
         'size': 'int',
         'tasks': 'int',
@@ -60,9 +62,11 @@ class MiniClusterSpec(object):
         'flux_restful': 'fluxRestful',
         'interactive': 'interactive',
         'job_labels': 'jobLabels',
+        'job_selector': 'jobSelector',
         'logging': 'logging',
         'max_size': 'maxSize',
         'pod': 'pod',
+        'service_name': 'serviceName',
         'services': 'services',
         'size': 'size',
         'tasks': 'tasks',
@@ -70,7 +74,7 @@ class MiniClusterSpec(object):
         'volumes': 'volumes'
     }
 
-    def __init__(self, archive=None, cleanup=False, containers=None, deadline_seconds=31500000, flux=None, flux_restful=None, interactive=False, job_labels=None, logging=None, max_size=None, pod=None, services=None, size=1, tasks=1, users=None, volumes=None, local_vars_configuration=None):  # noqa: E501
+    def __init__(self, archive=None, cleanup=False, containers=None, deadline_seconds=31500000, flux=None, flux_restful=None, interactive=False, job_labels=None, job_selector='', logging=None, max_size=None, pod=None, service_name='flux-service', services=None, size=1, tasks=1, users=None, volumes=None, local_vars_configuration=None):  # noqa: E501
         """MiniClusterSpec - a model defined in OpenAPI"""  # noqa: E501
         if local_vars_configuration is None:
             local_vars_configuration = Configuration.get_default_copy()
@@ -84,9 +88,11 @@ class MiniClusterSpec(object):
         self._flux_restful = None
         self._interactive = None
         self._job_labels = None
+        self._job_selector = None
         self._logging = None
         self._max_size = None
         self._pod = None
+        self._service_name = None
         self._services = None
         self._size = None
         self._tasks = None
@@ -109,12 +115,16 @@ class MiniClusterSpec(object):
             self.interactive = interactive
         if job_labels is not None:
             self.job_labels = job_labels
+        if job_selector is not None:
+            self.job_selector = job_selector
         if logging is not None:
             self.logging = logging
         if max_size is not None:
             self.max_size = max_size
         if pod is not None:
             self.pod = pod
+        if service_name is not None:
+            self.service_name = service_name
         if services is not None:
             self.services = services
         if size is not None:
@@ -307,6 +317,29 @@ class MiniClusterSpec(object):
         self._job_labels = job_labels
 
     @property
+    def job_selector(self):
+        """Gets the job_selector of this MiniClusterSpec.  # noqa: E501
+
+        Specify the name of the job selector. You would want to do this if you intend to connect miniclusters Multiple jobs can be selected under a single services  # noqa: E501
+
+        :return: The job_selector of this MiniClusterSpec.  # noqa: E501
+        :rtype: str
+        """
+        return self._job_selector
+
+    @job_selector.setter
+    def job_selector(self, job_selector):
+        """Sets the job_selector of this MiniClusterSpec.
+
+        Specify the name of the job selector. You would want to do this if you intend to connect miniclusters Multiple jobs can be selected under a single services  # noqa: E501
+
+        :param job_selector: The job_selector of this MiniClusterSpec.  # noqa: E501
+        :type job_selector: str
+        """
+
+        self._job_selector = job_selector
+
+    @property
     def logging(self):
         """Gets the logging of this MiniClusterSpec.  # noqa: E501
 
@@ -370,6 +403,29 @@ class MiniClusterSpec(object):
         """
 
         self._pod = pod
+
+    @property
+    def service_name(self):
+        """Gets the service_name of this MiniClusterSpec.  # noqa: E501
+
+        Specify the name of the cluster service  # noqa: E501
+
+        :return: The service_name of this MiniClusterSpec.  # noqa: E501
+        :rtype: str
+        """
+        return self._service_name
+
+    @service_name.setter
+    def service_name(self, service_name):
+        """Sets the service_name of this MiniClusterSpec.
+
+        Specify the name of the cluster service  # noqa: E501
+
+        :param service_name: The service_name of this MiniClusterSpec.  # noqa: E501
+        :type service_name: str
+        """
+
+        self._service_name = service_name
 
     @property
     def services(self):

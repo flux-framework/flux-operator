@@ -28,9 +28,6 @@ var brokerArchiveSection string
 //go:embed templates/wait.sh
 var waitToStartTemplate string
 
-//go:embed templates/cert-generate.sh
-var generateCertTemplate string
-
 // WaitTemplate populates wait.sh
 type WaitTemplate struct {
 	FluxToken string // Token to log into the UI, should be consistent across containers
@@ -38,8 +35,10 @@ type WaitTemplate struct {
 	MainHost  string // Main host identifier
 	Hosts     string // List of hosts
 	Cores     int32
+	TotalSize int32
 	Container api.MiniClusterContainer
 	Spec      api.MiniClusterSpec
+	Namespace string
 
 	// Broker initial quorum that must be online to start
 	// This is used if the cluster MaxSize > Size
