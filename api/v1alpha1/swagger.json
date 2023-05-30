@@ -377,23 +377,22 @@
     "MiniClusterExistingVolume": {
       "description": "Mini Cluster local volumes available to mount (these are on the host)",
       "type": "object",
-      "required": [
-        "path",
-        "claimName"
-      ],
       "properties": {
         "claimName": {
-          "type": "string",
-          "default": ""
+          "description": "Claim name if the existing volume is a PVC",
+          "type": "string"
         },
         "path": {
-          "description": "Path and claim name are always required",
-          "type": "string",
-          "default": ""
+          "description": "Path and claim name are always required if a secret isn't defined",
+          "type": "string"
         },
         "readOnly": {
           "type": "boolean",
           "default": false
+        },
+        "secretName": {
+          "description": "An existing secret",
+          "type": "string"
         }
       }
     },

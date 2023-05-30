@@ -35,16 +35,18 @@ class MiniClusterExistingVolume(object):
     openapi_types = {
         'claim_name': 'str',
         'path': 'str',
-        'read_only': 'bool'
+        'read_only': 'bool',
+        'secret_name': 'str'
     }
 
     attribute_map = {
         'claim_name': 'claimName',
         'path': 'path',
-        'read_only': 'readOnly'
+        'read_only': 'readOnly',
+        'secret_name': 'secretName'
     }
 
-    def __init__(self, claim_name='', path='', read_only=False, local_vars_configuration=None):  # noqa: E501
+    def __init__(self, claim_name=None, path=None, read_only=False, secret_name=None, local_vars_configuration=None):  # noqa: E501
         """MiniClusterExistingVolume - a model defined in OpenAPI"""  # noqa: E501
         if local_vars_configuration is None:
             local_vars_configuration = Configuration.get_default_copy()
@@ -53,17 +55,23 @@ class MiniClusterExistingVolume(object):
         self._claim_name = None
         self._path = None
         self._read_only = None
+        self._secret_name = None
         self.discriminator = None
 
-        self.claim_name = claim_name
-        self.path = path
+        if claim_name is not None:
+            self.claim_name = claim_name
+        if path is not None:
+            self.path = path
         if read_only is not None:
             self.read_only = read_only
+        if secret_name is not None:
+            self.secret_name = secret_name
 
     @property
     def claim_name(self):
         """Gets the claim_name of this MiniClusterExistingVolume.  # noqa: E501
 
+        Claim name if the existing volume is a PVC  # noqa: E501
 
         :return: The claim_name of this MiniClusterExistingVolume.  # noqa: E501
         :rtype: str
@@ -74,12 +82,11 @@ class MiniClusterExistingVolume(object):
     def claim_name(self, claim_name):
         """Sets the claim_name of this MiniClusterExistingVolume.
 
+        Claim name if the existing volume is a PVC  # noqa: E501
 
         :param claim_name: The claim_name of this MiniClusterExistingVolume.  # noqa: E501
         :type claim_name: str
         """
-        if self.local_vars_configuration.client_side_validation and claim_name is None:  # noqa: E501
-            raise ValueError("Invalid value for `claim_name`, must not be `None`")  # noqa: E501
 
         self._claim_name = claim_name
 
@@ -87,7 +94,7 @@ class MiniClusterExistingVolume(object):
     def path(self):
         """Gets the path of this MiniClusterExistingVolume.  # noqa: E501
 
-        Path and claim name are always required  # noqa: E501
+        Path and claim name are always required if a secret isn't defined  # noqa: E501
 
         :return: The path of this MiniClusterExistingVolume.  # noqa: E501
         :rtype: str
@@ -98,13 +105,11 @@ class MiniClusterExistingVolume(object):
     def path(self, path):
         """Sets the path of this MiniClusterExistingVolume.
 
-        Path and claim name are always required  # noqa: E501
+        Path and claim name are always required if a secret isn't defined  # noqa: E501
 
         :param path: The path of this MiniClusterExistingVolume.  # noqa: E501
         :type path: str
         """
-        if self.local_vars_configuration.client_side_validation and path is None:  # noqa: E501
-            raise ValueError("Invalid value for `path`, must not be `None`")  # noqa: E501
 
         self._path = path
 
@@ -128,6 +133,29 @@ class MiniClusterExistingVolume(object):
         """
 
         self._read_only = read_only
+
+    @property
+    def secret_name(self):
+        """Gets the secret_name of this MiniClusterExistingVolume.  # noqa: E501
+
+        An existing secret  # noqa: E501
+
+        :return: The secret_name of this MiniClusterExistingVolume.  # noqa: E501
+        :rtype: str
+        """
+        return self._secret_name
+
+    @secret_name.setter
+    def secret_name(self, secret_name):
+        """Sets the secret_name of this MiniClusterExistingVolume.
+
+        An existing secret  # noqa: E501
+
+        :param secret_name: The secret_name of this MiniClusterExistingVolume.  # noqa: E501
+        :type secret_name: str
+        """
+
+        self._secret_name = secret_name
 
     def to_dict(self, serialize=False):
         """Returns the model properties as a dict"""

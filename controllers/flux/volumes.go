@@ -134,16 +134,33 @@ func getVolumes(cluster *api.MiniCluster) []corev1.Volume {
 		},
 	}
 
-	// Add claims that already exist (not created by the Flux Operator)
+	// Add volumes that already exist (not created by the Flux Operator)
 	// These are unique names and path/claim names across containers
+	// This can be a claim or a secret
 	for volumeName, volumeMeta := range cluster.ExistingVolumes() {
-		newVolume := corev1.Volume{
-			Name: volumeName,
-			VolumeSource: corev1.VolumeSource{
-				PersistentVolumeClaim: &corev1.PersistentVolumeClaimVolumeSource{
-					ClaimName: volumeMeta.ClaimName,
+
+		var newVolume corev1.Volume
+		if volumeMeta.SecretName != "" {
+			newVolume = corev1.Volume{
+				Name: volumeName,
+				VolumeSource: corev1.VolumeSource{
+					Secret: &corev1.SecretVolumeSource{
+						SecretName: volumeMeta.SecretName,
+					},
 				},
-			},
+			}
+
+		} else {
+
+			// Fall back to persistent volume claim
+			newVolume = corev1.Volume{
+				Name: volumeName,
+				VolumeSource: corev1.VolumeSource{
+					PersistentVolumeClaim: &corev1.PersistentVolumeClaimVolumeSource{
+						ClaimName: volumeMeta.ClaimName,
+					},
+				},
+			}
 		}
 		volumes = append(volumes, newVolume)
 	}

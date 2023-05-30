@@ -286,9 +286,17 @@ type MiniClusterVolume struct {
 // Mini Cluster local volumes available to mount (these are on the host)
 type MiniClusterExistingVolume struct {
 
-	// Path and claim name are always required
-	Path      string `json:"path"`
-	ClaimName string `json:"claimName"`
+	// Path and claim name are always required if a secret isn't defined
+	// +optional
+	Path string `json:"path,omitempty"`
+
+	// Claim name if the existing volume is a PVC
+	// +optional
+	ClaimName string `json:"claimName,omitempty"`
+
+	// An existing secret
+	// +optional
+	SecretName string `json:"secretName,omitempty"`
 
 	// +kubebuilder:default=false
 	// +default=false
@@ -687,6 +695,24 @@ func (f *MiniCluster) Validate() bool {
 		}
 	}
 
+	// For existing volumes, if it's a claim, a path is required.
+	for key, volume := range f.ExistingVolumes() {
+
+		// Case 1: it's a secret and we only need that
+		if volume.SecretName != "" {
+			continue
+		}
+		// Case 2: claim desired without path
+		if volume.ClaimName == "" && volume.Path != "" {
+			fmt.Printf("😥️ Found existing volume %s with path %s that is missing a claim name\n", key, volume.Path)
+			valid = false
+		}
+		// Case 3: reverse of the above
+		if volume.ClaimName != "" && volume.Path == "" {
+			fmt.Printf("😥️ Found existing volume %s with claimName %s that is missing a path\n", key, volume.ClaimName)
+			valid = false
+		}
+	}
 	return valid
 }
 
