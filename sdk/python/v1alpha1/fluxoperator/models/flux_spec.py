@@ -34,6 +34,8 @@ class FluxSpec(object):
     """
     openapi_types = {
         'connect_timeout': 'str',
+        'connection': 'str',
+        'connection_size': 'int',
         'install_root': 'str',
         'log_level': 'int',
         'option_flags': 'str',
@@ -42,19 +44,23 @@ class FluxSpec(object):
 
     attribute_map = {
         'connect_timeout': 'connectTimeout',
+        'connection': 'connection',
+        'connection_size': 'connectionSize',
         'install_root': 'installRoot',
         'log_level': 'logLevel',
         'option_flags': 'optionFlags',
         'wrap': 'wrap'
     }
 
-    def __init__(self, connect_timeout='5s', install_root='/usr', log_level=6, option_flags='', wrap=None, local_vars_configuration=None):  # noqa: E501
+    def __init__(self, connect_timeout='5s', connection=None, connection_size=None, install_root='/usr', log_level=6, option_flags='', wrap=None, local_vars_configuration=None):  # noqa: E501
         """FluxSpec - a model defined in OpenAPI"""  # noqa: E501
         if local_vars_configuration is None:
             local_vars_configuration = Configuration.get_default_copy()
         self.local_vars_configuration = local_vars_configuration
 
         self._connect_timeout = None
+        self._connection = None
+        self._connection_size = None
         self._install_root = None
         self._log_level = None
         self._option_flags = None
@@ -63,6 +69,10 @@ class FluxSpec(object):
 
         if connect_timeout is not None:
             self.connect_timeout = connect_timeout
+        if connection is not None:
+            self.connection = connection
+        if connection_size is not None:
+            self.connection_size = connection_size
         if install_root is not None:
             self.install_root = install_root
         if log_level is not None:
@@ -94,6 +104,52 @@ class FluxSpec(object):
         """
 
         self._connect_timeout = connect_timeout
+
+    @property
+    def connection(self):
+        """Gets the connection of this FluxSpec.  # noqa: E501
+
+        Connect to this job in the same namespace (akin to BootServer but within cluster)  # noqa: E501
+
+        :return: The connection of this FluxSpec.  # noqa: E501
+        :rtype: str
+        """
+        return self._connection
+
+    @connection.setter
+    def connection(self, connection):
+        """Sets the connection of this FluxSpec.
+
+        Connect to this job in the same namespace (akin to BootServer but within cluster)  # noqa: E501
+
+        :param connection: The connection of this FluxSpec.  # noqa: E501
+        :type connection: str
+        """
+
+        self._connection = connection
+
+    @property
+    def connection_size(self):
+        """Gets the connection_size of this FluxSpec.  # noqa: E501
+
+        Additional number of nodes to allow from external boot-server This currently only allows local MiniCluster but could be extended to any general URI  # noqa: E501
+
+        :return: The connection_size of this FluxSpec.  # noqa: E501
+        :rtype: int
+        """
+        return self._connection_size
+
+    @connection_size.setter
+    def connection_size(self, connection_size):
+        """Sets the connection_size of this FluxSpec.
+
+        Additional number of nodes to allow from external boot-server This currently only allows local MiniCluster but could be extended to any general URI  # noqa: E501
+
+        :param connection_size: The connection_size of this FluxSpec.  # noqa: E501
+        :type connection_size: int
+        """
+
+        self._connection_size = connection_size
 
     @property
     def install_root(self):

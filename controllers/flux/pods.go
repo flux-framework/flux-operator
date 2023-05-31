@@ -109,8 +109,11 @@ func (r *MiniClusterReconciler) newServicePod(
 	podLabels := r.getPodLabels(cluster)
 	podServiceName := cluster.Name + "-services"
 
-	// service selector?
-	podLabels["job-name"] = cluster.Name
+	// service selector
+	podLabels["job-group"] = cluster.Name
+	if cluster.Spec.JobSelector != "" {
+		podLabels["job-group"] = cluster.Spec.JobSelector
+	}
 
 	// This is an indexed-job
 	pod := &corev1.Pod{
@@ -122,7 +125,7 @@ func (r *MiniClusterReconciler) newServicePod(
 		},
 		Spec: corev1.PodSpec{
 			// This is the headless service name
-			Subdomain:          restfulServiceName,
+			Subdomain:          cluster.Spec.ServiceName,
 			Hostname:           podServiceName,
 			SetHostnameAsFQDN:  &setAsFQDN,
 			RestartPolicy:      corev1.RestartPolicyOnFailure,

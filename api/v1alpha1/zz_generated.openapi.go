@@ -258,6 +258,20 @@ func schema__api_v1alpha1__FluxSpec(ref common.ReferenceCallback) common.OpenAPI
 							Format:      "",
 						},
 					},
+					"connection": {
+						SchemaProps: spec.SchemaProps{
+							Description: "Connect to this job in the same namespace (akin to BootServer but within cluster)",
+							Type:        []string{"string"},
+							Format:      "",
+						},
+					},
+					"connectionSize": {
+						SchemaProps: spec.SchemaProps{
+							Description: "Additional number of nodes to allow from external boot-server This currently only allows local MiniCluster but could be extended to any general URI",
+							Type:        []string{"integer"},
+							Format:      "int32",
+						},
+					},
 					"connectTimeout": {
 						SchemaProps: spec.SchemaProps{
 							Description: "Single user executable to provide to flux start",
@@ -862,6 +876,22 @@ func schema__api_v1alpha1__MiniClusterSpec(ref common.ReferenceCallback) common.
 							Description: "Run a single-user, interactive minicluster",
 							Default:     false,
 							Type:        []string{"boolean"},
+							Format:      "",
+						},
+					},
+					"serviceName": {
+						SchemaProps: spec.SchemaProps{
+							Description: "Specify the name of the cluster service",
+							Default:     "flux-service",
+							Type:        []string{"string"},
+							Format:      "",
+						},
+					},
+					"jobSelector": {
+						SchemaProps: spec.SchemaProps{
+							Description: "Specify the name of the job selector. You would want to do this if you intend to connect miniclusters Multiple jobs can be selected under a single services",
+							Default:     "",
+							Type:        []string{"string"},
 							Format:      "",
 						},
 					},

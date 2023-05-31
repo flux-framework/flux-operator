@@ -22,7 +22,7 @@ import (
 )
 
 // addScaleSelector populates the fields the horizontal auto scaler needs.
-// Meaning: job-name is used to select pods to check. The size variable
+// Meaning: hpa-selector is used to select pods to check. The size variable
 // is updated later.
 func (r *MiniClusterReconciler) addScaleSelector(
 	ctx context.Context,
