@@ -1,0 +1,15 @@
+apiVersion: apiregistration.k8s.io/v1
+kind: APIService
+metadata:
+  name: v1beta2.custom.metrics.k8s.io
+spec:
+  # You'll want to not do this in production
+  insecureSkipTLSVerify: true
+  service:
+    name: custom-metrics-apiserver
+    namespace: flux-operator
+  group: custom.metrics.k8s.io
+  version: v1beta2
+  groupPriorityMinimum: 1000
+  versionPriority: 5
+  # caBundle: ${CA_BUNDLE}

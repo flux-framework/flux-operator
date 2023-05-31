@@ -119,16 +119,18 @@ spec:
                           (these are on the host)
                         properties:
                           claimName:
+                            description: Claim name if the existing volume is a PVC
                             type: string
                           path:
-                            description: Path and claim name are always required
+                            description: Path and claim name are always required if
+                              a secret isn't defined
                             type: string
                           readOnly:
                             default: false
                             type: boolean
-                        required:
-                        - claimName
-                        - path
+                          secretName:
+                            description: An existing secret
+                            type: string
                         type: object
                       description: Existing Volumes to add to the containers
                       type: object
@@ -435,16 +437,18 @@ spec:
                           (these are on the host)
                         properties:
                           claimName:
+                            description: Claim name if the existing volume is a PVC
                             type: string
                           path:
-                            description: Path and claim name are always required
+                            description: Path and claim name are always required if
+                              a secret isn't defined
                             type: string
                           readOnly:
                             default: false
                             type: boolean
-                        required:
-                        - claimName
-                        - path
+                          secretName:
+                            description: An existing secret
+                            type: string
                         type: object
                       description: Existing Volumes to add to the containers
                       type: object

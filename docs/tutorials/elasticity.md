@@ -36,7 +36,7 @@ Since we need custom permissions - to make requests from inside the cluster - we
 extra RBAC roles:
 
 ```bash
-$ kubectl apply -f ../rbac.yaml
+$ kubectl apply -f ../../rbac.yaml
 ```
 
 Note that this is not added to the operator proper because not everyone needs this level of permission,
@@ -45,7 +45,7 @@ when I wrote it! We could also likely create a more scoped service account as op
 the flux-operators. Then install the operator, and create the MiniCluster:
 
 ```bash
-$ kubectl apply -f ../../dist/flux-operator.yaml
+$ kubectl apply -f ../../../dist/flux-operator.yaml
 $ kubectl apply -f ./minicluster.yaml
 ```
 
@@ -182,17 +182,16 @@ an endpoint. Make sure to cleanup when you finish:
 $ kind delete cluster
 ```
 
-## Horizontal Autoscaler Example
+## Horizontal Autoscaler Examples
 
 > Using the horizontal pod autoscaler (HPA) API to scale instead
 
 The rbac permissions required above might be a bit much, and this was suggested as an alternative approach.
 For this approach we are going to use the [HPA + Scale sub-resource](https://book.kubebuilder.io/reference/generating-crd.html#scale) in our custom resource definition to scale resources automatically,
 and our application running in the MiniCluster can then provide custom metrics based on which we set up the scaling. 
-Note that right now we are just scaling based on size, but in the future it is possible to [autoscale on multiple metrics](https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale-walkthrough/#autoscaling-on-multiple-metrics-and-custom-metrics). Note that we are interested in this technique because the requests can [come from an external service](https://cloud.google.com/kubernetes-engine/docs/concepts/horizontalpodautoscaler), meaning we could have a single service (paired with application logic, optionally) to handle scaling both node and MiniClusters, and coordinating the two.
 
- **[Tutorial File](https://github.com/flux-framework/flux-operator/blob/main/examples/elasticity/horizontal-autoscaler/minicluster.yaml)**
-
+The [APIs for v1 and v2 of the autoscaler are subtly different](https://www.pulumi.com/registry/packages/kubernetes/api-docs/autoscaling/v1/horizontalpodautoscaler/).
+In the version 1 example below, we scale based on size. In version 2 we use a different API and then add [multiple metrics](https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale-walkthrough/#autoscaling-on-multiple-metrics-and-custom-metrics). Note that we are interested in this technique because the requests can [come from an external service](https://cloud.google.com/kubernetes-engine/docs/concepts/horizontalpodautoscaler), meaning we could have a single service (paired with application logic, optionally) to handle scaling both node and MiniClusters, and coordinating the two.
 
 ### How does it work?
 
@@ -214,7 +213,6 @@ no action is taken. This means that:
 
 You'll need to ensure that:
 
-- The version of the autoscaler expected by its endpoint matches the version you deploy
 - Your minicluster.yaml has resources defined for CPU (or the metrics you are interested in)
 - You've set at maxSize in your minicluster.yaml to give Flux a heads up
 - Your cluster will need a metrics server
@@ -222,12 +220,21 @@ You'll need to ensure that:
 
 Details for how to inspect the above (and sample files) are provided below.
 
-### Running the Example
 
-To run this example, you'll want to first cd to the example directory:
+### Horizontal Autoscaler (v2) Example
+
+The version 2 API is more flexible than version 1 in allowing custom metrics. This means we can use a [prometheus-flux](https://github.com/converged-computing/prometheus-flux)
+exporter running inside of an instance to interact with it. This small set of tutorials will show setting a basic autoscaling example
+based on CPU, and then one based on custom metrics.
+
+ **[Tutorial File](https://github.com/flux-framework/flux-operator/blob/main/examples/elasticity/horizontal-autoscaler/v2-cpu/minicluster.yaml)**
+
+#### Setup
+
+This is the setup for testing v2 with a CPU metric:
 
 ```bash
-$ cd examples/elasticity/horizontal-autoscaler
+$ cd examples/elasticity/horizontal-autoscaler/v2-cpu
 ```
 
 Create a kind cluster with Kubernetes version 1.27.0
@@ -240,12 +247,11 @@ Create the flux-operator namespace and install the operator:
 
 ```bash
 $ kubectl create namespace flux-operator
-$ kubectl apply -f ../../dist/flux-operator-dev.yaml
+$ kubectl apply -f ../../../dist/flux-operator-dev.yaml
 ```
 
 And then create a very simply interactive cluster (it's small, 2 pods, but importantly has a maxsize of 10).
-Note that we are going to limit the HPA to a size of 4, because we assume you are running on an average desktop computer
-with 1000 browser tabs open, probably a slack, a coding editor, and don't want 10 containers running!
+Note that we are going to limit the HPA to a size of 4, because we assume you are running on an average desktop computer.
 
 ```bash
 $ kubectl apply -f ./minicluster.yaml
@@ -261,8 +267,7 @@ flux-sample-0-4wmmp   1/1     Running   0          6m50s
 flux-sample-1-mjj7b   1/1     Running   0          6m50s
 ```
 
-Okay here is the cool part - you can look at the scale endpoint of the MiniCluster
-with `kubectl` directly! Remember that we haven't installed a horizontal auto-scaler yet:
+Look at the scale endpoint of the MiniCluster with `kubectl` directly! Remember that we haven't installed a horizontal auto-scaler yet:
 
 ```bash
 $ kubectl get --raw /apis/flux-framework.org/v1alpha1/namespaces/flux-operator/miniclusters/flux-sample/scale | jq
@@ -289,11 +294,11 @@ $ kubectl get --raw /apis/flux-framework.org/v1alpha1/namespaces/flux-operator/m
 ```
 
 The above knows the selector to use to get pods (and look at current resource usage).
-The output above is also telling us the `autoscaler/v1` is being used, so we will apply that.
-The [APIs for v1 and v2 are subtly different](https://www.pulumi.com/registry/packages/kubernetes/api-docs/autoscaling/v1/horizontalpodautoscaler/).
-So let's now install the autoscaler. Take a look at the file [hpa-v1.yaml](https://github.com/flux-framework/flux-operator/blob/main/examples/elasticity/horizontal-autoscaler/hpa-v1.yaml). It's going to create the auto scaler specifically for our MiniCluster, and it's going to allow us to scale up to a maximum size of 4. Since we want to see the scale happen, we've set the CPU metric really low.
+The output above is also telling us the `autoscaler/v1` is being used, which I used to think
+means I could not use autoscaler/v2, but they seem to work OK (note that autoscaler/v2 is
+installed to my current cluster with Kubernetes 1.27).
 
-Before we deploy the autoscaler, we need a metrics server! This doesn't come out of the box with kind so
+Before we deploy any autoscaler, we need a metrics server! This doesn't come out of the box with kind so
 we install it:
 
 ```bash
@@ -306,6 +311,94 @@ it's running:
 ```bash
 $ kubectl get deploy,svc -n kube-system | egrep metrics-server
 ```
+
+#### Autoscaler with CPU
+
+This first autoscaler will work based on CPU. We can create it as follows:
+
+
+```bash
+$ kubectl apply -f hpa-cpu.yaml
+```
+```console
+horizontalpodautoscaler.autoscaling/flux-sample-hpa created
+```
+
+Remember that when you first created your cluster, your size was two, and we had two?
+
+```bash
+$ kubectl get -n flux-operator pods
+NAME                  READY   STATUS    RESTARTS   AGE
+flux-sample-0-4wmmp   1/1     Running   0          6m50s
+flux-sample-1-mjj7b   1/1     Running   0          6m50s
+```
+
+If you watch your pods (and your autoscaler and your endpoint) you'll
+see first that the resource usage changes (just by way of Flux starting):
+And to get it to change more, try shelling into your broker leader pod, connecting
+to the broker, and issuing commands:
+
+```bash
+$ kubectl exec -it -n flux-operator flux-sample-0-p85cj bash
+$ sudo -u fluxuser -E $(env) -E HOME=/home/fluxuser flux proxy local:///run/flux/local bash
+$ openssl speed -multi 4
+```
+
+You'll see it change (with updates between 15 seconds and 1.5 minutes!):
+
+```
+$ kubectl get -n flux-operator hpa -w
+NAME              REFERENCE                 TARGETS   MINPODS   MAXPODS   REPLICAS   AGE
+flux-sample-hpa   MiniCluster/flux-sample   0%/2%     2         4         2          33m
+flux-sample-hpa   MiniCluster/flux-sample   0%/2%     2         4         2          34m
+flux-sample-hpa   MiniCluster/flux-sample   3%/2%     2         4         2          34m
+flux-sample-hpa   MiniCluster/flux-sample   0%/2%     2         4         3          34m
+```
+
+With the openssl command above, I got it to hit a much higher load:
+
+```bash
+flux-sample-hpa   MiniCluster/flux-sample   0%/2%          2         4         4          7m30s
+flux-sample-hpa   MiniCluster/flux-sample   21%/2%         2         4         4          8m30s
+flux-sample-hpa   MiniCluster/flux-sample   25%/2%         2         4         4          8m46s
+flux-sample-hpa   MiniCluster/flux-sample   25%/2%         2         4         4          9m1s
+```
+
+See the [autoscaler/v1](#creating-the-v1-autoscaler) example for more detail about outputs. They have
+a slightly different design, but result in the same output to the terminal.
+When you are done demo-ing the CPU autoscaler, you can clean it up:
+
+```bash
+$ kubectl delete -f hpa-cpu.yaml
+```
+
+#### Autoscaler with Custom Metrics
+
+For this tutorial, it requires a little extra work to setup the api service, so we provide
+the full details in the tutorial directory alongside the MiniCluster YAML file.
+
+ **[Tutorial File](https://github.com/flux-framework/flux-operator/blob/main/examples/elasticity/horizontal-autoscaler/v2-custom-metric/minicluster.yaml)**
+
+And when you are done either of the tutorials above, don't forget to clean up.
+
+```bash
+$ kind delete cluster
+```
+
+### Horizontal Autoscaler (v1) Example
+
+This will show using the version 1 API.
+
+ **[Tutorial File](https://github.com/flux-framework/flux-operator/blob/main/examples/elasticity/horizontal-autoscaler/v1/minicluster.yaml)**
+
+You should have already completed [setup](#setup) for this example.
+To run this example, you'll want to first cd to the example directory:
+
+```bash
+$ cd examples/elasticity/horizontal-autoscaler/v1
+```
+
+#### Creating the v1 autoscaler
 
 Now create the autoscaler!
 
@@ -420,3 +513,4 @@ cluster itself. When you are done:
 ```bash
 $ kind delete cluster
 ```
+

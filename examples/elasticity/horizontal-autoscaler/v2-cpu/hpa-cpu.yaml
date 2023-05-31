@@ -1,0 +1,20 @@
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: flux-sample-hpa
+  namespace: flux-operator
+spec:
+  scaleTargetRef:
+    apiVersion: flux-framework.org/v1alpha1
+    kind: MiniCluster
+    name: flux-sample
+  minReplicas: 2
+  maxReplicas: 4
+  metrics:
+  - type: Resource
+    resource:
+      name: cpu
+      # This is explicitly set to be very low so it triggers
+      target:
+        type: Utilization
+        averageUtilization: 2

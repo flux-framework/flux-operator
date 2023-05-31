@@ -81,7 +81,7 @@ func (r *MiniClusterReconciler) newMiniClusterJob(
 	}
 	job.Spec.Template.Spec.Overhead = resources
 
-	// Get volume mounts, add on container specific ones
+	// Get volume mounts specific to operator, add on container specific ones
 	mounts := getVolumeMounts(cluster)
 	containers, err := r.getContainers(cluster.Spec.Containers, cluster.Name, mounts)
 	job.Spec.Template.Spec.Containers = containers

@@ -696,17 +696,23 @@ func schema__api_v1alpha1__MiniClusterExistingVolume(ref common.ReferenceCallbac
 				Properties: map[string]spec.Schema{
 					"path": {
 						SchemaProps: spec.SchemaProps{
-							Description: "Path and claim name are always required",
-							Default:     "",
+							Description: "Path and claim name are always required if a secret isn't defined",
 							Type:        []string{"string"},
 							Format:      "",
 						},
 					},
 					"claimName": {
 						SchemaProps: spec.SchemaProps{
-							Default: "",
-							Type:    []string{"string"},
-							Format:  "",
+							Description: "Claim name if the existing volume is a PVC",
+							Type:        []string{"string"},
+							Format:      "",
+						},
+					},
+					"secretName": {
+						SchemaProps: spec.SchemaProps{
+							Description: "An existing secret",
+							Type:        []string{"string"},
+							Format:      "",
 						},
 					},
 					"readOnly": {
@@ -717,7 +723,6 @@ func schema__api_v1alpha1__MiniClusterExistingVolume(ref common.ReferenceCallbac
 						},
 					},
 				},
-				Required: []string{"path", "claimName"},
 			},
 		},
 	}

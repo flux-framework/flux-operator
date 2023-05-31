@@ -1,0 +1,52 @@
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: flux-sample-hpa
+  namespace: flux-operator
+spec:
+  scaleTargetRef:
+    apiVersion: flux-framework.org/v1alpha1
+    kind: MiniCluster
+    name: flux-sample
+  minReplicas: 2
+  maxReplicas: 4
+  metrics:
+
+  # https://docs.openshift.com/container-platform/4.11/rest_api/autoscale_apis/horizontalpodautoscaler-autoscaling-v2.html#spec-metrics-object
+  - type: Object
+    object:
+      # This is the service we created
+      target:
+        value: 4
+        type: "Value"
+
+      # Where to get the data from
+      describedObject:
+        kind: Service
+        name: custom-metrics-apiserver
+
+      # This should scale until we hit 4
+      metric:
+        name: node_up_count
+
+  # Behavior determines how to do the scaling
+  # Without this, nothing would happen
+  # https://www.kloia.com/blog/advanced-hpa-in-kubernetes
+  behavior:
+
+    # select the preferred policy dynamically, "Max" or "Disabled"
+    scaleUp:
+      selectPolicy: Max
+      stabilizationWindowSeconds: 120
+      policies:
+      - type: Percent
+        value: 100
+        periodSeconds: 60
+
+    scaleDown:
+      selectPolicy: Max
+      stabilizationWindowSeconds: 120
+      policies:
+      - type: Percent
+        value: 100
+        periodSeconds: 60
