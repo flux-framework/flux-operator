@@ -336,29 +336,29 @@ $ kubectl get --raw /apis/custom.metrics.k8s.io/v1beta2/namespaces/flux-operator
 ```
 
 Note that when I was working on this, I first hit [this error](https://github.com/kubernetes/kubernetes/blob/18e3f01deda3bc1ea62751553df0b689598de7a7/staging/src/k8s.io/metrics/pkg/client/custom_metrics/discovery.go#L101) and had to find that spot in the source code, and then realize that 
-the `/apis` root endpoint was being pinged for some kind of "preferred version"
+the `/apis` root endpoint was being pinged for some kind of "preferred version." I tried mocking
+the endpoint (and it seemed to work?) so then I simply got the actual endpoint from within the
+pod, and forwarded it along. This seemed to make the cluster happy - I started seeing the
+autoscaler actually pinging my server for the metric!
 
-```bash
-$ kubectl get --raw /apis | jq
-```
 ```console
-    {
-      "name": "custom.metrics.k8s.io",
-      "versions": [
-        {
-          "groupVersion": "custom.metrics.k8s.io/v1beta2",
-          "version": "v1beta2"
-        }
-      ],
-      "preferredVersion": {
-        "groupVersion": "custom.metrics.k8s.io/v1beta2",
-        "version": "v1beta2"
-      }
-    }
+INFO:     10.244.0.1:10333 - "GET /openapi/v2 HTTP/1.1" 200 OK
+Requested metric node_up_count in  namespace flux-operator
+INFO:     10.244.0.1:31834 - "GET /apis/custom.metrics.k8s.io/v1beta2/namespaces/flux-operator/services/custom-metrics-apiserver/node_up_count HTTP/1.1" 200 OK
+INFO:     10.244.0.1:12095 - "GET /apis HTTP/1.1" 200 OK
+INFO:     10.244.0.1:33736 - "GET /apis/custom.metrics.k8s.io/v1beta2 HTTP/1.1" 200 OK
+INFO:     10.244.0.1:43900 - "GET /apis/custom.metrics.k8s.io/v1beta2 HTTP/1.1" 200 OK
+INFO:     10.244.0.1:53777 - "GET /apis/custom.metrics.k8s.io/v1beta2 HTTP/1.1" 200 OK
+INFO:     10.244.0.1:28114 - "GET /apis/custom.metrics.k8s.io/v1beta2 HTTP/1.1" 200 OK
+INFO:     10.244.0.1:4014 - "GET /apis/custom.metrics.k8s.io/v1beta2 HTTP/1.1" 200 OK
+Requested metric node_up_count in  namespace flux-operator
+INFO:     10.244.0.1:16713 - "GET /apis/custom.metrics.k8s.io/v1beta2/namespaces/flux-operator/services/custom-metrics-apiserver/node_up_count HTTP/1.1" 200 OK
 ```
 
-And weirdly enough, I could run that call from my terminal and I saw it being done to my API, but my API of course was not returning a known response.
-I think (based on that error message) our API endpoint needs to serve it too. So what to do? Make a faux one, of course!
+At this point we are retrieving the metric, although we haven't really added any logic for what to do with it. I'll likely work on this next!
+
+I noticed that a few times over a long period of time there would be an error issued that the server was "unable to handle the request" and I think this is related to
+memory. Note that another strategy I haven't looked into is using [External](https://github.com/GoogleCloudPlatform/bank-of-anthos/blob/a32d4cf14a6a030705f00fc9d0dbf2d547ef1231/extras/postgres-hpa/hpa/frontend.yaml#L16) for autoscaling.
 
 
 Get logs for HPA

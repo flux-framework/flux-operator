@@ -47,7 +47,7 @@ spec:
       # Install the metrics exporter
       commands:
         pre: |
-          git clone https://github.com/converged-computing/flux-metrics-api
+          git clone -b add/ssl-default-port https://github.com/converged-computing/flux-metrics-api
           cd flux-metrics-api
           pip install -e .
 
