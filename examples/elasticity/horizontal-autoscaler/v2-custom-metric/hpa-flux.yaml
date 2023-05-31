@@ -28,3 +28,25 @@ spec:
       # This should scale until we hit 4
       metric:
         name: node_up_count
+
+  # Behavior determines how to do the scaling
+  # Without this, nothing would happen
+  # https://www.kloia.com/blog/advanced-hpa-in-kubernetes
+  behavior:
+
+    # select the preferred policy dynamically, "Max" or "Disabled"
+    scaleUp:
+      selectPolicy: Max
+      stabilizationWindowSeconds: 120
+      policies:
+      - type: Percent
+        value: 100
+        periodSeconds: 60
+
+    scaleDown:
+      selectPolicy: Max
+      stabilizationWindowSeconds: 120
+      policies:
+      - type: Percent
+        value: 100
+        periodSeconds: 60

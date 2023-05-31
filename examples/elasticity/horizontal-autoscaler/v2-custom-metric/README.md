@@ -150,29 +150,11 @@ The above knows the selector to use to get pods (and look at current resource us
 the reference to "autoscaling/v1" does not mean we cannot use autoscaling/v1 for the one we create.
 This threw me off for a bit!
 
-## Metrics Server
-
-TODO not sure if I need this or not
-
-Before we deploy any autoscaler, we need a main metrics server! This doesn't come out of the box with kind so
-we install it:
-
-```bash
-$ kubectl apply -f metrics-server.yaml
-```
-
-I found this suggestion [here](https://gist.github.com/sanketsudake/a089e691286bf2189bfedf295222bd43). Ensure
-it's running:
-
-```bash
-$ kubectl get deploy,svc -n kube-system | egrep metrics-server
-```
-
 ## Custom Metrics API Service
 
-We next want to setup our custom metrics API service. Since this is a tutorial let's start this manually
-for now, shelling into the broker pod, then connecting to the broker and running the server from there:
-
+We next want to setup our custom metrics API service. We will walk through the steps
+to start an interactive cluster. You'll want to first shell into the broker pod, 
+then connect to the broker and running the server from there:
 
 ```bash
 $ kubectl exec -it -n flux-operator flux-sample-0-p85cj -- bash
@@ -355,11 +337,52 @@ Requested metric node_up_count in  namespace flux-operator
 INFO:     10.244.0.1:16713 - "GET /apis/custom.metrics.k8s.io/v1beta2/namespaces/flux-operator/services/custom-metrics-apiserver/node_up_count HTTP/1.1" 200 OK
 ```
 
-At this point we are retrieving the metric, although we haven't really added any logic for what to do with it. I'll likely work on this next!
+At this point we are retrieving the metric, and the behavior defined in the hpa yaml file will determine how scaling is done.
+This is a dummy example and I didn't put too much thought into it beyond getting it to scale. Note that you can
+get a status from the hpa directly:
 
-I noticed that a few times over a long period of time there would be an error issued that the server was "unable to handle the request" and I think this is related to
+```console
+$ kubectl get hpa -n flux-operator flux-sample-hpa -o json | jq .status.conditions
+[
+  {
+    "lastTransitionTime": "2023-05-31T19:50:20Z",
+    "message": "recommended size matches current size",
+    "reason": "ReadyForNewScale",
+    "status": "True",
+    "type": "AbleToScale"
+  },
+  {
+    "lastTransitionTime": "2023-05-31T19:52:35Z",
+    "message": "the HPA was able to successfully calculate a replica count from Service metric node_up_count",
+    "reason": "ValidMetricFound",
+    "status": "True",
+    "type": "ScalingActive"
+  },
+  {
+    "lastTransitionTime": "2023-05-31T20:30:54Z",
+    "message": "the desired count is within the acceptable range",
+    "reason": "DesiredWithinRange",
+    "status": "False",
+    "type": "ScalingLimited"
+  }
+]
+```
+
+And note the scaling was done (we started at 2):
+
+```bash
+$ kubectl get -n flux-operator pods
+NAME                  READY   STATUS    RESTARTS   AGE
+flux-sample-0-kg8mq   1/1     Running   0          42m
+flux-sample-1-dntwk   1/1     Running   0          42m
+flux-sample-2-p8vhn   1/1     Running   0          2m3s
+flux-sample-3-pvg6l   1/1     Running   0          2m3s
+```
+
+One quick note - I noticed that a few times over a long period of time there would be an error issued that the server was "unable to handle the request" and I think this is related to
 memory. Note that another strategy I haven't looked into is using [External](https://github.com/GoogleCloudPlatform/bank-of-anthos/blob/a32d4cf14a6a030705f00fc9d0dbf2d547ef1231/extras/postgres-hpa/hpa/frontend.yaml#L16) for autoscaling.
+And that's it! When you are done, clean up.
 
-
-Get logs for HPA
-$ kubectl get -n flux-operator hpa -w
+```bash
+$ kind delete cluster
+```

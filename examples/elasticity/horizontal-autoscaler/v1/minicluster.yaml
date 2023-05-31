@@ -5,29 +5,18 @@ metadata:
   namespace: flux-operator
 spec:
   size: 2
-
   # If we don't set this, we won't be able to go above two!
   maxSize: 10
 
-  # Interactive will start the broker to shell into
-  interactive: true
-  
   # This is a list because a pod can support multiple containers
   containers:
     - image: ghcr.io/rse-ops/singularity:tag-mamba
       workingDir: /data
 
+      # We will use launcher here to just run the command
       # You can shell in to connect to the broker and issue commands that use CPU
+      launcher: true
       command: sleep infinity
-
-      # These are volume mounts for the container for config / secrets we've created separately
-      # They are only needed by the leader broker, but per the indexed job, we add to all pods
-      # This would be a good usecase for JobSet if we ever decide to switch
-      # This is an existing secret that we will mount into /etc/certs
-      existingVolumes:
-        certs:
-          path: /etc/certs
-          secretName: certs
 
       # Important! We need to have resource requests for the horizonal autoscaler
       # The Flux Operator doesn't know you want to use it, so it's up to you
@@ -39,9 +28,9 @@ spec:
         requests:
           cpu: "1"
       
-      # Install the metrics exporter, ensuring it's installed to the Flux user space
+      # This pulls the container (once) by the broker to workingDir /data
       commands:
-        pre: python3 -m pip install flux-metrics-api
+        pre: pip install kubernetes
 
       fluxUser:
         name: fluxuser
