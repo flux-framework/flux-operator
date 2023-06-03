@@ -250,7 +250,7 @@ func (r *MiniClusterReconciler) createMiniClusterIngress(
 		r.log.Error(err, "🔴 Create ingress", "Service", restfulServiceName)
 		return err
 	}
-	err = r.Client.Create(ctx, ingress)
+	err = r.New(ctx, ingress)
 	if err != nil {
 		r.log.Error(err, "🔴 Create ingress", "Service", restfulServiceName)
 		return err

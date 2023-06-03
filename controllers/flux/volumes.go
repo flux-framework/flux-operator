@@ -266,7 +266,7 @@ func (r *MiniClusterReconciler) getExistingPersistentVolume(
 
 	// First look for an existing persistent volume
 	existing := &corev1.PersistentVolume{}
-	err := r.Client.Get(
+	err := r.Get(
 		ctx,
 		types.NamespacedName{
 			Name:      volumeName,
@@ -300,7 +300,7 @@ func (r *MiniClusterReconciler) getPersistentVolume(
 				"Name", volumeName,
 			)
 
-			err = r.Client.Create(ctx, volume)
+			err = r.New(ctx, volume)
 			if err != nil {
 				r.log.Error(
 					err, "Failed to create MiniCluster Mounted Volume",
@@ -341,7 +341,7 @@ func (r *MiniClusterReconciler) getExistingPersistentVolumeClaim(
 ) (*corev1.PersistentVolumeClaim, error) {
 
 	existing := &corev1.PersistentVolumeClaim{}
-	err := r.Client.Get(
+	err := r.Get(
 		ctx,
 		types.NamespacedName{
 			Name:      claimName,
@@ -373,7 +373,7 @@ func (r *MiniClusterReconciler) getPersistentVolumeClaim(
 				"Namespace", cluster.Namespace,
 				"Name", claimName,
 			)
-			err = r.Client.Create(ctx, volume)
+			err = r.New(ctx, volume)
 
 			// This is a creation error we need to report back
 			if err != nil {

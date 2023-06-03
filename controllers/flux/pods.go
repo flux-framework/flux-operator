@@ -54,7 +54,7 @@ func (r *MiniClusterReconciler) ensureServicePod(
 				"Name:", pod.Name,
 			)
 
-			err = r.Client.Create(ctx, pod)
+			err = r.New(ctx, pod)
 			if err != nil {
 				r.log.Error(
 					err,
@@ -89,7 +89,7 @@ func (r *MiniClusterReconciler) getExistingPod(
 ) (*corev1.Pod, error) {
 
 	existing := &corev1.Pod{}
-	err := r.Client.Get(
+	err := r.Get(
 		ctx,
 		types.NamespacedName{
 			Name:      cluster.Name + "-services",

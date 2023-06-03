@@ -36,7 +36,7 @@ func (r *MiniClusterReconciler) addScaleSelector(
 		return ctrl.Result{}, nil
 	}
 	cluster.Status.Selector = selector
-	err := r.Client.Status().Update(ctx, cluster)
+	err := r.Status().Update(ctx, cluster)
 	r.log.Info("MiniCluster", "ScaleSelector", selector, "Status", "Updating")
 	return ctrl.Result{Requeue: true}, err
 }
@@ -54,10 +54,10 @@ func (r *MiniClusterReconciler) disallowScale(
 	cluster.Status.Size = cluster.Status.MaximumSize
 
 	// Apply the patch to restore to the original size
-	err := r.Client.Patch(ctx, cluster, patch)
+	err := r.Patch(ctx, cluster, patch)
 
 	// First update fixes the status
-	r.Client.Status().Update(ctx, cluster)
+	r.Status().Update(ctx, cluster)
 	return ctrl.Result{Requeue: true}, err
 }
 
@@ -74,9 +74,9 @@ func (r *MiniClusterReconciler) allowScale(
 	job.Spec.Completions = &cluster.Spec.Size
 	cluster.Status.Size = cluster.Spec.Size
 
-	err := r.Client.Patch(ctx, job, patch)
+	err := r.Patch(ctx, job, patch)
 	// I don't check for error because I want both changes to go in at once
-	r.Client.Status().Update(ctx, cluster)
+	r.Status().Update(ctx, cluster)
 	return ctrl.Result{Requeue: true}, err
 }
 
@@ -93,8 +93,8 @@ func (r *MiniClusterReconciler) restoreOriginalSize(
 	cluster.Status.Size = cluster.Spec.Size
 
 	// Apply the patch to restore to the original size
-	r.Client.Status().Update(ctx, cluster)
-	err := r.Client.Patch(ctx, cluster, patch)
+	r.Status().Update(ctx, cluster)
+	err := r.Patch(ctx, cluster, patch)
 	return ctrl.Result{Requeue: true}, err
 }
 

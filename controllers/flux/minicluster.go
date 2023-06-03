@@ -142,7 +142,7 @@ func (r *MiniClusterReconciler) ensureMiniCluster(
 	if status != jobctrl.ConditionJobReady {
 		clusterCopy := cluster.DeepCopy()
 		jobctrl.FlagConditionReady(clusterCopy)
-		r.Client.Status().Update(ctx, clusterCopy)
+		r.Status().Update(ctx, clusterCopy)
 	}
 
 	// And we re-queue so the Ready condition triggers next steps!
@@ -214,7 +214,7 @@ func (r *MiniClusterReconciler) getExistingJob(
 ) (*batchv1.Job, error) {
 
 	existing := &batchv1.Job{}
-	err := r.Client.Get(
+	err := r.Get(
 		ctx,
 		types.NamespacedName{
 			Name:      cluster.Name,
@@ -254,7 +254,7 @@ func (r *MiniClusterReconciler) getMiniCluster(
 				"Name:", job.Name,
 			)
 
-			err = r.Client.Create(ctx, job)
+			err = r.New(ctx, job)
 			if err != nil {
 				r.log.Error(
 					err,
@@ -292,7 +292,7 @@ func (r *MiniClusterReconciler) getConfigMap(
 
 	// Look for the config map by name
 	existing := &corev1.ConfigMap{}
-	err := r.Client.Get(
+	err := r.Get(
 		ctx,
 		types.NamespacedName{
 			Name:      configFullName,
@@ -347,7 +347,7 @@ func (r *MiniClusterReconciler) getConfigMap(
 				"Namespace", dep.Namespace,
 				"Name", dep.Name,
 			)
-			err = r.Client.Create(ctx, dep)
+			err = r.New(ctx, dep)
 			if err != nil {
 				r.log.Error(
 					err, "❌ Failed to create MiniCluster ConfigMap",
