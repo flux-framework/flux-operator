@@ -39,7 +39,7 @@ func (r *MiniClusterReconciler) exposeServices(
 
 	// This service is for the restful API
 	existing := &corev1.Service{}
-	err := r.Client.Get(ctx, types.NamespacedName{Name: serviceName, Namespace: cluster.Namespace}, existing)
+	err := r.Get(ctx, types.NamespacedName{Name: serviceName, Namespace: cluster.Namespace}, existing)
 	if err != nil {
 		if errors.IsNotFound(err) {
 			_, err = r.createHeadlessService(ctx, cluster, serviceName, selector)
@@ -67,7 +67,7 @@ func (r *MiniClusterReconciler) createHeadlessService(
 		},
 	}
 	ctrl.SetControllerReference(cluster, service, r.Scheme)
-	err := r.Client.Create(ctx, service)
+	err := r.New(ctx, service)
 	if err != nil {
 		r.log.Error(err, "🔴 Create service", "Service", service.Name)
 	}
@@ -85,7 +85,7 @@ func (r *MiniClusterReconciler) exposeService(
 
 	// This service is for the restful API
 	existing := &corev1.Service{}
-	err := r.Client.Get(ctx, types.NamespacedName{Name: serviceName, Namespace: cluster.Namespace}, existing)
+	err := r.Get(ctx, types.NamespacedName{Name: serviceName, Namespace: cluster.Namespace}, existing)
 	if err != nil {
 		if errors.IsNotFound(err) {
 			r.log.Info("Creating service with: ", serviceName, cluster.Namespace)
@@ -110,7 +110,7 @@ func (r *MiniClusterReconciler) exposeService(
 				},
 			}
 			ctrl.SetControllerReference(cluster, service, r.Scheme)
-			err := r.Client.Create(ctx, service)
+			err := r.New(ctx, service)
 			if err != nil {
 				r.log.Error(err, "🔴 Create service", "Service", service.Name)
 			}

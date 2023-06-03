@@ -21,6 +21,7 @@ import (
 	"k8s.io/apimachinery/pkg/runtime"
 	"k8s.io/client-go/rest"
 	ctrl "sigs.k8s.io/controller-runtime"
+
 	"sigs.k8s.io/controller-runtime/pkg/client"
 
 	"k8s.io/apimachinery/pkg/api/errors"
@@ -35,7 +36,7 @@ type MiniClusterUpdateWatcher interface {
 
 // MiniClusterReconciler reconciles a MiniCluster object
 type MiniClusterReconciler struct {
-	Client     client.Client
+	client.Client
 	Scheme     *runtime.Scheme
 	Manager    ctrl.Manager
 	log        logr.Logger
@@ -113,7 +114,7 @@ func (r *MiniClusterReconciler) Reconcile(
 	r.log.Info("Request: ", "req", req)
 
 	// Does the Flux Job exist yet (based on name and namespace)
-	err := r.Client.Get(ctx, req.NamespacedName, &cluster)
+	err := r.Get(ctx, req.NamespacedName, &cluster)
 	if err != nil {
 
 		// Create it, doesn't exist yet
@@ -156,6 +157,11 @@ func (r *MiniClusterReconciler) Reconcile(
 		}
 	}
 	return result, nil
+}
+
+// Wrapper to Client.Create (New) for easier interaction
+func (r *MiniClusterReconciler) New(ctx context.Context, obj client.Object, opts ...client.CreateOption) error {
+	return r.Client.Create(ctx, obj, opts...)
 }
 
 // SetupWithManager sets up the controller with the Manager.
