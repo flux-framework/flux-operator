@@ -37,12 +37,17 @@ func (r *MiniClusterReconciler) exposeServices(
 	selector map[string]string,
 ) (ctrl.Result, error) {
 
-	// This service is for the restful API
+	// Create either the headless service or broker service
 	existing := &corev1.Service{}
 	err := r.Get(ctx, types.NamespacedName{Name: serviceName, Namespace: cluster.Namespace}, existing)
 	if err != nil {
 		if errors.IsNotFound(err) {
-			_, err = r.createHeadlessService(ctx, cluster, serviceName, selector)
+
+			if cluster.Spec.Flux.MinimalService {
+				_, err = r.createBrokerService(ctx, cluster, serviceName, selector)
+			} else {
+				_, err = r.createHeadlessService(ctx, cluster, serviceName, selector)
+			}
 
 		}
 		return ctrl.Result{}, err
@@ -70,6 +75,34 @@ func (r *MiniClusterReconciler) createHeadlessService(
 	err := r.New(ctx, service)
 	if err != nil {
 		r.log.Error(err, "🔴 Create service", "Service", service.Name)
+	}
+	return service, err
+}
+
+// createBrokerService creates a service for the lead broker
+func (r *MiniClusterReconciler) createBrokerService(
+	ctx context.Context,
+	cluster *api.MiniCluster,
+	serviceName string,
+	selector map[string]string,
+) (*corev1.Service, error) {
+
+	r.log.Info("Creating minimal broker service with: ", serviceName, cluster.Namespace)
+	service := &corev1.Service{
+		ObjectMeta: metav1.ObjectMeta{Name: serviceName, Namespace: cluster.Namespace},
+		Spec: corev1.ServiceSpec{
+			// Target port should be set to same value as port, by default
+			Ports: []corev1.ServicePort{{
+				Port:     int32(8050),
+				Protocol: "TCP",
+			}},
+			Selector: selector,
+		},
+	}
+	ctrl.SetControllerReference(cluster, service, r.Scheme)
+	err := r.New(ctx, service)
+	if err != nil {
+		r.log.Error(err, "🔴 Create minimal broker service", "Service", service.Name)
 	}
 	return service, err
 }
