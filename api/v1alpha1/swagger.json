@@ -134,6 +134,11 @@
           "format": "int32",
           "default": 6
         },
+        "minimalService": {
+          "description": "Only expose the broker service (to reduce load on DNS)",
+          "type": "boolean",
+          "default": false
+        },
         "optionFlags": {
           "description": "Flux option flags, usually provided with -o optional - if needed, default option flags for the server These can also be set in the user interface to override here. This is only valid for a FluxRunner \"runFlux\" true",
           "type": "string",

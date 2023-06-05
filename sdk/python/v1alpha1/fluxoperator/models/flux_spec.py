@@ -36,6 +36,7 @@ class FluxSpec(object):
         'connect_timeout': 'str',
         'install_root': 'str',
         'log_level': 'int',
+        'minimal_service': 'bool',
         'option_flags': 'str',
         'wrap': 'str'
     }
@@ -44,11 +45,12 @@ class FluxSpec(object):
         'connect_timeout': 'connectTimeout',
         'install_root': 'installRoot',
         'log_level': 'logLevel',
+        'minimal_service': 'minimalService',
         'option_flags': 'optionFlags',
         'wrap': 'wrap'
     }
 
-    def __init__(self, connect_timeout='5s', install_root='/usr', log_level=6, option_flags='', wrap=None, local_vars_configuration=None):  # noqa: E501
+    def __init__(self, connect_timeout='5s', install_root='/usr', log_level=6, minimal_service=False, option_flags='', wrap=None, local_vars_configuration=None):  # noqa: E501
         """FluxSpec - a model defined in OpenAPI"""  # noqa: E501
         if local_vars_configuration is None:
             local_vars_configuration = Configuration.get_default_copy()
@@ -57,6 +59,7 @@ class FluxSpec(object):
         self._connect_timeout = None
         self._install_root = None
         self._log_level = None
+        self._minimal_service = None
         self._option_flags = None
         self._wrap = None
         self.discriminator = None
@@ -67,6 +70,8 @@ class FluxSpec(object):
             self.install_root = install_root
         if log_level is not None:
             self.log_level = log_level
+        if minimal_service is not None:
+            self.minimal_service = minimal_service
         if option_flags is not None:
             self.option_flags = option_flags
         if wrap is not None:
@@ -140,6 +145,29 @@ class FluxSpec(object):
         """
 
         self._log_level = log_level
+
+    @property
+    def minimal_service(self):
+        """Gets the minimal_service of this FluxSpec.  # noqa: E501
+
+        Only expose the broker service (to reduce load on DNS)  # noqa: E501
+
+        :return: The minimal_service of this FluxSpec.  # noqa: E501
+        :rtype: bool
+        """
+        return self._minimal_service
+
+    @minimal_service.setter
+    def minimal_service(self, minimal_service):
+        """Sets the minimal_service of this FluxSpec.
+
+        Only expose the broker service (to reduce load on DNS)  # noqa: E501
+
+        :param minimal_service: The minimal_service of this FluxSpec.  # noqa: E501
+        :type minimal_service: bool
+        """
+
+        self._minimal_service = minimal_service
 
     @property
     def option_flags(self):
