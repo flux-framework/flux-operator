@@ -111,6 +111,9 @@ To add custom labels for your job, add a set of key value pairs (strings) to a "
     job-attribute-b: dinosaur-b
 ```
 
+Note that by default, each pod will be labeled with a label `job-index` that corresponds to the
+particular pod index. E.g., the lead broker would have `job-index=0` and this could be used as a service
+selector.
 
 ### deadline
 
@@ -354,6 +357,33 @@ flux:
 ```
 
 In the above, we would add `--wrap=strace,-e,network,-tt` to flux start commands.
+
+#### minimalService
+
+By default, the Flux MiniCluster will be created with a headless service across the cluster,
+meaning that all pods can ping one another via a fully qualified hostname. As an example,
+the 0 index (the lead broker) of an indexed job will be available at:
+
+```
+flux-sample-0.flux-service.flux-operator.svc.cluster.local: Nam
+```
+
+Where "flux-sample" is the name of the job. Index 1 would be at:
+
+```
+flux-sample-1.flux-service.flux-operator.svc.cluster.local: Nam
+```
+
+However, it's the case that only the lead broker (index 0) needs to be reachable
+by the others. If you set `minimalService` to true, this will be honored, so
+the networking setup will be more minimal.
+
+```yaml
+flux:
+  minimalService: true
+```
+
+The drawback is that you cannot ping the other nodes by hostname.
 
 #### connectTimeout
 

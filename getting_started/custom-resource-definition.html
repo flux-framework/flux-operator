@@ -643,6 +643,13 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#minimalservice" class="md-nav__link">
+    <span title="/getting_started/custom-resource-definition.md#minimalservice (reference label)" class="md-ellipsis">minimal<wbr>Service</span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#connecttimeout" class="md-nav__link">
     <span title="/getting_started/custom-resource-definition.md#connecttimeout (reference label)" class="md-ellipsis">connect<wbr>Timeout</span>
   </a>
@@ -1285,6 +1292,9 @@ then you can set launcher to true.</p>
 <span class="w">    </span><span class="nt">job-attribute-b</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">dinosaur-b</span>
 </code></pre></div>
 </div>
+<p>Note that by default, each pod will be labeled with a label <code class="docutils literal notranslate"><span class="pre">job-index</span></code> that corresponds to the
+particular pod index. E.g., the lead broker would have <code class="docutils literal notranslate"><span class="pre">job-index=0</span></code> and this could be used as a service
+selector.</p>
 <h3 id="deadline">deadline<a class="headerlink" href="#deadline" title="Permalink to this heading">¶</a></h3>
 <p>This is the maximum running time for your job. If you leave unset, it is essentially infinite.
 If a Job is suspended (at creation or through an update), this timer will effectively be stopped and reset when the Job is resumed again.</p>
@@ -1464,6 +1474,25 @@ with some listing of arguments, you can specify it as follows:</p>
 </code></pre></div>
 </div>
 <p>In the above, we would add <code class="docutils literal notranslate"><span class="pre">--wrap=strace,-e,network,-tt</span></code> to flux start commands.</p>
+<h4 id="minimalservice">minimalService<a class="headerlink" href="#minimalservice" title="Permalink to this heading">¶</a></h4>
+<p>By default, the Flux MiniCluster will be created with a headless service across the cluster,
+meaning that all pods can ping one another via a fully qualified hostname. As an example,
+the 0 index (the lead broker) of an indexed job will be available at:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><code><span class="n">flux</span><span class="o">-</span><span class="n">sample</span><span class="o">-</span><span class="mf">0.</span><span class="n">flux</span><span class="o">-</span><span class="n">service</span><span class="o">.</span><span class="n">flux</span><span class="o">-</span><span class="n">operator</span><span class="o">.</span><span class="n">svc</span><span class="o">.</span><span class="n">cluster</span><span class="o">.</span><span class="n">local</span><span class="p">:</span> <span class="n">Nam</span>
+</code></pre></div>
+</div>
+<p>Where “flux-sample” is the name of the job. Index 1 would be at:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><code><span class="n">flux</span><span class="o">-</span><span class="n">sample</span><span class="o">-</span><span class="mf">1.</span><span class="n">flux</span><span class="o">-</span><span class="n">service</span><span class="o">.</span><span class="n">flux</span><span class="o">-</span><span class="n">operator</span><span class="o">.</span><span class="n">svc</span><span class="o">.</span><span class="n">cluster</span><span class="o">.</span><span class="n">local</span><span class="p">:</span> <span class="n">Nam</span>
+</code></pre></div>
+</div>
+<p>However, it’s the case that only the lead broker (index 0) needs to be reachable
+by the others. If you set <code class="docutils literal notranslate"><span class="pre">minimalService</span></code> to true, this will be honored, so
+the networking setup will be more minimal.</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><code><span class="nt">flux</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">minimalService</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+</code></pre></div>
+</div>
+<p>The drawback is that you cannot ping the other nodes by hostname.</p>
 <h4 id="connecttimeout">connectTimeout<a class="headerlink" href="#connecttimeout" title="Permalink to this heading">¶</a></h4>
 <p>For Flux versions 0.50.0 and later, you can customize the zeromq timeout. This is done
 via an extra broker option provided on the command line:</p>
@@ -2025,7 +2054,7 @@ or define your own as follows:</p>
   <small>
     
       Last update:
-      Jun 04, 2023
+      Jun 05, 2023
     
   </small>
 </div>
