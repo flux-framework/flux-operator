@@ -86,8 +86,11 @@ func (r *MiniClusterReconciler) ensureMiniCluster(
 		}
 	}
 
-	// Create headless service for the MiniCluster
+	// Create headless service for the MiniCluster OR single service for the broker
 	selector := map[string]string{"job-name": cluster.Name}
+	if cluster.Spec.Flux.MinimalService {
+		selector = map[string]string{"job-index": "0"}
+	}
 	result, err = r.exposeServices(ctx, cluster, restfulServiceName, selector)
 	if err != nil {
 		return result, err
@@ -135,6 +138,12 @@ func (r *MiniClusterReconciler) ensureMiniCluster(
 		if err != nil {
 			return result, err
 		}
+	}
+
+	// Add the single label for the broker pod
+	result, err = r.addBrokerLabel(ctx, cluster)
+	if err != nil {
+		return result, err
 	}
 
 	// If we get here, update the status to be ready

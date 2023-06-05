@@ -338,6 +338,10 @@ type FluxSpec struct {
 	// +optional
 	OptionFlags string `json:"optionFlags"`
 
+	// Only expose the broker service (to reduce load on DNS)
+	// +optional
+	MinimalService bool `json:"minimalService"`
+
 	// Log level to use for flux logging (only in non TestMode)
 	// +kubebuilder:default=6
 	// +default=6

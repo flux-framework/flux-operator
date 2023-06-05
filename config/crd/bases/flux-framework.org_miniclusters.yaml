@@ -262,6 +262,10 @@ spec:
                     description: Log level to use for flux logging (only in non TestMode)
                     format: int32
                     type: integer
+                  minimalService:
+                    description: Only expose the broker service (to reduce load on
+                      DNS)
+                    type: boolean
                   optionFlags:
                     description: Flux option flags, usually provided with -o optional
                       - if needed, default option flags for the server These can also

@@ -55,6 +55,7 @@ jobs:
       fail-fast: false
       matrix:
         test: [["hello-world", "ghcr.io/flux-framework/flux-restful-api:latest", 60],
+               ["minimal-service", "ghcr.io/flux-framework/flux-restful-api:latest", 60],
                ["post", "ghcr.io/flux-framework/flux-restful-api:latest", 60],
                ["batch", "ghcr.io/flux-framework/flux-restful-api:latest", 60],
                ["singularity", "ghcr.io/rse-ops/singularity:tag-mamba", 60],

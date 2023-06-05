@@ -1,0 +1,21 @@
+apiVersion: flux-framework.org/v1alpha1
+kind: MiniCluster
+metadata:
+  name: flux-sample
+  namespace: flux-operator
+spec:
+  # Number of pods to create for MiniCluster
+  size: 4
+  tasks: 4
+    
+  logging:
+    quiet: true
+
+  # Minimal service for Flux means only the lead broker gets an address
+  flux:
+    minimalService: true
+
+  # This is a list because a pod can support multiple containers
+  containers:
+    - image: ghcr.io/flux-framework/flux-restful-api:latest
+      command: echo hello-world
