@@ -33,6 +33,10 @@ type MiniClusterSpec struct {
 	// +listType=atomic
 	Services []MiniClusterContainer `json:"services"`
 
+	// A spec for exposing or defining the cluster headless service
+	//+optional
+	Network Network `json:"network"`
+
 	// Users of the MiniCluster
 	// +optional
 	// +listType=atomic
@@ -102,6 +106,15 @@ type MiniClusterSpec struct {
 	// Pod spec details
 	// +optional
 	Pod PodSpec `json:"pod"`
+}
+
+type Network struct {
+
+	// Name for cluster headless service
+	// +kubebuilder:default="flux-service"
+	// +default="flux-service"
+	// +optional
+	HeadlessName string `json:"headlessName,omitempty"`
 }
 
 type MiniClusterUser struct {
@@ -289,6 +302,15 @@ type MiniClusterExistingVolume struct {
 	// Path and claim name are always required if a secret isn't defined
 	// +optional
 	Path string `json:"path,omitempty"`
+
+	// Config map name if the existing volume is a config map
+	// You should also define items if you are using this
+	// +optional
+	ConfigMapName string `json:"configMapName,omitempty"`
+
+	// Items (key and paths) for the config map
+	// +optional
+	Items map[string]string `json:"items"`
 
 	// Claim name if the existing volume is a PVC
 	// +optional
@@ -558,10 +580,20 @@ func (f *MiniCluster) MultiUser() bool {
 
 // Return a lookup of all container existing volumes (for the higher level Pod)
 // Volumes are unique by name.
-func (f *MiniCluster) ExistingVolumes() map[string]MiniClusterExistingVolume {
+func (f *MiniCluster) ExistingContainerVolumes() map[string]MiniClusterExistingVolume {
+	return uniqueExistingVolumes(f.Spec.Containers)
+}
 
+// Return a lookup of all service existing volumes (for the higher level Pod)
+// Volumes are unique by name.
+func (f *MiniCluster) ExistingServiceVolumes() map[string]MiniClusterExistingVolume {
+	return uniqueExistingVolumes(f.Spec.Services)
+}
+
+// uniqueExistingVolumes is a shared function to populate existing container or service volumes
+func uniqueExistingVolumes(containers []MiniClusterContainer) map[string]MiniClusterExistingVolume {
 	volumes := map[string]MiniClusterExistingVolume{}
-	for _, container := range f.Spec.Containers {
+	for _, container := range containers {
 		for name, volume := range container.ExistingVolumes {
 			volumes[name] = volume
 		}
@@ -595,6 +627,11 @@ func (f *MiniCluster) Validate() bool {
 	// Set the Flux install root
 	if f.Spec.Flux.InstallRoot == "" {
 		f.Spec.Flux.InstallRoot = "/usr"
+	}
+
+	// Set the default headless service name
+	if f.Spec.Network.HeadlessName == "" {
+		f.Spec.Network.HeadlessName = "flux-service"
 	}
 
 	// If the MaxSize isn't set, ensure it's equal to the size
@@ -700,18 +737,39 @@ func (f *MiniCluster) Validate() bool {
 	}
 
 	// For existing volumes, if it's a claim, a path is required.
-	for key, volume := range f.ExistingVolumes() {
+	if !f.validateExistingVolumes(f.ExistingContainerVolumes()) {
+		fmt.Printf("😥️ Existing container volumes are not valid\n")
+		return false
+	}
+	if !f.validateExistingVolumes(f.ExistingServiceVolumes()) {
+		fmt.Printf("😥️ Existing service volumes are not valid\n")
+		return false
+	}
+
+	return valid
+}
+
+// validateExistingVolumes ensures secret names vs. volume paths are valid
+func (f *MiniCluster) validateExistingVolumes(existing map[string]MiniClusterExistingVolume) bool {
+	valid := true
+	for key, volume := range existing {
 
 		// Case 1: it's a secret and we only need that
 		if volume.SecretName != "" {
 			continue
 		}
-		// Case 2: claim desired without path
+
+		// Case 2: it's a config map (and will have items too, but we don't hard require them)
+		if volume.ConfigMapName != "" {
+			continue
+		}
+
+		// Case 3: claim desired without path
 		if volume.ClaimName == "" && volume.Path != "" {
 			fmt.Printf("😥️ Found existing volume %s with path %s that is missing a claim name\n", key, volume.Path)
 			valid = false
 		}
-		// Case 3: reverse of the above
+		// Case 4: reverse of the above
 		if volume.ClaimName != "" && volume.Path == "" {
 			fmt.Printf("😥️ Found existing volume %s with claimName %s that is missing a path\n", key, volume.ClaimName)
 			valid = false

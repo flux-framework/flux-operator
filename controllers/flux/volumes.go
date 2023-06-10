@@ -136,8 +136,30 @@ func getVolumes(cluster *api.MiniCluster) []corev1.Volume {
 
 	// Add volumes that already exist (not created by the Flux Operator)
 	// These are unique names and path/claim names across containers
-	// This can be a claim or a secret
-	for volumeName, volumeMeta := range cluster.ExistingVolumes() {
+	// This can be a claim, secret, or config map
+	existingVolumes := getExistingVolumes(cluster.ExistingContainerVolumes())
+	volumes = append(volumes, existingVolumes...)
+
+	// Add claims for storage types requested
+	// These are created by the Flux Operator and should be Container Storage Interfaces (CSI)
+	for volumeName := range cluster.Spec.Volumes {
+		newVolume := corev1.Volume{
+			Name: volumeName,
+			VolumeSource: corev1.VolumeSource{
+				PersistentVolumeClaim: &corev1.PersistentVolumeClaimVolumeSource{
+					ClaimName: fmt.Sprintf("%s-claim", volumeName),
+				},
+			},
+		}
+		volumes = append(volumes, newVolume)
+	}
+	return volumes
+}
+
+// Get Existing volumes for the MiniCluster
+func getExistingVolumes(existing map[string]api.MiniClusterExistingVolume) []corev1.Volume {
+	volumes := []corev1.Volume{}
+	for volumeName, volumeMeta := range existing {
 
 		var newVolume corev1.Volume
 		if volumeMeta.SecretName != "" {
@@ -146,6 +168,31 @@ func getVolumes(cluster *api.MiniCluster) []corev1.Volume {
 				VolumeSource: corev1.VolumeSource{
 					Secret: &corev1.SecretVolumeSource{
 						SecretName: volumeMeta.SecretName,
+					},
+				},
+			}
+
+		} else if volumeMeta.ConfigMapName != "" {
+
+			// Prepare items as key to path
+			items := []corev1.KeyToPath{}
+			for key, path := range volumeMeta.Items {
+				newItem := corev1.KeyToPath{
+					Key:  key,
+					Path: path,
+				}
+				items = append(items, newItem)
+			}
+
+			// This is a config map volume with items
+			newVolume = corev1.Volume{
+				Name: volumeMeta.ConfigMapName,
+				VolumeSource: corev1.VolumeSource{
+					ConfigMap: &corev1.ConfigMapVolumeSource{
+						LocalObjectReference: corev1.LocalObjectReference{
+							Name: volumeMeta.ConfigMapName,
+						},
+						Items: items,
 					},
 				},
 			}
@@ -161,20 +208,6 @@ func getVolumes(cluster *api.MiniCluster) []corev1.Volume {
 					},
 				},
 			}
-		}
-		volumes = append(volumes, newVolume)
-	}
-
-	// Add claims for storage types requested
-	// These are created by the Flux Operator and should be Container Storage Interfaces (CSI)
-	for volumeName := range cluster.Spec.Volumes {
-		newVolume := corev1.Volume{
-			Name: volumeName,
-			VolumeSource: corev1.VolumeSource{
-				PersistentVolumeClaim: &corev1.PersistentVolumeClaimVolumeSource{
-					ClaimName: fmt.Sprintf("%s-claim", volumeName),
-				},
-			},
 		}
 		volumes = append(volumes, newVolume)
 	}

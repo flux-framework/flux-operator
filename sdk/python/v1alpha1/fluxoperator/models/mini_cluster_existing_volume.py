@@ -34,6 +34,8 @@ class MiniClusterExistingVolume(object):
     """
     openapi_types = {
         'claim_name': 'str',
+        'config_map_name': 'str',
+        'items': 'dict(str, str)',
         'path': 'str',
         'read_only': 'bool',
         'secret_name': 'str'
@@ -41,18 +43,22 @@ class MiniClusterExistingVolume(object):
 
     attribute_map = {
         'claim_name': 'claimName',
+        'config_map_name': 'configMapName',
+        'items': 'items',
         'path': 'path',
         'read_only': 'readOnly',
         'secret_name': 'secretName'
     }
 
-    def __init__(self, claim_name=None, path=None, read_only=False, secret_name=None, local_vars_configuration=None):  # noqa: E501
+    def __init__(self, claim_name=None, config_map_name=None, items=None, path=None, read_only=False, secret_name=None, local_vars_configuration=None):  # noqa: E501
         """MiniClusterExistingVolume - a model defined in OpenAPI"""  # noqa: E501
         if local_vars_configuration is None:
             local_vars_configuration = Configuration.get_default_copy()
         self.local_vars_configuration = local_vars_configuration
 
         self._claim_name = None
+        self._config_map_name = None
+        self._items = None
         self._path = None
         self._read_only = None
         self._secret_name = None
@@ -60,6 +66,10 @@ class MiniClusterExistingVolume(object):
 
         if claim_name is not None:
             self.claim_name = claim_name
+        if config_map_name is not None:
+            self.config_map_name = config_map_name
+        if items is not None:
+            self.items = items
         if path is not None:
             self.path = path
         if read_only is not None:
@@ -89,6 +99,52 @@ class MiniClusterExistingVolume(object):
         """
 
         self._claim_name = claim_name
+
+    @property
+    def config_map_name(self):
+        """Gets the config_map_name of this MiniClusterExistingVolume.  # noqa: E501
+
+        Config map name if the existing volume is a config map You should also define items if you are using this  # noqa: E501
+
+        :return: The config_map_name of this MiniClusterExistingVolume.  # noqa: E501
+        :rtype: str
+        """
+        return self._config_map_name
+
+    @config_map_name.setter
+    def config_map_name(self, config_map_name):
+        """Sets the config_map_name of this MiniClusterExistingVolume.
+
+        Config map name if the existing volume is a config map You should also define items if you are using this  # noqa: E501
+
+        :param config_map_name: The config_map_name of this MiniClusterExistingVolume.  # noqa: E501
+        :type config_map_name: str
+        """
+
+        self._config_map_name = config_map_name
+
+    @property
+    def items(self):
+        """Gets the items of this MiniClusterExistingVolume.  # noqa: E501
+
+        Items (key and paths) for the config map  # noqa: E501
+
+        :return: The items of this MiniClusterExistingVolume.  # noqa: E501
+        :rtype: dict(str, str)
+        """
+        return self._items
+
+    @items.setter
+    def items(self, items):
+        """Sets the items of this MiniClusterExistingVolume.
+
+        Items (key and paths) for the config map  # noqa: E501
+
+        :param items: The items of this MiniClusterExistingVolume.  # noqa: E501
+        :type items: dict(str, str)
+        """
+
+        self._items = items
 
     @property
     def path(self):

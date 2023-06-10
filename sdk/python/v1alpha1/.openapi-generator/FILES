@@ -19,6 +19,7 @@ docs/MiniClusterSpec.md
 docs/MiniClusterStatus.md
 docs/MiniClusterUser.md
 docs/MiniClusterVolume.md
+docs/Network.md
 docs/PodSpec.md
 docs/SecurityContext.md
 fluxoperator/__init__.py
@@ -44,6 +45,7 @@ fluxoperator/models/mini_cluster_spec.py
 fluxoperator/models/mini_cluster_status.py
 fluxoperator/models/mini_cluster_user.py
 fluxoperator/models/mini_cluster_volume.py
+fluxoperator/models/network.py
 fluxoperator/models/pod_spec.py
 fluxoperator/models/security_context.py
 fluxoperator/rest.py

@@ -387,6 +387,18 @@
           "description": "Claim name if the existing volume is a PVC",
           "type": "string"
         },
+        "configMapName": {
+          "description": "Config map name if the existing volume is a config map You should also define items if you are using this",
+          "type": "string"
+        },
+        "items": {
+          "description": "Items (key and paths) for the config map",
+          "type": "object",
+          "additionalProperties": {
+            "type": "string",
+            "default": ""
+          }
+        },
         "path": {
           "description": "Path and claim name are always required if a secret isn't defined",
           "type": "string"
@@ -493,6 +505,11 @@
           "description": "MaxSize (maximum number of pods to allow scaling to)",
           "type": "integer",
           "format": "int32"
+        },
+        "network": {
+          "description": "A spec for exposing or defining the cluster headless service",
+          "default": {},
+          "$ref": "#/definitions/Network"
         },
         "pod": {
           "description": "Pod spec details",
@@ -673,6 +690,16 @@
           "description": "Volume handle, falls back to storage class name if not defined",
           "type": "string",
           "default": ""
+        }
+      }
+    },
+    "Network": {
+      "type": "object",
+      "properties": {
+        "headlessName": {
+          "description": "Name for cluster headless service",
+          "type": "string",
+          "default": "flux-service"
         }
       }
     },
