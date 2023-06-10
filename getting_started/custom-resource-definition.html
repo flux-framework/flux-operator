@@ -963,6 +963,33 @@
     <span title="/getting_started/custom-resource-definition.md#existingvolumes (reference label)" class="md-ellipsis">existing<wbr>Volumes</span>
   </a>
   
+    <nav class="md-nav" aria-label="existingVolumes">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#persistent-volume-claim-example" class="md-nav__link">
+    <span title="/getting_started/custom-resource-definition.md#persistent-volume-claim-example (reference label)" class="md-ellipsis">persistent volume claim example</span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#config-map-example" class="md-nav__link">
+    <span title="/getting_started/custom-resource-definition.md#config-map-example (reference label)" class="md-ellipsis">config map example</span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#secret-example" class="md-nav__link">
+    <span title="/getting_started/custom-resource-definition.md#secret-example (reference label)" class="md-ellipsis">secret example</span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
         
           <li class="md-nav__item">
@@ -1999,9 +2026,16 @@ If you want to change the readOnly status to true:</p>
 </code></pre></div>
 </div>
 <h3 id="existingvolumes">existingVolumes<a class="headerlink" href="#existingvolumes" title="Permalink to this heading">¶</a></h3>
-<p>Existing volumes come down (typically) to a persistent volume claim (PVC) and persistent volume (PV)
-that you’ve already created and want to give to the operator. As an example, the IBM plugin we use
-to setup takes this approach, and then we define the existing volume on the level of the container:</p>
+<p>An existing volume can be:</p>
+<ul class="simple">
+<li><p>a persistent volume claim (PVC) and persistent volume (PV) that you’ve created</p></li>
+<li><p>a secret that you’ve created</p></li>
+<li><p>a config map that you’ve created</p></li>
+</ul>
+<p>and for all of the above, you want to provide it to the operator, which will work either for a worker
+pod (in the indexed job) or a service.</p>
+<h4 id="persistent-volume-claim-example">persistent volume claim example<a class="headerlink" href="#persistent-volume-claim-example" title="Permalink to this heading">¶</a></h4>
+<p>As an example, the IBM plugin we use to setup takes this approach, and then we define the existing volume on the level of the container:</p>
 <div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><code><span class="c1"># This is a list because a pod can support multiple containers</span>
 <span class="nt">containers</span><span class="p">:</span>
 
@@ -2019,6 +2053,56 @@ to setup takes this approach, and then we define the existing volume on the leve
 <p>The above would add a claim named “data” to the container it is defined alongside. Note that the names
 define uniqueness, so if you use a claim in two places with the same name “data” it should also
 use the same path “/workflow.” If this doesn’t work for your use case, please <a class="reference external" href="https://github.com/flux-framework/flux-operator/issues">let us know</a>.</p>
+<h4 id="config-map-example">config map example<a class="headerlink" href="#config-map-example" title="Permalink to this heading">¶</a></h4>
+<p>Here is an example of providing a config map to a service container (that runs as a sidecar container alongside the MiniCluster)
+that we want to add to the service container. In layman’s terms, we are deploying vanilla nginx, but adding a configuration file
+to <code class="docutils literal notranslate"><span class="pre">/etc/nginx/conf.d</span></code></p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><code><span class="c1"># Add an nginx service with an existing config map</span>
+<span class="nt">services</span><span class="p">:</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">image</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">nginx</span>
+<span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">nginx</span>
+<span class="w">    </span><span class="nt">existingVolumes</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">nginx-conf</span><span class="p">:</span>
+<span class="w">        </span><span class="nt">configMapName</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">nginx-conf</span><span class="w"> </span>
+<span class="w">        </span><span class="nt">path</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">/etc/nginx/conf.d</span>
+<span class="w">        </span><span class="nt">items</span><span class="p">:</span>
+<span class="w">          </span><span class="nt">flux.conf</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">flux.conf</span>
+</code></pre></div>
+</div>
+<p>Your config map would be created separately (likely first, before the MiniCluster). Here is an example:</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><code><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">v1</span>
+<span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ConfigMap</span>
+<span class="nt">metadata</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">nginx-conf</span>
+<span class="w">  </span><span class="nt">namespace</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">flux-operator</span>
+<span class="nt">data</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">flux.conf</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">|</span>
+<span class="w">    </span><span class="no">server {</span>
+<span class="w">        </span><span class="no">listen       80;</span>
+<span class="w">        </span><span class="no">server_name  localhost;</span>
+<span class="w">        </span><span class="no">location / {</span>
+<span class="w">          </span><span class="no">root   /usr/share/nginx/html;</span>
+<span class="w">          </span><span class="no">index  index.html index.htm;</span>
+<span class="w">        </span><span class="no">}        </span>
+<span class="w">    </span><span class="no">}</span>
+</code></pre></div>
+</div>
+<p>Note that the above block <code class="docutils literal notranslate"><span class="pre">existingVolumes</span></code> is valid to be under the
+MiniCluster-&gt;containers section too. Either MiniCluster containers OR service
+containers can have existingVolumes of any type.</p>
+<h4 id="secret-example">secret example<a class="headerlink" href="#secret-example" title="Permalink to this heading">¶</a></h4>
+<p>Here is an example of providing an existing secret (in the flux-operator namespace)
+to the indexed job container:</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><code><span class="nt">containers</span><span class="p">:</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">image</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ghcr.io/rse-ops/singularity:tag-mamba</span>
+<span class="w">    </span><span class="nt">workingDir</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">/data</span>
+<span class="w">    </span><span class="nt">existingVolumes</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">certs</span><span class="p">:</span>
+<span class="w">        </span><span class="nt">path</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">/etc/certs</span>
+<span class="w">        </span><span class="nt">secretName</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">certs</span>
+</code></pre></div>
+</div>
+<p>The above shows an existing secret named “certs” that we will mount into <code class="docutils literal notranslate"><span class="pre">/etc/certs</span></code>.</p>
 <h3 id="fluxrestful">fluxRestful<a class="headerlink" href="#fluxrestful" title="Permalink to this heading">¶</a></h3>
 <p>The “fluxRestful” section has a few parameters to dictate the installation of the
 <a class="reference external" href="https://github.com/flux-framework/flux-restful-api">Flux Restful API</a>, which provides
@@ -2054,7 +2138,7 @@ or define your own as follows:</p>
   <small>
     
       Last update:
-      Jun 05, 2023
+      Jun 10, 2023
     
   </small>
 </div>

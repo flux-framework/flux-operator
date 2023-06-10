@@ -10,7 +10,8 @@ flux install, along with a service for the entire cluster (a deployment next to 
  **[Tutorial File](https://github.com/flux-framework/flux-operator/blob/main/examples/tests/nginx-sidecar-service/minicluster.yaml)**
 
 This is one of the simplest examples, implemented as a test, to run a sidecar with NGINX and then curl localhost
-to get a response from flux.
+to get a response from flux. Note that if you are interested in a more complex example that does similar, but also
+provides a custom nginx.conf and shows how to interact with the flux restful API, see the [services/sidecar/nginx](https://github.com/flux-framework/flux-operator/blob/main/examples/services/sidecar/nginx) example.
 
 ```yaml
 apiVersion: flux-framework.org/v1alpha1

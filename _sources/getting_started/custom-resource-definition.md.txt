@@ -1054,10 +1054,18 @@ volumes:
 
 ### existingVolumes
 
-Existing volumes come down (typically) to a persistent volume claim (PVC) and persistent volume (PV)
-that you've already created and want to give to the operator. As an example, the IBM plugin we use
-to setup takes this approach, and then we define the existing volume on the level of the container:
+An existing volume can be:
 
+ - a persistent volume claim (PVC) and persistent volume (PV) that you've created
+ - a secret that you've created
+ - a config map that you've created
+
+and for all of the above, you want to provide it to the operator, which will work either for a worker
+pod (in the indexed job) or a service. 
+
+#### persistent volume claim example
+
+As an example, the IBM plugin we use to setup takes this approach, and then we define the existing volume on the level of the container:
 
 ```yaml
 # This is a list because a pod can support multiple containers
@@ -1077,6 +1085,66 @@ containers:
 The above would add a claim named "data" to the container it is defined alongside. Note that the names
 define uniqueness, so if you use a claim in two places with the same name "data" it should also
 use the same path "/workflow." If this doesn't work for your use case, please [let us know](https://github.com/flux-framework/flux-operator/issues).
+
+#### config map example
+
+Here is an example of providing a config map to a service container (that runs as a sidecar container alongside the MiniCluster)
+that we want to add to the service container. In layman's terms, we are deploying vanilla nginx, but adding a configuration file
+to `/etc/nginx/conf.d`
+
+```yaml
+# Add an nginx service with an existing config map
+services:
+  - image: nginx
+    name: nginx
+    existingVolumes:
+      nginx-conf:
+        configMapName: nginx-conf 
+        path: /etc/nginx/conf.d
+        items:
+          flux.conf: flux.conf
+```
+
+Your config map would be created separately (likely first, before the MiniCluster). Here is an example:
+
+```yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: nginx-conf
+  namespace: flux-operator
+data:
+  flux.conf: |
+    server {
+        listen       80;
+        server_name  localhost;
+        location / {
+          root   /usr/share/nginx/html;
+          index  index.html index.htm;
+        }        
+    }
+```
+
+Note that the above block `existingVolumes` is valid to be under the
+MiniCluster->containers section too. Either MiniCluster containers OR service
+containers can have existingVolumes of any type.
+
+#### secret example
+
+Here is an example of providing an existing secret (in the flux-operator namespace)
+to the indexed job container:
+
+```yaml
+containers:
+  - image: ghcr.io/rse-ops/singularity:tag-mamba
+    workingDir: /data
+    existingVolumes:
+      certs:
+        path: /etc/certs
+        secretName: certs
+```
+
+The above shows an existing secret named "certs" that we will mount into `/etc/certs`.
 
 ### fluxRestful
 

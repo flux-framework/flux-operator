@@ -892,7 +892,8 @@ flux install, along with a service for the entire cluster (a deployment next to 
 <h3 id="sidecar-nginx-container">Sidecar NGINX Container<a class="headerlink" href="#sidecar-nginx-container" title="Permalink to this heading">¶</a></h3>
 <p><strong><a class="reference external" href="https://github.com/flux-framework/flux-operator/blob/main/examples/tests/nginx-sidecar-service/minicluster.yaml">Tutorial File</a></strong></p>
 <p>This is one of the simplest examples, implemented as a test, to run a sidecar with NGINX and then curl localhost
-to get a response from flux.</p>
+to get a response from flux. Note that if you are interested in a more complex example that does similar, but also
+provides a custom nginx.conf and shows how to interact with the flux restful API, see the <a class="reference external" href="https://github.com/flux-framework/flux-operator/blob/main/examples/services/sidecar/nginx">services/sidecar/nginx</a> example.</p>
 <div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><code><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">flux-framework.org/v1alpha1</span>
 <span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">MiniCluster</span>
 <span class="nt">metadata</span><span class="p">:</span>
@@ -1186,7 +1187,7 @@ why do we also need a celery queue?</p>
   <small>
     
       Last update:
-      Jun 05, 2023
+      Jun 10, 2023
     
   </small>
 </div>
