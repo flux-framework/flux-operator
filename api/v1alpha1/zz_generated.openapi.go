@@ -41,6 +41,7 @@ func GetOpenAPIDefinitions(ref common.ReferenceCallback) map[string]common.OpenA
 		"./api/v1alpha1/.MiniClusterStatus":         schema__api_v1alpha1__MiniClusterStatus(ref),
 		"./api/v1alpha1/.MiniClusterUser":           schema__api_v1alpha1__MiniClusterUser(ref),
 		"./api/v1alpha1/.MiniClusterVolume":         schema__api_v1alpha1__MiniClusterVolume(ref),
+		"./api/v1alpha1/.Network":                   schema__api_v1alpha1__Network(ref),
 		"./api/v1alpha1/.PodSpec":                   schema__api_v1alpha1__PodSpec(ref),
 		"./api/v1alpha1/.SecurityContext":           schema__api_v1alpha1__SecurityContext(ref),
 	}
@@ -709,6 +710,29 @@ func schema__api_v1alpha1__MiniClusterExistingVolume(ref common.ReferenceCallbac
 							Format:      "",
 						},
 					},
+					"configMapName": {
+						SchemaProps: spec.SchemaProps{
+							Description: "Config map name if the existing volume is a config map You should also define items if you are using this",
+							Type:        []string{"string"},
+							Format:      "",
+						},
+					},
+					"items": {
+						SchemaProps: spec.SchemaProps{
+							Description: "Items (key and paths) for the config map",
+							Type:        []string{"object"},
+							AdditionalProperties: &spec.SchemaOrBool{
+								Allows: true,
+								Schema: &spec.Schema{
+									SchemaProps: spec.SchemaProps{
+										Default: "",
+										Type:    []string{"string"},
+										Format:  "",
+									},
+								},
+							},
+						},
+					},
 					"claimName": {
 						SchemaProps: spec.SchemaProps{
 							Description: "Claim name if the existing volume is a PVC",
@@ -828,6 +852,13 @@ func schema__api_v1alpha1__MiniClusterSpec(ref common.ReferenceCallback) common.
 									},
 								},
 							},
+						},
+					},
+					"network": {
+						SchemaProps: spec.SchemaProps{
+							Description: "A spec for exposing or defining the cluster headless service",
+							Default:     map[string]interface{}{},
+							Ref:         ref("./api/v1alpha1/.Network"),
 						},
 					},
 					"users": {
@@ -967,7 +998,7 @@ func schema__api_v1alpha1__MiniClusterSpec(ref common.ReferenceCallback) common.
 			},
 		},
 		Dependencies: []string{
-			"./api/v1alpha1/.FluxRestful", "./api/v1alpha1/.FluxSpec", "./api/v1alpha1/.LoggingSpec", "./api/v1alpha1/.MiniClusterArchive", "./api/v1alpha1/.MiniClusterContainer", "./api/v1alpha1/.MiniClusterUser", "./api/v1alpha1/.MiniClusterVolume", "./api/v1alpha1/.PodSpec"},
+			"./api/v1alpha1/.FluxRestful", "./api/v1alpha1/.FluxSpec", "./api/v1alpha1/.LoggingSpec", "./api/v1alpha1/.MiniClusterArchive", "./api/v1alpha1/.MiniClusterContainer", "./api/v1alpha1/.MiniClusterUser", "./api/v1alpha1/.MiniClusterVolume", "./api/v1alpha1/.Network", "./api/v1alpha1/.PodSpec"},
 	}
 }
 
@@ -1199,6 +1230,26 @@ func schema__api_v1alpha1__MiniClusterVolume(ref common.ReferenceCallback) commo
 					},
 				},
 				Required: []string{"path"},
+			},
+		},
+	}
+}
+
+func schema__api_v1alpha1__Network(ref common.ReferenceCallback) common.OpenAPIDefinition {
+	return common.OpenAPIDefinition{
+		Schema: spec.Schema{
+			SchemaProps: spec.SchemaProps{
+				Type: []string{"object"},
+				Properties: map[string]spec.Schema{
+					"headlessName": {
+						SchemaProps: spec.SchemaProps{
+							Description: "Name for cluster headless service",
+							Default:     "flux-service",
+							Type:        []string{"string"},
+							Format:      "",
+						},
+					},
+				},
 			},
 		},
 	}

@@ -112,6 +112,9 @@ func (r *MiniClusterReconciler) newServicePod(
 	// service selector?
 	podLabels["job-name"] = cluster.Name
 
+	// Services can have existing volumes
+	existingVolumes := getExistingVolumes(cluster.ExistingServiceVolumes())
+
 	// This is an indexed-job
 	pod := &corev1.Pod{
 		ObjectMeta: metav1.ObjectMeta{
@@ -122,15 +125,18 @@ func (r *MiniClusterReconciler) newServicePod(
 		},
 		Spec: corev1.PodSpec{
 			// This is the headless service name
-			Subdomain:          restfulServiceName,
+			Subdomain:          cluster.Spec.Network.HeadlessName,
 			Hostname:           podServiceName,
 			SetHostnameAsFQDN:  &setAsFQDN,
+			Volumes:            existingVolumes,
 			RestartPolicy:      corev1.RestartPolicyOnFailure,
 			ImagePullSecrets:   getImagePullSecrets(cluster),
 			ServiceAccountName: cluster.Spec.Pod.ServiceAccountName,
 			NodeSelector:       cluster.Spec.Pod.NodeSelector,
 		},
 	}
+
+	// Assemble existing volume mounts - they are added with getContainers
 	mounts := []corev1.VolumeMount{}
 	containers, err := r.getContainers(cluster.Spec.Services, podServiceName, mounts)
 	if err != nil {

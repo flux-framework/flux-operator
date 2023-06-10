@@ -88,10 +88,13 @@ func (r *MiniClusterReconciler) ensureMiniCluster(
 
 	// Create headless service for the MiniCluster OR single service for the broker
 	selector := map[string]string{"job-name": cluster.Name}
+
+	// If we are adding a minimal service to the index 0 pod only
 	if cluster.Spec.Flux.MinimalService {
 		selector = map[string]string{"job-index": "0"}
 	}
-	result, err = r.exposeServices(ctx, cluster, restfulServiceName, selector)
+
+	result, err = r.exposeServices(ctx, cluster, cluster.Spec.Network.HeadlessName, selector)
 	if err != nil {
 		return result, err
 	}
@@ -396,7 +399,7 @@ func generateHostlist(cluster *api.MiniCluster, size int) string {
 func generateFluxConfig(cluster *api.MiniCluster) string {
 
 	// The hosts are generated through the max size, so the cluster can expand
-	fqdn := fmt.Sprintf("%s.%s.svc.cluster.local", restfulServiceName, cluster.Namespace)
+	fqdn := fmt.Sprintf("%s.%s.svc.cluster.local", cluster.Spec.Network.HeadlessName, cluster.Namespace)
 	hosts := fmt.Sprintf("[%s]", generateRange(int(cluster.Spec.MaxSize)))
 	fluxConfig := fmt.Sprintf(brokerConfigTemplate, cluster.FluxInstallRoot(), fqdn, cluster.Name, hosts)
 	fluxConfig += "\n" + brokerArchiveSection

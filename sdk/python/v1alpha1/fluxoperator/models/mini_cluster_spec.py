@@ -43,6 +43,7 @@ class MiniClusterSpec(object):
         'job_labels': 'dict(str, str)',
         'logging': 'LoggingSpec',
         'max_size': 'int',
+        'network': 'Network',
         'pod': 'PodSpec',
         'services': 'list[MiniClusterContainer]',
         'size': 'int',
@@ -62,6 +63,7 @@ class MiniClusterSpec(object):
         'job_labels': 'jobLabels',
         'logging': 'logging',
         'max_size': 'maxSize',
+        'network': 'network',
         'pod': 'pod',
         'services': 'services',
         'size': 'size',
@@ -70,7 +72,7 @@ class MiniClusterSpec(object):
         'volumes': 'volumes'
     }
 
-    def __init__(self, archive=None, cleanup=False, containers=None, deadline_seconds=31500000, flux=None, flux_restful=None, interactive=False, job_labels=None, logging=None, max_size=None, pod=None, services=None, size=1, tasks=1, users=None, volumes=None, local_vars_configuration=None):  # noqa: E501
+    def __init__(self, archive=None, cleanup=False, containers=None, deadline_seconds=31500000, flux=None, flux_restful=None, interactive=False, job_labels=None, logging=None, max_size=None, network=None, pod=None, services=None, size=1, tasks=1, users=None, volumes=None, local_vars_configuration=None):  # noqa: E501
         """MiniClusterSpec - a model defined in OpenAPI"""  # noqa: E501
         if local_vars_configuration is None:
             local_vars_configuration = Configuration.get_default_copy()
@@ -86,6 +88,7 @@ class MiniClusterSpec(object):
         self._job_labels = None
         self._logging = None
         self._max_size = None
+        self._network = None
         self._pod = None
         self._services = None
         self._size = None
@@ -113,6 +116,8 @@ class MiniClusterSpec(object):
             self.logging = logging
         if max_size is not None:
             self.max_size = max_size
+        if network is not None:
+            self.network = network
         if pod is not None:
             self.pod = pod
         if services is not None:
@@ -349,6 +354,27 @@ class MiniClusterSpec(object):
         """
 
         self._max_size = max_size
+
+    @property
+    def network(self):
+        """Gets the network of this MiniClusterSpec.  # noqa: E501
+
+
+        :return: The network of this MiniClusterSpec.  # noqa: E501
+        :rtype: Network
+        """
+        return self._network
+
+    @network.setter
+    def network(self, network):
+        """Sets the network of this MiniClusterSpec.
+
+
+        :param network: The network of this MiniClusterSpec.  # noqa: E501
+        :type network: Network
+        """
+
+        self._network = network
 
     @property
     def pod(self):

@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: nginx-service
+  namespace: flux-operator
+spec:
+  type: NodePort
+  ports:
+    # nginx running on port 80 of pod
+    # will expose to 30093
+  - port: 80
+    nodePort: 30093
+  selector:
+    job-index: services

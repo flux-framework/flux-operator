@@ -247,12 +247,12 @@ func (r *MiniClusterReconciler) createMiniClusterIngress(
 	}
 	err := ctrl.SetControllerReference(cluster, ingress, r.Scheme)
 	if err != nil {
-		r.log.Error(err, "🔴 Create ingress", "Service", restfulServiceName)
+		r.log.Error(err, "🔴 Create ingress", "Service", cluster.Spec.Network.HeadlessName)
 		return err
 	}
 	err = r.New(ctx, ingress)
 	if err != nil {
-		r.log.Error(err, "🔴 Create ingress", "Service", restfulServiceName)
+		r.log.Error(err, "🔴 Create ingress", "Service", cluster.Spec.Network.HeadlessName)
 		return err
 	}
 	return nil

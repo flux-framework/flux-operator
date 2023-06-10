@@ -61,7 +61,7 @@ func (r *MiniClusterReconciler) newMiniClusterJob(
 				},
 				Spec: corev1.PodSpec{
 					// matches the service
-					Subdomain:          restfulServiceName,
+					Subdomain:          cluster.Spec.Network.HeadlessName,
 					SetHostnameAsFQDN:  &setAsFQDN,
 					Volumes:            getVolumes(cluster),
 					RestartPolicy:      corev1.RestartPolicyOnFailure,

@@ -73,6 +73,7 @@ from pprint import pprint
  - [MiniClusterUser](MiniClusterUser.md)
  - [MiniClusterExistingVolume](MiniClusterExistingVolume.md)
  - [MiniClusterVolume](MiniClusterVolume.md)
+ - [Network](Network.md)
  - [PodSpec](PodSpec.md)
  - [SecurityContext](SecurityContext.md)
 

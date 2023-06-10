@@ -115,6 +115,16 @@ spec:
                           claimName:
                             description: Claim name if the existing volume is a PVC
                             type: string
+                          configMapName:
+                            description: Config map name if the existing volume is
+                              a config map You should also define items if you are
+                              using this
+                            type: string
+                          items:
+                            additionalProperties:
+                              type: string
+                            description: Items (key and paths) for the config map
+                            type: object
                           path:
                             description: Path and claim name are always required if
                               a secret isn't defined
@@ -341,6 +351,15 @@ spec:
                 description: MaxSize (maximum number of pods to allow scaling to)
                 format: int32
                 type: integer
+              network:
+                description: A spec for exposing or defining the cluster headless
+                  service
+                properties:
+                  headlessName:
+                    default: flux-service
+                    description: Name for cluster headless service
+                    type: string
+                type: object
               pod:
                 description: Pod spec details
                 properties:
@@ -437,6 +456,16 @@ spec:
                           claimName:
                             description: Claim name if the existing volume is a PVC
                             type: string
+                          configMapName:
+                            description: Config map name if the existing volume is
+                              a config map You should also define items if you are
+                              using this
+                            type: string
+                          items:
+                            additionalProperties:
+                              type: string
+                            description: Items (key and paths) for the config map
+                            type: object
                           path:
                             description: Path and claim name are always required if
                               a secret isn't defined
