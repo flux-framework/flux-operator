@@ -33,24 +33,33 @@ class FluxSpec(object):
                             and the value is json key in definition.
     """
     openapi_types = {
-        'connect_timeout': 'str',
-        'install_root': 'str',
-        'log_level': 'int',
-        'minimal_service': 'bool',
-        'option_flags': 'str',
-        'wrap': 'str'
+        "connect_timeout": "str",
+        "install_root": "str",
+        "log_level": "int",
+        "minimal_service": "bool",
+        "option_flags": "str",
+        "wrap": "str",
     }
 
     attribute_map = {
-        'connect_timeout': 'connectTimeout',
-        'install_root': 'installRoot',
-        'log_level': 'logLevel',
-        'minimal_service': 'minimalService',
-        'option_flags': 'optionFlags',
-        'wrap': 'wrap'
+        "connect_timeout": "connectTimeout",
+        "install_root": "installRoot",
+        "log_level": "logLevel",
+        "minimal_service": "minimalService",
+        "option_flags": "optionFlags",
+        "wrap": "wrap",
     }
 
-    def __init__(self, connect_timeout='5s', install_root='/usr', log_level=6, minimal_service=False, option_flags='', wrap=None, local_vars_configuration=None):  # noqa: E501
+    def __init__(
+        self,
+        connect_timeout="5s",
+        install_root="/usr",
+        log_level=6,
+        minimal_service=False,
+        option_flags="",
+        wrap=None,
+        local_vars_configuration=None,
+    ):  # noqa: E501
         """FluxSpec - a model defined in OpenAPI"""  # noqa: E501
         if local_vars_configuration is None:
             local_vars_configuration = Configuration.get_default_copy()
@@ -233,15 +242,11 @@ class FluxSpec(object):
             value = getattr(self, attr)
             attr = self.attribute_map.get(attr, attr) if serialize else attr
             if isinstance(value, list):
-                result[attr] = list(map(
-                    lambda x: convert(x),
-                    value
-                ))
+                result[attr] = list(map(lambda x: convert(x), value))
             elif isinstance(value, dict):
-                result[attr] = dict(map(
-                    lambda item: (item[0], convert(item[1])),
-                    value.items()
-                ))
+                result[attr] = dict(
+                    map(lambda item: (item[0], convert(item[1])), value.items())
+                )
             else:
                 result[attr] = convert(value)
 

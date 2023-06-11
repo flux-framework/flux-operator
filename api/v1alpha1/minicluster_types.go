@@ -374,6 +374,16 @@ type FluxSpec struct {
 	// +default=6
 	// +optional
 	LogLevel int32 `json:"logLevel,omitempty"`
+
+	// Optionally provide an already existing curve certificate
+	// this is intended for bursting to remote clusters
+	//+optional
+	CurveCert string `json:"curveCert"`
+
+	// Optionally provide a manually created broker config
+	// this is intended for bursting to remote clusters
+	//+optional
+	BrokerConfig string `json:"brokerConfig"`
 }
 
 type MiniClusterContainer struct {

@@ -408,6 +408,11 @@ func generateHostlist(cluster *api.MiniCluster, size int) string {
 // generateFluxConfig creates the broker.toml file used to boostrap flux
 func generateFluxConfig(cluster *api.MiniCluster) string {
 
+	// If we have a config provided by user, use it.
+	if cluster.Spec.Flux.BrokerConfig != "" {
+		return cluster.Spec.Flux.BrokerConfig
+	}
+
 	// The hosts are generated through the max size, so the cluster can expand
 	fqdn := fmt.Sprintf("%s.%s.svc.cluster.local", cluster.Spec.Network.HeadlessName, cluster.Namespace)
 	hosts := fmt.Sprintf("[%s]", generateRange(int(cluster.Spec.MaxSize)))

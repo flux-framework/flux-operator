@@ -6,7 +6,7 @@ metadata:
 spec:
   # suppress all output except for test run
   logging:
-    quiet: true
+    quiet: false
 
   # Number of pods to create for MiniCluster
   size: 4

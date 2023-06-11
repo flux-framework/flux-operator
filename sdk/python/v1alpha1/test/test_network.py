@@ -19,6 +19,7 @@ import fluxoperator
 from fluxoperator.models.network import Network  # noqa: E501
 from fluxoperator.rest import ApiException
 
+
 class TestNetwork(unittest.TestCase):
     """Network unit test stubs"""
 
@@ -30,22 +31,20 @@ class TestNetwork(unittest.TestCase):
 
     def make_instance(self, include_optional):
         """Test Network
-            include_option is a boolean, when False only required
-            params are included, when True both required and
-            optional params are included """
+        include_option is a boolean, when False only required
+        params are included, when True both required and
+        optional params are included"""
         # model = fluxoperator.models.network.Network()  # noqa: E501
-        if include_optional :
-            return Network(
-                headless_name = 'flux-service'
-            )
-        else :
-            return Network(
-        )
+        if include_optional:
+            return Network(headless_name="flux-service")
+        else:
+            return Network()
 
     def testNetwork(self):
         """Test Network"""
         inst_req_only = self.make_instance(include_optional=False)
         inst_req_and_optional = self.make_instance(include_optional=True)
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     unittest.main()

@@ -6,7 +6,15 @@ import fluxoperator.defaults as defaults
 import sys
 
 # These are known objects we will parse
-_objects = ["logging", "volumes", "resources", "flux_restful", "container", "resources", "flux"]
+_objects = [
+    "logging",
+    "volumes",
+    "resources",
+    "flux_restful",
+    "container",
+    "resources",
+    "flux",
+]
 
 
 def _get_logging_spec(logging):
@@ -51,6 +59,7 @@ def _get_flux_spec(flux):
         if k in flux:
             fluxspec[k] = flux[k]
     return models.FluxSpec(**fluxspec)
+
 
 def _get_container_spec(container):
     """

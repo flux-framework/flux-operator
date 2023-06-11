@@ -24,6 +24,7 @@ The following tutorials are provided from their respective directories (and are 
 
 #### Nested
 
+ - [Bursting](https://github.com/flux-framework/flux-operator/tree/main/examples/experimental/bursting) from a local to an external cluster.
  - [K3s](https://github.com/flux-framework/flux-operator/tree/main/examples/nested/k3s/basic): instiatiate k3s inside Flux, and deploy an app.
 
 

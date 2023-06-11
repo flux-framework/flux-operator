@@ -33,24 +33,33 @@ class MiniClusterExistingVolume(object):
                             and the value is json key in definition.
     """
     openapi_types = {
-        'claim_name': 'str',
-        'config_map_name': 'str',
-        'items': 'dict(str, str)',
-        'path': 'str',
-        'read_only': 'bool',
-        'secret_name': 'str'
+        "claim_name": "str",
+        "config_map_name": "str",
+        "items": "dict(str, str)",
+        "path": "str",
+        "read_only": "bool",
+        "secret_name": "str",
     }
 
     attribute_map = {
-        'claim_name': 'claimName',
-        'config_map_name': 'configMapName',
-        'items': 'items',
-        'path': 'path',
-        'read_only': 'readOnly',
-        'secret_name': 'secretName'
+        "claim_name": "claimName",
+        "config_map_name": "configMapName",
+        "items": "items",
+        "path": "path",
+        "read_only": "readOnly",
+        "secret_name": "secretName",
     }
 
-    def __init__(self, claim_name=None, config_map_name=None, items=None, path=None, read_only=False, secret_name=None, local_vars_configuration=None):  # noqa: E501
+    def __init__(
+        self,
+        claim_name=None,
+        config_map_name=None,
+        items=None,
+        path=None,
+        read_only=False,
+        secret_name=None,
+        local_vars_configuration=None,
+    ):  # noqa: E501
         """MiniClusterExistingVolume - a model defined in OpenAPI"""  # noqa: E501
         if local_vars_configuration is None:
             local_vars_configuration = Configuration.get_default_copy()
@@ -231,15 +240,11 @@ class MiniClusterExistingVolume(object):
             value = getattr(self, attr)
             attr = self.attribute_map.get(attr, attr) if serialize else attr
             if isinstance(value, list):
-                result[attr] = list(map(
-                    lambda x: convert(x),
-                    value
-                ))
+                result[attr] = list(map(lambda x: convert(x), value))
             elif isinstance(value, dict):
-                result[attr] = dict(map(
-                    lambda item: (item[0], convert(item[1])),
-                    value.items()
-                ))
+                result[attr] = dict(
+                    map(lambda item: (item[0], convert(item[1])), value.items())
+                )
             else:
                 result[attr] = convert(value)
 

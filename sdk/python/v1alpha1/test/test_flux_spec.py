@@ -19,6 +19,7 @@ import fluxoperator
 from fluxoperator.models.flux_spec import FluxSpec  # noqa: E501
 from fluxoperator.rest import ApiException
 
+
 class TestFluxSpec(unittest.TestCase):
     """FluxSpec unit test stubs"""
 
@@ -30,23 +31,20 @@ class TestFluxSpec(unittest.TestCase):
 
     def make_instance(self, include_optional):
         """Test FluxSpec
-            include_option is a boolean, when False only required
-            params are included, when True both required and
-            optional params are included """
+        include_option is a boolean, when False only required
+        params are included, when True both required and
+        optional params are included"""
         # model = fluxoperator.models.flux_spec.FluxSpec()  # noqa: E501
-        if include_optional :
-            return FluxSpec(
-                connect_timeout = '5s', 
-                option_flags = ''
-            )
-        else :
-            return FluxSpec(
-        )
+        if include_optional:
+            return FluxSpec(connect_timeout="5s", option_flags="")
+        else:
+            return FluxSpec()
 
     def testFluxSpec(self):
         """Test FluxSpec"""
         inst_req_only = self.make_instance(include_optional=False)
         inst_req_and_optional = self.make_instance(include_optional=True)
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     unittest.main()
