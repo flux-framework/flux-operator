@@ -41,6 +41,10 @@ spec:
       # launcher: true
       # command: sleep infinity
 
+      # This should not be done in production
+      environment:
+        GOOGLE_APPLICATION_CREDENTIALS: /tmp/workflow/application_default_credentials.json
+
       # Important! We need to have resource requests for the horizonal autoscaler
       # The Flux Operator doesn't know you want to use it, so it's up to you
       # to provide these if your metric is about CPU
@@ -54,12 +58,14 @@ spec:
       # This pulls the container (once) by the broker to workingDir /data
       commands:
         pre: |
+          pip install --upgrade pip
           git clone -b add/gke-kubectl-client https://github.com/converged-computing/kubescaler
           cd kubescaler
           pip install -e .[google]
           pip install -e .[aws]
           cd -
-          cd /tmp/workflow/lib
+          git clone --depth 1 -b bursting https://github.com/flux-framework/flux-operator ./op
+          cd ./op/sdk/python/v1alpha1
           pip install -e .
           cd -
 

@@ -33,39 +33,36 @@ class FluxSpec(object):
                             and the value is json key in definition.
     """
     openapi_types = {
-        "connect_timeout": "str",
-        "install_root": "str",
-        "log_level": "int",
-        "minimal_service": "bool",
-        "option_flags": "str",
-        "wrap": "str",
+        'broker_config': 'str',
+        'connect_timeout': 'str',
+        'curve_cert': 'str',
+        'install_root': 'str',
+        'log_level': 'int',
+        'minimal_service': 'bool',
+        'option_flags': 'str',
+        'wrap': 'str'
     }
 
     attribute_map = {
-        "connect_timeout": "connectTimeout",
-        "install_root": "installRoot",
-        "log_level": "logLevel",
-        "minimal_service": "minimalService",
-        "option_flags": "optionFlags",
-        "wrap": "wrap",
+        'broker_config': 'brokerConfig',
+        'connect_timeout': 'connectTimeout',
+        'curve_cert': 'curveCert',
+        'install_root': 'installRoot',
+        'log_level': 'logLevel',
+        'minimal_service': 'minimalService',
+        'option_flags': 'optionFlags',
+        'wrap': 'wrap'
     }
 
-    def __init__(
-        self,
-        connect_timeout="5s",
-        install_root="/usr",
-        log_level=6,
-        minimal_service=False,
-        option_flags="",
-        wrap=None,
-        local_vars_configuration=None,
-    ):  # noqa: E501
+    def __init__(self, broker_config='', connect_timeout='5s', curve_cert='', install_root='/usr', log_level=6, minimal_service=False, option_flags='', wrap=None, local_vars_configuration=None):  # noqa: E501
         """FluxSpec - a model defined in OpenAPI"""  # noqa: E501
         if local_vars_configuration is None:
             local_vars_configuration = Configuration.get_default_copy()
         self.local_vars_configuration = local_vars_configuration
 
+        self._broker_config = None
         self._connect_timeout = None
+        self._curve_cert = None
         self._install_root = None
         self._log_level = None
         self._minimal_service = None
@@ -73,8 +70,12 @@ class FluxSpec(object):
         self._wrap = None
         self.discriminator = None
 
+        if broker_config is not None:
+            self.broker_config = broker_config
         if connect_timeout is not None:
             self.connect_timeout = connect_timeout
+        if curve_cert is not None:
+            self.curve_cert = curve_cert
         if install_root is not None:
             self.install_root = install_root
         if log_level is not None:
@@ -85,6 +86,29 @@ class FluxSpec(object):
             self.option_flags = option_flags
         if wrap is not None:
             self.wrap = wrap
+
+    @property
+    def broker_config(self):
+        """Gets the broker_config of this FluxSpec.  # noqa: E501
+
+        Optionally provide a manually created broker config this is intended for bursting to remote clusters  # noqa: E501
+
+        :return: The broker_config of this FluxSpec.  # noqa: E501
+        :rtype: str
+        """
+        return self._broker_config
+
+    @broker_config.setter
+    def broker_config(self, broker_config):
+        """Sets the broker_config of this FluxSpec.
+
+        Optionally provide a manually created broker config this is intended for bursting to remote clusters  # noqa: E501
+
+        :param broker_config: The broker_config of this FluxSpec.  # noqa: E501
+        :type broker_config: str
+        """
+
+        self._broker_config = broker_config
 
     @property
     def connect_timeout(self):
@@ -108,6 +132,29 @@ class FluxSpec(object):
         """
 
         self._connect_timeout = connect_timeout
+
+    @property
+    def curve_cert(self):
+        """Gets the curve_cert of this FluxSpec.  # noqa: E501
+
+        Optionally provide an already existing curve certificate this is intended for bursting to remote clusters  # noqa: E501
+
+        :return: The curve_cert of this FluxSpec.  # noqa: E501
+        :rtype: str
+        """
+        return self._curve_cert
+
+    @curve_cert.setter
+    def curve_cert(self, curve_cert):
+        """Sets the curve_cert of this FluxSpec.
+
+        Optionally provide an already existing curve certificate this is intended for bursting to remote clusters  # noqa: E501
+
+        :param curve_cert: The curve_cert of this FluxSpec.  # noqa: E501
+        :type curve_cert: str
+        """
+
+        self._curve_cert = curve_cert
 
     @property
     def install_root(self):
@@ -242,11 +289,15 @@ class FluxSpec(object):
             value = getattr(self, attr)
             attr = self.attribute_map.get(attr, attr) if serialize else attr
             if isinstance(value, list):
-                result[attr] = list(map(lambda x: convert(x), value))
+                result[attr] = list(map(
+                    lambda x: convert(x),
+                    value
+                ))
             elif isinstance(value, dict):
-                result[attr] = dict(
-                    map(lambda item: (item[0], convert(item[1])), value.items())
-                )
+                result[attr] = dict(map(
+                    lambda item: (item[0], convert(item[1])),
+                    value.items()
+                ))
             else:
                 result[attr] = convert(value)
 

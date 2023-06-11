@@ -33,66 +33,46 @@ class MiniClusterSpec(object):
                             and the value is json key in definition.
     """
     openapi_types = {
-        "archive": "MiniClusterArchive",
-        "cleanup": "bool",
-        "containers": "list[MiniClusterContainer]",
-        "deadline_seconds": "int",
-        "flux": "FluxSpec",
-        "flux_restful": "FluxRestful",
-        "interactive": "bool",
-        "job_labels": "dict(str, str)",
-        "logging": "LoggingSpec",
-        "max_size": "int",
-        "network": "Network",
-        "pod": "PodSpec",
-        "services": "list[MiniClusterContainer]",
-        "size": "int",
-        "tasks": "int",
-        "users": "list[MiniClusterUser]",
-        "volumes": "dict(str, MiniClusterVolume)",
+        'archive': 'MiniClusterArchive',
+        'cleanup': 'bool',
+        'containers': 'list[MiniClusterContainer]',
+        'deadline_seconds': 'int',
+        'flux': 'FluxSpec',
+        'flux_restful': 'FluxRestful',
+        'interactive': 'bool',
+        'job_labels': 'dict(str, str)',
+        'logging': 'LoggingSpec',
+        'max_size': 'int',
+        'network': 'Network',
+        'pod': 'PodSpec',
+        'services': 'list[MiniClusterContainer]',
+        'size': 'int',
+        'tasks': 'int',
+        'users': 'list[MiniClusterUser]',
+        'volumes': 'dict(str, MiniClusterVolume)'
     }
 
     attribute_map = {
-        "archive": "archive",
-        "cleanup": "cleanup",
-        "containers": "containers",
-        "deadline_seconds": "deadlineSeconds",
-        "flux": "flux",
-        "flux_restful": "fluxRestful",
-        "interactive": "interactive",
-        "job_labels": "jobLabels",
-        "logging": "logging",
-        "max_size": "maxSize",
-        "network": "network",
-        "pod": "pod",
-        "services": "services",
-        "size": "size",
-        "tasks": "tasks",
-        "users": "users",
-        "volumes": "volumes",
+        'archive': 'archive',
+        'cleanup': 'cleanup',
+        'containers': 'containers',
+        'deadline_seconds': 'deadlineSeconds',
+        'flux': 'flux',
+        'flux_restful': 'fluxRestful',
+        'interactive': 'interactive',
+        'job_labels': 'jobLabels',
+        'logging': 'logging',
+        'max_size': 'maxSize',
+        'network': 'network',
+        'pod': 'pod',
+        'services': 'services',
+        'size': 'size',
+        'tasks': 'tasks',
+        'users': 'users',
+        'volumes': 'volumes'
     }
 
-    def __init__(
-        self,
-        archive=None,
-        cleanup=False,
-        containers=None,
-        deadline_seconds=31500000,
-        flux=None,
-        flux_restful=None,
-        interactive=False,
-        job_labels=None,
-        logging=None,
-        max_size=None,
-        network=None,
-        pod=None,
-        services=None,
-        size=1,
-        tasks=1,
-        users=None,
-        volumes=None,
-        local_vars_configuration=None,
-    ):  # noqa: E501
+    def __init__(self, archive=None, cleanup=False, containers=None, deadline_seconds=31500000, flux=None, flux_restful=None, interactive=False, job_labels=None, logging=None, max_size=None, network=None, pod=None, services=None, size=1, tasks=1, users=None, volumes=None, local_vars_configuration=None):  # noqa: E501
         """MiniClusterSpec - a model defined in OpenAPI"""  # noqa: E501
         if local_vars_configuration is None:
             local_vars_configuration = Configuration.get_default_copy()
@@ -215,12 +195,8 @@ class MiniClusterSpec(object):
         :param containers: The containers of this MiniClusterSpec.  # noqa: E501
         :type containers: list[MiniClusterContainer]
         """
-        if (
-            self.local_vars_configuration.client_side_validation and containers is None
-        ):  # noqa: E501
-            raise ValueError(
-                "Invalid value for `containers`, must not be `None`"
-            )  # noqa: E501
+        if self.local_vars_configuration.client_side_validation and containers is None:  # noqa: E501
+            raise ValueError("Invalid value for `containers`, must not be `None`")  # noqa: E501
 
         self._containers = containers
 
@@ -554,11 +530,15 @@ class MiniClusterSpec(object):
             value = getattr(self, attr)
             attr = self.attribute_map.get(attr, attr) if serialize else attr
             if isinstance(value, list):
-                result[attr] = list(map(lambda x: convert(x), value))
+                result[attr] = list(map(
+                    lambda x: convert(x),
+                    value
+                ))
             elif isinstance(value, dict):
-                result[attr] = dict(
-                    map(lambda item: (item[0], convert(item[1])), value.items())
-                )
+                result[attr] = dict(map(
+                    lambda item: (item[0], convert(item[1])),
+                    value.items()
+                ))
             else:
                 result[attr] = convert(value)
 

@@ -33,7 +33,10 @@ class MiniClusterStatus(object):
                             and the value is json key in definition.
     """
     openapi_types = {
+<<<<<<< HEAD
         'completed': 'bool',
+=======
+>>>>>>> e12d2f9 (allow for custom crd_api client)
         'conditions': 'list[V1Condition]',
         'jobid': 'str',
         'maximum_size': 'int',
@@ -49,7 +52,6 @@ class MiniClusterStatus(object):
         'selector': 'selector',
         'size': 'size'
     }
-
     def __init__(self, completed=False, conditions=None, jobid='', maximum_size=0, selector='', size=0, local_vars_configuration=None):  # noqa: E501
         """MiniClusterStatus - a model defined in OpenAPI"""  # noqa: E501
         if local_vars_configuration is None:
@@ -139,12 +141,8 @@ class MiniClusterStatus(object):
         :param jobid: The jobid of this MiniClusterStatus.  # noqa: E501
         :type jobid: str
         """
-        if (
-            self.local_vars_configuration.client_side_validation and jobid is None
-        ):  # noqa: E501
-            raise ValueError(
-                "Invalid value for `jobid`, must not be `None`"
-            )  # noqa: E501
+        if self.local_vars_configuration.client_side_validation and jobid is None:  # noqa: E501
+            raise ValueError("Invalid value for `jobid`, must not be `None`")  # noqa: E501
 
         self._jobid = jobid
 
@@ -168,13 +166,8 @@ class MiniClusterStatus(object):
         :param maximum_size: The maximum_size of this MiniClusterStatus.  # noqa: E501
         :type maximum_size: int
         """
-        if (
-            self.local_vars_configuration.client_side_validation
-            and maximum_size is None
-        ):  # noqa: E501
-            raise ValueError(
-                "Invalid value for `maximum_size`, must not be `None`"
-            )  # noqa: E501
+        if self.local_vars_configuration.client_side_validation and maximum_size is None:  # noqa: E501
+            raise ValueError("Invalid value for `maximum_size`, must not be `None`")  # noqa: E501
 
         self._maximum_size = maximum_size
 
@@ -196,12 +189,8 @@ class MiniClusterStatus(object):
         :param selector: The selector of this MiniClusterStatus.  # noqa: E501
         :type selector: str
         """
-        if (
-            self.local_vars_configuration.client_side_validation and selector is None
-        ):  # noqa: E501
-            raise ValueError(
-                "Invalid value for `selector`, must not be `None`"
-            )  # noqa: E501
+        if self.local_vars_configuration.client_side_validation and selector is None:  # noqa: E501
+            raise ValueError("Invalid value for `selector`, must not be `None`")  # noqa: E501
 
         self._selector = selector
 
@@ -225,12 +214,8 @@ class MiniClusterStatus(object):
         :param size: The size of this MiniClusterStatus.  # noqa: E501
         :type size: int
         """
-        if (
-            self.local_vars_configuration.client_side_validation and size is None
-        ):  # noqa: E501
-            raise ValueError(
-                "Invalid value for `size`, must not be `None`"
-            )  # noqa: E501
+        if self.local_vars_configuration.client_side_validation and size is None:  # noqa: E501
+            raise ValueError("Invalid value for `size`, must not be `None`")  # noqa: E501
 
         self._size = size
 
@@ -252,11 +237,15 @@ class MiniClusterStatus(object):
             value = getattr(self, attr)
             attr = self.attribute_map.get(attr, attr) if serialize else attr
             if isinstance(value, list):
-                result[attr] = list(map(lambda x: convert(x), value))
+                result[attr] = list(map(
+                    lambda x: convert(x),
+                    value
+                ))
             elif isinstance(value, dict):
-                result[attr] = dict(
-                    map(lambda item: (item[0], convert(item[1])), value.items())
-                )
+                result[attr] = dict(map(
+                    lambda item: (item[0], convert(item[1])),
+                    value.items()
+                ))
             else:
                 result[attr] = convert(value)
 

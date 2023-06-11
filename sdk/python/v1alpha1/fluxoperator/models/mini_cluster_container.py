@@ -33,84 +33,58 @@ class MiniClusterContainer(object):
                             and the value is json key in definition.
     """
     openapi_types = {
-        "batch": "bool",
-        "batch_raw": "bool",
-        "command": "str",
-        "commands": "Commands",
-        "cores": "int",
-        "diagnostics": "bool",
-        "environment": "dict(str, str)",
-        "existing_volumes": "dict(str, MiniClusterExistingVolume)",
-        "flux_user": "FluxUser",
-        "image": "str",
-        "image_pull_secret": "str",
-        "launcher": "bool",
-        "life_cycle": "LifeCycle",
-        "logs": "str",
-        "name": "str",
-        "ports": "list[int]",
-        "pre_command": "str",
-        "pull_always": "bool",
-        "resources": "ContainerResources",
-        "run_flux": "bool",
-        "security_context": "SecurityContext",
-        "volumes": "dict(str, ContainerVolume)",
-        "working_dir": "str",
+        'batch': 'bool',
+        'batch_raw': 'bool',
+        'command': 'str',
+        'commands': 'Commands',
+        'cores': 'int',
+        'diagnostics': 'bool',
+        'environment': 'dict(str, str)',
+        'existing_volumes': 'dict(str, MiniClusterExistingVolume)',
+        'flux_user': 'FluxUser',
+        'image': 'str',
+        'image_pull_secret': 'str',
+        'launcher': 'bool',
+        'life_cycle': 'LifeCycle',
+        'logs': 'str',
+        'name': 'str',
+        'ports': 'list[int]',
+        'pre_command': 'str',
+        'pull_always': 'bool',
+        'resources': 'ContainerResources',
+        'run_flux': 'bool',
+        'security_context': 'SecurityContext',
+        'volumes': 'dict(str, ContainerVolume)',
+        'working_dir': 'str'
     }
 
     attribute_map = {
-        "batch": "batch",
-        "batch_raw": "batchRaw",
-        "command": "command",
-        "commands": "commands",
-        "cores": "cores",
-        "diagnostics": "diagnostics",
-        "environment": "environment",
-        "existing_volumes": "existingVolumes",
-        "flux_user": "fluxUser",
-        "image": "image",
-        "image_pull_secret": "imagePullSecret",
-        "launcher": "launcher",
-        "life_cycle": "lifeCycle",
-        "logs": "logs",
-        "name": "name",
-        "ports": "ports",
-        "pre_command": "preCommand",
-        "pull_always": "pullAlways",
-        "resources": "resources",
-        "run_flux": "runFlux",
-        "security_context": "securityContext",
-        "volumes": "volumes",
-        "working_dir": "workingDir",
+        'batch': 'batch',
+        'batch_raw': 'batchRaw',
+        'command': 'command',
+        'commands': 'commands',
+        'cores': 'cores',
+        'diagnostics': 'diagnostics',
+        'environment': 'environment',
+        'existing_volumes': 'existingVolumes',
+        'flux_user': 'fluxUser',
+        'image': 'image',
+        'image_pull_secret': 'imagePullSecret',
+        'launcher': 'launcher',
+        'life_cycle': 'lifeCycle',
+        'logs': 'logs',
+        'name': 'name',
+        'ports': 'ports',
+        'pre_command': 'preCommand',
+        'pull_always': 'pullAlways',
+        'resources': 'resources',
+        'run_flux': 'runFlux',
+        'security_context': 'securityContext',
+        'volumes': 'volumes',
+        'working_dir': 'workingDir'
     }
 
-    def __init__(
-        self,
-        batch=False,
-        batch_raw=False,
-        command="",
-        commands=None,
-        cores=0,
-        diagnostics=False,
-        environment=None,
-        existing_volumes=None,
-        flux_user=None,
-        image="ghcr.io/rse-ops/accounting:app-latest",
-        image_pull_secret="",
-        launcher=False,
-        life_cycle=None,
-        logs="",
-        name="",
-        ports=None,
-        pre_command="",
-        pull_always=False,
-        resources=None,
-        run_flux=False,
-        security_context=None,
-        volumes=None,
-        working_dir="",
-        local_vars_configuration=None,
-    ):  # noqa: E501
+    def __init__(self, batch=False, batch_raw=False, command='', commands=None, cores=0, diagnostics=False, environment=None, existing_volumes=None, flux_user=None, image='ghcr.io/rse-ops/accounting:app-latest', image_pull_secret='', launcher=False, life_cycle=None, logs='', name='', ports=None, pre_command='', pull_always=False, resources=None, run_flux=False, security_context=None, volumes=None, working_dir='', local_vars_configuration=None):  # noqa: E501
         """MiniClusterContainer - a model defined in OpenAPI"""  # noqa: E501
         if local_vars_configuration is None:
             local_vars_configuration = Configuration.get_default_copy()
@@ -725,11 +699,15 @@ class MiniClusterContainer(object):
             value = getattr(self, attr)
             attr = self.attribute_map.get(attr, attr) if serialize else attr
             if isinstance(value, list):
-                result[attr] = list(map(lambda x: convert(x), value))
+                result[attr] = list(map(
+                    lambda x: convert(x),
+                    value
+                ))
             elif isinstance(value, dict):
-                result[attr] = dict(
-                    map(lambda item: (item[0], convert(item[1])), value.items())
-                )
+                result[attr] = dict(map(
+                    lambda item: (item[0], convert(item[1])),
+                    value.items()
+                ))
             else:
                 result[attr] = convert(value)
 

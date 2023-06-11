@@ -265,9 +265,17 @@ spec:
               flux:
                 description: Flux options for the broker, shared across cluster
                 properties:
+                  brokerConfig:
+                    description: Optionally provide a manually created broker config
+                      this is intended for bursting to remote clusters
+                    type: string
                   connectTimeout:
                     default: 5s
                     description: Single user executable to provide to flux start
+                    type: string
+                  curveCert:
+                    description: Optionally provide an already existing curve certificate
+                      this is intended for bursting to remote clusters
                     type: string
                   installRoot:
                     default: /usr

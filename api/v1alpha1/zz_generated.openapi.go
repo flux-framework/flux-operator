@@ -291,6 +291,22 @@ func schema__api_v1alpha1__FluxSpec(ref common.ReferenceCallback) common.OpenAPI
 							Format:      "int32",
 						},
 					},
+					"curveCert": {
+						SchemaProps: spec.SchemaProps{
+							Description: "Optionally provide an already existing curve certificate this is intended for bursting to remote clusters",
+							Default:     "",
+							Type:        []string{"string"},
+							Format:      "",
+						},
+					},
+					"brokerConfig": {
+						SchemaProps: spec.SchemaProps{
+							Description: "Optionally provide a manually created broker config this is intended for bursting to remote clusters",
+							Default:     "",
+							Type:        []string{"string"},
+							Format:      "",
+						},
+					},
 				},
 			},
 		},

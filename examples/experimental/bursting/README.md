@@ -15,7 +15,36 @@ I expect for this kind of bursting to work I will need to be able to:
  - Be able to read in send the curve certificate as a configuration variable
  - Create a service to run (in place of the nginx container) to ensure the request goes to the right broker
 
+We will eventually need to do the following:
+
+ - Have an elegant way to decide:
+   - When to burst
+   - What jobs are marked for bursting, and how assigned to an external cluster
+ - Unique external cluster names (within a cloud namespace) that are linked to their spec (content hash of broker.toml?)
+ - When to configure external cluster to allow for scaling of flux (right now we set min == max so constant size)
+ - Create a more scoped permission (Google service account) for running inside a cluster
+
+We will use the following tricks to start (and each can be worked on to improve)
+
+ - WRITE ME
+
+Questions:
+
+ - What would happen if we gave the lead broker two hosts with the same name?
+
 ## Usage
+
+### Credentials
+
+Since we are interacting with Google from within the MiniCluster, you need to have your default application credentials
+shared there. This can probably be scoped to a service account, but for now we are being lazy. You must ABSOLUTELY
+be sure you don't add these to git.
+
+```bash
+cp $HOME/.config/gcloud/application_default_credentials.json .
+```
+
+**DO NOT DO THIS FOR ANYTHING OTHER THAN A LOCAL TEST.**
 
 ### Setup Cluster
 
@@ -113,7 +142,8 @@ flux-job: ƒQURAmBXV waiting for resources
 Now we can run our script (which is bound locally in `/data` from the present working directory) to find the jobs based on this attribute!
 
 ```bash
-python 
+GOOGLE_PROJECT=llnl-flux
+python run-burst.py ${GOOGLE_PROJECT} --flux-operator-yaml ./external-config/flux-operator-dev.yaml
 ```
 
 ### Cleanup
