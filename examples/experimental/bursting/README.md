@@ -142,8 +142,7 @@ flux-job: ƒQURAmBXV waiting for resources
 Now we can run our script (which is bound locally in `/data` from the present working directory) to find the jobs based on this attribute!
 
 ```bash
-GOOGLE_PROJECT=llnl-flux
-python run-burst.py ${GOOGLE_PROJECT} --flux-operator-yaml ./external-config/flux-operator-dev.yaml
+$ python run-burst.py ${GOOGLE_PROJECT} --flux-operator-yaml ./external-config/flux-operator-dev.yaml --lead-host ${LEAD_HOST} --lead-port 33093
 ```
 
 ### Cleanup
@@ -156,9 +155,4 @@ kubectl delete -f minicluster.yaml
 kubectl delete -f nginx.yaml
 kubectl delete -f service.yaml
 ```
-
-kubectl apply -f nginx.yaml
-kubectl apply -f service.yaml
-kubectl apply -f minicluster.yaml
-
 
