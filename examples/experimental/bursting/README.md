@@ -98,6 +98,7 @@ this, but for now we are going to ensure the job doesn't run locally, and give i
 ```bash
 $ kubectl exec -it -n flux-operator flux-sample-0-4r488 bash
 ```
+
 Connect to the broker socket
 
 ```bash

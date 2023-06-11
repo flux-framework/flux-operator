@@ -68,6 +68,7 @@ spec:
           cd ./op/sdk/python/v1alpha1
           pip install -e .
           cd -
+          pip install IPython
 
       # Bind /tmp/workflow on hostpath to /data in container
       volumes:

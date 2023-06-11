@@ -45,6 +45,8 @@ def get_minicluster(
     name=None,
     namespace=None,
     image=None,
+    wrap=None,
+    log_level=7,
 ):
     """
     Get a MiniCluster CRD as a dictionary
@@ -57,7 +59,6 @@ def get_minicluster(
     container = {
         "image": image,
         "command": command,
-        "flux_log_level": 7,
         "resources": {
             "limits": {"cpu": cpu_limit, "memory": memory_limit},
             "requests": {"cpu": cpu_limit, "memory": memory_limit},
@@ -72,16 +73,18 @@ def get_minicluster(
         "interactive": False,
         "logging": {"zeromq": True, "quiet": False, "strict": False},
         "flux": {
-            "wrap": "strace,-e,network,-tt",
             "optionFlags": flags,
             "option_flags": flags,
             "connect_timeout": "5s",
             "curve_cert": curve_cert,
+            "log_level": log_level,
             "broker_config": broker_toml,
         },
     }
+    # e.g., this would require strace "strace,-e,network,-tt"
+    if wrap is not None:
+        mc['flux']['wrap'] = wrap
     return mc, container
-
 
 def get_parser():
     parser = argparse.ArgumentParser(
@@ -118,6 +121,9 @@ def get_parser():
         "--lead-port", help="Lead broker service port", dest="lead_port", default=30093
     )
     parser.add_argument(
+        "--log-level", help="Logging level for flux", default=7, type=int,
+    )
+    parser.add_argument(
         "--name", help="Name for external MiniCluster", default="flux-sample"
     )
     parser.add_argument(
@@ -131,6 +137,9 @@ def get_parser():
     parser.add_argument("--flux-operator-yaml", dest="flux_operator_yaml")
     parser.add_argument(
         "--curve-cert", dest="curve_cert", default="/mnt/curve/curve.cert"
+    )
+    parser.add_argument(
+        "--wrap", help='arguments to flux wrap, e.g., "strace,-e,network,-tt'
     )
     return parser
 
@@ -314,6 +323,8 @@ def main():
         tasks=info["ntasks"],
         size=info["nnodes"],
         image=args.image,
+        wrap=args.wrap,
+        log_level=args.log_level,
     )
 
     # Create the namespace
@@ -328,6 +339,10 @@ def main():
 
     # Let's assume there could be bugs applying this differently
     crd_api = kubernetes_client.CustomObjectsApi(kubectl.api_client)
+
+    import IPython
+    IPython.embed()
+    sys.exit()
 
     # Create the MiniCluster! This also waits for it to be ready
     print(f"⭐️ Creating the minicluster {args.name} in {args.namespace}...")
