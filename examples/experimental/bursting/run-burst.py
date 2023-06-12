@@ -1,28 +1,26 @@
 #!/usr/bin/env python3
 
 import argparse
-import json
 import os
 import socket
 import sys
-import jinja2
-import time
-import yaml
-
-# This will allow us to create and interact with our cluster
-from kubescaler.scaler import GKECluster
-import kubescaler.utils as utils
 
 import flux
 import flux.job
+import jinja2
 import requests
+
+import kubescaler.utils as utils
+
+# This will allow us to create and interact with our cluster
+from kubescaler.scaler import GKECluster
 
 # Save data here
 here = os.path.dirname(os.path.abspath(__file__))
 
-import statistics
-from kubernetes import client as kubernetes_client, config, utils as k8sutils
 from fluxoperator.client import FluxMiniCluster
+from kubernetes import client as kubernetes_client
+from kubernetes import utils as k8sutils
 
 here = os.path.abspath(os.path.dirname(__file__))
 
@@ -354,7 +352,7 @@ def main():
     # Create the MiniCluster! This also waits for it to be ready
     print(f"⭐️ Creating the minicluster {args.name} in {args.namespace}...")
     operator = FluxMiniCluster()
-    res = operator.create(**minicluster, container=container, crd_api=crd_api)
+    operator.create(**minicluster, container=container, crd_api=crd_api)
 
     # Eventually to clean up...
     cli.delete_cluster()
