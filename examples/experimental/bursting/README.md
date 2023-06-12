@@ -24,15 +24,99 @@ We will eventually need to do the following:
  - When to configure external cluster to allow for scaling of flux (right now we set min == max so constant size)
  - Create a more scoped permission (Google service account) for running inside a cluster
 
+Right now what we do:
+
+- Allow the user to provide a custom broker.toml and curve.cert (the idea being the external clusters are created with a lead broker pointing to that service, and the same curve.cert that is on the local cluster they were created from) - these are changes to the operator CRD
+- Submit jobs that are flagged for burstable (an attribute) and ask for more nodes than the cluster has (but below the max number so it doesn't immediately fail - we will want to fix this in flux because with bursting we should be able to ask for more than the potential size)
+- Have a Python script that connects to the flux handle, finds the burstable jobs, and creates a minicluster spec (with the same nodes, tasks, and command - right now the machine is an argument)
+- The Python script generates a broker.toml on the fly that defines the lead broker to be the service of the minicluster where it's running, and the curve.cert read directly from the filesystem (being used by the current cluster)
+- The external cluster is created from the first, directly from the flux lead broker!
+- Next - we need to figure out networking the two.
+
 We will use the following tricks to start (and each can be worked on to improve)
 
- - WRITE ME
+ - WRITE ME I don't know which tricks we will need yet :)
 
 Questions:
 
  - What would happen if we gave the lead broker two hosts with the same name?
 
-## Usage
+## Google Cloud Setup
+
+Since we want to have two clusters communicating (and they will need public addresses) we will deploy both to GKE.
+Let's create the first cluster:
+
+```bash
+CLUSTER_NAME=flux-cluster
+GOOGLE_PROJECT=myproject
+```
+```bash
+$ gcloud container clusters create ${CLUSTER_NAME} --project $GOOGLE_PROJECT \
+    --zone us-central1-a --machine-type n2-standard-8 \
+    --num-nodes=4 --enable-network-policy --tags=flux-cluster --enable-intra-node-visibility
+```
+
+And be sure to activate your credentials!
+
+```bash
+gcloud container clusters get-credentials ${CLUSTER_NAME}
+```
+Install the operator and create the minicluster
+
+```bash
+kubectl apply -f ../../dist/flux-operator-dev.yaml
+kubectl create namespace flux-operator
+kubectl apply -f service/nginx.yaml
+kubectl apply -f minicluster.yaml
+# Expose broker pod port 8050 to 30093
+kubectl apply -f service/broker-service.yaml
+```
+
+We need to open up the firewall to that port - this creates the rule:
+
+```bash
+gcloud compute firewall-rules create flux-cluster-test-node-port --allow tcp:30093
+```
+
+Then figure out the node that the service is running from:
+
+```bash
+$ kubectl get pods -o wide -n flux-operator 
+NAME                   READY   STATUS    RESTARTS   AGE     IP           NODE                                          NOMINATED NODE   READINESS GATES
+flux-sample-0-kktl7    1/1     Running   0          7m22s   10.116.2.4   gke-flux-cluster-default-pool-4dea9d5c-0b0d   <none>           <none>
+flux-sample-1-s7r69    1/1     Running   0          7m22s   10.116.1.4   gke-flux-cluster-default-pool-4dea9d5c-1h6q   <none>           <none>
+flux-sample-services   1/1     Running   0          7m22s   10.116.0.4   gke-flux-cluster-default-pool-4dea9d5c-lc1h   <none>           <none>
+```
+
+Get the external ip for that node (for nginx, flux-services, and for the lead broker, a flux-sample-0-xx)
+
+```bash
+$ kubectl get nodes -o wide | grep gke-flux-cluster-default-pool-4dea9d5c-0b0d 
+gke-flux-cluster-default-pool-4dea9d5c-0b0d   Ready    <none>   69m   v1.25.8-gke.500   10.128.0.83   34.171.113.254   Container-Optimized OS from Google   5.15.89+         containerd://1.6.18
+```
+
+If you applied [service/nginx.yaml](service/nginx.yaml) (a testing setup I used as a hello world for a service) you can try opening `34.135.221.11:30093`. For the broker (34.171.113.254) above, that might be harder to test. If you do the first, you should see the "Welcome to nginx!" page. Finally, copy your scripts and configs over:
+
+```bash
+POD=flux-sample-0-jzvkm
+kubectl cp -n flux-operator ./run-burst.py ${POD}:/tmp/workflow/run-burst.py -c flux-sample
+
+# We will find a better way than this
+kubectl cp -n flux-operator ./application_default_credentials.json ${POD}:/tmp/workflow/application_default_credentials.json -c flux-sample
+
+# Make directory
+kubectl exec -it -n flux-operator ${POD} -- mkdir -p /tmp/workflow/external-config
+
+# Copy configs
+kubectl cp -n flux-operator ./external-config/flux-operator-dev.yaml ${POD}:/tmp/workflow/external-config/flux-operator-dev.yaml -c flux-sample
+kubectl cp -n flux-operator ./external-config/broker.toml ${POD}:/tmp/workflow/external-config/broker.toml -c flux-sample
+```
+
+At this point, jump down to [burstable job](#burstable-job). If you are having trouble seeing communication for the service, you should come back to this step, and redo with nginx (service/service.yaml) and the flux-sample-service pod. 
+
+## Development with Kind
+
+I first tested on kind, and was able to get up to the point of needing to connect (and could not without the host).
 
 ### Credentials
 
@@ -62,6 +146,7 @@ kubectl apply -f ../../dist/flux-operator-dev.yaml
 kubectl create namespace flux-operator
 ```
 
+
 Create an existing config map for nginx (that it will expect to be there, and we 
 have defined in our minicluster.yaml under the nginx service existingVolumes).
 
@@ -90,13 +175,13 @@ kubectl apply -f minicluster.yaml
 kubectl apply -f service/service.yaml
 ```
 
-### Burstable Job
+## Burstable Job
 
 Now let's create a job that cannot be run because we don't have the resources. In the future we would want some other logic to determine
 this, but for now we are going to ensure the job doesn't run locally, and give it a label that our external application can sniff out and grab. Shell into the broker pod:
 
 ```bash
-$ kubectl exec -it -n flux-operator flux-sample-0-4r488 bash
+$ kubectl exec -it -n flux-operator flux-sample-0-kvg5t bash
 ```
 
 Connect to the broker socket
@@ -140,10 +225,62 @@ $ flux job attach $(flux job last)
 flux-job: ƒQURAmBXV waiting for resources  
 ```
 
-Now we can run our script (which is bound locally in `/data` from the present working directory) to find the jobs based on this attribute!
+Now we can run our script to find the jobs based on this attribute!
 
 ```bash
-$ python run-burst.py ${GOOGLE_PROJECT} --flux-operator-yaml ./external-config/flux-operator-dev.yaml --lead-host ${LEAD_HOST} --lead-port 33093
+GOOGLE_PROJECT=myproject
+LEAD_HOST="34.171.113.254"
+LEAD_PORT=30093
+python run-burst.py --project ${GOOGLE_PROJECT} --cluster-name flux-external-cluster --flux-operator-yaml ./external-config/flux-operator-dev.yaml --lead-host ${LEAD_HOST} --lead-port ${LEAD_PORT}
+```
+
+**STOPPED HERE** we are now at the handshake and need to figure out that failure, from the first cluster:
+
+```console
+broker.debug[0]: child sockevent tcp://10.116.2.8:8050 unknown socket event
+broker.debug[0]: child sockevent tcp://10.116.2.8:8050 disconnected
+broker.debug[0]: child sockevent tcp://10.116.2.8:8050 accepted
+broker.debug[0]: child sockevent tcp://10.116.2.8:8050 unknown socket event
+```
+
+and the external cluster:
+
+```console
+broker.err[1]: parent sockevent tcp://34.171.113.254:30093 handshake failed: Broken pipe
+broker.debug[1]: parent sockevent tcp://34.171.113.254:30093 disconnected
+broker.debug[1]: parent sockevent tcp://34.171.113.254:30093 connect retried
+```
+The "accepted" is promising - and the broken pipe has me thinking something is leading it to disconnect. I've seen this happen with 
+flaky connections, and maybe there is something about the port actually serving vs. the one served by Kubernetes. Let's discuss this week!
+
+**Testing** I tried connecting to this second cluster with a cloud shell, and create the same exposed port.
+We could eventually have the operator do this, but manual for now. 
+
+```yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: lead-broker-service
+  namespace: flux-operator
+spec:
+  type: NodePort
+  ports:
+  - port: 8050
+    nodePort: 30093
+  selector:
+    job-index: "0"
+```
+
+I'm also not sure if the child brokers need to be exposed (I thought not).
+
+### Debugging
+
+Note that it's possible to get the kubectl config for you external cluster, and I recommended running
+this from the Google Cloud console (shell) so you don't muck around with your default kubectl:
+
+```bash
+$  gcloud container clusters get-credentials flux-cluster --zone us-central1-a --project llnl-flux \
+>  && kubectl get service kubernetes -o yaml
 ```
 
 ### Cleanup

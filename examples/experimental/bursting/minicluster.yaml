@@ -7,14 +7,17 @@ spec:
   size: 2
   # If we don't set this, we won't be able to go above two!
   maxSize: 10
+  interactive: true
 
-  # Allow us to see the local volume
-  volumes:
-    data:
-      storageClass: hostpath
-      path: /tmp/workflow
+  # This allows us to see zeromq and debug logging
+  flux:
+    logLevel: 7
+  logging:
+    zeromq: true
 
   # Add an nginx service with an existing config map
+  # This isn't currently used, but is a setup I'm keeping for 
+  # potentially later, adding some integration with flux restful
   services:
     - image: nginx
       name: nginx
@@ -25,12 +28,6 @@ spec:
           items:
             flux.conf: flux.conf
 
-  # Flux restful with the username, token, and secret key
-  fluxRestful:
-    secretKey: theonionisanogre
-    username: flux
-    token: theogreisanonion
-
   # This is a list because a pod can support multiple containers
   containers:
     - image: ghcr.io/rse-ops/singularity:tag-mamba
@@ -38,8 +35,6 @@ spec:
 
       # We will use launcher here to just run the command
       # You can shell in to connect to the broker and issue commands that use CPU
-      # launcher: true
-      # command: sleep infinity
 
       # This should not be done in production
       environment:
@@ -69,11 +64,6 @@ spec:
           pip install -e .
           cd -
           pip install IPython
-
-      # Bind /tmp/workflow on hostpath to /data in container
-      volumes:
-        data:
-          path: /tmp/workflow
 
       fluxUser:
         name: fluxuser

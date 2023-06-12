@@ -83,18 +83,18 @@ def get_minicluster(
     }
     # e.g., this would require strace "strace,-e,network,-tt"
     if wrap is not None:
-        mc['flux']['wrap'] = wrap
+        mc["flux"]["wrap"] = wrap
     return mc, container
+
 
 def get_parser():
     parser = argparse.ArgumentParser(
         description="Experimental Bursting",
         formatter_class=argparse.RawTextHelpFormatter,
     )
-    parser.add_argument("project", help="Google Cloud project")
-    parser.add_argument(
-        "cluster_name", nargs="?", help="Cluster name suffix", default="flux-cluster"
-    )
+    parser.add_argument("--project", help="Google Cloud project")
+    parser.add_argument("--cluster-name", help="Cluster name", default="flux-cluster")
+
     # We aren't using this for the time being - assume job size == exactly what is needed
     parser.add_argument(
         "--max-node-count",
@@ -121,7 +121,10 @@ def get_parser():
         "--lead-port", help="Lead broker service port", dest="lead_port", default=30093
     )
     parser.add_argument(
-        "--log-level", help="Logging level for flux", default=7, type=int,
+        "--log-level",
+        help="Logging level for flux",
+        default=7,
+        type=int,
     )
     parser.add_argument(
         "--name", help="Name for external MiniCluster", default="flux-sample"
@@ -220,6 +223,8 @@ def main():
 
     # If an error occurs while parsing the arguments, the interpreter will exit with value 2
     args, _ = parser.parse_known_args()
+    if not args.project:
+        sys.exit("Please define your Google Cloud Project with --project")
 
     # Pull cluster name out of argument
     # TODO: likely we will start Flux with an ability to say "allow this external flux cluster"
@@ -288,7 +293,7 @@ def main():
         k8sutils.create_from_yaml(kubectl.api_client, args.flux_operator_yaml)
         print("Installed the operator.")
     except Exception as exc:
-        print("Issue installing the operator: {exc}, assuming already exists")
+        print(f"Issue installing the operator: {exc}, assuming already exists")
 
     # Now let's customize our minicluster CRD. Importantly, we need the curve.cert from the
     # parent cluster, along with a custom host file.
@@ -340,7 +345,9 @@ def main():
     # Let's assume there could be bugs applying this differently
     crd_api = kubernetes_client.CustomObjectsApi(kubectl.api_client)
 
+    # WORKING HERE
     import IPython
+
     IPython.embed()
     sys.exit()
 

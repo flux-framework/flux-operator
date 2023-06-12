@@ -10,7 +10,7 @@ path = "/etc/flux/system/R"
 
 [bootstrap]
 curve_cert = "/etc/curve/curve.cert"
-default_port = 8050
+default_port = 30093
 default_bind = "tcp://eth0:%p"
 default_connect = "tcp://%h.flux-service.flux-operator.svc.cluster.local:%p"
 hosts = [{host="{{ lead_host }}", bind="tcp://eth0:{{ lead_port }}", connect="tcp://{{ lead_host }}:{{ lead_port }}"},
