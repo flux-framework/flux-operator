@@ -261,6 +261,58 @@ spec:
                     description: Optionally provide a manually created broker config
                       this is intended for bursting to remote clusters
                     type: string
+                  bursting:
+                    description: Bursting - one or more external clusters to burst to
+                      We assume a single, central MiniCluster with an ipaddress that
+                      all connect to.
+                    properties:
+                      clusters:
+                        description: External clusters to burst to. Each external cluster
+                          must share the same listing to align ranks
+                        items:
+                          properties:
+                            name:
+                              description: The hostnames for the bursted clusters If
+                                set, the user is responsible for ensuring uniqueness.
+                                The operator will set to burst-N
+                              type: string
+                            size:
+                              description: Size of bursted cluster. Defaults to same
+                                size as local minicluster if not set
+                              format: int32
+                              type: integer
+                          type: object
+                        type: array
+                      leadBroker:
+                        description: The lead broker ip address to join to. E.g., if
+                          we burst to cluster 2, this is the address to connect to cluster
+                          1 For the first cluster, this should not be defined
+                        properties:
+                          address:
+                            description: Lead broker address (ip or hostname)
+                            type: string
+                          name:
+                            description: We need the name of the lead job to assemble
+                              the hostnames
+                            type: string
+                          port:
+                            default: 8050
+                            description: Lead broker port - should only be used for
+                              external cluster
+                            format: int32
+                            type: integer
+                          size:
+                            description: Lead broker size
+                            format: int32
+                            type: integer
+                        required:
+                        - address
+                        - name
+                        - size
+                        type: object
+                    required:
+                    - clusters
+                    type: object
                   connectTimeout:
                     default: 5s
                     description: Single user executable to provide to flux start
@@ -273,23 +325,6 @@ spec:
                     default: /usr
                     description: Install root location
                     type: string
-                  leadBroker:
-                    description: The lead broker ip address to provide as a resource
-                      and to the broker.toml this is intended for bursting to remote
-                      clusters
-                    properties:
-                      address:
-                        description: Lead broker address (ip or hostname)
-                        type: string
-                      port:
-                        default: 8050
-                        description: Lead broker port - should only be used for external
-                          cluster
-                        format: int32
-                        type: integer
-                    required:
-                    - address
-                    type: object
                   logLevel:
                     default: 6
                     description: Log level to use for flux logging (only in non TestMode)

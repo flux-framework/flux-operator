@@ -28,6 +28,8 @@ from fluxoperator.exceptions import ApiKeyError
 from fluxoperator.exceptions import ApiAttributeError
 from fluxoperator.exceptions import ApiException
 # import models into sdk package
+from fluxoperator.models.bursted_cluster import BurstedCluster
+from fluxoperator.models.bursting import Bursting
 from fluxoperator.models.commands import Commands
 from fluxoperator.models.container_resources import ContainerResources
 from fluxoperator.models.container_volume import ContainerVolume

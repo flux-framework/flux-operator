@@ -83,6 +83,7 @@ Install the operator and create the minicluster
 ```bash
 kubectl apply -f ../../dist/flux-operator-dev.yaml
 kubectl create namespace flux-operator
+# This is currently not used (but could be in the future)
 kubectl apply -f service/nginx.yaml
 kubectl apply -f minicluster.yaml
 # Expose broker pod port 8050 to 30093
@@ -260,8 +261,17 @@ Now we can run our script to find the jobs based on this attribute!
 GOOGLE_PROJECT=myproject
 LEAD_HOST="35.223.235.162"
 LEAD_PORT=30093
-python3 run-burst.py --project ${GOOGLE_PROJECT} --cluster-name flux-external-cluster --flux-operator-yaml ./external-config/flux-operator-dev.yaml --lead-host ${LEAD_HOST} --lead-port ${LEAD_PORT} --munge-key ./munge.key --name flux-another-sample
+python3 run-burst.py --project ${GOOGLE_PROJECT} --cluster-name flux-external-cluster --flux-operator-yaml ./external-config/flux-operator-dev.yaml \
+        --lead-host ${LEAD_HOST} --lead-port ${LEAD_PORT} --lead-size 4 \
+        --munge-key ./munge.key --name burst-0 \
 ```
+
+Important notes for the above:
+
+- The name is the automatically generated name by Flux given a bursted cluster (that isn't explicitly given a name)
+- The lead name is derived from the hostname where it is running (e.g., flux-sample)
+- We set the lead size to the max size, and we are using a size that won't fail the job (which needs 4)
+
 
 **STOPPED HERE** the handshake is successful, the local (first) cluster seems to pick up 2 nodes,
 the job runs and reports 2 of the external hostnames, but the second lead broker seems to continue

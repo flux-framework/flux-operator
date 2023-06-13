@@ -50,6 +50,8 @@ def get_minicluster(
     lead_port=None,
     broker_toml=None,
     munge_config_map=None,
+    lead_size=None,
+    lead_jobname=None,
 ):
     """
     Get a MiniCluster CRD as a dictionary
@@ -86,12 +88,17 @@ def get_minicluster(
             "connect_timeout": "5s",
             "curve_cert": curve_cert,
             "log_level": log_level,
+
+            # Providing the lead broker and port points back to the parent
+            "bursting": {
+                "lead_broker": {"address": lead_host, "port": int(lead_port), "name": lead_jobname, "size": lead_size},
+                "clusters": [{"size": size, "name": name}]
+            }
         },
     }
+
     if munge_config_map:
         mc["flux"]["mungeConfigMap"] = munge_config_map
-    if lead_host and lead_port:
-        mc["flux"]["lead_broker"] = {"address": lead_host, "port": int(lead_port)}
     if broker_toml:
         mc["flux"]["broker_config"] = broker_toml
 
@@ -156,6 +163,7 @@ def get_parser():
         help="Lead broker service hostname or ip address",
         dest="lead_host",
     )
+    parser.add_argument("--lead-size", help="Lead broker size")
     parser.add_argument(
         "--munge-key",
         help="Name of a config map to be made in the same namespace",
@@ -373,6 +381,8 @@ def main():
         lead_host=args.lead_host,
         lead_port=args.lead_port,
         munge_config_map=args.munge_config_map,
+        lead_jobname=hostname,
+        lead_size=args.lead_size
     )
 
     # Create the namespace

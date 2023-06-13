@@ -403,15 +403,33 @@ func (r *MiniClusterReconciler) getConfigMap(
 }
 
 // generateHostlist for a specific size given the cluster namespace and a size
-func generateHostlist(cluster *api.MiniCluster, size int) string {
+func generateHostlist(cluster *api.MiniCluster, size int32) string {
 
-	// The hosts are generated through the max size, so the cluster can expand
-	hosts := fmt.Sprintf("%s-[%s]", cluster.Name, generateRange(size))
+	// If we don't have a leadbroker address, we are at the root
+	var hosts string
+	if cluster.Spec.Flux.Bursting.LeadBroker.Address == "" {
+		hosts = fmt.Sprintf("%s-[%s]", cluster.Name, generateRange(size))
 
-	// If we have an additional external host, add it here.
-	// The first position is important to indicate it is the lead
-	if cluster.Spec.Flux.LeadBroker.Address != "" {
-		hosts = fmt.Sprintf("%s,%s", cluster.Spec.Flux.LeadBroker.Address, hosts)
+	} else {
+
+		// Otherwise, we need to put the lead broker first, replacing the previous
+		// index 0, and adding the rest of the range of jobs.
+		// The hosts array must be consistent in ordering of ranks across workers
+		adjustedSize := cluster.Spec.Flux.Bursting.LeadBroker.Size - 1
+		hosts = fmt.Sprintf(
+			"%s,%s-%s",
+			cluster.Spec.Flux.Bursting.LeadBroker.Address,
+			cluster.Spec.Flux.Bursting.LeadBroker.Name,
+			generateRange(adjustedSize),
+		)
+	}
+
+	// Now regardless of where we are, we add the bursted jobs in the same order.
+	// Any cluster with bursting must share all the bursted hosts across clusters
+	// This ensures that the ranks line up
+	for _, bursted := range cluster.Spec.Flux.Bursting.Clusters {
+		burstedHosts := fmt.Sprintf("%s-[%s]", bursted.Name, generateRange(bursted.Size))
+		hosts = fmt.Sprintf("%s,%s", hosts, burstedHosts)
 	}
 	return hosts
 }
@@ -424,11 +442,9 @@ func generateFluxConfig(cluster *api.MiniCluster) (string, error) {
 		return cluster.Spec.Flux.BrokerConfig, nil
 	}
 
-	// Generate the broker.toml template
+	// Generate the broker.toml template, always up to the max size allowed
 	fqdn := fmt.Sprintf("%s.%s.svc.cluster.local", cluster.Spec.Network.HeadlessName, cluster.Namespace)
-
-	// If we have a separate lead broker, the max size is one smaller than we expect
-	hosts := fmt.Sprintf("[%s]", generateRange(int(cluster.Spec.MaxSize)))
+	hosts := generateHostlist(cluster, cluster.Spec.MaxSize)
 
 	bt := BrokerTemplate{
 		Hosts:           hosts,
@@ -462,7 +478,7 @@ func getRequiredRanks(cluster *api.MiniCluster) string {
 	}
 	// This is the quorum - the nodes required to be online - so we can start
 	// This can be less than the MaxSize
-	return generateRange(int(cluster.Spec.Size))
+	return generateRange(cluster.Spec.Size)
 }
 
 // generateWaitScript generates the main script to start everything up!
@@ -472,7 +488,8 @@ func generateWaitScript(cluster *api.MiniCluster, containerIndex int) (string, e
 	mainHost := fmt.Sprintf("%s-0", cluster.Name)
 
 	// The resources size must also match the max size in the cluster
-	hosts := generateHostlist(cluster, int(cluster.Spec.MaxSize))
+	// This set of hosts explicitly gets provided to resources
+	hosts := generateHostlist(cluster, cluster.Spec.MaxSize)
 
 	// Ensure our requested users each each have a password
 	for i, user := range cluster.Spec.Users {
@@ -525,7 +542,7 @@ func generateWaitScript(cluster *api.MiniCluster, containerIndex int) (string, e
 }
 
 // generateRange is a shared function to generate a range string
-func generateRange(size int) string {
+func generateRange(size int32) string {
 	var rangeString string
 	if size == 1 {
 		rangeString = "0"

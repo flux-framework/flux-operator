@@ -56,6 +56,8 @@ from pprint import pprint
 
 ## Documentation For Models
 
+ - [BurstedCluster](BurstedCluster.md)
+ - [Bursting](Bursting.md)
  - [Commands](Commands.md)
  - [ContainerResources](dContainerResources.md)
  - [ContainerVolume](ContainerVolume.md)

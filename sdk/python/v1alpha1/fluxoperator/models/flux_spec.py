@@ -34,10 +34,10 @@ class FluxSpec(object):
     """
     openapi_types = {
         'broker_config': 'str',
+        'bursting': 'Bursting',
         'connect_timeout': 'str',
         'curve_cert': 'str',
         'install_root': 'str',
-        'lead_broker': 'FluxBroker',
         'log_level': 'int',
         'minimal_service': 'bool',
         'munge_config_map': 'str',
@@ -47,10 +47,10 @@ class FluxSpec(object):
 
     attribute_map = {
         'broker_config': 'brokerConfig',
+        'bursting': 'bursting',
         'connect_timeout': 'connectTimeout',
         'curve_cert': 'curveCert',
         'install_root': 'installRoot',
-        'lead_broker': 'leadBroker',
         'log_level': 'logLevel',
         'minimal_service': 'minimalService',
         'munge_config_map': 'mungeConfigMap',
@@ -58,17 +58,17 @@ class FluxSpec(object):
         'wrap': 'wrap'
     }
 
-    def __init__(self, broker_config='', connect_timeout='5s', curve_cert='', install_root='/usr', lead_broker=None, log_level=6, minimal_service=False, munge_config_map='', option_flags='', wrap=None, local_vars_configuration=None):  # noqa: E501
+    def __init__(self, broker_config='', bursting=None, connect_timeout='5s', curve_cert='', install_root='/usr', log_level=6, minimal_service=False, munge_config_map='', option_flags='', wrap=None, local_vars_configuration=None):  # noqa: E501
         """FluxSpec - a model defined in OpenAPI"""  # noqa: E501
         if local_vars_configuration is None:
             local_vars_configuration = Configuration.get_default_copy()
         self.local_vars_configuration = local_vars_configuration
 
         self._broker_config = None
+        self._bursting = None
         self._connect_timeout = None
         self._curve_cert = None
         self._install_root = None
-        self._lead_broker = None
         self._log_level = None
         self._minimal_service = None
         self._munge_config_map = None
@@ -78,14 +78,14 @@ class FluxSpec(object):
 
         if broker_config is not None:
             self.broker_config = broker_config
+        if bursting is not None:
+            self.bursting = bursting
         if connect_timeout is not None:
             self.connect_timeout = connect_timeout
         if curve_cert is not None:
             self.curve_cert = curve_cert
         if install_root is not None:
             self.install_root = install_root
-        if lead_broker is not None:
-            self.lead_broker = lead_broker
         if log_level is not None:
             self.log_level = log_level
         if minimal_service is not None:
@@ -119,6 +119,27 @@ class FluxSpec(object):
         """
 
         self._broker_config = broker_config
+
+    @property
+    def bursting(self):
+        """Gets the bursting of this FluxSpec.  # noqa: E501
+
+
+        :return: The bursting of this FluxSpec.  # noqa: E501
+        :rtype: Bursting
+        """
+        return self._bursting
+
+    @bursting.setter
+    def bursting(self, bursting):
+        """Sets the bursting of this FluxSpec.
+
+
+        :param bursting: The bursting of this FluxSpec.  # noqa: E501
+        :type bursting: Bursting
+        """
+
+        self._bursting = bursting
 
     @property
     def connect_timeout(self):
@@ -188,27 +209,6 @@ class FluxSpec(object):
         """
 
         self._install_root = install_root
-
-    @property
-    def lead_broker(self):
-        """Gets the lead_broker of this FluxSpec.  # noqa: E501
-
-
-        :return: The lead_broker of this FluxSpec.  # noqa: E501
-        :rtype: FluxBroker
-        """
-        return self._lead_broker
-
-    @lead_broker.setter
-    def lead_broker(self, lead_broker):
-        """Sets the lead_broker of this FluxSpec.
-
-
-        :param lead_broker: The lead_broker of this FluxSpec.  # noqa: E501
-        :type lead_broker: FluxBroker
-        """
-
-        self._lead_broker = lead_broker
 
     @property
     def log_level(self):

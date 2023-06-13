@@ -7,6 +7,43 @@
   },
   "paths": {},
   "definitions": {
+    "BurstedCluster": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "description": "The hostnames for the bursted clusters If set, the user is responsible for ensuring uniqueness. The operator will set to burst-N",
+          "type": "string",
+          "default": ""
+        },
+        "size": {
+          "description": "Size of bursted cluster. Defaults to same size as local minicluster if not set",
+          "type": "integer",
+          "format": "int32"
+        }
+      }
+    },
+    "Bursting": {
+      "description": "Bursting Config For simplicity, we internally handle the name of the job (hostnames)",
+      "type": "object",
+      "required": [
+        "clusters"
+      ],
+      "properties": {
+        "clusters": {
+          "description": "External clusters to burst to. Each external cluster must share the same listing to align ranks",
+          "type": "array",
+          "items": {
+            "default": {},
+            "$ref": "#/definitions/BurstedCluster"
+          }
+        },
+        "leadBroker": {
+          "description": "The lead broker ip address to join to. E.g., if we burst to cluster 2, this is the address to connect to cluster 1 For the first cluster, this should not be defined",
+          "default": {},
+          "$ref": "#/definitions/FluxBroker"
+        }
+      }
+    },
     "Commands": {
       "type": "object",
       "properties": {
@@ -88,11 +125,18 @@
       "description": "A FluxBroker defines a broker for flux",
       "type": "object",
       "required": [
-        "address"
+        "address",
+        "name",
+        "size"
       ],
       "properties": {
         "address": {
           "description": "Lead broker address (ip or hostname)",
+          "type": "string",
+          "default": ""
+        },
+        "name": {
+          "description": "We need the name of the lead job to assemble the hostnames",
           "type": "string",
           "default": ""
         },
@@ -101,6 +145,12 @@
           "type": "integer",
           "format": "int32",
           "default": 8050
+        },
+        "size": {
+          "description": "Lead broker size",
+          "type": "integer",
+          "format": "int32",
+          "default": 0
         }
       }
     },
@@ -143,6 +193,11 @@
           "type": "string",
           "default": ""
         },
+        "bursting": {
+          "description": "Bursting - one or more external clusters to burst to We assume a single, central MiniCluster with an ipaddress that all connect to.",
+          "default": {},
+          "$ref": "#/definitions/Bursting"
+        },
         "connectTimeout": {
           "description": "Single user executable to provide to flux start",
           "type": "string",
@@ -157,11 +212,6 @@
           "description": "Install root location",
           "type": "string",
           "default": "/usr"
-        },
-        "leadBroker": {
-          "description": "The lead broker ip address to provide as a resource and to the broker.toml this is intended for bursting to remote clusters",
-          "default": {},
-          "$ref": "#/definitions/FluxBroker"
         },
         "logLevel": {
           "description": "Log level to use for flux logging (only in non TestMode)",

@@ -2,6 +2,8 @@
 .gitlab-ci.yml
 .travis.yml
 README.md
+docs/BurstedCluster.md
+docs/Bursting.md
 docs/Commands.md
 docs/ContainerResources.md
 docs/ContainerVolume.md
@@ -29,6 +31,8 @@ fluxoperator/api_client.py
 fluxoperator/configuration.py
 fluxoperator/exceptions.py
 fluxoperator/models/__init__.py
+fluxoperator/models/bursted_cluster.py
+fluxoperator/models/bursting.py
 fluxoperator/models/commands.py
 fluxoperator/models/container_resources.py
 fluxoperator/models/container_volume.py
@@ -57,4 +61,6 @@ setup.cfg
 setup.py
 test-requirements.txt
 test/__init__.py
+test/test_bursted_cluster.py
+test/test_bursting.py
 tox.ini

@@ -387,11 +387,11 @@ type FluxSpec struct {
 	//+optional
 	MungeConfigMap string `json:"mungeConfigMap"`
 
-	// The lead broker ip address to provide as a resource
-	// and to the broker.toml
-	// this is intended for bursting to remote clusters
+	// Bursting - one or more external clusters to burst to
+	// We assume a single, central MiniCluster with an ipaddress
+	// that all connect to.
 	//+optional
-	LeadBroker FluxBroker `json:"leadBroker"`
+	Bursting Bursting `json:"bursting"`
 
 	// Optionally provide a manually created broker config
 	// this is intended for bursting to remote clusters
@@ -399,11 +399,46 @@ type FluxSpec struct {
 	BrokerConfig string `json:"brokerConfig"`
 }
 
+// Bursting Config
+// For simplicity, we internally handle the name of the job (hostnames)
+type Bursting struct {
+
+	// The lead broker ip address to join to. E.g., if we burst
+	// to cluster 2, this is the address to connect to cluster 1
+	// For the first cluster, this should not be defined
+	//+optional
+	LeadBroker FluxBroker `json:"leadBroker"`
+
+	// External clusters to burst to. Each external
+	// cluster must share the same listing to align ranks
+	Clusters []BurstedCluster `json:"clusters"`
+}
+
+type BurstedCluster struct {
+
+	// The hostnames for the bursted clusters
+	// If set, the user is responsible for ensuring
+	// uniqueness. The operator will set to burst-N
+	//+optional
+	Name string `json:"name"`
+
+	// Size of bursted cluster.
+	// Defaults to same size as local minicluster if not set
+	// +optional
+	Size int32 `json:"size,omitempty"`
+}
+
 // A FluxBroker defines a broker for flux
 type FluxBroker struct {
 
 	// Lead broker address (ip or hostname)
 	Address string `json:"address"`
+
+	// We need the name of the lead job to assemble the hostnames
+	Name string `json:"name"`
+
+	// Lead broker size
+	Size int32 `json:"size"`
 
 	// Lead broker port - should only be used for external cluster
 	// +kubebuilder:default=8050
@@ -680,12 +715,6 @@ func (f *MiniCluster) Validate() bool {
 		f.Spec.MaxSize = f.Spec.Size
 	}
 
-	// If we have a separate lead broker, the max size is one smaller than we expect
-	// However, we do not want to go below 1!
-	if f.Spec.Flux.LeadBroker.Address != "" && f.Spec.MaxSize >= 2 {
-		f.Spec.MaxSize = f.Spec.MaxSize - 1
-	}
-
 	// If we haven't seen a MaxSize (in the status) yet, set it
 	// This needs to be the absolute max that is allowed
 	if f.Status.MaximumSize == 0 {
@@ -713,9 +742,24 @@ func (f *MiniCluster) Validate() bool {
 		}
 	}
 
+	// If we have a LeadBroker address, this is a child cluster, and
+	// we also need a port
+	if f.Spec.Flux.Bursting.LeadBroker.Port == 0 {
+		f.Spec.Flux.Bursting.LeadBroker.Port = 8050
+	}
+
 	// Set default port if unset
-	if f.Spec.Flux.LeadBroker.Port == 0 {
-		f.Spec.Flux.LeadBroker.Port = 8050
+	for b, bursted := range f.Spec.Flux.Bursting.Clusters {
+
+		// If bursted size not set, default to the current MiniCluster size
+		if bursted.Size == 0 {
+			bursted.Size = f.Spec.Size
+		}
+
+		// Set default name if not set to burst-N
+		if bursted.Name == "" {
+			bursted.Name = fmt.Sprintf("burst-%d", b)
+		}
 	}
 
 	// If we only have one container, assume we want to run flux with it

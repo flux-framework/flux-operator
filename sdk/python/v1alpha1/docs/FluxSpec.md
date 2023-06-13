@@ -5,10 +5,10 @@
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
 **broker_config** | **str** | Optionally provide a manually created broker config this is intended for bursting to remote clusters | [optional] [default to '']
+**bursting** | [**Bursting**](Bursting.md) |  | [optional] 
 **connect_timeout** | **str** | Single user executable to provide to flux start | [optional] [default to '5s']
 **curve_cert** | **str** | Optionally provide an already existing curve certificate this is intended for bursting to remote clusters | [optional] [default to '']
 **install_root** | **str** | Install root location | [optional] [default to '/usr']
-**lead_broker** | [**FluxBroker**](FluxBroker.md) |  | [optional] 
 **log_level** | **int** | Log level to use for flux logging (only in non TestMode) | [optional] [default to 6]
 **minimal_service** | **bool** | Only expose the broker service (to reduce load on DNS) | [optional] [default to False]
 **munge_config_map** | **str** | Expect a config map (named according to this string) for a munge key. This is intended for bursting. Assumed to be at /etc/munge/munge.key We expect a config map since it&#39;s binary data | [optional] [default to '']
