@@ -430,7 +430,7 @@ In the case that you are also bursting, you'll need the shared munge key between
 Since this is a binary file, we recommend you create a config map from the file:
 
 ```bash
-$ kubectl create configmap munge-key --from-file=/etc/munge/munge.key
+$ kubectl create configmap --namespace flux-operator munge-key --from-file=/etc/munge/munge.key
 ```
 
 And then tell the operator to expect it as a volume:

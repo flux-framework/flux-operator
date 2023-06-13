@@ -17,7 +17,7 @@ default_bind = "tcp://eth0:%p"
 default_connect = "tcp://%h.{{ .FQDN }}:%p"
 {{ if .Spec.Flux.LeadBroker.Address }}
 hosts = [{host="{{ .Spec.Flux.LeadBroker.Address }}", bind="tcp://eth0:{{ .Spec.Flux.LeadBroker.Port }}", connect="tcp://{{ .Spec.Flux.LeadBroker.Address }}:{{ .Spec.Flux.LeadBroker.Port }}"},
-         {host="{{ .ClusterName }}-{{ .Hosts }}]"}]
+         {host="{{ .ClusterName }}-{{ .Hosts }}"}]
 {{ else }}hosts = [
 	{ host="{{ .ClusterName }}-{{ .Hosts }}"},
 ]{{ end }}

@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 import argparse
+import base64
 import os
 import socket
 import sys
@@ -20,6 +21,7 @@ here = os.path.dirname(os.path.abspath(__file__))
 from fluxoperator.client import FluxMiniCluster
 from kubernetes import client as kubernetes_client
 from kubernetes import utils as k8sutils
+from kubernetes.client.rest import ApiException
 
 here = os.path.abspath(os.path.dirname(__file__))
 
@@ -43,10 +45,11 @@ def get_minicluster(
     image=None,
     wrap=None,
     log_level=7,
-    flux_user=None
+    flux_user=None,
     lead_host=None,
     lead_port=None,
     broker_toml=None,
+    munge_config_map=None,
 ):
     """
     Get a MiniCluster CRD as a dictionary
@@ -85,16 +88,42 @@ def get_minicluster(
             "log_level": log_level,
         },
     }
+    if munge_config_map:
+        mc["flux"]["mungeConfigMap"] = munge_config_map
     if lead_host and lead_port:
-        mc['flux']['lead_broker'] = {'address': lead_host, 'port': lead_port}
-
+        mc["flux"]["lead_broker"] = {"address": lead_host, "port": int(lead_port)}
     if broker_toml:
-        mc['flux']['broker_config'] = broker_toml
+        mc["flux"]["broker_config"] = broker_toml
 
     # eg., this would require strace "strace,-e,network,-tt"
     if wrap is not None:
         mc["flux"]["wrap"] = wrap
     return mc, container
+
+
+def create_munge_configmap(path, name, namespace):
+    """
+    Create a binary data config map
+    """
+    # Configureate ConfigMap metadata
+    metadata = kubernetes_client.V1ObjectMeta(
+        name=name,
+        namespace=namespace,
+    )
+    # Get File Content
+    with open(path, "rb") as f:
+        content = f.read()
+
+    # base64 encoded string
+    content = base64.b64encode(content).decode("utf-8")
+
+    # Instantiate the configmap object
+    return kubernetes_client.V1ConfigMap(
+        api_version="v1",
+        kind="ConfigMap",
+        binary_data={"munge.key": content},
+        metadata=metadata,
+    )
 
 
 def get_parser():
@@ -128,6 +157,14 @@ def get_parser():
         dest="lead_host",
     )
     parser.add_argument(
+        "--munge-key",
+        help="Name of a config map to be made in the same namespace",
+    )
+    parser.add_argument(
+        "--munge-config-map",
+        help="Path to munge.key",
+    )
+    parser.add_argument(
         "--lead-port", help="Lead broker service port", dest="lead_port", default=30093
     )
     parser.add_argument(
@@ -142,14 +179,15 @@ def get_parser():
     parser.add_argument(
         "--namespace", help="Namespace for external cluster", default="flux-operator"
     )
-    parser.add_argument("--broker-toml", help="Broker toml template",)
+    parser.add_argument(
+        "--broker-toml",
+        help="Broker toml template",
+    )
     parser.add_argument("--flux-operator-yaml", dest="flux_operator_yaml")
     parser.add_argument(
         "--curve-cert", dest="curve_cert", default="/mnt/curve/curve.cert"
     )
-    parser.add_argument(
-        "--flux-user", help='custom flux user (defaults to flux)'
-    )
+    parser.add_argument("--flux-user", help="custom flux user (defaults to flux)")
     parser.add_argument(
         "--wrap", help='arguments to flux wrap, e.g., "strace,-e,network,-tt'
     )
@@ -251,6 +289,11 @@ def main():
         "Broker lead will be expected to be accessible on {args.lead_host}:{args.lead_port}"
     )
 
+    if args.munge_key and not os.path.exists(args.munge_key):
+        sys.exit(f"Provided munge key {args.munge_key} does not exist.")
+    if args.munge_key and not args.munge_config_map:
+        args.munge_config_map = "munge-key"
+
     # Create a spec for what we need to burst.
     # This will be just for one moment in time, obviously there would be different
     # ways to do this (to decide when to burst, based on what metrics, etc.)
@@ -320,7 +363,7 @@ def main():
         cpu_limit=args.cpu_limit,
         namespace=args.namespace,
         curve_cert=curve_cert,
-        broker_toml=broker_toml,
+        broker_toml=args.broker_toml,
         tasks=info["ntasks"],
         size=info["nnodes"],
         image=args.image,
@@ -329,6 +372,7 @@ def main():
         flux_user=args.flux_user,
         lead_host=args.lead_host,
         lead_port=args.lead_port,
+        munge_config_map=args.munge_config_map,
     )
 
     # Create the namespace
@@ -344,13 +388,30 @@ def main():
     # Let's assume there could be bugs applying this differently
     crd_api = kubernetes_client.CustomObjectsApi(kubectl.api_client)
 
+    # kubectl create configmap --namespace flux-operator munge-key --from-file=/etc/munge/munge.key
     # WORKING HERE
+    # TODO create from file in the same namespace?
     import IPython
 
     IPython.embed()
     sys.exit()
+    if args.munge_key:
+        cm = create_munge_configmap(
+            args.munge_key, args.munge_config_map, args.namespace
+        )
+        try:
+            api_response = kubectl.create_namespaced_config_map(
+                namespace=args.namespace,
+                body=cm,
+            )
+        except ApiException as e:
+            print(
+                "Exception when calling CoreV1Api->create_namespaced_config_map: %s\n"
+                % e
+            )
 
     # Create the MiniCluster! This also waits for it to be ready
+    # TODO we need a check here for completed - it will hang
     print(f"⭐️ Creating the minicluster {args.name} in {args.namespace}...")
     operator = FluxMiniCluster()
     operator.create(**minicluster, container=container, crd_api=crd_api)

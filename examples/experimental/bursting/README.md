@@ -46,6 +46,18 @@ We will eventually need to do the following:
  - Is there ever interaction from any node aside from the lead broker of the second cluster?
 
 
+## Credentials
+
+Since we are interacting with Google from within the MiniCluster, you need to have your default application credentials
+shared there. This can probably be scoped to a service account, but for now we are being lazy. You must ABSOLUTELY
+be sure you don't add these to git.
+
+```bash
+cp $HOME/.config/gcloud/application_default_credentials.json .
+```
+
+**DO NOT DO THIS FOR ANYTHING OTHER THAN DEVELOPMENT OR TESTING.**
+
 ## Google Cloud Setup
 
 Since we want to have two clusters communicating (and they will need public addresses) we will deploy both to GKE.
@@ -103,8 +115,6 @@ gke-flux-cluster-default-pool-4dea9d5c-0b0d   Ready    <none>   69m   v1.25.8-gk
 If you applied [service/nginx.yaml](service/nginx.yaml) (a testing setup I used as a hello world for a service) you can try opening `34.135.221.11:30093`. For the broker (34.171.113.254) above, that might be harder to test. If you do the first, you should see the "Welcome to nginx!" page. Finally, when the broker index 0 pod is running, copy your scripts and configs over to it:
 
 ```bash
-POD=flux-sample-0-jzvkm
-
 # This should be the index 0
 POD=$(kubectl get pods -n flux-operator -o json | jq -r .items[0].metadata.name)
 
@@ -118,7 +128,6 @@ kubectl exec -it -n flux-operator ${POD} -- mkdir -p /tmp/workflow/external-conf
 
 # Copy configs
 kubectl cp -n flux-operator ./external-config/flux-operator-dev.yaml ${POD}:/tmp/workflow/external-config/flux-operator-dev.yaml -c flux-sample
-kubectl cp -n flux-operator ./external-config/broker.toml ${POD}:/tmp/workflow/external-config/broker.toml -c flux-sample
 ```
 
 At this point, jump down to [burstable job](#burstable-job). If you are having trouble seeing communication for the service, you should come back to this step, and redo with nginx (service/service.yaml) and the flux-sample-service pod. 
@@ -126,18 +135,6 @@ At this point, jump down to [burstable job](#burstable-job). If you are having t
 ## Development with Kind
 
 I first tested on kind, and was able to get up to the point of needing to connect (and could not without the host).
-
-### Credentials
-
-Since we are interacting with Google from within the MiniCluster, you need to have your default application credentials
-shared there. This can probably be scoped to a service account, but for now we are being lazy. You must ABSOLUTELY
-be sure you don't add these to git.
-
-```bash
-cp $HOME/.config/gcloud/application_default_credentials.json .
-```
-
-**DO NOT DO THIS FOR ANYTHING OTHER THAN A LOCAL TEST.**
 
 ### Setup Cluster
 
@@ -155,7 +152,6 @@ kubectl apply -f ../../dist/flux-operator-dev.yaml
 kubectl create namespace flux-operator
 ```
 
-
 Create an existing config map for nginx (that it will expect to be there, and we 
 have defined in our minicluster.yaml under the nginx service existingVolumes).
 
@@ -163,7 +159,6 @@ have defined in our minicluster.yaml under the nginx service existingVolumes).
 $ kubectl apply -f service/nginx.yaml
 ```
 
-TODO need to make portal to serve brokers from here...
 And then create the MiniCluster
 
 ```bash
@@ -215,6 +210,7 @@ cd -
 python3 -m pip install IPython
 ```
 
+We can eventually package these in a container base.
 Resources we have available?
 
 ```bash
@@ -251,16 +247,25 @@ $ flux job attach $(flux job last)
 flux-job: ƒQURAmBXV waiting for resources  
 ```
 
+Get a variant of the munge key we can see:
+
+```bash
+sudo cp /etc/munge/munge.key munge.key
+sudo chown $USER munge.key
+```
+
 Now we can run our script to find the jobs based on this attribute!
 
 ```bash
 GOOGLE_PROJECT=myproject
-LEAD_HOST="34.172.58.30"
+LEAD_HOST="35.223.235.162"
 LEAD_PORT=30093
-python3 run-burst.py --project ${GOOGLE_PROJECT} --cluster-name flux-external-cluster --flux-operator-yaml ./external-config/flux-operator-dev.yaml --lead-host ${LEAD_HOST} --lead-port ${LEAD_PORT}
+python3 run-burst.py --project ${GOOGLE_PROJECT} --cluster-name flux-external-cluster --flux-operator-yaml ./external-config/flux-operator-dev.yaml --lead-host ${LEAD_HOST} --lead-port ${LEAD_PORT} --munge-key ./munge.key --name flux-another-sample
 ```
 
-**STOPPED HERE** we are now at the handshake and need to figure out that failure, from the first cluster:
+**STOPPED HERE** the handshake is successful, the local (first) cluster seems to pick up 2 nodes,
+the job runs and reports 2 of the external hostnames, but the second lead broker seems to continue
+crashing and restarting. This is still great progress!
 
 
 ## Debugging
