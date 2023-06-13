@@ -15,7 +15,7 @@ curve_cert = "/etc/curve/curve.cert"
 default_port = 8050
 default_bind = "tcp://eth0:%p"
 default_connect = "tcp://%h.{{ .FQDN }}:%p"
-{{ if .Spec.Flux.LeadBroker }}
+{{ if .Spec.Flux.LeadBroker.Address }}
 hosts = [{host="{{ .Spec.Flux.LeadBroker.Address }}", bind="tcp://eth0:{{ .Spec.Flux.LeadBroker.Port }}", connect="tcp://{{ .Spec.Flux.LeadBroker.Address }}:{{ .Spec.Flux.LeadBroker.Port }}"},
          {host="{{ .ClusterName }}-{{ .Hosts }}]"}]
 {{ else }}hosts = [
