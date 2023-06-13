@@ -380,11 +380,12 @@ type FluxSpec struct {
 	//+optional
 	CurveCert string `json:"curveCert"`
 
-	// Optionally provide an already existing munge key
-	// this is intended for bursting to remote clusters.
+	// Expect a config map (named according to this string)
+	// for a munge key. This is intended for bursting.
 	// Assumed to be at /etc/munge/munge.key
+	// We expect a config map since it's binary data
 	//+optional
-	MungeKey string `json:"mungeKey"`
+	MungeConfigMap string `json:"mungeConfigMap"`
 
 	// The lead broker ip address to provide as a resource
 	// and to the broker.toml

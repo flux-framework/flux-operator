@@ -385,6 +385,61 @@ flux:
 
 The drawback is that you cannot ping the other nodes by hostname.
 
+#### brokerConfig
+
+If you want to manually specify the broker config in entirety, you can define
+it as a full string under flux->brokerConfig. This is useful for experiments
+or development work.
+
+```yaml
+flux:
+  brokerConfig: |
+     [exec]
+     ...
+```
+
+#### curveCert
+
+The same goes for the curve certificate! If you are bursting and want your
+new cluster to talk to the cluster it's bursted from, you can share this certificate.
+
+```yaml
+flux:
+  curveCert: |
+     [exec]
+     ...
+```
+
+#### leadBroker
+
+The lead broker can be custom defined, e.g., if you are bursting to another cluster you just
+created and want it to point back to the cluster you bursted from. A port and an address
+are always required.
+
+
+```yaml
+flux:
+  leadBroker: 
+    address: 35.123.54.122
+    port: 30093
+```
+
+#### mungeConfigMap
+
+In the case that you are also bursting, you'll need the shared munge key between clusters.
+Since this is a binary file, we recommend you create a config map from the file:
+
+```bash
+$ kubectl create configmap munge-key --from-file=/etc/munge/munge.key
+```
+
+And then tell the operator to expect it as a volume:
+
+```yaml
+flux:
+  mungeConfigMap: munge-key
+```
+
 #### connectTimeout
 
 For Flux versions 0.50.0 and later, you can customize the zeromq timeout. This is done

@@ -330,9 +330,9 @@ func schema__api_v1alpha1__FluxSpec(ref common.ReferenceCallback) common.OpenAPI
 							Format:      "",
 						},
 					},
-					"mungeKey": {
+					"mungeConfigMap": {
 						SchemaProps: spec.SchemaProps{
-							Description: "Optionally provide an already existing munge key this is intended for bursting to remote clusters. Assumed to be at /etc/munge/munge.key",
+							Description: "Expect a config map (named according to this string) for a munge key. This is intended for bursting. Assumed to be at /etc/munge/munge.key We expect a config map since it's binary data",
 							Default:     "",
 							Type:        []string{"string"},
 							Format:      "",

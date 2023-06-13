@@ -40,7 +40,7 @@ class FluxSpec(object):
         'lead_broker': 'FluxBroker',
         'log_level': 'int',
         'minimal_service': 'bool',
-        'munge_key': 'str',
+        'munge_config_map': 'str',
         'option_flags': 'str',
         'wrap': 'str'
     }
@@ -53,12 +53,12 @@ class FluxSpec(object):
         'lead_broker': 'leadBroker',
         'log_level': 'logLevel',
         'minimal_service': 'minimalService',
-        'munge_key': 'mungeKey',
+        'munge_config_map': 'mungeConfigMap',
         'option_flags': 'optionFlags',
         'wrap': 'wrap'
     }
 
-    def __init__(self, broker_config='', connect_timeout='5s', curve_cert='', install_root='/usr', lead_broker=None, log_level=6, minimal_service=False, munge_key='', option_flags='', wrap=None, local_vars_configuration=None):  # noqa: E501
+    def __init__(self, broker_config='', connect_timeout='5s', curve_cert='', install_root='/usr', lead_broker=None, log_level=6, minimal_service=False, munge_config_map='', option_flags='', wrap=None, local_vars_configuration=None):  # noqa: E501
         """FluxSpec - a model defined in OpenAPI"""  # noqa: E501
         if local_vars_configuration is None:
             local_vars_configuration = Configuration.get_default_copy()
@@ -71,7 +71,7 @@ class FluxSpec(object):
         self._lead_broker = None
         self._log_level = None
         self._minimal_service = None
-        self._munge_key = None
+        self._munge_config_map = None
         self._option_flags = None
         self._wrap = None
         self.discriminator = None
@@ -90,8 +90,8 @@ class FluxSpec(object):
             self.log_level = log_level
         if minimal_service is not None:
             self.minimal_service = minimal_service
-        if munge_key is not None:
-            self.munge_key = munge_key
+        if munge_config_map is not None:
+            self.munge_config_map = munge_config_map
         if option_flags is not None:
             self.option_flags = option_flags
         if wrap is not None:
@@ -257,27 +257,27 @@ class FluxSpec(object):
         self._minimal_service = minimal_service
 
     @property
-    def munge_key(self):
-        """Gets the munge_key of this FluxSpec.  # noqa: E501
+    def munge_config_map(self):
+        """Gets the munge_config_map of this FluxSpec.  # noqa: E501
 
-        Optionally provide an already existing munge key this is intended for bursting to remote clusters. Assumed to be at /etc/munge/munge.key  # noqa: E501
+        Expect a config map (named according to this string) for a munge key. This is intended for bursting. Assumed to be at /etc/munge/munge.key We expect a config map since it's binary data  # noqa: E501
 
-        :return: The munge_key of this FluxSpec.  # noqa: E501
+        :return: The munge_config_map of this FluxSpec.  # noqa: E501
         :rtype: str
         """
-        return self._munge_key
+        return self._munge_config_map
 
-    @munge_key.setter
-    def munge_key(self, munge_key):
-        """Sets the munge_key of this FluxSpec.
+    @munge_config_map.setter
+    def munge_config_map(self, munge_config_map):
+        """Sets the munge_config_map of this FluxSpec.
 
-        Optionally provide an already existing munge key this is intended for bursting to remote clusters. Assumed to be at /etc/munge/munge.key  # noqa: E501
+        Expect a config map (named according to this string) for a munge key. This is intended for bursting. Assumed to be at /etc/munge/munge.key We expect a config map since it's binary data  # noqa: E501
 
-        :param munge_key: The munge_key of this FluxSpec.  # noqa: E501
-        :type munge_key: str
+        :param munge_config_map: The munge_config_map of this FluxSpec.  # noqa: E501
+        :type munge_config_map: str
         """
 
-        self._munge_key = munge_key
+        self._munge_config_map = munge_config_map
 
     @property
     def option_flags(self):

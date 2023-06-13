@@ -298,10 +298,11 @@ spec:
                   minimalService:
                     description: Only expose the broker service (to reduce load on DNS)
                     type: boolean
-                  mungeKey:
-                    description: Optionally provide an already existing munge key this
-                      is intended for bursting to remote clusters. Assumed to be at
-                      /etc/munge/munge.key
+                  mungeConfigMap:
+                    description: Expect a config map (named according to this string)
+                      for a munge key. This is intended for bursting. Assumed to be
+                      at /etc/munge/munge.key We expect a config map since it's binary
+                      data
                     type: string
                   optionFlags:
                     description: Flux option flags, usually provided with -o optional

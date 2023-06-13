@@ -49,6 +49,15 @@ func getVolumeMounts(cluster *api.MiniCluster) []corev1.VolumeMount {
 			ReadOnly:  true,
 		},
 	}
+	// Are we expecting a munge config map?
+	if cluster.Spec.Flux.MungeConfigMap != "" {
+		mungeMount := corev1.VolumeMount{
+			Name:      cluster.Spec.Flux.MungeConfigMap,
+			MountPath: "/etc/munge",
+			ReadOnly:  true,
+		}
+		mounts = append(mounts, mungeMount)
+	}
 	return mounts
 }
 
@@ -77,6 +86,12 @@ func getVolumes(cluster *api.MiniCluster) []corev1.Volume {
 	brokerFile := corev1.KeyToPath{
 		Key:  "hostfile",
 		Path: "broker.toml",
+	}
+
+	// If we need the munge.key
+	mungeKey := corev1.KeyToPath{
+		Key:  "munge.key",
+		Path: "munge.key",
 	}
 
 	if cluster.MultiUser() {
@@ -134,6 +149,22 @@ func getVolumes(cluster *api.MiniCluster) []corev1.Volume {
 		},
 	}
 
+	// Are we expecting a munge config map?
+	if cluster.Spec.Flux.MungeConfigMap != "" {
+		mungeVolume := corev1.Volume{
+			Name: cluster.Name + fluxConfigSuffix,
+			VolumeSource: corev1.VolumeSource{
+				ConfigMap: &corev1.ConfigMapVolumeSource{
+					LocalObjectReference: corev1.LocalObjectReference{
+						Name: cluster.Spec.Flux.MungeConfigMap,
+					},
+					// /etc/munge/munge.key
+					Items: []corev1.KeyToPath{mungeKey},
+				},
+			},
+		}
+		volumes = append(volumes, mungeVolume)
+	}
 	// Add volumes that already exist (not created by the Flux Operator)
 	// These are unique names and path/claim names across containers
 	// This can be a claim, secret, or config map
