@@ -84,6 +84,26 @@
         }
       }
     },
+    "FluxBroker": {
+      "description": "A FluxBroker defines a broker for flux",
+      "type": "object",
+      "required": [
+        "address"
+      ],
+      "properties": {
+        "address": {
+          "description": "Lead broker address (ip or hostname)",
+          "type": "string",
+          "default": ""
+        },
+        "port": {
+          "description": "Lead broker port - should only be used for external cluster",
+          "type": "integer",
+          "format": "int32",
+          "default": 8050
+        }
+      }
+    },
     "FluxRestful": {
       "type": "object",
       "properties": {
@@ -138,6 +158,11 @@
           "type": "string",
           "default": "/usr"
         },
+        "leadBroker": {
+          "description": "The lead broker ip address to provide as a resource and to the broker.toml this is intended for bursting to remote clusters",
+          "default": {},
+          "$ref": "#/definitions/FluxBroker"
+        },
         "logLevel": {
           "description": "Log level to use for flux logging (only in non TestMode)",
           "type": "integer",
@@ -148,6 +173,11 @@
           "description": "Only expose the broker service (to reduce load on DNS)",
           "type": "boolean",
           "default": false
+        },
+        "mungeKey": {
+          "description": "Optionally provide an already existing munge key this is intended for bursting to remote clusters. Assumed to be at /etc/munge/munge.key",
+          "type": "string",
+          "default": ""
         },
         "optionFlags": {
           "description": "Flux option flags, usually provided with -o optional - if needed, default option flags for the server These can also be set in the user interface to override here. This is only valid for a FluxRunner \"runFlux\" true",

@@ -380,10 +380,35 @@ type FluxSpec struct {
 	//+optional
 	CurveCert string `json:"curveCert"`
 
+	// Optionally provide an already existing munge key
+	// this is intended for bursting to remote clusters.
+	// Assumed to be at /etc/munge/munge.key
+	//+optional
+	MungeKey string `json:"mungeKey"`
+
+	// The lead broker ip address to provide as a resource
+	// and to the broker.toml
+	// this is intended for bursting to remote clusters
+	//+optional
+	LeadBroker FluxBroker `json:"leadBroker"`
+
 	// Optionally provide a manually created broker config
 	// this is intended for bursting to remote clusters
 	//+optional
 	BrokerConfig string `json:"brokerConfig"`
+}
+
+// A FluxBroker defines a broker for flux
+type FluxBroker struct {
+
+	// Lead broker address (ip or hostname)
+	Address string `json:"address"`
+
+	// Lead broker port - should only be used for external cluster
+	// +kubebuilder:default=8050
+	// +default=8050
+	// +optional
+	Port int32 `json:"port,omitempty"`
 }
 
 type MiniClusterContainer struct {
@@ -654,6 +679,12 @@ func (f *MiniCluster) Validate() bool {
 		f.Spec.MaxSize = f.Spec.Size
 	}
 
+	// If we have a separate lead broker, the max size is one smaller than we expect
+	// However, we do not want to go below 1!
+	if f.Spec.Flux.LeadBroker.Address != "" && f.Spec.MaxSize >= 2 {
+		f.Spec.MaxSize = f.Spec.MaxSize - 1
+	}
+
 	// If we haven't seen a MaxSize (in the status) yet, set it
 	// This needs to be the absolute max that is allowed
 	if f.Status.MaximumSize == 0 {
@@ -679,6 +710,11 @@ func (f *MiniCluster) Validate() bool {
 			fmt.Printf("😥️ Services do not support Commands.\n")
 			return false
 		}
+	}
+
+	// Set default port if unset
+	if f.Spec.Flux.LeadBroker.Port == 0 {
+		f.Spec.Flux.LeadBroker.Port = 8050
 	}
 
 	// If we only have one container, assume we want to run flux with it

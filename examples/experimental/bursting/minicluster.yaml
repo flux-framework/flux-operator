@@ -30,7 +30,7 @@ spec:
 
   # This is a list because a pod can support multiple containers
   containers:
-    - image: ghcr.io/rse-ops/singularity:tag-mamba
+    - image: ghcr.io/flux-framework/flux-restful-api
       workingDir: /tmp/workflow
 
       # We will use launcher here to just run the command
@@ -49,21 +49,3 @@ spec:
 
         requests:
           cpu: "1"
-      
-      # This pulls the container (once) by the broker to workingDir /data
-      commands:
-        pre: |
-          pip install --upgrade pip
-          git clone -b add/gke-kubectl-client https://github.com/converged-computing/kubescaler
-          cd kubescaler
-          pip install -e .[google]
-          pip install -e .[aws]
-          cd -
-          git clone --depth 1 -b bursting https://github.com/flux-framework/flux-operator ./op
-          cd ./op/sdk/python/v1alpha1
-          pip install -e .
-          cd -
-          pip install IPython
-
-      fluxUser:
-        name: fluxuser

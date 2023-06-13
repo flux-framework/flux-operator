@@ -27,6 +27,7 @@ func GetOpenAPIDefinitions(ref common.ReferenceCallback) map[string]common.OpenA
 		"./api/v1alpha1/.Commands":                  schema__api_v1alpha1__Commands(ref),
 		"./api/v1alpha1/.ContainerResources":        schema__api_v1alpha1__ContainerResources(ref),
 		"./api/v1alpha1/.ContainerVolume":           schema__api_v1alpha1__ContainerVolume(ref),
+		"./api/v1alpha1/.FluxBroker":                schema__api_v1alpha1__FluxBroker(ref),
 		"./api/v1alpha1/.FluxRestful":               schema__api_v1alpha1__FluxRestful(ref),
 		"./api/v1alpha1/.FluxSpec":                  schema__api_v1alpha1__FluxSpec(ref),
 		"./api/v1alpha1/.FluxUser":                  schema__api_v1alpha1__FluxUser(ref),
@@ -186,6 +187,36 @@ func schema__api_v1alpha1__ContainerVolume(ref common.ReferenceCallback) common.
 	}
 }
 
+func schema__api_v1alpha1__FluxBroker(ref common.ReferenceCallback) common.OpenAPIDefinition {
+	return common.OpenAPIDefinition{
+		Schema: spec.Schema{
+			SchemaProps: spec.SchemaProps{
+				Description: "A FluxBroker defines a broker for flux",
+				Type:        []string{"object"},
+				Properties: map[string]spec.Schema{
+					"address": {
+						SchemaProps: spec.SchemaProps{
+							Description: "Lead broker address (ip or hostname)",
+							Default:     "",
+							Type:        []string{"string"},
+							Format:      "",
+						},
+					},
+					"port": {
+						SchemaProps: spec.SchemaProps{
+							Description: "Lead broker port - should only be used for external cluster",
+							Default:     8050,
+							Type:        []string{"integer"},
+							Format:      "int32",
+						},
+					},
+				},
+				Required: []string{"address"},
+			},
+		},
+	}
+}
+
 func schema__api_v1alpha1__FluxRestful(ref common.ReferenceCallback) common.OpenAPIDefinition {
 	return common.OpenAPIDefinition{
 		Schema: spec.Schema{
@@ -299,6 +330,21 @@ func schema__api_v1alpha1__FluxSpec(ref common.ReferenceCallback) common.OpenAPI
 							Format:      "",
 						},
 					},
+					"mungeKey": {
+						SchemaProps: spec.SchemaProps{
+							Description: "Optionally provide an already existing munge key this is intended for bursting to remote clusters. Assumed to be at /etc/munge/munge.key",
+							Default:     "",
+							Type:        []string{"string"},
+							Format:      "",
+						},
+					},
+					"leadBroker": {
+						SchemaProps: spec.SchemaProps{
+							Description: "The lead broker ip address to provide as a resource and to the broker.toml this is intended for bursting to remote clusters",
+							Default:     map[string]interface{}{},
+							Ref:         ref("./api/v1alpha1/.FluxBroker"),
+						},
+					},
 					"brokerConfig": {
 						SchemaProps: spec.SchemaProps{
 							Description: "Optionally provide a manually created broker config this is intended for bursting to remote clusters",
@@ -310,6 +356,8 @@ func schema__api_v1alpha1__FluxSpec(ref common.ReferenceCallback) common.OpenAPI
 				},
 			},
 		},
+		Dependencies: []string{
+			"./api/v1alpha1/.FluxBroker"},
 	}
 }
 

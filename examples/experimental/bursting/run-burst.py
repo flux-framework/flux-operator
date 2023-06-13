@@ -7,7 +7,6 @@ import sys
 
 import flux
 import flux.job
-import jinja2
 import requests
 
 import kubescaler.utils as utils
@@ -34,7 +33,6 @@ default_flux_operator_yaml = "https://raw.githubusercontent.com/flux-framework/f
 def get_minicluster(
     command,
     curve_cert,
-    broker_toml,
     size=4,
     tasks=16,  # nodes * cpu per node, where cpu per node is vCPU / 2
     cpu_limit=7,
@@ -45,6 +43,10 @@ def get_minicluster(
     image=None,
     wrap=None,
     log_level=7,
+    flux_user=None
+    lead_host=None,
+    lead_port=None,
+    broker_toml=None,
 ):
     """
     Get a MiniCluster CRD as a dictionary
@@ -53,7 +55,7 @@ def get_minicluster(
     are required, since we need this external cluster to connect to ours!
     """
     flags = flags or "-ompi=openmpi@5 -c 1 -o cpu-affinity=per-task"
-    image = image or "ghcr.io/flux-framework/flux-restful-api:latest"
+    image = image or "ghcr.io/flux-framework/flux-restful-api"
     container = {
         "image": image,
         "command": command,
@@ -62,6 +64,11 @@ def get_minicluster(
             "requests": {"cpu": cpu_limit, "memory": memory_limit},
         },
     }
+
+    # Do we have a custom flux user for the container?
+    if flux_user:
+        container["flux_user"] = {"name": flux_user}
+
     # The MiniCluster has the added name and namespace
     mc = {
         "size": size,
@@ -76,10 +83,15 @@ def get_minicluster(
             "connect_timeout": "5s",
             "curve_cert": curve_cert,
             "log_level": log_level,
-            "broker_config": broker_toml,
         },
     }
-    # e.g., this would require strace "strace,-e,network,-tt"
+    if lead_host and lead_port:
+        mc['flux']['lead_broker'] = {'address': lead_host, 'port': lead_port}
+
+    if broker_toml:
+        mc['flux']['broker_config'] = broker_toml
+
+    # eg., this would require strace "strace,-e,network,-tt"
     if wrap is not None:
         mc["flux"]["wrap"] = wrap
     return mc, container
@@ -130,14 +142,13 @@ def get_parser():
     parser.add_argument(
         "--namespace", help="Namespace for external cluster", default="flux-operator"
     )
-    parser.add_argument(
-        "--broker-toml",
-        help="Broker toml template",
-        default=os.path.join(here, "external-config", "broker.toml"),
-    )
+    parser.add_argument("--broker-toml", help="Broker toml template",)
     parser.add_argument("--flux-operator-yaml", dest="flux_operator_yaml")
     parser.add_argument(
         "--curve-cert", dest="curve_cert", default="/mnt/curve/curve.cert"
+    )
+    parser.add_argument(
+        "--flux-user", help='custom flux user (defaults to flux)'
     )
     parser.add_argument(
         "--wrap", help='arguments to flux wrap, e.g., "strace,-e,network,-tt'
@@ -293,21 +304,8 @@ def main():
     except Exception as exc:
         print(f"Issue installing the operator: {exc}, assuming already exists")
 
-    # Now let's customize our minicluster CRD. Importantly, we need the curve.cert from the
-    # parent cluster, along with a custom host file.
-    broker_toml_raw = utils.read_file(args.broker_toml)
-    template = jinja2.Template(broker_toml_raw)
-    broker_toml = template.render(
-        {
-            "size": info["nnodes"] - 1,
-            "job_name": hostname,
-            "lead_host": args.lead_host,
-            "lead_port": args.lead_port,
-        }
-    )
-
-    # TODO: try running this from one google cloud cluster to another
-    # OR give my ip address for the broker connect?
+    # NOTE we previously populated a broker.toml template here, and we don't
+    # need to do that anymore - the operator will generate the config
 
     # Assemble the command from the requested job
     command = " ".join(info["spec"]["tasks"][0]["command"])
@@ -328,6 +326,9 @@ def main():
         image=args.image,
         wrap=args.wrap,
         log_level=args.log_level,
+        flux_user=args.flux_user,
+        lead_host=args.lead_host,
+        lead_port=args.lead_port,
     )
 
     # Create the namespace

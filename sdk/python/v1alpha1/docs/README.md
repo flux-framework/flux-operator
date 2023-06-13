@@ -59,6 +59,7 @@ from pprint import pprint
  - [Commands](Commands.md)
  - [ContainerResources](dContainerResources.md)
  - [ContainerVolume](ContainerVolume.md)
+ - [FluxBroker](FluxBrokerl.md)
  - [FluxRestful](FluxRestful.md)
  - [FluxSpec](FluxSpec.md)
  - [FluxUser](FluxUser.md)

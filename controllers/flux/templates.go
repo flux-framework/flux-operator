@@ -22,14 +22,8 @@ var brokerConfigTemplate string
 //go:embed templates/job-manager.toml
 var brokerConfigJobManagerPlugin string
 
-//go:embed templates/archive.toml
-var brokerArchiveSection string
-
 //go:embed templates/wait.sh
 var waitToStartTemplate string
-
-//go:embed templates/cert-generate.sh
-var generateCertTemplate string
 
 // WaitTemplate populates wait.sh
 type WaitTemplate struct {
@@ -49,7 +43,11 @@ type WaitTemplate struct {
 	Batch []string
 }
 
-// CertTemplate populates cert-generate.sh
-type CertTemplate struct {
-	PreCommand string
+// BrokerTemplate defines the broker templates (broker.toml)
+type BrokerTemplate struct {
+	FluxInstallRoot string
+	FQDN            string
+	Spec            api.MiniClusterSpec
+	ClusterName     string
+	Hosts           string
 }

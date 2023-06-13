@@ -8,12 +8,19 @@ can be used on the fly (when we don't have a DNS name to use in some cloud). For
 experiment we are going to try defining a cluster service, nginx, that is on the same
 headless network, and that (hopefully) we can forward as a port. Note that to start this
 work, I started with work on the [nginx service](../../services/sidecar/nginx/) example.
+
+## Design
+
+### What we might need
+
 I expect for this kind of bursting to work I will need to be able to:
 
  - Define the lead broker as a hostname external to the cluster AND internal (can we have two aliases?)
  - Have a custom external broker config that we generate
  - Be able to read in send the curve certificate as a configuration variable
  - Create a service to run (in place of the nginx container) to ensure the request goes to the right broker
+
+### What we we eventually want to improve upon
 
 We will eventually need to do the following:
 
@@ -24,7 +31,7 @@ We will eventually need to do the following:
  - When to configure external cluster to allow for scaling of flux (right now we set min == max so constant size)
  - Create a more scoped permission (Google service account) for running inside a cluster
 
-Right now what we do:
+### What we do now
 
 - Allow the user to provide a custom broker.toml and curve.cert (the idea being the external clusters are created with a lead broker pointing to that service, and the same curve.cert that is on the local cluster they were created from) - these are changes to the operator CRD
 - Submit jobs that are flagged for burstable (an attribute) and ask for more nodes than the cluster has (but below the max number so it doesn't immediately fail - we will want to fix this in flux because with bursting we should be able to ask for more than the potential size)
@@ -33,13 +40,11 @@ Right now what we do:
 - The external cluster is created from the first, directly from the flux lead broker!
 - Next - we need to figure out networking the two.
 
-We will use the following tricks to start (and each can be worked on to improve)
-
- - WRITE ME I don't know which tricks we will need yet :)
-
-Questions:
+### Questions
 
  - What would happen if we gave the lead broker two hosts with the same name?
+ - Is there ever interaction from any node aside from the lead broker of the second cluster?
+
 
 ## Google Cloud Setup
 
@@ -72,7 +77,7 @@ kubectl apply -f minicluster.yaml
 kubectl apply -f service/broker-service.yaml
 ```
 
-We need to open up the firewall to that port - this creates the rule:
+We need to open up the firewall to that port - this creates the rule (you only need to do this once)
 
 ```bash
 gcloud compute firewall-rules create flux-cluster-test-node-port --allow tcp:30093
@@ -95,10 +100,14 @@ $ kubectl get nodes -o wide | grep gke-flux-cluster-default-pool-4dea9d5c-0b0d
 gke-flux-cluster-default-pool-4dea9d5c-0b0d   Ready    <none>   69m   v1.25.8-gke.500   10.128.0.83   34.171.113.254   Container-Optimized OS from Google   5.15.89+         containerd://1.6.18
 ```
 
-If you applied [service/nginx.yaml](service/nginx.yaml) (a testing setup I used as a hello world for a service) you can try opening `34.135.221.11:30093`. For the broker (34.171.113.254) above, that might be harder to test. If you do the first, you should see the "Welcome to nginx!" page. Finally, copy your scripts and configs over:
+If you applied [service/nginx.yaml](service/nginx.yaml) (a testing setup I used as a hello world for a service) you can try opening `34.135.221.11:30093`. For the broker (34.171.113.254) above, that might be harder to test. If you do the first, you should see the "Welcome to nginx!" page. Finally, when the broker index 0 pod is running, copy your scripts and configs over to it:
 
 ```bash
 POD=flux-sample-0-jzvkm
+
+# This should be the index 0
+POD=$(kubectl get pods -n flux-operator -o json | jq -r .items[0].metadata.name)
+
 kubectl cp -n flux-operator ./run-burst.py ${POD}:/tmp/workflow/run-burst.py -c flux-sample
 
 # We will find a better way than this
@@ -187,7 +196,23 @@ $ kubectl exec -it -n flux-operator flux-sample-0-kvg5t bash
 Connect to the broker socket
 
 ```bash
-$ sudo -u fluxuser -E $(env) -E HOME=/home/fluxuser flux proxy local:///run/flux/local bash
+$ sudo -u flux -E $(env) -E HOME=/home/flux flux proxy local:///run/flux/local bash
+```
+
+Install the libraries we need:
+
+```bash
+# This is from /tmp/workflow
+git clone -b add/gke-kubectl-client https://github.com/converged-computing/kubescaler
+cd kubescaler
+python3 -m pip install -e .[google]
+python3 -m pip install -e .[aws]
+cd -
+git clone --depth 1 -b bursting https://github.com/flux-framework/flux-operator ./op
+cd ./op/sdk/python/v1alpha1
+python3 -m pip install -e .
+cd -
+python3 -m pip install IPython
 ```
 
 Resources we have available?
@@ -215,6 +240,7 @@ to the cluster (e.g. 4 nodes and 32 tasks) it would just fail so:
 
 You can see it is scheduled and waiting for resources:
 
+
 ```bash
 $ flux jobs -a
        JOBID USER     NAME       ST NTASKS NNODES     TIME INFO
@@ -229,12 +255,19 @@ Now we can run our script to find the jobs based on this attribute!
 
 ```bash
 GOOGLE_PROJECT=myproject
-LEAD_HOST="34.171.113.254"
+LEAD_HOST="34.172.58.30"
 LEAD_PORT=30093
-python run-burst.py --project ${GOOGLE_PROJECT} --cluster-name flux-external-cluster --flux-operator-yaml ./external-config/flux-operator-dev.yaml --lead-host ${LEAD_HOST} --lead-port ${LEAD_PORT}
+python3 run-burst.py --project ${GOOGLE_PROJECT} --cluster-name flux-external-cluster --flux-operator-yaml ./external-config/flux-operator-dev.yaml --lead-host ${LEAD_HOST} --lead-port ${LEAD_PORT}
 ```
 
 **STOPPED HERE** we are now at the handshake and need to figure out that failure, from the first cluster:
+
+
+## Debugging
+
+### Mismatch of zeromq version
+
+Note that if you see a bug like this - the issue is a mismatch of zeromq versions between containers.
 
 ```console
 broker.debug[0]: child sockevent tcp://10.116.2.8:8050 unknown socket event
@@ -250,30 +283,7 @@ broker.err[1]: parent sockevent tcp://34.171.113.254:30093 handshake failed: Bro
 broker.debug[1]: parent sockevent tcp://34.171.113.254:30093 disconnected
 broker.debug[1]: parent sockevent tcp://34.171.113.254:30093 connect retried
 ```
-The "accepted" is promising - and the broken pipe has me thinking something is leading it to disconnect. I've seen this happen with 
-flaky connections, and maybe there is something about the port actually serving vs. the one served by Kubernetes. Let's discuss this week!
-
-**Testing** I tried connecting to this second cluster with a cloud shell, and create the same exposed port.
-We could eventually have the operator do this, but manual for now. 
-
-```yaml
-apiVersion: v1
-kind: Service
-metadata:
-  name: lead-broker-service
-  namespace: flux-operator
-spec:
-  type: NodePort
-  ports:
-  - port: 8050
-    nodePort: 30093
-  selector:
-    job-index: "0"
-```
-
-I'm also not sure if the child brokers need to be exposed (I thought not).
-
-### Debugging
+### Kubectl for External
 
 Note that it's possible to get the kubectl config for you external cluster, and I recommended running
 this from the Google Cloud console (shell) so you don't muck around with your default kubectl:
@@ -282,6 +292,8 @@ this from the Google Cloud console (shell) so you don't muck around with your de
 $  gcloud container clusters get-credentials flux-cluster --zone us-central1-a --project llnl-flux \
 >  && kubectl get service kubernetes -o yaml
 ```
+
+If you click on the job name, there should be a "kubectl" link at the top.
 
 ### Cleanup
 
@@ -292,5 +304,7 @@ When you are done, clean up
 kubectl delete -f minicluster.yaml
 kubectl delete -f nginx.yaml
 kubectl delete -f service.yaml
+gcloud container clusters delete flux-cluster
 ```
+
 

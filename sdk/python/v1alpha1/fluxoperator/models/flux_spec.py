@@ -37,8 +37,10 @@ class FluxSpec(object):
         'connect_timeout': 'str',
         'curve_cert': 'str',
         'install_root': 'str',
+        'lead_broker': 'FluxBroker',
         'log_level': 'int',
         'minimal_service': 'bool',
+        'munge_key': 'str',
         'option_flags': 'str',
         'wrap': 'str'
     }
@@ -48,13 +50,15 @@ class FluxSpec(object):
         'connect_timeout': 'connectTimeout',
         'curve_cert': 'curveCert',
         'install_root': 'installRoot',
+        'lead_broker': 'leadBroker',
         'log_level': 'logLevel',
         'minimal_service': 'minimalService',
+        'munge_key': 'mungeKey',
         'option_flags': 'optionFlags',
         'wrap': 'wrap'
     }
 
-    def __init__(self, broker_config='', connect_timeout='5s', curve_cert='', install_root='/usr', log_level=6, minimal_service=False, option_flags='', wrap=None, local_vars_configuration=None):  # noqa: E501
+    def __init__(self, broker_config='', connect_timeout='5s', curve_cert='', install_root='/usr', lead_broker=None, log_level=6, minimal_service=False, munge_key='', option_flags='', wrap=None, local_vars_configuration=None):  # noqa: E501
         """FluxSpec - a model defined in OpenAPI"""  # noqa: E501
         if local_vars_configuration is None:
             local_vars_configuration = Configuration.get_default_copy()
@@ -64,8 +68,10 @@ class FluxSpec(object):
         self._connect_timeout = None
         self._curve_cert = None
         self._install_root = None
+        self._lead_broker = None
         self._log_level = None
         self._minimal_service = None
+        self._munge_key = None
         self._option_flags = None
         self._wrap = None
         self.discriminator = None
@@ -78,10 +84,14 @@ class FluxSpec(object):
             self.curve_cert = curve_cert
         if install_root is not None:
             self.install_root = install_root
+        if lead_broker is not None:
+            self.lead_broker = lead_broker
         if log_level is not None:
             self.log_level = log_level
         if minimal_service is not None:
             self.minimal_service = minimal_service
+        if munge_key is not None:
+            self.munge_key = munge_key
         if option_flags is not None:
             self.option_flags = option_flags
         if wrap is not None:
@@ -180,6 +190,27 @@ class FluxSpec(object):
         self._install_root = install_root
 
     @property
+    def lead_broker(self):
+        """Gets the lead_broker of this FluxSpec.  # noqa: E501
+
+
+        :return: The lead_broker of this FluxSpec.  # noqa: E501
+        :rtype: FluxBroker
+        """
+        return self._lead_broker
+
+    @lead_broker.setter
+    def lead_broker(self, lead_broker):
+        """Sets the lead_broker of this FluxSpec.
+
+
+        :param lead_broker: The lead_broker of this FluxSpec.  # noqa: E501
+        :type lead_broker: FluxBroker
+        """
+
+        self._lead_broker = lead_broker
+
+    @property
     def log_level(self):
         """Gets the log_level of this FluxSpec.  # noqa: E501
 
@@ -224,6 +255,29 @@ class FluxSpec(object):
         """
 
         self._minimal_service = minimal_service
+
+    @property
+    def munge_key(self):
+        """Gets the munge_key of this FluxSpec.  # noqa: E501
+
+        Optionally provide an already existing munge key this is intended for bursting to remote clusters. Assumed to be at /etc/munge/munge.key  # noqa: E501
+
+        :return: The munge_key of this FluxSpec.  # noqa: E501
+        :rtype: str
+        """
+        return self._munge_key
+
+    @munge_key.setter
+    def munge_key(self, munge_key):
+        """Sets the munge_key of this FluxSpec.
+
+        Optionally provide an already existing munge key this is intended for bursting to remote clusters. Assumed to be at /etc/munge/munge.key  # noqa: E501
+
+        :param munge_key: The munge_key of this FluxSpec.  # noqa: E501
+        :type munge_key: str
+        """
+
+        self._munge_key = munge_key
 
     @property
     def option_flags(self):

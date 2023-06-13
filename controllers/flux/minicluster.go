@@ -333,7 +333,11 @@ func (r *MiniClusterReconciler) getConfigMap(
 
 			// check if its broker.toml (the flux config)
 			if configName == "flux-config" {
-				data[hostfileName] = generateFluxConfig(cluster)
+				brokerConfig, err := generateFluxConfig(cluster)
+				if err != nil {
+					return existing, ctrl.Result{Requeue: true}, err
+				}
+				data[hostfileName] = brokerConfig
 
 			} else if configName == "cert" {
 
@@ -402,23 +406,49 @@ func (r *MiniClusterReconciler) getConfigMap(
 func generateHostlist(cluster *api.MiniCluster, size int) string {
 
 	// The hosts are generated through the max size, so the cluster can expand
-	return fmt.Sprintf("%s-[%s]", cluster.Name, generateRange(size))
+	hosts := fmt.Sprintf("%s-[%s]", cluster.Name, generateRange(size))
+
+	// If we have an additional external host, add it here.
+	// The first position is important to indicate it is the lead
+	if cluster.Spec.Flux.LeadBroker.Address != "" {
+		hosts = fmt.Sprintf("%s,%s", cluster.Spec.Flux.LeadBroker.Address, hosts)
+	}
+	return hosts
 }
 
 // generateFluxConfig creates the broker.toml file used to boostrap flux
-func generateFluxConfig(cluster *api.MiniCluster) string {
+func generateFluxConfig(cluster *api.MiniCluster) (string, error) {
 
 	// If we have a config provided by user, use it.
 	if cluster.Spec.Flux.BrokerConfig != "" {
-		return cluster.Spec.Flux.BrokerConfig
+		return cluster.Spec.Flux.BrokerConfig, nil
 	}
 
-	// The hosts are generated through the max size, so the cluster can expand
+	// Generate the broker.toml template
 	fqdn := fmt.Sprintf("%s.%s.svc.cluster.local", cluster.Spec.Network.HeadlessName, cluster.Namespace)
+
+	// If we have a separate lead broker, the max size is one smaller than we expect
 	hosts := fmt.Sprintf("[%s]", generateRange(int(cluster.Spec.MaxSize)))
-	fluxConfig := fmt.Sprintf(brokerConfigTemplate, cluster.FluxInstallRoot(), fqdn, cluster.Name, hosts)
-	fluxConfig += "\n" + brokerArchiveSection
-	return fluxConfig
+
+	bt := BrokerTemplate{
+		Hosts:           hosts,
+		FQDN:            fqdn,
+		Spec:            cluster.Spec,
+		ClusterName:     cluster.Name,
+		FluxInstallRoot: cluster.FluxInstallRoot(),
+	}
+
+	t, err := template.New("broker-toml").Parse(brokerConfigTemplate)
+	if err != nil {
+		return "", err
+	}
+
+	var output bytes.Buffer
+	if err := t.Execute(&output, bt); err != nil {
+		return "", err
+	}
+
+	return output.String(), nil
 }
 
 // getRequiredRanks figures out the quorum that should be online for the cluster to start
@@ -438,7 +468,6 @@ func getRequiredRanks(cluster *api.MiniCluster) string {
 // generateWaitScript generates the main script to start everything up!
 func generateWaitScript(cluster *api.MiniCluster, containerIndex int) (string, error) {
 
-	// The first pod (0) should always generate the curve certificate
 	container := cluster.Spec.Containers[containerIndex]
 	mainHost := fmt.Sprintf("%s-0", cluster.Name)
 

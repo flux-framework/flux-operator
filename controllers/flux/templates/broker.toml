@@ -1,6 +1,6 @@
 # Flux needs to know the path to the IMP executable
 [exec]
-imp = "%s/libexec/flux/flux-imp"
+imp = "{{ .FluxInstallRoot }}/libexec/flux/flux-imp"
 
 [access]
 allow-guest-user = true
@@ -13,8 +13,15 @@ path = "/etc/flux/system/R"
 [bootstrap]
 curve_cert = "/etc/curve/curve.cert"
 default_port = 8050
-default_bind = "tcp://eth0:%%p"
-default_connect = "tcp://%%h.%s:%%p"
-hosts = [
-	{ host="%s-%s"},
-]
+default_bind = "tcp://eth0:%p"
+default_connect = "tcp://%h.{{ .FQDN }}:%p"
+{{ if .Spec.Flux.LeadBroker }}
+hosts = [{host="{{ .Spec.Flux.LeadBroker.Address }}", bind="tcp://eth0:{{ .Spec.Flux.LeadBroker.Port }}", connect="tcp://{{ .Spec.Flux.LeadBroker.Address }}:{{ .Spec.Flux.LeadBroker.Port }}"},
+         {host="{{ .ClusterName }}-{{ .Hosts }}]"}]
+{{ else }}hosts = [
+	{ host="{{ .ClusterName }}-{{ .Hosts }}"},
+]{{ end }}
+[archive]
+dbpath = "/var/lib/flux/job-archive.sqlite"
+period = "1m"
+busytimeout = "50s"
