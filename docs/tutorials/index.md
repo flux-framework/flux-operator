@@ -48,6 +48,8 @@ The following tutorials are provided from their respective directories (and are 
 
 ### Workflows
 
+ - [ramble](https://github.com/flux-framework/flux-operator/blob/main/examples/workflows/ramble): recommended if you require installation with spack.
+
 Although some of the others above are also workflows, these examples are going to use `flux tree` (in various contexts) to
 submit different job hierarchies and get around the etcd bottleneck in Kubernetes. 
 
