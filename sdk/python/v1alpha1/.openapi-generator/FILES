@@ -61,6 +61,4 @@ setup.cfg
 setup.py
 test-requirements.txt
 test/__init__.py
-test/test_bursted_cluster.py
-test/test_bursting.py
 tox.ini

@@ -408,7 +408,7 @@ func generateHostlist(cluster *api.MiniCluster, size int32) string {
 	// If we don't have a leadbroker address, we are at the root
 	var hosts string
 	if cluster.Spec.Flux.Bursting.LeadBroker.Address == "" {
-		hosts = fmt.Sprintf("%s-[%s]", cluster.Name, generateRange(size))
+		hosts = fmt.Sprintf("%s-[%s]", cluster.Name, generateRange(size, 0))
 
 	} else {
 
@@ -417,10 +417,12 @@ func generateHostlist(cluster *api.MiniCluster, size int32) string {
 		// The hosts array must be consistent in ordering of ranks across workers
 		adjustedSize := cluster.Spec.Flux.Bursting.LeadBroker.Size - 1
 		hosts = fmt.Sprintf(
-			"%s,%s-%s",
+			"%s,%s-[%s]",
 			cluster.Spec.Flux.Bursting.LeadBroker.Address,
 			cluster.Spec.Flux.Bursting.LeadBroker.Name,
-			generateRange(adjustedSize),
+
+			// Index starts at 1
+			generateRange(adjustedSize, 1),
 		)
 	}
 
@@ -428,7 +430,7 @@ func generateHostlist(cluster *api.MiniCluster, size int32) string {
 	// Any cluster with bursting must share all the bursted hosts across clusters
 	// This ensures that the ranks line up
 	for _, bursted := range cluster.Spec.Flux.Bursting.Clusters {
-		burstedHosts := fmt.Sprintf("%s-[%s]", bursted.Name, generateRange(bursted.Size))
+		burstedHosts := fmt.Sprintf("%s-[%s]", bursted.Name, generateRange(bursted.Size, 0))
 		hosts = fmt.Sprintf("%s,%s", hosts, burstedHosts)
 	}
 	return hosts
@@ -478,7 +480,7 @@ func getRequiredRanks(cluster *api.MiniCluster) string {
 	}
 	// This is the quorum - the nodes required to be online - so we can start
 	// This can be less than the MaxSize
-	return generateRange(cluster.Spec.Size)
+	return generateRange(cluster.Spec.Size, 0)
 }
 
 // generateWaitScript generates the main script to start everything up!
@@ -542,12 +544,12 @@ func generateWaitScript(cluster *api.MiniCluster, containerIndex int) (string, e
 }
 
 // generateRange is a shared function to generate a range string
-func generateRange(size int32) string {
+func generateRange(size int32, start int32) string {
 	var rangeString string
 	if size == 1 {
-		rangeString = "0"
+		rangeString = fmt.Sprintf("%d", start)
 	} else {
-		rangeString = fmt.Sprintf("0-%d", size-1)
+		rangeString = fmt.Sprintf("%d-%d", start, (start+size)-1)
 	}
 	return rangeString
 }

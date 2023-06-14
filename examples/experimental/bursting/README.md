@@ -201,8 +201,7 @@ Install the libraries we need:
 # This is from /tmp/workflow
 git clone -b add/gke-kubectl-client https://github.com/converged-computing/kubescaler
 cd kubescaler
-python3 -m pip install -e .[google]
-python3 -m pip install -e .[aws]
+python3 -m pip install -e .[all]
 cd -
 git clone --depth 1 -b bursting https://github.com/flux-framework/flux-operator ./op
 cd ./op/sdk/python/v1alpha1
@@ -219,7 +218,7 @@ $ flux resource list
      STATE NNODES   NCORES NODELIST
       free      2        8 flux-sample-[0-1]
  allocated      0        0 
-      down      8       32 flux-sample-[2-9]
+      down      6       24 flux-sample-[2-3],burst-0-[0-3]
 ```
 
 And now let's create a burstable job, and ask for more nodes than we have :)
@@ -251,7 +250,7 @@ flux-job: ƒQURAmBXV waiting for resources
 Get a variant of the munge key we can see:
 
 ```bash
-sudo cp /etc/munge/munge.key munge.key
+sudo cp /etc/munge/munge.key ./munge.key
 sudo chown $USER munge.key
 ```
 
@@ -259,24 +258,69 @@ Now we can run our script to find the jobs based on this attribute!
 
 ```bash
 GOOGLE_PROJECT=myproject
-LEAD_HOST="35.223.235.162"
+LEAD_HOST="34.28.41.20"
 LEAD_PORT=30093
 python3 run-burst.py --project ${GOOGLE_PROJECT} --cluster-name flux-external-cluster --flux-operator-yaml ./external-config/flux-operator-dev.yaml \
         --lead-host ${LEAD_HOST} --lead-port ${LEAD_PORT} --lead-size 4 \
-        --munge-key ./munge.key --name burst-0 \
+        --munge-key ./munge.key --name burst-0
 ```
 
 Important notes for the above:
 
-- The name is the automatically generated name by Flux given a bursted cluster (that isn't explicitly given a name)
-- The lead name is derived from the hostname where it is running (e.g., flux-sample)
-- We set the lead size to the max size, and we are using a size that won't fail the job (which needs 4)
+- The name is same that would be automatically generated name by Flux given a bursted cluster (that isn't explicitly given a name) but we are being pedantic. It's also in the [minicluster.yaml](minicluster.yaml)
+- The lead name is derived from the hostname where it is running (e.g., flux-sample) so we don't need to provide it
+- We set the lead size to the max size, because the ranks indices need to line up. We are using a size that won't fail the job (which needs 4)
 
+When you do the above (and the second MiniCluster launches) you should be able to see on your local cluster the external
+MiniCluster resources, and the result of hostname will include the external hosts!
 
-**STOPPED HERE** the handshake is successful, the local (first) cluster seems to pick up 2 nodes,
-the job runs and reports 2 of the external hostnames, but the second lead broker seems to continue
-crashing and restarting. This is still great progress!
+```bash
+flux@flux-sample-0:/tmp/workflow$ flux resource list
+     STATE NNODES   NCORES NODELIST
+      free      6       24 flux-sample-[0-1],burst-0-[0-3]
+ allocated      0        0 
+      down      2        8 flux-sample-[2-3]
+```
+Our job has run:
 
+```bash
+flux@flux-sample-0:/tmp/workflow$ flux jobs -a 
+       JOBID USER     NAME       ST NTASKS NNODES     TIME INFO
+  ƒ2S9iZpoJw flux     hostname   CD      4      4   0.027s flux-sample-1,burst-0-[0,2-3]
+   ƒ3i2dgyDq flux     hostname   CD      4      4   0.035s flux-sample-[0-1,3],burst-0-0
+```
+
+And we can see output! Note that the error is because the working directory where it was launched doesn't exist on the remote.
+
+```bash
+flux@flux-sample-0:/tmp/workflow$ flux job attach ƒ2S9iZpoJw
+214.588s: flux-shell[2]: ERROR: host burst-0-2: Could not change dir to /tmp/workflow: No such file or directory. Going to /tmp instead
+214.589s: flux-shell[3]: ERROR: host burst-0-3: Could not change dir to /tmp/workflow: No such file or directory. Going to /tmp instead
+214.588s: flux-shell[1]: ERROR: host burst-0-0: Could not change dir to /tmp/workflow: No such file or directory. Going to /tmp instead
+flux-sample-1
+burst-0-0
+burst-0-3
+burst-0-2
+```
+
+You can also launch a new job that asks to hit all the nodes (6):
+
+```bash
+flux@flux-sample-0:/tmp/workflow$ flux run -N 6 hostname
+0.039s: flux-shell[5]: ERROR: host burst-0-3: Could not change dir to /tmp/workflow: No such file or directory. Going to /tmp instead
+0.038s: flux-shell[4]: ERROR: host burst-0-2: Could not change dir to /tmp/workflow: No such file or directory. Going to /tmp instead
+0.040s: flux-shell[3]: ERROR: host burst-0-1: Could not change dir to /tmp/workflow: No such file or directory. Going to /tmp instead
+0.038s: flux-shell[2]: ERROR: host burst-0-0: Could not change dir to /tmp/workflow: No such file or directory. Going to /tmp instead
+flux-sample-0
+burst-0-2
+burst-0-1
+burst-0-3
+burst-0-0
+flux-sample-1
+```
+
+And that's bursting! At this point we should think about how to better start / stop a burst, since the cluster
+will typically come up (and stay up).
 
 ## Debugging
 

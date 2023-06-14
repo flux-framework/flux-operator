@@ -83,17 +83,20 @@ def get_minicluster(
         "interactive": False,
         "logging": {"zeromq": True, "quiet": False, "strict": False},
         "flux": {
-            "optionFlags": flags,
             "option_flags": flags,
             "connect_timeout": "5s",
             "curve_cert": curve_cert,
             "log_level": log_level,
-
             # Providing the lead broker and port points back to the parent
             "bursting": {
-                "lead_broker": {"address": lead_host, "port": int(lead_port), "name": lead_jobname, "size": lead_size},
-                "clusters": [{"size": size, "name": name}]
-            }
+                "lead_broker": {
+                    "address": lead_host,
+                    "port": int(lead_port),
+                    "name": lead_jobname,
+                    "size": int(lead_size),
+                },
+                "clusters": [{"size": size, "name": name}],
+            },
         },
     }
 
@@ -140,14 +143,6 @@ def get_parser():
     )
     parser.add_argument("--project", help="Google Cloud project")
     parser.add_argument("--cluster-name", help="Cluster name", default="flux-cluster")
-
-    # We aren't using this for the time being - assume job size == exactly what is needed
-    parser.add_argument(
-        "--max-node-count",
-        help="don't allow bursting above this maximum node count",
-        type=int,
-        default=10,
-    )
     parser.add_argument(
         "--machine-type", help="Google machine type", default="c2-standard-8"
     )
@@ -182,7 +177,7 @@ def get_parser():
         type=int,
     )
     parser.add_argument(
-        "--name", help="Name for external MiniCluster", default="flux-sample"
+        "--name", help="Name for external MiniCluster", default="burst-0"
     )
     parser.add_argument(
         "--namespace", help="Namespace for external cluster", default="flux-operator"
@@ -382,7 +377,7 @@ def main():
         lead_port=args.lead_port,
         munge_config_map=args.munge_config_map,
         lead_jobname=hostname,
-        lead_size=args.lead_size
+        lead_size=args.lead_size,
     )
 
     # Create the namespace
@@ -404,13 +399,13 @@ def main():
     import IPython
 
     IPython.embed()
-    sys.exit()
+
     if args.munge_key:
         cm = create_munge_configmap(
             args.munge_key, args.munge_config_map, args.namespace
         )
         try:
-            api_response = kubectl.create_namespaced_config_map(
+            kubectl.create_namespaced_config_map(
                 namespace=args.namespace,
                 body=cm,
             )
@@ -422,6 +417,8 @@ def main():
 
     # Create the MiniCluster! This also waits for it to be ready
     # TODO we need a check here for completed - it will hang
+    # Need to fix this so it doesn't hang. We need to decide when to
+    # bring down the minicluster.
     print(f"⭐️ Creating the minicluster {args.name} in {args.namespace}...")
     operator = FluxMiniCluster()
     operator.create(**minicluster, container=container, crd_api=crd_api)
