@@ -14,6 +14,7 @@ and **Merged pull requests**. Critical items to know are:
 The versions coincide with releases on pip. Only major versions will be released as tags on Github.
 
 ## [0.0.x](https://github.com/flux-framework/flux-operator/tree/main/sdk/python/v2alpha1) (0.0.x)
+ - COMPLETED is an acceptable state for wait_pods (0.0.29)
  - support for custom api_crd instead of manual creation (0.0.28)
  - support for separate Network directive (0.0.27)
  - adding horizontal autoscaler support (0.0.26)
