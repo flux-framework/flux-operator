@@ -135,9 +135,11 @@ def create_minicluster(*args, **kwargs):
     name = kwargs["name"]
     del kwargs["container"]
 
-    # The cluster should be running with the operator installed
-    config.load_kube_config()
-    crd_api = client.CustomObjectsApi()
+    # This allows the client to provide a custom crd that already has credentials
+    crd_api = kwargs.get('crd_api')
+    if not crd_api:
+        config.load_kube_config()
+        crd_api = client.CustomObjectsApi()
 
     # We assume that this is a single container to run flux
     # Multi-container support can eventually be added.
@@ -176,12 +178,15 @@ def create_minicluster(*args, **kwargs):
     )
 
 
-def delete_minicluster(name, namespace):
+def delete_minicluster(name, namespace, **kwargs):
     """
     Delete a named MiniCluster.
     """
-    config.load_kube_config()
-    crd_api = client.CustomObjectsApi()
+    # This allows the client to provide a custom crd that already has credentials
+    crd_api = kwargs.get('crd_api')
+    if not crd_api:
+        config.load_kube_config()
+        crd_api = client.CustomObjectsApi()
 
     return crd_api.delete_namespaced_custom_object(
         group="flux-framework.org",
