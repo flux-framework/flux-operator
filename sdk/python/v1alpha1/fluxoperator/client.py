@@ -362,12 +362,12 @@ class FluxOperator:
         if not quiet:
             print("All pods are terminated.")
 
-    def delete_minicluster(self, name=None, namespace=None):
+    def delete_minicluster(self, name=None, namespace=None, **kwargs):
         """
         Deletion (and time the deletion of) the MiniCluster
         """
         namespace = namespace or self.namespace
-        res = delete_minicluster(name, namespace)
+        res = delete_minicluster(name, namespace, **kwargs)
         self.wait_termination_pods(name, namespace)
         return res
 
