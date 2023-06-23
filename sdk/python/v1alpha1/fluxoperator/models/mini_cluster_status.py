@@ -33,6 +33,7 @@ class MiniClusterStatus(object):
                             and the value is json key in definition.
     """
     openapi_types = {
+        'completed': 'bool',
         'conditions': 'list[V1Condition]',
         'jobid': 'str',
         'maximum_size': 'int',
@@ -41,6 +42,7 @@ class MiniClusterStatus(object):
     }
 
     attribute_map = {
+        'completed': 'completed',
         'conditions': 'conditions',
         'jobid': 'jobid',
         'maximum_size': 'maximumSize',
@@ -48,12 +50,13 @@ class MiniClusterStatus(object):
         'size': 'size'
     }
 
-    def __init__(self, conditions=None, jobid='', maximum_size=0, selector='', size=0, local_vars_configuration=None):  # noqa: E501
+    def __init__(self, completed=False, conditions=None, jobid='', maximum_size=0, selector='', size=0, local_vars_configuration=None):  # noqa: E501
         """MiniClusterStatus - a model defined in OpenAPI"""  # noqa: E501
         if local_vars_configuration is None:
             local_vars_configuration = Configuration.get_default_copy()
         self.local_vars_configuration = local_vars_configuration
 
+        self._completed = None
         self._conditions = None
         self._jobid = None
         self._maximum_size = None
@@ -61,12 +64,37 @@ class MiniClusterStatus(object):
         self._size = None
         self.discriminator = None
 
+        if completed is not None:
+            self.completed = completed
         if conditions is not None:
             self.conditions = conditions
         self.jobid = jobid
         self.maximum_size = maximum_size
         self.selector = selector
         self.size = size
+
+    @property
+    def completed(self):
+        """Gets the completed of this MiniClusterStatus.  # noqa: E501
+
+        Label to indicate that job is completed, comes from Job.Completed The user can also look at conditions -> JobFinished  # noqa: E501
+
+        :return: The completed of this MiniClusterStatus.  # noqa: E501
+        :rtype: bool
+        """
+        return self._completed
+
+    @completed.setter
+    def completed(self, completed):
+        """Sets the completed of this MiniClusterStatus.
+
+        Label to indicate that job is completed, comes from Job.Completed The user can also look at conditions -> JobFinished  # noqa: E501
+
+        :param completed: The completed of this MiniClusterStatus.  # noqa: E501
+        :type completed: bool
+        """
+
+        self._completed = completed
 
     @property
     def conditions(self):

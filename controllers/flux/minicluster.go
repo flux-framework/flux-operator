@@ -157,6 +157,16 @@ func (r *MiniClusterReconciler) ensureMiniCluster(
 		r.Status().Update(ctx, clusterCopy)
 	}
 
+	// Determine if the job is completed, and flag the MiniCluster
+	if !cluster.Status.Completed {
+		if jobctrl.IsFinished(mc) {
+			cluster.Status.Completed = true
+			clusterCopy := cluster.DeepCopy()
+			jobctrl.FlagConditionFinished(clusterCopy)
+			r.Status().Update(ctx, clusterCopy)
+		}
+	}
+
 	// And we re-queue so the Ready condition triggers next steps!
 	return ctrl.Result{Requeue: true}, nil
 }

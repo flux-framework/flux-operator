@@ -32,7 +32,7 @@ const (
 	//     Resources are created, and status is switched from Waiting -> Running by MiniCluster
 	//     This should be when we kick off the command. The job is running
 	// Finished:
-	//     When resources are done (TBA how determined)
+	//     When resources are done
 	// Finished the job is finished running!
 	ConditionJobRequested string = "JobRequested"
 	ConditionJobWaiting   string = "JobWaitingForResources"

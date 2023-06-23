@@ -13,6 +13,9 @@ package job
 import (
 	api "flux-framework/flux-operator/api/v1alpha1"
 
+	batchv1 "k8s.io/api/batch/v1"
+	corev1 "k8s.io/api/core/v1"
+
 	"github.com/mitchellh/hashstructure/v2"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
@@ -118,13 +121,12 @@ func FlagConditionFinished(job *api.MiniCluster) {
 	UpdateCondition(job, ConditionJobFinished)
 }
 
-// TODO here is how we determed if a batch job was successful / not
-// I'm not sure yet where batch fits in, but maybe...
-/*func IsFinished(job *api.MiniCluster) (batchv1.JobConditionType, bool) {
-	for _, c := range j.Status.Conditions {
-		if (c.Type == batchv1.JobComplete || c.Type == batchv1.JobFailed) && c.Status == corev1.ConditionTrue {
-			return c.Type, true
+// Determine if the job is finished
+func IsFinished(job *batchv1.Job) bool {
+	for _, condition := range job.Status.Conditions {
+		if condition.Type == "Complete" {
+			return condition.Status == corev1.ConditionTrue
 		}
 	}
-	return "", false
-}*/
+	return false
+}
