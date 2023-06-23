@@ -384,7 +384,7 @@ class FluxOperator:
         Wait for all pods to be running or completed (or in a specific set of states)
         """
         namespace = namespace or self.namespace
-        states = states or ["Running", "Succeeded"]
+        states = states or ["Running", "Succeeded", "Completed"]
         if not isinstance(states, list):
             states = [states]
 
