@@ -1024,6 +1024,14 @@ func schema__api_v1alpha1__MiniClusterStatus(ref common.ReferenceCallback) commo
 							Format:  "",
 						},
 					},
+					"completed": {
+						SchemaProps: spec.SchemaProps{
+							Description: "Label to indicate that job is completed, comes from Job.Completed The user can also look at conditions -> JobFinished",
+							Default:     false,
+							Type:        []string{"boolean"},
+							Format:      "",
+						},
+					},
 					"jobid": {
 						SchemaProps: spec.SchemaProps{
 							Description: "The Jobid is set internally to associate to a miniCluster This isn't currently in use, we only have one!",
@@ -1060,7 +1068,7 @@ func schema__api_v1alpha1__MiniClusterStatus(ref common.ReferenceCallback) commo
 						},
 					},
 				},
-				Required: []string{"size", "selector", "jobid", "maximumSize"},
+				Required: []string{"size", "selector", "completed", "jobid", "maximumSize"},
 			},
 		},
 		Dependencies: []string{

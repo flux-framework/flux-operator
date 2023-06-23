@@ -24,7 +24,7 @@ class FluxMiniCluster:
     Each MiniCluster holds it's own controller for the Flux Operator.
     """
 
-    def __init__(self):
+    def __init__(self, **kwargs):
         """
         Create a persistent client to interact with a MiniCluster
 
@@ -34,7 +34,7 @@ class FluxMiniCluster:
         self.metadata = None
         self._pods = None
         self._broker_pod = None
-        self.ctrl = FluxOperator()
+        self.ctrl = FluxOperator(**kwargs)
 
     def load(self, metadata):
         """
@@ -210,13 +210,13 @@ class FluxBrokerMiniCluster(FluxMiniCluster):
 
 
 class FluxOperator:
-    def __init__(self, namespace=None):
+    def __init__(self, namespace=None, **kwargs):
         """
         Create a persistent client to interact with a MiniCluster
 
         This currently assumes the namespace exists.
         """
-        self._core_v1 = None
+        self._core_v1 = kwargs.get('core_v1_api')
         self.namespace = namespace
 
     @property
