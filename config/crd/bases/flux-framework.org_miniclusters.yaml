@@ -772,7 +772,6 @@ spec:
                 format: int32
                 type: integer
             required:
-            - completed
             - jobid
             - maximumSize
             - selector

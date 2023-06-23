@@ -199,6 +199,7 @@ type MiniClusterStatus struct {
 
 	// Label to indicate that job is completed, comes from Job.Completed
 	// The user can also look at conditions -> JobFinished
+	// +optional
 	Completed bool `json:"completed"`
 
 	// The Jobid is set internally to associate to a miniCluster

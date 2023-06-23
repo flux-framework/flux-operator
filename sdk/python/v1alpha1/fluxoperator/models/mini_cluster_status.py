@@ -64,7 +64,8 @@ class MiniClusterStatus(object):
         self._size = None
         self.discriminator = None
 
-        self.completed = completed
+        if completed is not None:
+            self.completed = completed
         if conditions is not None:
             self.conditions = conditions
         self.jobid = jobid
@@ -92,8 +93,6 @@ class MiniClusterStatus(object):
         :param completed: The completed of this MiniClusterStatus.  # noqa: E501
         :type completed: bool
         """
-        if self.local_vars_configuration.client_side_validation and completed is None:  # noqa: E501
-            raise ValueError("Invalid value for `completed`, must not be `None`")  # noqa: E501
 
         self._completed = completed
 

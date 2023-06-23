@@ -1068,7 +1068,7 @@ func schema__api_v1alpha1__MiniClusterStatus(ref common.ReferenceCallback) commo
 						},
 					},
 				},
-				Required: []string{"size", "selector", "completed", "jobid", "maximumSize"},
+				Required: []string{"size", "selector", "jobid", "maximumSize"},
 			},
 		},
 		Dependencies: []string{
