@@ -34,7 +34,7 @@ import (
 
 var (
 	hostfileName   = "hostfile"
-	curveCertKey   = "curve-cert"
+	curveCertKey   = "curve.cert"
 	mungeMountName = "munge-key"
 )
 
@@ -42,7 +42,7 @@ var (
 // 1. An indexed job with some number of pods
 // 2. Config maps for secrets and other things.
 // 3. We "launch" a job by starting the Indexed job on the connected nodes
-// newMiniCluster creates a new MiniCluster, a stateful set for running flux!
+// ensureMiniCluster creates a new MiniCluster, a stateful set for running flux!
 func (r *MiniClusterReconciler) ensureMiniCluster(
 	ctx context.Context,
 	cluster *api.MiniCluster,
