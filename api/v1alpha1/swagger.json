@@ -187,9 +187,6 @@
     },
     "FluxSpec": {
       "type": "object",
-      "required": [
-        "curveCertSecret"
-      ],
       "properties": {
         "brokerConfig": {
           "description": "Optionally provide a manually created broker config this is intended for bursting to remote clusters",
@@ -207,7 +204,7 @@
           "default": "5s"
         },
         "curveCert": {
-          "description": "Optionally provide an already existing curve certificate this is intended for bursting to remote clusters",
+          "description": "Optionally provide an already existing curve certificate This is not recommended in favor of providing the secret name as curveCertSecret, below",
           "type": "string",
           "default": ""
         },

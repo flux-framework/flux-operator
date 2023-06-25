@@ -406,7 +406,7 @@ func schema__api_v1alpha1__FluxSpec(ref common.ReferenceCallback) common.OpenAPI
 					},
 					"curveCert": {
 						SchemaProps: spec.SchemaProps{
-							Description: "Optionally provide an already existing curve certificate this is intended for bursting to remote clusters",
+							Description: "Optionally provide an already existing curve certificate This is not recommended in favor of providing the secret name as curveCertSecret, below",
 							Default:     "",
 							Type:        []string{"string"},
 							Format:      "",
@@ -444,7 +444,6 @@ func schema__api_v1alpha1__FluxSpec(ref common.ReferenceCallback) common.OpenAPI
 						},
 					},
 				},
-				Required: []string{"curveCertSecret"},
 			},
 		},
 		Dependencies: []string{

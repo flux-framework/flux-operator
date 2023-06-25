@@ -94,6 +94,12 @@ func getVolumes(cluster *api.MiniCluster) []corev1.Volume {
 		Path: "munge.key",
 	}
 
+	// /mnt/curve/curve.cert
+	curveKey := corev1.KeyToPath{
+		Key:  curveCertKey,
+		Path: "curve.cert",
+	}
+
 	if cluster.MultiUser() {
 		mode := int32(0644)
 		brokerFile = corev1.KeyToPath{
@@ -103,12 +109,7 @@ func getVolumes(cluster *api.MiniCluster) []corev1.Volume {
 		}
 	}
 
-	// Are we using our generated curve cert, or a custom one?
-	curveCertName := cluster.Name + curveVolumeSuffix
-	if cluster.Spec.Flux.CurveCertSecret != "" {
-		curveCertName = cluster.Spec.Flux.CurveCertSecret
-	}
-
+	// Defaults volumes we always write - entrypoint and configs
 	volumes := []corev1.Volume{
 		{
 			Name: cluster.Name + fluxConfigSuffix,
@@ -136,36 +137,46 @@ func getVolumes(cluster *api.MiniCluster) []corev1.Volume {
 				},
 			},
 		},
-		{
-			Name: cluster.Name + curveVolumeSuffix,
+	}
+
+	// We either generate a curve.cert config map, or get it from secret
+	curveVolumeName := cluster.Name + fluxConfigSuffix
+	if cluster.Spec.Flux.CurveCertSecret != "" {
+		curveVolume := corev1.Volume{
+			Name: curveVolumeName,
+			VolumeSource: corev1.VolumeSource{
+				Secret: &corev1.SecretVolumeSource{
+					SecretName: cluster.Spec.Flux.CurveCertSecret,
+					Items:      []corev1.KeyToPath{curveKey},
+				},
+			},
+		}
+		volumes = append(volumes, curveVolume)
+
+	} else {
+		curveVolume := corev1.Volume{
+			Name: curveVolumeName,
 			VolumeSource: corev1.VolumeSource{
 				ConfigMap: &corev1.ConfigMapVolumeSource{
 
 					// Namespace based on the cluster
 					LocalObjectReference: corev1.LocalObjectReference{
-						Name: curveCertName,
+						Name: cluster.Name + curveVolumeSuffix,
 					},
-					// /mnt/curve/curve.cert
-					Items: []corev1.KeyToPath{{
-						Key:  curveCertKey,
-						Path: "curve.cert",
-					}},
 				},
 			},
-		},
+		}
+		volumes = append(volumes, curveVolume)
 	}
-	
+
 	// Are we expecting a munge config map?
 	if cluster.Spec.Flux.MungeSecret != "" {
 		mungeVolume := corev1.Volume{
 			Name: cluster.Name + fluxConfigSuffix,
 			VolumeSource: corev1.VolumeSource{
-				ConfigMap: &corev1.ConfigMapVolumeSource{
-					LocalObjectReference: corev1.LocalObjectReference{
-						Name: cluster.Spec.Flux.MungeSecret,
-					},
-					// /etc/munge/munge.key
-					Items: []corev1.KeyToPath{mungeKey},
+				Secret: &corev1.SecretVolumeSource{
+					SecretName: cluster.Spec.Flux.MungeSecret,
+					Items:      []corev1.KeyToPath{mungeKey},
 				},
 			},
 		}

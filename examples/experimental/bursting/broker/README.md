@@ -214,12 +214,19 @@ python3 run-burst.py --project ${GOOGLE_PROJECT} --flux-operator-yaml ./external
 
 Important notes for the above:
 
+- The curve path and secret name have defaults set.
 - The name is same that would be automatically generated name by Flux given a bursted cluster (that isn't explicitly given a name) but we are being pedantic. It's also in the [minicluster.yaml](minicluster.yaml)
 - The lead name is derived from the hostname where it is running (e.g., flux-sample) so we don't need to provide it
 - We set the lead size to the max size, because the ranks indices need to line up. We are using a size that won't fail the job (which needs 4)
 
 When you do the above (and the second MiniCluster launches) you should be able to see on your local cluster the external
-MiniCluster resources, and the result of hostname will include the external hosts!
+MiniCluster resources, and the result of hostname will include the external hosts! Here is how to shell into the cluster
+from another terminal:
+
+```bash
+$ kubectl exec -it -n flux-operator flux-sample-0-kvg5t bash
+$ sudo -u flux -E $(env) -E HOME=/home/flux flux proxy local:///run/flux/local bash
+```
 
 ```bash
 flux@flux-sample-0:/tmp/workflow$ flux resource list

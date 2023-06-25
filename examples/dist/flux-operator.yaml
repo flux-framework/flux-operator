@@ -327,7 +327,8 @@ spec:
                     type: string
                   curveCert:
                     description: Optionally provide an already existing curve certificate
-                      this is intended for bursting to remote clusters
+                      This is not recommended in favor of providing the secret name
+                      as curveCertSecret, below
                     type: string
                   curveCertSecret:
                     description: Expect a secret for a curve cert here. This is ideal
@@ -360,8 +361,6 @@ spec:
                   wrap:
                     description: Commands for flux start --wrap
                     type: string
-                required:
-                - curveCertSecret
                 type: object
               fluxRestful:
                 description: Customization to Flux Restful API There should only be

@@ -87,7 +87,8 @@ class FluxSpec(object):
             self.connect_timeout = connect_timeout
         if curve_cert is not None:
             self.curve_cert = curve_cert
-        self.curve_cert_secret = curve_cert_secret
+        if curve_cert_secret is not None:
+            self.curve_cert_secret = curve_cert_secret
         if install_root is not None:
             self.install_root = install_root
         if log_level is not None:
@@ -172,7 +173,7 @@ class FluxSpec(object):
     def curve_cert(self):
         """Gets the curve_cert of this FluxSpec.  # noqa: E501
 
-        Optionally provide an already existing curve certificate this is intended for bursting to remote clusters  # noqa: E501
+        Optionally provide an already existing curve certificate This is not recommended in favor of providing the secret name as curveCertSecret, below  # noqa: E501
 
         :return: The curve_cert of this FluxSpec.  # noqa: E501
         :rtype: str
@@ -183,7 +184,7 @@ class FluxSpec(object):
     def curve_cert(self, curve_cert):
         """Sets the curve_cert of this FluxSpec.
 
-        Optionally provide an already existing curve certificate this is intended for bursting to remote clusters  # noqa: E501
+        Optionally provide an already existing curve certificate This is not recommended in favor of providing the secret name as curveCertSecret, below  # noqa: E501
 
         :param curve_cert: The curve_cert of this FluxSpec.  # noqa: E501
         :type curve_cert: str
@@ -211,8 +212,6 @@ class FluxSpec(object):
         :param curve_cert_secret: The curve_cert_secret of this FluxSpec.  # noqa: E501
         :type curve_cert_secret: str
         """
-        if self.local_vars_configuration.client_side_validation and curve_cert_secret is None:  # noqa: E501
-            raise ValueError("Invalid value for `curve_cert_secret`, must not be `None`")  # noqa: E501
 
         self._curve_cert_secret = curve_cert_secret
 

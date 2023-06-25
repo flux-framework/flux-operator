@@ -51,6 +51,9 @@ def get_parser():
     parser.add_argument(
         "--curve-cert", dest="curve_cert", default="/mnt/curve/curve.cert"
     )
+    parser.add_argument(
+        "--curve-cert-secret-name", default="curve-cert"
+    )
     return parser
 
 
@@ -85,6 +88,7 @@ def main():
         project=args.project,
         munge_key=args.munge_key,
         munge_secret_name=args.munge_secret_name,
+        curve_cert_secret_name=args.curve_cert_secret_name,
         flux_operator_yaml=args.flux_operator_yaml,
         lead_host=args.lead_host,   
         lead_port=args.lead_port,     

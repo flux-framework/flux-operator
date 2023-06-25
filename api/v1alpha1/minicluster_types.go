@@ -376,14 +376,16 @@ type FluxSpec struct {
 	LogLevel int32 `json:"logLevel,omitempty"`
 
 	// Optionally provide an already existing curve certificate
-	// this is intended for bursting to remote clusters
+	// This is not recommended in favor of providing the secret
+	// name as curveCertSecret, below
 	//+optional
 	CurveCert string `json:"curveCert"`
 
 	// Expect a secret for a curve cert here.
 	// This is ideal over the curveCert (as a string) above.
+	//+optional
 	CurveCertSecret string `json:"curveCertSecret"`
-		
+
 	// Expect a secret (named according to this string)
 	// for a munge key. This is intended for bursting.
 	// Assumed to be at /etc/munge/munge.key

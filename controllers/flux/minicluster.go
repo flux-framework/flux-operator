@@ -59,10 +59,12 @@ func (r *MiniClusterReconciler) ensureMiniCluster(
 		return result, err
 	}
 
-	// Generate the curve certificate config map.
-	_, result, err = r.getConfigMap(ctx, cluster, "cert", cluster.Name+curveVolumeSuffix)
-	if err != nil {
-		return result, err
+	// Generate the curve certificate config map, unless already exists
+	if cluster.Spec.Flux.CurveCertSecret != "" {
+		_, result, err = r.getConfigMap(ctx, cluster, "cert", cluster.Name+curveVolumeSuffix)
+		if err != nil {
+			return result, err
+		}
 	}
 
 	// Prepare volumes, if requested, to be available to containers
