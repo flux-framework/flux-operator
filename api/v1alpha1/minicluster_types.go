@@ -380,12 +380,16 @@ type FluxSpec struct {
 	//+optional
 	CurveCert string `json:"curveCert"`
 
-	// Expect a config map (named according to this string)
+	// Expect a secret for a curve cert here.
+	// This is ideal over the curveCert (as a string) above.
+	CurveCertSecret string `json:"curveCertSecret"`
+		
+	// Expect a secret (named according to this string)
 	// for a munge key. This is intended for bursting.
 	// Assumed to be at /etc/munge/munge.key
-	// We expect a config map since it's binary data
+	// This is binary data.
 	//+optional
-	MungeConfigMap string `json:"mungeConfigMap"`
+	MungeSecret string `json:"mungeSecret"`
 
 	// Bursting - one or more external clusters to burst to
 	// We assume a single, central MiniCluster with an ipaddress

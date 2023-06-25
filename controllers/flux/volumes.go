@@ -49,10 +49,10 @@ func getVolumeMounts(cluster *api.MiniCluster) []corev1.VolumeMount {
 			ReadOnly:  true,
 		},
 	}
-	// Are we expecting a munge config map?
-	if cluster.Spec.Flux.MungeConfigMap != "" {
+	// Are we expecting a munge secret?
+	if cluster.Spec.Flux.MungeSecret != "" {
 		mungeMount := corev1.VolumeMount{
-			Name:      cluster.Spec.Flux.MungeConfigMap,
+			Name:      cluster.Spec.Flux.MungeSecret,
 			MountPath: "/etc/munge",
 			ReadOnly:  true,
 		}
@@ -103,6 +103,12 @@ func getVolumes(cluster *api.MiniCluster) []corev1.Volume {
 		}
 	}
 
+	// Are we using our generated curve cert, or a custom one?
+	curveCertName := cluster.Name + curveVolumeSuffix
+	if cluster.Spec.Flux.CurveCertSecret != "" {
+		curveCertName = cluster.Spec.Flux.CurveCertSecret
+	}
+
 	volumes := []corev1.Volume{
 		{
 			Name: cluster.Name + fluxConfigSuffix,
@@ -137,7 +143,7 @@ func getVolumes(cluster *api.MiniCluster) []corev1.Volume {
 
 					// Namespace based on the cluster
 					LocalObjectReference: corev1.LocalObjectReference{
-						Name: cluster.Name + curveVolumeSuffix,
+						Name: curveCertName,
 					},
 					// /mnt/curve/curve.cert
 					Items: []corev1.KeyToPath{{
@@ -148,15 +154,15 @@ func getVolumes(cluster *api.MiniCluster) []corev1.Volume {
 			},
 		},
 	}
-
+	
 	// Are we expecting a munge config map?
-	if cluster.Spec.Flux.MungeConfigMap != "" {
+	if cluster.Spec.Flux.MungeSecret != "" {
 		mungeVolume := corev1.Volume{
 			Name: cluster.Name + fluxConfigSuffix,
 			VolumeSource: corev1.VolumeSource{
 				ConfigMap: &corev1.ConfigMapVolumeSource{
 					LocalObjectReference: corev1.LocalObjectReference{
-						Name: cluster.Spec.Flux.MungeConfigMap,
+						Name: cluster.Spec.Flux.MungeSecret,
 					},
 					// /etc/munge/munge.key
 					Items: []corev1.KeyToPath{mungeKey},

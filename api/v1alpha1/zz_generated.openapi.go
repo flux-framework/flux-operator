@@ -412,9 +412,17 @@ func schema__api_v1alpha1__FluxSpec(ref common.ReferenceCallback) common.OpenAPI
 							Format:      "",
 						},
 					},
-					"mungeConfigMap": {
+					"curveCertSecret": {
 						SchemaProps: spec.SchemaProps{
-							Description: "Expect a config map (named according to this string) for a munge key. This is intended for bursting. Assumed to be at /etc/munge/munge.key We expect a config map since it's binary data",
+							Description: "Expect a secret for a curve cert here. This is ideal over the curveCert (as a string) above.",
+							Default:     "",
+							Type:        []string{"string"},
+							Format:      "",
+						},
+					},
+					"mungeSecret": {
+						SchemaProps: spec.SchemaProps{
+							Description: "Expect a secret (named according to this string) for a munge key. This is intended for bursting. Assumed to be at /etc/munge/munge.key This is binary data.",
 							Default:     "",
 							Type:        []string{"string"},
 							Format:      "",
@@ -436,6 +444,7 @@ func schema__api_v1alpha1__FluxSpec(ref common.ReferenceCallback) common.OpenAPI
 						},
 					},
 				},
+				Required: []string{"curveCertSecret"},
 			},
 		},
 		Dependencies: []string{

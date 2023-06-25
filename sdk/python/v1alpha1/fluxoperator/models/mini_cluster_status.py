@@ -33,10 +33,7 @@ class MiniClusterStatus(object):
                             and the value is json key in definition.
     """
     openapi_types = {
-<<<<<<< HEAD
         'completed': 'bool',
-=======
->>>>>>> e12d2f9 (allow for custom crd_api client)
         'conditions': 'list[V1Condition]',
         'jobid': 'str',
         'maximum_size': 'int',
@@ -52,6 +49,7 @@ class MiniClusterStatus(object):
         'selector': 'selector',
         'size': 'size'
     }
+
     def __init__(self, completed=False, conditions=None, jobid='', maximum_size=0, selector='', size=0, local_vars_configuration=None):  # noqa: E501
         """MiniClusterStatus - a model defined in OpenAPI"""  # noqa: E501
         if local_vars_configuration is None:

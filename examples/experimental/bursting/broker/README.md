@@ -2,12 +2,10 @@
 
 > Experimental setup to burst to Google Cloud
 
-I was reading about [external-dns](https://github.com/kubernetes-sigs/external-dns), 
-and although this could be a more "production" way to set up bursting, we need something that
-can be used on the fly (when we don't have a DNS name to use in some cloud). For this
-experiment we are going to try defining a cluster service, nginx, that is on the same
-headless network, and that (hopefully) we can forward as a port. Note that to start this
-work, I started with work on the [nginx service](../../services/sidecar/nginx/) example.
+This setup will expose a lead broker (index 0 of the MiniCluster job) as a service,
+and then deploy a second cluster that can connect back to the first. For a different
+design that could be used to do similar but via a central router (less developed)
+start with [nginx](../nginx).
 
 ## Design
 
@@ -15,10 +13,11 @@ work, I started with work on the [nginx service](../../services/sidecar/nginx/) 
 
 I expect for this kind of bursting to work I will need to be able to:
 
- - Define the lead broker as a hostname external to the cluster AND internal (can we have two aliases?)
+ - Define the lead broker as a hostname external to the cluster AND internal (we will have two aliases for the same broker)
  - Have a custom external broker config that we generate
  - Be able to read in send the curve certificate as a configuration variable
- - Create a service to run (in place of the nginx container) to ensure the request goes to the right broker
+ - Be able to create the munge.key as a secret
+ - Create the service to run directly from the lead broker pod
 
 ### What we we eventually want to improve upon
 
@@ -38,12 +37,14 @@ We will eventually need to do the following:
 - Have a Python script that connects to the flux handle, finds the burstable jobs, and creates a minicluster spec (with the same nodes, tasks, and command - right now the machine is an argument)
 - The Python script generates a broker.toml on the fly that defines the lead broker to be the service of the minicluster where it's running, and the curve.cert read directly from the filesystem (being used by the current cluster)
 - The external cluster is created from the first, directly from the flux lead broker!
-- Next - we need to figure out networking the two.
+- The order of hosts in the broker.toml and resource spec must be consistent
+- The two are networked via the exposed service on the lead broker pod
 
-### Questions
+### History
 
- - What would happen if we gave the lead broker two hosts with the same name?
- - Is there ever interaction from any node aside from the lead broker of the second cluster?
+This example was originally implemented as a standalone script, and that setup is preserved in [v1](v1).
+The version here has been updated to use the [flux-burst](https://github.com/converged-computing/flux-burst)
+module and the GKE plugin for it, [flux-burst-gke](https://github.com/converged-computing/flux-burst-gke).
 
 
 ## Credentials
@@ -78,13 +79,12 @@ And be sure to activate your credentials!
 ```bash
 gcloud container clusters get-credentials ${CLUSTER_NAME}
 ```
-Install the operator and create the minicluster
+
+Create the namespace, install the operator (assuming you are using a development version) and create the minicluster:
 
 ```bash
-kubectl apply -f ../../dist/flux-operator-dev.yaml
+kubectl apply -f ../../../dist/flux-operator-dev.yaml
 kubectl create namespace flux-operator
-# This is currently not used (but could be in the future)
-kubectl apply -f service/nginx.yaml
 kubectl apply -f minicluster.yaml
 # Expose broker pod port 8050 to 30093
 kubectl apply -f service/broker-service.yaml
@@ -96,7 +96,7 @@ We need to open up the firewall to that port - this creates the rule (you only n
 gcloud compute firewall-rules create flux-cluster-test-node-port --allow tcp:30093
 ```
 
-Then figure out the node that the service is running from:
+Then figure out the node that the service is running from (we are interested in lead broker flux-sample-0-*)
 
 ```bash
 $ kubectl get pods -o wide -n flux-operator 
@@ -106,84 +106,39 @@ flux-sample-1-s7r69    1/1     Running   0          7m22s   10.116.1.4   gke-flu
 flux-sample-services   1/1     Running   0          7m22s   10.116.0.4   gke-flux-cluster-default-pool-4dea9d5c-lc1h   <none>           <none>
 ```
 
-Get the external ip for that node (for nginx, flux-services, and for the lead broker, a flux-sample-0-xx)
+Then (using that node name) get the external ip for that node (for nginx, flux-services, and for the lead broker, a flux-sample-0-xx)
 
 ```bash
 $ kubectl get nodes -o wide | grep gke-flux-cluster-default-pool-4dea9d5c-0b0d 
 gke-flux-cluster-default-pool-4dea9d5c-0b0d   Ready    <none>   69m   v1.25.8-gke.500   10.128.0.83   34.171.113.254   Container-Optimized OS from Google   5.15.89+         containerd://1.6.18
 ```
 
-If you applied [service/nginx.yaml](service/nginx.yaml) (a testing setup I used as a hello world for a service) you can try opening `34.135.221.11:30093`. For the broker (34.171.113.254) above, that might be harder to test. If you do the first, you should see the "Welcome to nginx!" page. Finally, when the broker index 0 pod is running, copy your scripts and configs over to it:
+I set it to the environment to be useful later:
+
+```bash
+export LEAD_BROKER_HOST=34.171.113.254
+```
+
+Finally, when the broker index 0 pod is running, copy your scripts and configs over to it:
 
 ```bash
 # This should be the index 0
 POD=$(kubectl get pods -n flux-operator -o json | jq -r .items[0].metadata.name)
 
+# This will copy configs / create directories for it
 kubectl cp -n flux-operator ./run-burst.py ${POD}:/tmp/workflow/run-burst.py -c flux-sample
-
-# We will find a better way than this
 kubectl cp -n flux-operator ./application_default_credentials.json ${POD}:/tmp/workflow/application_default_credentials.json -c flux-sample
-
-# Make directory
 kubectl exec -it -n flux-operator ${POD} -- mkdir -p /tmp/workflow/external-config
-
-# Copy configs
-kubectl cp -n flux-operator ./external-config/flux-operator-dev.yaml ${POD}:/tmp/workflow/external-config/flux-operator-dev.yaml -c flux-sample
-```
-
-At this point, jump down to [burstable job](#burstable-job). If you are having trouble seeing communication for the service, you should come back to this step, and redo with nginx (service/service.yaml) and the flux-sample-service pod. 
-
-## Development with Kind
-
-I first tested on kind, and was able to get up to the point of needing to connect (and could not without the host).
-
-### Setup Cluster
-
-Create the cluster
-
-```bash
-$ kind create cluster --config ./kind-config.yaml
-```
-
-Note this config ensures that the cluster has an external IP on localhost.
-Then install the operator, create the namespace, and the minicluster.
-
-```bash
-kubectl apply -f ../../dist/flux-operator-dev.yaml
-kubectl create namespace flux-operator
-```
-
-Create an existing config map for nginx (that it will expect to be there, and we 
-have defined in our minicluster.yaml under the nginx service existingVolumes).
-
-```bash
-$ kubectl apply -f service/nginx.yaml
-```
-
-And then create the MiniCluster
-
-```bash
-$ kubectl apply -f minicluster.yaml
-```
-
-And when the containers are ready, create the node port service for "flux-services":
-
-```bash
-$ kubectl apply -f service/service.yaml
-```
-
-Here is a nice block to easily copy paste all three :)
-
-```bash
-kubectl apply -f service/nginx.yaml
-kubectl apply -f minicluster.yaml
-kubectl apply -f service/service.yaml
+kubectl cp -n flux-operator ../../../dist/flux-operator-dev.yaml ${POD}:/tmp/workflow/external-config/flux-operator-dev.yaml -c flux-sample
 ```
 
 ## Burstable Job
 
-Now let's create a job that cannot be run because we don't have the resources. In the future we would want some other logic to determine
-this, but for now we are going to ensure the job doesn't run locally, and give it a label that our external application can sniff out and grab. Shell into the broker pod:
+Now let's create a job that cannot be run because we don't have the resources. The `flux-burst` Python module, using it's simple
+default, will just look for jobs with `burstable=True` and then look for a place to assign them to burst. Since this is a plugin
+framework, in the future we can implement more intelligent algorithms for either filtering the queue (e.g., "Which jobs need bursting?"
+and then determining if a burst can be scheduled for some given burst plugin (e.g., GKE)). For this simple setup and example,
+we ensure the job doesn't run locally because we've asked for more nodes than we have. Shell into your broker pod:
 
 ```bash
 $ kubectl exec -it -n flux-operator flux-sample-0-kvg5t bash
@@ -195,22 +150,8 @@ Connect to the broker socket
 $ sudo -u flux -E $(env) -E HOME=/home/flux flux proxy local:///run/flux/local bash
 ```
 
-Install the libraries we need:
-
-```bash
-# This is from /tmp/workflow
-git clone -b add/gke-kubectl-client https://github.com/converged-computing/kubescaler
-cd kubescaler
-python3 -m pip install -e .[all]
-cd -
-git clone --depth 1 -b bursting https://github.com/flux-framework/flux-operator ./op
-cd ./op/sdk/python/v1alpha1
-python3 -m pip install -e .
-cd -
-python3 -m pip install IPython
-```
-
-We can eventually package these in a container base.
+The libraries we need should be installed in the minicluster.yaml.
+You might want to add others for development (e.g., IPython).
 Resources we have available?
 
 ```bash
@@ -221,7 +162,10 @@ $ flux resource list
       down      6       24 flux-sample-[2-3],burst-0-[0-3]
 ```
 
-And now let's create a burstable job, and ask for more nodes than we have :)
+The above shows us that the broker running here can accept burstable resources (`burst-0-[0-3]`), and even
+can accept the local cluster expanding (`flux-sample[2-3]`) for a total of 24 cores. The reason
+that the remote burst prefix has an extra "0" is that we could potentially have different sets of
+burstable remotes, namespaced by this prefix. And now let's create a burstable job, and ask for more nodes than we have :)
 
 ```bash
 # Set burstable=1
@@ -230,10 +174,8 @@ $ flux submit -N 4 --setattr=burstable hostname
 ```
 
 You should see it's scheduled (but not running). Note that if we asked for a resource totally unknown
-to the cluster (e.g. 4 nodes and 32 tasks) it would just fail so:
-
-> TODO we need in our "mark as burstable" method a way to tell Flux not to fail in this case.
-
+to the cluster (e.g. 4 nodes and 32 tasks) it would just fail. Note that because of this,
+we need in our "mark as burstable" method a way to tell Flux not to fail in this case.
 You can see it is scheduled and waiting for resources:
 
 
@@ -247,7 +189,7 @@ $ flux job attach $(flux job last)
 flux-job: ƒQURAmBXV waiting for resources  
 ```
 
-Get a variant of the munge key we can see:
+Get a variant of the munge key we can see (it's owned by root so this ensures we can see/own it as the flux user)
 
 ```bash
 sudo cp /etc/munge/munge.key ./munge.key
@@ -257,10 +199,15 @@ sudo chown $USER munge.key
 Now we can run our script to find the jobs based on this attribute!
 
 ```bash
+# Our Google Project name
 GOOGLE_PROJECT=myproject
-LEAD_HOST="34.28.41.20"
+
+# This is the address of the lead host we discovered above
+LEAD_HOST="34.72.223.15"
+
+# This is the node port we've exposed on the cluster
 LEAD_PORT=30093
-python3 run-burst.py --project ${GOOGLE_PROJECT} --cluster-name flux-external-cluster --flux-operator-yaml ./external-config/flux-operator-dev.yaml \
+python3 run-burst.py --project ${GOOGLE_PROJECT} --flux-operator-yaml ./external-config/flux-operator-dev.yaml \
         --lead-host ${LEAD_HOST} --lead-port ${LEAD_PORT} --lead-size 4 \
         --munge-key ./munge.key --name burst-0
 ```
@@ -365,5 +312,3 @@ kubectl delete -f nginx.yaml
 kubectl delete -f service.yaml
 gcloud container clusters delete flux-cluster
 ```
-
-

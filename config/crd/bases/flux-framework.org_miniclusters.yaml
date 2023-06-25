@@ -323,6 +323,10 @@ spec:
                     description: Optionally provide an already existing curve certificate
                       this is intended for bursting to remote clusters
                     type: string
+                  curveCertSecret:
+                    description: Expect a secret for a curve cert here. This is ideal
+                      over the curveCert (as a string) above.
+                    type: string
                   installRoot:
                     default: /usr
                     description: Install root location
@@ -336,11 +340,10 @@ spec:
                     description: Only expose the broker service (to reduce load on
                       DNS)
                     type: boolean
-                  mungeConfigMap:
-                    description: Expect a config map (named according to this string)
+                  mungeSecret:
+                    description: Expect a secret (named according to this string)
                       for a munge key. This is intended for bursting. Assumed to be
-                      at /etc/munge/munge.key We expect a config map since it's binary
-                      data
+                      at /etc/munge/munge.key This is binary data.
                     type: string
                   optionFlags:
                     description: Flux option flags, usually provided with -o optional
@@ -351,6 +354,8 @@ spec:
                   wrap:
                     description: Commands for flux start --wrap
                     type: string
+                required:
+                - curveCertSecret
                 type: object
               fluxRestful:
                 description: Customization to Flux Restful API There should only be

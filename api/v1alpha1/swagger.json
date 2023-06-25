@@ -187,6 +187,9 @@
     },
     "FluxSpec": {
       "type": "object",
+      "required": [
+        "curveCertSecret"
+      ],
       "properties": {
         "brokerConfig": {
           "description": "Optionally provide a manually created broker config this is intended for bursting to remote clusters",
@@ -208,6 +211,11 @@
           "type": "string",
           "default": ""
         },
+        "curveCertSecret": {
+          "description": "Expect a secret for a curve cert here. This is ideal over the curveCert (as a string) above.",
+          "type": "string",
+          "default": ""
+        },
         "installRoot": {
           "description": "Install root location",
           "type": "string",
@@ -224,8 +232,8 @@
           "type": "boolean",
           "default": false
         },
-        "mungeConfigMap": {
-          "description": "Expect a config map (named according to this string) for a munge key. This is intended for bursting. Assumed to be at /etc/munge/munge.key We expect a config map since it's binary data",
+        "mungeSecret": {
+          "description": "Expect a secret (named according to this string) for a munge key. This is intended for bursting. Assumed to be at /etc/munge/munge.key This is binary data.",
           "type": "string",
           "default": ""
         },
