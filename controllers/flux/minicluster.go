@@ -61,7 +61,7 @@ func (r *MiniClusterReconciler) ensureMiniCluster(
 	}
 
 	// Generate the curve certificate config map, unless already exists
-	if cluster.Spec.Flux.CurveCertSecret != "" {
+	if cluster.Spec.Flux.CurveCertSecret == "" {
 		_, result, err = r.getConfigMap(ctx, cluster, "cert", cluster.Name+curveVolumeSuffix)
 		if err != nil {
 			return result, err
