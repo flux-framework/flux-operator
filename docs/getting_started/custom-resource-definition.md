@@ -398,6 +398,21 @@ flux:
      ...
 ```
 
+#### curveCertSecret
+
+To provide the name of a secret with a key `curve.cert` with a curve certificate to
+the MiniCluster, you can define this variable. This is recommended (and likely)
+for bursting scenarios when you need to share your primary cluster certificate
+with an external one.
+
+```yaml
+flux:
+  curveCertSecret: curve-cert
+```
+
+This is recommended in favor of the plain text, below, and if both are
+provided the secret will be honored first.
+
 #### curveCert
 
 The same goes for the curve certificate! If you are bursting and want your
@@ -410,20 +425,20 @@ flux:
      ...
 ```
 
-#### mungeConfigMap
+#### mungeSecret
 
 In the case that you are also bursting, you'll need the shared munge key between clusters.
-Since this is a binary file, we recommend you create a config map from the file:
+Since this is a binary file, we recommend you create a secret from the file:
 
 ```bash
-$ kubectl create configmap --namespace flux-operator munge-key --from-file=/etc/munge/munge.key
+$ kubectl create secret --namespace flux-operator munge-key --from-file=/etc/munge/munge.key
 ```
 
 And then tell the operator to expect it as a volume:
 
 ```yaml
 flux:
-  mungeConfigMap: munge-key
+  mungeSecret: munge-key
 ```
 
 #### connectTimeout
@@ -523,7 +538,7 @@ it's ip address or hostname, and not, for example `flux-sample-0`. Also note tha
 explicitly give a command to the bursted cluster - the jobs are launched on the main cluster and sent
 to these external resources when they come up and are available (and needed). For a full example,
 see [the bursting](https://github.com/flux-framework/flux-operator/tree/main/examples/experimental/bursting) 
-example.
+examples directory.
 
 
 ### logging

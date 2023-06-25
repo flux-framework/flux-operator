@@ -33,14 +33,8 @@ spec:
       # Commands to support installing flux-burst plugins
       commands:
         pre: |
-          git clone -b integrate-flux-burst https://github.com/converged-computing/flux-burst ./fb
-          git clone -b integrate-flux-burst https://github.com/converged-computing/flux-burst-gke ./gke
-          cd ./fb && pip install -e .
-          cd ../gke && pip install -e .
-          cd -
-
-      # We will use launcher here to just run the command
-      # You can shell in to connect to the broker and issue commands that use CPU
+          pip install flux-burst
+          pip install flux-burst-gke
 
       # This should not be done in production
       environment:
