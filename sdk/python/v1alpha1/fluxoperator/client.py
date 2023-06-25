@@ -225,7 +225,8 @@ class FluxOperator:
         Instantiate a core_v1 api (if not done yet)
 
         We have this here because we typically need to create the MiniCluster
-        first.
+        first. For a custom core_v1_api, provide core_c1_api to the FluxOperator
+        init function.
         """
         if self._core_v1 is not None:
             return self._core_v1

@@ -33,15 +33,16 @@ import (
 )
 
 var (
-	hostfileName = "hostfile"
-	curveCertKey = "curve-cert"
+	hostfileName   = "hostfile"
+	curveCertKey   = "curve.cert"
+	mungeMountName = "munge-key"
 )
 
 // This is a MiniCluster! A MiniCluster is associated with a running MiniCluster and include:
 // 1. An indexed job with some number of pods
 // 2. Config maps for secrets and other things.
 // 3. We "launch" a job by starting the Indexed job on the connected nodes
-// newMiniCluster creates a new MiniCluster, a stateful set for running flux!
+// ensureMiniCluster creates a new MiniCluster, a stateful set for running flux!
 func (r *MiniClusterReconciler) ensureMiniCluster(
 	ctx context.Context,
 	cluster *api.MiniCluster,
@@ -59,10 +60,12 @@ func (r *MiniClusterReconciler) ensureMiniCluster(
 		return result, err
 	}
 
-	// Generate the curve certificate config map.
-	_, result, err = r.getConfigMap(ctx, cluster, "cert", cluster.Name+curveVolumeSuffix)
-	if err != nil {
-		return result, err
+	// Generate the curve certificate config map, unless already exists
+	if cluster.Spec.Flux.CurveCertSecret == "" {
+		_, result, err = r.getConfigMap(ctx, cluster, "cert", cluster.Name+curveVolumeSuffix)
+		if err != nil {
+			return result, err
+		}
 	}
 
 	// Prepare volumes, if requested, to be available to containers
@@ -333,7 +336,11 @@ func (r *MiniClusterReconciler) getConfigMap(
 
 			// check if its broker.toml (the flux config)
 			if configName == "flux-config" {
-				data[hostfileName] = generateFluxConfig(cluster)
+				brokerConfig, err := generateFluxConfig(cluster)
+				if err != nil {
+					return existing, ctrl.Result{Requeue: true}, err
+				}
+				data[hostfileName] = brokerConfig
 
 			} else if configName == "cert" {
 
@@ -399,21 +406,70 @@ func (r *MiniClusterReconciler) getConfigMap(
 }
 
 // generateHostlist for a specific size given the cluster namespace and a size
-func generateHostlist(cluster *api.MiniCluster, size int) string {
+func generateHostlist(cluster *api.MiniCluster, size int32) string {
 
-	// The hosts are generated through the max size, so the cluster can expand
-	return fmt.Sprintf("%s-[%s]", cluster.Name, generateRange(size))
+	// If we don't have a leadbroker address, we are at the root
+	var hosts string
+	if cluster.Spec.Flux.Bursting.LeadBroker.Address == "" {
+		hosts = fmt.Sprintf("%s-[%s]", cluster.Name, generateRange(size, 0))
+
+	} else {
+
+		// Otherwise, we need to put the lead broker first, replacing the previous
+		// index 0, and adding the rest of the range of jobs.
+		// The hosts array must be consistent in ordering of ranks across workers
+		adjustedSize := cluster.Spec.Flux.Bursting.LeadBroker.Size - 1
+		hosts = fmt.Sprintf(
+			"%s,%s-[%s]",
+			cluster.Spec.Flux.Bursting.LeadBroker.Address,
+			cluster.Spec.Flux.Bursting.LeadBroker.Name,
+
+			// Index starts at 1
+			generateRange(adjustedSize, 1),
+		)
+	}
+
+	// Now regardless of where we are, we add the bursted jobs in the same order.
+	// Any cluster with bursting must share all the bursted hosts across clusters
+	// This ensures that the ranks line up
+	for _, bursted := range cluster.Spec.Flux.Bursting.Clusters {
+		burstedHosts := fmt.Sprintf("%s-[%s]", bursted.Name, generateRange(bursted.Size, 0))
+		hosts = fmt.Sprintf("%s,%s", hosts, burstedHosts)
+	}
+	return hosts
 }
 
 // generateFluxConfig creates the broker.toml file used to boostrap flux
-func generateFluxConfig(cluster *api.MiniCluster) string {
+func generateFluxConfig(cluster *api.MiniCluster) (string, error) {
 
-	// The hosts are generated through the max size, so the cluster can expand
+	// If we have a config provided by user, use it.
+	if cluster.Spec.Flux.BrokerConfig != "" {
+		return cluster.Spec.Flux.BrokerConfig, nil
+	}
+
+	// Generate the broker.toml template, always up to the max size allowed
 	fqdn := fmt.Sprintf("%s.%s.svc.cluster.local", cluster.Spec.Network.HeadlessName, cluster.Namespace)
-	hosts := fmt.Sprintf("[%s]", generateRange(int(cluster.Spec.MaxSize)))
-	fluxConfig := fmt.Sprintf(brokerConfigTemplate, cluster.FluxInstallRoot(), fqdn, cluster.Name, hosts)
-	fluxConfig += "\n" + brokerArchiveSection
-	return fluxConfig
+	hosts := generateHostlist(cluster, cluster.Spec.MaxSize)
+
+	bt := BrokerTemplate{
+		Hosts:           hosts,
+		FQDN:            fqdn,
+		Spec:            cluster.Spec,
+		ClusterName:     cluster.Name,
+		FluxInstallRoot: cluster.FluxInstallRoot(),
+	}
+
+	t, err := template.New("broker-toml").Parse(brokerConfigTemplate)
+	if err != nil {
+		return "", err
+	}
+
+	var output bytes.Buffer
+	if err := t.Execute(&output, bt); err != nil {
+		return "", err
+	}
+
+	return output.String(), nil
 }
 
 // getRequiredRanks figures out the quorum that should be online for the cluster to start
@@ -427,18 +483,18 @@ func getRequiredRanks(cluster *api.MiniCluster) string {
 	}
 	// This is the quorum - the nodes required to be online - so we can start
 	// This can be less than the MaxSize
-	return generateRange(int(cluster.Spec.Size))
+	return generateRange(cluster.Spec.Size, 0)
 }
 
 // generateWaitScript generates the main script to start everything up!
 func generateWaitScript(cluster *api.MiniCluster, containerIndex int) (string, error) {
 
-	// The first pod (0) should always generate the curve certificate
 	container := cluster.Spec.Containers[containerIndex]
 	mainHost := fmt.Sprintf("%s-0", cluster.Name)
 
 	// The resources size must also match the max size in the cluster
-	hosts := generateHostlist(cluster, int(cluster.Spec.MaxSize))
+	// This set of hosts explicitly gets provided to resources
+	hosts := generateHostlist(cluster, cluster.Spec.MaxSize)
 
 	// Ensure our requested users each each have a password
 	for i, user := range cluster.Spec.Users {
@@ -491,12 +547,12 @@ func generateWaitScript(cluster *api.MiniCluster, containerIndex int) (string, e
 }
 
 // generateRange is a shared function to generate a range string
-func generateRange(size int) string {
+func generateRange(size int32, start int32) string {
 	var rangeString string
 	if size == 1 {
-		rangeString = "0"
+		rangeString = fmt.Sprintf("%d", start)
 	} else {
-		rangeString = fmt.Sprintf("0-%d", size-1)
+		rangeString = fmt.Sprintf("%d-%d", start, (start+size)-1)
 	}
 	return rangeString
 }

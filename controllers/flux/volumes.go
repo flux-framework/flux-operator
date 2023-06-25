@@ -49,6 +49,15 @@ func getVolumeMounts(cluster *api.MiniCluster) []corev1.VolumeMount {
 			ReadOnly:  true,
 		},
 	}
+	// Are we expecting a munge secret?
+	if cluster.Spec.Flux.MungeSecret != "" {
+		mungeMount := corev1.VolumeMount{
+			Name:      mungeMountName,
+			MountPath: "/etc/munge",
+			ReadOnly:  true,
+		}
+		mounts = append(mounts, mungeMount)
+	}
 	return mounts
 }
 
@@ -79,6 +88,18 @@ func getVolumes(cluster *api.MiniCluster) []corev1.Volume {
 		Path: "broker.toml",
 	}
 
+	// Only used if we need to provide the munge.key
+	mungeKey := corev1.KeyToPath{
+		Key:  cluster.Spec.Flux.MungeSecret,
+		Path: "munge.key",
+	}
+
+	// /mnt/curve/curve.cert
+	curveKey := corev1.KeyToPath{
+		Key:  curveCertKey,
+		Path: "curve.cert",
+	}
+
 	if cluster.MultiUser() {
 		mode := int32(0644)
 		brokerFile = corev1.KeyToPath{
@@ -88,6 +109,7 @@ func getVolumes(cluster *api.MiniCluster) []corev1.Volume {
 		}
 	}
 
+	// Defaults volumes we always write - entrypoint and configs
 	volumes := []corev1.Volume{
 		{
 			Name: cluster.Name + fluxConfigSuffix,
@@ -115,8 +137,25 @@ func getVolumes(cluster *api.MiniCluster) []corev1.Volume {
 				},
 			},
 		},
-		{
-			Name: cluster.Name + curveVolumeSuffix,
+	}
+
+	// We either generate a curve.cert config map, or get it from secret
+	curveVolumeName := cluster.Name + curveVolumeSuffix
+	if cluster.Spec.Flux.CurveCertSecret != "" {
+		curveVolume := corev1.Volume{
+			Name: curveVolumeName,
+			VolumeSource: corev1.VolumeSource{
+				Secret: &corev1.SecretVolumeSource{
+					SecretName: cluster.Spec.Flux.CurveCertSecret,
+					Items:      []corev1.KeyToPath{curveKey},
+				},
+			},
+		}
+		volumes = append(volumes, curveVolume)
+
+	} else {
+		curveVolume := corev1.Volume{
+			Name: curveVolumeName,
 			VolumeSource: corev1.VolumeSource{
 				ConfigMap: &corev1.ConfigMapVolumeSource{
 
@@ -124,16 +163,25 @@ func getVolumes(cluster *api.MiniCluster) []corev1.Volume {
 					LocalObjectReference: corev1.LocalObjectReference{
 						Name: cluster.Name + curveVolumeSuffix,
 					},
-					// /mnt/curve/curve.cert
-					Items: []corev1.KeyToPath{{
-						Key:  curveCertKey,
-						Path: "curve.cert",
-					}},
 				},
 			},
-		},
+		}
+		volumes = append(volumes, curveVolume)
 	}
 
+	// Are we expecting a munge config map?
+	if cluster.Spec.Flux.MungeSecret != "" {
+		mungeVolume := corev1.Volume{
+			Name: mungeMountName,
+			VolumeSource: corev1.VolumeSource{
+				Secret: &corev1.SecretVolumeSource{
+					SecretName: cluster.Spec.Flux.MungeSecret,
+					Items:      []corev1.KeyToPath{mungeKey},
+				},
+			},
+		}
+		volumes = append(volumes, mungeVolume)
+	}
 	// Add volumes that already exist (not created by the Flux Operator)
 	// These are unique names and path/claim names across containers
 	// This can be a claim, secret, or config map

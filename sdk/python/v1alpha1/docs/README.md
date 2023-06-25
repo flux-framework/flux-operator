@@ -56,9 +56,12 @@ from pprint import pprint
 
 ## Documentation For Models
 
+ - [BurstedCluster](BurstedCluster.md)
+ - [Bursting](Bursting.md)
  - [Commands](Commands.md)
  - [ContainerResources](dContainerResources.md)
  - [ContainerVolume](ContainerVolume.md)
+ - [FluxBroker](FluxBrokerl.md)
  - [FluxRestful](FluxRestful.md)
  - [FluxSpec](FluxSpec.md)
  - [FluxUser](FluxUser.md)

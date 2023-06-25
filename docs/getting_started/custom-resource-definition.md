@@ -385,6 +385,62 @@ flux:
 
 The drawback is that you cannot ping the other nodes by hostname.
 
+#### brokerConfig
+
+If you want to manually specify the broker config in entirety, you can define
+it as a full string under flux->brokerConfig. This is useful for experiments
+or development work.
+
+```yaml
+flux:
+  brokerConfig: |
+     [exec]
+     ...
+```
+
+#### curveCertSecret
+
+To provide the name of a secret with a key `curve.cert` with a curve certificate to
+the MiniCluster, you can define this variable. This is recommended (and likely)
+for bursting scenarios when you need to share your primary cluster certificate
+with an external one.
+
+```yaml
+flux:
+  curveCertSecret: curve-cert
+```
+
+This is recommended in favor of the plain text, below, and if both are
+provided the secret will be honored first.
+
+#### curveCert
+
+The same goes for the curve certificate! If you are bursting and want your
+new cluster to talk to the cluster it's bursted from, you can share this certificate.
+
+```yaml
+flux:
+  curveCert: |
+     [exec]
+     ...
+```
+
+#### mungeSecret
+
+In the case that you are also bursting, you'll need the shared munge key between clusters.
+Since this is a binary file, we recommend you create a secret from the file:
+
+```bash
+$ kubectl create secret --namespace flux-operator munge-key --from-file=/etc/munge/munge.key
+```
+
+And then tell the operator to expect it as a volume:
+
+```yaml
+flux:
+  mungeSecret: munge-key
+```
+
 #### connectTimeout
 
 For Flux versions 0.50.0 and later, you can customize the zeromq timeout. This is done
@@ -436,6 +492,54 @@ Although we have fixed the zeromq timeout bug, there still seems to be some unde
 
 Note that we think this higher level networking bug is still an issue, and are going to be creating a dummy case
 to reproduce it and share with the Kubernetes networking team.
+
+### bursting
+
+The bursting spec defines when you expect to burst to an external cluster. Since the initial Flux cluster needs
+to know all future hosts in advance, we ask that you provide sizes. More specifically:
+
+- A bursted cluster should have a `leadBroker` defined - the ip address or hostname, port, and job name of the initial MiniCluster
+- The main "root" cluster should not have a `leadBroker` defined, but needs to know about the intended bursted clusters and sizes.
+
+An example for the root cluster might look like the following:
+
+```yaml
+  flux:
+    # Declare that this cluster will allow for a bursted cluster
+    # It would automatically be named burst-0, but we explicitly set
+    # for clarity. The leadBroker is left out because this IS it.
+    bursting:
+      clusters:
+        - size: 4
+          name: burst-0
+```
+
+And then the cluster launched from this cluster "bursted to" would define:
+
+
+```yaml
+  flux:
+    leadBroker:
+      # This is the name of the first minicluster.yaml spec
+      name: flux-sample
+      # In a cloud environment this would be a NodePort
+      address: 24.123.50.123
+      port: 30093
+    
+    bursting:
+      clusters:
+        - size: 4
+          name: burst-0
+```
+
+Using the above, both the main and bursted to cluster will have almost the same spec for their flux resources
+and broker.toml (config). The main difference will be that the bursted cluster knows about the first one via
+it's ip address or hostname, and not, for example `flux-sample-0`. Also note that when bursting, you don't
+explicitly give a command to the bursted cluster - the jobs are launched on the main cluster and sent
+to these external resources when they come up and are available (and needed). For a full example,
+see [the bursting](https://github.com/flux-framework/flux-operator/tree/main/examples/experimental/bursting) 
+examples directory.
+
 
 ### logging
 

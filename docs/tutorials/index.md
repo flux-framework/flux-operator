@@ -22,6 +22,11 @@ The following tutorials are provided from their respective directories (and are 
 
 ### Experimental
 
+#### Bursting
+
+ - [Bursting (via Broker)](https://github.com/flux-framework/flux-operator/tree/main/examples/experimental/bursting/broker) from a local broker to an external cluster.
+ - [Bursting (nginx service)](https://github.com/flux-framework/flux-operator/tree/main/examples/experimental/bursting/nginx) design to use central router for bursting.
+
 #### Nested
 
  - [K3s](https://github.com/flux-framework/flux-operator/tree/main/examples/nested/k3s/basic): instiatiate k3s inside Flux, and deploy an app.

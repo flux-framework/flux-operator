@@ -7,6 +7,43 @@
   },
   "paths": {},
   "definitions": {
+    "BurstedCluster": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "description": "The hostnames for the bursted clusters If set, the user is responsible for ensuring uniqueness. The operator will set to burst-N",
+          "type": "string",
+          "default": ""
+        },
+        "size": {
+          "description": "Size of bursted cluster. Defaults to same size as local minicluster if not set",
+          "type": "integer",
+          "format": "int32"
+        }
+      }
+    },
+    "Bursting": {
+      "description": "Bursting Config For simplicity, we internally handle the name of the job (hostnames)",
+      "type": "object",
+      "required": [
+        "clusters"
+      ],
+      "properties": {
+        "clusters": {
+          "description": "External clusters to burst to. Each external cluster must share the same listing to align ranks",
+          "type": "array",
+          "items": {
+            "default": {},
+            "$ref": "#/definitions/BurstedCluster"
+          }
+        },
+        "leadBroker": {
+          "description": "The lead broker ip address to join to. E.g., if we burst to cluster 2, this is the address to connect to cluster 1 For the first cluster, this should not be defined",
+          "default": {},
+          "$ref": "#/definitions/FluxBroker"
+        }
+      }
+    },
     "Commands": {
       "type": "object",
       "properties": {
@@ -84,6 +121,39 @@
         }
       }
     },
+    "FluxBroker": {
+      "description": "A FluxBroker defines a broker for flux",
+      "type": "object",
+      "required": [
+        "address",
+        "name",
+        "size"
+      ],
+      "properties": {
+        "address": {
+          "description": "Lead broker address (ip or hostname)",
+          "type": "string",
+          "default": ""
+        },
+        "name": {
+          "description": "We need the name of the lead job to assemble the hostnames",
+          "type": "string",
+          "default": ""
+        },
+        "port": {
+          "description": "Lead broker port - should only be used for external cluster",
+          "type": "integer",
+          "format": "int32",
+          "default": 8050
+        },
+        "size": {
+          "description": "Lead broker size",
+          "type": "integer",
+          "format": "int32",
+          "default": 0
+        }
+      }
+    },
     "FluxRestful": {
       "type": "object",
       "properties": {
@@ -118,10 +188,30 @@
     "FluxSpec": {
       "type": "object",
       "properties": {
+        "brokerConfig": {
+          "description": "Optionally provide a manually created broker config this is intended for bursting to remote clusters",
+          "type": "string",
+          "default": ""
+        },
+        "bursting": {
+          "description": "Bursting - one or more external clusters to burst to We assume a single, central MiniCluster with an ipaddress that all connect to.",
+          "default": {},
+          "$ref": "#/definitions/Bursting"
+        },
         "connectTimeout": {
           "description": "Single user executable to provide to flux start",
           "type": "string",
           "default": "5s"
+        },
+        "curveCert": {
+          "description": "Optionally provide an already existing curve certificate This is not recommended in favor of providing the secret name as curveCertSecret, below",
+          "type": "string",
+          "default": ""
+        },
+        "curveCertSecret": {
+          "description": "Expect a secret for a curve cert here. This is ideal over the curveCert (as a string) above.",
+          "type": "string",
+          "default": ""
         },
         "installRoot": {
           "description": "Install root location",
@@ -138,6 +228,11 @@
           "description": "Only expose the broker service (to reduce load on DNS)",
           "type": "boolean",
           "default": false
+        },
+        "mungeSecret": {
+          "description": "Expect a secret (named according to this string) for a munge key. This is intended for bursting. Assumed to be at /etc/munge/munge.key This is binary data.",
+          "type": "string",
+          "default": ""
         },
         "optionFlags": {
           "description": "Flux option flags, usually provided with -o optional - if needed, default option flags for the server These can also be set in the user interface to override here. This is only valid for a FluxRunner \"runFlux\" true",

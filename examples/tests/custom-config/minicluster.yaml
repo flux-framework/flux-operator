@@ -1,0 +1,49 @@
+apiVersion: flux-framework.org/v1alpha1
+kind: MiniCluster
+metadata:
+  name: flux-sample
+  namespace: flux-operator
+spec:
+  # suppress all output except for test run
+  logging:
+    quiet: false
+
+  # Number of pods to create for MiniCluster
+  size: 4
+
+  flux:
+      curveCert: |
+        metadata
+            name = "flux-cert-generator"
+            keygen.hostname = "flux-sample-0"
+        curve
+            public-key = "}D{Y3<amLLl*TIt>@b*umPD-nBr#I}[PnV!lZBkW"
+            secret-key = "5khD%TixeW<j<6ssPNG>s<nY1E}5)fyk@TI)g8Xu"
+
+      brokerConfig: |
+        [exec]
+        imp = "/usr/libexec/flux/flux-imp"
+
+        [access]
+        allow-guest-user = true
+        allow-root-owner = true
+
+        [resource]
+        path = "/etc/flux/system/R"
+
+        [bootstrap]
+        curve_cert = "/etc/curve/curve.cert"
+        default_port = 8050
+        default_bind = "tcp://eth0:%p"
+        default_connect = "tcp://%h.flux-service.flux-operator.svc.cluster.local:%p"
+        hosts = [{host="flux-sample-0", bind="tcp://eth0:8050",connect="tcp://flux-sample-0.flux-service.flux-operator.svc.cluster.local:8050"},
+                 {host="flux-sample-[1-3]"}]
+        [archive]
+        dbpath = "/var/lib/flux/job-archive.sqlite"
+        period = "1m"
+        busytimeout = "50s"
+
+  # This is a list because a pod can support multiple containers
+  containers:
+    - image: ghcr.io/flux-framework/flux-restful-api:latest
+      command: echo hello world

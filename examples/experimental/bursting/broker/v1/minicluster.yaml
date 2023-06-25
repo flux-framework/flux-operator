@@ -1,0 +1,61 @@
+apiVersion: flux-framework.org/v1alpha1
+kind: MiniCluster
+metadata:
+  name: flux-sample
+  namespace: flux-operator
+spec:
+  size: 2
+  # If we don't set this, we won't be able to go above two
+  # and the request for 4 nodes will fail instead of scheduling
+  maxSize: 4
+  interactive: true
+
+  # This allows us to see zeromq and debug logging
+  flux:
+    logLevel: 7
+
+    # Declare that this cluster will allow for a bursted cluster
+    # It would automatically be named burst-0, but we explicitly set
+    # for clarity. The leadBroker is left out because this IS it.
+    bursting:
+      clusters:
+        - size: 4
+          name: burst-0
+
+  logging:
+    zeromq: true
+
+  # Add an nginx service with an existing config map
+  # This isn't currently used, but is a setup I'm keeping for 
+  # potentially later, adding some integration with flux restful
+  services:
+    - image: nginx
+      name: nginx
+      existingVolumes:
+        nginx-conf:
+          configMapName: nginx-conf 
+          path: /etc/nginx/conf.d
+          items:
+            flux.conf: flux.conf
+
+  # This is a list because a pod can support multiple containers
+  containers:
+    - image: ghcr.io/flux-framework/flux-restful-api
+      workingDir: /tmp/workflow
+
+      # We will use launcher here to just run the command
+      # You can shell in to connect to the broker and issue commands that use CPU
+
+      # This should not be done in production
+      environment:
+        GOOGLE_APPLICATION_CREDENTIALS: /tmp/workflow/application_default_credentials.json
+
+      # Important! We need to have resource requests for the horizonal autoscaler
+      # The Flux Operator doesn't know you want to use it, so it's up to you
+      # to provide these if your metric is about CPU
+      resources:
+        limits:
+          cpu: "1"
+
+        requests:
+          cpu: "1"

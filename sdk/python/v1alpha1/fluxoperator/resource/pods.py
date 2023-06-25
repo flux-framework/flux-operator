@@ -6,7 +6,15 @@ import fluxoperator.defaults as defaults
 import sys
 
 # These are known objects we will parse
-_objects = ["logging", "volumes", "resources", "flux_restful", "container", "resources", "flux"]
+_objects = [
+    "logging",
+    "volumes",
+    "resources",
+    "flux_restful",
+    "container",
+    "resources",
+    "flux",
+]
 
 
 def _get_logging_spec(logging):
@@ -41,6 +49,27 @@ def _get_container_volumes(volumes):
         volumeset[name] = models.ContainerVolume(**volume_spec)
     return volumeset
 
+def _get_bursting_spec(bursting):
+    """
+    Get the bursting spec
+    """
+    burstspec = {}
+    for k in models.Bursting.attribute_map:
+        if k in bursting and k == "lead_broker":
+            burstspec[k] = _get_lead_broker_spec(bursting[k])
+        elif k in bursting:
+            burstspec[k] = bursting[k]
+    return models.Bursting(**burstspec)
+
+def _get_lead_broker_spec(broker):
+    """
+    Get the lead broker spec
+    """
+    brokerspec = {}
+    for k in models.FluxBroker.attribute_map:
+        if k in broker:
+            brokerspec[k] = broker[k]
+    return models.FluxBroker(**brokerspec)
 
 def _get_flux_spec(flux):
     """
@@ -48,9 +77,12 @@ def _get_flux_spec(flux):
     """
     fluxspec = {}
     for k in models.FluxSpec.attribute_map:
-        if k in flux:
+        if k in flux and k == "bursting":
+            fluxspec[k] = _get_bursting_spec(flux[k])
+        elif k in flux:
             fluxspec[k] = flux[k]
     return models.FluxSpec(**fluxspec)
+
 
 def _get_container_spec(container):
     """

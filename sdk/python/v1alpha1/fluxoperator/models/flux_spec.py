@@ -33,49 +33,118 @@ class FluxSpec(object):
                             and the value is json key in definition.
     """
     openapi_types = {
+        'broker_config': 'str',
+        'bursting': 'Bursting',
         'connect_timeout': 'str',
+        'curve_cert': 'str',
+        'curve_cert_secret': 'str',
         'install_root': 'str',
         'log_level': 'int',
         'minimal_service': 'bool',
+        'munge_secret': 'str',
         'option_flags': 'str',
         'wrap': 'str'
     }
 
     attribute_map = {
+        'broker_config': 'brokerConfig',
+        'bursting': 'bursting',
         'connect_timeout': 'connectTimeout',
+        'curve_cert': 'curveCert',
+        'curve_cert_secret': 'curveCertSecret',
         'install_root': 'installRoot',
         'log_level': 'logLevel',
         'minimal_service': 'minimalService',
+        'munge_secret': 'mungeSecret',
         'option_flags': 'optionFlags',
         'wrap': 'wrap'
     }
 
-    def __init__(self, connect_timeout='5s', install_root='/usr', log_level=6, minimal_service=False, option_flags='', wrap=None, local_vars_configuration=None):  # noqa: E501
+    def __init__(self, broker_config='', bursting=None, connect_timeout='5s', curve_cert='', curve_cert_secret='', install_root='/usr', log_level=6, minimal_service=False, munge_secret='', option_flags='', wrap=None, local_vars_configuration=None):  # noqa: E501
         """FluxSpec - a model defined in OpenAPI"""  # noqa: E501
         if local_vars_configuration is None:
             local_vars_configuration = Configuration.get_default_copy()
         self.local_vars_configuration = local_vars_configuration
 
+        self._broker_config = None
+        self._bursting = None
         self._connect_timeout = None
+        self._curve_cert = None
+        self._curve_cert_secret = None
         self._install_root = None
         self._log_level = None
         self._minimal_service = None
+        self._munge_secret = None
         self._option_flags = None
         self._wrap = None
         self.discriminator = None
 
+        if broker_config is not None:
+            self.broker_config = broker_config
+        if bursting is not None:
+            self.bursting = bursting
         if connect_timeout is not None:
             self.connect_timeout = connect_timeout
+        if curve_cert is not None:
+            self.curve_cert = curve_cert
+        if curve_cert_secret is not None:
+            self.curve_cert_secret = curve_cert_secret
         if install_root is not None:
             self.install_root = install_root
         if log_level is not None:
             self.log_level = log_level
         if minimal_service is not None:
             self.minimal_service = minimal_service
+        if munge_secret is not None:
+            self.munge_secret = munge_secret
         if option_flags is not None:
             self.option_flags = option_flags
         if wrap is not None:
             self.wrap = wrap
+
+    @property
+    def broker_config(self):
+        """Gets the broker_config of this FluxSpec.  # noqa: E501
+
+        Optionally provide a manually created broker config this is intended for bursting to remote clusters  # noqa: E501
+
+        :return: The broker_config of this FluxSpec.  # noqa: E501
+        :rtype: str
+        """
+        return self._broker_config
+
+    @broker_config.setter
+    def broker_config(self, broker_config):
+        """Sets the broker_config of this FluxSpec.
+
+        Optionally provide a manually created broker config this is intended for bursting to remote clusters  # noqa: E501
+
+        :param broker_config: The broker_config of this FluxSpec.  # noqa: E501
+        :type broker_config: str
+        """
+
+        self._broker_config = broker_config
+
+    @property
+    def bursting(self):
+        """Gets the bursting of this FluxSpec.  # noqa: E501
+
+
+        :return: The bursting of this FluxSpec.  # noqa: E501
+        :rtype: Bursting
+        """
+        return self._bursting
+
+    @bursting.setter
+    def bursting(self, bursting):
+        """Sets the bursting of this FluxSpec.
+
+
+        :param bursting: The bursting of this FluxSpec.  # noqa: E501
+        :type bursting: Bursting
+        """
+
+        self._bursting = bursting
 
     @property
     def connect_timeout(self):
@@ -99,6 +168,52 @@ class FluxSpec(object):
         """
 
         self._connect_timeout = connect_timeout
+
+    @property
+    def curve_cert(self):
+        """Gets the curve_cert of this FluxSpec.  # noqa: E501
+
+        Optionally provide an already existing curve certificate This is not recommended in favor of providing the secret name as curveCertSecret, below  # noqa: E501
+
+        :return: The curve_cert of this FluxSpec.  # noqa: E501
+        :rtype: str
+        """
+        return self._curve_cert
+
+    @curve_cert.setter
+    def curve_cert(self, curve_cert):
+        """Sets the curve_cert of this FluxSpec.
+
+        Optionally provide an already existing curve certificate This is not recommended in favor of providing the secret name as curveCertSecret, below  # noqa: E501
+
+        :param curve_cert: The curve_cert of this FluxSpec.  # noqa: E501
+        :type curve_cert: str
+        """
+
+        self._curve_cert = curve_cert
+
+    @property
+    def curve_cert_secret(self):
+        """Gets the curve_cert_secret of this FluxSpec.  # noqa: E501
+
+        Expect a secret for a curve cert here. This is ideal over the curveCert (as a string) above.  # noqa: E501
+
+        :return: The curve_cert_secret of this FluxSpec.  # noqa: E501
+        :rtype: str
+        """
+        return self._curve_cert_secret
+
+    @curve_cert_secret.setter
+    def curve_cert_secret(self, curve_cert_secret):
+        """Sets the curve_cert_secret of this FluxSpec.
+
+        Expect a secret for a curve cert here. This is ideal over the curveCert (as a string) above.  # noqa: E501
+
+        :param curve_cert_secret: The curve_cert_secret of this FluxSpec.  # noqa: E501
+        :type curve_cert_secret: str
+        """
+
+        self._curve_cert_secret = curve_cert_secret
 
     @property
     def install_root(self):
@@ -168,6 +283,29 @@ class FluxSpec(object):
         """
 
         self._minimal_service = minimal_service
+
+    @property
+    def munge_secret(self):
+        """Gets the munge_secret of this FluxSpec.  # noqa: E501
+
+        Expect a secret (named according to this string) for a munge key. This is intended for bursting. Assumed to be at /etc/munge/munge.key This is binary data.  # noqa: E501
+
+        :return: The munge_secret of this FluxSpec.  # noqa: E501
+        :rtype: str
+        """
+        return self._munge_secret
+
+    @munge_secret.setter
+    def munge_secret(self, munge_secret):
+        """Sets the munge_secret of this FluxSpec.
+
+        Expect a secret (named according to this string) for a munge key. This is intended for bursting. Assumed to be at /etc/munge/munge.key This is binary data.  # noqa: E501
+
+        :param munge_secret: The munge_secret of this FluxSpec.  # noqa: E501
+        :type munge_secret: str
+        """
+
+        self._munge_secret = munge_secret
 
     @property
     def option_flags(self):

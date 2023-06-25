@@ -24,9 +24,12 @@ import (
 
 func GetOpenAPIDefinitions(ref common.ReferenceCallback) map[string]common.OpenAPIDefinition {
 	return map[string]common.OpenAPIDefinition{
+		"./api/v1alpha1/.BurstedCluster":            schema__api_v1alpha1__BurstedCluster(ref),
+		"./api/v1alpha1/.Bursting":                  schema__api_v1alpha1__Bursting(ref),
 		"./api/v1alpha1/.Commands":                  schema__api_v1alpha1__Commands(ref),
 		"./api/v1alpha1/.ContainerResources":        schema__api_v1alpha1__ContainerResources(ref),
 		"./api/v1alpha1/.ContainerVolume":           schema__api_v1alpha1__ContainerVolume(ref),
+		"./api/v1alpha1/.FluxBroker":                schema__api_v1alpha1__FluxBroker(ref),
 		"./api/v1alpha1/.FluxRestful":               schema__api_v1alpha1__FluxRestful(ref),
 		"./api/v1alpha1/.FluxSpec":                  schema__api_v1alpha1__FluxSpec(ref),
 		"./api/v1alpha1/.FluxUser":                  schema__api_v1alpha1__FluxUser(ref),
@@ -44,6 +47,70 @@ func GetOpenAPIDefinitions(ref common.ReferenceCallback) map[string]common.OpenA
 		"./api/v1alpha1/.Network":                   schema__api_v1alpha1__Network(ref),
 		"./api/v1alpha1/.PodSpec":                   schema__api_v1alpha1__PodSpec(ref),
 		"./api/v1alpha1/.SecurityContext":           schema__api_v1alpha1__SecurityContext(ref),
+	}
+}
+
+func schema__api_v1alpha1__BurstedCluster(ref common.ReferenceCallback) common.OpenAPIDefinition {
+	return common.OpenAPIDefinition{
+		Schema: spec.Schema{
+			SchemaProps: spec.SchemaProps{
+				Type: []string{"object"},
+				Properties: map[string]spec.Schema{
+					"name": {
+						SchemaProps: spec.SchemaProps{
+							Description: "The hostnames for the bursted clusters If set, the user is responsible for ensuring uniqueness. The operator will set to burst-N",
+							Default:     "",
+							Type:        []string{"string"},
+							Format:      "",
+						},
+					},
+					"size": {
+						SchemaProps: spec.SchemaProps{
+							Description: "Size of bursted cluster. Defaults to same size as local minicluster if not set",
+							Type:        []string{"integer"},
+							Format:      "int32",
+						},
+					},
+				},
+			},
+		},
+	}
+}
+
+func schema__api_v1alpha1__Bursting(ref common.ReferenceCallback) common.OpenAPIDefinition {
+	return common.OpenAPIDefinition{
+		Schema: spec.Schema{
+			SchemaProps: spec.SchemaProps{
+				Description: "Bursting Config For simplicity, we internally handle the name of the job (hostnames)",
+				Type:        []string{"object"},
+				Properties: map[string]spec.Schema{
+					"leadBroker": {
+						SchemaProps: spec.SchemaProps{
+							Description: "The lead broker ip address to join to. E.g., if we burst to cluster 2, this is the address to connect to cluster 1 For the first cluster, this should not be defined",
+							Default:     map[string]interface{}{},
+							Ref:         ref("./api/v1alpha1/.FluxBroker"),
+						},
+					},
+					"clusters": {
+						SchemaProps: spec.SchemaProps{
+							Description: "External clusters to burst to. Each external cluster must share the same listing to align ranks",
+							Type:        []string{"array"},
+							Items: &spec.SchemaOrArray{
+								Schema: &spec.Schema{
+									SchemaProps: spec.SchemaProps{
+										Default: map[string]interface{}{},
+										Ref:     ref("./api/v1alpha1/.BurstedCluster"),
+									},
+								},
+							},
+						},
+					},
+				},
+				Required: []string{"clusters"},
+			},
+		},
+		Dependencies: []string{
+			"./api/v1alpha1/.BurstedCluster", "./api/v1alpha1/.FluxBroker"},
 	}
 }
 
@@ -186,6 +253,52 @@ func schema__api_v1alpha1__ContainerVolume(ref common.ReferenceCallback) common.
 	}
 }
 
+func schema__api_v1alpha1__FluxBroker(ref common.ReferenceCallback) common.OpenAPIDefinition {
+	return common.OpenAPIDefinition{
+		Schema: spec.Schema{
+			SchemaProps: spec.SchemaProps{
+				Description: "A FluxBroker defines a broker for flux",
+				Type:        []string{"object"},
+				Properties: map[string]spec.Schema{
+					"address": {
+						SchemaProps: spec.SchemaProps{
+							Description: "Lead broker address (ip or hostname)",
+							Default:     "",
+							Type:        []string{"string"},
+							Format:      "",
+						},
+					},
+					"name": {
+						SchemaProps: spec.SchemaProps{
+							Description: "We need the name of the lead job to assemble the hostnames",
+							Default:     "",
+							Type:        []string{"string"},
+							Format:      "",
+						},
+					},
+					"size": {
+						SchemaProps: spec.SchemaProps{
+							Description: "Lead broker size",
+							Default:     0,
+							Type:        []string{"integer"},
+							Format:      "int32",
+						},
+					},
+					"port": {
+						SchemaProps: spec.SchemaProps{
+							Description: "Lead broker port - should only be used for external cluster",
+							Default:     8050,
+							Type:        []string{"integer"},
+							Format:      "int32",
+						},
+					},
+				},
+				Required: []string{"address", "name", "size"},
+			},
+		},
+	}
+}
+
 func schema__api_v1alpha1__FluxRestful(ref common.ReferenceCallback) common.OpenAPIDefinition {
 	return common.OpenAPIDefinition{
 		Schema: spec.Schema{
@@ -291,9 +404,50 @@ func schema__api_v1alpha1__FluxSpec(ref common.ReferenceCallback) common.OpenAPI
 							Format:      "int32",
 						},
 					},
+					"curveCert": {
+						SchemaProps: spec.SchemaProps{
+							Description: "Optionally provide an already existing curve certificate This is not recommended in favor of providing the secret name as curveCertSecret, below",
+							Default:     "",
+							Type:        []string{"string"},
+							Format:      "",
+						},
+					},
+					"curveCertSecret": {
+						SchemaProps: spec.SchemaProps{
+							Description: "Expect a secret for a curve cert here. This is ideal over the curveCert (as a string) above.",
+							Default:     "",
+							Type:        []string{"string"},
+							Format:      "",
+						},
+					},
+					"mungeSecret": {
+						SchemaProps: spec.SchemaProps{
+							Description: "Expect a secret (named according to this string) for a munge key. This is intended for bursting. Assumed to be at /etc/munge/munge.key This is binary data.",
+							Default:     "",
+							Type:        []string{"string"},
+							Format:      "",
+						},
+					},
+					"bursting": {
+						SchemaProps: spec.SchemaProps{
+							Description: "Bursting - one or more external clusters to burst to We assume a single, central MiniCluster with an ipaddress that all connect to.",
+							Default:     map[string]interface{}{},
+							Ref:         ref("./api/v1alpha1/.Bursting"),
+						},
+					},
+					"brokerConfig": {
+						SchemaProps: spec.SchemaProps{
+							Description: "Optionally provide a manually created broker config this is intended for bursting to remote clusters",
+							Default:     "",
+							Type:        []string{"string"},
+							Format:      "",
+						},
+					},
 				},
 			},
 		},
+		Dependencies: []string{
+			"./api/v1alpha1/.Bursting"},
 	}
 }
 

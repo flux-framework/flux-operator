@@ -16,8 +16,11 @@ import unittest
 import datetime
 
 import fluxoperator
-from fluxoperator.models.mini_cluster_container import MiniClusterContainer  # noqa: E501
+from fluxoperator.models.mini_cluster_container import (
+    MiniClusterContainer,
+)  # noqa: E501
 from fluxoperator.rest import ApiException
+
 
 class TestMiniClusterContainer(unittest.TestCase):
     """MiniClusterContainer unit test stubs"""
@@ -30,75 +33,74 @@ class TestMiniClusterContainer(unittest.TestCase):
 
     def make_instance(self, include_optional):
         """Test MiniClusterContainer
-            include_option is a boolean, when False only required
-            params are included, when True both required and
-            optional params are included """
+        include_option is a boolean, when False only required
+        params are included, when True both required and
+        optional params are included"""
         # model = fluxoperator.models.mini_cluster_container.MiniClusterContainer()  # noqa: E501
-        if include_optional :
+        if include_optional:
             return MiniClusterContainer(
-                batch = True, 
-                batch_raw = True, 
-                command = '', 
-                commands = fluxoperator.models.commands.Commands(
-                    broker_pre = '', 
-                    init = '', 
-                    post = '', 
-                    pre = '', 
-                    prefix = '', 
-                    run_flux_as_root = True, 
-                    worker_pre = '', ), 
-                cores = 56, 
-                diagnostics = True, 
-                environment = {
-                    'key' : ''
-                    }, 
-                existing_volumes = {
-                    'key' : fluxoperator.models.mini_cluster_existing_volume.MiniClusterExistingVolume(
-                        claim_name = '', 
-                        path = '', 
-                        read_only = True, )
-                    }, 
-                flux_user = fluxoperator.models.flux_user.FluxUser(
-                    name = 'flux', 
-                    uid = 56, ), 
-                image = 'ghcr.io/rse-ops/accounting:app-latest', 
-                image_pull_secret = '', 
-                launcher = True, 
-                life_cycle = fluxoperator.models.life_cycle.LifeCycle(
-                    post_start_exec = '', 
-                    pre_stop_exec = '', ), 
-                logs = '', 
-                name = '', 
-                ports = [
-                    56
-                    ], 
-                pre_command = '', 
-                pull_always = True, 
-                resources = fluxoperator.models.container_resources.ContainerResources(
-                    limits = {
-                        'key' : None
-                        }, 
-                    requests = {
-                        'key' : None
-                        }, ), 
-                run_flux = True, 
-                security_context = fluxoperator.models.security_context.SecurityContext(
-                    privileged = True, ), 
-                volumes = {
-                    'key' : fluxoperator.models.container_volume.ContainerVolume(
-                        path = '', 
-                        read_only = True, )
-                    }, 
-                working_dir = ''
+                batch=True,
+                batch_raw=True,
+                command="",
+                commands=fluxoperator.models.commands.Commands(
+                    broker_pre="",
+                    init="",
+                    post="",
+                    pre="",
+                    prefix="",
+                    run_flux_as_root=True,
+                    worker_pre="",
+                ),
+                cores=56,
+                diagnostics=True,
+                environment={"key": ""},
+                existing_volumes={
+                    "key": fluxoperator.models.mini_cluster_existing_volume.MiniClusterExistingVolume(
+                        claim_name="",
+                        path="",
+                        read_only=True,
+                    )
+                },
+                flux_user=fluxoperator.models.flux_user.FluxUser(
+                    name="flux",
+                    uid=56,
+                ),
+                image="ghcr.io/rse-ops/accounting:app-latest",
+                image_pull_secret="",
+                launcher=True,
+                life_cycle=fluxoperator.models.life_cycle.LifeCycle(
+                    post_start_exec="",
+                    pre_stop_exec="",
+                ),
+                logs="",
+                name="",
+                ports=[56],
+                pre_command="",
+                pull_always=True,
+                resources=fluxoperator.models.container_resources.ContainerResources(
+                    limits={"key": None},
+                    requests={"key": None},
+                ),
+                run_flux=True,
+                security_context=fluxoperator.models.security_context.SecurityContext(
+                    privileged=True,
+                ),
+                volumes={
+                    "key": fluxoperator.models.container_volume.ContainerVolume(
+                        path="",
+                        read_only=True,
+                    )
+                },
+                working_dir="",
             )
-        else :
-            return MiniClusterContainer(
-        )
+        else:
+            return MiniClusterContainer()
 
     def testMiniClusterContainer(self):
         """Test MiniClusterContainer"""
         inst_req_only = self.make_instance(include_optional=False)
         inst_req_and_optional = self.make_instance(include_optional=True)
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     unittest.main()

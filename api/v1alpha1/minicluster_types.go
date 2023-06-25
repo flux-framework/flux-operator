@@ -374,6 +374,83 @@ type FluxSpec struct {
 	// +default=6
 	// +optional
 	LogLevel int32 `json:"logLevel,omitempty"`
+
+	// Optionally provide an already existing curve certificate
+	// This is not recommended in favor of providing the secret
+	// name as curveCertSecret, below
+	//+optional
+	CurveCert string `json:"curveCert"`
+
+	// Expect a secret for a curve cert here.
+	// This is ideal over the curveCert (as a string) above.
+	//+optional
+	CurveCertSecret string `json:"curveCertSecret"`
+
+	// Expect a secret (named according to this string)
+	// for a munge key. This is intended for bursting.
+	// Assumed to be at /etc/munge/munge.key
+	// This is binary data.
+	//+optional
+	MungeSecret string `json:"mungeSecret"`
+
+	// Bursting - one or more external clusters to burst to
+	// We assume a single, central MiniCluster with an ipaddress
+	// that all connect to.
+	//+optional
+	Bursting Bursting `json:"bursting"`
+
+	// Optionally provide a manually created broker config
+	// this is intended for bursting to remote clusters
+	//+optional
+	BrokerConfig string `json:"brokerConfig"`
+}
+
+// Bursting Config
+// For simplicity, we internally handle the name of the job (hostnames)
+type Bursting struct {
+
+	// The lead broker ip address to join to. E.g., if we burst
+	// to cluster 2, this is the address to connect to cluster 1
+	// For the first cluster, this should not be defined
+	//+optional
+	LeadBroker FluxBroker `json:"leadBroker"`
+
+	// External clusters to burst to. Each external
+	// cluster must share the same listing to align ranks
+	Clusters []BurstedCluster `json:"clusters"`
+}
+
+type BurstedCluster struct {
+
+	// The hostnames for the bursted clusters
+	// If set, the user is responsible for ensuring
+	// uniqueness. The operator will set to burst-N
+	//+optional
+	Name string `json:"name"`
+
+	// Size of bursted cluster.
+	// Defaults to same size as local minicluster if not set
+	// +optional
+	Size int32 `json:"size,omitempty"`
+}
+
+// A FluxBroker defines a broker for flux
+type FluxBroker struct {
+
+	// Lead broker address (ip or hostname)
+	Address string `json:"address"`
+
+	// We need the name of the lead job to assemble the hostnames
+	Name string `json:"name"`
+
+	// Lead broker size
+	Size int32 `json:"size"`
+
+	// Lead broker port - should only be used for external cluster
+	// +kubebuilder:default=8050
+	// +default=8050
+	// +optional
+	Port int32 `json:"port,omitempty"`
 }
 
 type MiniClusterContainer struct {
@@ -668,6 +745,26 @@ func (f *MiniCluster) Validate() bool {
 			service.Commands.BrokerPre != "" || service.Commands.WorkerPre != "" {
 			fmt.Printf("😥️ Services do not support Commands.\n")
 			return false
+		}
+	}
+
+	// If we have a LeadBroker address, this is a child cluster, and
+	// we also need a port
+	if f.Spec.Flux.Bursting.LeadBroker.Port == 0 {
+		f.Spec.Flux.Bursting.LeadBroker.Port = 8050
+	}
+
+	// Set default port if unset
+	for b, bursted := range f.Spec.Flux.Bursting.Clusters {
+
+		// If bursted size not set, default to the current MiniCluster size
+		if bursted.Size == 0 {
+			bursted.Size = f.Spec.Size
+		}
+
+		// Set default name if not set to burst-N
+		if bursted.Name == "" {
+			bursted.Name = fmt.Sprintf("burst-%d", b)
 		}
 	}
 

@@ -1,0 +1,28 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: nginx-conf
+  namespace: flux-operator
+data:
+  flux.conf: |
+    server {
+        listen       80;
+        server_name  localhost;
+
+        # This is an example of service a static site
+        location / {
+          root   /usr/share/nginx/html;
+          index  index.html index.htm;
+        }        
+        # This is an example of forwarding traffic to somewhere else
+        # location / {
+        #  proxy_pass http://google.com;
+        # }
+        # And this is the example we want - forwarding to an internal service
+        # location / {
+        # proxy_set_header X-Forwarded-Host $host;
+        #  proxy_set_header X-Forwarded-Server $host;
+        #  proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        #  proxy_pass http://flux-sample-0.flux-service.flux-operator.svc.cluster.local:5000;
+        # }
+    }
