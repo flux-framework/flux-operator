@@ -650,6 +650,34 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#brokerconfig" class="md-nav__link">
+    <span title="/getting_started/custom-resource-definition.md#brokerconfig (reference label)" class="md-ellipsis">broker<wbr>Config</span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#curvecertsecret" class="md-nav__link">
+    <span title="/getting_started/custom-resource-definition.md#curvecertsecret (reference label)" class="md-ellipsis">curve<wbr>Cert<wbr>Secret</span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#curvecert" class="md-nav__link">
+    <span title="/getting_started/custom-resource-definition.md#curvecert (reference label)" class="md-ellipsis">curve<wbr>Cert</span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#mungesecret" class="md-nav__link">
+    <span title="/getting_started/custom-resource-definition.md#mungesecret (reference label)" class="md-ellipsis">munge<wbr>Secret</span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#connecttimeout" class="md-nav__link">
     <span title="/getting_started/custom-resource-definition.md#connecttimeout (reference label)" class="md-ellipsis">connect<wbr>Timeout</span>
   </a>
@@ -658,6 +686,13 @@
         
       </ul>
     </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#bursting" class="md-nav__link">
+    <span title="/getting_started/custom-resource-definition.md#bursting (reference label)" class="md-ellipsis">bursting</span>
+  </a>
   
 </li>
         
@@ -1520,6 +1555,47 @@ the networking setup will be more minimal.</p>
 </code></pre></div>
 </div>
 <p>The drawback is that you cannot ping the other nodes by hostname.</p>
+<h4 id="brokerconfig">brokerConfig<a class="headerlink" href="#brokerconfig" title="Permalink to this heading">¶</a></h4>
+<p>If you want to manually specify the broker config in entirety, you can define
+it as a full string under flux-&gt;brokerConfig. This is useful for experiments
+or development work.</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><code><span class="nt">flux</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">brokerConfig</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">|</span>
+<span class="w">     </span><span class="no">[exec]</span>
+<span class="w">     </span><span class="no">...</span>
+</code></pre></div>
+</div>
+<h4 id="curvecertsecret">curveCertSecret<a class="headerlink" href="#curvecertsecret" title="Permalink to this heading">¶</a></h4>
+<p>To provide the name of a secret with a key <code class="docutils literal notranslate"><span class="pre">curve.cert</span></code> with a curve certificate to
+the MiniCluster, you can define this variable. This is recommended (and likely)
+for bursting scenarios when you need to share your primary cluster certificate
+with an external one.</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><code><span class="nt">flux</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">curveCertSecret</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">curve-cert</span>
+</code></pre></div>
+</div>
+<p>This is recommended in favor of the plain text, below, and if both are
+provided the secret will be honored first.</p>
+<h4 id="curvecert">curveCert<a class="headerlink" href="#curvecert" title="Permalink to this heading">¶</a></h4>
+<p>The same goes for the curve certificate! If you are bursting and want your
+new cluster to talk to the cluster it’s bursted from, you can share this certificate.</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><code><span class="nt">flux</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">curveCert</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">|</span>
+<span class="w">     </span><span class="no">[exec]</span>
+<span class="w">     </span><span class="no">...</span>
+</code></pre></div>
+</div>
+<h4 id="mungesecret">mungeSecret<a class="headerlink" href="#mungesecret" title="Permalink to this heading">¶</a></h4>
+<p>In the case that you are also bursting, you’ll need the shared munge key between clusters.
+Since this is a binary file, we recommend you create a secret from the file:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span>kubectl<span class="w"> </span>create<span class="w"> </span>secret<span class="w"> </span>--namespace<span class="w"> </span>flux-operator<span class="w"> </span>munge-key<span class="w"> </span>--from-file<span class="o">=</span>/etc/munge/munge.key
+</code></pre></div>
+</div>
+<p>And then tell the operator to expect it as a volume:</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><code><span class="nt">flux</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">mungeSecret</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">munge-key</span>
+</code></pre></div>
+</div>
 <h4 id="connecttimeout">connectTimeout<a class="headerlink" href="#connecttimeout" title="Permalink to this heading">¶</a></h4>
 <p>For Flux versions 0.50.0 and later, you can customize the zeromq timeout. This is done
 via an extra broker option provided on the command line:</p>
@@ -1561,6 +1637,46 @@ More details are available in <a class="reference external" href="https://github
 Although we have fixed the zeromq timeout bug, there still seems to be some underlying issue in Kubernetes.</p>
 <p>Note that we think this higher level networking bug is still an issue, and are going to be creating a dummy case
 to reproduce it and share with the Kubernetes networking team.</p>
+<h3 id="bursting">bursting<a class="headerlink" href="#bursting" title="Permalink to this heading">¶</a></h3>
+<p>The bursting spec defines when you expect to burst to an external cluster. Since the initial Flux cluster needs
+to know all future hosts in advance, we ask that you provide sizes. More specifically:</p>
+<ul class="simple">
+<li><p>A bursted cluster should have a <code class="docutils literal notranslate"><span class="pre">leadBroker</span></code> defined - the ip address or hostname, port, and job name of the initial MiniCluster</p></li>
+<li><p>The main “root” cluster should not have a <code class="docutils literal notranslate"><span class="pre">leadBroker</span></code> defined, but needs to know about the intended bursted clusters and sizes.</p></li>
+</ul>
+<p>An example for the root cluster might look like the following:</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><code><span class="w">  </span><span class="nt">flux</span><span class="p">:</span>
+<span class="w">    </span><span class="c1"># Declare that this cluster will allow for a bursted cluster</span>
+<span class="w">    </span><span class="c1"># It would automatically be named burst-0, but we explicitly set</span>
+<span class="w">    </span><span class="c1"># for clarity. The leadBroker is left out because this IS it.</span>
+<span class="w">    </span><span class="nt">bursting</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">clusters</span><span class="p">:</span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">size</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">4</span>
+<span class="w">          </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">burst-0</span>
+</code></pre></div>
+</div>
+<p>And then the cluster launched from this cluster “bursted to” would define:</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><code><span class="w">  </span><span class="nt">flux</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">leadBroker</span><span class="p">:</span>
+<span class="w">      </span><span class="c1"># This is the name of the first minicluster.yaml spec</span>
+<span class="w">      </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">flux-sample</span>
+<span class="w">      </span><span class="c1"># In a cloud environment this would be a NodePort</span>
+<span class="w">      </span><span class="nt">address</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">24.123.50.123</span>
+<span class="w">      </span><span class="nt">port</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">30093</span>
+<span class="w">    </span>
+<span class="w">    </span><span class="nt">bursting</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">clusters</span><span class="p">:</span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">size</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">4</span>
+<span class="w">          </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">burst-0</span>
+</code></pre></div>
+</div>
+<p>Using the above, both the main and bursted to cluster will have almost the same spec for their flux resources
+and broker.toml (config). The main difference will be that the bursted cluster knows about the first one via
+it’s ip address or hostname, and not, for example <code class="docutils literal notranslate"><span class="pre">flux-sample-0</span></code>. Also note that when bursting, you don’t
+explicitly give a command to the bursted cluster - the jobs are launched on the main cluster and sent
+to these external resources when they come up and are available (and needed). For a full example,
+see <a class="reference external" href="https://github.com/flux-framework/flux-operator/tree/main/examples/experimental/bursting">the bursting</a>
+examples directory.</p>
 <h3 id="logging">logging<a class="headerlink" href="#logging" title="Permalink to this heading">¶</a></h3>
 <p>We provide simple types of “logging” within the main script that is run for the job.
 If you don’t set any variables, you’ll get the most verbosity with timing of the main
@@ -2138,7 +2254,7 @@ or define your own as follows:</p>
   <small>
     
       Last update:
-      Jun 23, 2023
+      Jun 25, 2023
     
   </small>
 </div>
