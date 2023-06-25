@@ -90,9 +90,9 @@ func getVolumes(cluster *api.MiniCluster) []corev1.Volume {
 		Path: "broker.toml",
 	}
 
-	// If we need the munge.key
+	// Only used if we need to provide the munge.key
 	mungeKey := corev1.KeyToPath{
-		Key:  "munge.key",
+		Key:  cluster.Spec.Flux.MungeSecret,
 		Path: "munge.key",
 	}
 
