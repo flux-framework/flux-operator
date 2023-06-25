@@ -140,7 +140,7 @@ func getVolumes(cluster *api.MiniCluster) []corev1.Volume {
 	}
 
 	// We either generate a curve.cert config map, or get it from secret
-	curveVolumeName := cluster.Name + fluxConfigSuffix
+	curveVolumeName := cluster.Name + curveVolumeSuffix
 	if cluster.Spec.Flux.CurveCertSecret != "" {
 		curveVolume := corev1.Volume{
 			Name: curveVolumeName,
