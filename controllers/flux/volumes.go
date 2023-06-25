@@ -50,6 +50,8 @@ func getVolumeMounts(cluster *api.MiniCluster) []corev1.VolumeMount {
 		},
 	}
 	// Are we expecting a munge secret?
+	// Have the mount name be consistent with the secret name
+	// so we don't have to confuse / remember two things.
 	if cluster.Spec.Flux.MungeSecret != "" {
 		mungeMount := corev1.VolumeMount{
 			Name:      cluster.Spec.Flux.MungeSecret,
@@ -172,7 +174,7 @@ func getVolumes(cluster *api.MiniCluster) []corev1.Volume {
 	// Are we expecting a munge config map?
 	if cluster.Spec.Flux.MungeSecret != "" {
 		mungeVolume := corev1.Volume{
-			Name: cluster.Name + fluxConfigSuffix,
+			Name: cluster.Spec.Flux.MungeSecret,
 			VolumeSource: corev1.VolumeSource{
 				Secret: &corev1.SecretVolumeSource{
 					SecretName: cluster.Spec.Flux.MungeSecret,
