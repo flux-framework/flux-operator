@@ -8,7 +8,9 @@ on:
   workflow_dispatch:
 
 jobs:
+  # Only build arm image on merge, takes too long otherwise
   build-arm:
+    if: (github.event_name != 'pull_request')    
     runs-on: ubuntu-latest
     name: make and build arm
     steps:
@@ -31,12 +33,7 @@ jobs:
        docker buildx use armbuilder
        docker buildx inspect --bootstrap
 
-    - name: Build Container
-      if: (github.event_name == 'pull_request')
-      run: make arm-build
-
     - name: Deploy Container
-      if: (github.event_name != 'pull_request')
       run: make arm-deploy
 
   build:
