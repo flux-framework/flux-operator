@@ -40,6 +40,14 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: make test
 
+    - name: Check Updated flux-operator-arm.yaml
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      run: |
+        cp examples/dist/flux-operator-arm.yaml /tmp/flux-operator-arm.yaml
+        make build-config-arm
+        diff examples/dist/flux-operator-arm.yaml /tmp/flux-operator-arm.yaml
+
     # Ensure build-config is the same as the one we have
     - name: Check Updated flux-operator.yaml
       env:
