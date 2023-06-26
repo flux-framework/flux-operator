@@ -33,7 +33,7 @@ jobs:
       if: (matrix.command == 'arm')
       run: |
        docker buildx create --name armbuilder
-       docker buildx use mybuilder
+       docker buildx use armbuilder
        docker buildx inspect --bootstrap
 
     - name: Build Container
