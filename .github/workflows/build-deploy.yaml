@@ -9,6 +9,7 @@ on:
 
 jobs:
   build-arm:
+    runs-on: ubuntu-latest
     name: make and build arm
     steps:
     - name: Checkout Repository
