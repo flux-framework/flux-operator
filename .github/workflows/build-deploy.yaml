@@ -57,13 +57,6 @@ jobs:
         username: ${{ github.actor }}
         password: ${{ secrets.GITHUB_TOKEN }}
 
-    - name: Add custom buildx ARM builder
-      if: (matrix.command == 'arm')
-      run: |
-       docker buildx create --name armbuilder
-       docker buildx use armbuilder
-       docker buildx inspect --bootstrap
-
     - name: Build Container
       run: make ${{ matrix.command }}-build
 

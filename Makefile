@@ -129,7 +129,7 @@ helm: manifests kustomize helmify
 	$(KUSTOMIZE) build config/default | $(HELMIFY)
 
 .PHONY: pre-push
-pre-push: generate api build-config build-config-arm helm
+pre-push: generate api build-config-arm build-config helm
 	git status
 
 .PHONY: fmt
@@ -244,10 +244,6 @@ docker-build: test ## Build docker image with the manager.
 .PHONY: arm-build
 arm-build: test ## Build docker image with the manager.
 	docker buildx build --platform linux/arm64 -t ${ARMIMG} .
-
-.PHONY: arm-push
-arm-push: test ## Build docker image with the manager.
-	docker push ${ARMIMG}
 
 .PHONY: docker-push
 docker-push: ## Push docker image with the manager.
