@@ -17,7 +17,7 @@ controllerManager:
       allowPrivilegeEscalation: false
     image:
       repository: ghcr.io/flux-framework/flux-operator
-      tag: latest
+      tag: arm
     imagePullPolicy: Always
     resources:
       limits:

@@ -129,7 +129,7 @@ helm: manifests kustomize helmify
 	$(KUSTOMIZE) build config/default | $(HELMIFY)
 
 .PHONY: pre-push
-pre-push: generate api build-config helm
+pre-push: generate api build-config build-config-arm helm
 	git status
 
 .PHONY: fmt
