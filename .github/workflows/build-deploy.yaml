@@ -12,7 +12,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        command: [docker, bundle, catalog]
+        command: [arm, bundle, catalog, docker]
 
     name: make and build ${{ matrix.command }}
     steps:
@@ -28,6 +28,13 @@ jobs:
         registry: ghcr.io
         username: ${{ github.actor }}
         password: ${{ secrets.GITHUB_TOKEN }}
+
+    - name: Add custom buildx ARM builder
+      if: (matrix.command == 'arm')
+      run: |
+       docker buildx create --name armbuilder
+       docker buildx use mybuilder
+       docker buildx inspect --bootstrap
 
     - name: Build Container
       run: make ${{ matrix.command }}-build

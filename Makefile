@@ -57,6 +57,7 @@ IMG ?= ghcr.io/flux-framework/flux-operator
 
 # Testing image (for development mostly)
 DEVIMG ?= ghcr.io/flux-framework/flux-operator:test
+ARMIMG ?= ghcr.io/flux-framework/flux-operator:arm
 
 # ENVTEST_K8S_VERSION refers to the version of kubebuilder assets to be downloaded by envtest binary.
 ENVTEST_K8S_VERSION = 1.24.1
@@ -240,6 +241,14 @@ run: manifests generate fmt vet ## Run a controller from your host.
 docker-build: test ## Build docker image with the manager.
 	docker build -t ${IMG} .
 
+.PHONY: arm-build
+arm-build: test ## Build docker image with the manager.
+	docker buildx build --platform linux/arm64 -t ${ARMIMG} .
+
+.PHONY: arm-push
+arm-push: test ## Build docker image with the manager.
+	docker push ${ARMIMG}
+
 .PHONY: docker-push
 docker-push: ## Push docker image with the manager.
 	docker push ${IMG}
@@ -275,6 +284,13 @@ test-deploy: manifests kustomize
 	docker push ${DEVIMG}
 	cd config/manager && $(KUSTOMIZE) edit set image controller=${DEVIMG}
 	$(KUSTOMIZE) build config/default > examples/dist/flux-operator-dev.yaml
+
+.PHONY: arm-deploy
+arm-deploy: manifests kustomize
+	docker buildx build --platform linux/arm64 -t ${ARMIMG} .
+	docker push ${ARMIMG}
+	cd config/manager && $(KUSTOMIZE) edit set image controller=${ARMIMG}
+	$(KUSTOMIZE) build config/default > examples/dist/flux-operator-arm.yaml
 
 # Build a local test image, load into minikube or kind and apply the build-config
 .PHONY: deploy-local
