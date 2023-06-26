@@ -287,8 +287,7 @@ test-deploy: manifests kustomize
 
 .PHONY: arm-deploy
 arm-deploy: manifests kustomize
-	docker buildx build --platform linux/arm64 -t ${ARMIMG} .
-	docker push ${ARMIMG}
+	docker buildx build --platform linux/arm64 --push -t ${ARMIMG} .
 	cd config/manager && $(KUSTOMIZE) edit set image controller=${ARMIMG}
 	$(KUSTOMIZE) build config/default > examples/dist/flux-operator-arm.yaml
 
