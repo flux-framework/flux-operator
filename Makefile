@@ -280,7 +280,7 @@ build-config: manifests kustomize ## Deploy controller to the K8s cluster specif
 .PHONY: build-config-arm
 build-config-arm: manifests kustomize ## Deploy controller to the K8s cluster specified in ~/.kube/config.
 	cd config/manager && $(KUSTOMIZE) edit set image controller=${ARMIMG}
-	$(KUSTOMIZE) build config/default > examples/dist/flux-operator.yaml
+	$(KUSTOMIZE) build config/default > examples/dist/flux-operator-arm.yaml
 
 # Build a test image, push to the registry at test, and apply the build-config
 .PHONY: test-deploy
