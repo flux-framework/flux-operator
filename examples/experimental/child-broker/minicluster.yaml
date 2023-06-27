@@ -1,0 +1,31 @@
+apiVersion: flux-framework.org/v1alpha1
+kind: MiniCluster
+metadata:
+  name: flux-sample
+  namespace: flux-operator
+spec:
+
+  # Number of pods to create for MiniCluster
+  size: 4
+
+  volumes:
+    data:
+      storageClass: hostpath
+      path: /tmp/workflow
+
+  # This starts the flux broker without a command (interactive)
+  interactive: true  
+  flux:
+    optionFlags: "-ompi=openmpi@5"
+
+  # TODO try with shared FS
+  # This is a list because a pod can support multiple containers
+  containers:
+    - image: ghcr.io/flux-framework/flux-restful-api:latest
+      commands:
+        pre: apt-get update && apt-get install -y bc
+      workingDir: /tmp/worklow
+      volumes:
+        data:
+          path: /tmp/workflow
+      
