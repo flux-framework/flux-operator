@@ -24,7 +24,6 @@ spec:
     - image: ghcr.io/flux-framework/flux-restful-api:latest
       commands:
         pre: apt-get update && apt-get install -y bc
-      workingDir: /tmp/worklow
       volumes:
         data:
           path: /tmp/workflow

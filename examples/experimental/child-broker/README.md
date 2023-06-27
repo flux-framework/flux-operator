@@ -1,9 +1,11 @@
 # Testing Faux Child Broker
 
-Create the minicluster
+Create the minicluster (and install the flux operator)
 
 ```bash
-$ kind create cluster --config kind-config.yaml
+$ kind create cluster --config ../../machine-learning/kind-config.yaml
+$ kubectl create namespace flux-operator
+$ kubectl apply -f ../../dist/flux-operator.yaml
 $ kubectl apply -f minicluster.yaml
 ```
 
@@ -16,7 +18,8 @@ $ kubectl exec -it -n flux-operator flux-sample-0-ldwph bash
 $ sudo -u flux -E $(env) -E HOME=/home/flux flux proxy local:///var/run/flux/local bash
 ```
 
-First, note the resources we have from the index 0:
+Note that we are installing bc, so if you get an error it can't connect just wait because
+that is likely still running. Next, note the resources we have from the index 0:
 
 ```bash
 $ flux resource list
@@ -30,6 +33,11 @@ $ flux resource list
 ```
 
 Each of the following examples should be run from the root node for the time being.
+You'll want to change directory to `/tmp/workflow`:
+
+```bash
+$ cd /tmp/workflow
+```
 
 ## Instance 1 node smaller
 
@@ -125,5 +133,17 @@ rv1             10    6     0.89    11.24       194313          495       425984
   }
 }
 ```
+
+For background about how this is working, see [this discussion](https://github.com/flux-framework/flux-sched/issues/1009#issuecomment-1610039068).
+
+## Combined 
+
+> Submit some actual (working/running) jobs and mock jobs.
+
+
+```bash
+$ flux batch -n1 ./combined/start.sh 
+```
+
 
 I don't totally get how this is working, but it's cool!
