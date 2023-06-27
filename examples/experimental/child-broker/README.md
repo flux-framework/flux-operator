@@ -140,10 +140,75 @@ For background about how this is working, see [this discussion](https://github.c
 
 > Submit some actual (working/running) jobs and mock jobs.
 
-
 ```bash
 $ flux batch -n1 ./combined/start.sh 
 ```
 
+I want to have a combination of working and faux - and this is still a WIP!
+You can find [discussion here](https://github.com/flux-framework/flux-core/issues/5295).
 
-I don't totally get how this is working, but it's cool!
+```console
+MATCH_FORMAT=rv1 NJOBS=10 NODES/JOB=6
+{
+  "match-format": "rv1"
+}
+     STATE QUEUE      NNODES   NCORES    NGPUS NODELIST
+      free online          4       16        0 flux-sample[0-3]
+      free offline       100    10400        0 burst[0-99]
+ allocated                 0        0        0 
+      down                 0        0        0 
+ƒy5hqHZ
+rv1             10    6     1.31     7.64         2058          608       462848
+0.049s: job.exception type=exec severity=0 lost contact with job shell on broker (null) (rank 3)
+flux-job: task(s) exited with exit code 1
+flux-job: No job output found
+       JOBID QUEUE    USER     NAME       ST NTASKS NNODES     TIME INFO
+     ƒy5hqHZ online   flux     hostname    F      1      1   0.020s flux-sample3
+     ƒZhBAS4 offline  flux     hostname   CD      6      6   0.297s burst[40-45]
+     ƒZhBAS3 offline  flux     hostname   CD      6      6   0.383s burst[46-51]
+     ƒZfhB9j offline  flux     hostname   CD      6      6   0.383s burst[52-57]
+     ƒZfhB9i offline  flux     hostname   CD      6      6   0.370s burst[58-63]
+     ƒZfhB9h offline  flux     hostname   CD      6      6   0.349s burst[64-69]
+     ƒZeDBsN offline  flux     hostname   CD      6      6   0.323s burst[70-75]
+     ƒZeDBsM offline  flux     hostname   CD      6      6   0.291s burst[76-81]
+     ƒZcjCb2 offline  flux     hostname   CD      6      6   0.265s burst[82-87]
+     ƒZcjCb1 offline  flux     hostname   CD      6      6   0.230s burst[88-93]
+     ƒZbFDJf offline  flux     hostname   CD      6      6   0.187s burst[94-99]
+{
+  "t_depend": 1687907405.771481,
+  "t_run": 1687907405.7893674,
+  "t_cleanup": 1687907405.8089585,
+  "t_inactive": 1687907405.8110194,
+  "duration": 0,
+  "expiration": 4841507405,
+  "name": "hostname",
+  "cwd": "/tmp/workflow",
+  "queue": "online",
+  "ntasks": 1,
+  "ncores": 4,
+  "nnodes": 1,
+  "priority": 16,
+  "ranks": "3",
+  "nodelist": "flux-sample3",
+  "success": false,
+  "result": "FAILED",
+  "waitstatus": 256,
+  "id": 36809211904,
+  "t_submit": 1687907405.7600687,
+  "state": "INACTIVE",
+  "username": "flux",
+  "userid": 1000,
+  "urgency": 16,
+  "runtime": 0.019591093063354492,
+  "status": "FAILED",
+  "returncode": 1,
+  "dependencies": [],
+  "annotations": {},
+  "exception": {
+    "occurred": true,
+    "severity": 0,
+    "type": "exec",
+    "note": "lost contact with job shell on broker (null) (rank 3)"
+  }
+}
+```
