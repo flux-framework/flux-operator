@@ -745,10 +745,6 @@ spec:
           status:
             description: MiniClusterStatus defines the observed state of Flux
             properties:
-              completed:
-                description: Label to indicate that job is completed, comes from Job.Completed
-                  The user can also look at conditions -> JobFinished
-                type: boolean
               conditions:
                 description: conditions hold the latest Flux Job and MiniCluster states
                 items:
