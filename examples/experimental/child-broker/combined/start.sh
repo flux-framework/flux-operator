@@ -4,6 +4,13 @@ NJOBS=${NJOBS:-10}
 NNODES=${NNODES:-6}
 printf "MATCH_FORMAT=${MATCH_FORMAT} NJOBS=$NJOBS NODES/JOB=$NNODES\n"
 
+# We need the hostlist for flux-sample
+# This will tell us which nodes were allocated, the 3/4
+echo "The Hostlist is..."
+flux getattr hostlist
+echo
+hostlist=$(flux getattr hostlist)
+
 flux module remove sched-fluxion-qmanager
 flux module remove sched-fluxion-resource
 flux module remove resource
@@ -24,12 +31,12 @@ requires = ["offline"]
 requires = ["online"]
 
 [[resource.config]]
-hosts = "flux-sample[0-3]"
+hosts = "${hostlist}"
 properties = ["online"]
 
 [[resource.config]]
-hosts = "flux-sample[0-3],burst[0-99]"
-cores = "0-3"
+hosts = "${hostlist},burst[0-99]"
+cores = "0-2"
 
 [[resource.config]]
 hosts = "burst[0-99]"

@@ -141,70 +141,73 @@ For background about how this is working, see [this discussion](https://github.c
 > Submit some actual (working/running) jobs and mock jobs.
 
 ```bash
-$ flux batch -N 4 ./combined/start.sh 
+$ flux batch -N 3 ./combined/start.sh 
 ```
 
-I want to have a combination of working and faux - and this is still a WIP!
+Note that we are selecting 3/4 nodes, and then will get the hostlist dynamically
+to know which we got! I want to have a combination of working and faux - and this is still a WIP!
 You can find [discussion here](https://github.com/flux-framework/flux-core/issues/5295).
 
 ```console
 MATCH_FORMAT=rv1 NJOBS=10 NODES/JOB=6
+The Hostlist is...
+flux-sample-[1-3]
+
 {
   "match-format": "rv1"
 }
      STATE QUEUE      NNODES   NCORES    NGPUS NODELIST
-      free online          4       16        0 flux-sample[0-3]
-      free offline       100    10400        0 burst[0-99]
+      free online          3        9        0 flux-sample-[1-3]
+      free offline       100    10300        0 burst[0-99]
  allocated                 0        0        0 
       down                 0        0        0 
-0 flux-sample-0: full
-├─ 1 flux-sample-1: full
-│  └─ 3 flux-sample-3: full
-└─ 2 flux-sample-2: full
+0 flux-sample-1: full
+├─ 1 flux-sample-2: full
+└─ 2 flux-sample-3: full
      STATE UP NNODES NODELIST
-     avail  ✔      4 flux-sample[0-3]
+     avail  ✔      3 flux-sample-[1-3]
     avail*  ✗    100 burst[0-99]
-ƒzFuGFR
-rv1             10    6     1.09     9.16         2058          553       454656
+ƒyWud5R
+rv1             10    6     1.22     8.20         1758          563       454656
 flux-sample-3
        JOBID QUEUE    USER     NAME       ST NTASKS NNODES     TIME INFO
-     ƒzFuGFR online   flux     hostname   CD      1      1   0.031s flux-sample3
-     ƒew6dCj offline  flux     hostname   CD      6      6   0.119s burst[40-45]
-     ƒeucdvS offline  flux     hostname   CD      6      6   0.177s burst[46-51]
-     ƒeucdvR offline  flux     hostname   CD      6      6   0.177s burst[52-57]
-     ƒeucdvQ offline  flux     hostname   CD      6      6   0.167s burst[58-63]
-     ƒeucdvP offline  flux     hostname   CD      6      6   0.157s burst[64-69]
-     ƒet8ee6 offline  flux     hostname   CD      6      6   0.147s burst[70-75]
-     ƒet8ee5 offline  flux     hostname   CD      6      6   0.135s burst[76-81]
-     ƒet8ee4 offline  flux     hostname   CD      6      6   0.124s burst[82-87]
-     ƒet8ee3 offline  flux     hostname   CD      6      6   0.112s burst[88-93]
-     ƒerefMh offline  flux     hostname   CD      6      6   0.090s burst[94-99]
+     ƒyWud5R online   flux     hostname   CD      1      1   0.036s flux-sample-3
+     ƒd4sXdb offline  flux     hostname   CD      6      6   0.121s burst[40-45]
+     ƒd4sXda offline  flux     hostname   CD      6      6   0.172s burst[46-51]
+     ƒd4sXdZ offline  flux     hostname   CD      6      6   0.172s burst[52-57]
+     ƒd3PYMF offline  flux     hostname   CD      6      6   0.159s burst[58-63]
+     ƒd3PYME offline  flux     hostname   CD      6      6   0.148s burst[64-69]
+     ƒd3PYMD offline  flux     hostname   CD      6      6   0.137s burst[70-75]
+     ƒd1uZ4u offline  flux     hostname   CD      6      6   0.125s burst[76-81]
+     ƒd1uZ4t offline  flux     hostname   CD      6      6   0.113s burst[82-87]
+     ƒd1uZ4s offline  flux     hostname   CD      6      6   0.102s burst[88-93]
+     ƒczRZnX offline  flux     hostname   CD      6      6   0.080s burst[94-99]
 {
-  "t_depend": 1687925701.795268,
-  "t_run": 1687925701.8081512,
-  "t_cleanup": 1687925701.8393326,
-  "t_inactive": 1687925701.8408003,
+  "t_depend": 1687976241.7190528,
+  "t_run": 1687976241.7324638,
+  "t_cleanup": 1687976241.7688088,
+  "t_inactive": 1687976241.7703216,
   "duration": 0,
-  "expiration": 4841525701,
+  "expiration": 4841576241,
   "name": "hostname",
   "cwd": "/tmp/workflow",
   "queue": "online",
   "ntasks": 1,
-  "ncores": 4,
+  "ncores": 3,
   "nnodes": 1,
   "priority": 16,
-  "ranks": "3",
-  "nodelist": "flux-sample3",
+  "ranks": "2",
+  "nodelist": "flux-sample-3",
   "success": true,
   "result": "COMPLETED",
   "waitstatus": 0,
-  "id": 37580963840,
-  "t_submit": 1687925701.7840245,
+  "id": 37094424576,
+  "t_submit": 1687976241.707649,
   "state": "INACTIVE",
   "username": "flux",
   "userid": 1000,
   "urgency": 16,
-  "runtime": 0.03118133544921875,
+  "runtime": 0.03634500503540039,
   "status": "COMPLETED",
   "returncode": 0,
   "dependencies": [],
