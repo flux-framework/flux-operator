@@ -74,7 +74,7 @@ cli.load(result)
 # This is why we want interactive mod!
 # By default, this selects (and waits for) the broker pod
 print("✨️ Submitting jobs!")
-time.sleep(5)
+time.sleep(20)
 for iter in range(0, 5):
     res = cli.execute("flux submit sleep %s" % iter)
     print(res)
