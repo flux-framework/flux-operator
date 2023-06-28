@@ -50,6 +50,9 @@ flux submit -N$NNODES --cc=1-$NJOBS --queue=offline \
     --setattr=exec.test.run_duration=1ms \
     --quiet --wait hostname
 
+flux overlay status
+flux resource status
+
 # These are real jobs (2 nodes each)
 flux submit -N1 --queue=online hostname
 

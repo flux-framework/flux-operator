@@ -141,7 +141,7 @@ For background about how this is working, see [this discussion](https://github.c
 > Submit some actual (working/running) jobs and mock jobs.
 
 ```bash
-$ flux batch -n1 ./combined/start.sh 
+$ flux batch -N 4 ./combined/start.sh 
 ```
 
 I want to have a combination of working and faux - and this is still a WIP!
@@ -157,30 +157,45 @@ MATCH_FORMAT=rv1 NJOBS=10 NODES/JOB=6
       free offline       100    10400        0 burst[0-99]
  allocated                 0        0        0 
       down                 0        0        0 
-ƒy5hqHZ
-rv1             10    6     1.31     7.64         2058          608       462848
-0.049s: job.exception type=exec severity=0 lost contact with job shell on broker (null) (rank 3)
-flux-job: task(s) exited with exit code 1
-flux-job: No job output found
-       JOBID QUEUE    USER     NAME       ST NTASKS NNODES     TIME INFO
-     ƒy5hqHZ online   flux     hostname    F      1      1   0.020s flux-sample3
-     ƒZhBAS4 offline  flux     hostname   CD      6      6   0.297s burst[40-45]
-     ƒZhBAS3 offline  flux     hostname   CD      6      6   0.383s burst[46-51]
-     ƒZfhB9j offline  flux     hostname   CD      6      6   0.383s burst[52-57]
-     ƒZfhB9i offline  flux     hostname   CD      6      6   0.370s burst[58-63]
-     ƒZfhB9h offline  flux     hostname   CD      6      6   0.349s burst[64-69]
-     ƒZeDBsN offline  flux     hostname   CD      6      6   0.323s burst[70-75]
-     ƒZeDBsM offline  flux     hostname   CD      6      6   0.291s burst[76-81]
-     ƒZcjCb2 offline  flux     hostname   CD      6      6   0.265s burst[82-87]
-     ƒZcjCb1 offline  flux     hostname   CD      6      6   0.230s burst[88-93]
-     ƒZbFDJf offline  flux     hostname   CD      6      6   0.187s burst[94-99]
+flux@flux-sample-0:/tmp/workflow$ cat flux-ƒ5M7HuVUK.out 
+MATCH_FORMAT=rv1 NJOBS=10 NODES/JOB=6
 {
-  "t_depend": 1687907405.771481,
-  "t_run": 1687907405.7893674,
-  "t_cleanup": 1687907405.8089585,
-  "t_inactive": 1687907405.8110194,
+  "match-format": "rv1"
+}
+     STATE QUEUE      NNODES   NCORES    NGPUS NODELIST
+      free online          4       16        0 flux-sample[0-3]
+      free offline       100    10400        0 burst[0-99]
+ allocated                 0        0        0 
+      down                 0        0        0 
+0 flux-sample-0: full
+├─ 1 flux-sample-1: full
+│  └─ 3 flux-sample-3: full
+└─ 2 flux-sample-2: full
+     STATE UP NNODES NODELIST
+     avail  ✔      4 flux-sample[0-3]
+    avail*  ✗    100 burst[0-99]
+ƒzFuGFR
+rv1             10    6     1.09     9.16         2058          553       454656
+flux-sample-3
+       JOBID QUEUE    USER     NAME       ST NTASKS NNODES     TIME INFO
+     ƒzFuGFR online   flux     hostname   CD      1      1   0.031s flux-sample3
+     ƒew6dCj offline  flux     hostname   CD      6      6   0.119s burst[40-45]
+     ƒeucdvS offline  flux     hostname   CD      6      6   0.177s burst[46-51]
+     ƒeucdvR offline  flux     hostname   CD      6      6   0.177s burst[52-57]
+     ƒeucdvQ offline  flux     hostname   CD      6      6   0.167s burst[58-63]
+     ƒeucdvP offline  flux     hostname   CD      6      6   0.157s burst[64-69]
+     ƒet8ee6 offline  flux     hostname   CD      6      6   0.147s burst[70-75]
+     ƒet8ee5 offline  flux     hostname   CD      6      6   0.135s burst[76-81]
+     ƒet8ee4 offline  flux     hostname   CD      6      6   0.124s burst[82-87]
+     ƒet8ee3 offline  flux     hostname   CD      6      6   0.112s burst[88-93]
+     ƒerefMh offline  flux     hostname   CD      6      6   0.090s burst[94-99]
+{
+  "t_depend": 1687925701.795268,
+  "t_run": 1687925701.8081512,
+  "t_cleanup": 1687925701.8393326,
+  "t_inactive": 1687925701.8408003,
   "duration": 0,
-  "expiration": 4841507405,
+  "expiration": 4841525701,
   "name": "hostname",
   "cwd": "/tmp/workflow",
   "queue": "online",
@@ -190,25 +205,26 @@ flux-job: No job output found
   "priority": 16,
   "ranks": "3",
   "nodelist": "flux-sample3",
-  "success": false,
-  "result": "FAILED",
-  "waitstatus": 256,
-  "id": 36809211904,
-  "t_submit": 1687907405.7600687,
+  "success": true,
+  "result": "COMPLETED",
+  "waitstatus": 0,
+  "id": 37580963840,
+  "t_submit": 1687925701.7840245,
   "state": "INACTIVE",
   "username": "flux",
   "userid": 1000,
   "urgency": 16,
-  "runtime": 0.019591093063354492,
-  "status": "FAILED",
-  "returncode": 1,
+  "runtime": 0.03118133544921875,
+  "status": "COMPLETED",
+  "returncode": 0,
   "dependencies": [],
   "annotations": {},
   "exception": {
-    "occurred": true,
-    "severity": 0,
-    "type": "exec",
-    "note": "lost contact with job shell on broker (null) (rank 3)"
+    "occurred": false
   }
 }
 ```
+
+Note that if we provide all the sample workers in the broker spec, we need
+to do `-N 4`. I'm not sure if there is a way to know some -n1 worker and then write
+it to the underlying spec as the new parent.
