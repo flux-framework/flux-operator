@@ -157,16 +157,6 @@ MATCH_FORMAT=rv1 NJOBS=10 NODES/JOB=6
       free offline       100    10400        0 burst[0-99]
  allocated                 0        0        0 
       down                 0        0        0 
-flux@flux-sample-0:/tmp/workflow$ cat flux-ƒ5M7HuVUK.out 
-MATCH_FORMAT=rv1 NJOBS=10 NODES/JOB=6
-{
-  "match-format": "rv1"
-}
-     STATE QUEUE      NNODES   NCORES    NGPUS NODELIST
-      free online          4       16        0 flux-sample[0-3]
-      free offline       100    10400        0 burst[0-99]
- allocated                 0        0        0 
-      down                 0        0        0 
 0 flux-sample-0: full
 ├─ 1 flux-sample-1: full
 │  └─ 3 flux-sample-3: full
