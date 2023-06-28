@@ -88,7 +88,7 @@ cli.load(result)
 # By default, this selects (and waits for) the broker pod
 
 print("✨️ Submitting a ton of jobs!")
-time.sleep(5)
+time.sleep(60)
 for iter in range(0, 30):
     res = cli.execute("flux submit sleep %s" % iter)
     assert res.startswith("ƒ")
