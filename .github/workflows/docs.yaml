@@ -1,6 +1,5 @@
 name: docs flux-operator
 on:
-  pull_request: []
   push:
     branches: [main]
  
@@ -10,8 +9,8 @@ jobs:
     steps:
 
     - uses: actions/checkout@v3
-#      with:
-#        ref: gh-pages
+      with:
+        ref: gh-pages
 
     - name: Create conda environment
       run: conda create --quiet -c conda-forge --name fluxdocs sphinx-material
@@ -21,9 +20,8 @@ jobs:
         export PATH="/usr/share/miniconda/bin:$PATH"
         root=$PWD
         source activate fluxdocs
-        #git clone https://github.com/flux-framework/flux-operator /tmp/operator
-        #cd /tmp/operator/docs
-        cd docs
+        git clone https://github.com/flux-framework/flux-operator /tmp/operator
+        cd /tmp/operator/docs
         pip install -r requirements.txt
         make html
         echo
@@ -43,8 +41,8 @@ jobs:
         git add .
         ls .
 
-#    - name: Deploy 🚀
-#      uses: JamesIves/github-pages-deploy-action@ba1486788b0490a235422264426c45848eac35c6 # v4.4.1
-#      with:
-#        branch: gh-pages
-#        folder: .
+    - name: Deploy 🚀
+      uses: JamesIves/github-pages-deploy-action@ba1486788b0490a235422264426c45848eac35c6 # v4.4.1
+      with:
+        branch: gh-pages
+        folder: .
