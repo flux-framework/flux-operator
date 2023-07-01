@@ -24,6 +24,7 @@ docs/MiniClusterUser.md
 docs/MiniClusterVolume.md
 docs/Network.md
 docs/PodSpec.md
+docs/Secret.md
 docs/SecurityContext.md
 fluxoperator/__init__.py
 fluxoperator/api/__init__.py
@@ -53,6 +54,7 @@ fluxoperator/models/mini_cluster_user.py
 fluxoperator/models/mini_cluster_volume.py
 fluxoperator/models/network.py
 fluxoperator/models/pod_spec.py
+fluxoperator/models/secret.py
 fluxoperator/models/security_context.py
 fluxoperator/rest.py
 git_push.sh

@@ -221,6 +221,25 @@ spec:
                     runFlux:
                       description: Main container to run flux (only should be one)
                       type: boolean
+                    secrets:
+                      additionalProperties:
+                        description: Secret describes a secret from the environment.
+                          The envar name should be the key of the top level map.
+                        properties:
+                          key:
+                            description: Key under secretKeyRef->Key
+                            type: string
+                          name:
+                            description: Name under secretKeyRef->Name
+                            type: string
+                        required:
+                        - key
+                        - name
+                        type: object
+                      description: Secrets that will be added to the environment The
+                        user is expected to create their own secrets for the operator
+                        to find
+                      type: object
                     securityContext:
                       description: Security Context https://kubernetes.io/docs/tasks/configure-pod-container/security-context/
                       properties:
@@ -632,6 +651,25 @@ spec:
                     runFlux:
                       description: Main container to run flux (only should be one)
                       type: boolean
+                    secrets:
+                      additionalProperties:
+                        description: Secret describes a secret from the environment.
+                          The envar name should be the key of the top level map.
+                        properties:
+                          key:
+                            description: Key under secretKeyRef->Key
+                            type: string
+                          name:
+                            description: Name under secretKeyRef->Name
+                            type: string
+                        required:
+                        - key
+                        - name
+                        type: object
+                      description: Secrets that will be added to the environment The
+                        user is expected to create their own secrets for the operator
+                        to find
+                      type: object
                     securityContext:
                       description: Security Context https://kubernetes.io/docs/tasks/configure-pod-container/security-context/
                       properties:

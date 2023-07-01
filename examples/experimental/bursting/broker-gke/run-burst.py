@@ -71,7 +71,7 @@ def main():
     if not args.lead_port or not args.lead_host or not args.lead_size:
         sys.exit("All of --lead-host, --lead-size, and --lead-port must be defined.")
     print(
-        "Broker lead will be expected to be accessible on {args.lead_host}:{args.lead_port}"
+        f"Broker lead will be expected to be accessible on {args.lead_host}:{args.lead_port}"
     )
 
     # These checks are done by plugin, but I wanted to do them earlier too

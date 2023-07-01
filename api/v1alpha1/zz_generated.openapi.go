@@ -46,6 +46,7 @@ func GetOpenAPIDefinitions(ref common.ReferenceCallback) map[string]common.OpenA
 		"./api/v1alpha1/.MiniClusterVolume":         schema__api_v1alpha1__MiniClusterVolume(ref),
 		"./api/v1alpha1/.Network":                   schema__api_v1alpha1__Network(ref),
 		"./api/v1alpha1/.PodSpec":                   schema__api_v1alpha1__PodSpec(ref),
+		"./api/v1alpha1/.Secret":                    schema__api_v1alpha1__Secret(ref),
 		"./api/v1alpha1/.SecurityContext":           schema__api_v1alpha1__SecurityContext(ref),
 	}
 }
@@ -712,6 +713,21 @@ func schema__api_v1alpha1__MiniClusterContainer(ref common.ReferenceCallback) co
 							},
 						},
 					},
+					"secrets": {
+						SchemaProps: spec.SchemaProps{
+							Description: "Secrets that will be added to the environment The user is expected to create their own secrets for the operator to find",
+							Type:        []string{"object"},
+							AdditionalProperties: &spec.SchemaOrBool{
+								Allows: true,
+								Schema: &spec.Schema{
+									SchemaProps: spec.SchemaProps{
+										Default: map[string]interface{}{},
+										Ref:     ref("./api/v1alpha1/.Secret"),
+									},
+								},
+							},
+						},
+					},
 					"imagePullSecret": {
 						SchemaProps: spec.SchemaProps{
 							Description: "Allow the user to pull authenticated images By default no secret is selected. Setting this with the name of an already existing imagePullSecret will specify that secret in the pod spec.",
@@ -846,7 +862,7 @@ func schema__api_v1alpha1__MiniClusterContainer(ref common.ReferenceCallback) co
 			},
 		},
 		Dependencies: []string{
-			"./api/v1alpha1/.Commands", "./api/v1alpha1/.ContainerResources", "./api/v1alpha1/.ContainerVolume", "./api/v1alpha1/.FluxUser", "./api/v1alpha1/.LifeCycle", "./api/v1alpha1/.MiniClusterExistingVolume", "./api/v1alpha1/.SecurityContext"},
+			"./api/v1alpha1/.Commands", "./api/v1alpha1/.ContainerResources", "./api/v1alpha1/.ContainerVolume", "./api/v1alpha1/.FluxUser", "./api/v1alpha1/.LifeCycle", "./api/v1alpha1/.MiniClusterExistingVolume", "./api/v1alpha1/.Secret", "./api/v1alpha1/.SecurityContext"},
 	}
 }
 
@@ -1491,6 +1507,36 @@ func schema__api_v1alpha1__PodSpec(ref common.ReferenceCallback) common.OpenAPID
 		},
 		Dependencies: []string{
 			"k8s.io/apimachinery/pkg/util/intstr.IntOrString"},
+	}
+}
+
+func schema__api_v1alpha1__Secret(ref common.ReferenceCallback) common.OpenAPIDefinition {
+	return common.OpenAPIDefinition{
+		Schema: spec.Schema{
+			SchemaProps: spec.SchemaProps{
+				Description: "Secret describes a secret from the environment. The envar name should be the key of the top level map.",
+				Type:        []string{"object"},
+				Properties: map[string]spec.Schema{
+					"name": {
+						SchemaProps: spec.SchemaProps{
+							Description: "Name under secretKeyRef->Name",
+							Default:     "",
+							Type:        []string{"string"},
+							Format:      "",
+						},
+					},
+					"key": {
+						SchemaProps: spec.SchemaProps{
+							Description: "Key under secretKeyRef->Key",
+							Default:     "",
+							Type:        []string{"string"},
+							Format:      "",
+						},
+					},
+				},
+				Required: []string{"name", "key"},
+			},
+		},
 	}
 }
 

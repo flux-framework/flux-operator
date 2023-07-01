@@ -22,12 +22,13 @@ spec:
         - size: 4
           name: burst-0
 
+  interactive: true
   logging:
     zeromq: true
 
   # This is a list because a pod can support multiple containers
   containers:
-    - image: ghcr.io/flux-framework/flux-restful-api
+    - image: ghcr.io/flux-framework/flux-restful-api@sha256:be2326f12b70721d92a17a277d5cb9e9d7383e93ce488060b78b6f6a394dcb82
       workingDir: /tmp/workflow
 
       # Commands to support installing flux-burst plugins
@@ -35,10 +36,16 @@ spec:
         pre: |
           pip install flux-burst
           pip install flux-burst-gke
+          pip install kubescaler[all]
 
-      # This should not be done in production
-      environment:
-        GOOGLE_APPLICATION_CREDENTIALS: /tmp/workflow/application_default_credentials.json
+      secrets:
+        AWS_ACCESS_KEY_ID:
+          name: flux-operator-burst
+          key: AWS_ACCESS_KEY_ID
+
+        AWS_SECRET_ACCESS_KEY:
+          name: flux-operator-burst
+          key: AWS_SECRET_ACCESS_KEY
 
       # Important! We need to have resource requests for the horizonal autoscaler
       # The Flux Operator doesn't know you want to use it, so it's up to you

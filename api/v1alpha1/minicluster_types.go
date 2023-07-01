@@ -485,6 +485,11 @@ type MiniClusterContainer struct {
 	// +optional
 	Environment map[string]string `json:"environment"`
 
+	// Secrets that will be added to the environment
+	// The user is expected to create their own secrets for the operator to find
+	// +optional
+	Secrets map[string]Secret `json:"secrets"`
+
 	// Allow the user to pull authenticated images
 	// By default no secret is selected. Setting
 	// this with the name of an already existing
@@ -588,6 +593,17 @@ type FluxUser struct {
 	// +default=1000
 	// +optional
 	Uid int `json:"uid,omitempty"`
+}
+
+// Secret describes a secret from the environment.
+// The envar name should be the key of the top level map.
+type Secret struct {
+
+	// Name under secretKeyRef->Name
+	Name string `json:"name"`
+
+	// Key under secretKeyRef->Key
+	Key string `json:"key"`
 }
 
 type Commands struct {
@@ -709,6 +725,11 @@ func (f *MiniCluster) Validate() bool {
 	// Set the default headless service name
 	if f.Spec.Network.HeadlessName == "" {
 		f.Spec.Network.HeadlessName = "flux-service"
+	}
+
+	// Flux Restful default port
+	if f.Spec.FluxRestful.Port == 0 {
+		f.Spec.FluxRestful.Port = 5000
 	}
 
 	// If the MaxSize isn't set, ensure it's equal to the size

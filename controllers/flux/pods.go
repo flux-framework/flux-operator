@@ -138,7 +138,15 @@ func (r *MiniClusterReconciler) newServicePod(
 
 	// Assemble existing volume mounts - they are added with getContainers
 	mounts := []corev1.VolumeMount{}
-	containers, err := r.getContainers(cluster.Spec.Services, podServiceName, mounts)
+
+	// Get containers for the service pods
+	containers, err := r.getContainers(
+		cluster.Spec.Services,
+		podServiceName,
+		cluster.Spec.FluxRestful.Port,
+		mounts,
+	)
+
 	if err != nil {
 		return pod, err
 	}

@@ -78,6 +78,7 @@ from pprint import pprint
  - [MiniClusterVolume](MiniClusterVolume.md)
  - [Network](Network.md)
  - [PodSpec](PodSpec.md)
+ - [Secret](Secret.md)
  - [SecurityContext](SecurityContext.md)
 
 ## Documentation For Authorization

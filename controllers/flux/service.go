@@ -24,10 +24,6 @@ import (
 	api "flux-framework/flux-operator/api/v1alpha1"
 )
 
-var (
-	servicePort = 5000
-)
-
 // exposeService will expose services - one for the port 5000 forward, and the other for job networking (headless)
 func (r *MiniClusterReconciler) exposeServices(
 	ctx context.Context,

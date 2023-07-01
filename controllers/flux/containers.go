@@ -22,6 +22,7 @@ import (
 func (r *MiniClusterReconciler) getContainers(
 	specs []api.MiniClusterContainer,
 	defaultName string,
+	servicePort int32,
 	mounts []corev1.VolumeMount,
 ) ([]corev1.Container, error) {
 
@@ -128,6 +129,22 @@ func (r *MiniClusterReconciler) getContainers(
 			newEnvar := corev1.EnvVar{
 				Name:  key,
 				Value: value,
+			}
+			envars = append(envars, newEnvar)
+		}
+
+		// Add environment variables that come as secrets
+		for envarName, envar := range container.Secrets {
+			newEnvar := corev1.EnvVar{
+				Name: envarName,
+				ValueFrom: &corev1.EnvVarSource{
+					SecretKeyRef: &corev1.SecretKeySelector{
+						LocalObjectReference: corev1.LocalObjectReference{
+							Name: envar.Name,
+						},
+						Key: envar.Key,
+					},
+				},
 			}
 			envars = append(envars, newEnvar)
 		}

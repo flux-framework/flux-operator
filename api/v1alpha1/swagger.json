@@ -454,6 +454,14 @@
           "type": "boolean",
           "default": false
         },
+        "secrets": {
+          "description": "Secrets that will be added to the environment The user is expected to create their own secrets for the operator to find",
+          "type": "object",
+          "additionalProperties": {
+            "default": {},
+            "$ref": "#/definitions/Secret"
+          }
+        },
         "securityContext": {
           "description": "Security Context https://kubernetes.io/docs/tasks/configure-pod-container/security-context/",
           "default": {},
@@ -837,6 +845,26 @@
         "serviceAccountName": {
           "description": "Service account name for the pod",
           "type": "string"
+        }
+      }
+    },
+    "Secret": {
+      "description": "Secret describes a secret from the environment. The envar name should be the key of the top level map.",
+      "type": "object",
+      "required": [
+        "name",
+        "key"
+      ],
+      "properties": {
+        "key": {
+          "description": "Key under secretKeyRef-\u003eKey",
+          "type": "string",
+          "default": ""
+        },
+        "name": {
+          "description": "Name under secretKeyRef-\u003eName",
+          "type": "string",
+          "default": ""
         }
       }
     },
