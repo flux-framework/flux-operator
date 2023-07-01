@@ -2,6 +2,7 @@ sphinx
 markupsafe
 sphinx_immaterial
 numpy
+pydantic==1.10.8
 pandas
 matplotlib
 nbsphinx
