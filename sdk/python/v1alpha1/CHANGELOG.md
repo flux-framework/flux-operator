@@ -14,7 +14,8 @@ and **Merged pull requests**. Critical items to know are:
 The versions coincide with releases on pip. Only major versions will be released as tags on Github.
 
 ## [0.0.x](https://github.com/flux-framework/flux-operator/tree/main/sdk/python/v2alpha1) (0.0.x)
- - support for bursting and curve cert as a secret (0.0.3)
+ - support for bursting and curve cert as a secret (0.0.31)
+ - support for simple bursting (0.0.3)
  - COMPLETED is an acceptable state for wait_pods (0.0.29)
  - support for custom api_crd instead of manual creation (0.0.28)
  - support for separate Network directive (0.0.27)
