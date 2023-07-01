@@ -83,7 +83,14 @@ func (r *MiniClusterReconciler) newMiniClusterJob(
 
 	// Get volume mounts specific to operator, add on container specific ones
 	mounts := getVolumeMounts(cluster)
-	containers, err := r.getContainers(cluster.Spec.Containers, cluster.Name, mounts)
+
+	// Prepare listing of containers for the MiniCluster
+	containers, err := r.getContainers(
+		cluster.Spec.Containers,
+		cluster.Name,
+		cluster.Spec.FluxRestful.Port,
+		mounts,
+	)
 	job.Spec.Template.Spec.Containers = containers
 	ctrl.SetControllerReference(cluster, job, r.Scheme)
 	return job, err

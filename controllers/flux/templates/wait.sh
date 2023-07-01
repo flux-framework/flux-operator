@@ -86,6 +86,7 @@ mkdir -p ${STATE_DIR} ${FLUX_OUTPUT_DIR}
 # Broker Options: important!
 # The local-uri setting places the unix domain socket in rundir
 #   if FLUX_URI is not set, tools know where to connect.
+# TODO newer flux will not have quorum=ranks, but rather -Sbroker.quorum=2 (size)
 brokerOptions="-Scron.directory=/etc/flux/system/cron.d \
   -Stbon.fanout=256 \
   -Srundir=/run/flux {{ if .Spec.Interactive }}-Sbroker.rc2_none {{ end }} \

@@ -1,51 +1,11 @@
-# Bursting Experiment
+# Bursting Experiment to GKE
 
 > Experimental setup to burst to Google Cloud
 
 This setup will expose a lead broker (index 0 of the MiniCluster job) as a service,
 and then deploy a second cluster that can connect back to the first. For a different
 design that could be used to do similar but via a central router (less developed)
-start with [nginx](../nginx).
-
-## Design
-
-### What we might need
-
-I expect for this kind of bursting to work I will need to be able to:
-
- - Define the lead broker as a hostname external to the cluster AND internal (we will have two aliases for the same broker)
- - Have a custom external broker config that we generate
- - Be able to read in send the curve certificate as a configuration variable
- - Be able to create the munge.key as a secret
- - Create the service to run directly from the lead broker pod
-
-### What we we eventually want to improve upon
-
-We will eventually need to do the following:
-
- - Have an elegant way to decide:
-   - When to burst
-   - What jobs are marked for bursting, and how assigned to an external cluster
- - Unique external cluster names (within a cloud namespace) that are linked to their spec (content hash of broker.toml?)
- - When to configure external cluster to allow for scaling of flux (right now we set min == max so constant size)
- - Create a more scoped permission (Google service account) for running inside a cluster
-
-### What we do now
-
-- Allow the user to provide a custom broker.toml and curve.cert (the idea being the external clusters are created with a lead broker pointing to that service, and the same curve.cert that is on the local cluster they were created from) - these are changes to the operator CRD
-- Submit jobs that are flagged for burstable (an attribute) and ask for more nodes than the cluster has (but below the max number so it doesn't immediately fail - we will want to fix this in flux because with bursting we should be able to ask for more than the potential size)
-- Have a Python script that connects to the flux handle, finds the burstable jobs, and creates a minicluster spec (with the same nodes, tasks, and command - right now the machine is an argument)
-- The Python script generates a broker.toml on the fly that defines the lead broker to be the service of the minicluster where it's running, and the curve.cert read directly from the filesystem (being used by the current cluster)
-- The external cluster is created from the first, directly from the flux lead broker!
-- The order of hosts in the broker.toml and resource spec must be consistent
-- The two are networked via the exposed service on the lead broker pod
-
-### History
-
-This example was originally implemented as a standalone script, and that setup is preserved in [v1](v1).
-The version here has been updated to use the [flux-burst](https://github.com/converged-computing/flux-burst)
-module and the GKE plugin for it, [flux-burst-gke](https://github.com/converged-computing/flux-burst-gke).
-
+start with [nginx](../nginx). For the overall design, see the top level [README](../README.md)
 
 ## Credentials
 
@@ -77,7 +37,7 @@ $ gcloud container clusters create ${CLUSTER_NAME} --project $GOOGLE_PROJECT \
 And be sure to activate your credentials!
 
 ```bash
-gcloud container clusters get-credentials ${CLUSTER_NAME}
+$ gcloud container clusters get-credentials ${CLUSTER_NAME}
 ```
 
 Create the namespace, install the operator (assuming you are using a development version) and create the minicluster:
@@ -141,7 +101,7 @@ and then determining if a burst can be scheduled for some given burst plugin (e.
 we ensure the job doesn't run locally because we've asked for more nodes than we have. Shell into your broker pod:
 
 ```bash
-$ kubectl exec -it -n flux-operator flux-sample-0-kvg5t bash
+$ kubectl exec -it -n flux-operator ${POD} bash
 ```
 
 Connect to the broker socket
@@ -170,7 +130,7 @@ burstable remotes, namespaced by this prefix. And now let's create a burstable j
 ```bash
 # Set burstable=1
 # this will be for 4 nodes, 8 cores each
-$ flux submit -N 4 --setattr=burstable hostname
+$ flux submit -N 4 --cwd /tmp --setattr=burstable hostname
 ```
 
 You should see it's scheduled (but not running). Note that if we asked for a resource totally unknown
@@ -204,6 +164,8 @@ GOOGLE_PROJECT=myproject
 
 # This is the address of the lead host we discovered above
 LEAD_HOST="34.72.223.15"
+
+34.134.229.141
 
 # This is the node port we've exposed on the cluster
 LEAD_PORT=30093
@@ -248,31 +210,25 @@ And we can see output! Note that the error is because the working directory wher
 
 ```bash
 flux@flux-sample-0:/tmp/workflow$ flux job attach ƒ2S9iZpoJw
-214.588s: flux-shell[2]: ERROR: host burst-0-2: Could not change dir to /tmp/workflow: No such file or directory. Going to /tmp instead
-214.589s: flux-shell[3]: ERROR: host burst-0-3: Could not change dir to /tmp/workflow: No such file or directory. Going to /tmp instead
-214.588s: flux-shell[1]: ERROR: host burst-0-0: Could not change dir to /tmp/workflow: No such file or directory. Going to /tmp instead
+flux-sample-0
 flux-sample-1
-burst-0-0
-burst-0-3
 burst-0-2
+burst-0-0
 ```
 
 You can also launch a new job that asks to hit all the nodes (6):
 
 ```bash
-flux@flux-sample-0:/tmp/workflow$ flux run -N 6 hostname
-0.039s: flux-shell[5]: ERROR: host burst-0-3: Could not change dir to /tmp/workflow: No such file or directory. Going to /tmp instead
-0.038s: flux-shell[4]: ERROR: host burst-0-2: Could not change dir to /tmp/workflow: No such file or directory. Going to /tmp instead
-0.040s: flux-shell[3]: ERROR: host burst-0-1: Could not change dir to /tmp/workflow: No such file or directory. Going to /tmp instead
-0.038s: flux-shell[2]: ERROR: host burst-0-0: Could not change dir to /tmp/workflow: No such file or directory. Going to /tmp instead
+flux@flux-sample-0:/tmp/workflow$ flux run -N 6 --cwd /tmp hostname
 flux-sample-0
+burst-0-3
 burst-0-2
 burst-0-1
-burst-0-3
 burst-0-0
 flux-sample-1
 ```
 
+Note that without `--cwd` you would see an error that the bursted cluster can't CD to `/tmp/workflow` (it doesn't exist there).
 And that's bursting! At this point we should think about how to better start / stop a burst, since the cluster
 will typically come up (and stay up).
 
