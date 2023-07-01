@@ -34,27 +34,9 @@ spec:
       # Commands to support installing flux-burst plugins
       commands:
         pre: |
-          git clone --depth 1 https://github.com/flux-framework/flux-operator ./op
-          cd ./op/sdk/python/v1alpha1
-          pip install .
-          cd -
-          git clone -b test-plugin https://github.com/converged-computing/flux-burst ./burst
-          cd ./burst 
-          pip install .[kubernetes]
-          cd -
-          git clone -b fix-eks-wait-for-nodes https://github.com/converged-computing/kubescaler ./ks
-          cd ./ks 
-          pip install .
-          cd -
-          git clone -b test-plugin https://github.com/converged-computing/flux-burst-eks ./fb
-          cd ./fb
-          pip install .
-          cd -
-          # Install kubectl
-          apt-get update && apt-get install -y curl
-          curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
-          chmod +x ./kubectl
-          mv ./kubectl /usr/bin/kubectl
+          pip install flux-burst[kubernetes]
+          pip install flux-burst-eks
+          pip install kubescaler[all]
 
       # Important! We need to have resource requests for the horizonal autoscaler
       # The Flux Operator doesn't know you want to use it, so it's up to you

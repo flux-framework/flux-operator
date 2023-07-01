@@ -165,8 +165,6 @@ GOOGLE_PROJECT=myproject
 # This is the address of the lead host we discovered above
 LEAD_HOST="34.72.223.15"
 
-34.134.229.141
-
 # This is the node port we've exposed on the cluster
 LEAD_PORT=30093
 python3 run-burst.py --project ${GOOGLE_PROJECT} --flux-operator-yaml ./external-config/flux-operator-dev.yaml \
