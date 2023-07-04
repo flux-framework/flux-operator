@@ -37,6 +37,8 @@ spec:
           pip install flux-burst
           pip install flux-burst-gke
           pip install kubescaler[all]
+          # flux needs to write the kubeconfig here
+          chown -R flux /tmp/workflow
 
       secrets:
         AWS_ACCESS_KEY_ID:

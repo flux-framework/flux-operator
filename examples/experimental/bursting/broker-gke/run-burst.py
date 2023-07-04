@@ -66,19 +66,8 @@ def main():
     if not args.project:
         sys.exit("Please define your Google Cloud Project with --project")
 
-    # Lead host and port are required. A custom broker.toml can be provided,
-    # but we are having the operator create it for us
-    if not args.lead_port or not args.lead_host or not args.lead_size:
-        sys.exit("All of --lead-host, --lead-size, and --lead-port must be defined.")
-    print(
-        f"Broker lead will be expected to be accessible on {args.lead_host}:{args.lead_port}"
-    )
-
-    # These checks are done by plugin, but I wanted to do them earlier too
-    if args.munge_key and not os.path.exists(args.munge_key):
-        sys.exit(f"Provided munge key {args.munge_key} does not exist.")
-    if args.munge_key and not args.munge_secret_name:
-        args.munge_secret_name = "munge-key"
+    # Lead port, lead host, and lead size and existing munge key should be
+    # checked / validated by the plugin
 
     # Create the dataclass for the plugin config
     # We use a dataclass because it does implicit validation of required params, etc.
@@ -95,7 +84,7 @@ def main():
     )
 
     # Create the flux burst client. This can be passed a flux handle (flux.Flux())
-    # and will make one otherwise.
+    # and will make one otherwise. Note that by default mock=False
     client = FluxBurst()
 
     # For debugging, here is a way to see plugins available
@@ -122,11 +111,12 @@ def main():
     # burst. unmatched jobs (those we weren't able to schedule) are
     # returned, maybe to do something with?
     unmatched = client.run_burst()  
-    print("Sleeping for a few minutes so you can look around...")
-    time.sleep(360)
+
+    assert not unmatched
 
     # Get a handle to the plugin so we can cleanup!
     plugin = client.plugins["gke"]
+    input("Press Enter to when you are ready to destroy...")
     plugin.cleanup()
 
 if __name__ == "__main__":

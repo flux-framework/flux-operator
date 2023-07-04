@@ -37,6 +37,8 @@ spec:
           pip install flux-burst[kubernetes]
           pip install flux-burst-eks
           pip install kubescaler[all]
+          # flux needs to write the kubeconfig here
+          chown -R flux /tmp/workflow
 
       # Important! We need to have resource requests for the horizonal autoscaler
       # The Flux Operator doesn't know you want to use it, so it's up to you

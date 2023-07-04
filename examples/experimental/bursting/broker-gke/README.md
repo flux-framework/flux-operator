@@ -40,7 +40,8 @@ And be sure to activate your credentials!
 $ gcloud container clusters get-credentials ${CLUSTER_NAME}
 ```
 
-Create the namespace, install the operator (assuming you are using a development version) and create the minicluster:
+Create the namespace, install the operator (assuming you are using a development version) and create the minicluster.
+Note that if you aren't using a development version, you can apply `flux-operator.yaml` instead.
 
 ```bash
 kubectl apply -f ../../../dist/flux-operator-dev.yaml
@@ -104,7 +105,8 @@ we ensure the job doesn't run locally because we've asked for more nodes than we
 $ kubectl exec -it -n flux-operator ${POD} bash
 ```
 
-Connect to the broker socket
+Connect to the broker socket. If this issues an error, it's likely the install scripts are still running (you can check
+the logs and wait a minute!)
 
 ```bash
 $ sudo -u flux -E $(env) -E HOME=/home/flux flux proxy local:///run/flux/local bash
@@ -178,13 +180,15 @@ Important notes for the above:
 - The name is same that would be automatically generated name by Flux given a bursted cluster (that isn't explicitly given a name) but we are being pedantic. It's also in the [minicluster.yaml](minicluster.yaml)
 - The lead name is derived from the hostname where it is running (e.g., flux-sample) so we don't need to provide it
 - We set the lead size to the max size, because the ranks indices need to line up. We are using a size that won't fail the job (which needs 4)
+- mock mode is set to false for the `FluxBurst` client, meaning the cluster will attempt to connect to our first one
 
 When you do the above (and the second MiniCluster launches) you should be able to see on your local cluster the external
 MiniCluster resources, and the result of hostname will include the external hosts! Here is how to shell into the cluster
 from another terminal:
 
 ```bash
-$ kubectl exec -it -n flux-operator flux-sample-0-kvg5t bash
+$ POD=$(kubectl get pods -n flux-operator -o json | jq -r .items[0].metadata.name)
+$ kubectl exec -it -n flux-operator ${POD} bash
 $ sudo -u flux -E $(env) -E HOME=/home/flux flux proxy local:///run/flux/local bash
 ```
 
