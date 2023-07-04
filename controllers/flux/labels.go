@@ -13,9 +13,10 @@ package controllers
 import (
 	"context"
 	"encoding/json"
-	api "flux-framework/flux-operator/api/v1alpha1"
 	"fmt"
 	"strings"
+
+	api "github.com/flux-framework/flux-operator/api/v1alpha1"
 
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/types"

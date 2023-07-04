@@ -13,7 +13,7 @@ package controllers
 import (
 	corev1 "k8s.io/api/core/v1"
 
-	api "flux-framework/flux-operator/api/v1alpha1"
+	api "github.com/flux-framework/flux-operator/api/v1alpha1"
 )
 
 // createContainerLifecycle adds lifecycle commands to help with moving cluster state

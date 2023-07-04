@@ -17,7 +17,7 @@ import (
 	"strings"
 	"text/template"
 
-	jobctrl "flux-framework/flux-operator/pkg/job"
+	jobctrl "github.com/flux-framework/flux-operator/pkg/job"
 
 	"github.com/google/uuid"
 	batchv1 "k8s.io/api/batch/v1"
@@ -29,7 +29,7 @@ import (
 	"k8s.io/apimachinery/pkg/api/errors"
 	"k8s.io/apimachinery/pkg/types"
 
-	api "flux-framework/flux-operator/api/v1alpha1"
+	api "github.com/flux-framework/flux-operator/api/v1alpha1"
 )
 
 var (

@@ -11,7 +11,7 @@ SPDX-License-Identifier: Apache-2.0
 package job
 
 import (
-	api "flux-framework/flux-operator/api/v1alpha1"
+	api "github.com/flux-framework/flux-operator/api/v1alpha1"
 
 	batchv1 "k8s.io/api/batch/v1"
 	corev1 "k8s.io/api/core/v1"

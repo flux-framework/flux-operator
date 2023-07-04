@@ -29,9 +29,9 @@ import (
 	"sigs.k8s.io/controller-runtime/pkg/healthz"
 	"sigs.k8s.io/controller-runtime/pkg/log/zap"
 
-	api "flux-framework/flux-operator/api/v1alpha1"
+	api "github.com/flux-framework/flux-operator/api/v1alpha1"
 
-	"flux-framework/flux-operator/controllers/core"
+	"github.com/flux-framework/flux-operator/controllers/core"
 	//+kubebuilder:scaffold:imports
 )
 

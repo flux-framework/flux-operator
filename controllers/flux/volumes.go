@@ -12,9 +12,10 @@ package controllers
 
 import (
 	"context"
-	api "flux-framework/flux-operator/api/v1alpha1"
 	"fmt"
 	"path"
+
+	api "github.com/flux-framework/flux-operator/api/v1alpha1"
 
 	corev1 "k8s.io/api/core/v1"
 	"k8s.io/apimachinery/pkg/api/errors"
