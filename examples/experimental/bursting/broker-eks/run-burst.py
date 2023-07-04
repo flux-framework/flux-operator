@@ -30,6 +30,13 @@ def get_parser():
         help="Lead broker service hostname or ip address",
         dest="lead_host",
     )
+    parser.add_argument(
+        "--creds-from-env",
+        help="Set this boolean to assert you are setting credentials in the environment",
+        dest="creds_from_environ",
+        action="store_true",
+        default=False,
+    )
     parser.add_argument("--lead-size", help="Lead broker size", type=int)
     parser.add_argument(
         "--lead-port", help="Lead broker service port", dest="lead_port", default=30093
@@ -64,22 +71,13 @@ def main():
     args, _ = parser.parse_known_args()
 
     # Lead host and port are required. A custom broker.toml can be provided,
-    # but we are having the operator create it for us
-    if not args.lead_port or not args.lead_host or not args.lead_size:
-        sys.exit("All of --lead-host, --lead-size, and --lead-port must be defined.")
-    print(
-        f"Broker lead will be expected to be accessible on {args.lead_host}:{args.lead_port}"
-    )
-
-    # These checks are done by plugin, but I wanted to do them earlier too
-    if args.munge_key and not os.path.exists(args.munge_key):
-        sys.exit(f"Provided munge key {args.munge_key} does not exist.")
-    if args.munge_key and not args.munge_secret_name:
-        args.munge_secret_name = "munge-key"
+    # but we are having the operator create it for us. Note that validation
+    # happens in the fluxburst.kubernetes module
 
     # Create the dataclass for the plugin config
     # We use a dataclass because it does implicit validation of required params, etc.
     params = BurstParameters(
+        creds_from_environ=args.creds_from_environ,
         munge_key=args.munge_key,
         munge_secret_name=args.munge_secret_name,
         curve_cert_secret_name=args.curve_cert_secret_name,
@@ -112,17 +110,14 @@ def main():
     # are able to schedule a job, and if so, will do the work needed to
     # burst. unmatched jobs (those we weren't able to schedule) are
     # returned, maybe to do something with?
-    unmatched = client.run_burst()  
-    print("Sleeping for 6 minutes so you can look around...")
-    # Note that creation/deletion times are under cli.times
-    time.sleep(360)
+    unmatched = client.run_burst()
 
     # Get a handle to the plugin so we can cleanup!
     # WARNING - check the console that the stack was deleted -
     # the cluster cleans up OK but often the stack is still there
     # on cloud formation
-    print('Cleaning up EKS bursted cluster...')
     plugin = client.plugins["eks"]
+    input("Press Enter to when you are ready to destroy...")
     plugin.cleanup()
 
 if __name__ == "__main__":

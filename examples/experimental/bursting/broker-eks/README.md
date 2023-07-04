@@ -273,7 +273,8 @@ MiniCluster resources, and the result of hostname will include the external host
 from another terminal:
 
 ```bash
-$ kubectl exec -it -n flux-operator flux-sample-0-kvg5t bash
+$ POD=$(kubectl get pods -n flux-operator -o json | jq -r .items[0].metadata.name)
+$ kubectl exec -it -n flux-operator ${POD} bash
 $ sudo -u flux -E $(env) -E HOME=/home/flux flux proxy local:///run/flux/local bash
 ```
 
@@ -285,19 +286,19 @@ flux@flux-sample-0:/tmp/workflow$ flux resource list
       down      2        8 flux-sample-[2-3]
 ```
 
-Our job has run:
+Note that flux sample 2-3 have been left if we wanted to expand the local cluster, just as an example.
+Also notice that (along with the burst resources being online), our job has run:
 
 ```bash
 flux@flux-sample-0:/tmp/workflow$ flux jobs -a 
        JOBID USER     NAME       ST NTASKS NNODES     TIME INFO
-  ƒ2S9iZpoJw flux     hostname   CD      4      4   0.027s flux-sample-1,burst-0-[0,2-3]
-   ƒ3i2dgyDq flux     hostname   CD      4      4   0.035s flux-sample-[0-1,3],burst-0-0
+   ƒ2XwYQ37M flux     hostname   CD      4      4   0.049s flux-sample-[0-1],burst-0-[2-3]
 ```
 
 And we can see output! Note that the error is because the working directory where it was launched doesn't exist on the remote.
 
 ```bash
-flux@flux-sample-0:/tmp/workflow$ flux job attach ƒ2S9iZpoJw
+flux@flux-sample-0:/tmp/workflow$ flux job attach ƒ2XwYQ37M
 flux-sample-1
 burst-0-3
 burst-0-1
