@@ -1,4 +1,4 @@
-module flux-framework/flux-operator
+module github.com/flux-framework/flux-operator
 
 go 1.18
 

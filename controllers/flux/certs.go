@@ -14,7 +14,7 @@ import (
 	"context"
 	"fmt"
 
-	api "flux-framework/flux-operator/api/v1alpha1"
+	api "github.com/flux-framework/flux-operator/api/v1alpha1"
 )
 
 // getCurveCert generates a pod to run a single command and get a curve certificate

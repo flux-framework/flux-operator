@@ -11,7 +11,7 @@ SPDX-License-Identifier: Apache-2.0
 package core
 
 import (
-	controllers "flux-framework/flux-operator/controllers/flux"
+	controllers "github.com/flux-framework/flux-operator/controllers/flux"
 
 	"k8s.io/client-go/rest"
 	ctrl "sigs.k8s.io/controller-runtime"

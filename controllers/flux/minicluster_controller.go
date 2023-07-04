@@ -26,7 +26,7 @@ import (
 
 	"k8s.io/apimachinery/pkg/api/errors"
 
-	api "flux-framework/flux-operator/api/v1alpha1"
+	api "github.com/flux-framework/flux-operator/api/v1alpha1"
 )
 
 // This interface allows us to define a NotifyMiniClusterUpdate function

@@ -11,7 +11,7 @@ SPDX-License-Identifier: Apache-2.0
 package controllers
 
 import (
-	api "flux-framework/flux-operator/api/v1alpha1"
+	api "github.com/flux-framework/flux-operator/api/v1alpha1"
 
 	_ "embed"
 )

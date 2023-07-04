@@ -16,9 +16,9 @@ package controllers
 // 3. (Optionally) the Reconciler Client can be inherited directly
 
 import (
-	jobctrl "flux-framework/flux-operator/pkg/job"
+	jobctrl "github.com/flux-framework/flux-operator/pkg/job"
 
-	api "flux-framework/flux-operator/api/v1alpha1"
+	api "github.com/flux-framework/flux-operator/api/v1alpha1"
 
 	"k8s.io/klog/v2"
 	"sigs.k8s.io/controller-runtime/pkg/event"
