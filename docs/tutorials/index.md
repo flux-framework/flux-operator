@@ -26,6 +26,7 @@ The following tutorials are provided from their respective directories (and are 
 
  - [Bursting to GKE](https://github.com/flux-framework/flux-operator/tree/main/examples/experimental/bursting/broker-gke) from a local broker to an external Google Kubernetes Engine cluster.
  - [Bursting to EKS](https://github.com/flux-framework/flux-operator/tree/main/examples/experimental/bursting/broker-eks) from a local broker to an external Amazon Elastic Kubernetes Service
+ - [Bursting to Compute Engine](https://github.com/flux-framework/flux-operator/tree/main/examples/experimental/bursting/broker-compute-engine) from a GKE broker to an external Compute Engine cluster.
  - [Bursting (nginx service)](https://github.com/flux-framework/flux-operator/tree/main/examples/experimental/bursting/nginx) design to use central router for bursting.
 
 #### Nested
