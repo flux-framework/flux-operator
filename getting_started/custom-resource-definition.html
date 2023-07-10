@@ -1674,8 +1674,23 @@ to know all future hosts in advance, we ask that you provide sizes. More specifi
 and broker.toml (config). The main difference will be that the bursted cluster knows about the first one via
 it’s ip address or hostname, and not, for example <code class="docutils literal notranslate"><span class="pre">flux-sample-0</span></code>. Also note that when bursting, you don’t
 explicitly give a command to the bursted cluster - the jobs are launched on the main cluster and sent
-to these external resources when they come up and are available (and needed). For a full example,
-see <a class="reference external" href="https://github.com/flux-framework/flux-operator/tree/main/examples/experimental/bursting">the bursting</a>
+to these external resources when they come up and are available (and needed).</p>
+<p>Finally, for advanced bursting cases where the pattern of hostnames does not match the convention
+deployed by the Flux Operator, we allow the CRD to define a custom list. As an example, here is how
+we might burst to compute engine:</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><code><span class="w">  </span><span class="nt">flux</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">leadBroker</span><span class="p">:</span>
+<span class="w">      </span><span class="c1"># This is the name of the first minicluster.yaml spec</span>
+<span class="w">      </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">flux-sample</span>
+<span class="w">      </span><span class="c1"># In a cloud environment this would be a NodePort</span>
+<span class="w">      </span><span class="nt">address</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">24.123.50.123</span>
+<span class="w">      </span><span class="nt">port</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">30093</span>
+<span class="w">      </span><span class="nt">hostlist</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;flux-sample-[0-3],gffw-compute-a-[001-003]&quot;</span><span class="w"> </span>
+</code></pre></div>
+</div>
+<p>In the above case, the clusters are not used. The bursting plugin you use will determine
+how the hostnames and address are provided to the remote (second) cluster.</p>
+<p>For full examples, see <a class="reference external" href="https://github.com/flux-framework/flux-operator/tree/main/examples/experimental/bursting">the bursting</a>
 examples directory.</p>
 <h3 id="logging">logging<a class="headerlink" href="#logging" title="Permalink to this heading">¶</a></h3>
 <p>We provide simple types of “logging” within the main script that is run for the job.
@@ -2254,7 +2269,7 @@ or define your own as follows:</p>
   <small>
     
       Last update:
-      Jul 04, 2023
+      Jul 10, 2023
     
   </small>
 </div>
