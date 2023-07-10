@@ -310,6 +310,13 @@ spec:
                               type: integer
                           type: object
                         type: array
+                      hostlist:
+                        description: Hostlist is a custom hostlist for the broker.toml
+                          that includes the local plus bursted cluster. This is typically
+                          used for bursting to another resource type, where we can
+                          predict the hostnames but they don't follow the same convention
+                          as the Flux Operator
+                        type: string
                       leadBroker:
                         description: The lead broker ip address to join to. E.g.,
                           if we burst to cluster 2, this is the address to connect
@@ -337,8 +344,6 @@ spec:
                         - name
                         - size
                         type: object
-                    required:
-                    - clusters
                     type: object
                   connectTimeout:
                     default: 5s

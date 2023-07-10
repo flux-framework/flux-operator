@@ -1,0 +1,62 @@
+apiVersion: flux-framework.org/v1alpha1
+kind: MiniCluster
+metadata:
+  name: flux-sample
+  namespace: flux-operator
+spec:
+  size: 2
+  # If we don't set this, we won't be able to go above two
+  # and the request for 4 nodes will fail instead of scheduling
+  maxSize: 4
+  interactive: true
+
+  # This allows us to see zeromq and debug logging
+  flux:
+    logLevel: 7
+
+    # Declare that this cluster will allow for a bursted cluster
+    # We don't define clusters here because we are providing the hostlist
+    # verbatim! Note that this is the hostlist provided for the cluster
+    # here, anticipating to burst to compute engine. The compute engine 
+    # hostlist will need to be:
+    # "<ip-address>,flux-sample[1-3],gffw-compute-a-[001-004]"
+    bursting:
+      hostlist: "flux-sample-[0-3],gffw-compute-a-[001-003]" 
+
+  logging:
+    zeromq: true
+
+  # This is a list because a pod can support multiple containers
+  containers:
+    - image: ghcr.io/flux-framework/flux-restful-api
+      workingDir: /tmp/workflow
+
+      # Commands to support installing flux-burst plugins
+      # We also need terraform, which is how the plugin works
+      commands:
+        pre: |
+          pip install flux-burst[kubernetes]
+          pip install flux-burst-compute-engine
+          apt-get update && apt-get install -y unzip
+          wget --quiet https://releases.hashicorp.com/terraform/1.3.9/terraform_1.3.9_linux_amd64.zip
+          unzip terraform_1.3.9_linux_amd64.zip
+          mv terraform /usr/bin
+          rm terraform_1.3.9_linux_amd64.zip
+
+      # This should not be done in production
+      environment:
+        GOOGLE_APPLICATION_CREDENTIALS: /tmp/workflow/application_default_credentials.json
+
+      # The fluxuser uid must match the name / uid in the container
+      fluxUser:
+        uid: 	1004
+
+      # Important! We need to have resource requests for the horizonal autoscaler
+      # The Flux Operator doesn't know you want to use it, so it's up to you
+      # to provide these if your metric is about CPU
+      resources:
+        limits:
+          cpu: "1"
+
+        requests:
+          cpu: "1"

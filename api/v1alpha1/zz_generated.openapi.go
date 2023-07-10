@@ -92,6 +92,14 @@ func schema__api_v1alpha1__Bursting(ref common.ReferenceCallback) common.OpenAPI
 							Ref:         ref("./api/v1alpha1/.FluxBroker"),
 						},
 					},
+					"hostlist": {
+						SchemaProps: spec.SchemaProps{
+							Description: "Hostlist is a custom hostlist for the broker.toml that includes the local plus bursted cluster. This is typically used for bursting to another resource type, where we can predict the hostnames but they don't follow the same convention as the Flux Operator",
+							Default:     "",
+							Type:        []string{"string"},
+							Format:      "",
+						},
+					},
 					"clusters": {
 						SchemaProps: spec.SchemaProps{
 							Description: "External clusters to burst to. Each external cluster must share the same listing to align ranks",
@@ -107,7 +115,6 @@ func schema__api_v1alpha1__Bursting(ref common.ReferenceCallback) common.OpenAPI
 						},
 					},
 				},
-				Required: []string{"clusters"},
 			},
 		},
 		Dependencies: []string{

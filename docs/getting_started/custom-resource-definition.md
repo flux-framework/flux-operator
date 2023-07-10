@@ -536,8 +536,27 @@ Using the above, both the main and bursted to cluster will have almost the same 
 and broker.toml (config). The main difference will be that the bursted cluster knows about the first one via
 it's ip address or hostname, and not, for example `flux-sample-0`. Also note that when bursting, you don't
 explicitly give a command to the bursted cluster - the jobs are launched on the main cluster and sent
-to these external resources when they come up and are available (and needed). For a full example,
-see [the bursting](https://github.com/flux-framework/flux-operator/tree/main/examples/experimental/bursting) 
+to these external resources when they come up and are available (and needed). 
+
+Finally, for advanced bursting cases where the pattern of hostnames does not match the convention
+deployed by the Flux Operator, we allow the CRD to define a custom list. As an example, here is how
+we might burst to compute engine:
+
+```yaml
+  flux:
+    leadBroker:
+      # This is the name of the first minicluster.yaml spec
+      name: flux-sample
+      # In a cloud environment this would be a NodePort
+      address: 24.123.50.123
+      port: 30093
+      hostlist: "flux-sample-[0-3],gffw-compute-a-[001-003]" 
+```
+
+In the above case, the clusters are not used. The bursting plugin you use will determine
+how the hostnames and address are provided to the remote (second) cluster.
+
+For full examples, see [the bursting](https://github.com/flux-framework/flux-operator/tree/main/examples/experimental/bursting) 
 examples directory.
 
 
