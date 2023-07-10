@@ -164,7 +164,8 @@ $ flux submit -N 4 --cwd /tmp --setattr=burstable hostname
 You should see it's scheduled (but not running). Note that if we asked for a resource totally unknown
 to the cluster (e.g. 4 nodes and 32 tasks) it would just fail. Note that because of this,
 we need in our "mark as burstable" method a way to tell Flux not to fail in this case.
-You can see it is scheduled and waiting for resources:
+Also note that once it's assigned to a plugin to be bursted, it will lose that attribute
+(and note be able to be scheduled again). You can see it is scheduled and waiting for resources:
 
 ```bash
 $ flux jobs -a
@@ -190,7 +191,7 @@ Now we can run our script to find the jobs based on this attribute!
 GOOGLE_PROJECT=myproject
 
 # This is the address of the lead host we discovered above
-LEAD_HOST="34.172.14.82"
+LEAD_HOST="35.202.211.23"
 
 # Note that the lead host will be added here as a prefix
 hostnames="flux-sample-[1-3],gffw-compute-a-[001-003]"
@@ -203,8 +204,8 @@ python3 run-burst.py --project ${GOOGLE_PROJECT} \
 ```
 
 When you do the above you'll see the terraform configs apply, and the second Flux cluster will be launched when they finish. 
-You should then be able to see on your local cluster the external resources, and the result of hostname will include the external 
-hosts! Here is how to shell into the cluster from another terminal:
+You'll then be prompted to press ENTER when you want to destroy the burst. This is when you can open another terminal
+to see the outcome. Here is how to shell into the cluster from another terminal:
 
 ```bash
 $ POD=$(kubectl get pods -n flux-operator -o json | jq -r .items[0].metadata.name)
@@ -212,12 +213,14 @@ $ kubectl exec -it -n flux-operator ${POD} bash
 $ sudo -u flux -E $(env) -E HOME=/home/flux flux proxy local:///run/flux/local bash
 ```
 
+Resources are now allocated:
+
 ```bash
 flux@flux-sample-0:/tmp/workflow$ flux resource list
      STATE NNODES   NCORES NODELIST
-      free      6       24 flux-sample-[0-1],burst-0-[0-3]
+      free      5       10 flux-sample-[0-1],gffw-compute-a-[001-003]
  allocated      0        0 
-      down      2        8 flux-sample-[2-3]
+      down      2        4 flux-sample-[2-3]
 ```
 Our job has run:
 
@@ -226,8 +229,9 @@ $ flux jobs -a
 ```
 ```console
        JOBID USER     NAME       ST NTASKS NNODES     TIME INFO
-    ƒXmSxZFm flux     hostname   CD      4      4   0.767s flux-sample-1,gffw-compute-a-[001-003]
+    ƒCJTuUPR flux     hostname   CD      4      4   0.623s flux-sample-1,gffw-compute-a-[001-003]
 ```
+And we can see the result with hostnames from the local and bursted cluster.
 Note that we get an error about resources (I think) because we haven't done any work to ensure they are correct.
 This is probably OK for now and we will need to tweak further to allow the template to include them.
 
@@ -247,10 +251,10 @@ gffw-compute-a-002
 gffw-compute-a-001
 ```
 
-You can also launch a new job that asks to hit all the nodes (6):
+You can also launch a new job to see it interactively:
 
 ```bash
-flux@flux-sample-0:/tmp/workflow$ flux run -N 4 --cwd /tmp hostname
+flux@flux-sample-0:/tmp/workflow$ flux run -N 6 --cwd /tmp hostname
 ...
 flux-sample-0
 gffw-compute-a-002
