@@ -410,8 +410,17 @@ type Bursting struct {
 	//+optional
 	LeadBroker FluxBroker `json:"leadBroker"`
 
+	// Hostlist is a custom hostlist for the broker.toml
+	// that includes the local plus bursted cluster. This
+	// is typically used for bursting to another resource
+	// type, where we can predict the hostnames but they
+	// don't follow the same convention as the Flux Operator
+	//+optional
+	Hostlist string `json:"hostlist"`
+
 	// External clusters to burst to. Each external
 	// cluster must share the same listing to align ranks
+	//+optional
 	Clusters []BurstedCluster `json:"clusters"`
 }
 
@@ -768,6 +777,12 @@ func (f *MiniCluster) Validate() bool {
 	// we also need a port
 	if f.Spec.Flux.Bursting.LeadBroker.Port == 0 {
 		f.Spec.Flux.Bursting.LeadBroker.Port = 8050
+	}
+
+	// If we are provided a hostlist, we don't need bursted clusters
+	if f.Spec.Flux.Bursting.Hostlist != "" && len(f.Spec.Flux.Bursting.Clusters) > 0 {
+		fmt.Printf("😥️ A custom hostlist cannot be provided with a bursting spec, choose one or the other!\n")
+		return false
 	}
 
 	// Set default port if unset

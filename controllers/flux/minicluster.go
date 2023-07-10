@@ -398,9 +398,17 @@ func (r *MiniClusterReconciler) getConfigMap(
 // generateHostlist for a specific size given the cluster namespace and a size
 func generateHostlist(cluster *api.MiniCluster, size int32) string {
 
-	// If we don't have a leadbroker address, we are at the root
 	var hosts string
-	if cluster.Spec.Flux.Bursting.LeadBroker.Address == "" {
+	if cluster.Spec.Flux.Bursting.Hostlist != "" {
+
+		// In case 1, we are given a custom hostlist
+		// This is usually the case when we are bursting to a different resource
+		// Where the hostlists are not predictable.
+		hosts = cluster.Spec.Flux.Bursting.Hostlist
+
+	} else if cluster.Spec.Flux.Bursting.LeadBroker.Address == "" {
+
+		// If we don't have a leadbroker address, we are at the root
 		hosts = fmt.Sprintf("%s-[%s]", cluster.Name, generateRange(size, 0))
 
 	} else {
@@ -419,12 +427,15 @@ func generateHostlist(cluster *api.MiniCluster, size int32) string {
 		)
 	}
 
-	// Now regardless of where we are, we add the bursted jobs in the same order.
+	// For cases where the Flux Operator determines the hostlist, we need to
+	// add the bursted jobs in the same order.
 	// Any cluster with bursting must share all the bursted hosts across clusters
 	// This ensures that the ranks line up
-	for _, bursted := range cluster.Spec.Flux.Bursting.Clusters {
-		burstedHosts := fmt.Sprintf("%s-[%s]", bursted.Name, generateRange(bursted.Size, 0))
-		hosts = fmt.Sprintf("%s,%s", hosts, burstedHosts)
+	if cluster.Spec.Flux.Bursting.Hostlist == "" {
+		for _, bursted := range cluster.Spec.Flux.Bursting.Clusters {
+			burstedHosts := fmt.Sprintf("%s-[%s]", bursted.Name, generateRange(bursted.Size, 0))
+			hosts = fmt.Sprintf("%s,%s", hosts, burstedHosts)
+		}
 	}
 	return hosts
 }

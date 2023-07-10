@@ -25,9 +25,6 @@
     "Bursting": {
       "description": "Bursting Config For simplicity, we internally handle the name of the job (hostnames)",
       "type": "object",
-      "required": [
-        "clusters"
-      ],
       "properties": {
         "clusters": {
           "description": "External clusters to burst to. Each external cluster must share the same listing to align ranks",
@@ -36,6 +33,11 @@
             "default": {},
             "$ref": "#/definitions/BurstedCluster"
           }
+        },
+        "hostlist": {
+          "description": "Hostlist is a custom hostlist for the broker.toml that includes the local plus bursted cluster. This is typically used for bursting to another resource type, where we can predict the hostnames but they don't follow the same convention as the Flux Operator",
+          "type": "string",
+          "default": ""
         },
         "leadBroker": {
           "description": "The lead broker ip address to join to. E.g., if we burst to cluster 2, this is the address to connect to cluster 1 For the first cluster, this should not be defined",

@@ -34,25 +34,31 @@ class Bursting(object):
     """
     openapi_types = {
         'clusters': 'list[BurstedCluster]',
+        'hostlist': 'str',
         'lead_broker': 'FluxBroker'
     }
 
     attribute_map = {
         'clusters': 'clusters',
+        'hostlist': 'hostlist',
         'lead_broker': 'leadBroker'
     }
 
-    def __init__(self, clusters=None, lead_broker=None, local_vars_configuration=None):  # noqa: E501
+    def __init__(self, clusters=None, hostlist='', lead_broker=None, local_vars_configuration=None):  # noqa: E501
         """Bursting - a model defined in OpenAPI"""  # noqa: E501
         if local_vars_configuration is None:
             local_vars_configuration = Configuration.get_default_copy()
         self.local_vars_configuration = local_vars_configuration
 
         self._clusters = None
+        self._hostlist = None
         self._lead_broker = None
         self.discriminator = None
 
-        self.clusters = clusters
+        if clusters is not None:
+            self.clusters = clusters
+        if hostlist is not None:
+            self.hostlist = hostlist
         if lead_broker is not None:
             self.lead_broker = lead_broker
 
@@ -76,10 +82,31 @@ class Bursting(object):
         :param clusters: The clusters of this Bursting.  # noqa: E501
         :type clusters: list[BurstedCluster]
         """
-        if self.local_vars_configuration.client_side_validation and clusters is None:  # noqa: E501
-            raise ValueError("Invalid value for `clusters`, must not be `None`")  # noqa: E501
 
         self._clusters = clusters
+
+    @property
+    def hostlist(self):
+        """Gets the hostlist of this Bursting.  # noqa: E501
+
+        Hostlist is a custom hostlist for the broker.toml that includes the local plus bursted cluster. This is typically used for bursting to another resource type, where we can predict the hostnames but they don't follow the same convention as the Flux Operator  # noqa: E501
+
+        :return: The hostlist of this Bursting.  # noqa: E501
+        :rtype: str
+        """
+        return self._hostlist
+
+    @hostlist.setter
+    def hostlist(self, hostlist):
+        """Sets the hostlist of this Bursting.
+
+        Hostlist is a custom hostlist for the broker.toml that includes the local plus bursted cluster. This is typically used for bursting to another resource type, where we can predict the hostnames but they don't follow the same convention as the Flux Operator  # noqa: E501
+
+        :param hostlist: The hostlist of this Bursting.  # noqa: E501
+        :type hostlist: str
+        """
+
+        self._hostlist = hostlist
 
     @property
     def lead_broker(self):
