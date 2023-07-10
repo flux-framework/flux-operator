@@ -550,10 +550,11 @@ we might burst to compute engine:
       # In a cloud environment this would be a NodePort
       address: 24.123.50.123
       port: 30093
-      hostlist:
+      hostlist: "flux-sample-[0-3],gffw-compute-a-[001-003]" 
 ```
 
-In the above case, the clusters are not used.
+In the above case, the clusters are not used. The bursting plugin you use will determine
+how the hostnames and address are provided to the remote (second) cluster.
 
 For full examples, see [the bursting](https://github.com/flux-framework/flux-operator/tree/main/examples/experimental/bursting) 
 examples directory.

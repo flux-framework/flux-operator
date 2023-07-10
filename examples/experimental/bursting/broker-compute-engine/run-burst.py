@@ -12,16 +12,6 @@ from fluxburst.client import FluxBurst
 here = os.path.dirname(os.path.abspath(__file__))
 
 
-# This is the dataclass we create with parameters for our plugin.
-# Note that this will eventually come from a config file / the environment
-# We originally had most of these exposed via command line, but we are
-# migrating to an approach where it comes primarily from a config file.
-# Thus, the only command line stuff is the project, or ephemeral list host
-
-# TODO
-# we need to custom generate the munge.key and send up the curve.cert in metadata
-
-
 def get_parser():
     parser = argparse.ArgumentParser(
         description="Experimental Bursting",
