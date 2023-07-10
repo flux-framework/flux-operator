@@ -12,7 +12,7 @@ For the overall design, see the top level [README](../README.md). In summary, fo
 2. The bursted cluster will be on Compute Engine
 
 This is a more complex setup because it requires not just the terraform configs provided by
-flux-burst-compute-engine, but also the image built from [flux-terraform-gcp](https://github.com/converged-computing/flux-terraform-gcp/tree/main/build-images/basic/bursted).
+flux-burst-compute-engine, but also the image built from [flux-terraform-gcp](https://github.com/converged-computing/flux-terraform-gcp/tree/main/build-images/bursted).
 (the repository that hosts the terraform modules). 
 
 ### What should be the same?
