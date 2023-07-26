@@ -51,6 +51,13 @@ func (r *MiniClusterReconciler) getContainers(
 			containerName = defaultName
 		}
 
+		// A container not running flux can only have pre/post sections
+		// in a custom script if we know the entrypoint.
+		if container.GenerateEntrypoint() {
+			startScript := fmt.Sprintf("/flux_operator/start-%d.sh", i)
+			command = []string{"/bin/bash", startScript, container.Command}
+		}
+
 		// Prepare lifescycle commands for the container
 		lifecycle := r.createContainerLifecycle(container)
 
@@ -81,8 +88,17 @@ func (r *MiniClusterReconciler) getContainers(
 		if err != nil {
 			return containers, err
 		}
+
+		addCaps := []corev1.Capability{}
+		for _, cap := range container.SecurityContext.AddCapabilities {
+			addCaps = append(addCaps, corev1.Capability(cap))
+		}
+
 		securityContext := corev1.SecurityContext{
 			Privileged: &container.SecurityContext.Privileged,
+			Capabilities: &corev1.Capabilities{
+				Add: addCaps,
+			},
 		}
 		newContainer := corev1.Container{
 

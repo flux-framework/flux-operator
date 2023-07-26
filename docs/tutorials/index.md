@@ -33,6 +33,9 @@ The following tutorials are provided from their respective directories (and are 
 
  - [K3s](https://github.com/flux-framework/flux-operator/tree/main/examples/nested/k3s/basic): instiatiate k3s inside Flux, and deploy an app.
 
+#### Process Namespace
+
+ - [shared-process-space](https://github.com/flux-framework/flux-operator/tree/main/examples/experimental/shared-process-space): Allow flux to execute a command into another container
 
 ### Machine Learning
 

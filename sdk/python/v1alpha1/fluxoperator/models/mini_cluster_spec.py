@@ -46,6 +46,7 @@ class MiniClusterSpec(object):
         'network': 'Network',
         'pod': 'PodSpec',
         'services': 'list[MiniClusterContainer]',
+        'share_process_namespace': 'bool',
         'size': 'int',
         'tasks': 'int',
         'users': 'list[MiniClusterUser]',
@@ -66,13 +67,14 @@ class MiniClusterSpec(object):
         'network': 'network',
         'pod': 'pod',
         'services': 'services',
+        'share_process_namespace': 'shareProcessNamespace',
         'size': 'size',
         'tasks': 'tasks',
         'users': 'users',
         'volumes': 'volumes'
     }
 
-    def __init__(self, archive=None, cleanup=False, containers=None, deadline_seconds=31500000, flux=None, flux_restful=None, interactive=False, job_labels=None, logging=None, max_size=None, network=None, pod=None, services=None, size=1, tasks=1, users=None, volumes=None, local_vars_configuration=None):  # noqa: E501
+    def __init__(self, archive=None, cleanup=False, containers=None, deadline_seconds=31500000, flux=None, flux_restful=None, interactive=False, job_labels=None, logging=None, max_size=None, network=None, pod=None, services=None, share_process_namespace=False, size=1, tasks=1, users=None, volumes=None, local_vars_configuration=None):  # noqa: E501
         """MiniClusterSpec - a model defined in OpenAPI"""  # noqa: E501
         if local_vars_configuration is None:
             local_vars_configuration = Configuration.get_default_copy()
@@ -91,6 +93,7 @@ class MiniClusterSpec(object):
         self._network = None
         self._pod = None
         self._services = None
+        self._share_process_namespace = None
         self._size = None
         self._tasks = None
         self._users = None
@@ -122,6 +125,8 @@ class MiniClusterSpec(object):
             self.pod = pod
         if services is not None:
             self.services = services
+        if share_process_namespace is not None:
+            self.share_process_namespace = share_process_namespace
         if size is not None:
             self.size = size
         if tasks is not None:
@@ -419,6 +424,29 @@ class MiniClusterSpec(object):
         """
 
         self._services = services
+
+    @property
+    def share_process_namespace(self):
+        """Gets the share_process_namespace of this MiniClusterSpec.  # noqa: E501
+
+        Share process namespace?  # noqa: E501
+
+        :return: The share_process_namespace of this MiniClusterSpec.  # noqa: E501
+        :rtype: bool
+        """
+        return self._share_process_namespace
+
+    @share_process_namespace.setter
+    def share_process_namespace(self, share_process_namespace):
+        """Sets the share_process_namespace of this MiniClusterSpec.
+
+        Share process namespace?  # noqa: E501
+
+        :param share_process_namespace: The share_process_namespace of this MiniClusterSpec.  # noqa: E501
+        :type share_process_namespace: bool
+        """
+
+        self._share_process_namespace = share_process_namespace
 
     @property
     def size(self):

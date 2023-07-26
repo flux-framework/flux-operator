@@ -81,6 +81,16 @@ func getVolumes(cluster *api.MiniCluster) []corev1.Volume {
 			}
 			runnerStartScripts = append(runnerStartScripts, startScript)
 		}
+
+		// A non flux container can also handle custom logic, if command is provided
+		if container.GenerateEntrypoint() {
+			startScript := corev1.KeyToPath{
+				Key:  fmt.Sprintf("start-%d", i),
+				Path: fmt.Sprintf("start-%d.sh", i),
+				Mode: &makeExecutable,
+			}
+			runnerStartScripts = append(runnerStartScripts, startScript)
+		}
 	}
 
 	// If we have Multi User mode, we need to set permission 0644

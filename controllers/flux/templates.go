@@ -25,7 +25,10 @@ var brokerConfigJobManagerPlugin string
 //go:embed templates/wait.sh
 var waitToStartTemplate string
 
-// WaitTemplate populates wait.sh
+//go:embed templates/start.sh
+var sidecarStartTemplate string
+
+// WaitTemplate populates wait.sh and start.sh
 type WaitTemplate struct {
 	FluxToken string // Token to log into the UI, should be consistent across containers
 	FluxUser  string // Username for Flux Restful API

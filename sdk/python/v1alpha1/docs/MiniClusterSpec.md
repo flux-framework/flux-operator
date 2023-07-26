@@ -18,6 +18,7 @@ Name | Type | Description | Notes
 **network** | [**Network**](Network.md) |  | [optional] 
 **pod** | [**PodSpec**](PodSpec.md) |  | [optional] 
 **services** | [**list[MiniClusterContainer]**](MiniClusterContainer.md) | Services are one or more service containers to bring up alongside the MiniCluster. | [optional] 
+**share_process_namespace** | **bool** | Share process namespace? | [optional] [default to False]
 **size** | **int** | Size (number of job pods to run, size of minicluster in pods) This is also the minimum number required to start Flux | [optional] [default to 1]
 **tasks** | **int** | Total number of CPUs being run across entire cluster | [optional] [default to 1]
 **users** | [**list[MiniClusterUser]**](MiniClusterUser.md) | Users of the MiniCluster | [optional] 

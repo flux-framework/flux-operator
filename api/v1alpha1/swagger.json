@@ -436,11 +436,6 @@
           },
           "x-kubernetes-list-type": "atomic"
         },
-        "preCommand": {
-          "description": "Special command to run at beginning of script, directly after asFlux is defined as sudo -u flux -E (so you can change that if desired.) This is only valid if FluxRunner is set (that writes a wait.sh script) This is for the indexed job pods and the certificate generation container.",
-          "type": "string",
-          "default": ""
-        },
         "pullAlways": {
           "description": "Allow the user to dictate pulling By default we pull if not present. Setting this to true will indicate to pull always",
           "type": "boolean",
@@ -629,6 +624,11 @@
             "$ref": "#/definitions/MiniClusterContainer"
           },
           "x-kubernetes-list-type": "atomic"
+        },
+        "shareProcessNamespace": {
+          "description": "Share process namespace?",
+          "type": "boolean",
+          "default": false
         },
         "size": {
           "description": "Size (number of job pods to run, size of minicluster in pods) This is also the minimum number required to start Flux",
@@ -873,6 +873,14 @@
     "SecurityContext": {
       "type": "object",
       "properties": {
+        "addCapabilities": {
+          "description": "Capabilities to add",
+          "type": "array",
+          "items": {
+            "type": "string",
+            "default": ""
+          }
+        },
         "privileged": {
           "description": "Privileged container",
           "type": "boolean"

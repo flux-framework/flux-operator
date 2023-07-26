@@ -829,14 +829,6 @@ func schema__api_v1alpha1__MiniClusterContainer(ref common.ReferenceCallback) co
 							},
 						},
 					},
-					"preCommand": {
-						SchemaProps: spec.SchemaProps{
-							Description: "Special command to run at beginning of script, directly after asFlux is defined as sudo -u flux -E (so you can change that if desired.) This is only valid if FluxRunner is set (that writes a wait.sh script) This is for the indexed job pods and the certificate generation container.",
-							Default:     "",
-							Type:        []string{"string"},
-							Format:      "",
-						},
-					},
 					"lifeCycle": {
 						SchemaProps: spec.SchemaProps{
 							Description: "Lifecycle can handle post start commands, etc.",
@@ -1115,6 +1107,14 @@ func schema__api_v1alpha1__MiniClusterSpec(ref common.ReferenceCallback) common.
 							Description: "Archive to load or save",
 							Default:     map[string]interface{}{},
 							Ref:         ref("./api/v1alpha1/.MiniClusterArchive"),
+						},
+					},
+					"shareProcessNamespace": {
+						SchemaProps: spec.SchemaProps{
+							Description: "Share process namespace?",
+							Default:     false,
+							Type:        []string{"boolean"},
+							Format:      "",
 						},
 					},
 					"fluxRestful": {
@@ -1558,6 +1558,21 @@ func schema__api_v1alpha1__SecurityContext(ref common.ReferenceCallback) common.
 							Description: "Privileged container",
 							Type:        []string{"boolean"},
 							Format:      "",
+						},
+					},
+					"addCapabilities": {
+						SchemaProps: spec.SchemaProps{
+							Description: "Capabilities to add",
+							Type:        []string{"array"},
+							Items: &spec.SchemaOrArray{
+								Schema: &spec.Schema{
+									SchemaProps: spec.SchemaProps{
+										Default: "",
+										Type:    []string{"string"},
+										Format:  "",
+									},
+								},
+							},
 						},
 					},
 				},

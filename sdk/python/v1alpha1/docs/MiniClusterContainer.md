@@ -20,7 +20,6 @@ Name | Type | Description | Notes
 **logs** | **str** | Log output directory | [optional] [default to '']
 **name** | **str** | Container name is only required for non flux runners | [optional] [default to '']
 **ports** | **list[int]** | Ports to be exposed to other containers in the cluster We take a single list of integers and map to the same | [optional] 
-**pre_command** | **str** | Special command to run at beginning of script, directly after asFlux is defined as sudo -u flux -E (so you can change that if desired.) This is only valid if FluxRunner is set (that writes a wait.sh script) This is for the indexed job pods and the certificate generation container. | [optional] [default to '']
 **pull_always** | **bool** | Allow the user to dictate pulling By default we pull if not present. Setting this to true will indicate to pull always | [optional] [default to False]
 **resources** | [**ContainerResources**](ContainerResources.md) |  | [optional] 
 **run_flux** | **bool** | Main container to run flux (only should be one) | [optional] [default to False]
