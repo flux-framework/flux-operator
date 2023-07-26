@@ -21,7 +21,7 @@ spec:
     - image: ghcr.io/flux-framework/flux-restful-api
       runFlux: true
       # This is what we can run in interactive mode
-      command: goshare-cli -s /proc/$GOSHARE_PID/root/dinosaur.sock echo hello world
+      command: goshare-cli -s /proc/$(cat /goshare.pid)/root/dinosaur.sock echo hello world
       commands:
         # users in both containers need to be same
         runFluxAsRoot: true
@@ -45,7 +45,7 @@ spec:
           done
 
           # Keep this around if we want it
-          echo "export GOSHARE_PID=${pid}" > /goshare.pid
+          echo "${pid}" > /goshare.pid
           export GOSHARE_PID=$pid
 
           # Extra sleep to allow socket to start first
