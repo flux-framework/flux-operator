@@ -643,6 +643,13 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#scheduler" class="md-nav__link">
+    <span title="/getting_started/custom-resource-definition.md#scheduler (reference label)" class="md-ellipsis">scheduler</span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#minimalservice" class="md-nav__link">
     <span title="/getting_started/custom-resource-definition.md#minimalservice (reference label)" class="md-ellipsis">minimal<wbr>Service</span>
   </a>
@@ -1543,6 +1550,26 @@ with some listing of arguments, you can specify it as follows:</p>
 </code></pre></div>
 </div>
 <p>In the above, we would add <code class="docutils literal notranslate"><span class="pre">--wrap=strace,-e,network,-tt</span></code> to flux start commands.</p>
+<h4 id="scheduler">scheduler<a class="headerlink" href="#scheduler" title="Permalink to this heading">¶</a></h4>
+<p>Under flux-&gt;scheduler you can define attributes for the scheduler. We currently allow
+setting a custom queue policy. The default (if unset) looks like this for first come first serve:</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><code><span class="nt">flux</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">scheduler</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">queuePolicy</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">fcfs</span>
+</code></pre></div>
+</div>
+<p>To change to a policy that supports backfilling, you can change this to “easy”:</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><code><span class="nt">flux</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">scheduler</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">queuePolicy</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">easy</span>
+</code></pre></div>
+</div>
+<p>And the broker.toml config will update appropriately:</p>
+<div class="highlight-toml notranslate"><div class="highlight"><pre><span></span><code><span class="k">[sched-fluxion-qmanager]</span>
+<span class="n">queue-policy</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;easy&quot;</span>
+</code></pre></div>
+</div>
+<p>You can learn more about queues <a class="reference external" href="https://flux-framework.readthedocs.io/en/latest/guides/admin-guide.html?h=system#adding-queues">here</a>. Please <a class="reference external" href="https://github.com/flux-framework/flux-operator/issues">open an issue</a> if you want support for something that you don’t see. Also note that you can set an entire broker config for more detailed customization.</p>
 <h4 id="minimalservice">minimalService<a class="headerlink" href="#minimalservice" title="Permalink to this heading">¶</a></h4>
 <p>By default, the Flux MiniCluster will be created with a headless service across the cluster,
 meaning that all pods can ping one another via a fully qualified hostname. As an example,

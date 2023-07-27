@@ -358,6 +358,34 @@ flux:
 
 In the above, we would add `--wrap=strace,-e,network,-tt` to flux start commands.
 
+#### scheduler
+
+Under flux->scheduler you can define attributes for the scheduler. We currently allow
+setting a custom queue policy. The default (if unset) looks like this for first come first serve:
+
+```yaml
+flux:
+  scheduler:
+    queuePolicy: fcfs
+```
+
+To change to a policy that supports backfilling, you can change this to "easy":
+
+```yaml
+flux:
+  scheduler:
+    queuePolicy: easy
+```
+
+And the broker.toml config will update appropriately:
+
+```toml
+[sched-fluxion-qmanager]
+queue-policy = "easy"
+```
+
+You can learn more about queues [here](https://flux-framework.readthedocs.io/en/latest/guides/admin-guide.html?h=system#adding-queues). Please [open an issue](https://github.com/flux-framework/flux-operator/issues) if you want support for something that you don't see. Also note that you can set an entire [broker config](#broker-config) for more detailed customization.
+
 #### minimalService
 
 By default, the Flux MiniCluster will be created with a headless service across the cluster,
