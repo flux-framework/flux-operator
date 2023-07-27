@@ -498,6 +498,13 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#workers-completed-too-early" class="md-nav__link">
+    <span title="/development/debugging.md#workers-completed-too-early (reference label)" class="md-ellipsis">Workers completed too early</span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#crd-should-be-installed" class="md-nav__link">
     <span title="/development/debugging.md#crd-should-be-installed (reference label)" class="md-ellipsis">CRD should be installed</span>
   </a>
@@ -774,6 +781,20 @@
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span><span class="nb">kill</span><span class="w"> </span><span class="k">$(</span>lsof<span class="w"> </span>-t<span class="w"> </span>-i:8080<span class="k">)</span>
 </code></pre></div>
 </div>
+<h3 id="workers-completed-too-early">Workers completed too early<a class="headerlink" href="#workers-completed-too-early" title="Permalink to this heading">¶</a></h3>
+<p>If you see that your workers are entering state <code class="docutils literal notranslate"><span class="pre">Completed</span></code> and not connecting to the main broker, first try adding a worker pre command block to sleep (and ensure they start after the main broker):</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><code><span class="nt">commands</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">workerPre</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">sleep 60</span>
+</code></pre></div>
+</div>
+<p>This will fix the error if you have a lot of setup logic and there is some race for the workers and lead broker starting. If that doesn’t work,
+then look at the logs of the lead broker (index 0) and see if there is an obvious error message. If so, this would result in the behavior we see here.
+If that doesn’t give insight, then likely the lead broker is still not working, but it’s hard to see, and your best bet is to set <code class="docutils literal notranslate"><span class="pre">interactive:</span> <span class="pre">true</span></code>
+under the main spec, and then shell into the lead broker container, connect via flux proxy (and that usually looks like this):</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span>sudo<span class="w"> </span>-u<span class="w"> </span>flux<span class="w"> </span>-E<span class="w"> </span><span class="k">$(</span>env<span class="k">)</span><span class="w"> </span>-E<span class="w"> </span><span class="nv">HOME</span><span class="o">=</span>/home/flux<span class="w"> </span>flux<span class="w"> </span>proxy<span class="w"> </span>local:///run/flux/local<span class="w"> </span>bash
+</code></pre></div>
+</div>
+<p>And then try running your command to look for obvious issues.</p>
 <h3 id="crd-should-be-installed">CRD should be installed<a class="headerlink" href="#crd-should-be-installed" title="Permalink to this heading">¶</a></h3>
 <p>If you see something like:</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code><span class="m">1</span>.6605195805812113e+09<span class="w">	</span>ERROR<span class="w">	</span>controller-runtime.source<span class="w">	</span><span class="k">if</span><span class="w"> </span>kind<span class="w"> </span>is<span class="w"> </span>a<span class="w"> </span>CRD,<span class="w"> </span>it<span class="w"> </span>should<span class="w"> </span>be<span class="w"> </span>installed<span class="w"> </span>before<span class="w"> </span>calling<span class="w"> </span>Start<span class="w">	</span><span class="o">{</span><span class="s2">&quot;kind&quot;</span>:<span class="w"> </span><span class="s2">&quot;Flux.flux-framework.org&quot;</span>,<span class="w"> </span><span class="s2">&quot;error&quot;</span>:<span class="w"> </span><span class="s2">&quot;no matches for kind \&quot;Flux\&quot; in version \&quot;flux-framework.org/v1alpha1\&quot;&quot;</span><span class="o">}</span>
@@ -831,7 +852,7 @@ combinations that might be useful.</p>
   <small>
     
       Last update:
-      Jul 10, 2023
+      Jul 27, 2023
     
   </small>
 </div>

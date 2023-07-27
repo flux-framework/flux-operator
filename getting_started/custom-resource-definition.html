@@ -921,6 +921,13 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#workerpre-and-brokerpre" class="md-nav__link">
+    <span title="/getting_started/custom-resource-definition.md#workerpre-and-brokerpre (reference label)" class="md-ellipsis">worker<wbr>Pre and broker<wbr>Pre</span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#post" class="md-nav__link">
     <span title="/getting_started/custom-resource-definition.md#post (reference label)" class="md-ellipsis">post</span>
   </a>
@@ -1991,9 +1998,7 @@ assets to a home directory, so we need to customize the entrypoint for that.</p>
 </code></pre></div>
 </div>
 <h4 id="commands">commands<a class="headerlink" href="#commands" title="Permalink to this heading">¶</a></h4>
-<p>A special “commands” section is available for commands that you want to run in the broker and workers containers,
-but not during certificate generation. As an example, if you print extra output to the certificate generator,
-it will mangle the certificate output. Instead, you could write debug statements in this section.</p>
+<p>A special “commands” section is available for commands that you want to run in the broker and workers containers.</p>
 <h5 id="init">init<a class="headerlink" href="#init" title="Permalink to this heading">¶</a></h5>
 <p>Init happens before everything - at the very beginning of the entrypoint. If you want to customize
 the <code class="docutils literal notranslate"><span class="pre">PATH</span></code>, <code class="docutils literal notranslate"><span class="pre">PYTHONPATH</span></code>, or <code class="docutils literal notranslate"><span class="pre">LD_LIBRARY_PATH</span></code> handed to asFlux you can do that here.</p>
@@ -2015,6 +2020,16 @@ early environment variables are set (e.g., asFlux). Here is an example:</p>
 <span class="w">        </span><span class="no"># Commands that might print to stdout/stderr to debug, etc.</span>
 <span class="w">        </span><span class="no">echo &quot;I am running the pre-command&quot;</span>
 <span class="w">        </span><span class="no">ls /workdir</span>
+</code></pre></div>
+</div>
+<h5 id="workerpre-and-brokerpre">workerPre and brokerPre<a class="headerlink" href="#workerpre-and-brokerpre" title="Permalink to this heading">¶</a></h5>
+<p>This is akin to pre, but only for the broker OR the workers.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><code><span class="n">containers</span><span class="p">:</span>
+  <span class="o">-</span> <span class="n">image</span><span class="p">:</span> <span class="n">my</span><span class="o">-</span><span class="n">flux</span><span class="o">-</span><span class="n">image</span>
+    <span class="o">...</span>
+    <span class="n">commands</span><span class="p">:</span>
+      <span class="n">preWorker</span><span class="p">:</span> <span class="n">echo</span> <span class="n">hello</span> <span class="n">I</span> <span class="n">am</span> <span class="n">a</span> <span class="n">worker</span>
+      <span class="n">preBroker</span><span class="p">:</span> <span class="n">echo</span> <span class="n">hello</span> <span class="n">I</span> <span class="n">am</span> <span class="n">the</span> <span class="n">lead</span> <span class="n">broker</span> 
 </code></pre></div>
 </div>
 <h5 id="post">post<a class="headerlink" href="#post" title="Permalink to this heading">¶</a></h5>
@@ -2269,7 +2284,7 @@ or define your own as follows:</p>
   <small>
     
       Last update:
-      Jul 10, 2023
+      Jul 27, 2023
     
   </small>
 </div>
