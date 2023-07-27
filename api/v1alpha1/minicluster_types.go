@@ -385,6 +385,10 @@ type FluxSpec struct {
 	//+optional
 	CurveCertSecret string `json:"curveCertSecret"`
 
+	// Custom attributes for the fluxion scheduler
+	//+optional
+	Scheduler FluxScheduler `json:"scheduler"`
+
 	// Expect a secret (named according to this string)
 	// for a munge key. This is intended for bursting.
 	// Assumed to be at /etc/munge/munge.key
@@ -402,6 +406,14 @@ type FluxSpec struct {
 	// this is intended for bursting to remote clusters
 	//+optional
 	BrokerConfig string `json:"brokerConfig"`
+}
+
+// FluxScheduler attributes
+type FluxScheduler struct {
+
+	// Scheduler queue policy, defaults to "fcfs" can also be "easy"
+	// +optional
+	QueuePolicy string `json:"queuePolicy"`
 }
 
 // Bursting Config

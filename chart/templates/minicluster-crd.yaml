@@ -371,6 +371,14 @@ spec:
                       be set in the user interface to override here. This is only valid
                       for a FluxRunner "runFlux" true
                     type: string
+                  scheduler:
+                    description: Custom attributes for the fluxion scheduler
+                    properties:
+                      queuePolicy:
+                        description: Scheduler queue policy, defaults to "fcfs" can
+                          also be "easy"
+                        type: string
+                    type: object
                   wrap:
                     description: Commands for flux start --wrap
                     type: string

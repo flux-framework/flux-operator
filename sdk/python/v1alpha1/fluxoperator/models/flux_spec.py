@@ -43,6 +43,7 @@ class FluxSpec(object):
         'minimal_service': 'bool',
         'munge_secret': 'str',
         'option_flags': 'str',
+        'scheduler': 'FluxScheduler',
         'wrap': 'str'
     }
 
@@ -57,10 +58,11 @@ class FluxSpec(object):
         'minimal_service': 'minimalService',
         'munge_secret': 'mungeSecret',
         'option_flags': 'optionFlags',
+        'scheduler': 'scheduler',
         'wrap': 'wrap'
     }
 
-    def __init__(self, broker_config='', bursting=None, connect_timeout='5s', curve_cert='', curve_cert_secret='', install_root='/usr', log_level=6, minimal_service=False, munge_secret='', option_flags='', wrap=None, local_vars_configuration=None):  # noqa: E501
+    def __init__(self, broker_config='', bursting=None, connect_timeout='5s', curve_cert='', curve_cert_secret='', install_root='/usr', log_level=6, minimal_service=False, munge_secret='', option_flags='', scheduler=None, wrap=None, local_vars_configuration=None):  # noqa: E501
         """FluxSpec - a model defined in OpenAPI"""  # noqa: E501
         if local_vars_configuration is None:
             local_vars_configuration = Configuration.get_default_copy()
@@ -76,6 +78,7 @@ class FluxSpec(object):
         self._minimal_service = None
         self._munge_secret = None
         self._option_flags = None
+        self._scheduler = None
         self._wrap = None
         self.discriminator = None
 
@@ -99,6 +102,8 @@ class FluxSpec(object):
             self.munge_secret = munge_secret
         if option_flags is not None:
             self.option_flags = option_flags
+        if scheduler is not None:
+            self.scheduler = scheduler
         if wrap is not None:
             self.wrap = wrap
 
@@ -329,6 +334,27 @@ class FluxSpec(object):
         """
 
         self._option_flags = option_flags
+
+    @property
+    def scheduler(self):
+        """Gets the scheduler of this FluxSpec.  # noqa: E501
+
+
+        :return: The scheduler of this FluxSpec.  # noqa: E501
+        :rtype: FluxScheduler
+        """
+        return self._scheduler
+
+    @scheduler.setter
+    def scheduler(self, scheduler):
+        """Sets the scheduler of this FluxSpec.
+
+
+        :param scheduler: The scheduler of this FluxSpec.  # noqa: E501
+        :type scheduler: FluxScheduler
+        """
+
+        self._scheduler = scheduler
 
     @property
     def wrap(self):

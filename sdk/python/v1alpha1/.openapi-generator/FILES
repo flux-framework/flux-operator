@@ -1,7 +1,6 @@
 .gitignore
 .gitlab-ci.yml
 .travis.yml
-README.md
 docs/BurstedCluster.md
 docs/Bursting.md
 docs/Commands.md
@@ -9,6 +8,7 @@ docs/ContainerResources.md
 docs/ContainerVolume.md
 docs/FluxBroker.md
 docs/FluxRestful.md
+docs/FluxScheduler.md
 docs/FluxSpec.md
 docs/FluxUser.md
 docs/LifeCycle.md
@@ -39,6 +39,7 @@ fluxoperator/models/container_resources.py
 fluxoperator/models/container_volume.py
 fluxoperator/models/flux_broker.py
 fluxoperator/models/flux_restful.py
+fluxoperator/models/flux_scheduler.py
 fluxoperator/models/flux_spec.py
 fluxoperator/models/flux_user.py
 fluxoperator/models/life_cycle.py
@@ -58,18 +59,7 @@ fluxoperator/models/secret.py
 fluxoperator/models/security_context.py
 fluxoperator/rest.py
 git_push.sh
-requirements.txt
 setup.cfg
-setup.py
 test-requirements.txt
 test/__init__.py
-test/test_mini_cluster.py
-test/test_mini_cluster_archive.py
-test/test_mini_cluster_container.py
-test/test_mini_cluster_existing_volume.py
-test/test_mini_cluster_list.py
-test/test_mini_cluster_spec.py
-test/test_mini_cluster_status.py
-test/test_mini_cluster_user.py
-test/test_mini_cluster_volume.py
 tox.ini
