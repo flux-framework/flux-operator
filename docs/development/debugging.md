@@ -24,6 +24,25 @@ One time I messed something up and my metrics server was still running (and I co
 $ kill $(lsof -t -i:8080)
 ```
 
+### Workers completed too early
+
+If you see that your workers are entering state `Completed` and not connecting to the main broker, first try adding a worker pre command block to sleep (and ensure they start after the main broker):
+
+```yaml
+commands:
+  workerPre: sleep 60
+```
+This will fix the error if you have a lot of setup logic and there is some race for the workers and lead broker starting. If that doesn't work,
+then look at the logs of the lead broker (index 0) and see if there is an obvious error message. If so, this would result in the behavior we see here.
+If that doesn't give insight, then likely the lead broker is still not working, but it's hard to see, and your best bet is to set `interactive: true`
+under the main spec, and then shell into the lead broker container, connect via flux proxy (and that usually looks like this):
+
+```bash
+$ sudo -u flux -E $(env) -E HOME=/home/flux flux proxy local:///run/flux/local bash
+```
+
+And then try running your command to look for obvious issues.
+
 ### CRD should be installed
 
 If you see something like:

@@ -68,6 +68,10 @@ type MiniClusterSpec struct {
 	// +optional
 	Archive MiniClusterArchive `json:"archive"`
 
+	// Share process namespace?
+	// +optional
+	ShareProcessNamespace bool `json:"shareProcessNamespace"`
+
 	// Customization to Flux Restful API
 	// There should only be one container to run flux with runFlux
 	// +optional
@@ -548,13 +552,6 @@ type MiniClusterContainer struct {
 	// +optional
 	ExistingVolumes map[string]MiniClusterExistingVolume `json:"existingVolumes"`
 
-	// Special command to run at beginning of script, directly after asFlux
-	// is defined as sudo -u flux -E (so you can change that if desired.)
-	// This is only valid if FluxRunner is set (that writes a wait.sh script)
-	// This is for the indexed job pods and the certificate generation container.
-	// +optional
-	PreCommand string `json:"preCommand"`
-
 	// Lifecycle can handle post start commands, etc.
 	// +optional
 	LifeCycle LifeCycle `json:"lifeCycle"`
@@ -578,6 +575,10 @@ type SecurityContext struct {
 	// Privileged container
 	// +optional
 	Privileged bool `json:"privileged,omitempty"`
+
+	// Capabilities to add
+	// +optional
+	AddCapabilities []string `json:"addCapabilities,omitempty"`
 }
 
 type LifeCycle struct {
@@ -680,6 +681,17 @@ func (f *MiniCluster) MultiUser() bool {
 	return len(f.Spec.Users) > 0
 }
 
+// Determine if a MiniCluster container has custom commands
+// if we have custom commands and a command entrypoint we can support additional custom logic
+func (c *MiniClusterContainer) HasCommands() bool {
+	return c.Commands.Pre != "" || c.Commands.BrokerPre != "" || c.Commands.WorkerPre != "" || c.Commands.Init != "" || c.Commands.Post != ""
+}
+
+// Determine if we should generate a start.sh entrypoint for a sidecar
+func (c *MiniClusterContainer) GenerateEntrypoint() bool {
+	return c.HasCommands() && !c.RunFlux && c.Command != ""
+}
+
 // Return a lookup of all container existing volumes (for the higher level Pod)
 // Volumes are unique by name.
 func (f *MiniCluster) ExistingContainerVolumes() map[string]MiniClusterExistingVolume {
@@ -766,7 +778,7 @@ func (f *MiniCluster) Validate() bool {
 			fmt.Printf("😥️ Service containers always require a name.\n")
 			return false
 		}
-		if service.PreCommand != "" || service.Commands.Pre != "" ||
+		if service.Commands.Pre != "" ||
 			service.Commands.BrokerPre != "" || service.Commands.WorkerPre != "" {
 			fmt.Printf("😥️ Services do not support Commands.\n")
 			return false
@@ -829,6 +841,12 @@ func (f *MiniCluster) Validate() bool {
 		fmt.Printf("🤓 %s.Command %s\n", name, container.Command)
 		fmt.Printf("🤓 %s.FluxRunner %t\n", name, container.RunFlux)
 
+		// A non-flux runner container with any commands also needs a command
+		// Don't allow the user to specify commands without a main command!
+		if !container.RunFlux && container.HasCommands() && container.Command == "" {
+			fmt.Printf("😥️ %s has commands, but not a main entrypoint command. Both are required to customize entrypoint logic..\n", name)
+			return false
+		}
 		// Launcher mode does not work with batch
 		if container.Launcher && container.Batch {
 			fmt.Printf("😥️ %s is indicated for batch and launcher, choose one.\n", name)

@@ -54,7 +54,7 @@ func (r *MiniClusterReconciler) ensureMiniCluster(
 		return result, err
 	}
 
-	// Add initial config map with entrypoint scripts (wait.sh, start.sh, empty update_hosts.sh)
+	// Add initial config map with entrypoint scripts (wait.sh, start.sh, etc.)
 	_, result, err = r.getConfigMap(ctx, cluster, "entrypoint", cluster.Name+entrypointSuffix)
 	if err != nil {
 		return result, err
@@ -348,12 +348,24 @@ func (r *MiniClusterReconciler) getConfigMap(
 				// meaning a Flux Runner.
 				for i, container := range cluster.Spec.Containers {
 					if container.RunFlux {
+						r.log.Info("✨ Generating main flux container wait.sh entrypoint ✨")
 						waitScriptID := fmt.Sprintf("wait-%d", i)
-						waitScript, err := generateWaitScript(cluster, i)
+						waitScript, err := generateEntrypointScript(cluster, i, "wait-sh", waitToStartTemplate)
 						if err != nil {
 							return existing, ctrl.Result{}, err
 						}
 						data[waitScriptID] = waitScript
+					}
+
+					// Custom logic for a sidecar container alongside flux
+					if container.GenerateEntrypoint() {
+						r.log.Info("✨ Generating sidecar container start.sh entrypoint ✨")
+						startScriptID := fmt.Sprintf("start-%d", i)
+						startScript, err := generateEntrypointScript(cluster, i, "start-sh", sidecarStartTemplate)
+						if err != nil {
+							return existing, ctrl.Result{}, err
+						}
+						data[startScriptID] = startScript
 					}
 				}
 			}
@@ -487,8 +499,13 @@ func getRequiredRanks(cluster *api.MiniCluster) string {
 	return generateRange(cluster.Spec.Size, 0)
 }
 
-// generateWaitScript generates the main script to start everything up!
-func generateWaitScript(cluster *api.MiniCluster, containerIndex int) (string, error) {
+// generateEntrypointScript generates an entrypoint script to start everything up!
+func generateEntrypointScript(
+	cluster *api.MiniCluster,
+	containerIndex int,
+	templateName string,
+	templateScriptName string,
+) (string, error) {
 
 	container := cluster.Spec.Containers[containerIndex]
 	mainHost := fmt.Sprintf("%s-0", cluster.Name)
@@ -534,7 +551,7 @@ func generateWaitScript(cluster *api.MiniCluster, containerIndex int) (string, e
 		Batch:         batchCommand,
 		RequiredRanks: requiredRanks,
 	}
-	t, err := template.New("wait-sh").Parse(waitToStartTemplate)
+	t, err := template.New(templateName).Parse(templateScriptName)
 	if err != nil {
 		return "", err
 	}

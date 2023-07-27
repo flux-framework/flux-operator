@@ -1,0 +1,74 @@
+apiVersion: flux-framework.org/v1alpha1
+kind: MiniCluster
+metadata:
+  name: flux-sample
+  namespace: flux-operator
+spec:
+  size: 4
+  shareProcessNamespace: true
+
+  # This allows us to see zeromq and debug logging
+  flux:
+    logLevel: 7
+
+  logging:
+    zeromq: true
+
+  # This is a list because a pod can support multiple containers
+  containers:
+  
+     # The client container (issuing commands) has flux
+    - image: ghcr.io/flux-framework/flux-restful-api
+      runFlux: true
+      # This is what we can run in interactive mode
+      command: goshare-cli -s /proc/$(cat /goshare.pid)/root/dinosaur.sock echo hello world
+      commands:
+        # users in both containers need to be same
+        runFluxAsRoot: true
+        pre: |
+          wget https://github.com/converged-computing/goshare/releases/download/2023-07-26-rc2/client
+          chmod +x ./client
+          mv ./client /bin/goshare-cli
+
+          # This block ensures we have the pid of the running client before continuing
+          # I hope we can improve on this!
+          sleep 20
+          while true
+            do
+            echo "Looking for PID for goshare-srv"
+            pid=$(ps aux | grep -i "goshare-srv -s /dinosaur.sock" | grep -Eiv "flux_operator" | grep -Eiv "grep" | awk -v OFS=, '{print $1, $2}' |  head -n 1 | jq -R 'split(",") | {user: .[0], pid: .[1]}' | jq -r .pid)
+            if [[ "${pid}" != "" ]]; then
+                echo "Found PID ${pid} for goshare-srv"
+                break
+            fi
+            sleep 3
+          done
+
+          # Keep this around if we want it
+          echo "${pid}" > /goshare.pid
+          export GOSHARE_PID=$pid
+
+          # Extra sleep to allow socket to start first
+          sleep 20
+
+          # This works running outside of flux
+          echo "Running hello world"
+          goshare-cli -s /proc/$GOSHARE_PID/root/dinosaur.sock echo hello world
+
+          echo "Running lammps"
+          goshare-cli -s /proc/$GOSHARE_PID/root/dinosaur.sock mpirun lmp -v x 1 -v y 1 -v z 1 -in in.reaxc.hns -nocite
+
+      securityContext:
+        addCapabilities:
+          - SYS_PTRACE
+
+    - image: ghcr.io/rse-ops/vanilla-lammps:tag-latest
+      command: exec goshare-srv -s /dinosaur.sock
+      name: server
+
+      # The server expects to receive commands
+      commands:
+        pre: |
+          wget https://github.com/converged-computing/goshare/releases/download/2023-07-26-rc2/server
+          chmod +x ./server
+          mv ./server /bin/goshare-srv

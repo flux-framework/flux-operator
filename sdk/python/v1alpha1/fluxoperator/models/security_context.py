@@ -33,24 +33,52 @@ class SecurityContext(object):
                             and the value is json key in definition.
     """
     openapi_types = {
+        'add_capabilities': 'list[str]',
         'privileged': 'bool'
     }
 
     attribute_map = {
+        'add_capabilities': 'addCapabilities',
         'privileged': 'privileged'
     }
 
-    def __init__(self, privileged=None, local_vars_configuration=None):  # noqa: E501
+    def __init__(self, add_capabilities=None, privileged=None, local_vars_configuration=None):  # noqa: E501
         """SecurityContext - a model defined in OpenAPI"""  # noqa: E501
         if local_vars_configuration is None:
             local_vars_configuration = Configuration.get_default_copy()
         self.local_vars_configuration = local_vars_configuration
 
+        self._add_capabilities = None
         self._privileged = None
         self.discriminator = None
 
+        if add_capabilities is not None:
+            self.add_capabilities = add_capabilities
         if privileged is not None:
             self.privileged = privileged
+
+    @property
+    def add_capabilities(self):
+        """Gets the add_capabilities of this SecurityContext.  # noqa: E501
+
+        Capabilities to add  # noqa: E501
+
+        :return: The add_capabilities of this SecurityContext.  # noqa: E501
+        :rtype: list[str]
+        """
+        return self._add_capabilities
+
+    @add_capabilities.setter
+    def add_capabilities(self, add_capabilities):
+        """Sets the add_capabilities of this SecurityContext.
+
+        Capabilities to add  # noqa: E501
+
+        :param add_capabilities: The add_capabilities of this SecurityContext.  # noqa: E501
+        :type add_capabilities: list[str]
+        """
+
+        self._add_capabilities = add_capabilities
 
     @property
     def privileged(self):

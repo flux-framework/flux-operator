@@ -45,9 +45,6 @@ asFlux="${asSudo} -E HOME=/home/${fluxuser}"{{ else }}
 asFlux="sudo -u ${fluxuser} -E PYTHONPATH=$PYTHONPATH -E PATH=$PATH -E LD_LIBRARY_PATH=${LD_LIBRARY_PATH} -E HOME=/home/${fluxuser}"
 {{ end }}
 
-# If any preCommand logic is defined
-{{ .Container.PreCommand}} {{ if .Spec.Logging.Quiet }}> /dev/null 2>&1{{ end }}
-
 # And pre command logic that isn't passed to the certificate generator
 {{ .Container.Commands.Pre}} {{ if .Spec.Logging.Quiet }}> /dev/null 2>&1{{ end }}
 

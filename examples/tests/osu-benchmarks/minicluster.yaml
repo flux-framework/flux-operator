@@ -21,9 +21,10 @@ spec:
     - image: ghcr.io/rse-ops/osu-microbench:app-latest
 
       # custom preCommand logic (run at start of script)
-      preCommand: |
-        source /etc/profile.d/z10_spack_environment.sh
-        asFlux="sudo -u flux -E PYTHONPATH=$PYTHONPATH"
+      command: 
+        pre: |
+          source /etc/profile.d/z10_spack_environment.sh
+          asFlux="sudo -u flux -E PYTHONPATH=$PYTHONPATH"
 
       # While these aren't set, these are the workdir and command for a benchmark
       workingDir: /opt/osu-benchmark/build.openmpi/libexec/osu-micro-benchmarks/mpi/one-sided

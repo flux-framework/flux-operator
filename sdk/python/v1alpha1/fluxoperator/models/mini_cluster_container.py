@@ -49,7 +49,6 @@ class MiniClusterContainer(object):
         'logs': 'str',
         'name': 'str',
         'ports': 'list[int]',
-        'pre_command': 'str',
         'pull_always': 'bool',
         'resources': 'ContainerResources',
         'run_flux': 'bool',
@@ -76,7 +75,6 @@ class MiniClusterContainer(object):
         'logs': 'logs',
         'name': 'name',
         'ports': 'ports',
-        'pre_command': 'preCommand',
         'pull_always': 'pullAlways',
         'resources': 'resources',
         'run_flux': 'runFlux',
@@ -86,7 +84,7 @@ class MiniClusterContainer(object):
         'working_dir': 'workingDir'
     }
 
-    def __init__(self, batch=False, batch_raw=False, command='', commands=None, cores=0, diagnostics=False, environment=None, existing_volumes=None, flux_user=None, image='ghcr.io/rse-ops/accounting:app-latest', image_pull_secret='', launcher=False, life_cycle=None, logs='', name='', ports=None, pre_command='', pull_always=False, resources=None, run_flux=False, secrets=None, security_context=None, volumes=None, working_dir='', local_vars_configuration=None):  # noqa: E501
+    def __init__(self, batch=False, batch_raw=False, command='', commands=None, cores=0, diagnostics=False, environment=None, existing_volumes=None, flux_user=None, image='ghcr.io/rse-ops/accounting:app-latest', image_pull_secret='', launcher=False, life_cycle=None, logs='', name='', ports=None, pull_always=False, resources=None, run_flux=False, secrets=None, security_context=None, volumes=None, working_dir='', local_vars_configuration=None):  # noqa: E501
         """MiniClusterContainer - a model defined in OpenAPI"""  # noqa: E501
         if local_vars_configuration is None:
             local_vars_configuration = Configuration.get_default_copy()
@@ -108,7 +106,6 @@ class MiniClusterContainer(object):
         self._logs = None
         self._name = None
         self._ports = None
-        self._pre_command = None
         self._pull_always = None
         self._resources = None
         self._run_flux = None
@@ -150,8 +147,6 @@ class MiniClusterContainer(object):
             self.name = name
         if ports is not None:
             self.ports = ports
-        if pre_command is not None:
-            self.pre_command = pre_command
         if pull_always is not None:
             self.pull_always = pull_always
         if resources is not None:
@@ -528,29 +523,6 @@ class MiniClusterContainer(object):
         """
 
         self._ports = ports
-
-    @property
-    def pre_command(self):
-        """Gets the pre_command of this MiniClusterContainer.  # noqa: E501
-
-        Special command to run at beginning of script, directly after asFlux is defined as sudo -u flux -E (so you can change that if desired.) This is only valid if FluxRunner is set (that writes a wait.sh script) This is for the indexed job pods and the certificate generation container.  # noqa: E501
-
-        :return: The pre_command of this MiniClusterContainer.  # noqa: E501
-        :rtype: str
-        """
-        return self._pre_command
-
-    @pre_command.setter
-    def pre_command(self, pre_command):
-        """Sets the pre_command of this MiniClusterContainer.
-
-        Special command to run at beginning of script, directly after asFlux is defined as sudo -u flux -E (so you can change that if desired.) This is only valid if FluxRunner is set (that writes a wait.sh script) This is for the indexed job pods and the certificate generation container.  # noqa: E501
-
-        :param pre_command: The pre_command of this MiniClusterContainer.  # noqa: E501
-        :type pre_command: str
-        """
-
-        self._pre_command = pre_command
 
     @property
     def pull_always(self):

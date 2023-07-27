@@ -966,9 +966,7 @@ asFlux="sudo -u flux -E PYTHONPATH=$PYTHONPATH -E PATH=$PATH -E HOME=/home/flux"
 
 #### commands
 
-A special "commands" section is available for commands that you want to run in the broker and workers containers,
-but not during certificate generation. As an example, if you print extra output to the certificate generator,
-it will mangle the certificate output. Instead, you could write debug statements in this section.
+A special "commands" section is available for commands that you want to run in the broker and workers containers. 
 
 ##### init
 
@@ -998,6 +996,19 @@ containers:
         # Commands that might print to stdout/stderr to debug, etc.
         echo "I am running the pre-command"
         ls /workdir
+```
+
+##### workerPre and brokerPre
+
+This is akin to pre, but only for the broker OR the workers.
+
+```
+containers:
+  - image: my-flux-image
+    ...
+    commands:
+      preWorker: echo hello I am a worker
+      preBroker: echo hello I am the lead broker 
 ```
 
 ##### post
