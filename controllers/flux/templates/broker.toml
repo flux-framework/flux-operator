@@ -25,3 +25,9 @@ hosts = [{host="{{ .Spec.Flux.Bursting.LeadBroker.Address }}", bind="tcp://eth0:
 dbpath = "/var/lib/flux/job-archive.sqlite"
 period = "1m"
 busytimeout = "50s"
+
+# Configure the flux-sched (fluxion) scheduler policies
+# The 'lonodex' match policy selects node-exclusive scheduling, and can be
+# commented out if jobs may share nodes.
+[sched-fluxion-qmanager]
+queue-policy = "{{ if .Spec.Flux.Scheduler.QueuePolicy }}{{ .Spec.Flux.Scheduler.QueuePolicy }}{{ else }}fcfs{{ end }}"

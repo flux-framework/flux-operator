@@ -31,6 +31,7 @@ func GetOpenAPIDefinitions(ref common.ReferenceCallback) map[string]common.OpenA
 		"./api/v1alpha1/.ContainerVolume":           schema__api_v1alpha1__ContainerVolume(ref),
 		"./api/v1alpha1/.FluxBroker":                schema__api_v1alpha1__FluxBroker(ref),
 		"./api/v1alpha1/.FluxRestful":               schema__api_v1alpha1__FluxRestful(ref),
+		"./api/v1alpha1/.FluxScheduler":             schema__api_v1alpha1__FluxScheduler(ref),
 		"./api/v1alpha1/.FluxSpec":                  schema__api_v1alpha1__FluxSpec(ref),
 		"./api/v1alpha1/.FluxUser":                  schema__api_v1alpha1__FluxUser(ref),
 		"./api/v1alpha1/.LifeCycle":                 schema__api_v1alpha1__LifeCycle(ref),
@@ -359,6 +360,27 @@ func schema__api_v1alpha1__FluxRestful(ref common.ReferenceCallback) common.Open
 	}
 }
 
+func schema__api_v1alpha1__FluxScheduler(ref common.ReferenceCallback) common.OpenAPIDefinition {
+	return common.OpenAPIDefinition{
+		Schema: spec.Schema{
+			SchemaProps: spec.SchemaProps{
+				Description: "FluxScheduler attributes",
+				Type:        []string{"object"},
+				Properties: map[string]spec.Schema{
+					"queuePolicy": {
+						SchemaProps: spec.SchemaProps{
+							Description: "Scheduler queue policy, defaults to \"fcfs\" can also be \"easy\"",
+							Default:     "",
+							Type:        []string{"string"},
+							Format:      "",
+						},
+					},
+				},
+			},
+		},
+	}
+}
+
 func schema__api_v1alpha1__FluxSpec(ref common.ReferenceCallback) common.OpenAPIDefinition {
 	return common.OpenAPIDefinition{
 		Schema: spec.Schema{
@@ -428,6 +450,13 @@ func schema__api_v1alpha1__FluxSpec(ref common.ReferenceCallback) common.OpenAPI
 							Format:      "",
 						},
 					},
+					"scheduler": {
+						SchemaProps: spec.SchemaProps{
+							Description: "Custom attributes for the fluxion scheduler",
+							Default:     map[string]interface{}{},
+							Ref:         ref("./api/v1alpha1/.FluxScheduler"),
+						},
+					},
 					"mungeSecret": {
 						SchemaProps: spec.SchemaProps{
 							Description: "Expect a secret (named according to this string) for a munge key. This is intended for bursting. Assumed to be at /etc/munge/munge.key This is binary data.",
@@ -455,7 +484,7 @@ func schema__api_v1alpha1__FluxSpec(ref common.ReferenceCallback) common.OpenAPI
 			},
 		},
 		Dependencies: []string{
-			"./api/v1alpha1/.Bursting"},
+			"./api/v1alpha1/.Bursting", "./api/v1alpha1/.FluxScheduler"},
 	}
 }
 
