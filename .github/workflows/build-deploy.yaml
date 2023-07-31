@@ -40,7 +40,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        command: [bundle, catalog, docker]
+        command: [docker]
 
     name: make and build ${{ matrix.command }}
     steps:
