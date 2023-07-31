@@ -44,7 +44,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        command: [bundle, catalog, docker]
+        command: [docker]
     name: make and build ${{ matrix.command }}
     steps:
     - name: Checkout Repository
@@ -97,7 +97,6 @@ jobs:
       run: |
         export PATH="/usr/share/miniconda/bin:$PATH"
         source activate fo
-        pip install -e .
         pip install setuptools wheel twine
     - name: Build and publish
       env:
@@ -108,6 +107,7 @@ jobs:
         export PATH="/usr/share/miniconda/bin:$PATH"
         source activate fo
         cd sdk/python/v1alpha1/
+        pip install -e .
         python setup.py sdist bdist_wheel
         cd dist
         wheelfile=$(ls fluxoperator-*.whl)
