@@ -114,9 +114,9 @@ html_theme_options = {
         "repo": "fontawesome/brands/github",
         "edit": "material/file-edit-outline",
     },
+    "site_url": "https://flux-framework.org/flux-operator/",
     "repo_url": "https://github.com/flux-framework/flux-operator/",
     "repo_name": "Flux Operator",
-    "repo_type": "github",
     "edit_uri": "blob/main/docs",
     "globaltoc_collapse": True,
     "features": [
@@ -142,7 +142,7 @@ html_theme_options = {
             "primary": "blue",
             "accent": "light-blue",
             "toggle": {
-                "icon": "material/lightbulb-outline",
+                "icon": "material/weather-night",
                 "name": "Switch to dark mode",
             },
         },
@@ -152,7 +152,7 @@ html_theme_options = {
             "primary": "blue",
             "accent": "light-blue",
             "toggle": {
-                "icon": "material/lightbulb",
+                "icon": "material/weather-sunny",
                 "name": "Switch to light mode",
             },
         },
