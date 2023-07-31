@@ -115,6 +115,7 @@ jobs:
         wheelfile=$(echo "$wheelfile" | sed "s/-py3-none-any.whl//")
         echo "Release for Python is ${wheelfile}"
         echo "Release for flux operator is ${tag}"
+        cd ../
         if [[ "${wheelfile}" == "${tag}" ]]; then
             echo "Versions are correct, publishing."          
             twine upload dist/*
