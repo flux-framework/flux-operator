@@ -152,7 +152,7 @@
           <input class="md-option" data-md-color-media="(prefers-color-scheme: light)" data-md-color-scheme="default" data-md-color-primary="blue" data-md-color-accent="light-blue"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_1">
           
             <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_2" hidden>
-              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 2a7 7 0 0 1 7 7c0 2.38-1.19 4.47-3 5.74V17a1 1 0 0 1-1 1H9a1 1 0 0 1-1-1v-2.26C6.19 13.47 5 11.38 5 9a7 7 0 0 1 7-7M9 21v-1h6v1a1 1 0 0 1-1 1h-4a1 1 0 0 1-1-1m3-17a5 5 0 0 0-5 5c0 2.05 1.23 3.81 3 4.58V16h4v-2.42c1.77-.77 3-2.53 3-4.58a5 5 0 0 0-5-5Z"/></svg>
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m17.75 4.09-2.53 1.94.91 3.06-2.63-1.81-2.63 1.81.91-3.06-2.53-1.94L12.44 4l1.06-3 1.06 3 3.19.09m3.5 6.91-1.64 1.25.59 1.98-1.7-1.17-1.7 1.17.59-1.98L15.75 11l2.06-.05L18.5 9l.69 1.95 2.06.05m-2.28 4.95c.83-.08 1.72 1.1 1.19 1.85-.32.45-.66.87-1.08 1.27C15.17 23 8.84 23 4.94 19.07c-3.91-3.9-3.91-10.24 0-14.14.4-.4.82-.76 1.27-1.08.75-.53 1.93.36 1.85 1.19-.27 2.86.69 5.83 2.89 8.02a9.96 9.96 0 0 0 8.02 2.89m-1.64 2.02a12.08 12.08 0 0 1-7.8-3.47c-2.17-2.19-3.33-5-3.49-7.82-2.81 3.14-2.7 7.96.31 10.98 3.02 3.01 7.84 3.12 10.98.31Z"/></svg>
             </label>
           
         
@@ -161,7 +161,7 @@
           <input class="md-option" data-md-color-media="(prefers-color-scheme: dark)" data-md-color-scheme="slate" data-md-color-primary="blue" data-md-color-accent="light-blue"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_2">
           
             <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_1" hidden>
-              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 2a7 7 0 0 0-7 7c0 2.38 1.19 4.47 3 5.74V17a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1v-2.26c1.81-1.27 3-3.36 3-5.74a7 7 0 0 0-7-7M9 21a1 1 0 0 0 1 1h4a1 1 0 0 0 1-1v-1H9v1Z"/></svg>
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 7a5 5 0 0 1 5 5 5 5 0 0 1-5 5 5 5 0 0 1-5-5 5 5 0 0 1 5-5m0 2a3 3 0 0 0-3 3 3 3 0 0 0 3 3 3 3 0 0 0 3-3 3 3 0 0 0-3-3m0-7 2.39 3.42C13.65 5.15 12.84 5 12 5c-.84 0-1.65.15-2.39.42L12 2M3.34 7l4.16-.35A7.2 7.2 0 0 0 5.94 8.5c-.44.74-.69 1.5-.83 2.29L3.34 7m.02 10 1.76-3.77a7.131 7.131 0 0 0 2.38 4.14L3.36 17M20.65 7l-1.77 3.79a7.023 7.023 0 0 0-2.38-4.15l4.15.36m-.01 10-4.14.36c.59-.51 1.12-1.14 1.54-1.86.42-.73.69-1.5.83-2.29L20.64 17M12 22l-2.41-3.44c.74.27 1.55.44 2.41.44.82 0 1.63-.17 2.37-.44L12 22Z"/></svg>
             </label>
           
         
@@ -1104,77 +1104,77 @@ variables:</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span>helm<span class="w"> </span>show<span class="w"> </span>values<span class="w"> </span>ibm-helm/ibm-object-storage-plugin
 </code></pre></div>
 </div>
-<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><code>replicaCount: 1
-maxUnavailableNodeCount: 1
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><code><span class="nt">replicaCount</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1</span>
+<span class="nt">maxUnavailableNodeCount</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1</span>
 
-# Change license to true to indicate have read and agreed to license agreement
-# https://www.apache.org/licenses/LICENSE-2.0
-license: false
+<span class="c1"># Change license to true to indicate have read and agreed to license agreement</span>
+<span class="c1"># https://www.apache.org/licenses/LICENSE-2.0</span>
+<span class="nt">license</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
 
-image:
-  providerImage:
-    # This image is required only for IBM Cloud clusters
-    ibmContainerRegistry: icr.io/ibm/ibmcloud-provider-storage:1.30.6
-  pluginImage:
-    ibmContainerRegistry: icr.io/ibm/ibmcloud-object-storage-plugin@sha256:ce509caa7a47c3329cb4d854e0b3763081ac725901e40d5e57fe93b6cd125243
-    publicRegistry: icr.io/cpopen/ibmcloud-object-storage-plugin@sha256:ce509caa7a47c3329cb4d854e0b3763081ac725901e40d5e57fe93b6cd125243
-  driverImage:
-    ibmContainerRegistry: icr.io/ibm/ibmcloud-object-storage-driver@sha256:8c91974660bf98efc772f369b828b3dbcea5d6829cbd85e6321884f4c4eabe09
-    publicRegistry: icr.io/cpopen/ibmcloud-object-storage-driver@sha256:8c91974660bf98efc772f369b828b3dbcea5d6829cbd85e6321884f4c4eabe09
-  pullPolicy: Always
+<span class="nt">image</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">providerImage</span><span class="p">:</span>
+<span class="w">    </span><span class="c1"># This image is required only for IBM Cloud clusters</span>
+<span class="w">    </span><span class="nt">ibmContainerRegistry</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">icr.io/ibm/ibmcloud-provider-storage:1.30.6</span>
+<span class="w">  </span><span class="nt">pluginImage</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">ibmContainerRegistry</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">icr.io/ibm/ibmcloud-object-storage-plugin@sha256:ce509caa7a47c3329cb4d854e0b3763081ac725901e40d5e57fe93b6cd125243</span>
+<span class="w">    </span><span class="nt">publicRegistry</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">icr.io/cpopen/ibmcloud-object-storage-plugin@sha256:ce509caa7a47c3329cb4d854e0b3763081ac725901e40d5e57fe93b6cd125243</span>
+<span class="w">  </span><span class="nt">driverImage</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">ibmContainerRegistry</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">icr.io/ibm/ibmcloud-object-storage-driver@sha256:8c91974660bf98efc772f369b828b3dbcea5d6829cbd85e6321884f4c4eabe09</span>
+<span class="w">    </span><span class="nt">publicRegistry</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">icr.io/cpopen/ibmcloud-object-storage-driver@sha256:8c91974660bf98efc772f369b828b3dbcea5d6829cbd85e6321884f4c4eabe09</span>
+<span class="w">  </span><span class="nt">pullPolicy</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Always</span>
 
-# IAM endpoint url
-iamEndpoint: https://iam.cloud.ibm.com
-iamEndpointVPC: https://private.iam.cloud.ibm.com
+<span class="c1"># IAM endpoint url</span>
+<span class="nt">iamEndpoint</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">https://iam.cloud.ibm.com</span>
+<span class="nt">iamEndpointVPC</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">https://private.iam.cloud.ibm.com</span>
 
-# IBMC || IBMC-VPC || RHOCP || SATELLITE
-provider: RHOCP
+<span class="c1"># IBMC || IBMC-VPC || RHOCP || SATELLITE</span>
+<span class="nt">provider</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">RHOCP</span>
 
-# Container platform [ K8S vs OpenShift ]
-platform: OpenShift
+<span class="c1"># Container platform [ K8S vs OpenShift ]</span>
+<span class="nt">platform</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">OpenShift</span>
 
-# Datacenter name where cluster is deployed (required only for IKS)
-dcname: &quot;&quot;
-region: &quot;&quot;
-# Worker node&#39;s OS [ redhat || debian ]
-workerOS: redhat
+<span class="c1"># Datacenter name where cluster is deployed (required only for IKS)</span>
+<span class="nt">dcname</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;&quot;</span>
+<span class="nt">region</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;&quot;</span>
+<span class="c1"># Worker node&#39;s OS [ redhat || debian ]</span>
+<span class="nt">workerOS</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">redhat</span>
 
-# COS endpoints and COS storageClass configuration
-# For satellite clusters, to use aws, wasabi or ibm object storage, please provide the s3Provider(aws/wasabi/ibm) and respective storageClass(region) values.
-# If user provides all 3 values endpoint, storageClass and s3Provider, precedence is given to storageClass and s3Provider.
-# To input endpoint explicitly, input only endpoint and storageClass and skip s3Provider.
-# For non-satellite rhocp clusters, please provide cos endpoint and cos storageclass.
+<span class="c1"># COS endpoints and COS storageClass configuration</span>
+<span class="c1"># For satellite clusters, to use aws, wasabi or ibm object storage, please provide the s3Provider(aws/wasabi/ibm) and respective storageClass(region) values.</span>
+<span class="c1"># If user provides all 3 values endpoint, storageClass and s3Provider, precedence is given to storageClass and s3Provider.</span>
+<span class="c1"># To input endpoint explicitly, input only endpoint and storageClass and skip s3Provider.</span>
+<span class="c1"># For non-satellite rhocp clusters, please provide cos endpoint and cos storageclass.</span>
 
-cos:
-  # The s3 endpoint url for the targeted object storage service; format - https://&lt;Endpoint URL&gt;
-  endpoint: &quot;NA&quot;
-  # The region in which the bucket has to be created as per the object storage service provider, ex - us-south
-  storageClass: &quot;&quot;
-  # Supported object storage service providers are aws, ibm, wasabi
-  s3Provider: &quot;&quot;
+<span class="nt">cos</span><span class="p">:</span>
+<span class="w">  </span><span class="c1"># The s3 endpoint url for the targeted object storage service; format - https://&lt;Endpoint URL&gt;</span>
+<span class="w">  </span><span class="nt">endpoint</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;NA&quot;</span>
+<span class="w">  </span><span class="c1"># The region in which the bucket has to be created as per the object storage service provider, ex - us-south</span>
+<span class="w">  </span><span class="nt">storageClass</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;&quot;</span>
+<span class="w">  </span><span class="c1"># Supported object storage service providers are aws, ibm, wasabi</span>
+<span class="w">  </span><span class="nt">s3Provider</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;&quot;</span>
 
-secondaryValueFile: ibm/values.yaml
-secondaryValueFileSat: satellite/values.yaml
+<span class="nt">secondaryValueFile</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ibm/values.yaml</span>
+<span class="nt">secondaryValueFileSat</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">satellite/values.yaml</span>
 
-arch: amd64
+<span class="nt">arch</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">amd64</span>
 
-resource:
-  memory: 500Mi
-  cpu: 500m
-  ephemeralStorageReq: 5Mi
-  ephemeralStorageLimit: 105Mi
+<span class="nt">resource</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">memory</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">500Mi</span>
+<span class="w">  </span><span class="nt">cpu</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">500m</span>
+<span class="w">  </span><span class="nt">ephemeralStorageReq</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">5Mi</span>
+<span class="w">  </span><span class="nt">ephemeralStorageLimit</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">105Mi</span>
 
-# /etc/kubernetes for RHOCP else /usr/libexec/kubernetes
-kubeDriver: /usr/libexec/kubernetes
+<span class="c1"># /etc/kubernetes for RHOCP else /usr/libexec/kubernetes</span>
+<span class="nt">kubeDriver</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">/usr/libexec/kubernetes</span>
 
-bucketAccessPolicy: false
+<span class="nt">bucketAccessPolicy</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
 
-quotaLimit: false
+<span class="nt">quotaLimit</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
 
-allowCrossNsSecret: true
+<span class="nt">allowCrossNsSecret</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
 
-# current and previous
-s3fsVersion: current
+<span class="c1"># current and previous</span>
+<span class="nt">s3fsVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">current</span>
 </code></pre></div>
 </div>
 <p>Of the values we can set, we likely want to set the following:</p>
