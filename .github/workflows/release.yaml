@@ -134,8 +134,7 @@ jobs:
       with:
         name: Flux Operator Release v${{ env.tag }}
         tag_name: ${{ env.tag }}
-        body_path: CHANGELOG.md
-        body: "flux operator release ${{ env.tag }}"
+        generate_release_notes: true
         files: |
           examples/dist/flux-operator-arm.yaml
           examples/dist/flux-operator.yaml

@@ -7,31 +7,44 @@ on new functionality or features for the Flux Operator, see our [Developer Guide
 
 ## Containers Available
 
-All containers are provided under [ghcr.io/flux-framework/flux-operator](https://github.com/flux-framework/flux-operator/pkgs/container/flux-operator). The latest tag is the current main branch, a "bleeding edge" version,
-and we provide the other pinned containers in case you want a previous version:
+All containers are provided under [ghcr.io/flux-framework/flux-operator](https://github.com/flux-framework/flux-operator/pkgs/container/flux-operator). The latest tag is the current main branch, a "bleeding edge" version, and we also provide [releases](https://github.com/flux-framework/flux-operator/releases), each of which has YAML for x86 or ARM associated with a release container. For dates before June 30, 2023, we provide the other pinned containers in case you want a previous version:
 
  - [ghcr.io/flux-framework/flux-operator:feb-2023](https://github.com/flux-framework/flux-operator/pkgs/container/flux-operator): the version used for Kubecon experiments, and before storage (minikube and Google Cloud example) were added.
  - [ghcr.io/flux-framework/flux-operator:april-2023](https://github.com/flux-framework/flux-operator/pkgs/container/flux-operator): the version directly before the refactor to remove the certificate generator pod (3.3)
 
+These were primarily experimental versions run for experiments like Kubecon!
 
 ## Install
 
 ### Quick Install
 
-This works best for production Kubernetes clusters, and comes down to downloading the latest yaml config, and applying it.
+We generally recommend that you install a [release](https://raw.githubusercontent.com/flux-framework/flux-operator/main/examples/dist/flux-operator.yaml), e.g.,
 
 ```bash
-wget https://raw.githubusercontent.com/flux-framework/flux-operator/main/examples/dist/flux-operator.yaml
-kubectl apply -f flux-operator.yaml
+VERSION=0.1.0
+
+# For x86
+kubectl apply -f https://github.com/flux-framework/flux-operator/releases/download/${VERSION}/flux-operator.yaml
+
+# For ARM
+kubectl apply -f https://github.com/flux-framework/flux-operator/releases/download/${VERSION}/flux-operator-arm.yaml
 ```
 
-Note that from the repository, this config is generated with:
+You can also install from the current main branch "bleeding edge" latest:
+
+```bash
+kubectl apply -f https://raw.githubusercontent.com/flux-framework/flux-operator/main/examples/dist/flux-operator.yaml
+kubectl apply -f https://raw.githubusercontent.com/flux-framework/flux-operator/main/examples/dist/flux-operator-arm.yaml
+```
+
+Note that from the repository, these configs are generated with:
 
 ```bash
 $ make build-config
+$ make build-config-arm
 ```
 
-and then saved to the main branch where you retrieve it from.
+and then saved to the main branch or release where you retrieve it from.
 
 ### Helm Install
 
@@ -45,7 +58,7 @@ $ helm install ./chart
 
 Or directly from GitHub packages (an OCI registry):
 
-```
+```bash
 # helm prior to v3.8.0
 $ export HELM_EXPERIMENTAL_OCI=1
 $ helm pull oci://ghcr.io/flux-framework/flux-operator-helm/chart
@@ -70,69 +83,7 @@ TEST SUITE: None
 
 ### Development Install
 
-If you are trying this out on your own, here is a quick start to getting the operator installed on MiniKube (or similar),
-and installing directly from the repository (with the development use case in mind).
-This assumes some experience with Kubernetes (or applying yaml configs) and using MiniKube or similar.
-More advanced users can try out the [Production](#production) install detailed below.
-
-This setup is intended if you want to clone the codebase and use the same tools that we use
-to develop! You'll first want to clone the codebase.
-
-```bash
-$ git clone https://github.com/flux-framework/flux-operator
-$ cd flux-operator
-```
-
-And then start a cluster with minikube:
-
-```bash
-$ minikube start
-```
-
-And make a flux operator namespace
-
-```bash
-$ kubectl create namespace flux-operator
-namespace/flux-operator created
-```
-You can set this namespace to be the default (if you don't want to enter `-n flux-operator` for future commands:
-
-```bash
-$ kubectl config set-context --current --namespace=flux-operator
-```
-
-If you haven't ever installed minkube, you can see [install instructions here](https://minikube.sigs.k8s.io/docs/start/).
-And then we recommend that you use a local development container to build and install the operator. Note
-that we are also loading into MiniKube:
-
-```bash
-$ make deploy-local
-$ minikube image load ghcr.io/flux-framework/flux-operator:test
-$ kubectl apply -f examples/dist/flux-operator-local.yaml
-```
-
-At this point, you can kubectl apply your custom resource definition to define your MiniCluster to your cluster to
-either run a job or start a Flux MiniCluster.
-
-```bash
-$ kubectl apply -f config/samples/flux-framework.org_v1alpha1_minicluster.yaml
-```
-
-Note that we have other examples (using the web interface in [examples/flux-restful](https://github.com/flux-framework/flux-operator/tree/main/examples/flux-restful)
-and headless examples for testing in [examples/tests](https://github.com/flux-framework/flux-operator/tree/main/examples/tests)) along with
-general (category-specific) examples in [the examples root](https://github.com/flux-framework/flux-operator/tree/main/examples/).
-When you are all done, cleanup with `kubectl delete` commands and/or!
-
-```bash
-$ make clean
-```
-
-And to stop MiniKube.
-
-```bash
-$ minikube stop
-$ minikube delete
-```
+For developer instructions, please see our [developer documentation](../development/index.md).
 
 ### Tool Install
 
@@ -141,7 +92,6 @@ and optionally run experiments and bring them down. We currently support a handf
 (AWS and Google) and if you find yourself wanting a way to easily generate and save results
 for experiments, this might be the way to go. If you have a cloud or environment you
 want to deploy to that isn't supported, please [let us know](https://github.com/converged-computing/flux-cloud/issues).
-
 
 ## Next Steps
 
@@ -206,12 +156,11 @@ through the list and verify the points on your own.
 ### 4. Apply your custom resource definition
 
 Ensure that your custom resource definition matches the namespace you just created.
-Then apply your CRD. You can use the default [testing one from the repository](https://github.com/flux-framework/flux-operator/blob/main/config/samples/flux-framework.org_v1alpha1_minicluster.yaml)
-or any in our [examples](https://github.com/flux-framework/flux-operator/tree/main/examples) folder. Here is using the default we provide:
+Then apply your CRD. You can use [an example](https://github.com/flux-framework/flux-operator/blob/main/exampless)
+Here is using a default we provide:
 
 ```bash
-$ wget https://raw.githubusercontent.com/flux-framework/flux-operator/main/config/samples/flux-framework.org_v1alpha1_minicluster.yaml
-$ kubectl apply -f flux-framework.org_v1alpha1_minicluster.yaml
+$ kubectl apply -f https://raw.githubusercontent.com/flux-framework/flux-operator/main/config/samples/flux-framework.org_v1alpha1_minicluster.yaml
 ```
 
 Please [let us know](https://github.com/flux-framework/flux-operator) if you would like an example type added - we have plans for many more

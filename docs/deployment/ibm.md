@@ -454,7 +454,7 @@ variables:
 $ helm show values ibm-helm/ibm-object-storage-plugin
 ```
 
-```console
+```yaml
 replicaCount: 1
 maxUnavailableNodeCount: 1
 

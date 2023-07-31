@@ -8,7 +8,7 @@ environment.
 To work on this operator you should:
 
  - Have a recent version of Go installed (1.18.1)
- - Have minikube installed
+ - Have minikube or kind installed
 
 **Important** For minikube, make sure to enable [DNS plugins](https://minikube.sigs.k8s.io/docs/handbook/addons/ingress-dns/).
 
@@ -28,17 +28,20 @@ $ git clone https://github.com/flux-framework/flux-operator
 $ cd flux-operator
 ```
 
-### Local Development
+## Local Development
 
-After cloning, you need to create your MiniKube cluster before doing anything else!
+After cloning, you need to create your MiniKube or Kind cluster before doing anything else!
 
-#### 1. Quick Start
+### 1. Quick Start
 
 Here is a quick start for doing that, making the namespace, and installing the operator.
 
 ```console
 # Start a minikube cluster
 $ minikube start
+
+# Start a Kind cluster
+$ kind create cluster
 
 # Make a flux operator namespace
 $ kubectl create namespace flux-operator
@@ -55,7 +58,7 @@ $ kubectl apply -f examples/dist/flux-operator-local.yaml
 
 But you can also try the manual steps:
 
-```
+```bash
 # Build the operator
 $ make
 
@@ -73,113 +76,22 @@ sudo apt-get install -y libsodium-dev libzmq3-dev libczmq-dev
 ```
 
 If you are unable to install zeromq locally, we recommend the `make deploy-local` command shown above.
-
-#### 2. Configs
-
-##### Default Config
-
-Our "default" job config, or custom resource definition "CRD" can be found in [config/samples](https://github.com/flux-framework/flux-operator/tree/main/config/samples).
-We will walk through how to deploy this one, and then any of the ones in our examples gallery.
-When you've built and installed the operator, here is how to "launch"
-the MiniCluster (or if providing a command, an ephemeral job):
+Finally, the way that I usually develop locally is with `make test-deploy` targeting a registry
+I have write to, which will also save that image name to `examples/dist/flux-operator-dev.yaml`:
 
 ```bash
-$ kubectl apply -f config/samples/flux-framework.org_v1alpha1_minicluster.yaml
+make test-deploy DEVIMG=vanessa/flux-operator:latest
+kubectl apply -f examples/dist/flux-operator-dev.yaml
 ```
 
-there is a courtesy function to clean, and apply the samples:
+During development, ensure that you delete and re-apply the YAML between new builds so the image is re-pulled.
+For developing, you can find many examples in the [examples](https://github.com/flux-framework/flux-operator/tree/main/examples)
+directory.
 
-```bash
-$ make clean  # remove old flux-operator namespaced items
-$ make apply  # apply the setup and job config
-$ make run    # make the cluster
-```
-
-or run all three for easy development!
-
-```bash
-$ make redo  # clean, apply, and run
-```
-
-To see logs for the job, you'd do:
-
-```bash
-$ kubectl logs -n flux-operator job.batch/flux-sample
-```
-
-And this is also:
-
-```bash
-$ make log
-```
-
-But the above gives you a (somewhat random?) pod. If you want to see a specific one do:
-
-```bash
-./script/log.sh flux-sample-0-b5rw6
-```
-
-E.g., rank 0 is the "main" one. List running pods (each pod is part of a batch job)
-
-```bash
-$ make list
-```
-
-And shell into one with the helper script:
-
-```bash
-./script/shell.sh flux-sample-0-b5rw6
-```
-
-Note that if you are running more than one container, you need a custom command for shell:
-
-```bash
-$ kubectl exec --stdin --tty -n flux-operator flux-sample-0-vsnvz -c flux-sample-1 -- /bin/bash
-```
-
-Where the first is the name of the pod, and `-c` references the container.
-
-##### Example Configs
-
-We provide an extended gallery of configs for:
-
- - [Flux Restful Examples](https://github.com/flux-framework/flux-operator/tree/main/examples/flux-restful) that deploy a web interface to submit jobs to.
- - [Headless Test Examples](https://github.com/flux-framework/flux-operator/tree/main/examples/tests) that run commands directly, ideal for testing.
-
-Generally these sets of configs are the same (e.g., same container bases and other options) and only vary in providing a command entrypoint (for the headless)
-or not (for the Flux Restful). To make it easy to clean up your cluster and apply a named config, you have two options:
-
-###### Flux Restful
-
-We call this the main set of "examples." To clean up Minikube, apply a named config, and run the example via a MiniCluster, first match the name of the yaml
-file to a variable name. E.g., for the following files, the names would be:
-
-```console
-$ tree examples/flux-restful/
-├── minicluster-conveyorlc.yaml       (- name=conveyorlc
-├── minicluster-lammps.yaml           (- name=lammps
-└── minicluster-osu-benchmarks.yaml   (- name=osu-benchmarks
-```
-
-This, to run the full example for conveyorlc:
-
-```bash
-$ make name=conveyorlc redo_example
-```
-
-Be careful running this on a production cluster, as it will delete all Kubernetes objects in the namespace.
-If you just want to just apply the new job and run the cluster, do:
-
-```bash
-$ make name=conveyorlc example
-$ make run
-```
-
-###### Headless Tests
+### 2. Headless Tests
 
 Our headless tests are modified examples intended to be run without the web interface.
-The naming convention is the same as above, except we are concerned with files
-in the examples test folder:
+These tests are found under [examples/tests](https://github.com/flux-framework/flux-operator/tree/main/examples/tests):
 
 ```console
 $ tree examples/tests/
@@ -190,11 +102,12 @@ examples/tests/
     └── minicluster.yaml
 ```
 
-Thus, to run the full example for hello-world you can do:
+Thus, to run the full example for the hello-world test you can do:
 
 ```bash
 $ bash script/test.sh hello-world
 ```
+
 or (for a less scripted run):
 
 ```bash
@@ -208,7 +121,7 @@ $ make name=hello-world applytest
 $ make run
 ```
 
-Note that there is a default sleep of ~20 seconds for all jobs (so the worker nodes start after the broker)
+Note that there is a default sleep time for all jobs (so the worker nodes start after the broker)
 so they will not run instantly. You can list pods to get an id, and then view logs:
 
 ```bash
@@ -216,18 +129,17 @@ $ make list
 $ bash script/log.sh <pod>
 ```
 
-Also note that these headless tests have `test: true` in the config,
+Also note that these headless tests have `logging->quiet: true` in the config,
 meaning you will only see output with the command above from what you actually ran.
 We do this because we test them in CI, and we don't want the other verbose output
-to get in the way! If you want to disable this quiet mode, just comment out
-this parameter in the configuration.
+to get in the way! If you want to disable this quiet mode, just set this
+same field to false.
 
-
-### Interacting with Services
+## Interacting with Services
 
 Currently, the most reliable thing to do is port forward:
 
-#### port-forward
+### port-forward
 
 If we run as a ClusterIP, we can accomplish the same with a one off `kubectl port-forward`:
 
@@ -248,7 +160,6 @@ $ minikube service -n flux-operator flux-restful-service --url=true
 
 But for now I'm developing with port forward.
 
-
 ## Build Images
 
 If you want to build the "production" images - here is how to do that!
@@ -258,22 +169,15 @@ This happens in our Docker CI, however you can build (and deploy if you are an o
 $ make docker-build
 $ make docker-push
 ```
-```bash
-# operator lifecycle manager
-$ operator-sdk olm install
-$ make bundle
-$ make bundle-build
-$ make bundle-push
-```
 
-And for the catalog:
+You can also build helm charts:
 
 ```bash
-$ make catalog-build
-$ make catalog-push
+$ make helm
 ```
 
-Note that these are done in CI so you shouldn't need to do anything from the command line.
+We do not currently provide a catalog or bundle build, typical of the Operator SDK,
+because we have not needed them Also note that these are done in CI so you shouldn't need to do anything from the command line.
 
 ## Other Developer Commands
 
@@ -395,6 +299,7 @@ Finally, note that for big containers it's suggested to pull them first, e.g.,:
 ```bash
 $ minikube ssh docker pull ghcr.io/rse-ops/lammps:flux-sched-focal-v0.24.0
 ```
+
 The tests above are headless, meaning they submit commands directly, and that way
 we don't need to do it in the UI and can programmatically determine if they were successful.
 Finally, note that if you have commands that you need to run before or after the tests,

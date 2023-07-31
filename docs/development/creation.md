@@ -2,7 +2,7 @@
 
 These sections will walk through some of the steps that @vsoch took to create the controller using the operator-sdk, and challenges she faced.
 
-### 1. Installation
+## 1. Installation
 
 First, [install the operator-sdk](https://sdk.operatorframework.io/docs/installation/) for your platform.
 At the end of this procedure it should be on your path.
@@ -12,7 +12,7 @@ $ which operator-sdk
 /usr/local/bin/operator-sdk
 ```
 
-### 2. Start A Development Cluster
+## 2. Start A Development Cluster
 
 You can use [minikube](https://minikube.sigs.k8s.io/docs/start/):
 
@@ -26,7 +26,7 @@ $ minikube start init
 [Kind](https://kind.sigs.k8s.io/docs/user/quick-start/) was recommended to me, however it sent me down a rabbit hole of "something isn't working and I don't know why"
 for about a day, and when I realized it was specific to kind, I went back to minikube.
 
-### 3. Local Workspace
+## 3. Local Workspace
 
 At this point, I made sure I was in this present working directory, and I created
 a new (v2) module and then "init" the operator:
@@ -38,7 +38,7 @@ $ operator-sdk init
 
 Note that you don't need to do this, obviously, if you are using the existing operator here!
 
-### 4. Create Controller
+## 4. Create Controller
 
 Now let's create a controller, and call it Flux (again, no need to do this if you are using the one here).
 
