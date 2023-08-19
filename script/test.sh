@@ -43,7 +43,7 @@ sleep ${jobtime}
     kubectl logs -n operator-system ${operator_pod} || echo "cannot get logs for flux operator controller"
     echo "LOGS for Flux Operator Sample"
     sample_pod=$(kubectl get -n flux-operator pods -o json | jq -r .items[0].metadata.name)
-    kubectl logs -n flux-operator ${sample_pod}
+    kubectl logs -n flux-operator ${sample_pod} || echo "cannot get logs for sample pod"
     exit 1
 )
 kill ${pid} || true

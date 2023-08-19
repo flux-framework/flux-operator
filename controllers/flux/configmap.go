@@ -77,45 +77,46 @@ func (r *MiniClusterReconciler) getConfigMap(
 			} else if configName == "entrypoint" {
 
 				// Get updated data with
-				data, err := GenerateEntrypoints(cluster)
+				data, err = GenerateEntrypoints(cluster)
 				if err != nil {
 					return existing, ctrl.Result{}, err
 				}
+			}
 
-				// Finally create the config map
-				dep := r.createConfigMap(cluster, configFullName, data)
-				r.log.Info(
-					"✨ Creating MiniCluster ConfigMap ✨",
+			// Finally create the config map
+			dep := r.createConfigMap(cluster, configFullName, data)
+			r.log.Info(
+				"✨ Creating MiniCluster ConfigMap ✨",
+				"Type", configName,
+				"Namespace", dep.Namespace,
+				"Name", dep.Name,
+			)
+			err = r.New(ctx, dep)
+			if err != nil {
+				r.log.Error(
+					err, "❌ Failed to create MiniCluster ConfigMap",
 					"Type", configName,
 					"Namespace", dep.Namespace,
-					"Name", dep.Name,
+					"Name", (*dep).Name,
 				)
-				err = r.New(ctx, dep)
-				if err != nil {
-					r.log.Error(
-						err, "❌ Failed to create MiniCluster ConfigMap",
-						"Type", configName,
-						"Namespace", dep.Namespace,
-						"Name", (*dep).Name,
-					)
-					return existing, ctrl.Result{}, err
-				}
-				// Successful - return and requeue
-				return dep, ctrl.Result{Requeue: true}, nil
-
-			} else if err != nil {
-				r.log.Error(err, "Failed to get MiniCluster ConfigMap")
 				return existing, ctrl.Result{}, err
 			}
 
-		} else {
-			r.log.Info(
-				"🎉 Found existing MiniCluster ConfigMap",
-				"Type", configName,
-				"Namespace", existing.Namespace,
-				"Name", existing.Name,
-			)
+			// Successful - return and requeue
+			return dep, ctrl.Result{Requeue: true}, nil
+
+		} else if err != nil {
+			r.log.Error(err, "Failed to get MiniCluster ConfigMap")
+			return existing, ctrl.Result{}, err
 		}
+
+	} else {
+		r.log.Info(
+			"🎉 Found existing MiniCluster ConfigMap",
+			"Type", configName,
+			"Namespace", existing.Namespace,
+			"Name", existing.Name,
+		)
 	}
 	return existing, ctrl.Result{}, err
 }
