@@ -14,20 +14,17 @@ import (
 	batchv1 "k8s.io/api/batch/v1"
 	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-	ctrl "sigs.k8s.io/controller-runtime"
 
 	api "github.com/flux-framework/flux-operator/api/v1alpha1"
 )
 
 // newMiniCluster is used to create the MiniCluster Job
-func (r *MiniClusterReconciler) newMiniClusterJob(
-	cluster *api.MiniCluster,
-) (*batchv1.Job, error) {
+func NewMiniClusterJob(cluster *api.MiniCluster) (*batchv1.Job, error) {
 
 	// Number of retries before marking as failed
 	backoffLimit := int32(100)
 	completionMode := batchv1.IndexedCompletion
-	podLabels := r.getPodLabels(cluster)
+	podLabels := getPodLabels(cluster)
 	setAsFQDN := false
 
 	// We add the selector for the horizontal auto scaler, if active
@@ -36,7 +33,12 @@ func (r *MiniClusterReconciler) newMiniClusterJob(
 	podLabels["hpa-selector"] = cluster.Name
 
 	// This is an indexed-job
+	// TODO don't hard code type meta
 	job := &batchv1.Job{
+		TypeMeta: metav1.TypeMeta{
+			Kind:       "Job",
+			APIVersion: "v1",
+		},
 		ObjectMeta: metav1.ObjectMeta{
 			Name:      cluster.Name,
 			Namespace: cluster.Namespace,
@@ -74,10 +76,8 @@ func (r *MiniClusterReconciler) newMiniClusterJob(
 	}
 
 	// Get resources for the pod
-	resources, err := r.getPodResources(cluster)
-	r.log.Info("🌀 MiniCluster", "Pod.Resources", resources)
+	resources, err := getPodResources(cluster)
 	if err != nil {
-		r.log.Info("🌀 MiniCluster", "Pod.Resources", resources)
 		return job, err
 	}
 	job.Spec.Template.Spec.Overhead = resources
@@ -86,14 +86,13 @@ func (r *MiniClusterReconciler) newMiniClusterJob(
 	mounts := getVolumeMounts(cluster)
 
 	// Prepare listing of containers for the MiniCluster
-	containers, err := r.getContainers(
+	containers, err := getContainers(
 		cluster.Spec.Containers,
 		cluster.Name,
 		cluster.Spec.FluxRestful.Port,
 		mounts,
 	)
 	job.Spec.Template.Spec.Containers = containers
-	ctrl.SetControllerReference(cluster, job, r.Scheme)
 	return job, err
 }
 

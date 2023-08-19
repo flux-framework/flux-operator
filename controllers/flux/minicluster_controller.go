@@ -39,6 +39,7 @@ type MiniClusterReconciler struct {
 	client.Client
 	Scheme     *runtime.Scheme
 	Manager    ctrl.Manager
+	DumpYaml   string
 	log        logr.Logger
 	watchers   []MiniClusterUpdateWatcher
 	RESTClient rest.Interface
@@ -50,12 +51,14 @@ func NewMiniClusterReconciler(
 	scheme *runtime.Scheme,
 	restConfig rest.Config,
 	restClient rest.Interface,
+	dumpYaml string,
 	watchers ...MiniClusterUpdateWatcher,
 ) *MiniClusterReconciler {
 
 	return &MiniClusterReconciler{
 		log:        ctrl.Log.WithName("minicluster-reconciler"),
 		Client:     client,
+		DumpYaml:   dumpYaml,
 		Scheme:     scheme,
 		watchers:   watchers,
 		RESTClient: restClient,
@@ -119,7 +122,7 @@ func (r *MiniClusterReconciler) Reconcile(
 
 		// Create it, doesn't exist yet
 		if errors.IsNotFound(err) {
-			r.log.Info("🌀 MiniCluster not found . Ignoring since object must be deleted.")
+			r.log.Info("🌀 MiniCluster not found. Ignoring since object must be deleted.")
 			return ctrl.Result{}, nil
 		}
 		r.log.Info("🌀 Failed to get MiniCluster. Re-running reconcile.")

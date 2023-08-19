@@ -32,7 +32,8 @@
           "items": {
             "default": {},
             "$ref": "#/definitions/BurstedCluster"
-          }
+          },
+          "x-kubernetes-list-type": "atomic"
         },
         "hostlist": {
           "description": "Hostlist is a custom hostlist for the broker.toml that includes the local plus bursted cluster. This is typically used for bursting to another resource type, where we can predict the hostnames but they don't follow the same convention as the Flux Operator",
@@ -895,7 +896,8 @@
           "items": {
             "type": "string",
             "default": ""
-          }
+          },
+          "x-kubernetes-list-type": "atomic"
         },
         "privileged": {
           "description": "Privileged container",

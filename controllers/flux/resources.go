@@ -21,17 +21,13 @@ import (
 )
 
 // getResourceGroup can return a ResourceList for either requests or limits
-func (r *MiniClusterReconciler) getResourceGroup(
-	items api.ContainerResource,
-) (corev1.ResourceList, error) {
+func getResourceGroup(items api.ContainerResource) (corev1.ResourceList, error) {
 
-	r.log.Info("🍅️ Resource", "items", items)
 	list := corev1.ResourceList{}
 	for key, unknownValue := range items {
 		if unknownValue.Type == intstr.Int {
 
 			value := unknownValue.IntVal
-			r.log.Info("🍅️ ResourceKey", "Key", key, "Value", value)
 			limit, err := resource.ParseQuantity(fmt.Sprintf("%d", value))
 			if err != nil {
 				return list, err
@@ -47,7 +43,6 @@ func (r *MiniClusterReconciler) getResourceGroup(
 		} else if unknownValue.Type == intstr.String {
 
 			value := unknownValue.StrVal
-			r.log.Info("🍅️ ResourceKey", "Key", key, "Value", value)
 			if key == "memory" {
 				list[corev1.ResourceMemory] = resource.MustParse(value)
 			} else if key == "cpu" {
@@ -61,25 +56,21 @@ func (r *MiniClusterReconciler) getResourceGroup(
 }
 
 // getContainerResources determines if any resources are requested via the spec
-func (r *MiniClusterReconciler) getContainerResources(
-	container *api.MiniClusterContainer,
-) (corev1.ResourceRequirements, error) {
+func getContainerResources(container *api.MiniClusterContainer) (corev1.ResourceRequirements, error) {
 
 	// memory int, setCPURequest, setCPULimit, setGPULimit int64
 	resources := corev1.ResourceRequirements{}
 
 	// Limits
-	limits, err := r.getResourceGroup(container.Resources.Limits)
+	limits, err := getResourceGroup(container.Resources.Limits)
 	if err != nil {
-		r.log.Error(err, "🍅️ Resources for Container.Limits")
 		return resources, err
 	}
 	resources.Limits = limits
 
 	// Requests
-	requests, err := r.getResourceGroup(container.Resources.Requests)
+	requests, err := getResourceGroup(container.Resources.Requests)
 	if err != nil {
-		r.log.Error(err, "🍅️ Resources for Container.Requests")
 		return resources, err
 	}
 	resources.Requests = requests
@@ -87,14 +78,11 @@ func (r *MiniClusterReconciler) getContainerResources(
 }
 
 // getPodResources determines if any resources are requested via the spec
-func (r *MiniClusterReconciler) getPodResources(
-	cluster *api.MiniCluster,
-) (corev1.ResourceList, error) {
+func getPodResources(cluster *api.MiniCluster) (corev1.ResourceList, error) {
 
 	// memory int, setCPURequest, setCPULimit, setGPULimit int64
-	resources, err := r.getResourceGroup(cluster.Spec.Pod.Resources)
+	resources, err := getResourceGroup(cluster.Spec.Pod.Resources)
 	if err != nil {
-		r.log.Error(err, "🍅️ Resources for Pod.Resources")
 		return resources, err
 	}
 	return resources, nil

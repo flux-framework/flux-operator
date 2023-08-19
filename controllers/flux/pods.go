@@ -24,7 +24,10 @@ import (
 )
 
 // Get labels for any pod in the cluster
-func (r *MiniClusterReconciler) getPodLabels(cluster *api.MiniCluster) map[string]string {
+func getPodLabels(cluster *api.MiniCluster) map[string]string {
+	if cluster.Spec.Pod.Labels == nil {
+		cluster.Spec.Pod.Labels = map[string]string{}
+	}
 	podLabels := cluster.Spec.Pod.Labels
 	podLabels["namespace"] = cluster.Namespace
 	podLabels["app.kubernetes.io/name"] = cluster.Name
@@ -106,7 +109,7 @@ func (r *MiniClusterReconciler) newServicePod(
 ) (*corev1.Pod, error) {
 
 	setAsFQDN := false
-	podLabels := r.getPodLabels(cluster)
+	podLabels := getPodLabels(cluster)
 	podServiceName := cluster.Name + "-services"
 
 	// service selector?
@@ -140,7 +143,7 @@ func (r *MiniClusterReconciler) newServicePod(
 	mounts := []corev1.VolumeMount{}
 
 	// Get containers for the service pods
-	containers, err := r.getContainers(
+	containers, err := getContainers(
 		cluster.Spec.Services,
 		podServiceName,
 		cluster.Spec.FluxRestful.Port,

@@ -25,27 +25,21 @@ import (
 	ctrl "sigs.k8s.io/controller-runtime"
 )
 
-const (
-	entrypointSuffix  = "-entrypoint"
-	fluxConfigSuffix  = "-flux-config"
-	curveVolumeSuffix = "-curve-mount"
-)
-
 // Shared function to return consistent set of volume mounts
 func getVolumeMounts(cluster *api.MiniCluster) []corev1.VolumeMount {
 	mounts := []corev1.VolumeMount{
 		{
-			Name:      cluster.Name + curveVolumeSuffix,
+			Name:      cluster.CurveConfigMapName(),
 			MountPath: "/mnt/curve/",
 			ReadOnly:  true,
 		},
 		{
-			Name:      cluster.Name + fluxConfigSuffix,
+			Name:      cluster.FluxConfigMapName(),
 			MountPath: "/etc/flux/config",
 			ReadOnly:  true,
 		},
 		{
-			Name:      cluster.Name + entrypointSuffix,
+			Name:      cluster.EntrypointConfigMapName(),
 			MountPath: "/flux_operator/",
 			ReadOnly:  true,
 		},
@@ -107,7 +101,7 @@ func getVolumes(cluster *api.MiniCluster) []corev1.Volume {
 
 	// /mnt/curve/curve.cert
 	curveKey := corev1.KeyToPath{
-		Key:  curveCertKey,
+		Key:  CurveCertKey,
 		Path: "curve.cert",
 	}
 
@@ -123,11 +117,11 @@ func getVolumes(cluster *api.MiniCluster) []corev1.Volume {
 	// Defaults volumes we always write - entrypoint and configs
 	volumes := []corev1.Volume{
 		{
-			Name: cluster.Name + fluxConfigSuffix,
+			Name: cluster.FluxConfigMapName(),
 			VolumeSource: corev1.VolumeSource{
 				ConfigMap: &corev1.ConfigMapVolumeSource{
 					LocalObjectReference: corev1.LocalObjectReference{
-						Name: cluster.Name + fluxConfigSuffix,
+						Name: cluster.FluxConfigMapName(),
 					},
 					// /etc/flux/config
 					Items: []corev1.KeyToPath{brokerFile},
@@ -135,13 +129,13 @@ func getVolumes(cluster *api.MiniCluster) []corev1.Volume {
 			},
 		},
 		{
-			Name: cluster.Name + entrypointSuffix,
+			Name: cluster.EntrypointConfigMapName(),
 			VolumeSource: corev1.VolumeSource{
 				ConfigMap: &corev1.ConfigMapVolumeSource{
 
 					// Namespace based on the cluster
 					LocalObjectReference: corev1.LocalObjectReference{
-						Name: cluster.Name + entrypointSuffix,
+						Name: cluster.EntrypointConfigMapName(),
 					},
 					// /flux_operator/wait-<index>.sh
 					Items: runnerStartScripts,
@@ -151,7 +145,7 @@ func getVolumes(cluster *api.MiniCluster) []corev1.Volume {
 	}
 
 	// We either generate a curve.cert config map, or get it from secret
-	curveVolumeName := cluster.Name + curveVolumeSuffix
+	curveVolumeName := cluster.CurveConfigMapName()
 	if cluster.Spec.Flux.CurveCertSecret != "" {
 		curveVolume := corev1.Volume{
 			Name: curveVolumeName,
@@ -172,7 +166,7 @@ func getVolumes(cluster *api.MiniCluster) []corev1.Volume {
 
 					// Namespace based on the cluster
 					LocalObjectReference: corev1.LocalObjectReference{
-						Name: cluster.Name + curveVolumeSuffix,
+						Name: cluster.CurveConfigMapName(),
 					},
 				},
 			},
@@ -274,7 +268,7 @@ func getExistingVolumes(existing map[string]api.MiniClusterExistingVolume) []cor
 }
 
 // createPersistentVolume creates a volume in /mnt
-func (r *MiniClusterReconciler) createPersistentVolume(
+func CreatePersistentVolume(
 	cluster *api.MiniCluster,
 	volumeName string,
 	volume api.MiniClusterVolume,
@@ -324,7 +318,10 @@ func (r *MiniClusterReconciler) createPersistentVolume(
 	}
 
 	newVolume := &corev1.PersistentVolume{
-		TypeMeta: metav1.TypeMeta{},
+		TypeMeta: metav1.TypeMeta{
+			Kind:       "PersistentVolume",
+			APIVersion: "v1",
+		},
 		ObjectMeta: metav1.ObjectMeta{
 			Name:        volumeName,
 			Namespace:   cluster.Namespace,
@@ -384,7 +381,7 @@ func (r *MiniClusterReconciler) getPersistentVolume(
 		if errors.IsNotFound(err) {
 
 			// The volume "<name>-volume" will be under /mnt/<name>
-			volume := r.createPersistentVolume(cluster, volumeName, volume)
+			volume := CreatePersistentVolume(cluster, volumeName, volume)
 			r.log.Info(
 				"✨ Creating MiniCluster Mounted Volume ✨",
 				"Type", volumeName,
@@ -458,7 +455,8 @@ func (r *MiniClusterReconciler) getPersistentVolumeClaim(
 
 		// Case 1: not found yet, and hostfile is ready (recreate)
 		if errors.IsNotFound(err) {
-			volume := r.createPersistentVolumeClaim(cluster, claimName, volume)
+			volume := CreatePersistentVolumeClaim(cluster, claimName, volume)
+			ctrl.SetControllerReference(cluster, volume, r.Scheme)
 			r.log.Info(
 				"✨ Creating MiniCluster Mounted Volume ✨",
 				"Type", claimName,
@@ -497,7 +495,7 @@ func (r *MiniClusterReconciler) getPersistentVolumeClaim(
 }
 
 // createPersistentVolumeClaim generates a PVC
-func (r *MiniClusterReconciler) createPersistentVolumeClaim(
+func CreatePersistentVolumeClaim(
 	cluster *api.MiniCluster,
 	volumeName string,
 	volume api.MiniClusterVolume,
@@ -507,7 +505,10 @@ func (r *MiniClusterReconciler) createPersistentVolumeClaim(
 
 	// Create a new RWX persistent volume claim
 	newVolume := &corev1.PersistentVolumeClaim{
-		TypeMeta: metav1.TypeMeta{},
+		TypeMeta: metav1.TypeMeta{
+			Kind:       "PersistentVolumeClaim",
+			APIVersion: "v1",
+		},
 		ObjectMeta: metav1.ObjectMeta{
 			Name:        volumeName,
 			Namespace:   cluster.Namespace,
@@ -527,6 +528,5 @@ func (r *MiniClusterReconciler) createPersistentVolumeClaim(
 			},
 		},
 	}
-	ctrl.SetControllerReference(cluster, newVolume, r.Scheme)
 	return newVolume
 }

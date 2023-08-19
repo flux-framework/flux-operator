@@ -17,7 +17,7 @@ import (
 )
 
 // createContainerLifecycle adds lifecycle commands to help with moving cluster state
-func (r *MiniClusterReconciler) createContainerLifecycle(
+func createContainerLifecycle(
 	container api.MiniClusterContainer) *corev1.Lifecycle {
 
 	// Empty Lifecycle by default
@@ -25,7 +25,6 @@ func (r *MiniClusterReconciler) createContainerLifecycle(
 
 	// Manual lifecycles from the user before container start
 	if container.LifeCycle.PostStartExec != "" {
-		r.log.Info("🌀 MiniCluster", "LifeCycle.PostStartExec", container.LifeCycle.PostStartExec)
 		lifecycle.PostStart = &corev1.LifecycleHandler{
 			Exec: &corev1.ExecAction{
 				Command: []string{container.LifeCycle.PostStartExec},
@@ -34,7 +33,6 @@ func (r *MiniClusterReconciler) createContainerLifecycle(
 	}
 
 	if container.LifeCycle.PreStopExec != "" {
-		r.log.Info("🌀 MiniCluster", "LifeCycle.PreStopExec", container.LifeCycle.PreStopExec)
 		lifecycle.PreStop = &corev1.LifecycleHandler{
 			Exec: &corev1.ExecAction{
 				Command: []string{container.LifeCycle.PreStopExec},

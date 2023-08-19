@@ -14,6 +14,7 @@ and **Merged pull requests**. Critical items to know are:
 The versions coincide with releases on pip. Only major versions will be released as tags on Github.
 
 ## [0.0.x](https://github.com/flux-framework/flux-operator/tree/main) (0.0.x)
+ - fluxoperator-gen command added and restructure for more modular generation (0.1.1)
  - First release supporting experimenting bursting / scaling and customization (0.1.0)
  - Support for automated testing of examples/tests (0.0.x)
   - Early support for a basic multi-user mode.

@@ -3,7 +3,7 @@
 # To re-generate a bundle for another specific version without changing the standard setup, you can:
 # - use the VERSION as arg of the bundle target (e.g make bundle VERSION=0.0.2)
 # - use environment variables to overwrite this value (e.g export VERSION=0.0.2)
-VERSION ?= 0.1.0
+VERSION ?= 0.1.1
 API_VERSION ?= v1alpha1
 
 # CHANNELS define the bundle channels used in the bundle.
@@ -231,6 +231,12 @@ build: generate fmt vet ## Build manager binary.
 build-container: generate fmt vet
 	cp ./controllers/flux/keygen.go.template ./controllers/flux/keygen.go
 	$(BUILDENVVAR) go build -a -o ./manager main.go
+	$(BUILDENVVAR) go build -o ./bin/fluxoperator-gen cmd/gen/gen.go
+
+.PHONY: helpers
+helpers: $(LOCALBIN) 
+	cp ./controllers/flux/keygen.go.template ./controllers/flux/keygen.go
+	$(BUILDENVVAR) go build -o ./bin/fluxoperator-gen cmd/gen/gen.go
 
 .PHONY: run
 run: manifests generate fmt vet ## Run a controller from your host.

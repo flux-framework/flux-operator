@@ -17,6 +17,12 @@ import (
 	"k8s.io/apimachinery/pkg/util/intstr"
 )
 
+const (
+	entrypointSuffix  = "-entrypoint"
+	fluxConfigSuffix  = "-flux-config"
+	curveVolumeSuffix = "-curve-mount"
+)
+
 // MiniCluster is an HPC cluster in Kubernetes you can control
 // Either to submit a single job (and go away) or for a persistent single- or multi- user cluster
 type MiniClusterSpec struct {
@@ -437,6 +443,7 @@ type Bursting struct {
 	// External clusters to burst to. Each external
 	// cluster must share the same listing to align ranks
 	//+optional
+	// +listType=atomic
 	Clusters []BurstedCluster `json:"clusters"`
 }
 
@@ -590,6 +597,7 @@ type SecurityContext struct {
 
 	// Capabilities to add
 	// +optional
+	// +listType=atomic
 	AddCapabilities []string `json:"addCapabilities,omitempty"`
 }
 
@@ -725,6 +733,17 @@ func uniqueExistingVolumes(containers []MiniClusterContainer) map[string]MiniClu
 		}
 	}
 	return volumes
+}
+
+// Consistent functions to return config map names
+func (f *MiniCluster) FluxConfigMapName() string {
+	return f.Name + fluxConfigSuffix
+}
+func (f *MiniCluster) EntrypointConfigMapName() string {
+	return f.Name + entrypointSuffix
+}
+func (f *MiniCluster) CurveConfigMapName() string {
+	return f.Name + curveVolumeSuffix
 }
 
 // fluxInstallRoot returns the flux install root

@@ -19,6 +19,7 @@ RUN go mod download
 # Copy the go source
 COPY main.go main.go
 COPY api/ api/
+COPY cmd cmd/
 COPY controllers/ controllers/
 COPY pkg pkg/
 COPY hack hack
@@ -35,6 +36,7 @@ RUN make build-container && chmod +x ./manager
 FROM debian:stable-slim
 WORKDIR /
 COPY --from=builder /workspace/manager /manager
+COPY --from=builder /workspace/bin/fluxoperator-gen /usr/bin/fluxoperator-gen
 RUN apt-get update && apt-get install -y libsodium-dev libzmq3-dev libczmq-dev && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*

@@ -19,7 +19,7 @@ import (
 )
 
 // getContainers gets containers for a MiniCluster job or external service
-func (r *MiniClusterReconciler) getContainers(
+func getContainers(
 	specs []api.MiniClusterContainer,
 	defaultName string,
 	servicePort int32,
@@ -59,7 +59,7 @@ func (r *MiniClusterReconciler) getContainers(
 		}
 
 		// Prepare lifescycle commands for the container
-		lifecycle := r.createContainerLifecycle(container)
+		lifecycle := createContainerLifecycle(container)
 
 		for volumeName, volume := range container.Volumes {
 			mount := corev1.VolumeMount{
@@ -80,11 +80,8 @@ func (r *MiniClusterReconciler) getContainers(
 			mounts = append(mounts, mount)
 		}
 
-		r.log.Info("🌀 MiniCluster", "Container.Mounts", mounts)
-
 		// Prepare container resources
-		resources, err := r.getContainerResources(&container)
-		r.log.Info("🌀 MiniCluster", "Container.Resources", resources)
+		resources, err := getContainerResources(&container)
 		if err != nil {
 			return containers, err
 		}
@@ -168,7 +165,6 @@ func (r *MiniClusterReconciler) getContainers(
 		newContainer.Ports = ports
 		newContainer.Env = envars
 
-		r.log.Info("🌀 Container", "Ports", container.Ports)
 		containers = append(containers, newContainer)
 	}
 	return containers, nil

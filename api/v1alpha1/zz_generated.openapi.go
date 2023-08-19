@@ -102,6 +102,11 @@ func schema__api_v1alpha1__Bursting(ref common.ReferenceCallback) common.OpenAPI
 						},
 					},
 					"clusters": {
+						VendorExtensible: spec.VendorExtensible{
+							Extensions: spec.Extensions{
+								"x-kubernetes-list-type": "atomic",
+							},
+						},
 						SchemaProps: spec.SchemaProps{
 							Description: "External clusters to burst to. Each external cluster must share the same listing to align ranks",
 							Type:        []string{"array"},
@@ -1590,6 +1595,11 @@ func schema__api_v1alpha1__SecurityContext(ref common.ReferenceCallback) common.
 						},
 					},
 					"addCapabilities": {
+						VendorExtensible: spec.VendorExtensible{
+							Extensions: spec.Extensions{
+								"x-kubernetes-list-type": "atomic",
+							},
+						},
 						SchemaProps: spec.SchemaProps{
 							Description: "Capabilities to add",
 							Type:        []string{"array"},
