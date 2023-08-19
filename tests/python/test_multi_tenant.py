@@ -39,7 +39,10 @@ def create_minicluster():
     # Here is our main container with Flux accounting
     # run_flux True is required here
     container = MiniClusterContainer(
-        image="ghcr.io/flux-framework/flux-restful-api:latest", run_flux=True
+        image="ghcr.io/flux-framework/flux-restful-api:latest", run_flux=True,
+
+        # Ensure the workers start after lead broker
+        commands={"workerPre": "sleep 20"},
     )
 
     # Two users (set their passwords so we know)
@@ -62,7 +65,7 @@ def create_minicluster():
             size=4,
             containers=[container],
             flux_restful=flux_restful,
-            users=users,
+            users=users,            
         ),
     )
 
