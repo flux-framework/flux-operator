@@ -39,7 +39,6 @@ type MiniClusterReconciler struct {
 	client.Client
 	Scheme     *runtime.Scheme
 	Manager    ctrl.Manager
-	DumpYaml   string
 	log        logr.Logger
 	watchers   []MiniClusterUpdateWatcher
 	RESTClient rest.Interface
@@ -51,14 +50,12 @@ func NewMiniClusterReconciler(
 	scheme *runtime.Scheme,
 	restConfig rest.Config,
 	restClient rest.Interface,
-	dumpYaml string,
 	watchers ...MiniClusterUpdateWatcher,
 ) *MiniClusterReconciler {
 
 	return &MiniClusterReconciler{
 		log:        ctrl.Log.WithName("minicluster-reconciler"),
 		Client:     client,
-		DumpYaml:   dumpYaml,
 		Scheme:     scheme,
 		watchers:   watchers,
 		RESTClient: restClient,

@@ -22,17 +22,13 @@ var (
 )
 
 // SetupControllers sets up all controllers.
-func SetupControllers(mgr ctrl.Manager, restClient rest.Interface, dumpYaml string) (string, error) {
+func SetupControllers(mgr ctrl.Manager, restClient rest.Interface) (string, error) {
 
 	jobReconciler := controllers.NewMiniClusterReconciler(
 		mgr.GetClient(),
 		mgr.GetScheme(),
 		*(mgr.GetConfig()),
 		restClient,
-
-		// Directory to write namespaced yaml to
-		dumpYaml,
-
 		// other watching reconcilers could be added here!
 	)
 

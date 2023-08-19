@@ -53,10 +53,8 @@ func main() {
 	var probeAddr string
 
 	// Don't actually create resources, just dump the yaml configs
-	var dumpYaml string
 	flag.StringVar(&metricsAddr, "metrics-bind-address", ":8080", "The address the metric endpoint binds to.")
 	flag.StringVar(&probeAddr, "health-probe-bind-address", ":8081", "The address the probe endpoint binds to.")
-	flag.StringVar(&dumpYaml, "dump-yaml", "", "dump minicluster contents (Job, ConfigMap, etc.) to a YAML files in this directory (must exist)")
 
 	flag.BoolVar(&enableLeaderElection, "leader-elect", false,
 		"Enable leader election for controller manager. "+
@@ -108,7 +106,7 @@ func main() {
 		setupLog.Error(err, "unable to create REST client", "controller", restClient)
 	}
 
-	if failedCtrl, err := core.SetupControllers(mgr, restClient, dumpYaml); err != nil {
+	if failedCtrl, err := core.SetupControllers(mgr, restClient); err != nil {
 		setupLog.Error(err, "Unable to create controller", "controller", failedCtrl)
 		os.Exit(1)
 	}
