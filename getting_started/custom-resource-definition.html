@@ -33,7 +33,7 @@
         <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
       
     
-        <link rel="stylesheet" type="text/css" href="../_static/sphinx_immaterial_theme.9dcb20399d0097661.min.css?v=09738cfd" />
+        <link rel="stylesheet" type="text/css" href="../_static/sphinx_immaterial_theme.a60204c58f5e4ff66.min.css?v=f7c3c3dc" />
         <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=d68d0989" />
     <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
     
@@ -402,6 +402,21 @@
     <li class="md-nav__item">
       <a href="user-guide.html" class="md-nav__link">
         <span title="/getting_started/user-guide.md (reference label)" class="md-ellipsis">User Guide</span>
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="helper-clients.html" class="md-nav__link">
+        <span title="/getting_started/helper-clients.md (reference label)" class="md-ellipsis">Helper Clients</span>
       </a>
     </li>
   
@@ -1285,7 +1300,7 @@
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10 20H6V4h7v5h5v3.1l2-2V8l-6-6H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h4v-2m10.2-7c.1 0 .3.1.4.2l1.3 1.3c.2.2.2.6 0 .8l-1 1-2.1-2.1 1-1c.1-.1.2-.2.4-.2m0 3.9L14.1 23H12v-2.1l6.1-6.1 2.1 2.1Z"/></svg>
   </a>
 
-<h1 id="minicluster">MiniCluster<a class="headerlink" href="#minicluster" title="Permalink to this heading">¶</a></h1>
+<h1 id="minicluster">MiniCluster<a class="headerlink" href="#minicluster" title="Link to this heading">¶</a></h1>
 <blockquote>
 <div><p>The CRD “Custom Resource Definition” defines a MiniCluster</p>
 </div></blockquote>
@@ -1299,8 +1314,8 @@ for a MiniCluster. This document describes the spec of our custom resource defin
 Development examples can be found under <a class="reference external" href="https://github.com/flux-framework/flux-operator/tree/main/config/samples">config/samples</a>
 in the repository. We will have more samples soon, either in that directory or
 separately in the <a class="reference external" href="https://github.com/rse-ops/flux-hpc">flux-hpc</a> repository.</p>
-<h2 id="custom-resource-definition">Custom Resource Definition<a class="headerlink" href="#custom-resource-definition" title="Permalink to this heading">¶</a></h2>
-<h3 id="header">Header<a class="headerlink" href="#header" title="Permalink to this heading">¶</a></h3>
+<h2 id="custom-resource-definition">Custom Resource Definition<a class="headerlink" href="#custom-resource-definition" title="Link to this heading">¶</a></h2>
+<h3 id="header">Header<a class="headerlink" href="#header" title="Link to this heading">¶</a></h3>
 <p>The yaml spec will normally have an API version, the kind <code class="docutils literal notranslate"><span class="pre">MiniCluster</span></code> and then
 a name and namespace to identify the custom resource definition followed by the spec for it.</p>
 <div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><code><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">flux-framework.org/v1alpha1</span>
@@ -1312,12 +1327,12 @@ a name and namespace to identify the custom resource definition followed by the 
 <span class="w">  </span><span class="l l-Scalar l-Scalar-Plain">...</span>
 </code></pre></div>
 </div>
-<h3 id="spec">Spec<a class="headerlink" href="#spec" title="Permalink to this heading">¶</a></h3>
+<h3 id="spec">Spec<a class="headerlink" href="#spec" title="Link to this heading">¶</a></h3>
 <p>Under the spec, there are several variables to define. Descriptions are included below, and we
 recommend that you look at <a class="reference external" href="https://github.com/flux-framework/flux-operator/tree/main/config/samples">config/samples</a>
 in the repository  and the <a class="reference external" href="https://github.com/rse-ops/flux-hpc">flux-hpc</a> repository to see
 more.</p>
-<h3 id="size">size<a class="headerlink" href="#size" title="Permalink to this heading">¶</a></h3>
+<h3 id="size">size<a class="headerlink" href="#size" title="Link to this heading">¶</a></h3>
 <p>The <code class="docutils literal notranslate"><span class="pre">size</span></code> variable under the spec is the number of pods to create for the MiniCluster. Each pod includes
 the set of containers that you describe.</p>
 <div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><code><span class="w">  </span><span class="c1"># Number of pods to create for MiniCluster</span>
@@ -1330,7 +1345,7 @@ scale smaller, you can re-apply the CRD to scale down. Flux will see the nodes a
 of course you will want to be careful about the state of your cluster when you do this. If you scale
 down, you cannot go below 1 node, and if you scale up, you cannot exceed the maximum of the <code class="docutils literal notranslate"><span class="pre">size</span></code> or
 <code class="docutils literal notranslate"><span class="pre">maxsize</span></code>.</p>
-<h3 id="maxsize">maxSize<a class="headerlink" href="#maxsize" title="Permalink to this heading">¶</a></h3>
+<h3 id="maxsize">maxSize<a class="headerlink" href="#maxsize" title="Link to this heading">¶</a></h3>
 <p>The <code class="docutils literal notranslate"><span class="pre">maxSize</span></code> variable is typically used when you want elasticity. E.g., it is the largest size of cluster that
 you would be able to scale to. This works by way of registering this many workers (fully qualified domain names)
 with the broker.toml. If you don’t set this value, the maxsize will be set to the size.</p>
@@ -1339,13 +1354,13 @@ with the broker.toml. If you don’t set this value, the maxsize will be set to 
 </code></pre></div>
 </div>
 <p>The <code class="docutils literal notranslate"><span class="pre">maxSize</span></code> must always be greater than the size, if set.</p>
-<h3 id="tasks">tasks<a class="headerlink" href="#tasks" title="Permalink to this heading">¶</a></h3>
+<h3 id="tasks">tasks<a class="headerlink" href="#tasks" title="Link to this heading">¶</a></h3>
 <p>The <code class="docutils literal notranslate"><span class="pre">tasks</span></code> variable under the spec is the number of tasks that each pod in the MiniCluster should be given.</p>
 <div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><code><span class="w">  </span><span class="nt">tasks</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">4</span>
 </code></pre></div>
 </div>
 <p>This value defaults to 1.</p>
-<h3 id="interactive">interactive<a class="headerlink" href="#interactive" title="Permalink to this heading">¶</a></h3>
+<h3 id="interactive">interactive<a class="headerlink" href="#interactive" title="Link to this heading">¶</a></h3>
 <p>Interactive mode means that the Flux broker is started without a command, and this would
 allow you to shell into your cluster, connect to the broker, and interact with the Flux install.</p>
 <div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><code><span class="w">  </span><span class="nt">interactive</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
@@ -1354,14 +1369,14 @@ allow you to shell into your cluster, connect to the broker, and interact with t
 <p>This would be equivalent to giving a start command of <code class="docutils literal notranslate"><span class="pre">sleep</span> <span class="pre">infinity</span></code> however on exit
 (e.g., if there is a flux shutdown from within the Flux instance) the sleep command would
 not exit with a failed code.</p>
-<h3 id="launcher">launcher<a class="headerlink" href="#launcher" title="Permalink to this heading">¶</a></h3>
+<h3 id="launcher">launcher<a class="headerlink" href="#launcher" title="Link to this heading">¶</a></h3>
 <p>If you are using an executor that launches Flux Jobs (e.g., workflow managers such as Snakemake and Nextflow do!)
 then you can set launcher to true.</p>
 <div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><code><span class="w">  </span><span class="nt">launcher</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
 </code></pre></div>
 </div>
 <p>The main difference is that for a launcher, we don’t wrap it in a flux submit (as we would do with a job command).</p>
-<h3 id="joblabels">jobLabels<a class="headerlink" href="#joblabels" title="Permalink to this heading">¶</a></h3>
+<h3 id="joblabels">jobLabels<a class="headerlink" href="#joblabels" title="Link to this heading">¶</a></h3>
 <p>To add custom labels for your job, add a set of key value pairs (strings) to a “jobLabels” section:</p>
 <div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><code><span class="w">  </span><span class="nt">jobLabels</span><span class="p">:</span>
 <span class="w">    </span><span class="nt">job-attribute-a</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">dinosaur-a</span>
@@ -1371,20 +1386,20 @@ then you can set launcher to true.</p>
 <p>Note that by default, each pod will be labeled with a label <code class="docutils literal notranslate"><span class="pre">job-index</span></code> that corresponds to the
 particular pod index. E.g., the lead broker would have <code class="docutils literal notranslate"><span class="pre">job-index=0</span></code> and this could be used as a service
 selector.</p>
-<h3 id="deadline">deadline<a class="headerlink" href="#deadline" title="Permalink to this heading">¶</a></h3>
+<h3 id="deadline">deadline<a class="headerlink" href="#deadline" title="Link to this heading">¶</a></h3>
 <p>This is the maximum running time for your job. If you leave unset, it is essentially infinite.
 If a Job is suspended (at creation or through an update), this timer will effectively be stopped and reset when the Job is resumed again.</p>
 <div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><code><span class="w">  </span><span class="c1"># Deadline in seconds, if not set there is no deadline</span>
 <span class="w">  </span><span class="nt">deadlineSeconds</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">100</span>
 </code></pre></div>
 </div>
-<h3 id="volumes">volumes<a class="headerlink" href="#volumes" title="Permalink to this heading">¶</a></h3>
+<h3 id="volumes">volumes<a class="headerlink" href="#volumes" title="Link to this heading">¶</a></h3>
 <p>Volumes can be defined on the level of the MiniCluster that are then used by containers.</p>
 <ul class="simple">
 <li><p>For MiniKube, these volumes are expected to be inside of the VM, e.g., accessed via <code class="docutils literal notranslate"><span class="pre">minikube</span> <span class="pre">ssh</span></code></p></li>
 <li><p>For an actual cluster, they should be on the node running the pod.</p></li>
 </ul>
-<h4 id="volume-ids">volume ids<a class="headerlink" href="#volume-ids" title="Permalink to this heading">¶</a></h4>
+<h4 id="volume-ids">volume ids<a class="headerlink" href="#volume-ids" title="Link to this heading">¶</a></h4>
 <p>For each volume under “volumes” we enforce a unique name by way of using key values - e.g., “myvolume”
 in the example below can then be referenced for a container:</p>
 <div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><code><span class="nt">volumes</span><span class="p">:</span>
@@ -1396,7 +1411,7 @@ in the example below can then be referenced for a container:</p>
 <p>The “storageClass” above (which you can leave out) defaults to hostpath, and should be the storage class that your cluster provides.
 The Operator createst the “hostpath” volume claim. This currently is always created as a host path volume claim in MiniKube,
 and likely in the future will have different logic if it varies from that.</p>
-<h4 id="labels">labels<a class="headerlink" href="#labels" title="Permalink to this heading">¶</a></h4>
+<h4 id="labels">labels<a class="headerlink" href="#labels" title="Link to this heading">¶</a></h4>
 <p>You can add labels:</p>
 <div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><code><span class="nt">volumes</span><span class="p">:</span>
 <span class="w">  </span><span class="nt">myvolume</span><span class="p">:</span>
@@ -1406,7 +1421,7 @@ and likely in the future will have different logic if it varies from that.</p>
 <span class="w">      </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;local&quot;</span>
 </code></pre></div>
 </div>
-<h4 id="delete">delete<a class="headerlink" href="#delete" title="Permalink to this heading">¶</a></h4>
+<h4 id="delete">delete<a class="headerlink" href="#delete" title="Link to this heading">¶</a></h4>
 <p>By default, we will cleanup the persistent volume. To not do this (e.g., for a more permanent mount) set delete
 to false:</p>
 <div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><code><span class="nt">volumes</span><span class="p">:</span>
@@ -1416,7 +1431,7 @@ to false:</p>
 <span class="w">    </span><span class="nt">delete</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
 </code></pre></div>
 </div>
-<h4 id="driver">driver<a class="headerlink" href="#driver" title="Permalink to this heading">¶</a></h4>
+<h4 id="driver">driver<a class="headerlink" href="#driver" title="Link to this heading">¶</a></h4>
 <p>If you are using anything aside from hostpath, you’ll need a reference to a storage driver (usually a plugin)
 you’ve installed separately. This can also be referenced as a provisioner. Here is an example for Google Cloud storage:</p>
 <div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><code><span class="nt">volumes</span><span class="p">:</span>
@@ -1426,7 +1441,7 @@ you’ve installed separately. This can also be referenced as a provisioner. Her
 <span class="w">    </span><span class="nt">driver</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">gcs.csi.ofek.dev</span>
 </code></pre></div>
 </div>
-<h4 id="volumehandle">volumeHandle<a class="headerlink" href="#volumehandle" title="Permalink to this heading">¶</a></h4>
+<h4 id="volumehandle">volumeHandle<a class="headerlink" href="#volumehandle" title="Link to this heading">¶</a></h4>
 <p>If your volume handle differs from your storage class name, you can define it:</p>
 <div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><code><span class="nt">volumes</span><span class="p">:</span>
 <span class="w">  </span><span class="nt">myvolume</span><span class="p">:</span>
@@ -1436,7 +1451,7 @@ you’ve installed separately. This can also be referenced as a provisioner. Her
 <span class="w">    </span><span class="nt">volumeName</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">manualbucket/path</span>
 </code></pre></div>
 </div>
-<h4 id="attributes">attributes<a class="headerlink" href="#attributes" title="Permalink to this heading">¶</a></h4>
+<h4 id="attributes">attributes<a class="headerlink" href="#attributes" title="Link to this heading">¶</a></h4>
 <p>If your volume has attributes, you can add them too:</p>
 <div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><code><span class="nt">volumes</span><span class="p">:</span>
 <span class="w">  </span><span class="nt">myvolume</span><span class="p">:</span>
@@ -1445,7 +1460,7 @@ you’ve installed separately. This can also be referenced as a provisioner. Her
 <span class="w">    </span><span class="nt">capacity</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">25Gi</span>
 </code></pre></div>
 </div>
-<h4 id="request-storage-size">request storage size<a class="headerlink" href="#request-storage-size" title="Permalink to this heading">¶</a></h4>
+<h4 id="request-storage-size">request storage size<a class="headerlink" href="#request-storage-size" title="Link to this heading">¶</a></h4>
 <p>By default, a capacity request is “5Gi”, and we only do this because the field is required. However, keep in mind
 for many some cloud storage interfaces there is no concept of a max.
 This is defined as a string to be parsed. To tweak that, meaning
@@ -1460,7 +1475,7 @@ for Google Cloud)</p>
 </div>
 <p>Since storage classes are created separately (not by the operator) you should check with your storage
 class to ensure resource limits work with your selection above.</p>
-<h4 id="secret">secret<a class="headerlink" href="#secret" title="Permalink to this heading">¶</a></h4>
+<h4 id="secret">secret<a class="headerlink" href="#secret" title="Link to this heading">¶</a></h4>
 <p>For a CSI (container storage interface) you usually need to provide a secret reference. For example,
 for GKE we create a service account with the appropriate permissions, and then apply them as a secret named <code class="docutils literal notranslate"><span class="pre">csi-gks-secret</span></code>:</p>
 <div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><code><span class="nt">volumes</span><span class="p">:</span>
@@ -1472,7 +1487,7 @@ for GKE we create a service account with the appropriate permissions, and then a
 </code></pre></div>
 </div>
 <p>The secret (for now) should be in the default namespace.</p>
-<h4 id="annotations">annotations<a class="headerlink" href="#annotations" title="Permalink to this heading">¶</a></h4>
+<h4 id="annotations">annotations<a class="headerlink" href="#annotations" title="Link to this heading">¶</a></h4>
 <p>To add annotations for the volume use “annotations”</p>
 <div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><code><span class="nt">volumes</span><span class="p">:</span>
 <span class="w">  </span><span class="nt">myvolume</span><span class="p">:</span>
@@ -1480,7 +1495,7 @@ for GKE we create a service account with the appropriate permissions, and then a
 <span class="w">      </span><span class="nt">provider.svc/attribute</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">value</span>
 </code></pre></div>
 </div>
-<h4 id="claimannotations">claimAnnotations<a class="headerlink" href="#claimannotations" title="Permalink to this heading">¶</a></h4>
+<h4 id="claimannotations">claimAnnotations<a class="headerlink" href="#claimannotations" title="Link to this heading">¶</a></h4>
 <p>To set annotations for the claim:</p>
 <div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><code><span class="nt">volumes</span><span class="p">:</span>
 <span class="w">  </span><span class="nt">myvolume</span><span class="p">:</span>
@@ -1490,7 +1505,7 @@ for GKE we create a service account with the appropriate permissions, and then a
 <span class="w">      </span><span class="nt">gcs.csi.ofek.dev/bucket</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">flux-operator-storage</span>
 </code></pre></div>
 </div>
-<h3 id="cleanup">cleanup<a class="headerlink" href="#cleanup" title="Permalink to this heading">¶</a></h3>
+<h3 id="cleanup">cleanup<a class="headerlink" href="#cleanup" title="Link to this heading">¶</a></h3>
 <p>If you add any kind of persistent volume to your MiniCluster, it will likely need a cleanup after the fact
 (after you bring the MiniCluster down). By default, the operator will perform this cleanup, checking if the
 Job status is “Completed” and then removing the pods, Persistent Volume Claims, and Persistent Volumes.
@@ -1500,9 +1515,9 @@ If you want to disable this cleanup:</p>
 </div>
 <p>If you are streaming the logs with <code class="docutils literal notranslate"><span class="pre">kubectl</span> <span class="pre">logs</span></code> the steam would stop when the broker pod is completed,
 so typically you will get the logs as long as you are streaming when the job starts running.</p>
-<h3 id="flux">flux<a class="headerlink" href="#flux" title="Permalink to this heading">¶</a></h3>
+<h3 id="flux">flux<a class="headerlink" href="#flux" title="Link to this heading">¶</a></h3>
 <p>Settings under the Flux directive typically refer to flux options, e.g., for the broker or similar.</p>
-<h4 id="optionflags">optionFlags<a class="headerlink" href="#optionflags" title="Permalink to this heading">¶</a></h4>
+<h4 id="optionflags">optionFlags<a class="headerlink" href="#optionflags" title="Link to this heading">¶</a></h4>
 <p>Often when you run flux, you need to provide an option flag. E.g.,:</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span>flux<span class="w"> </span>submit<span class="w"> </span>-ompi<span class="o">=</span>openmpi@5
 </code></pre></div>
@@ -1522,13 +1537,13 @@ currently defined for your entire cluster and cannot be provided to specific con
 Also remember that your base container can equally provide these flags (and you
 could equally override them, but if they are set and you don’t define them here
 they should not be touched).</p>
-<h4 id="loglevel">logLevel<a class="headerlink" href="#loglevel" title="Permalink to this heading">¶</a></h4>
+<h4 id="loglevel">logLevel<a class="headerlink" href="#loglevel" title="Link to this heading">¶</a></h4>
 <p>The log level to provide to flux, given that test mode is not on.</p>
 <div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><code><span class="nt">flux</span><span class="p">:</span>
 <span class="w">  </span><span class="nt">logLevel</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">7</span>
 </code></pre></div>
 </div>
-<h4 id="installroot">installRoot<a class="headerlink" href="#installroot" title="Permalink to this heading">¶</a></h4>
+<h4 id="installroot">installRoot<a class="headerlink" href="#installroot" title="Link to this heading">¶</a></h4>
 <p>We traditionally install flux to <code class="docutils literal notranslate"><span class="pre">/usr</span></code>, however you might have a container
 with a non-traditional install location! You can edit this with the flux-&gt;installRoot
 directive:</p>
@@ -1542,7 +1557,7 @@ directive:</p>
 </code></pre></div>
 </div>
 <p>Note that the operator will still create assets for flux at <code class="docutils literal notranslate"><span class="pre">/etc/flux</span></code>.</p>
-<h4 id="wrap">wrap<a class="headerlink" href="#wrap" title="Permalink to this heading">¶</a></h4>
+<h4 id="wrap">wrap<a class="headerlink" href="#wrap" title="Link to this heading">¶</a></h4>
 <p>If you want to use the flux <code class="docutils literal notranslate"><span class="pre">--wrap</span></code> directive, which will add an additional <code class="docutils literal notranslate"><span class="pre">--wrap</span></code>
 with some listing of arguments, you can specify it as follows:</p>
 <div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><code><span class="nt">flux</span><span class="p">:</span>
@@ -1550,7 +1565,7 @@ with some listing of arguments, you can specify it as follows:</p>
 </code></pre></div>
 </div>
 <p>In the above, we would add <code class="docutils literal notranslate"><span class="pre">--wrap=strace,-e,network,-tt</span></code> to flux start commands.</p>
-<h4 id="scheduler">scheduler<a class="headerlink" href="#scheduler" title="Permalink to this heading">¶</a></h4>
+<h4 id="scheduler">scheduler<a class="headerlink" href="#scheduler" title="Link to this heading">¶</a></h4>
 <p>Under flux-&gt;scheduler you can define attributes for the scheduler. We currently allow
 setting a custom queue policy. The default (if unset) looks like this for first come first serve:</p>
 <div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><code><span class="nt">flux</span><span class="p">:</span>
@@ -1570,7 +1585,7 @@ setting a custom queue policy. The default (if unset) looks like this for first 
 </code></pre></div>
 </div>
 <p>You can learn more about queues <a class="reference external" href="https://flux-framework.readthedocs.io/en/latest/guides/admin-guide.html?h=system#adding-queues">here</a>. Please <a class="reference external" href="https://github.com/flux-framework/flux-operator/issues">open an issue</a> if you want support for something that you don’t see. Also note that you can set an entire broker config for more detailed customization.</p>
-<h4 id="minimalservice">minimalService<a class="headerlink" href="#minimalservice" title="Permalink to this heading">¶</a></h4>
+<h4 id="minimalservice">minimalService<a class="headerlink" href="#minimalservice" title="Link to this heading">¶</a></h4>
 <p>By default, the Flux MiniCluster will be created with a headless service across the cluster,
 meaning that all pods can ping one another via a fully qualified hostname. As an example,
 the 0 index (the lead broker) of an indexed job will be available at:</p>
@@ -1589,7 +1604,7 @@ the networking setup will be more minimal.</p>
 </code></pre></div>
 </div>
 <p>The drawback is that you cannot ping the other nodes by hostname.</p>
-<h4 id="brokerconfig">brokerConfig<a class="headerlink" href="#brokerconfig" title="Permalink to this heading">¶</a></h4>
+<h4 id="brokerconfig">brokerConfig<a class="headerlink" href="#brokerconfig" title="Link to this heading">¶</a></h4>
 <p>If you want to manually specify the broker config in entirety, you can define
 it as a full string under flux-&gt;brokerConfig. This is useful for experiments
 or development work.</p>
@@ -1599,7 +1614,7 @@ or development work.</p>
 <span class="w">     </span><span class="no">...</span>
 </code></pre></div>
 </div>
-<h4 id="curvecertsecret">curveCertSecret<a class="headerlink" href="#curvecertsecret" title="Permalink to this heading">¶</a></h4>
+<h4 id="curvecertsecret">curveCertSecret<a class="headerlink" href="#curvecertsecret" title="Link to this heading">¶</a></h4>
 <p>To provide the name of a secret with a key <code class="docutils literal notranslate"><span class="pre">curve.cert</span></code> with a curve certificate to
 the MiniCluster, you can define this variable. This is recommended (and likely)
 for bursting scenarios when you need to share your primary cluster certificate
@@ -1610,7 +1625,7 @@ with an external one.</p>
 </div>
 <p>This is recommended in favor of the plain text, below, and if both are
 provided the secret will be honored first.</p>
-<h4 id="curvecert">curveCert<a class="headerlink" href="#curvecert" title="Permalink to this heading">¶</a></h4>
+<h4 id="curvecert">curveCert<a class="headerlink" href="#curvecert" title="Link to this heading">¶</a></h4>
 <p>The same goes for the curve certificate! If you are bursting and want your
 new cluster to talk to the cluster it’s bursted from, you can share this certificate.</p>
 <div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><code><span class="nt">flux</span><span class="p">:</span>
@@ -1619,7 +1634,7 @@ new cluster to talk to the cluster it’s bursted from, you can share this certi
 <span class="w">     </span><span class="no">...</span>
 </code></pre></div>
 </div>
-<h4 id="mungesecret">mungeSecret<a class="headerlink" href="#mungesecret" title="Permalink to this heading">¶</a></h4>
+<h4 id="mungesecret">mungeSecret<a class="headerlink" href="#mungesecret" title="Link to this heading">¶</a></h4>
 <p>In the case that you are also bursting, you’ll need the shared munge key between clusters.
 Since this is a binary file, we recommend you create a secret from the file:</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span>kubectl<span class="w"> </span>create<span class="w"> </span>secret<span class="w"> </span>--namespace<span class="w"> </span>flux-operator<span class="w"> </span>munge-key<span class="w"> </span>--from-file<span class="o">=</span>/etc/munge/munge.key
@@ -1630,7 +1645,7 @@ Since this is a binary file, we recommend you create a secret from the file:</p>
 <span class="w">  </span><span class="nt">mungeSecret</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">munge-key</span>
 </code></pre></div>
 </div>
-<h4 id="connecttimeout">connectTimeout<a class="headerlink" href="#connecttimeout" title="Permalink to this heading">¶</a></h4>
+<h4 id="connecttimeout">connectTimeout<a class="headerlink" href="#connecttimeout" title="Link to this heading">¶</a></h4>
 <p>For Flux versions 0.50.0 and later, you can customize the zeromq timeout. This is done
 via an extra broker option provided on the command line:</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>-Stbon.connect_timeout<span class="o">=</span>5s
@@ -1671,7 +1686,7 @@ More details are available in <a class="reference external" href="https://github
 Although we have fixed the zeromq timeout bug, there still seems to be some underlying issue in Kubernetes.</p>
 <p>Note that we think this higher level networking bug is still an issue, and are going to be creating a dummy case
 to reproduce it and share with the Kubernetes networking team.</p>
-<h3 id="bursting">bursting<a class="headerlink" href="#bursting" title="Permalink to this heading">¶</a></h3>
+<h3 id="bursting">bursting<a class="headerlink" href="#bursting" title="Link to this heading">¶</a></h3>
 <p>The bursting spec defines when you expect to burst to an external cluster. Since the initial Flux cluster needs
 to know all future hosts in advance, we ask that you provide sizes. More specifically:</p>
 <ul class="simple">
@@ -1726,12 +1741,12 @@ we might burst to compute engine:</p>
 how the hostnames and address are provided to the remote (second) cluster.</p>
 <p>For full examples, see <a class="reference external" href="https://github.com/flux-framework/flux-operator/tree/main/examples/experimental/bursting">the bursting</a>
 examples directory.</p>
-<h3 id="logging">logging<a class="headerlink" href="#logging" title="Permalink to this heading">¶</a></h3>
+<h3 id="logging">logging<a class="headerlink" href="#logging" title="Link to this heading">¶</a></h3>
 <p>We provide simple types of “logging” within the main script that is run for the job.
 If you don’t set any variables, you’ll get the most verbosity with timing of the main
 command. You can set any subset of these for a custom output. Note that these logging levels
 are not specific to operator logs, but the indexed job running in the pod.</p>
-<h4 id="quiet">quiet<a class="headerlink" href="#quiet" title="Permalink to this heading">¶</a></h4>
+<h4 id="quiet">quiet<a class="headerlink" href="#quiet" title="Link to this heading">¶</a></h4>
 <p>Quiet mode turns off all verbose output (yes, the emojis too) so only the output of
 your job will be printed to the console. This way, you can retrieve the job lob
 and then determine if the test was successful based on this output.</p>
@@ -1740,7 +1755,7 @@ and then determine if the test was successful based on this output.</p>
 </code></pre></div>
 </div>
 <p>By default quiet is false. In early stages of the operator this was called <code class="docutils literal notranslate"><span class="pre">test</span></code>.</p>
-<h4 id="strict">strict<a class="headerlink" href="#strict" title="Permalink to this heading">¶</a></h4>
+<h4 id="strict">strict<a class="headerlink" href="#strict" title="Link to this heading">¶</a></h4>
 <p>By default, we run in bash strict mode, meaning that an error in a worker entrypoint script
 will cause it to exit with a non-zero exit code. However, if you want to debug (and pass over the issue)
 you can set this to false (it defaults to true):</p>
@@ -1748,7 +1763,7 @@ you can set this to false (it defaults to true):</p>
 <span class="w">  </span><span class="nt">strict</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
 </code></pre></div>
 </div>
-<h4 id="timed">timed<a class="headerlink" href="#timed" title="Permalink to this heading">¶</a></h4>
+<h4 id="timed">timed<a class="headerlink" href="#timed" title="Link to this heading">¶</a></h4>
 <p>Timed mode adds timing for the main Flux command and a few other interactions in the script.</p>
 <div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><code><span class="nt">logging</span><span class="p">:</span>
 <span class="w">  </span><span class="nt">timed</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
@@ -1770,13 +1785,13 @@ FLUXTIME<span class="w"> </span>fluxsubmit<span class="w"> </span>wall<span clas
 </div>
 <p>All timed command lines are prefixed with <code class="docutils literal notranslate"><span class="pre">FLUXTIME</span></code> and the main submit will be <code class="docutils literal notranslate"><span class="pre">fluxsubmit</span></code>
 and the worker pods flux start will have <code class="docutils literal notranslate"><span class="pre">fluxstart</span></code>.</p>
-<h4 id="debug">debug<a class="headerlink" href="#debug" title="Permalink to this heading">¶</a></h4>
+<h4 id="debug">debug<a class="headerlink" href="#debug" title="Link to this heading">¶</a></h4>
 <p>Debug mode adds verbosity to flux to see additional information about the job submission.</p>
 <div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><code><span class="nt">logging</span><span class="p">:</span>
 <span class="w">  </span><span class="nt">debug</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
 </code></pre></div>
 </div>
-<h4 id="zeromq">zeromq<a class="headerlink" href="#zeromq" title="Permalink to this heading">¶</a></h4>
+<h4 id="zeromq">zeromq<a class="headerlink" href="#zeromq" title="Link to this heading">¶</a></h4>
 <p>ZeroMQ has logging explicitly for it, and you can enable it for the operator as follows:</p>
 <div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><code><span class="nt">logging</span><span class="p">:</span>
 <span class="w">  </span><span class="nt">zeromq</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
@@ -1795,7 +1810,7 @@ broker.debug<span class="o">[</span><span class="m">1</span><span class="o">]</s
 <p>This parameter is currently unset in Flux (so the wait can be slow) and we will have an update to Flux
 soon to make the check more frequent. If you find that your cluster creation times are slower than
 you expected, this is the probably cause, and it will be resolved with this update to Flux.</p>
-<h3 id="archive">archive<a class="headerlink" href="#archive" title="Permalink to this heading">¶</a></h3>
+<h3 id="archive">archive<a class="headerlink" href="#archive" title="Link to this heading">¶</a></h3>
 <p>If you want to save state between MiniClusters, you can set an archive path for
 the MiniCluster to load and save to. Given that the path exists, in the entrypoint
 script it will be loaded via <code class="docutils literal notranslate"><span class="pre">flux</span> <span class="pre">system</span> <span class="pre">reload</span></code>. At the end, a pre stop hook
@@ -1807,7 +1822,7 @@ will then do another <code class="docutils literal notranslate"><span class="pre
 <p>This obviously requires that you have a persistent volume to save to that subsequent MiniClusters
 can access! This also assumes we are OK updating the archive state (and don’t want to save the original). This can
 be adjusted if needed.</p>
-<h3 id="users">users<a class="headerlink" href="#users" title="Permalink to this heading">¶</a></h3>
+<h3 id="users">users<a class="headerlink" href="#users" title="Link to this heading">¶</a></h3>
 <p>If you add a listing of users, minimally you need to provide a name for each one:</p>
 <div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><code><span class="nt">users</span><span class="p">:</span>
 <span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">peenut</span>
@@ -1831,9 +1846,9 @@ You can also define them manually:</p>
 Note that although we don’t validate this in the job, multi-user mode only makes sense to
 provide alongside a custom resource definition without a command, meaning you submit
 directly to the Flux Restful API server.```</p>
-<h3 id="pod">pod<a class="headerlink" href="#pod" title="Permalink to this heading">¶</a></h3>
+<h3 id="pod">pod<a class="headerlink" href="#pod" title="Link to this heading">¶</a></h3>
 <p>Variables and attributes for each pod in the Indexed job.</p>
-<h4 id="id1">labels<a class="headerlink" href="#id1" title="Permalink to this heading">¶</a></h4>
+<h4 id="id1">labels<a class="headerlink" href="#id1" title="Link to this heading">¶</a></h4>
 <p>To add custom labels for your pods (in the indexed job), add a set of key value pairs (strings) to a “labels” section:</p>
 <div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><code><span class="nt">pod</span><span class="p">:</span>
 <span class="w">  </span><span class="nt">labels</span><span class="p">:</span>
@@ -1842,7 +1857,7 @@ directly to the Flux Restful API server.```</p>
 </code></pre></div>
 </div>
 <p>Note that the “namespace” variable is controlled by the operator here, and would be over-ridden if you defined it here.</p>
-<h4 id="id2">annotations<a class="headerlink" href="#id2" title="Permalink to this heading">¶</a></h4>
+<h4 id="id2">annotations<a class="headerlink" href="#id2" title="Link to this heading">¶</a></h4>
 <p>The same is true for annotations! Just add annotations to a pod like so:</p>
 <div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><code><span class="nt">pod</span><span class="p">:</span>
 <span class="w">  </span><span class="nt">annotations</span><span class="p">:</span>
@@ -1850,7 +1865,7 @@ directly to the Flux Restful API server.```</p>
 <span class="w">    </span><span class="nt">pod-annotation-b</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">dinosaur-b</span>
 </code></pre></div>
 </div>
-<h4 id="resources">resources<a class="headerlink" href="#resources" title="Permalink to this heading">¶</a></h4>
+<h4 id="resources">resources<a class="headerlink" href="#resources" title="Link to this heading">¶</a></h4>
 <p>Resource lists for a pod go under <a class="reference external" href="https://kubernetes.io/docs/concepts/scheduling-eviction/pod-overhead/">Overhead</a>. Known keys include “memory” and “cpu” (should be provided in some
 string format that can be parsed) and all others are considered some kind of quantity request.</p>
 <div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><code><span class="nt">pod</span><span class="p">:</span>
@@ -1859,13 +1874,13 @@ string format that can be parsed) and all others are considered some kind of qua
 <span class="w">    </span><span class="nt">cpu</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">4</span>
 </code></pre></div>
 </div>
-<h4 id="serviceaccountname">serviceAccountName<a class="headerlink" href="#serviceaccountname" title="Permalink to this heading">¶</a></h4>
+<h4 id="serviceaccountname">serviceAccountName<a class="headerlink" href="#serviceaccountname" title="Link to this heading">¶</a></h4>
 <p>To give a service account name to your pods, simply do:</p>
 <div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><code><span class="nt">pod</span><span class="p">:</span>
 <span class="w">  </span><span class="nt">serviceAccountName</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">my-service-account</span>
 </code></pre></div>
 </div>
-<h4 id="nodeselector">nodeSelector<a class="headerlink" href="#nodeselector" title="Permalink to this heading">¶</a></h4>
+<h4 id="nodeselector">nodeSelector<a class="headerlink" href="#nodeselector" title="Link to this heading">¶</a></h4>
 <p>A node selector is a set of key value pairs that helps to schedule pods to the right nodes! You can
 add nodeSelector attributes to your pod as follows:</p>
 <div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><code><span class="nt">pod</span><span class="p">:</span>
@@ -1873,7 +1888,7 @@ add nodeSelector attributes to your pod as follows:</p>
 <span class="w">    </span><span class="nt">iam.gke.io/gke-metadata-server-enabled</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;true&quot;</span>
 </code></pre></div>
 </div>
-<h3 id="containers">containers<a class="headerlink" href="#containers" title="Permalink to this heading">¶</a></h3>
+<h3 id="containers">containers<a class="headerlink" href="#containers" title="Link to this heading">¶</a></h3>
 <p>Early on we identified that a job could include more than one container, where there might be a primary container
 running Flux, and others that provide services. Note that currently we only allow one container to be a FluxRunner,
 however we anticipate this could change (and allow for specifying custom logic for a flux runner entrypoint, a script
@@ -1885,26 +1900,26 @@ called “wait.sh”) on the level of the container.</p>
 </code></pre></div>
 </div>
 <p>For each container, the follow variables are available (nested under <code class="docutils literal notranslate"><span class="pre">containers</span></code> as a list, as shown above).</p>
-<h4 id="name">name<a class="headerlink" href="#name" title="Permalink to this heading">¶</a></h4>
+<h4 id="name">name<a class="headerlink" href="#name" title="Link to this heading">¶</a></h4>
 <p>For all containers that aren’t flux runners, a name is required. Validation will check that it is defined.</p>
 <div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><code><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">rabbit</span>
 </code></pre></div>
 </div>
-<h4 id="image">image<a class="headerlink" href="#image" title="Permalink to this heading">¶</a></h4>
+<h4 id="image">image<a class="headerlink" href="#image" title="Link to this heading">¶</a></h4>
 <p>This is the only required attribute! You <em>must</em> provide a container base that has Flux.
 The requirements of your container are defined in the README of the <a class="reference external" href="https://github.com/rse-ops/flux-hpc/">flux-hpc</a>
 repository. Generally speaking, you need to have Flux executables, Flux Python bindings,
 and your own executables on the path, and should be started with root with a flux user.
 If you use the <a class="reference external" href="https://hub.docker.com/r/fluxrm/flux-sched">fluxrm/flux-sched</a>
 base containers this is usually a good start.</p>
-<h4 id="cores">cores<a class="headerlink" href="#cores" title="Permalink to this heading">¶</a></h4>
+<h4 id="cores">cores<a class="headerlink" href="#cores" title="Link to this heading">¶</a></h4>
 <p>The number of cores to provide to the container as a variable. This does not actually allocate or control cores
 for the container, but exposes the variable for your container template (e.g., for the Flux wait.sh script).</p>
 <div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><code><span class="w">  </span><span class="nt">cores</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">4</span>
 </code></pre></div>
 </div>
 <p>This value when unset defaults to 1.</p>
-<h4 id="command">command<a class="headerlink" href="#command" title="Permalink to this heading">¶</a></h4>
+<h4 id="command">command<a class="headerlink" href="#command" title="Link to this heading">¶</a></h4>
 <p>Providing (or not providing) a command is going to dictate the behavior of your MiniCluster!</p>
 <ol class="arabic simple">
 <li><p>Providing a custom command means the MiniCluster is ephemeral - it will run the command and clean up.</p></li>
@@ -1915,7 +1930,7 @@ for the container, but exposes the variable for your container template (e.g., f
 <span class="w">    </span><span class="nt">command</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">lmp -v x 2 -v y 2 -v z 2 -in in.reaxc.hns -nocite</span>
 </code></pre></div>
 </div>
-<h4 id="id3">resources<a class="headerlink" href="#id3" title="Permalink to this heading">¶</a></h4>
+<h4 id="id3">resources<a class="headerlink" href="#id3" title="Link to this heading">¶</a></h4>
 <p>Resources can include limits and requests. Known keys include “memory” and “cpu” (should be provided in some
 string format that can be parsed) and all others are considered some kind of quantity request.</p>
 <div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><code><span class="nt">resources</span><span class="p">:</span>
@@ -1939,14 +1954,14 @@ string format that can be parsed) and all others are considered some kind of qua
 <p>Both limits and resources are flexible to accept a string or an integer value, and you’ll get an error if you
 provide something else. If you need something else, <a class="reference external" href="https://github.com/flux-framework/flux-operator/issues">let us know</a>.
 If you are requesting GPU, <a class="reference external" href="https://kubernetes.io/docs/tasks/manage-gpus/scheduling-gpus/">this documentation</a> is helpful.</p>
-<h4 id="imagepullsecret">imagePullSecret<a class="headerlink" href="#imagepullsecret" title="Permalink to this heading">¶</a></h4>
+<h4 id="imagepullsecret">imagePullSecret<a class="headerlink" href="#imagepullsecret" title="Link to this heading">¶</a></h4>
 <p>If your container has a pull secret, define it as <code class="docutils literal notranslate"><span class="pre">imagePullSecret</span></code>. If it’s publicly pullable,
 you don’t need this. But we do hope you are able to practice open science and share your containers!</p>
 <div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><code><span class="w">    </span><span class="c1"># Name of an already created ImagePullSecret for the image specified above</span>
 <span class="w">    </span><span class="nt">imagePullSecret</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">flux-image-secret</span>
 </code></pre></div>
 </div>
-<h4 id="workingdir">workingDir<a class="headerlink" href="#workingdir" title="Permalink to this heading">¶</a></h4>
+<h4 id="workingdir">workingDir<a class="headerlink" href="#workingdir" title="Link to this heading">¶</a></h4>
 <p>The container likely has a set working directory, and if you are running the RESTful API service (meaning
 you start without a command, as shown above) this will likely be the application folder. If you are launching
 a job directly with flux start and require a particular working directory, set it here!</p>
@@ -1957,13 +1972,13 @@ a job directly with flux start and require a particular working directory, set i
 <p>Remember that if you don’t provide a command and launch the RESTFul API, you can provide the working
 directory needed on the level of each job submit, and you don’t need to define it here.
 In fact, if you are using the flux-restful-api server, it will be changed anyway.</p>
-<h4 id="pullalways">pullAlways<a class="headerlink" href="#pullalways" title="Permalink to this heading">¶</a></h4>
+<h4 id="pullalways">pullAlways<a class="headerlink" href="#pullalways" title="Link to this heading">¶</a></h4>
 <p>For development, it can be helpful to request that an image is re-pulled. Control that using <code class="docutils literal notranslate"><span class="pre">pullAlways</span></code>:</p>
 <div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><code><span class="w">    </span><span class="c1"># Always pull the image (if you are updating the image between runs, set to true)!</span>
 <span class="w">    </span><span class="nt">pullAlways</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
 </code></pre></div>
 </div>
-<h4 id="runflux">runFlux<a class="headerlink" href="#runflux" title="Permalink to this heading">¶</a></h4>
+<h4 id="runflux">runFlux<a class="headerlink" href="#runflux" title="Link to this heading">¶</a></h4>
 <p>If you are running multiple containers in a pod, this boolean indicates the one that should
 be running Flux (and the rest are providing services).
 This defaults to true, so if you have one container, you largely don’t need to worry about this.
@@ -1975,14 +1990,14 @@ However, if you set this to true for <em>two</em> container (not allowed current
 <span class="w">    </span><span class="nt">runFlux</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
 </code></pre></div>
 </div>
-<h4 id="environment">environment<a class="headerlink" href="#environment" title="Permalink to this heading">¶</a></h4>
+<h4 id="environment">environment<a class="headerlink" href="#environment" title="Link to this heading">¶</a></h4>
 <p>If you have environment variables to add, you can use an environment section with key value pairs:</p>
 <div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><code><span class="nt">environment</span><span class="p">:</span>
 <span class="w">   </span><span class="nt">RABBITMQ_DEFAULT_USER</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">aha</span>
 <span class="w">   </span><span class="nt">RABBITMQ_DEFAULT_PASS</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">aharabbit</span>
 </code></pre></div>
 </div>
-<h4 id="ports">ports<a class="headerlink" href="#ports" title="Permalink to this heading">¶</a></h4>
+<h4 id="ports">ports<a class="headerlink" href="#ports" title="Link to this heading">¶</a></h4>
 <p>The same goes for ports! Since we are implementing fairly simple use cases, for now ports
 are provided as a single list of numbers, and the ideas is that the containerPort will
 be assigned this number (and you can forward to your host however you like):</p>
@@ -1992,7 +2007,7 @@ be assigned this number (and you can forward to your host however you like):</p>
 <span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">5672</span>
 </code></pre></div>
 </div>
-<h4 id="precommand">preCommand<a class="headerlink" href="#precommand" title="Permalink to this heading">¶</a></h4>
+<h4 id="precommand">preCommand<a class="headerlink" href="#precommand" title="Link to this heading">¶</a></h4>
 <p>It might be that you want some custom logic at the beginning of your script.
 E.g., perhaps you need to source an environment of interest! To support this we allow
 for a string (multiple lines possible) of custom logic to do that. This
@@ -2024,9 +2039,9 @@ assets to a home directory, so we need to customize the entrypoint for that.</p>
 <span class="nv">asFlux</span><span class="o">=</span><span class="s2">&quot;sudo -u flux -E PYTHONPATH=</span><span class="nv">$PYTHONPATH</span><span class="s2"> -E PATH=</span><span class="nv">$PATH</span><span class="s2"> -E HOME=/home/flux&quot;</span>
 </code></pre></div>
 </div>
-<h4 id="commands">commands<a class="headerlink" href="#commands" title="Permalink to this heading">¶</a></h4>
+<h4 id="commands">commands<a class="headerlink" href="#commands" title="Link to this heading">¶</a></h4>
 <p>A special “commands” section is available for commands that you want to run in the broker and workers containers.</p>
-<h5 id="init">init<a class="headerlink" href="#init" title="Permalink to this heading">¶</a></h5>
+<h5 id="init">init<a class="headerlink" href="#init" title="Link to this heading">¶</a></h5>
 <p>Init happens before everything - at the very beginning of the entrypoint. If you want to customize
 the <code class="docutils literal notranslate"><span class="pre">PATH</span></code>, <code class="docutils literal notranslate"><span class="pre">PYTHONPATH</span></code>, or <code class="docutils literal notranslate"><span class="pre">LD_LIBRARY_PATH</span></code> handed to asFlux you can do that here.</p>
 <div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><code><span class="nt">containers</span><span class="p">:</span>
@@ -2036,7 +2051,7 @@ the <code class="docutils literal notranslate"><span class="pre">PATH</span></co
 <span class="w">      </span><span class="nt">init</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">export LD_LIBRARY_PATH=/opt/conda/lib</span>
 </code></pre></div>
 </div>
-<h5 id="pre">pre<a class="headerlink" href="#pre" title="Permalink to this heading">¶</a></h5>
+<h5 id="pre">pre<a class="headerlink" href="#pre" title="Link to this heading">¶</a></h5>
 <p>The “pre” command is akin to <code class="docutils literal notranslate"><span class="pre">preCommand</span></code> but only run for the Flux workers and broker. It is run after a few
 early environment variables are set (e.g., asFlux). Here is an example:</p>
 <div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><code><span class="nt">containers</span><span class="p">:</span>
@@ -2049,7 +2064,7 @@ early environment variables are set (e.g., asFlux). Here is an example:</p>
 <span class="w">        </span><span class="no">ls /workdir</span>
 </code></pre></div>
 </div>
-<h5 id="workerpre-and-brokerpre">workerPre and brokerPre<a class="headerlink" href="#workerpre-and-brokerpre" title="Permalink to this heading">¶</a></h5>
+<h5 id="workerpre-and-brokerpre">workerPre and brokerPre<a class="headerlink" href="#workerpre-and-brokerpre" title="Link to this heading">¶</a></h5>
 <p>This is akin to pre, but only for the broker OR the workers.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><code><span class="n">containers</span><span class="p">:</span>
   <span class="o">-</span> <span class="n">image</span><span class="p">:</span> <span class="n">my</span><span class="o">-</span><span class="n">flux</span><span class="o">-</span><span class="n">image</span>
@@ -2059,7 +2074,7 @@ early environment variables are set (e.g., asFlux). Here is an example:</p>
       <span class="n">preBroker</span><span class="p">:</span> <span class="n">echo</span> <span class="n">hello</span> <span class="n">I</span> <span class="n">am</span> <span class="n">the</span> <span class="n">lead</span> <span class="n">broker</span> 
 </code></pre></div>
 </div>
-<h5 id="post">post<a class="headerlink" href="#post" title="Permalink to this heading">¶</a></h5>
+<h5 id="post">post<a class="headerlink" href="#post" title="Link to this heading">¶</a></h5>
 <p>The “post” command is run for in the entrypoint after everything finishes up.</p>
 <div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><code><span class="nt">containers</span><span class="p">:</span>
 <span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">image</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">my-flux-image</span>
@@ -2068,7 +2083,7 @@ early environment variables are set (e.g., asFlux). Here is an example:</p>
 <span class="w">      </span><span class="nt">post</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">echo &quot;Finishing up...&quot;</span>
 </code></pre></div>
 </div>
-<h5 id="runfluxasroot">runFluxAsRoot<a class="headerlink" href="#runfluxasroot" title="Permalink to this heading">¶</a></h5>
+<h5 id="runfluxasroot">runFluxAsRoot<a class="headerlink" href="#runfluxasroot" title="Link to this heading">¶</a></h5>
 <p>For different storage interfaces (e.g., CSI means “Container Storage Interface”) you might need to
 run flux as root (and not change permission of the mounted working directory) to be owned by the flux user. You
 can set this flag to enable that:</p>
@@ -2081,7 +2096,7 @@ can set this flag to enable that:</p>
 </div>
 <p>This defaults to false, meaning we run everything as the Flux user, and you are encouraged to try to figure out
 setting up your storage to be owned by that user.</p>
-<h5 id="prefix">prefix<a class="headerlink" href="#prefix" title="Permalink to this heading">¶</a></h5>
+<h5 id="prefix">prefix<a class="headerlink" href="#prefix" title="Link to this heading">¶</a></h5>
 <p>This is a “wrapper” to any of flux submit, broker, or start. It typically is needed if you need to wrap
 the initial command with something else. As an example, to get a storage driver working in the context
 of a command, you might need to prefix the executable (see <a class="reference internal" href="../deployment/google/fusion.html"><span class="std std-doc">fusion storage</span></a>).</p>
@@ -2092,7 +2107,7 @@ of a command, you might need to prefix the executable (see <a class="reference i
 <span class="w">      </span><span class="nt">prefix</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">fusion</span>
 </code></pre></div>
 </div>
-<h4 id="fluxuser">fluxUser<a class="headerlink" href="#fluxuser" title="Permalink to this heading">¶</a></h4>
+<h4 id="fluxuser">fluxUser<a class="headerlink" href="#fluxuser" title="Link to this heading">¶</a></h4>
 <p>If you need to change the uid or name for the flux user, you can define that here.</p>
 <div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><code><span class="nt">containers</span><span class="p">:</span>
 <span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">image</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">my-flux-image</span>
@@ -2106,7 +2121,7 @@ of a command, you might need to prefix the executable (see <a class="reference i
 </div>
 <p>Note that if the “flux” user already exists in your container, the uid will be discovered and you don’t need
 to set this. These parameters are only if you want the flux user to be created with a different unique id.</p>
-<h4 id="batch">batch<a class="headerlink" href="#batch" title="Permalink to this heading">¶</a></h4>
+<h4 id="batch">batch<a class="headerlink" href="#batch" title="Link to this heading">¶</a></h4>
 <p>If you are submitting many jobs, you are better off providing them to flux at once as a batch submission.
 This way, we won’t stress any Kubernetes APIs to submit multiple. To do this, you can define a command as before,
 but then set batch to true:</p>
@@ -2148,7 +2163,7 @@ jobs are numbered by the order you provide above. To change this path:</p>
 <p>Note that the output is recommended to be a shared volume so all pods can write to it.
 If you can’t use the filesystem for saving output, it’s recommended to have some other
 service used in your jobs to send output.</p>
-<h4 id="batchraw">batchRaw<a class="headerlink" href="#batchraw" title="Permalink to this heading">¶</a></h4>
+<h4 id="batchraw">batchRaw<a class="headerlink" href="#batchraw" title="Link to this heading">¶</a></h4>
 <p>By default, the commands you provide to batch will be wrapped in flux submit, and with <code class="docutils literal notranslate"><span class="pre">--output</span></code> and <code class="docutils literal notranslate"><span class="pre">--flags</span> <span class="pre">waitable</span></code> added.
 This works for a set of commands that are intended to be launched as such, but if you want custom logic in your script (such
 as using flux exec or flux filemap) you can set batchRaw to true, and then provide the full flux directives in your
@@ -2165,7 +2180,7 @@ to copy data from the broker to all nodes in a batch job, and run the job.</p>
 </div>
 <p>See our <a class="reference internal" href="../tutorials/staging.html"><span class="std std-doc">staging tutorial</span></a> for more details on how this works! You could use it for a Singularity container (that needs to be seen by
 all nodes) or for data.</p>
-<h4 id="diagnostics">diagnostics<a class="headerlink" href="#diagnostics" title="Permalink to this heading">¶</a></h4>
+<h4 id="diagnostics">diagnostics<a class="headerlink" href="#diagnostics" title="Link to this heading">¶</a></h4>
 <p>Flux has a command that makes it easy to run diagnostics on a cluster, and we expose a boolean that makes it possible
 to run that (instead of your job or starting the server). Since you might only want this for a specific container,
 we provide this argument on the level of the container. To enable this, set this boolean to true. By default, it is false.</p>
@@ -2174,14 +2189,14 @@ we provide this argument on the level of the container. To enable this, set this
 <span class="w">  </span><span class="nt">diagnostics</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
 </code></pre></div>
 </div>
-<h4 id="lifecycle">lifeCycle<a class="headerlink" href="#lifecycle" title="Permalink to this heading">¶</a></h4>
+<h4 id="lifecycle">lifeCycle<a class="headerlink" href="#lifecycle" title="Link to this heading">¶</a></h4>
 <p>You can define postStartExec or preStopExec hooks.</p>
 <div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><code><span class="nt">lifeCycle</span><span class="p">:</span>
 <span class="w">  </span><span class="nt">postStartExec</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">...</span>
 <span class="w">  </span><span class="nt">preStopExec</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">...</span>
 </code></pre></div>
 </div>
-<h3 id="id4">volumes<a class="headerlink" href="#id4" title="Permalink to this heading">¶</a></h3>
+<h3 id="id4">volumes<a class="headerlink" href="#id4" title="Link to this heading">¶</a></h3>
 <p>Volumes that are defined on the level of the container must be defined at the top level of the MiniCluster.
 As an example, here is how we tell the container to use the already defined volume “myvolume” to be mounted
 in the container as “/data”:</p>
@@ -2198,7 +2213,7 @@ If you want to change the readOnly status to true:</p>
 <span class="w">    </span><span class="nt">readOnly</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
 </code></pre></div>
 </div>
-<h3 id="existingvolumes">existingVolumes<a class="headerlink" href="#existingvolumes" title="Permalink to this heading">¶</a></h3>
+<h3 id="existingvolumes">existingVolumes<a class="headerlink" href="#existingvolumes" title="Link to this heading">¶</a></h3>
 <p>An existing volume can be:</p>
 <ul class="simple">
 <li><p>a persistent volume claim (PVC) and persistent volume (PV) that you’ve created</p></li>
@@ -2207,7 +2222,7 @@ If you want to change the readOnly status to true:</p>
 </ul>
 <p>and for all of the above, you want to provide it to the operator, which will work either for a worker
 pod (in the indexed job) or a service.</p>
-<h4 id="persistent-volume-claim-example">persistent volume claim example<a class="headerlink" href="#persistent-volume-claim-example" title="Permalink to this heading">¶</a></h4>
+<h4 id="persistent-volume-claim-example">persistent volume claim example<a class="headerlink" href="#persistent-volume-claim-example" title="Link to this heading">¶</a></h4>
 <p>As an example, the IBM plugin we use to setup takes this approach, and then we define the existing volume on the level of the container:</p>
 <div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><code><span class="c1"># This is a list because a pod can support multiple containers</span>
 <span class="nt">containers</span><span class="p">:</span>
@@ -2226,7 +2241,7 @@ pod (in the indexed job) or a service.</p>
 <p>The above would add a claim named “data” to the container it is defined alongside. Note that the names
 define uniqueness, so if you use a claim in two places with the same name “data” it should also
 use the same path “/workflow.” If this doesn’t work for your use case, please <a class="reference external" href="https://github.com/flux-framework/flux-operator/issues">let us know</a>.</p>
-<h4 id="config-map-example">config map example<a class="headerlink" href="#config-map-example" title="Permalink to this heading">¶</a></h4>
+<h4 id="config-map-example">config map example<a class="headerlink" href="#config-map-example" title="Link to this heading">¶</a></h4>
 <p>Here is an example of providing a config map to a service container (that runs as a sidecar container alongside the MiniCluster)
 that we want to add to the service container. In layman’s terms, we are deploying vanilla nginx, but adding a configuration file
 to <code class="docutils literal notranslate"><span class="pre">/etc/nginx/conf.d</span></code></p>
@@ -2263,7 +2278,7 @@ to <code class="docutils literal notranslate"><span class="pre">/etc/nginx/conf.
 <p>Note that the above block <code class="docutils literal notranslate"><span class="pre">existingVolumes</span></code> is valid to be under the
 MiniCluster-&gt;containers section too. Either MiniCluster containers OR service
 containers can have existingVolumes of any type.</p>
-<h4 id="secret-example">secret example<a class="headerlink" href="#secret-example" title="Permalink to this heading">¶</a></h4>
+<h4 id="secret-example">secret example<a class="headerlink" href="#secret-example" title="Link to this heading">¶</a></h4>
 <p>Here is an example of providing an existing secret (in the flux-operator namespace)
 to the indexed job container:</p>
 <div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><code><span class="nt">containers</span><span class="p">:</span>
@@ -2276,18 +2291,18 @@ to the indexed job container:</p>
 </code></pre></div>
 </div>
 <p>The above shows an existing secret named “certs” that we will mount into <code class="docutils literal notranslate"><span class="pre">/etc/certs</span></code>.</p>
-<h3 id="fluxrestful">fluxRestful<a class="headerlink" href="#fluxrestful" title="Permalink to this heading">¶</a></h3>
+<h3 id="fluxrestful">fluxRestful<a class="headerlink" href="#fluxrestful" title="Link to this heading">¶</a></h3>
 <p>The “fluxRestful” section has a few parameters to dictate the installation of the
 <a class="reference external" href="https://github.com/flux-framework/flux-restful-api">Flux Restful API</a>, which provides
 a user interface to submit jobs.</p>
-<h4 id="branch">branch<a class="headerlink" href="#branch" title="Permalink to this heading">¶</a></h4>
+<h4 id="branch">branch<a class="headerlink" href="#branch" title="Link to this heading">¶</a></h4>
 <p>The branch parameter controls if you want to clone a custom branch (e.g., for testing).
 It defaults to main.</p>
 <div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><code><span class="w">  </span><span class="nt">fluxRestful</span><span class="p">:</span>
 <span class="w">    </span><span class="nt">branch</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">feature-branch</span>
 </code></pre></div>
 </div>
-<h4 id="port">port<a class="headerlink" href="#port" title="Permalink to this heading">¶</a></h4>
+<h4 id="port">port<a class="headerlink" href="#port" title="Link to this heading">¶</a></h4>
 <p>The port parameter controls the port you want to run the FluxRestful server on,
 within the cluster. Remember that you can always forward this to something else!
 It defaults to 5000.</p>
@@ -2295,7 +2310,7 @@ It defaults to 5000.</p>
 <span class="w">    </span><span class="nt">port</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">5000</span>
 </code></pre></div>
 </div>
-<h4 id="secretkey">secretKey<a class="headerlink" href="#secretkey" title="Permalink to this heading">¶</a></h4>
+<h4 id="secretkey">secretKey<a class="headerlink" href="#secretkey" title="Link to this heading">¶</a></h4>
 <p>We use a secretKey to encode all payloads to the server. If you don’t specify one,
 the Flux Operator will make one for you! If you intend to communicate with your
 MiniCluster outside of this context, you can either grab this from the logs
@@ -2311,7 +2326,7 @@ or define your own as follows:</p>
   <small>
     
       Last update:
-      Jul 31, 2023
+      Aug 19, 2023
     
   </small>
 </div>
@@ -2342,7 +2357,7 @@ or define your own as follows:</p>
     <nav class="md-footer__inner md-grid" aria-label="Footer" >
       
         
-        <a href="user-guide.html" class="md-footer__link md-footer__link--prev" aria-label="Previous: User Guide" rel="prev">
+        <a href="helper-clients.html" class="md-footer__link md-footer__link--prev" aria-label="Previous: Helper Clients" rel="prev">
           <div class="md-footer__button md-icon">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
           </div>
@@ -2351,7 +2366,7 @@ or define your own as follows:</p>
               <span class="md-footer__direction">
                 Previous
               </span>
-              User Guide
+              Helper Clients
             </div>
           </div>
         </a>
@@ -2388,7 +2403,7 @@ or define your own as follows:</p>
   
     Created using
     <a href="https://www.sphinx-doc.org/" target="_blank" rel="noopener">Sphinx</a>
-    7.1.1.
+    7.2.2.
      and
     <a href="https://github.com/jbms/sphinx-immaterial/" target="_blank" rel="noopener">Sphinx-Immaterial</a>
   

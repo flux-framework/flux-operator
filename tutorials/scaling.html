@@ -33,7 +33,7 @@
         <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
       
     
-        <link rel="stylesheet" type="text/css" href="../_static/sphinx_immaterial_theme.9dcb20399d0097661.min.css?v=09738cfd" />
+        <link rel="stylesheet" type="text/css" href="../_static/sphinx_immaterial_theme.a60204c58f5e4ff66.min.css?v=f7c3c3dc" />
         <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=d68d0989" />
     <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
     
@@ -886,7 +886,7 @@
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10 20H6V4h7v5h5v3.1l2-2V8l-6-6H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h4v-2m10.2-7c.1 0 .3.1.4.2l1.3 1.3c.2.2.2.6 0 .8l-1 1-2.1-2.1 1-1c.1-.1.2-.2.4-.2m0 3.9L14.1 23H12v-2.1l6.1-6.1 2.1 2.1Z"/></svg>
   </a>
 
-<h1 id="scaling">Scaling<a class="headerlink" href="#scaling" title="Permalink to this heading">¶</a></h1>
+<h1 id="scaling">Scaling<a class="headerlink" href="#scaling" title="Link to this heading">¶</a></h1>
 <blockquote>
 <div><p>This functionality requires <a class="reference external" href="https://github.com/kubernetes/enhancements/tree/master/keps/sig-apps/3715-elastic-indexed-job#motivation">Kubernetes 1.27 and later</a>.</p>
 </div></blockquote>
@@ -920,7 +920,7 @@ mind for what to do with the new resources.
 </p>
 </div>
 </div>
-<h2 id="basic-example">Basic Example<a class="headerlink" href="#basic-example" title="Permalink to this heading">¶</a></h2>
+<h2 id="basic-example">Basic Example<a class="headerlink" href="#basic-example" title="Link to this heading">¶</a></h2>
 <blockquote>
 <div><p>Starting with a cluster at a maximum size and scaling it up and down</p>
 </div></blockquote>
@@ -940,7 +940,7 @@ help the pull via:</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span>minikube<span class="w"> </span>ssh<span class="w"> </span>docker<span class="w"> </span>pull<span class="w"> </span>ghcr.io/flux-framework/flux-restful-api:latest
 </code></pre></div>
 </div>
-<h3 id="check-initial-size">Check Initial Size<a class="headerlink" href="#check-initial-size" title="Permalink to this heading">¶</a></h3>
+<h3 id="check-initial-size">Check Initial Size<a class="headerlink" href="#check-initial-size" title="Link to this heading">¶</a></h3>
 <p>Wait until the cluster finishes, and you see the pods are ready to go (Running state):</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>kubectl<span class="w"> </span>get<span class="w"> </span>-n<span class="w"> </span>flux-operator<span class="w"> </span>pods
 NAME<span class="w">                  </span>READY<span class="w">   </span>STATUS<span class="w">    </span>RESTARTS<span class="w">   </span>AGE
@@ -966,7 +966,7 @@ are up.</p>
 </code></pre></div>
 </div>
 <p>At this point we want to try changing the size.</p>
-<h3 id="ask-for-a-larger-size">Ask for a Larger Size<a class="headerlink" href="#ask-for-a-larger-size" title="Permalink to this heading">¶</a></h3>
+<h3 id="ask-for-a-larger-size">Ask for a Larger Size<a class="headerlink" href="#ask-for-a-larger-size" title="Link to this heading">¶</a></h3>
 <div class="highlight-diff notranslate"><div class="highlight"><pre><span></span><code><span class="gd">-  size: 4</span>
 <span class="gi">+  size: 5</span>
 </code></pre></div>
@@ -984,7 +984,7 @@ you’ll see this in the operator logs:</p>
 <span class="go">1.6831543179369428e+09  INFO    minicluster-reconciler  MiniCluster     {&quot;PatchSize&quot;: 5, &quot;Status&quot;: &quot;Denied&quot;}</span>
 </code></pre></div>
 </div>
-<h3 id="ask-for-smaller-size">Ask for Smaller Size<a class="headerlink" href="#ask-for-smaller-size" title="Permalink to this heading">¶</a></h3>
+<h3 id="ask-for-smaller-size">Ask for Smaller Size<a class="headerlink" href="#ask-for-smaller-size" title="Link to this heading">¶</a></h3>
 <p>Asking for a smaller size will work! Let’s decrease the original CRD from 4 to 3:</p>
 <div class="highlight-diff notranslate"><div class="highlight"><pre><span></span><code><span class="gd">-  size: 4</span>
 <span class="gi">+  size: 3</span>
@@ -1015,7 +1015,7 @@ will now report this pod as down.</p>
 </div>
 <p>And importantly, the rest of the cluster keeps running smoothly! We haven’t interrupted the Flux broker or
 install by changing the size, at least superficially and not running any jobs on the pod that was terminated.</p>
-<h3 id="ask-for-larger-size">Ask for Larger Size<a class="headerlink" href="#ask-for-larger-size" title="Permalink to this heading">¶</a></h3>
+<h3 id="ask-for-larger-size">Ask for Larger Size<a class="headerlink" href="#ask-for-larger-size" title="Link to this heading">¶</a></h3>
 <p>Finally, let’s scale back up! Restore the original CRD size to 4:</p>
 <div class="highlight-diff notranslate"><div class="highlight"><pre><span></span><code><span class="gd">-  size: 3</span>
 <span class="gi">+  size: 4</span>
@@ -1045,7 +1045,7 @@ And that’s it!</p>
 </div>
 <p>We will have a tutorial for expanding a cluster size soon. Flux doesn’t allow
 the hosts to be greater than nodes currently, so we haven’t added this yet.</p>
-<h2 id="expand-example">Expand Example<a class="headerlink" href="#expand-example" title="Permalink to this heading">¶</a></h2>
+<h2 id="expand-example">Expand Example<a class="headerlink" href="#expand-example" title="Link to this heading">¶</a></h2>
 <blockquote>
 <div><p>Starting with a small cluster that is able to grow to a maximum size</p>
 </div></blockquote>
@@ -1060,7 +1060,7 @@ $<span class="w"> </span>kubectl<span class="w"> </span>create<span class="w"> <
 $<span class="w"> </span>kubectl<span class="w"> </span>apply<span class="w"> </span>-f<span class="w"> </span>examples/scaling/basic/minicluster.yaml
 </code></pre></div>
 </div>
-<h3 id="create-the-cluster">Create the cluster<a class="headerlink" href="#create-the-cluster" title="Permalink to this heading">¶</a></h3>
+<h3 id="create-the-cluster">Create the cluster<a class="headerlink" href="#create-the-cluster" title="Link to this heading">¶</a></h3>
 <p>First, apply the CRD to create the MiniCluster. Note that we are asking for a size of 2, but allowing
 for a maximum size of 4.</p>
 <div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><code><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">flux-framework.org/v1alpha1</span>
@@ -1161,7 +1161,7 @@ if you want to delete the MiniCluster, just do that. :)</p>
   <small>
     
       Last update:
-      Jul 31, 2023
+      Aug 19, 2023
     
   </small>
 </div>
@@ -1238,7 +1238,7 @@ if you want to delete the MiniCluster, just do that. :)</p>
   
     Created using
     <a href="https://www.sphinx-doc.org/" target="_blank" rel="noopener">Sphinx</a>
-    7.1.1.
+    7.2.2.
      and
     <a href="https://github.com/jbms/sphinx-immaterial/" target="_blank" rel="noopener">Sphinx-Immaterial</a>
   

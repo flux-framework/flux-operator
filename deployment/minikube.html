@@ -33,7 +33,7 @@
         <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
       
     
-        <link rel="stylesheet" type="text/css" href="../_static/sphinx_immaterial_theme.9dcb20399d0097661.min.css?v=09738cfd" />
+        <link rel="stylesheet" type="text/css" href="../_static/sphinx_immaterial_theme.a60204c58f5e4ff66.min.css?v=f7c3c3dc" />
         <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=d68d0989" />
     <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
     
@@ -762,25 +762,25 @@
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10 20H6V4h7v5h5v3.1l2-2V8l-6-6H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h4v-2m10.2-7c.1 0 .3.1.4.2l1.3 1.3c.2.2.2.6 0 .8l-1 1-2.1-2.1 1-1c.1-.1.2-.2.4-.2m0 3.9L14.1 23H12v-2.1l6.1-6.1 2.1 2.1Z"/></svg>
   </a>
 
-<h1 id="minikube">MiniKube<a class="headerlink" href="#minikube" title="Permalink to this heading">¶</a></h1>
+<h1 id="minikube">MiniKube<a class="headerlink" href="#minikube" title="Link to this heading">¶</a></h1>
 <p>This small tutorial wall walk through how to run the Flux Operator on MiniKube,
 deploying a workflow that requires storage.</p>
-<h2 id="external-examples">External Examples<a class="headerlink" href="#external-examples" title="Permalink to this heading">¶</a></h2>
+<h2 id="external-examples">External Examples<a class="headerlink" href="#external-examples" title="Link to this heading">¶</a></h2>
 <p>The following (external) example tutorials are available:</p>
 <ul class="simple">
 <li><p><a class="reference external" href="https://github.com/converged-computing/workflows/tree/main/nsdf-materialscience">nsfd-materialscience</a>: to preprocess images - requires private data, but code is public.</p></li>
 </ul>
-<h2 id="workflow-with-storage">Workflow with Storage<a class="headerlink" href="#workflow-with-storage" title="Permalink to this heading">¶</a></h2>
+<h2 id="workflow-with-storage">Workflow with Storage<a class="headerlink" href="#workflow-with-storage" title="Link to this heading">¶</a></h2>
 <p>The example here will use the <a class="reference external" href="https://github.com/flux-framework/flux-operator/tree/main/examples/tests/snakemake">Snakemake workflow</a> that comes alongside the examples! Instead of using data that is
 already in the <a class="reference external" href="https://github.com/rse-ops/flux-hpc/tree/main/snakemake/atacseq">base container</a>, we will mount it as a shared volume to demonstrate how that works.</p>
-<h3 id="cluster">Cluster<a class="headerlink" href="#cluster" title="Permalink to this heading">¶</a></h3>
+<h3 id="cluster">Cluster<a class="headerlink" href="#cluster" title="Link to this heading">¶</a></h3>
 <p>Bring up your MiniKube cluster!</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span>minikube<span class="w"> </span>start
 </code></pre></div>
 </div>
 <p>See the <a class="reference external" href="https://flux-framework.org/flux-operator/development/developer-guide.html#local-development">developer guide</a> for installing the operator.
 or the <a class="reference external" href="https://flux-framework.org/flux-operator/getting_started/user-guide.html#install">main install guide</a>.</p>
-<h3 id="prepare-data">Prepare Data<a class="headerlink" href="#prepare-data" title="Permalink to this heading">¶</a></h3>
+<h3 id="prepare-data">Prepare Data<a class="headerlink" href="#prepare-data" title="Link to this heading">¶</a></h3>
 <p>Let’s first clone the required data to our local machine. We are going to bind this to the pods.</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span>git<span class="w"> </span>clone<span class="w"> </span>--depth<span class="w"> </span><span class="m">1</span><span class="w"> </span>https://github.com/snakemake/snakemake-tutorial-data<span class="w"> </span>/tmp/workflow
 </code></pre></div>
@@ -820,13 +820,13 @@ $<span class="w"> </span>wget<span class="w"> </span>-O<span class="w"> </span>/
 </div>
 <p>In a real production setting, you would likely have this data in cloud storage somewhere. We are emulating
 that for MiniKube with a clone to a temporary directory! Note that to make it easier</p>
-<h3 id="containers">Containers<a class="headerlink" href="#containers" title="Permalink to this heading">¶</a></h3>
+<h3 id="containers">Containers<a class="headerlink" href="#containers" title="Link to this heading">¶</a></h3>
 <p>MiniKube can burp sometimes on pulling large images, so let’s issue a command to it to
 pull the container we need via ssh.</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span>minikube<span class="w"> </span>ssh<span class="w"> </span>docker<span class="w"> </span>pull<span class="w"> </span>ghcr.io/rse-ops/atacseq:app-latest
 </code></pre></div>
 </div>
-<h3 id="mount-data">Mount Data<a class="headerlink" href="#mount-data" title="Permalink to this heading">¶</a></h3>
+<h3 id="mount-data">Mount Data<a class="headerlink" href="#mount-data" title="Link to this heading">¶</a></h3>
 <p>The Flux Operator is going to expect to find volumes on the host of a particular storage type.
 Since we are early in development, we currently (as the default) define a “hostpath” storage type,
 meaning the operator will expect the path to be present on the node where you are running the job.
@@ -847,7 +847,7 @@ If you want to double check the data is in the MiniKube vm:</p>
 <div class="highlight-console notranslate"><div class="highlight"><pre><span></span><code><span class="go">Dockerfile  README.md  Snakefile  data	environment.yaml  scripts</span>
 </code></pre></div>
 </div>
-<h3 id="run-workflow">Run Workflow<a class="headerlink" href="#run-workflow" title="Permalink to this heading">¶</a></h3>
+<h3 id="run-workflow">Run Workflow<a class="headerlink" href="#run-workflow" title="Link to this heading">¶</a></h3>
 <p>At this point we want to run our Snakemake workflow, which means applying the custom resource definition
 for the MiniCluster. Conceptually, this is going to bring up the pods on your MiniCluster nodes,
 start a flux instance, run your command of interest, and then clean up. Here we can work from
@@ -1031,14 +1031,14 @@ directory was bound to our host, we have all the output locally too:</p>
 </div>
 <p>Wicked! This is actually the first “realish” workflow we’ve run with the Flux Operator and local data
 (that is public) so this is hugely cool to see!</p>
-<h2 id="development-notes">Development Notes<a class="headerlink" href="#development-notes" title="Permalink to this heading">¶</a></h2>
-<h3 id="debugging-containers">Debugging Containers<a class="headerlink" href="#debugging-containers" title="Permalink to this heading">¶</a></h3>
+<h2 id="development-notes">Development Notes<a class="headerlink" href="#development-notes" title="Link to this heading">¶</a></h2>
+<h3 id="debugging-containers">Debugging Containers<a class="headerlink" href="#debugging-containers" title="Link to this heading">¶</a></h3>
 <p>If you load a container in your MiniKube cluster and need to debug it, it’s useful to shell into the container already pulled there:</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span>minikube<span class="w"> </span>ssh<span class="w"> </span>--<span class="w"> </span>docker<span class="w"> </span>run<span class="w"> </span>-it<span class="w"> </span>--entrypoint<span class="w"> </span>bash<span class="w"> </span>ghcr.io/rse-ops/atacseq:app-latest
 </code></pre></div>
 </div>
 <p>This will avoid the redundant pull to your host!</p>
-<h3 id="cleaning-up">Cleaning up<a class="headerlink" href="#cleaning-up" title="Permalink to this heading">¶</a></h3>
+<h3 id="cleaning-up">Cleaning up<a class="headerlink" href="#cleaning-up" title="Link to this heading">¶</a></h3>
 <p>If you are testing and need to cleanup between runs, if you don’t finish via the operator (<code class="docutils literal notranslate"><span class="pre">cleanup:</span> <span class="pre">true</span></code>) and need to cleanup
 volumes:</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>kubectl<span class="w"> </span>delete<span class="w"> </span>-n<span class="w"> </span>flux-operator<span class="w"> </span>pods<span class="w"> </span>--all<span class="w"> </span>--grace-period<span class="o">=</span><span class="m">0</span><span class="w"> </span>--force
@@ -1057,7 +1057,7 @@ the Operator should handle this for you.</p>
   <small>
     
       Last update:
-      Jul 31, 2023
+      Aug 19, 2023
     
   </small>
 </div>
@@ -1134,7 +1134,7 @@ the Operator should handle this for you.</p>
   
     Created using
     <a href="https://www.sphinx-doc.org/" target="_blank" rel="noopener">Sphinx</a>
-    7.1.1.
+    7.2.2.
      and
     <a href="https://github.com/jbms/sphinx-immaterial/" target="_blank" rel="noopener">Sphinx-Immaterial</a>
   

@@ -33,7 +33,7 @@
         <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
       
     
-        <link rel="stylesheet" type="text/css" href="../../_static/sphinx_immaterial_theme.9dcb20399d0097661.min.css?v=09738cfd" />
+        <link rel="stylesheet" type="text/css" href="../../_static/sphinx_immaterial_theme.a60204c58f5e4ff66.min.css?v=f7c3c3dc" />
         <link rel="stylesheet" type="text/css" href="../../_static/custom.css?v=d68d0989" />
     <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
     
@@ -855,10 +855,10 @@
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10 20H6V4h7v5h5v3.1l2-2V8l-6-6H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h4v-2m10.2-7c.1 0 .3.1.4.2l1.3 1.3c.2.2.2.6 0 .8l-1 1-2.1-2.1 1-1c.1-.1.2-.2.4-.2m0 3.9L14.1 23H12v-2.1l6.1-6.1 2.1 2.1Z"/></svg>
   </a>
 
-<h1 id="lammps-on-google-cloud">Lammps on Google Cloud<a class="headerlink" href="#lammps-on-google-cloud" title="Permalink to this heading">¶</a></h1>
+<h1 id="lammps-on-google-cloud">Lammps on Google Cloud<a class="headerlink" href="#lammps-on-google-cloud" title="Link to this heading">¶</a></h1>
 <p>This basic tutorial will walk through creating a MiniCluster to run LAMMPS! You should have
 already <a class="reference internal" href="setup.html"><span class="std std-doc">setup your workspace</span></a></p>
-<h2 id="create-cluster">Create Cluster<a class="headerlink" href="#create-cluster" title="Permalink to this heading">¶</a></h2>
+<h2 id="create-cluster">Create Cluster<a class="headerlink" href="#create-cluster" title="Link to this heading">¶</a></h2>
 <p>Let’s use gcloud to create a cluster, and we are purposefully going to choose
 a very small node type to test. Note that I choose us-central1-a because it tends
 to be cheaper (and closer to me). First, here is our project for easy access:</p>
@@ -897,7 +897,7 @@ If you want to use cloud dns instead (after <a class="reference external" href="
 this might take a few minutes.</p>
 <p><img alt="img/cluster.png" src="deployment/img/cluster.png" /></p>
 <p>I also chose a tiny size (nodes and instances) anticipating having it up longer to figure things out.</p>
-<h2 id="get-credentials">Get Credentials<a class="headerlink" href="#get-credentials" title="Permalink to this heading">¶</a></h2>
+<h2 id="get-credentials">Get Credentials<a class="headerlink" href="#get-credentials" title="Link to this heading">¶</a></h2>
 <p>Next we need to ensure that we can issue commands to our cluster with kubectl.
 To get credentials, in the view shown above, select the cluster and click “connect.”
 Doing so will show you the correct statement to run to configure command-line access,
@@ -927,7 +927,7 @@ which probably looks something like this:</p>
 <span class="go">gke-flux-cluster-default-pool-f103d9d8-zz1q   Ready    &lt;none&gt;   3m42s   v1.23.14-gke.1800</span>
 </code></pre></div>
 </div>
-<h3 id="deploy-operator">Deploy Operator<a class="headerlink" href="#deploy-operator" title="Permalink to this heading">¶</a></h3>
+<h3 id="deploy-operator">Deploy Operator<a class="headerlink" href="#deploy-operator" title="Link to this heading">¶</a></h3>
 <p>To deploy the Flux Operator, <a class="reference external" href="https://flux-framework.org/flux-operator/getting_started/user-guide.html#production-install">choose one of the options here</a> to deploy the operator. Whether you apply a yaml file, use <a class="reference external" href="https://converged-computing.github.io/flux-cloud">flux-cloud</a> or clone the repository and <code class="docutils literal notranslate"><span class="pre">make</span> <span class="pre">deploy</span></code> you will see the operator install to the <code class="docutils literal notranslate"><span class="pre">operator-system</span></code> namespace.</p>
 <p>For a quick “production deploy” from development, the Makefile has a directive that will build and push a <code class="docutils literal notranslate"><span class="pre">test</span></code> tag (you’ll need to edit <code class="docutils literal notranslate"><span class="pre">DEVIMG</span></code> to be one you can push to) and then generate a
 yaml file targeting that image, e.g.,</p>
@@ -989,13 +989,13 @@ No<span class="w"> </span>LimitRange<span class="w"> </span>resource.
 <span class="go">operator-system   operator-controller-manager-56b5bcf9fd-m8wg4               2/2     Running   0          73s</span>
 </code></pre></div>
 </div>
-<h3 id="create-flux-operator-namespace">Create Flux Operator namespace<a class="headerlink" href="#create-flux-operator-namespace" title="Permalink to this heading">¶</a></h3>
+<h3 id="create-flux-operator-namespace">Create Flux Operator namespace<a class="headerlink" href="#create-flux-operator-namespace" title="Link to this heading">¶</a></h3>
 <p>Make your namespace for the flux-operator custom resource definition (CRD), which is the yaml file above that generates the MiniCluster:</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span>kubectl<span class="w"> </span>create<span class="w"> </span>namespace<span class="w"> </span>flux-operator
 </code></pre></div>
 </div>
 <p>Now let’s run a short experiment with LAMMPS!</p>
-<h2 id="custom-resource-definition">Custom Resource Definition<a class="headerlink" href="#custom-resource-definition" title="Permalink to this heading">¶</a></h2>
+<h2 id="custom-resource-definition">Custom Resource Definition<a class="headerlink" href="#custom-resource-definition" title="Link to this heading">¶</a></h2>
 <p>The Custom Resource Definition (CRD) defines our MiniCluster, and is what we hand to the flux
 operator to create it.  Here is the CRD for a small lammps run.</p>
 <div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><code><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">flux-framework.org/v1alpha1</span>
@@ -1022,7 +1022,7 @@ operator to create it.  Here is the CRD for a small lammps run.</p>
 </code></pre></div>
 </div>
 <p>You can save the above file as <code class="docutils literal notranslate"><span class="pre">minicluster-lammps.yaml</span></code> to get started.</p>
-<h2 id="create-the-lammps-job">Create the Lammps Job<a class="headerlink" href="#create-the-lammps-job" title="Permalink to this heading">¶</a></h2>
+<h2 id="create-the-lammps-job">Create the Lammps Job<a class="headerlink" href="#create-the-lammps-job" title="Link to this heading">¶</a></h2>
 <p>Now let’s apply the custom resource definition to create the lammps MiniCluster!
 The file we generated above should be in your present working directory.
 Importantly, we have set <code class="docutils literal notranslate"><span class="pre">localDeploy</span></code> to false because we need to create volume
@@ -1086,7 +1086,7 @@ ever!</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span>kubectl<span class="w"> </span>delete<span class="w"> </span>-f<span class="w"> </span>minicluster-lammps.yaml
 </code></pre></div>
 </div>
-<h2 id="clean-up">Clean up<a class="headerlink" href="#clean-up" title="Permalink to this heading">¶</a></h2>
+<h2 id="clean-up">Clean up<a class="headerlink" href="#clean-up" title="Link to this heading">¶</a></h2>
 <p>Whatever tutorial you choose, don’t forget to clean up at the end!
 You can optionally undeploy the operator (this is again at the root of the operator repository clone)</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span>make<span class="w"> </span>undeploy
@@ -1102,8 +1102,8 @@ $<span class="w"> </span>kubectl<span class="w"> </span>delete<span class="w"> <
 </code></pre></div>
 </div>
 <p>I like to check in the cloud console to ensure that it was actually deleted.</p>
-<h2 id="customization-and-debugging">Customization and Debugging<a class="headerlink" href="#customization-and-debugging" title="Permalink to this heading">¶</a></h2>
-<h3 id="firewall">Firewall<a class="headerlink" href="#firewall" title="Permalink to this heading">¶</a></h3>
+<h2 id="customization-and-debugging">Customization and Debugging<a class="headerlink" href="#customization-and-debugging" title="Link to this heading">¶</a></h2>
+<h3 id="firewall">Firewall<a class="headerlink" href="#firewall" title="Link to this heading">¶</a></h3>
 <p>When I first created my cluster, the nodes could not see one another. I added a few
 flags for networking, and looked at firewalls as follows:</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span>gcloud<span class="w"> </span>container<span class="w"> </span>clusters<span class="w"> </span>describe<span class="w"> </span>flux-cluster<span class="w"> </span>--zone<span class="w"> </span>us-central1-a<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>clusterIpv4Cidr
@@ -1117,7 +1117,7 @@ flags for networking, and looked at firewalls as follows:</p>
   <small>
     
       Last update:
-      Jul 31, 2023
+      Aug 19, 2023
     
   </small>
 </div>
@@ -1194,7 +1194,7 @@ flags for networking, and looked at firewalls as follows:</p>
   
     Created using
     <a href="https://www.sphinx-doc.org/" target="_blank" rel="noopener">Sphinx</a>
-    7.1.1.
+    7.2.2.
      and
     <a href="https://github.com/jbms/sphinx-immaterial/" target="_blank" rel="noopener">Sphinx-Immaterial</a>
   

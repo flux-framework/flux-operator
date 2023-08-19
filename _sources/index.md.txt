@@ -2,7 +2,6 @@
 
 <img style="width:50%" alt="Coming Soon" src="_static/images/coming-soon.png">
 
-
 Welcome to the Flux Operator Documentation!
 
 The Flux Operator is a Kubernetes Cluster [Operator](https://kubernetes.io/docs/concepts/extend-kubernetes/operator/)

@@ -33,7 +33,7 @@
         <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
       
     
-        <link rel="stylesheet" type="text/css" href="../_static/sphinx_immaterial_theme.9dcb20399d0097661.min.css?v=09738cfd" />
+        <link rel="stylesheet" type="text/css" href="../_static/sphinx_immaterial_theme.a60204c58f5e4ff66.min.css?v=f7c3c3dc" />
         <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=d68d0989" />
     <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
     
@@ -769,7 +769,7 @@
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10 20H6V4h7v5h5v3.1l2-2V8l-6-6H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h4v-2m10.2-7c.1 0 .3.1.4.2l1.3 1.3c.2.2.2.6 0 .8l-1 1-2.1-2.1 1-1c.1-.1.2-.2.4-.2m0 3.9L14.1 23H12v-2.1l6.1-6.1 2.1 2.1Z"/></svg>
   </a>
 
-<h1 id="ibm-cloud">IBM Cloud<a class="headerlink" href="#ibm-cloud" title="Permalink to this heading">¶</a></h1>
+<h1 id="ibm-cloud">IBM Cloud<a class="headerlink" href="#ibm-cloud" title="Link to this heading">¶</a></h1>
 <p>For this tutorial you will need to create or have access to an account on <a class="reference external" href="https://cloud.ibm.com/">IBM Cloud</a>.
 We are going to use the <a class="reference external" href="https://cloud.ibm.com/docs/containers?topic=containers-getting-started">IBM Kubernetes Service</a>.</p>
 <div class="result docutils container">
@@ -787,8 +787,8 @@ We are going to use the <a class="reference external" href="https://cloud.ibm.co
 </p>
 </div>
 </div>
-<h2 id="setup">Setup<a class="headerlink" href="#setup" title="Permalink to this heading">¶</a></h2>
-<h3 id="credentials">Credentials<a class="headerlink" href="#credentials" title="Permalink to this heading">¶</a></h3>
+<h2 id="setup">Setup<a class="headerlink" href="#setup" title="Link to this heading">¶</a></h2>
+<h3 id="credentials">Credentials<a class="headerlink" href="#credentials" title="Link to this heading">¶</a></h3>
 <p>IBM works by way of <a class="reference external" href="https://cloud.ibm.com/docs/account?topic=account-userapikey&amp;amp;interface=ui#userapikey">access keys</a> for the API.
 If you click on your profile in the top right of the console, you can click “Log in to CLI and API” and a box will pop up.
 You will want to copy paste the first command that logs in as follows:</p>
@@ -796,7 +796,7 @@ You will want to copy paste the first command that logs in as follows:</p>
 </code></pre></div>
 </div>
 <p>And then choose a zone (e.g., us-east).</p>
-<h3 id="install">Install<a class="headerlink" href="#install" title="Permalink to this heading">¶</a></h3>
+<h3 id="install">Install<a class="headerlink" href="#install" title="Link to this heading">¶</a></h3>
 <p>You’ll first need to <a class="reference external" href="https://cloud.ibm.com/docs/cli?topic=cli-getting-started">install the ibmcloud</a> command line
 client.</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span>curl<span class="w"> </span>-fsSL<span class="w"> </span>https://clis.cloud.ibm.com/install/linux<span class="w"> </span>&gt;<span class="w"> </span>install.sh
@@ -822,11 +822,11 @@ $<span class="w"> </span>ibmcloud<span class="w"> </span>cos<span class="w"> </s
 </div>
 <p>If you are doing this for the first time, you’ll notice the CRN is blank. We will create a CRN when we push objects to the bucket.
 In addition to this client, you’ll need <a class="reference external" href="https://docs.aws.amazon.com/cli/latest/userguide/cli-chap-getting-started.html">aws</a> and <a class="reference external" href="https://kubernetes.io/docs/tasks/tools/">kubectl</a>.</p>
-<h2 id="accessing-storage-on-ibm-cloud">Accessing Storage on IBM Cloud<a class="headerlink" href="#accessing-storage-on-ibm-cloud" title="Permalink to this heading">¶</a></h2>
+<h2 id="accessing-storage-on-ibm-cloud">Accessing Storage on IBM Cloud<a class="headerlink" href="#accessing-storage-on-ibm-cloud" title="Link to this heading">¶</a></h2>
 <p>Akin to how we created a local volume, we can do something similar, but instead of pointing the Flux Operator
 to a volume on the host (e.g., in MiniKube) we are going to point it to a storage bucket where we will interact
 with some workflow. IBM Cloud has an s3-like storage option we can use.</p>
-<h3 id="prepare-data">Prepare Data<a class="headerlink" href="#prepare-data" title="Permalink to this heading">¶</a></h3>
+<h3 id="prepare-data">Prepare Data<a class="headerlink" href="#prepare-data" title="Link to this heading">¶</a></h3>
 <p>This example shows preparing snakemake data, however you don’t need to do this to run the example
 to create a file in storage.</p>
 <details>
@@ -971,7 +971,7 @@ payload under credentials-&gt;cos_hmac_keys:</p>
 <p><img alt="img/ibm-storage-create.png" src="../_images/ibm-storage-create.png" /></p>
 </details>
 <p>For the tutorial here, it’s fine to have an empty bucket. We will simply write files to it.</p>
-<h3 id="create-cluster">Create Cluster<a class="headerlink" href="#create-cluster" title="Permalink to this heading">¶</a></h3>
+<h3 id="create-cluster">Create Cluster<a class="headerlink" href="#create-cluster" title="Link to this heading">¶</a></h3>
 <p>Next let’s create a cluster called “flux-operator,” following <a class="reference external" href="https://www.kubeflow.org/docs/distributions/ibm/create-cluster/">these instructions</a>.</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code><span class="c1"># Do ibmcloud ks versions to see versions available</span>
 <span class="c1"># I left unset to use the default</span>
@@ -1036,7 +1036,7 @@ Once it’s ready, you should be able to list:</p>
 </code></pre></div>
 </div>
 <p>and make sure all the nodes are in Ready state. Next we can move on to installing the operator!</p>
-<h3 id="deploy-operator">Deploy Operator<a class="headerlink" href="#deploy-operator" title="Permalink to this heading">¶</a></h3>
+<h3 id="deploy-operator">Deploy Operator<a class="headerlink" href="#deploy-operator" title="Link to this heading">¶</a></h3>
 <p>To deploy the Flux Operator, <a class="reference external" href="https://flux-framework.org/flux-operator/getting_started/user-guide.html#production-install">choose one of the options here</a> to deploy the operator. Whether you apply a yaml file, use <a class="reference external" href="https://converged-computing.github.io/flux-cloud">flux-cloud</a> or clone the repository and <code class="docutils literal notranslate"><span class="pre">make</span> <span class="pre">deploy</span></code> you will see the operator install to the <code class="docutils literal notranslate"><span class="pre">operator-system</span></code> namespace.</p>
 <p>For a quick “production deploy” from development, the Makefile has a directive that will build and push a <code class="docutils literal notranslate"><span class="pre">test</span></code> tag (you’ll need to edit <code class="docutils literal notranslate"><span class="pre">DEVIMG</span></code> to be one you can push to) and then generate a
 yaml file targeting that image, e.g.,</p>
@@ -1067,12 +1067,12 @@ $<span class="w"> </span>kubectl<span class="w"> </span>apply<span class="w"> </
 </code></pre></div>
 </div>
 <p>And wait until that is Running.</p>
-<h3 id="create-flux-operator-namespace">Create Flux Operator namespace<a class="headerlink" href="#create-flux-operator-namespace" title="Permalink to this heading">¶</a></h3>
+<h3 id="create-flux-operator-namespace">Create Flux Operator namespace<a class="headerlink" href="#create-flux-operator-namespace" title="Link to this heading">¶</a></h3>
 <p>Make your namespace for the flux-operator custom resource definition (CRD), which is the yaml file above that generates the MiniCluster:</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span>kubectl<span class="w"> </span>create<span class="w"> </span>namespace<span class="w"> </span>flux-operator
 </code></pre></div>
 </div>
-<h3 id="install-the-container-storage-plugin">Install the Container Storage Plugin<a class="headerlink" href="#install-the-container-storage-plugin" title="Permalink to this heading">¶</a></h3>
+<h3 id="install-the-container-storage-plugin">Install the Container Storage Plugin<a class="headerlink" href="#install-the-container-storage-plugin" title="Link to this heading">¶</a></h3>
 <p>We did a combined approach of using helm and our own YAML.</p>
 <details>
 <summary>Instructions for Generation of YAML</summary>
@@ -1250,7 +1250,7 @@ the service instance id should be <code class="docutils literal notranslate"><sp
 </div>
 <p>At this point we have the storage driver running, along with the storage class and secret, and we should
 attempt to use it with the Flux Operator.</p>
-<h3 id="example-minicluster">Example MiniCluster<a class="headerlink" href="#example-minicluster" title="Permalink to this heading">¶</a></h3>
+<h3 id="example-minicluster">Example MiniCluster<a class="headerlink" href="#example-minicluster" title="Link to this heading">¶</a></h3>
 <p><strong><a class="reference external" href="https://github.com/flux-framework/flux-operator/blob/main/examples/storage/ibm/minicluster.yaml">MiniCluster YAML</a></strong></p>
 <p>Note that we are setting the <code class="docutils literal notranslate"><span class="pre">commands:</span> <span class="pre">-&gt;</span> <span class="pre">runFluxAsRoot</span></code> to true. This isn’t ideal, but it was the
 only way I could get the storage to both be seen and have permission to write there. Let’s create the job!
@@ -1313,7 +1313,7 @@ If you check your cloud storage interface after the job, you should see the test
 Note that the s3fs is a bit fussy when it comes to mounting, and if you run into issues you
 should <a class="reference external" href="https://github.com/s3fs-fuse/s3fs-fuse">explore the options</a> and see what is already
 <a class="reference external" href="https://github.com/IBM/ibmcloud-object-storage-plugin">exposed by the plugin</a>.</p>
-<h2 id="clean-up">Clean up<a class="headerlink" href="#clean-up" title="Permalink to this heading">¶</a></h2>
+<h2 id="clean-up">Clean up<a class="headerlink" href="#clean-up" title="Link to this heading">¶</a></h2>
 <p>To clean up:</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code><span class="c1"># Delete the cluster</span>
 $<span class="w"> </span>ibmcloud<span class="w"> </span>ks<span class="w"> </span>cluster<span class="w"> </span>rm<span class="w"> </span>--force-delete-storage<span class="w"> </span>-c<span class="w"> </span><span class="si">${</span><span class="nv">CLUSTER_NAME</span><span class="si">}</span>
@@ -1329,7 +1329,7 @@ $<span class="w"> </span>ibmcloud<span class="w"> </span>cos<span class="w"> </s
   <small>
     
       Last update:
-      Jul 31, 2023
+      Aug 19, 2023
     
   </small>
 </div>
@@ -1406,7 +1406,7 @@ $<span class="w"> </span>ibmcloud<span class="w"> </span>cos<span class="w"> </s
   
     Created using
     <a href="https://www.sphinx-doc.org/" target="_blank" rel="noopener">Sphinx</a>
-    7.1.1.
+    7.2.2.
      and
     <a href="https://github.com/jbms/sphinx-immaterial/" target="_blank" rel="noopener">Sphinx-Immaterial</a>
   

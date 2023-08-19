@@ -33,7 +33,7 @@
         <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
       
     
-        <link rel="stylesheet" type="text/css" href="../_static/sphinx_immaterial_theme.9dcb20399d0097661.min.css?v=09738cfd" />
+        <link rel="stylesheet" type="text/css" href="../_static/sphinx_immaterial_theme.a60204c58f5e4ff66.min.css?v=f7c3c3dc" />
         <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=d68d0989" />
     <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
     
@@ -866,14 +866,14 @@
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10 20H6V4h7v5h5v3.1l2-2V8l-6-6H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h4v-2m10.2-7c.1 0 .3.1.4.2l1.3 1.3c.2.2.2.6 0 .8l-1 1-2.1-2.1 1-1c.1-.1.2-.2.4-.2m0 3.9L14.1 23H12v-2.1l6.1-6.1 2.1 2.1Z"/></svg>
   </a>
 
-<h1 id="staging">Staging<a class="headerlink" href="#staging" title="Permalink to this heading">¶</a></h1>
+<h1 id="staging">Staging<a class="headerlink" href="#staging" title="Link to this heading">¶</a></h1>
 <p>If you have data (or a Singularity container or similar) that you want all nodes to have access to before starting your job,
 Flux comes with a utility called <a class="reference external" href="https://flux-framework.readthedocs.io/projects/flux-core/en/latest/man1/flux-filemap.html">filemap</a>
 that can make this easy to do! Note that staging will ensure the content in <em>unshared</em> directories
 across nodes (e.g., /data on all nodes which isn’t a shared volume) has the same contents. These contents are not further updated or
 synced. The staging (and running of these commands) must happen in a batch script, so all of these examples will use the batch: true
 directive.</p>
-<h2 id="singularity-container-staging">Singularity Container Staging<a class="headerlink" href="#singularity-container-staging" title="Permalink to this heading">¶</a></h2>
+<h2 id="singularity-container-staging">Singularity Container Staging<a class="headerlink" href="#singularity-container-staging" title="Link to this heading">¶</a></h2>
 <blockquote>
 <div><p>Stage a singularity container for all nodes to access</p>
 </div></blockquote>
@@ -936,7 +936,7 @@ a job.</p>
 </code></pre></div>
 </div>
 <p>Let’s break down the above!</p>
-<h3 id="id1">Staging<a class="headerlink" href="#id1" title="Permalink to this heading">¶</a></h3>
+<h3 id="id1">Staging<a class="headerlink" href="#id1" title="Link to this heading">¶</a></h3>
 <p>The staging (and then running a subsequent job) happens in the batch script. Note that we have also set “batchRaw” to true,
 which tells the Flux operator “Don’t wrap our commands in submits.” This means we need to write the entire batch script
 on our own. It’s a bit like an expert mode! Let’s go through it in detail:</p>
@@ -957,16 +957,16 @@ flux<span class="w"> </span>queue<span class="w"> </span>idle
 flux<span class="w"> </span>filemap<span class="w"> </span>unmap
 </code></pre></div>
 </div>
-<h3 id="volumes">Volumes<a class="headerlink" href="#volumes" title="Permalink to this heading">¶</a></h3>
+<h3 id="volumes">Volumes<a class="headerlink" href="#volumes" title="Link to this heading">¶</a></h3>
 <p>Since we want the output file to be written to in a single location by all workers, we write that to the shared mount <code class="docutils literal notranslate"><span class="pre">/tmp/fluxout</span></code>,
 which is the default output location. Finally, since we are running a Singularity container, we run with privileged true.</p>
-<h3 id="commands">Commands<a class="headerlink" href="#commands" title="Permalink to this heading">¶</a></h3>
+<h3 id="commands">Commands<a class="headerlink" href="#commands" title="Link to this heading">¶</a></h3>
 <p>The broker pre command is going to pull the container <em>once</em> from an OCI registry (GitHub packages, ghcr.io) via ORAS (OCI Registry
 as Storage) to its local filesystem. This SIF binary is going to be mapped to the other workers before running it.
 Since we want to keep the cluster running after it finishes, we create a “post” command with “sleep infinity.” This will
 allow us to shell inside and look at output, etc. More realistically if you run a batch job it’s suggested to send output
 to some kind of service, and not put a dependency on the cluster running.</p>
-<h3 id="running-the-workflow">Running the Workflow<a class="headerlink" href="#running-the-workflow" title="Permalink to this heading">¶</a></h3>
+<h3 id="running-the-workflow">Running the Workflow<a class="headerlink" href="#running-the-workflow" title="Link to this heading">¶</a></h3>
 <p>Okay let’s run the example!</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span>kubectl<span class="w"> </span>create<span class="w"> </span>namespace<span class="w"> </span>flux-operator
 $<span class="w"> </span>kubectl<span class="w"> </span>apply<span class="w"> </span>-f<span class="w"> </span>examples/singularity/staging/minicluster.yaml
@@ -1020,7 +1020,7 @@ Remember the mapping will only work if the directory is not shared. You could al
   <small>
     
       Last update:
-      Jul 31, 2023
+      Aug 19, 2023
     
   </small>
 </div>
@@ -1097,7 +1097,7 @@ Remember the mapping will only work if the directory is not shared. You could al
   
     Created using
     <a href="https://www.sphinx-doc.org/" target="_blank" rel="noopener">Sphinx</a>
-    7.1.1.
+    7.2.2.
      and
     <a href="https://github.com/jbms/sphinx-immaterial/" target="_blank" rel="noopener">Sphinx-Immaterial</a>
   

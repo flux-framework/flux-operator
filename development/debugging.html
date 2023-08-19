@@ -33,7 +33,7 @@
         <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
       
     
-        <link rel="stylesheet" type="text/css" href="../_static/sphinx_immaterial_theme.9dcb20399d0097661.min.css?v=09738cfd" />
+        <link rel="stylesheet" type="text/css" href="../_static/sphinx_immaterial_theme.a60204c58f5e4ff66.min.css?v=f7c3c3dc" />
         <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=d68d0989" />
     <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
     
@@ -764,10 +764,10 @@
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10 20H6V4h7v5h5v3.1l2-2V8l-6-6H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h4v-2m10.2-7c.1 0 .3.1.4.2l1.3 1.3c.2.2.2.6 0 .8l-1 1-2.1-2.1 1-1c.1-.1.2-.2.4-.2m0 3.9L14.1 23H12v-2.1l6.1-6.1 2.1 2.1Z"/></svg>
   </a>
 
-<h1 id="debugging">Debugging<a class="headerlink" href="#debugging" title="Permalink to this heading">¶</a></h1>
+<h1 id="debugging">Debugging<a class="headerlink" href="#debugging" title="Link to this heading">¶</a></h1>
 <p>These sections include common errors that you might run into developing the operator.</p>
-<h2 id="errors">Errors<a class="headerlink" href="#errors" title="Permalink to this heading">¶</a></h2>
-<h3 id="pull-errors">Pull Errors<a class="headerlink" href="#pull-errors" title="Permalink to this heading">¶</a></h3>
+<h2 id="errors">Errors<a class="headerlink" href="#errors" title="Link to this heading">¶</a></h2>
+<h3 id="pull-errors">Pull Errors<a class="headerlink" href="#pull-errors" title="Link to this heading">¶</a></h3>
 <p>I had a problem where the containers I wanted to deploy seemed to time-out during pull. In the pod logs I would see:</p>
 <blockquote>
 <div><p>Context deadline exceeded</p>
@@ -776,12 +776,12 @@
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span>minikube<span class="w"> </span>ssh<span class="w"> </span>docker<span class="w"> </span>pull<span class="w"> </span>ghcr.io/rse-ops/lammps:flux-sched-focal-v0.24.0
 </code></pre></div>
 </div>
-<h3 id="service-already-on-port-8080">Service Already on Port 8080<a class="headerlink" href="#service-already-on-port-8080" title="Permalink to this heading">¶</a></h3>
+<h3 id="service-already-on-port-8080">Service Already on Port 8080<a class="headerlink" href="#service-already-on-port-8080" title="Link to this heading">¶</a></h3>
 <p>One time I messed something up and my metrics server was still running (and I couldn’t start again) and I killed it like this:</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span><span class="nb">kill</span><span class="w"> </span><span class="k">$(</span>lsof<span class="w"> </span>-t<span class="w"> </span>-i:8080<span class="k">)</span>
 </code></pre></div>
 </div>
-<h3 id="workers-completed-too-early">Workers completed too early<a class="headerlink" href="#workers-completed-too-early" title="Permalink to this heading">¶</a></h3>
+<h3 id="workers-completed-too-early">Workers completed too early<a class="headerlink" href="#workers-completed-too-early" title="Link to this heading">¶</a></h3>
 <p>If you see that your workers are entering state <code class="docutils literal notranslate"><span class="pre">Completed</span></code> and not connecting to the main broker, first try adding a worker pre command block to sleep (and ensure they start after the main broker):</p>
 <div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><code><span class="nt">commands</span><span class="p">:</span>
 <span class="w">  </span><span class="nt">workerPre</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">sleep 60</span>
@@ -795,7 +795,7 @@ under the main spec, and then shell into the lead broker container, connect via 
 </code></pre></div>
 </div>
 <p>And then try running your command to look for obvious issues.</p>
-<h3 id="crd-should-be-installed">CRD should be installed<a class="headerlink" href="#crd-should-be-installed" title="Permalink to this heading">¶</a></h3>
+<h3 id="crd-should-be-installed">CRD should be installed<a class="headerlink" href="#crd-should-be-installed" title="Link to this heading">¶</a></h3>
 <p>If you see something like:</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code><span class="m">1</span>.6605195805812113e+09<span class="w">	</span>ERROR<span class="w">	</span>controller-runtime.source<span class="w">	</span><span class="k">if</span><span class="w"> </span>kind<span class="w"> </span>is<span class="w"> </span>a<span class="w"> </span>CRD,<span class="w"> </span>it<span class="w"> </span>should<span class="w"> </span>be<span class="w"> </span>installed<span class="w"> </span>before<span class="w"> </span>calling<span class="w"> </span>Start<span class="w">	</span><span class="o">{</span><span class="s2">&quot;kind&quot;</span>:<span class="w"> </span><span class="s2">&quot;Flux.flux-framework.org&quot;</span>,<span class="w"> </span><span class="s2">&quot;error&quot;</span>:<span class="w"> </span><span class="s2">&quot;no matches for kind \&quot;Flux\&quot; in version \&quot;flux-framework.org/v1alpha1\&quot;&quot;</span><span class="o">}</span>
 </code></pre></div>
@@ -804,26 +804,26 @@ under the main spec, and then shell into the lead broker container, connect via 
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span>rm<span class="w"> </span>bin/kustomize
 </code></pre></div>
 </div>
-<h3 id="configs-not-taking">Configs not taking<a class="headerlink" href="#configs-not-taking" title="Permalink to this heading">¶</a></h3>
+<h3 id="configs-not-taking">Configs not taking<a class="headerlink" href="#configs-not-taking" title="Link to this heading">¶</a></h3>
 <p>If your resource (config/samples) don’t seem to be taking, remember you need to apply them for changes to take
 effect:</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span>bin/kustomize<span class="w"> </span>build<span class="w"> </span>config/samples<span class="w"> </span><span class="p">|</span><span class="w"> </span>kubectl<span class="w"> </span>apply<span class="w"> </span>-f<span class="w"> </span>-
 </code></pre></div>
 </div>
-<h3 id="fields-not-showing-up">Fields not showing up<a class="headerlink" href="#fields-not-showing-up" title="Permalink to this heading">¶</a></h3>
+<h3 id="fields-not-showing-up">Fields not showing up<a class="headerlink" href="#fields-not-showing-up" title="Link to this heading">¶</a></h3>
 <p>Since we are providing the instance as a reference (<code class="docutils literal notranslate"><span class="pre">&amp;instance</span></code>) to get the fields from that you sometimes need to do:</p>
 <div class="highlight-go notranslate"><div class="highlight"><pre><span></span><code><span class="p">(</span><span class="o">*</span><span class="nx">instance</span><span class="p">).</span><span class="nx">Spec</span><span class="p">.</span><span class="nx">Field</span>
 </code></pre></div>
 </div>
 <p>Otherwise it can show up as an empty string!</p>
-<h3 id="yaml">Yaml<a class="headerlink" href="#yaml" title="Permalink to this heading">¶</a></h3>
+<h3 id="yaml">Yaml<a class="headerlink" href="#yaml" title="Link to this heading">¶</a></h3>
 <p>Since many configs are created in the operator, a strategy to debug what you are creating is to write them out verbatim in a <code class="docutils literal notranslate"><span class="pre">yaml</span></code>
 folder alongside the repository. The “describe” commands of kubectl are useful for debugging specific Kubernetes objects:</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code><span class="c1"># Why didn&#39;t my statefulset create?</span>
 kubectl<span class="w"> </span>describe<span class="w"> </span>-n<span class="w"> </span>flux-operator<span class="w"> </span>statefulset
 </code></pre></div>
 </div>
-<h2 id="troubleshooting">Troubleshooting<a class="headerlink" href="#troubleshooting" title="Permalink to this heading">¶</a></h2>
+<h2 id="troubleshooting">Troubleshooting<a class="headerlink" href="#troubleshooting" title="Link to this heading">¶</a></h2>
 <p>Here is a general debugging strategy. To view a resource (in the flux-operator namespace):</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span>kubectl<span class="w"> </span>--namespace<span class="w"> </span>flux-operator<span class="w"> </span>get<span class="w"> </span>pods
 </code></pre></div>
@@ -852,7 +852,7 @@ combinations that might be useful.</p>
   <small>
     
       Last update:
-      Jul 31, 2023
+      Aug 19, 2023
     
   </small>
 </div>
@@ -929,7 +929,7 @@ combinations that might be useful.</p>
   
     Created using
     <a href="https://www.sphinx-doc.org/" target="_blank" rel="noopener">Sphinx</a>
-    7.1.1.
+    7.2.2.
      and
     <a href="https://github.com/jbms/sphinx-immaterial/" target="_blank" rel="noopener">Sphinx-Immaterial</a>
   

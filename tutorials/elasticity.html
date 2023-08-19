@@ -33,7 +33,7 @@
         <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
       
     
-        <link rel="stylesheet" type="text/css" href="../_static/sphinx_immaterial_theme.9dcb20399d0097661.min.css?v=09738cfd" />
+        <link rel="stylesheet" type="text/css" href="../_static/sphinx_immaterial_theme.a60204c58f5e4ff66.min.css?v=f7c3c3dc" />
         <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=d68d0989" />
     <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
     
@@ -913,7 +913,7 @@
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10 20H6V4h7v5h5v3.1l2-2V8l-6-6H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h4v-2m10.2-7c.1 0 .3.1.4.2l1.3 1.3c.2.2.2.6 0 .8l-1 1-2.1-2.1 1-1c.1-.1.2-.2.4-.2m0 3.9L14.1 23H12v-2.1l6.1-6.1 2.1 2.1Z"/></svg>
   </a>
 
-<h1 id="elasticity">Elasticity<a class="headerlink" href="#elasticity" title="Permalink to this heading">¶</a></h1>
+<h1 id="elasticity">Elasticity<a class="headerlink" href="#elasticity" title="Link to this heading">¶</a></h1>
 <blockquote>
 <div><p>This functionality requires <a class="reference external" href="https://github.com/kubernetes/enhancements/tree/master/keps/sig-apps/3715-elastic-indexed-job#motivation">Kubernetes 1.27 and later</a>.</p>
 </div></blockquote>
@@ -921,7 +921,7 @@
 is able to control scaling up and down. You can read <a class="reference internal" href="scaling.html"><span class="std std-doc">the scaling tutorial</span></a> to get a sense of how that
 works. This will add the ability for the application to communicate with the API server to request scaling up
 or down.</p>
-<h2 id="basic-example">Basic Example<a class="headerlink" href="#basic-example" title="Permalink to this heading">¶</a></h2>
+<h2 id="basic-example">Basic Example<a class="headerlink" href="#basic-example" title="Link to this heading">¶</a></h2>
 <blockquote>
 <div><p>An application interacting with the custom resource API to scale up and down</p>
 </div></blockquote>
@@ -1072,7 +1072,7 @@ an endpoint. Make sure to cleanup when you finish:</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span>kind<span class="w"> </span>delete<span class="w"> </span>cluster
 </code></pre></div>
 </div>
-<h2 id="horizontal-autoscaler-examples">Horizontal Autoscaler Examples<a class="headerlink" href="#horizontal-autoscaler-examples" title="Permalink to this heading">¶</a></h2>
+<h2 id="horizontal-autoscaler-examples">Horizontal Autoscaler Examples<a class="headerlink" href="#horizontal-autoscaler-examples" title="Link to this heading">¶</a></h2>
 <blockquote>
 <div><p>Using the horizontal pod autoscaler (HPA) API to scale instead</p>
 </div></blockquote>
@@ -1081,7 +1081,7 @@ For this approach we are going to use the <a class="reference external" href="ht
 and our application running in the MiniCluster can then provide custom metrics based on which we set up the scaling.</p>
 <p>The <a class="reference external" href="https://www.pulumi.com/registry/packages/kubernetes/api-docs/autoscaling/v1/horizontalpodautoscaler/">APIs for v1 and v2 of the autoscaler are subtly different</a>.
 In the version 1 example below, we scale based on size. In version 2 we use a different API and then add <a class="reference external" href="https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale-walkthrough/#autoscaling-on-multiple-metrics-and-custom-metrics">multiple metrics</a>. Note that we are interested in this technique because the requests can <a class="reference external" href="https://cloud.google.com/kubernetes-engine/docs/concepts/horizontalpodautoscaler">come from an external service</a>, meaning we could have a single service (paired with application logic, optionally) to handle scaling both node and MiniClusters, and coordinating the two.</p>
-<h3 id="how-does-it-work">How does it work?<a class="headerlink" href="#how-does-it-work" title="Permalink to this heading">¶</a></h3>
+<h3 id="how-does-it-work">How does it work?<a class="headerlink" href="#how-does-it-work" title="Link to this heading">¶</a></h3>
 <p>I think what happens is that our operator provides the autoscaler with a field (the size) and selector for pods (the <code class="docutils literal notranslate"><span class="pre">hpa-selector</span></code>) and then:</p>
 <ol class="arabic simple">
 <li><p>It pings the API endpoint for our CRD to get the current selector and size</p></li>
@@ -1095,7 +1095,7 @@ This means that, to the Flux Operator, a request to scale coming from a user app
 YAML vs. the autoscaler looks the same (and we can use the same functions). It also means that
 if an autoscaler isn’t installed to the cluster, we have those fields but nothing happens /
 no action is taken. This means that:</p>
-<h3 id="what-do-you-need">What do you need?<a class="headerlink" href="#what-do-you-need" title="Permalink to this heading">¶</a></h3>
+<h3 id="what-do-you-need">What do you need?<a class="headerlink" href="#what-do-you-need" title="Link to this heading">¶</a></h3>
 <p>You’ll need to ensure that:</p>
 <ul class="simple">
 <li><p>Your minicluster.yaml has resources defined for CPU (or the metrics you are interested in)</p></li>
@@ -1104,12 +1104,12 @@ no action is taken. This means that:</p>
 <li><p>If it’s a local metrics server, you’ll want to disable ssl (<a class="reference external" href="https://github.com/flux-framework/flux-operator/blob/main/examples/elasticity/horizontal-autoscaler/metrics-server.yaml">see our example</a>)</p></li>
 </ul>
 <p>Details for how to inspect the above (and sample files) are provided below.</p>
-<h3 id="horizontal-autoscaler-v2-example">Horizontal Autoscaler (v2) Example<a class="headerlink" href="#horizontal-autoscaler-v2-example" title="Permalink to this heading">¶</a></h3>
+<h3 id="horizontal-autoscaler-v2-example">Horizontal Autoscaler (v2) Example<a class="headerlink" href="#horizontal-autoscaler-v2-example" title="Link to this heading">¶</a></h3>
 <p>The version 2 API is more flexible than version 1 in allowing custom metrics. This means we can use a <a class="reference external" href="https://github.com/converged-computing/prometheus-flux">prometheus-flux</a>
 exporter running inside of an instance to interact with it. This small set of tutorials will show setting a basic autoscaling example
 based on CPU, and then one based on custom metrics.</p>
 <p><strong><a class="reference external" href="https://github.com/flux-framework/flux-operator/blob/main/examples/elasticity/horizontal-autoscaler/v2-cpu/minicluster.yaml">Tutorial File</a></strong></p>
-<h4 id="setup">Setup<a class="headerlink" href="#setup" title="Permalink to this heading">¶</a></h4>
+<h4 id="setup">Setup<a class="headerlink" href="#setup" title="Link to this heading">¶</a></h4>
 <p>This is the setup for testing v2 with a CPU metric:</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span><span class="nb">cd</span><span class="w"> </span>examples/elasticity/horizontal-autoscaler/v2-cpu
 </code></pre></div>
@@ -1174,7 +1174,7 @@ it’s running:</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span>kubectl<span class="w"> </span>get<span class="w"> </span>deploy,svc<span class="w"> </span>-n<span class="w"> </span>kube-system<span class="w"> </span><span class="p">|</span><span class="w"> </span>egrep<span class="w"> </span>metrics-server
 </code></pre></div>
 </div>
-<h4 id="autoscaler-with-cpu">Autoscaler with CPU<a class="headerlink" href="#autoscaler-with-cpu" title="Permalink to this heading">¶</a></h4>
+<h4 id="autoscaler-with-cpu">Autoscaler with CPU<a class="headerlink" href="#autoscaler-with-cpu" title="Link to this heading">¶</a></h4>
 <p>This first autoscaler will work based on CPU. We can create it as follows:</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span>kubectl<span class="w"> </span>apply<span class="w"> </span>-f<span class="w"> </span>hpa-cpu.yaml
 </code></pre></div>
@@ -1220,7 +1220,7 @@ When you are done demo-ing the CPU autoscaler, you can clean it up:</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span>kubectl<span class="w"> </span>delete<span class="w"> </span>-f<span class="w"> </span>hpa-cpu.yaml
 </code></pre></div>
 </div>
-<h4 id="autoscaler-with-custom-metrics">Autoscaler with Custom Metrics<a class="headerlink" href="#autoscaler-with-custom-metrics" title="Permalink to this heading">¶</a></h4>
+<h4 id="autoscaler-with-custom-metrics">Autoscaler with Custom Metrics<a class="headerlink" href="#autoscaler-with-custom-metrics" title="Link to this heading">¶</a></h4>
 <p>For this tutorial, it requires a little extra work to setup the api service, so we provide
 the full details in the tutorial directory alongside the MiniCluster YAML file.</p>
 <p><strong><a class="reference external" href="https://github.com/flux-framework/flux-operator/blob/main/examples/elasticity/horizontal-autoscaler/v2-custom-metric/minicluster.yaml">Tutorial File</a></strong></p>
@@ -1228,7 +1228,7 @@ the full details in the tutorial directory alongside the MiniCluster YAML file.<
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span>kind<span class="w"> </span>delete<span class="w"> </span>cluster
 </code></pre></div>
 </div>
-<h3 id="horizontal-autoscaler-v1-example">Horizontal Autoscaler (v1) Example<a class="headerlink" href="#horizontal-autoscaler-v1-example" title="Permalink to this heading">¶</a></h3>
+<h3 id="horizontal-autoscaler-v1-example">Horizontal Autoscaler (v1) Example<a class="headerlink" href="#horizontal-autoscaler-v1-example" title="Link to this heading">¶</a></h3>
 <p>This will show using the version 1 API.</p>
 <p><strong><a class="reference external" href="https://github.com/flux-framework/flux-operator/blob/main/examples/elasticity/horizontal-autoscaler/v1/minicluster.yaml">Tutorial File</a></strong></p>
 <p>You should have already completed <a class="reference internal" href="#setup"><span class="std std-ref">setup</span></a> for this example.
@@ -1236,7 +1236,7 @@ To run this example, you’ll want to first cd to the example directory:</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span><span class="nb">cd</span><span class="w"> </span>examples/elasticity/horizontal-autoscaler/v1
 </code></pre></div>
 </div>
-<h4 id="creating-the-v1-autoscaler">Creating the v1 autoscaler<a class="headerlink" href="#creating-the-v1-autoscaler" title="Permalink to this heading">¶</a></h4>
+<h4 id="creating-the-v1-autoscaler">Creating the v1 autoscaler<a class="headerlink" href="#creating-the-v1-autoscaler" title="Link to this heading">¶</a></h4>
 <p>Now create the autoscaler!</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span>kubectl<span class="w"> </span>apply<span class="w"> </span>-f<span class="w"> </span>hpa-v1.yaml
 </code></pre></div>
@@ -1339,7 +1339,7 @@ cluster itself. When you are done:</p>
   <small>
     
       Last update:
-      Jul 31, 2023
+      Aug 19, 2023
     
   </small>
 </div>
@@ -1416,7 +1416,7 @@ cluster itself. When you are done:</p>
   
     Created using
     <a href="https://www.sphinx-doc.org/" target="_blank" rel="noopener">Sphinx</a>
-    7.1.1.
+    7.2.2.
      and
     <a href="https://github.com/jbms/sphinx-immaterial/" target="_blank" rel="noopener">Sphinx-Immaterial</a>
   

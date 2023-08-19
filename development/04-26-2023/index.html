@@ -33,7 +33,7 @@
         <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
       
     
-        <link rel="stylesheet" type="text/css" href="../../_static/sphinx_immaterial_theme.9dcb20399d0097661.min.css?v=09738cfd" />
+        <link rel="stylesheet" type="text/css" href="../../_static/sphinx_immaterial_theme.a60204c58f5e4ff66.min.css?v=f7c3c3dc" />
         <link rel="stylesheet" type="text/css" href="../../_static/custom.css?v=d68d0989" />
     <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
     
@@ -558,13 +558,13 @@
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10 20H6V4h7v5h5v3.1l2-2V8l-6-6H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h4v-2m10.2-7c.1 0 .3.1.4.2l1.3 1.3c.2.2.2.6 0 .8l-1 1-2.1-2.1 1-1c.1-.1.2-.2.4-.2m0 3.9L14.1 23H12v-2.1l6.1-6.1 2.1 2.1Z"/></svg>
   </a>
 
-<h1 id="design-3-4">Design 3.4<a class="headerlink" href="#design-3-4" title="Permalink to this heading">¶</a></h1>
+<h1 id="design-3-4">Design 3.4<a class="headerlink" href="#design-3-4" title="Link to this heading">¶</a></h1>
 <p>This design is an extended 3.3, updated to remove the requirement of a “one off” pod to generate the curve certificate.
 This came out of <a class="reference external" href="https://github.com/kubernetes-sigs/kueue/issues/716">discussion for an issue adding the operator to Kueue</a>
 after presenting at <a class="reference external" href="https://youtu.be/C2T8bIlkeD4">Kubecon</a> 2023 in Amsterdam.</p>
 <p>The pro is that we now don’t require the certificate generator pod, the con is that we need a linked library and can’t
 use the distroless image, so the binary is larger.</p>
-<h2 id="summary">Summary<a class="headerlink" href="#summary" title="Permalink to this heading">¶</a></h2>
+<h2 id="summary">Summary<a class="headerlink" href="#summary" title="Link to this heading">¶</a></h2>
 <ul class="simple">
 <li><p>A <strong>MiniCluster</strong> is an <a class="reference external" href="https://kubernetes.io/docs/tasks/job/indexed-parallel-processing-static/">indexed job</a> so we can create N copies of the “same” base containers (each with Flux, and the connected workers in our cluster).</p>
 <ul>
@@ -583,7 +583,7 @@ use the distroless image, so the binary is larger.</p>
 </ul>
 </li>
 </ul>
-<h2 id="interactions">Interactions<a class="headerlink" href="#interactions" title="Permalink to this heading">¶</a></h2>
+<h2 id="interactions">Interactions<a class="headerlink" href="#interactions" title="Link to this heading">¶</a></h2>
 <p>There are several modes of interaction. Some of these are ephemeral and some persistent. The operator is flexible to different use cases.</p>
 <ul class="simple">
 <li><p><em>Single command</em> A special command to run a job is given to flux start. The job runs, completes, and the MiniCluster cleans up</p></li>
@@ -593,7 +593,7 @@ use the distroless image, so the binary is larger.</p>
 <li><p>The user can also shell directly into the cluster, akin to traditional HPC, to interact</p></li>
 <li><p><em>RESTFul API</em> The broker starts a RESTFul API server that can be interacted with (interctive: false and no command)</p></li>
 </ul>
-<h2 id="kubernetes-objects">Kubernetes Objects<a class="headerlink" href="#kubernetes-objects" title="Permalink to this heading">¶</a></h2>
+<h2 id="kubernetes-objects">Kubernetes Objects<a class="headerlink" href="#kubernetes-objects" title="Link to this heading">¶</a></h2>
 <ol class="arabic simple">
 <li><p>A MiniCluster is a CRD that includes containers (and for each, options such as image and command) and size (see the crd spec!)</p></li>
 <li><p>Creating a MiniCluster first creates Config Maps, Volumes (required customization), and secrets and then an indexed job with pods that use them</p></li>
@@ -601,7 +601,7 @@ use the distroless image, so the binary is larger.</p>
 <li><p>Flux is required in the running container image (from the user), however the Flux RESTful API is not (it is installed when the server comes up).</p></li>
 <li><p>A way to make a workflow more portable is to use a Flux base container, but then pull a Singularity container to run the workflow</p></li>
 </ol>
-<h2 id="testing-differences">Testing Differences<a class="headerlink" href="#testing-differences" title="Permalink to this heading">¶</a></h2>
+<h2 id="testing-differences">Testing Differences<a class="headerlink" href="#testing-differences" title="Link to this heading">¶</a></h2>
 <p>I learned something really interesting here about zeromq hostnames!
 I first tested to look at differences in times for small LAMMPS runs with the new design</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code><span class="c1"># These are times with the operator generator the curve cert, but with a bug</span>
@@ -641,7 +641,7 @@ And the fact that without a hostname the networking doesn’t happen is really i
   <small>
     
       Last update:
-      Jul 31, 2023
+      Aug 19, 2023
     
   </small>
 </div>
@@ -682,7 +682,7 @@ And the fact that without a hostname the networking doesn’t happen is really i
   
     Created using
     <a href="https://www.sphinx-doc.org/" target="_blank" rel="noopener">Sphinx</a>
-    7.1.1.
+    7.2.2.
      and
     <a href="https://github.com/jbms/sphinx-immaterial/" target="_blank" rel="noopener">Sphinx-Immaterial</a>
   

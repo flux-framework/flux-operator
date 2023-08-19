@@ -33,7 +33,7 @@
         <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
       
     
-        <link rel="stylesheet" type="text/css" href="../_static/sphinx_immaterial_theme.9dcb20399d0097661.min.css?v=09738cfd" />
+        <link rel="stylesheet" type="text/css" href="../_static/sphinx_immaterial_theme.a60204c58f5e4ff66.min.css?v=f7c3c3dc" />
         <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=d68d0989" />
     <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
     
@@ -844,10 +844,10 @@
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10 20H6V4h7v5h5v3.1l2-2V8l-6-6H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h4v-2m10.2-7c.1 0 .3.1.4.2l1.3 1.3c.2.2.2.6 0 .8l-1 1-2.1-2.1 1-1c.1-.1.2-.2.4-.2m0 3.9L14.1 23H12v-2.1l6.1-6.1 2.1 2.1Z"/></svg>
   </a>
 
-<h1 id="developer-guide">Developer Guide<a class="headerlink" href="#developer-guide" title="Permalink to this heading">¶</a></h1>
+<h1 id="developer-guide">Developer Guide<a class="headerlink" href="#developer-guide" title="Link to this heading">¶</a></h1>
 <p>This developer guide includes complete instructions for setting up a developer
 environment.</p>
-<h2 id="setup">Setup<a class="headerlink" href="#setup" title="Permalink to this heading">¶</a></h2>
+<h2 id="setup">Setup<a class="headerlink" href="#setup" title="Link to this heading">¶</a></h2>
 <p>To work on this operator you should:</p>
 <ul class="simple">
 <li><p>Have a recent version of Go installed (1.18.1)</p></li>
@@ -867,9 +867,9 @@ $<span class="w"> </span>git<span class="w"> </span>clone<span class="w"> </span
 $<span class="w"> </span><span class="nb">cd</span><span class="w"> </span>flux-operator
 </code></pre></div>
 </div>
-<h2 id="local-development">Local Development<a class="headerlink" href="#local-development" title="Permalink to this heading">¶</a></h2>
+<h2 id="local-development">Local Development<a class="headerlink" href="#local-development" title="Link to this heading">¶</a></h2>
 <p>After cloning, you need to create your MiniKube or Kind cluster before doing anything else!</p>
-<h3 id="quick-start">1. Quick Start<a class="headerlink" href="#quick-start" title="Permalink to this heading">¶</a></h3>
+<h3 id="quick-start">1. Quick Start<a class="headerlink" href="#quick-start" title="Link to this heading">¶</a></h3>
 <p>Here is a quick start for doing that, making the namespace, and installing the operator.</p>
 <div class="highlight-console notranslate"><div class="highlight"><pre><span></span><code><span class="gp"># </span>Start<span class="w"> </span>a<span class="w"> </span>minikube<span class="w"> </span>cluster
 <span class="gp">$ </span>minikube<span class="w"> </span>start
@@ -913,7 +913,7 @@ kubectl<span class="w"> </span>apply<span class="w"> </span>-f<span class="w"> <
 <p>During development, ensure that you delete and re-apply the YAML between new builds so the image is re-pulled.
 For developing, you can find many examples in the <a class="reference external" href="https://github.com/flux-framework/flux-operator/tree/main/examples">examples</a>
 directory.</p>
-<h3 id="headless-tests">2. Headless Tests<a class="headerlink" href="#headless-tests" title="Permalink to this heading">¶</a></h3>
+<h3 id="headless-tests">2. Headless Tests<a class="headerlink" href="#headless-tests" title="Link to this heading">¶</a></h3>
 <p>Our headless tests are modified examples intended to be run without the web interface.
 These tests are found under <a class="reference external" href="https://github.com/flux-framework/flux-operator/tree/main/examples/tests">examples/tests</a>:</p>
 <div class="highlight-console notranslate"><div class="highlight"><pre><span></span><code><span class="gp">$ </span>tree<span class="w"> </span>examples/tests/
@@ -948,9 +948,9 @@ meaning you will only see output with the command above from what you actually r
 We do this because we test them in CI, and we don’t want the other verbose output
 to get in the way! If you want to disable this quiet mode, just set this
 same field to false.</p>
-<h2 id="interacting-with-services">Interacting with Services<a class="headerlink" href="#interacting-with-services" title="Permalink to this heading">¶</a></h2>
+<h2 id="interacting-with-services">Interacting with Services<a class="headerlink" href="#interacting-with-services" title="Link to this heading">¶</a></h2>
 <p>Currently, the most reliable thing to do is port forward:</p>
-<h3 id="port-forward">port-forward<a class="headerlink" href="#port-forward" title="Permalink to this heading">¶</a></h3>
+<h3 id="port-forward">port-forward<a class="headerlink" href="#port-forward" title="Link to this heading">¶</a></h3>
 <p>If we run as a ClusterIP, we can accomplish the same with a one off <code class="docutils literal notranslate"><span class="pre">kubectl</span> <span class="pre">port-forward</span></code>:</p>
 <div class="highlight-console notranslate"><div class="highlight"><pre><span></span><code><span class="go">kubectl port-forward -n flux-operator flux-sample-0-zdhkp 5000:5000</span>
 <span class="go">Forwarding from 127.0.0.1:5000 -&gt; 5000</span>
@@ -964,7 +964,7 @@ If you want to try this:</p>
 </code></pre></div>
 </div>
 <p>But for now I’m developing with port forward.</p>
-<h2 id="build-images">Build Images<a class="headerlink" href="#build-images" title="Permalink to this heading">¶</a></h2>
+<h2 id="build-images">Build Images<a class="headerlink" href="#build-images" title="Link to this heading">¶</a></h2>
 <p>If you want to build the “production” images - here is how to do that!
 This happens in our Docker CI, however you can build (and deploy if you are an owner) them too!</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span>make<span class="w"> </span>docker-build
@@ -977,8 +977,8 @@ $<span class="w"> </span>make<span class="w"> </span>docker-push
 </div>
 <p>We do not currently provide a catalog or bundle build, typical of the Operator SDK,
 because we have not needed them Also note that these are done in CI so you shouldn’t need to do anything from the command line.</p>
-<h2 id="other-developer-commands">Other Developer Commands<a class="headerlink" href="#other-developer-commands" title="Permalink to this heading">¶</a></h2>
-<h3 id="build-operator-yaml">Build Operator Yaml<a class="headerlink" href="#build-operator-yaml" title="Permalink to this heading">¶</a></h3>
+<h2 id="other-developer-commands">Other Developer Commands<a class="headerlink" href="#other-developer-commands" title="Link to this heading">¶</a></h2>
+<h3 id="build-operator-yaml">Build Operator Yaml<a class="headerlink" href="#build-operator-yaml" title="Link to this heading">¶</a></h3>
 <p>To generate the CRD to install to a cluster, we’ve added a <code class="docutils literal notranslate"><span class="pre">make</span> <span class="pre">build-config</span></code> command:</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span>make<span class="w"> </span>build-config
 </code></pre></div>
@@ -986,18 +986,18 @@ because we have not needed them Also note that these are done in CI so you shoul
 <p>That will generate a yaml to install the operator (with default container image) to a
 cluster in <code class="docutils literal notranslate"><span class="pre">examples/dist</span></code>. This file being updated is tested in the PR, so you
 should do it before opening.</p>
-<h2 id="build-api">Build API<a class="headerlink" href="#build-api" title="Permalink to this heading">¶</a></h2>
+<h2 id="build-api">Build API<a class="headerlink" href="#build-api" title="Link to this heading">¶</a></h2>
 <p>We use openapi to generate our Python SDK! You can update it as follows:</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span>make<span class="w"> </span>api
 </code></pre></div>
 </div>
-<h2 id="pre-push">Pre-push<a class="headerlink" href="#pre-push" title="Permalink to this heading">¶</a></h2>
+<h2 id="pre-push">Pre-push<a class="headerlink" href="#pre-push" title="Link to this heading">¶</a></h2>
 <p>We likely want to build the config <em>and</em> API generation in one swoop.
 We have a courtesy command for that:</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span>make<span class="w"> </span>pre-push
 </code></pre></div>
 </div>
-<h2 id="container-requirements">Container Requirements<a class="headerlink" href="#container-requirements" title="Permalink to this heading">¶</a></h2>
+<h2 id="container-requirements">Container Requirements<a class="headerlink" href="#container-requirements" title="Link to this heading">¶</a></h2>
 <p>If you are looking to build a container to use with the Flux Operator, we have a set of
 example containers <a class="reference external" href="https://github.com/rse-ops/flux-hpc">here</a> and general guidelines are below.
 Generally we recommend using the flux-sched base image
@@ -1035,14 +1035,14 @@ reasonable. If you use this image, you should have python3 and pip3 available to
 and the active user is <code class="docutils literal notranslate"><span class="pre">fluxuser</span></code>. This means if you want to add content, either you’ll
 need to change the user to <code class="docutils literal notranslate"><span class="pre">root</span></code> in a build (and back to <code class="docutils literal notranslate"><span class="pre">fluxuser</span></code> at the end), use sudo, or
 install to <code class="docutils literal notranslate"><span class="pre">/home/fluxuser</span></code>.</p>
-<h2 id="testing">Testing<a class="headerlink" href="#testing" title="Permalink to this heading">¶</a></h2>
+<h2 id="testing">Testing<a class="headerlink" href="#testing" title="Link to this heading">¶</a></h2>
 <p>Testing is underway! From a high level, we want three kinds of testing:</p>
 <ul class="simple">
 <li><p>Unit tests, which will be more traditional <code class="docutils literal notranslate"><span class="pre">*_test.go</span></code> files alongside others in the repository (not done yet)</p></li>
 <li><p>End to end “e2e” tests, also within Go, to test an entire submission of a job, also within Go. (not done yet)</p></li>
 <li><p>Integration testing, likely some within Go and some external to it. (in progress)</p></li>
 </ul>
-<h3 id="integration">Integration<a class="headerlink" href="#integration" title="Permalink to this heading">¶</a></h3>
+<h3 id="integration">Integration<a class="headerlink" href="#integration" title="Link to this heading">¶</a></h3>
 <p>For the integration testing outside of Go, we currently have basic tests written that allow the following:</p>
 <ol class="arabic simple">
 <li><p>Write a custom resource definition (CRD) for a named MiniCluster under <code class="docutils literal notranslate"><span class="pre">examples/tests/${name}</span></code> as <code class="docutils literal notranslate"><span class="pre">minicluster.yaml</span></code>.</p></li>
@@ -1105,14 +1105,14 @@ minikube<span class="w"> </span>ssh<span class="w"> </span>--<span class="w"> </
 </div>
 <p>This would be the same for anytime you use minikube and want to create a local volume. It’s not actually on your host,
 but rather in the VM. For an example test that does this, see the <code class="docutils literal notranslate"><span class="pre">examples/tests/volumes</span></code> example.</p>
-<h2 id="documentation">Documentation<a class="headerlink" href="#documentation" title="Permalink to this heading">¶</a></h2>
+<h2 id="documentation">Documentation<a class="headerlink" href="#documentation" title="Link to this heading">¶</a></h2>
 <p>The documentation is provided in the <code class="docutils literal notranslate"><span class="pre">docs</span></code> folder of the repository, and generally most content that you might want to add is under
 <code class="docutils literal notranslate"><span class="pre">getting_started</span></code>. For ease of contribution, files that are likely to be updated by contributors (e.g., mostly everything but the module generated files)
 are written in markdown. If you need to use <a class="reference external" href="https://www.sphinx-doc.org/en/master/usage/restructuredtext/directives.html#table-of-contents">toctree</a> you should not use extra newlines or spaces (see index.md files for examples). The documentation is also provided in Markdown (instead of rst or restructured syntax) to make contribution easier for the community.</p>
 <p>Finally, we recommend you use the same development environment also to build and work on
 documentation. The reason is because we import the app to derive docstrings,
 and this will require having Flux.</p>
-<h3 id="install-dependencies-and-build">Install Dependencies and Build<a class="headerlink" href="#install-dependencies-and-build" title="Permalink to this heading">¶</a></h3>
+<h3 id="install-dependencies-and-build">Install Dependencies and Build<a class="headerlink" href="#install-dependencies-and-build" title="Link to this heading">¶</a></h3>
 <p>The documentation is built using sphinx, and generally you can
 create a virtual environment:</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span><span class="nb">cd</span><span class="w"> </span>docs
@@ -1127,7 +1127,7 @@ $<span class="w"> </span><span class="nb">source</span><span class="w"> </span>e
 <span class="gp">$ </span>make<span class="w"> </span>html
 </code></pre></div>
 </div>
-<h3 id="preview-documentation">Preview Documentation<a class="headerlink" href="#preview-documentation" title="Permalink to this heading">¶</a></h3>
+<h3 id="preview-documentation">Preview Documentation<a class="headerlink" href="#preview-documentation" title="Link to this heading">¶</a></h3>
 <p>After <code class="docutils literal notranslate"><span class="pre">make</span> <span class="pre">html</span></code> you can enter into <code class="docutils literal notranslate"><span class="pre">_build/html</span></code> and start a local web
 server to preview:</p>
 <div class="highlight-console notranslate"><div class="highlight"><pre><span></span><code><span class="gp">$ </span>python<span class="w"> </span>-m<span class="w"> </span>http.server<span class="w"> </span><span class="m">9999</span>
@@ -1141,7 +1141,7 @@ server to preview:</p>
   <small>
     
       Last update:
-      Jul 31, 2023
+      Aug 19, 2023
     
   </small>
 </div>
@@ -1218,7 +1218,7 @@ server to preview:</p>
   
     Created using
     <a href="https://www.sphinx-doc.org/" target="_blank" rel="noopener">Sphinx</a>
-    7.1.1.
+    7.2.2.
      and
     <a href="https://github.com/jbms/sphinx-immaterial/" target="_blank" rel="noopener">Sphinx-Immaterial</a>
   

@@ -33,7 +33,7 @@
         <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
       
     
-        <link rel="stylesheet" type="text/css" href="../../_static/sphinx_immaterial_theme.9dcb20399d0097661.min.css?v=09738cfd" />
+        <link rel="stylesheet" type="text/css" href="../../_static/sphinx_immaterial_theme.a60204c58f5e4ff66.min.css?v=f7c3c3dc" />
         <link rel="stylesheet" type="text/css" href="../../_static/custom.css?v=d68d0989" />
     <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
     
@@ -815,14 +815,14 @@
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10 20H6V4h7v5h5v3.1l2-2V8l-6-6H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h4v-2m10.2-7c.1 0 .3.1.4.2l1.3 1.3c.2.2.2.6 0 .8l-1 1-2.1-2.1 1-1c.1-.1.2-.2.4-.2m0 3.9L14.1 23H12v-2.1l6.1-6.1 2.1 2.1Z"/></svg>
   </a>
 
-<h1 id="filestore-nfs">Filestore (NFS)<a class="headerlink" href="#filestore-nfs" title="Permalink to this heading">¶</a></h1>
+<h1 id="filestore-nfs">Filestore (NFS)<a class="headerlink" href="#filestore-nfs" title="Link to this heading">¶</a></h1>
 <p><strong><a class="reference external" href="https://github.com/flux-framework/flux-operator/blob/main/examples/storage/google/filestore/minicluster.yaml">MiniCluster YAML</a></strong></p>
 <p>This tutorial will walk through creating a more persistent MiniCluster on Google Cloud
 using Filestore. We will be following the guidance <a class="reference external" href="https://cloud.google.com/filestore/docs/csi-driver">here</a>.
 First, make sure you have the Filestore and GKE (Google Kubernetes Engine) APIs enabled,
 and the other introductory steps at that link. If you’ve used Google Cloud for Kubernetes and
 Filestore before, you should largely be good to go.</p>
-<h2 id="create-the-cluster">Create the Cluster<a class="headerlink" href="#create-the-cluster" title="Permalink to this heading">¶</a></h2>
+<h2 id="create-the-cluster">Create the Cluster<a class="headerlink" href="#create-the-cluster" title="Link to this heading">¶</a></h2>
 <p>First, create your cluster with the Filestore CSI Driver enabled:</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code><span class="nv">GOOGLE_PROJECT</span><span class="o">=</span>myproject
 </code></pre></div>
@@ -837,7 +837,7 @@ Filestore before, you should largely be good to go.</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span>kubectl<span class="w"> </span>create<span class="w"> </span>namespace<span class="w"> </span>flux-operator
 </code></pre></div>
 </div>
-<h2 id="install-the-flux-operator">Install the Flux Operator<a class="headerlink" href="#install-the-flux-operator" title="Permalink to this heading">¶</a></h2>
+<h2 id="install-the-flux-operator">Install the Flux Operator<a class="headerlink" href="#install-the-flux-operator" title="Link to this heading">¶</a></h2>
 <p>Let’s next install the operator. You can <a class="reference external" href="https://flux-framework.org/flux-operator/getting_started/user-guide.html#production-install">choose one of the options here</a>.
 E.g., to deploy from the cloned repository:</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span>kubectl<span class="w"> </span>apply<span class="w"> </span>-f<span class="w"> </span>examples/dist/flux-operator.yaml
@@ -911,7 +911,7 @@ kubectl<span class="w"> </span>get<span class="w"> </span>-n<span class="w"> </s
 </div>
 <p>I tried applying it again (and actually just waited) and then it worked - I don’t think I actually did anything. I would
 give it a few minutes to (hopefully) resolve as it did for me!</p>
-<h2 id="test-your-storage">Test your Storage<a class="headerlink" href="#test-your-storage" title="Permalink to this heading">¶</a></h2>
+<h2 id="test-your-storage">Test your Storage<a class="headerlink" href="#test-your-storage" title="Link to this heading">¶</a></h2>
 <p>Let’s shell into the broker (index 0) and play with our Filesystem!</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span>kubectl<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>-it<span class="w"> </span>-n<span class="w"> </span>flux-operator<span class="w"> </span>flux-sample-0-vb59t<span class="w"> </span>bash
 </code></pre></div>
@@ -941,7 +941,7 @@ dinosaur-fart<span class="w">  </span>lost+found
 </code></pre></div>
 </div>
 <p>We have a dinosaur fart! I repeat - we have a dinosaur fart!! 🦖🌬️</p>
-<h2 id="run-snakemake">Run Snakemake<a class="headerlink" href="#run-snakemake" title="Permalink to this heading">¶</a></h2>
+<h2 id="run-snakemake">Run Snakemake<a class="headerlink" href="#run-snakemake" title="Link to this heading">¶</a></h2>
 <p>Let’s now run Snakemake! Since we haven’t properly set up permissions, we need to set up the workspace as root,
 and then give ownership to the flux user. Let’s prepare snakemake data in <code class="docutils literal notranslate"><span class="pre">/workflow</span></code> and run it.</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span>git<span class="w"> </span>clone<span class="w"> </span>--depth<span class="w"> </span><span class="m">1</span><span class="w"> </span>https://github.com/snakemake/snakemake-tutorial-data<span class="w"> </span>/workflow/snakemake-workflow
@@ -1181,7 +1181,7 @@ meaning that we could very easily create an entire Flux Framework cluster with u
 We would provide this NFS Filesystem at <code class="docutils literal notranslate"><span class="pre">/home</span></code>, and then create the user directories under it, and the only check
 you’d need to do is that your container base isn’t keeping anything important there.</p>
 <p>I’m pumped, yo!</p>
-<h2 id="clean-up">Clean Up<a class="headerlink" href="#clean-up" title="Permalink to this heading">¶</a></h2>
+<h2 id="clean-up">Clean Up<a class="headerlink" href="#clean-up" title="Link to this heading">¶</a></h2>
 <p>Don’t forget to clean up! Delete the MiniCluster and PVC first:</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span>kubectl<span class="w"> </span>delete<span class="w"> </span>-f<span class="w"> </span>examples/storage/google/filestore/minicluster.yaml
 $<span class="w"> </span>kubectl<span class="w"> </span>delete<span class="w"> </span>-f<span class="w"> </span>examples/storage/google/filestore/pvc.yaml
@@ -1203,7 +1203,7 @@ up the storage. The Filestore instance is created with your PVC, and it’s clea
   <small>
     
       Last update:
-      Jul 31, 2023
+      Aug 19, 2023
     
   </small>
 </div>
@@ -1280,7 +1280,7 @@ up the storage. The Filestore instance is created with your PVC, and it’s clea
   
     Created using
     <a href="https://www.sphinx-doc.org/" target="_blank" rel="noopener">Sphinx</a>
-    7.1.1.
+    7.2.2.
      and
     <a href="https://github.com/jbms/sphinx-immaterial/" target="_blank" rel="noopener">Sphinx-Immaterial</a>
   

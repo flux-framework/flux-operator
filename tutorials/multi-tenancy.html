@@ -33,7 +33,7 @@
         <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
       
     
-        <link rel="stylesheet" type="text/css" href="../_static/sphinx_immaterial_theme.9dcb20399d0097661.min.css?v=09738cfd" />
+        <link rel="stylesheet" type="text/css" href="../_static/sphinx_immaterial_theme.a60204c58f5e4ff66.min.css?v=f7c3c3dc" />
         <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=d68d0989" />
     <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
     
@@ -927,7 +927,7 @@
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10 20H6V4h7v5h5v3.1l2-2V8l-6-6H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h4v-2m10.2-7c.1 0 .3.1.4.2l1.3 1.3c.2.2.2.6 0 .8l-1 1-2.1-2.1 1-1c.1-.1.2-.2.4-.2m0 3.9L14.1 23H12v-2.1l6.1-6.1 2.1 2.1Z"/></svg>
   </a>
 
-<h1 id="multi-tenancy">Multi-tenancy<a class="headerlink" href="#multi-tenancy" title="Permalink to this heading">¶</a></h1>
+<h1 id="multi-tenancy">Multi-tenancy<a class="headerlink" href="#multi-tenancy" title="Link to this heading">¶</a></h1>
 <div class="result docutils container">
 <div class="warning admonition">
 <p class="admonition-title">Warning</p>
@@ -943,13 +943,13 @@
 <p>“Multi-tenancy” means having multiple tenants, or users, in a cluster! We can accomplish this
 fairly by creating multiple users for our MiniCluster. This small tutorial will walk through
 creating an example with MiniKube.</p>
-<h2 id="create-cluster">1. Create Cluster<a class="headerlink" href="#create-cluster" title="Permalink to this heading">¶</a></h2>
+<h2 id="create-cluster">1. Create Cluster<a class="headerlink" href="#create-cluster" title="Link to this heading">¶</a></h2>
 <p>Bring up your MiniKube cluster.</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span>minikube<span class="w"> </span>start
 </code></pre></div>
 </div>
 <p>Then choose your step of choice to <a class="reference external" href="https://flux-framework.org/flux-operator/getting_started/user-guide.html#install">install the operator</a></p>
-<h2 id="custom-resource-definition">2. Custom Resource Definition<a class="headerlink" href="#custom-resource-definition" title="Permalink to this heading">¶</a></h2>
+<h2 id="custom-resource-definition">2. Custom Resource Definition<a class="headerlink" href="#custom-resource-definition" title="Link to this heading">¶</a></h2>
 <p>You’ll want a custom resource definition that turns on multi-user mode, and defines the users you
 want to create, in addition to root (sets up the pods) and flux (owns the main flux instance). We
 have a minicluster.yaml provided as an example:</p>
@@ -989,7 +989,7 @@ to MiniKube first:</p>
 $<span class="w"> </span>kubectl<span class="w"> </span>create<span class="w"> </span>-f<span class="w"> </span>examples/flux-restful/minicluster-multi-tenant.yaml
 </code></pre></div>
 </div>
-<h2 id="view-logs">3. View Logs<a class="headerlink" href="#view-logs" title="Permalink to this heading">¶</a></h2>
+<h2 id="view-logs">3. View Logs<a class="headerlink" href="#view-logs" title="Link to this heading">¶</a></h2>
 <p>And then in the logs, we can see the different blocks of creating users (and passwords):</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code><span class="c1"># get pods</span>
 $<span class="w"> </span>kubectl<span class="w"> </span>get<span class="w"> </span>-n<span class="w"> </span>flux-operator<span class="w"> </span>pods
@@ -1031,7 +1031,7 @@ there is no need for the secret key.</p>
 </code></pre></div>
 </div>
 <p>Make sure that you grab a user name and password from the terminal.</p>
-<h2 id="expose-web-interface">4. Expose Web Interface<a class="headerlink" href="#expose-web-interface" title="Permalink to this heading">¶</a></h2>
+<h2 id="expose-web-interface">4. Expose Web Interface<a class="headerlink" href="#expose-web-interface" title="Link to this heading">¶</a></h2>
 <p>Next we will want to expose the service.</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span>kubectl<span class="w"> </span>port-forward<span class="w"> </span>-n<span class="w"> </span>flux-operator<span class="w"> </span>flux-sample-0-zdhkp<span class="w"> </span><span class="m">5000</span>:5000
 </code></pre></div>
@@ -1044,8 +1044,8 @@ You can also get prompted in the “API” link in the top right (and test the o
 <p>If you want more programmattic access, look at
 our Python SDK examples for “port forwarding” that will do the same above,
 but not require the manual extra work (all is done in Python).</p>
-<h2 id="admin-actions">5. Admin Actions<a class="headerlink" href="#admin-actions" title="Permalink to this heading">¶</a></h2>
-<h3 id="adding-a-user">Adding a User<a class="headerlink" href="#adding-a-user" title="Permalink to this heading">¶</a></h3>
+<h2 id="admin-actions">5. Admin Actions<a class="headerlink" href="#admin-actions" title="Link to this heading">¶</a></h2>
+<h3 id="adding-a-user">Adding a User<a class="headerlink" href="#adding-a-user" title="Link to this heading">¶</a></h3>
 <p>It is possible to dynamically add a user! You will need to create them inside the container.
 Shell inside to interact directly:</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span>kubectl<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>-it<span class="w"> </span>-n<span class="w"> </span>flux-operator<span class="w"> </span>flux-sample-0-bnwnt<span class="w"> </span>--<span class="w"> </span>bash
@@ -1059,7 +1059,7 @@ Shell inside to interact directly:</p>
 <div class="highlight-console notranslate"><div class="highlight"><pre><span></span><code><span class="go">INFO:flux-restful:User newuser has been created.</span>
 </code></pre></div>
 </div>
-<h3 id="viewing-instance-jobs">Viewing Instance Jobs<a class="headerlink" href="#viewing-instance-jobs" title="Permalink to this heading">¶</a></h3>
+<h3 id="viewing-instance-jobs">Viewing Instance Jobs<a class="headerlink" href="#viewing-instance-jobs" title="Link to this heading">¶</a></h3>
 <p>If you shell into the broker pod (as shown above) you can connect to the broker’s socket, the <code class="docutils literal notranslate"><span class="pre">FLUX_URI</span></code>
 as follows:</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span><span class="nb">export</span><span class="w"> </span><span class="nv">FLUX_URI</span><span class="o">=</span>local:///run/flux/local
@@ -1084,9 +1084,9 @@ flux
 <p>We are currently testing different ways to (aside from the id) ensure ownership
 of a job. This is why multi-user mode is “use at your own risk” for the time being -
 both jobs and the working space is largely shared.</p>
-<h2 id="frequently-asked-questions">Frequently Asked Questions<a class="headerlink" href="#frequently-asked-questions" title="Permalink to this heading">¶</a></h2>
-<h3 id="what-are-the-different-types-of-multi-tenant-use-cases">What are the different types of multi-tenant use cases?<a class="headerlink" href="#what-are-the-different-types-of-multi-tenant-use-cases" title="Permalink to this heading">¶</a></h3>
-<h4 id="a-single-multi-tenant-minicluster">1. A single multi-tenant MiniCluster<a class="headerlink" href="#a-single-multi-tenant-minicluster" title="Permalink to this heading">¶</a></h4>
+<h2 id="frequently-asked-questions">Frequently Asked Questions<a class="headerlink" href="#frequently-asked-questions" title="Link to this heading">¶</a></h2>
+<h3 id="what-are-the-different-types-of-multi-tenant-use-cases">What are the different types of multi-tenant use cases?<a class="headerlink" href="#what-are-the-different-types-of-multi-tenant-use-cases" title="Link to this heading">¶</a></h3>
+<h4 id="a-single-multi-tenant-minicluster">1. A single multi-tenant MiniCluster<a class="headerlink" href="#a-single-multi-tenant-minicluster" title="Link to this heading">¶</a></h4>
 <p>In the example above, we define our users in advance and bring up a single MiniCluster, meaning one MiniCluster
 custom resource definition on one Kubernetes cluster, that allows multiple users to submit jobs authenticating
 with basic (UI) or OAauth-based authentication (RESTFul) to authenticate to the Flux RESTFul API database.
@@ -1098,13 +1098,13 @@ Flux Instance on a set of container bases with the same needs, and where you lar
 yet support multi-tenant storage (we are still working on simple storage) so the filesystem is largely shared,
 but still has expected user permissions (e.g., “peenut” has a home). The cluster is persistent,
 meaning it stays up until the Kubernetes cluster owner destroys it.</p>
-<h4 id="multiple-miniclusters-for-multi-tenancy">2. Multiple MiniClusters for multi-tenancy<a class="headerlink" href="#multiple-miniclusters-for-multi-tenancy" title="Permalink to this heading">¶</a></h4>
+<h4 id="multiple-miniclusters-for-multi-tenancy">2. Multiple MiniClusters for multi-tenancy<a class="headerlink" href="#multiple-miniclusters-for-multi-tenancy" title="Link to this heading">¶</a></h4>
 <p>For this use case, you create a single-user MiniCluster, meaning it’s owned by only one user, and that user has total
 control of the Flux Instance, to submit their jobs to. Akin to the previous example, it is persistent and
 can be brought down when the user is finished. Unlike the first, if you have several (separate) MiniClusters
 running on a Kubernetes cluster, the Flux instances do not communicate. This use case is ideal for users
 that currently need storage or need a custom base container for the MiniCluster.</p>
-<h3 id="what-are-the-non-multi-tenant-use-cases">What are the non multi-tenant use cases?<a class="headerlink" href="#what-are-the-non-multi-tenant-use-cases" title="Permalink to this heading">¶</a></h3>
+<h3 id="what-are-the-non-multi-tenant-use-cases">What are the non multi-tenant use cases?<a class="headerlink" href="#what-are-the-non-multi-tenant-use-cases" title="Link to this heading">¶</a></h3>
 <p>Bringing up an ephermal MiniCluster to run one job is not considered a multi-user use case,
 and we don’t even care about creating user accounts. The MiniCluster comes up, runs the job,
 and the job completes and everything cleans up.</p>
@@ -1116,7 +1116,7 @@ and the job completes and everything cleans up.</p>
   <small>
     
       Last update:
-      Jul 31, 2023
+      Aug 19, 2023
     
   </small>
 </div>
@@ -1193,7 +1193,7 @@ and the job completes and everything cleans up.</p>
   
     Created using
     <a href="https://www.sphinx-doc.org/" target="_blank" rel="noopener">Sphinx</a>
-    7.1.1.
+    7.2.2.
      and
     <a href="https://github.com/jbms/sphinx-immaterial/" target="_blank" rel="noopener">Sphinx-Immaterial</a>
   

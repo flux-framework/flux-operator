@@ -33,7 +33,7 @@
         <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
       
     
-        <link rel="stylesheet" type="text/css" href="../_static/sphinx_immaterial_theme.9dcb20399d0097661.min.css?v=09738cfd" />
+        <link rel="stylesheet" type="text/css" href="../_static/sphinx_immaterial_theme.a60204c58f5e4ff66.min.css?v=f7c3c3dc" />
         <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=d68d0989" />
     <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
     
@@ -866,7 +866,7 @@
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10 20H6V4h7v5h5v3.1l2-2V8l-6-6H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h4v-2m10.2-7c.1 0 .3.1.4.2l1.3 1.3c.2.2.2.6 0 .8l-1 1-2.1-2.1 1-1c.1-.1.2-.2.4-.2m0 3.9L14.1 23H12v-2.1l6.1-6.1 2.1 2.1Z"/></svg>
   </a>
 
-<h1 id="state">State<a class="headerlink" href="#state" title="Permalink to this heading">¶</a></h1>
+<h1 id="state">State<a class="headerlink" href="#state" title="Link to this heading">¶</a></h1>
 <p>We are experimenting with saving state for the Flux Operator, which can have several different levels
 of difficulty:</p>
 <ul class="simple">
@@ -881,7 +881,7 @@ as well. One important note is that since we cannot control the timing of a pod 
 while we can have Flux automatically load a saved archive, for the process to wait for
 jobs to finish and then dump the archive anew, we rely on issuing a command to the MiniCluster
 (done by a script or workflow tool). This can likely be improved upon.</p>
-<h2 id="saving-pending-jobs">Saving Pending Jobs<a class="headerlink" href="#saving-pending-jobs" title="Permalink to this heading">¶</a></h2>
+<h2 id="saving-pending-jobs">Saving Pending Jobs<a class="headerlink" href="#saving-pending-jobs" title="Link to this heading">¶</a></h2>
 <blockquote>
 <div><p>Pausing scheduling and the queue in a populated queue</p>
 </div></blockquote>
@@ -929,7 +929,7 @@ before the delete command at the end, and then interactively shell into the new 
 </div>
 <p>The next (basic) example goes through the same ideas, but manually for each step so you
 can learn about what the script is doing.</p>
-<h2 id="basic-saving-jobs-and-metadata">Basic Saving Jobs and Metadata<a class="headerlink" href="#basic-saving-jobs-and-metadata" title="Permalink to this heading">¶</a></h2>
+<h2 id="basic-saving-jobs-and-metadata">Basic Saving Jobs and Metadata<a class="headerlink" href="#basic-saving-jobs-and-metadata" title="Link to this heading">¶</a></h2>
 <blockquote>
 <div><p>Saving state of the jobs queue and metadata, after runs are complete (between two MiniClusters)</p>
 </div></blockquote>
@@ -1074,13 +1074,13 @@ below with kubectl apply) or you can run a demo script that runs the commands on
 </code></pre></div>
 </div>
 </details>
-<h3 id="create-the-minicluster">Create the MiniCluster<a class="headerlink" href="#create-the-minicluster" title="Permalink to this heading">¶</a></h3>
+<h3 id="create-the-minicluster">Create the MiniCluster<a class="headerlink" href="#create-the-minicluster" title="Link to this heading">¶</a></h3>
 <p>This is how to create the MiniCluster:</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span>kubectl<span class="w"> </span>apply<span class="w"> </span>-f<span class="w"> </span>examples/state/basic-job-completion/minicluster.yaml<span class="w"> </span>
 </code></pre></div>
 </div>
 <p>At this point you can proceed to either <a class="reference internal" href="#interactive-submit"><span class="std std-ref">Interactive Submit</span></a> or <a class="reference internal" href="#programmatic-submit"><span class="std std-ref">Programmatic Submit</span></a>.</p>
-<h3 id="interactive-submit">Interactive Submit<a class="headerlink" href="#interactive-submit" title="Permalink to this heading">¶</a></h3>
+<h3 id="interactive-submit">Interactive Submit<a class="headerlink" href="#interactive-submit" title="Link to this heading">¶</a></h3>
 <p>And now we need to submit a bunch of jobs to run to completion. We can do this by shelling in (and
 note this could be done by the Flux Restful API for a more proggrammatic example). First,
 here is how to do this interactively:</p>
@@ -1111,7 +1111,7 @@ $<span class="w"> </span>kubectl<span class="w"> </span><span class="nb">exec</s
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span>flux<span class="w"> </span><span class="nb">jobs</span><span class="w"> </span>-a
 </code></pre></div>
 </div>
-<h3 id="programmatic-submit">Programmatic Submit<a class="headerlink" href="#programmatic-submit" title="Permalink to this heading">¶</a></h3>
+<h3 id="programmatic-submit">Programmatic Submit<a class="headerlink" href="#programmatic-submit" title="Link to this heading">¶</a></h3>
 <p>Or just do the entire thing from the command line! First, confirm the archive path is empty:</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span>minikube<span class="w"> </span>ssh<span class="w"> </span>ls<span class="w"> </span>/tmp/data
 <span class="c1"># no output</span>
@@ -1182,7 +1182,7 @@ the Python SDK? I’m not sure - we will find out!</p>
   <small>
     
       Last update:
-      Jul 31, 2023
+      Aug 19, 2023
     
   </small>
 </div>
@@ -1259,7 +1259,7 @@ the Python SDK? I’m not sure - we will find out!</p>
   
     Created using
     <a href="https://www.sphinx-doc.org/" target="_blank" rel="noopener">Sphinx</a>
-    7.1.1.
+    7.2.2.
      and
     <a href="https://github.com/jbms/sphinx-immaterial/" target="_blank" rel="noopener">Sphinx-Immaterial</a>
   

@@ -33,7 +33,7 @@
         <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
       
     
-        <link rel="stylesheet" type="text/css" href="../../_static/sphinx_immaterial_theme.9dcb20399d0097661.min.css?v=09738cfd" />
+        <link rel="stylesheet" type="text/css" href="../../_static/sphinx_immaterial_theme.a60204c58f5e4ff66.min.css?v=f7c3c3dc" />
         <link rel="stylesheet" type="text/css" href="../../_static/custom.css?v=d68d0989" />
     <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
     
@@ -808,12 +808,12 @@
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10 20H6V4h7v5h5v3.1l2-2V8l-6-6H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h4v-2m10.2-7c.1 0 .3.1.4.2l1.3 1.3c.2.2.2.6 0 .8l-1 1-2.1-2.1 1-1c.1-.1.2-.2.4-.2m0 3.9L14.1 23H12v-2.1l6.1-6.1 2.1 2.1Z"/></svg>
   </a>
 
-<h1 id="fusion-storage">Fusion Storage<a class="headerlink" href="#fusion-storage" title="Permalink to this heading">¶</a></h1>
+<h1 id="fusion-storage">Fusion Storage<a class="headerlink" href="#fusion-storage" title="Link to this heading">¶</a></h1>
 <p><strong><a class="reference external" href="https://github.com/flux-framework/flux-operator/blob/main/examples/storage/google/fusion/minicluster.yaml">MiniCluster YAML</a></strong></p>
 <p>This basic tutorial will walk through creating a MiniCluster to run a Snakemake workflow! You should have
 already <a class="reference internal" href="setup.html"><span class="std std-doc">setup your workspace</span></a>, including preparing the Snakemake data in
 Google Storage. The cluster creation commands are slightly modified here, discussed below.</p>
-<h2 id="create-cluster">Create Cluster<a class="headerlink" href="#create-cluster" title="Permalink to this heading">¶</a></h2>
+<h2 id="create-cluster">Create Cluster<a class="headerlink" href="#create-cluster" title="Link to this heading">¶</a></h2>
 <p>Now let’s use gcloud to create a cluster, and we are purposefully going to choose
 a very small node type to test. Note that I choose us-central1-a because it tends
 to be cheaper (and closer to me). First, here is our project for easy access:</p>
@@ -871,7 +871,7 @@ gcloud<span class="w"> </span>iam<span class="w"> </span>service-accounts<span c
 <p>Basically, this means our Kubernetes service account inherits the Google Service account.
 Next, you’ll want to choose a mens to <a class="reference external" href="https://flux-framework.org/flux-operator/getting_started/user-guide.html#install">install the operator</a>
 and then continue.</p>
-<h2 id="running-snakemake">Running Snakemake<a class="headerlink" href="#running-snakemake" title="Permalink to this heading">¶</a></h2>
+<h2 id="running-snakemake">Running Snakemake<a class="headerlink" href="#running-snakemake" title="Link to this heading">¶</a></h2>
 <p>Fusion is cool because it binds from the pod. We will first need to apply a Daemonset that enables a device
 manager so fuse to be used:</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span>kubectl<span class="w"> </span>apply<span class="w"> </span>-f<span class="w"> </span>examples/storage/google/fusion/daemonset.yaml
@@ -939,7 +939,7 @@ When you exit the container:</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span>kubectl<span class="w"> </span>delete<span class="w"> </span>-f<span class="w"> </span>examples/storage/google/fusion/minicluster.yaml
 </code></pre></div>
 </div>
-<h2 id="clean-up">Clean up<a class="headerlink" href="#clean-up" title="Permalink to this heading">¶</a></h2>
+<h2 id="clean-up">Clean up<a class="headerlink" href="#clean-up" title="Link to this heading">¶</a></h2>
 <p>Whatever tutorial you choose, don’t forget to clean up at the end!
 You can optionally undeploy the operator (this is again at the root of the operator repository clone)</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span>make<span class="w"> </span>undeploy
@@ -955,7 +955,7 @@ $<span class="w"> </span>kubectl<span class="w"> </span>delete<span class="w"> <
 </code></pre></div>
 </div>
 <p>I like to check in the cloud console to ensure that it was actually deleted.</p>
-<h2 id="how-does-it-work">How does it work?<a class="headerlink" href="#how-does-it-work" title="Permalink to this heading">¶</a></h2>
+<h2 id="how-does-it-work">How does it work?<a class="headerlink" href="#how-does-it-work" title="Link to this heading">¶</a></h2>
 <p>You can read <a class="reference external" href="https://seqera.io/fusion/">more about fusion here</a>. Specifically, I was confused why it didn’t require me to define
 a bucket anywhere. The reason is because the request for a bucket path happens when you list the filesystem. E.g.,
 although the original root at <code class="docutils literal notranslate"><span class="pre">/fusion</span></code> looked empty, this is what happened when I listed - I saw my workflow
@@ -1007,7 +1007,7 @@ have taken up to a week to figure out.</p>
   <small>
     
       Last update:
-      Jul 31, 2023
+      Aug 19, 2023
     
   </small>
 </div>
@@ -1084,7 +1084,7 @@ have taken up to a week to figure out.</p>
   
     Created using
     <a href="https://www.sphinx-doc.org/" target="_blank" rel="noopener">Sphinx</a>
-    7.1.1.
+    7.2.2.
      and
     <a href="https://github.com/jbms/sphinx-immaterial/" target="_blank" rel="noopener">Sphinx-Immaterial</a>
   

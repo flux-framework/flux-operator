@@ -33,7 +33,7 @@
         <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
       
     
-        <link rel="stylesheet" type="text/css" href="../_static/sphinx_immaterial_theme.9dcb20399d0097661.min.css?v=09738cfd" />
+        <link rel="stylesheet" type="text/css" href="../_static/sphinx_immaterial_theme.a60204c58f5e4ff66.min.css?v=f7c3c3dc" />
         <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=d68d0989" />
     <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
     
@@ -535,6 +535,21 @@
   
   
     <li class="md-nav__item">
+      <a href="helper-clients.html" class="md-nav__link">
+        <span title="/getting_started/helper-clients.md (reference label)" class="md-ellipsis">Helper Clients</span>
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="custom-resource-definition.html" class="md-nav__link">
         <span title="/getting_started/custom-resource-definition.md (reference label)" class="md-ellipsis">Mini<wbr>Cluster</span>
       </a>
@@ -739,20 +754,20 @@
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10 20H6V4h7v5h5v3.1l2-2V8l-6-6H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h4v-2m10.2-7c.1 0 .3.1.4.2l1.3 1.3c.2.2.2.6 0 .8l-1 1-2.1-2.1 1-1c.1-.1.2-.2.4-.2m0 3.9L14.1 23H12v-2.1l6.1-6.1 2.1 2.1Z"/></svg>
   </a>
 
-<h1 id="user-guide">User Guide<a class="headerlink" href="#user-guide" title="Permalink to this heading">¶</a></h1>
+<h1 id="user-guide">User Guide<a class="headerlink" href="#user-guide" title="Link to this heading">¶</a></h1>
 <p>Welcome to the Flux Operator user guide! If you come here, we are assuming you have a cluster
 with the Flux Operator installed and are interested to submit your own <a class="reference internal" href="custom-resource-definition.html"><span class="std std-doc">custom resource</span></a>
 to create a MiniCluster, or that someone has already done it for you. If you are a developer wanting to work
 on new functionality or features for the Flux Operator, see our <a class="reference internal" href="../development/index.html"><span class="std std-doc">Developer Guides</span></a> instead.</p>
-<h2 id="containers-available">Containers Available<a class="headerlink" href="#containers-available" title="Permalink to this heading">¶</a></h2>
+<h2 id="containers-available">Containers Available<a class="headerlink" href="#containers-available" title="Link to this heading">¶</a></h2>
 <p>All containers are provided under <a class="reference external" href="https://github.com/flux-framework/flux-operator/pkgs/container/flux-operator">ghcr.io/flux-framework/flux-operator</a>. The latest tag is the current main branch, a “bleeding edge” version, and we also provide <a class="reference external" href="https://github.com/flux-framework/flux-operator/releases">releases</a>, each of which has YAML for x86 or ARM associated with a release container. For dates before June 30, 2023, we provide the other pinned containers in case you want a previous version:</p>
 <ul class="simple">
 <li><p><a class="reference external" href="https://github.com/flux-framework/flux-operator/pkgs/container/flux-operator">ghcr.io/flux-framework/flux-operator:feb-2023</a>: the version used for Kubecon experiments, and before storage (minikube and Google Cloud example) were added.</p></li>
 <li><p><a class="reference external" href="https://github.com/flux-framework/flux-operator/pkgs/container/flux-operator">ghcr.io/flux-framework/flux-operator:april-2023</a>: the version directly before the refactor to remove the certificate generator pod (3.3)</p></li>
 </ul>
 <p>These were primarily experimental versions run for experiments like Kubecon!</p>
-<h2 id="install">Install<a class="headerlink" href="#install" title="Permalink to this heading">¶</a></h2>
-<h3 id="quick-install">Quick Install<a class="headerlink" href="#quick-install" title="Permalink to this heading">¶</a></h3>
+<h2 id="install">Install<a class="headerlink" href="#install" title="Link to this heading">¶</a></h2>
+<h3 id="quick-install">Quick Install<a class="headerlink" href="#quick-install" title="Link to this heading">¶</a></h3>
 <p>We generally recommend that you install a <a class="reference external" href="https://raw.githubusercontent.com/flux-framework/flux-operator/main/examples/dist/flux-operator.yaml">release</a>, e.g.,</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code><span class="nv">VERSION</span><span class="o">=</span><span class="m">0</span>.1.0
 
@@ -774,7 +789,7 @@ $<span class="w"> </span>make<span class="w"> </span>build-config-arm
 </code></pre></div>
 </div>
 <p>and then saved to the main branch or release where you retrieve it from.</p>
-<h3 id="helm-install">Helm Install<a class="headerlink" href="#helm-install" title="Permalink to this heading">¶</a></h3>
+<h3 id="helm-install">Helm Install<a class="headerlink" href="#helm-install" title="Link to this heading">¶</a></h3>
 <p>We optionally provide an install with helm, which you can do either from the charts in the repository:</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span>git<span class="w"> </span>clone<span class="w"> </span>https://github.com/flux-framework/flux-operator<span class="w"> </span>
 $<span class="w"> </span><span class="nb">cd</span><span class="w"> </span>flux-operator
@@ -802,17 +817,17 @@ $<span class="w"> </span>helm<span class="w"> </span>pull<span class="w"> </span
 <span class="go">TEST SUITE: None</span>
 </code></pre></div>
 </div>
-<h3 id="development-install">Development Install<a class="headerlink" href="#development-install" title="Permalink to this heading">¶</a></h3>
+<h3 id="development-install">Development Install<a class="headerlink" href="#development-install" title="Link to this heading">¶</a></h3>
 <p>For developer instructions, please see our <a class="reference internal" href="../development/index.html"><span class="std std-doc">developer documentation</span></a>.</p>
-<h3 id="tool-install">Tool Install<a class="headerlink" href="#tool-install" title="Permalink to this heading">¶</a></h3>
+<h3 id="tool-install">Tool Install<a class="headerlink" href="#tool-install" title="Link to this heading">¶</a></h3>
 <p>We maintain a tool <a class="reference external" href="https://github.com/converged-computing/flux-cloud">Flux Cloud</a> that is able to bring up clusters, install the operator,
 and optionally run experiments and bring them down. We currently support a handful of clouds
 (AWS and Google) and if you find yourself wanting a way to easily generate and save results
 for experiments, this might be the way to go. If you have a cloud or environment you
 want to deploy to that isn’t supported, please <a class="reference external" href="https://github.com/converged-computing/flux-cloud/issues">let us know</a>.</p>
-<h2 id="next-steps">Next Steps<a class="headerlink" href="#next-steps" title="Permalink to this heading">¶</a></h2>
+<h2 id="next-steps">Next Steps<a class="headerlink" href="#next-steps" title="Link to this heading">¶</a></h2>
 <p>For next steps, you might do the following:</p>
-<h3 id="verify-install">1. Verify Install<a class="headerlink" href="#verify-install" title="Permalink to this heading">¶</a></h3>
+<h3 id="verify-install">1. Verify Install<a class="headerlink" href="#verify-install" title="Link to this heading">¶</a></h3>
 <p>Regardless of what you chose above, from this point on (after the operator is installed)
 there are some checks that you can do to see that everything worked.
 First, ensure the <code class="docutils literal notranslate"><span class="pre">operator-system</span></code> namespace was created:</p>
@@ -849,16 +864,16 @@ First, ensure the <code class="docutils literal notranslate"><span class="pre">o
 <span class="go">operator-system   operator-controller-manager-6c699b7b94-bbp5q   2/2     Running   0             80s   192.168.30.43    ip-192-168-28-166.ec2.internal   &lt;none&gt;           &lt;none&gt;</span>
 </code></pre></div>
 </div>
-<h3 id="create-namespace">2. Create Namespace<a class="headerlink" href="#create-namespace" title="Permalink to this heading">¶</a></h3>
+<h3 id="create-namespace">2. Create Namespace<a class="headerlink" href="#create-namespace" title="Link to this heading">¶</a></h3>
 <p>You’ll likely Make your namespace for the flux-operator:</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span>kubectl<span class="w"> </span>create<span class="w"> </span>namespace<span class="w"> </span>flux-operator
 </code></pre></div>
 </div>
-<h3 id="validate-your-container-optional">3. Validate your container (optional)<a class="headerlink" href="#validate-your-container-optional" title="Permalink to this heading">¶</a></h3>
+<h3 id="validate-your-container-optional">3. Validate your container (optional)<a class="headerlink" href="#validate-your-container-optional" title="Link to this heading">¶</a></h3>
 <p>Your main container (with flux installed) has a basic <a class="reference external" href="https://flux-framework.org/flux-operator/development/developer-guide.html?h=container#container-requirements">set of requirements</a> and we provide a simple tool to sanity check the most simple of these requirements, the <a class="reference external" href="https://github.com/converged-computing/flux-operator-validator">Flux Operator Validator</a>.
 You are encouragd to run this script, although it’s not required- you can just as easily go
 through the list and verify the points on your own.</p>
-<h3 id="apply-your-custom-resource-definition">4. Apply your custom resource definition<a class="headerlink" href="#apply-your-custom-resource-definition" title="Permalink to this heading">¶</a></h3>
+<h3 id="apply-your-custom-resource-definition">4. Apply your custom resource definition<a class="headerlink" href="#apply-your-custom-resource-definition" title="Link to this heading">¶</a></h3>
 <p>Ensure that your custom resource definition matches the namespace you just created.
 Then apply your CRD. You can use <a class="reference external" href="https://github.com/flux-framework/flux-operator/blob/main/exampless">an example</a>
 Here is using a default we provide:</p>
@@ -884,7 +899,7 @@ Next, you might be interested in <a class="reference internal" href="#jobs.md"><
   <small>
     
       Last update:
-      Jul 31, 2023
+      Aug 19, 2023
     
   </small>
 </div>
@@ -931,13 +946,13 @@ Next, you might be interested in <a class="reference internal" href="#jobs.md"><
       
       
         
-        <a href="custom-resource-definition.html" class="md-footer__link md-footer__link--next" aria-label="Next: MiniCluster" rel="next">
+        <a href="helper-clients.html" class="md-footer__link md-footer__link--next" aria-label="Next: Helper Clients" rel="next">
           <div class="md-footer__title">
             <div class="md-ellipsis">
               <span class="md-footer__direction">
                 Next
               </span>
-              MiniCluster
+              Helper Clients
             </div>
           </div>
           <div class="md-footer__button md-icon">
@@ -961,7 +976,7 @@ Next, you might be interested in <a class="reference internal" href="#jobs.md"><
   
     Created using
     <a href="https://www.sphinx-doc.org/" target="_blank" rel="noopener">Sphinx</a>
-    7.1.1.
+    7.2.2.
      and
     <a href="https://github.com/jbms/sphinx-immaterial/" target="_blank" rel="noopener">Sphinx-Immaterial</a>
   
