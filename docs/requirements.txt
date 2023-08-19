@@ -1,8 +1,8 @@
 sphinx
 markupsafe
-sphinx_immaterial
+sphinx_immaterial==0.11.7
 numpy
-pydantic==1.10.8
+pydantic
 pandas
 matplotlib
 nbsphinx
