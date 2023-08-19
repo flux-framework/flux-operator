@@ -34,8 +34,17 @@ sleep ${jobtime}
     echo "$out"
     echo "$err"
     kill $(lsof -t -i:8080) || true
-    /bin/bash examples/tests/${name}/post-run.sh || true
-    exit 1;
+    echo "Describe pods"
+    kubectl describe pods || echo "Cannot describe pods"
+    echo "Describe jobs"
+    kubectl describe jobs || echo "Cannot describe jobs"
+    echo "LOGS for flux operator controller"
+    operator_pod=$(kubectl get -n operator-system pods -o json | jq -r .items[0].metadata.name)
+    kubectl logs -n operator-system ${operator_pod} || echo "cannot get logs for flux operator controller"
+    echo "LOGS for Flux Operator Sample"
+    sample_pod=$(kubectl get -n flux-operator pods -o json | jq -r .items[0].metadata.name)
+    kubectl logs -n flux-operator ${sample_pod}
+    exit 1
 )
 kill ${pid} || true
 kill $(lsof -t -i:8080) || true
