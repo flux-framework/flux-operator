@@ -240,6 +240,7 @@ spec:
                           items:
                             type: string
                           type: array
+                          x-kubernetes-list-type: atomic
                         privileged:
                           description: Privileged container
                           type: boolean
@@ -300,6 +301,7 @@ spec:
                               type: integer
                           type: object
                         type: array
+                        x-kubernetes-list-type: atomic
                       hostlist:
                         description: Hostlist is a custom hostlist for the broker.toml
                           that includes the local plus bursted cluster. This is typically
@@ -676,6 +678,7 @@ spec:
                           items:
                             type: string
                           type: array
+                          x-kubernetes-list-type: atomic
                         privileged:
                           description: Privileged container
                           type: boolean

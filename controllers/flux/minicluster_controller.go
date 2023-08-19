@@ -119,7 +119,7 @@ func (r *MiniClusterReconciler) Reconcile(
 
 		// Create it, doesn't exist yet
 		if errors.IsNotFound(err) {
-			r.log.Info("🌀 MiniCluster not found . Ignoring since object must be deleted.")
+			r.log.Info("🌀 MiniCluster not found. Ignoring since object must be deleted.")
 			return ctrl.Result{}, nil
 		}
 		r.log.Info("🌀 Failed to get MiniCluster. Re-running reconcile.")

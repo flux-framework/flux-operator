@@ -131,7 +131,10 @@ func (r *MiniClusterReconciler) exposeService(
 				servicePorts = append(servicePorts, newPort)
 			}
 			service := &corev1.Service{
-				ObjectMeta: metav1.ObjectMeta{Name: serviceName, Namespace: cluster.Namespace},
+				ObjectMeta: metav1.ObjectMeta{
+					Name:      serviceName,
+					Namespace: cluster.Namespace,
+				},
 				Spec: corev1.ServiceSpec{
 					Selector: selector,
 					Ports:    servicePorts,
