@@ -23,6 +23,8 @@ import (
 	api "github.com/flux-framework/flux-operator/api/v1alpha1"
 )
 
+const podLabelAppName = "app.kubernetes.io/name"
+
 // Get labels for any pod in the cluster
 func getPodLabels(cluster *api.MiniCluster) map[string]string {
 	if cluster.Spec.Pod.Labels == nil {
@@ -30,7 +32,7 @@ func getPodLabels(cluster *api.MiniCluster) map[string]string {
 	}
 	podLabels := cluster.Spec.Pod.Labels
 	podLabels["namespace"] = cluster.Namespace
-	podLabels["app.kubernetes.io/name"] = cluster.Name
+	podLabels[podLabelAppName] = cluster.Name
 	return podLabels
 }
 

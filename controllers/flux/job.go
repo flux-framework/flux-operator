@@ -71,7 +71,48 @@ func NewMiniClusterJob(cluster *api.MiniCluster) (*batchv1.Job, error) {
 					ImagePullSecrets:      getImagePullSecrets(cluster),
 					ServiceAccountName:    cluster.Spec.Pod.ServiceAccountName,
 					NodeSelector:          cluster.Spec.Pod.NodeSelector,
-				}},
+					Affinity: &corev1.Affinity{
+						// Prefer to schedule pods on the same zone
+						PodAffinity: &corev1.PodAffinity{
+							PreferredDuringSchedulingIgnoredDuringExecution: []corev1.WeightedPodAffinityTerm{
+								{
+									PodAffinityTerm: corev1.PodAffinityTerm{
+										LabelSelector: &metav1.LabelSelector{
+											MatchExpressions: []metav1.LabelSelectorRequirement{
+												{
+													Key:      podLabelAppName, // added in getPodLabels
+													Operator: metav1.LabelSelectorOpIn,
+													Values:   []string{cluster.Name},
+												},
+											},
+										},
+										TopologyKey: "topology.kubernetes.io/zone",
+									},
+								},
+							},
+						},
+						// Prefer to schedule pods on different nodes
+						PodAntiAffinity: &corev1.PodAntiAffinity{
+							PreferredDuringSchedulingIgnoredDuringExecution: []corev1.WeightedPodAffinityTerm{
+								{
+									PodAffinityTerm: corev1.PodAffinityTerm{
+										LabelSelector: &metav1.LabelSelector{
+											MatchExpressions: []metav1.LabelSelectorRequirement{
+												{
+													Key:      podLabelAppName, // added in getPodLabels
+													Operator: metav1.LabelSelectorOpIn,
+													Values:   []string{cluster.Name},
+												},
+											},
+										},
+										TopologyKey: "kubernetes.io/hostname",
+									},
+								},
+							},
+						},
+					},
+				},
+			},
 		},
 	}
 
