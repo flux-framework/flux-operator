@@ -88,9 +88,10 @@ func (r *MiniClusterReconciler) ensureMiniCluster(
 	// Create headless service for the MiniCluster OR single service for the broker
 	selector := map[string]string{"job-name": cluster.Name}
 
-	// If we are adding a minimal service to the index 0 pod only
+	// If we are adding a minimal service expose the index 0 pod only
+	// LabelSelectors are ANDed
 	if cluster.Spec.Flux.MinimalService {
-		selector = map[string]string{"job-index": "0"}
+		selector["job-index"] = "0"
 	}
 
 	result, err = r.exposeServices(ctx, cluster, cluster.Spec.Network.HeadlessName, selector)
