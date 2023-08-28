@@ -136,7 +136,7 @@ func (r *MiniClusterReconciler) ensureMiniCluster(
 		}
 
 		// Service name corresponds to container, but selector is pod-specific
-		selector := map[string]string{"app.kubernetes.io/name": cluster.Name}
+		selector := map[string]string{podLabelAppName: cluster.Name}
 		result, err = r.exposeService(ctx, cluster, container.Name, selector, container.Ports)
 		if err != nil {
 			return result, err
