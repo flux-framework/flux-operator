@@ -1543,6 +1543,13 @@ func schema__api_v1alpha1__PodSpec(ref common.ReferenceCallback) common.OpenAPID
 							},
 						},
 					},
+					"hostNetwork": {
+						SchemaProps: spec.SchemaProps{
+							Description: "HostNetwork uses the host network for the Pod if true",
+							Type:        []string{"boolean"},
+							Format:      "",
+						},
+					},
 				},
 			},
 		},

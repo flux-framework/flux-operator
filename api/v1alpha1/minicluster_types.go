@@ -198,6 +198,10 @@ type PodSpec struct {
 	// Resources include limits and requests
 	// +optional
 	Resources ContainerResource `json:"resources"`
+
+	// HostNetwork uses the host network for the Pod if true
+	// +optional
+	HostNetwork bool `json:"hostNetwork,omitempty"`
 }
 
 // MiniClusterStatus defines the observed state of Flux
