@@ -17,7 +17,7 @@ $ kind create cluster --config ../../../kind-config.yaml
 And the Flux Operator namespace created:
 
 ```bash
-$ kubectl create -n flux-operator
+$ kubectl create namespace flux-operator
 ```
 
 And then generate the (separate) pods to run redis and rabbitmq in the flux-operator namespace.

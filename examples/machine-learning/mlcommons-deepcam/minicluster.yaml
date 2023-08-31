@@ -1,0 +1,50 @@
+apiVersion: flux-framework.org/v1alpha1
+kind: MiniCluster
+metadata:
+  name: flux-sample
+  namespace: flux-operator
+spec:
+
+  # IMPORTANT: see the README.md to see how to prepare data first!
+  # You should have a local ./data folder with training and stats
+  # Number of pods to create for MiniCluster
+  size: 2
+  tasks: 2
+  interactive: true
+
+  # Make this kind of persistent volume and claim available to pods
+  # This is a path in minikube (e.g., minikube ssh)
+  volumes:
+    data:
+      storageClass: hostpath
+      path: /tmp/workflow
+
+  # This is a list because a pod can support multiple containers
+  containers:
+    # The container URI to pull (currently needs to be public)
+    - image: ghcr.io/rse-ops/singularity:tag-mamba
+      cores: 4
+
+      # This will run with the defaults, targeting our ./data directory
+      command: singularity exec --pwd /opt/deepCam ./deepcam.sif /bin/bash /tmp/workflow/run_training.sh
+      workingDir: /tmp/workflow
+
+      # This pulls the container (once) by the broker to workingDir /data
+      commands:
+        pre: mkdir -p /tmp/workflow/output
+        brokerPre: |
+           if [[ ! -e "/tmp/workflow/deepcam.sif" ]]; then
+               singularity pull /tmp/workflow/deepcam.sif docker://ghcr.io/rse-ops/mlcommons-deepcam:tag-21.12-py3
+           fi
+
+      fluxUser:
+        name: fluxuser
+
+      # Container will be pre-pulled here only by the broker
+      volumes:
+        data:
+          path: /tmp/workflow
+       
+      # Running a container in a container
+      securityContext:
+        privileged: true
