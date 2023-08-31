@@ -476,6 +476,9 @@ spec:
                       type: string
                     description: Annotations for each pod
                     type: object
+                  hostNetwork:
+                    description: HostNetwork uses the host network for the Pod if true
+                    type: boolean
                   labels:
                     additionalProperties:
                       type: string
