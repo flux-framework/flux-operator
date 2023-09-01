@@ -112,11 +112,13 @@ func getAffinity(cluster *api.MiniCluster) *corev1.Affinity {
 		PodAffinity: &corev1.PodAffinity{
 			PreferredDuringSchedulingIgnoredDuringExecution: []corev1.WeightedPodAffinityTerm{
 				{
+					Weight: 100,
 					PodAffinityTerm: corev1.PodAffinityTerm{
 						LabelSelector: &metav1.LabelSelector{
 							MatchExpressions: []metav1.LabelSelectorRequirement{
 								{
-									Key:      podLabelAppName, // added in getPodLabels
+									// added in getPodLabels
+									Key:      podLabelAppName,
 									Operator: metav1.LabelSelectorOpIn,
 									Values:   []string{cluster.Name},
 								},
@@ -131,11 +133,13 @@ func getAffinity(cluster *api.MiniCluster) *corev1.Affinity {
 		PodAntiAffinity: &corev1.PodAntiAffinity{
 			PreferredDuringSchedulingIgnoredDuringExecution: []corev1.WeightedPodAffinityTerm{
 				{
+					Weight: 100,
 					PodAffinityTerm: corev1.PodAffinityTerm{
 						LabelSelector: &metav1.LabelSelector{
 							MatchExpressions: []metav1.LabelSelectorRequirement{
 								{
-									Key:      podLabelAppName, // added in getPodLabels
+									// added in getPodLabels
+									Key:      podLabelAppName,
 									Operator: metav1.LabelSelectorOpIn,
 									Values:   []string{cluster.Name},
 								},
