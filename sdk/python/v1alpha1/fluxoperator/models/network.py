@@ -33,29 +33,24 @@ class Network(object):
                             and the value is json key in definition.
     """
     openapi_types = {
-        'headless_name': 'str',
-        'host_network': 'bool'
+        'headless_name': 'str'
     }
 
     attribute_map = {
-        'headless_name': 'headlessName',
-        'host_network': 'hostNetwork'
+        'headless_name': 'headlessName'
     }
 
-    def __init__(self, headless_name='flux-service', host_network=None, local_vars_configuration=None):  # noqa: E501
+    def __init__(self, headless_name='flux-service', local_vars_configuration=None):  # noqa: E501
         """Network - a model defined in OpenAPI"""  # noqa: E501
         if local_vars_configuration is None:
             local_vars_configuration = Configuration.get_default_copy()
         self.local_vars_configuration = local_vars_configuration
 
         self._headless_name = None
-        self._host_network = None
         self.discriminator = None
 
         if headless_name is not None:
             self.headless_name = headless_name
-        if host_network is not None:
-            self.host_network = host_network
 
     @property
     def headless_name(self):
@@ -79,29 +74,6 @@ class Network(object):
         """
 
         self._headless_name = headless_name
-
-    @property
-    def host_network(self):
-        """Gets the host_network of this Network.  # noqa: E501
-
-        HostNetwork uses the host network for the Pod if true  # noqa: E501
-
-        :return: The host_network of this Network.  # noqa: E501
-        :rtype: bool
-        """
-        return self._host_network
-
-    @host_network.setter
-    def host_network(self, host_network):
-        """Sets the host_network of this Network.
-
-        HostNetwork uses the host network for the Pod if true  # noqa: E501
-
-        :param host_network: The host_network of this Network.  # noqa: E501
-        :type host_network: bool
-        """
-
-        self._host_network = host_network
 
     def to_dict(self, serialize=False):
         """Returns the model properties as a dict"""

@@ -300,16 +300,6 @@ network:
   headlessName: my-network
 ```
 
-#### hostNetwork
-
-Use the host network. This can make using devices easier, but you should fully understand [the implications](https://www.elastic.co/guide/en/security/current/kubernetes-pod-created-with-hostnetwork.html).
-
-```yaml
-network:
-  hostNetwork: true
-```
-
-
 ### flux
 
 Settings under the Flux directive typically refer to flux options, e.g., for the broker or similar.

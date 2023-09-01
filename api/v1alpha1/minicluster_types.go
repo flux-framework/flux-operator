@@ -120,10 +120,6 @@ type MiniClusterSpec struct {
 
 type Network struct {
 
-	// HostNetwork uses the host network for the Pod if true
-	// +optional
-	HostNetwork bool `json:"hostNetwork,omitempty"`
-
 	// Name for cluster headless service
 	// +kubebuilder:default="flux-service"
 	// +default="flux-service"

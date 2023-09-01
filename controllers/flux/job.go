@@ -71,17 +71,10 @@ func NewMiniClusterJob(cluster *api.MiniCluster) (*batchv1.Job, error) {
 					ImagePullSecrets:      getImagePullSecrets(cluster),
 					ServiceAccountName:    cluster.Spec.Pod.ServiceAccountName,
 					NodeSelector:          cluster.Spec.Pod.NodeSelector,
-					HostNetwork:           cluster.Spec.Network.HostNetwork,
 					Affinity:              getAffinity(cluster),
 				},
 			},
 		},
-	}
-
-	// If hostnetwork is true, need to also change DNS policy
-	// https://kubernetes.io/docs/concepts/services-networking/dns-pod-service/#pod-s-dns-policy
-	if cluster.Spec.Network.HostNetwork {
-		job.Spec.Template.Spec.DNSPolicy = "ClusterFirstWithHostNet"
 	}
 
 	// Get resources for the pod

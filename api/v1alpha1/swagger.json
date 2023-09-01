@@ -822,10 +822,6 @@
           "description": "Name for cluster headless service",
           "type": "string",
           "default": "flux-service"
-        },
-        "hostNetwork": {
-          "description": "HostNetwork uses the host network for the Pod if true",
-          "type": "boolean"
         }
       }
     },

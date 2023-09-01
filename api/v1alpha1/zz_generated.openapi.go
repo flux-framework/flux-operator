@@ -1452,13 +1452,6 @@ func schema__api_v1alpha1__Network(ref common.ReferenceCallback) common.OpenAPID
 			SchemaProps: spec.SchemaProps{
 				Type: []string{"object"},
 				Properties: map[string]spec.Schema{
-					"hostNetwork": {
-						SchemaProps: spec.SchemaProps{
-							Description: "HostNetwork uses the host network for the Pod if true",
-							Type:        []string{"boolean"},
-							Format:      "",
-						},
-					},
 					"headlessName": {
 						SchemaProps: spec.SchemaProps{
 							Description: "Name for cluster headless service",
