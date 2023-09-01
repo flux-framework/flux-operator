@@ -622,6 +622,26 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#network" class="md-nav__link">
+    <span title="/getting_started/custom-resource-definition.md#network (reference label)" class="md-ellipsis">network</span>
+  </a>
+  
+    <nav class="md-nav" aria-label="network">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#headlessname" class="md-nav__link">
+    <span title="/getting_started/custom-resource-definition.md#headlessname (reference label)" class="md-ellipsis">headless<wbr>Name</span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#flux" class="md-nav__link">
     <span title="/getting_started/custom-resource-definition.md#flux (reference label)" class="md-ellipsis">flux</span>
   </a>
@@ -1515,6 +1535,14 @@ If you want to disable this cleanup:</p>
 </div>
 <p>If you are streaming the logs with <code class="docutils literal notranslate"><span class="pre">kubectl</span> <span class="pre">logs</span></code> the steam would stop when the broker pod is completed,
 so typically you will get the logs as long as you are streaming when the job starts running.</p>
+<h3 id="network">network<a class="headerlink" href="#network" title="Link to this heading">¶</a></h3>
+<p>The network section exposes networking options for the Flux MiniCluster.</p>
+<h4 id="headlessname">headlessName<a class="headerlink" href="#headlessname" title="Link to this heading">¶</a></h4>
+<p>Change the default headless service name (defaults to <code class="docutils literal notranslate"><span class="pre">flux-service</span></code>).</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><code><span class="nt">network</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">headlessName</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">my-network</span>
+</code></pre></div>
+</div>
 <h3 id="flux">flux<a class="headerlink" href="#flux" title="Link to this heading">¶</a></h3>
 <p>Settings under the Flux directive typically refer to flux options, e.g., for the broker or similar.</p>
 <h4 id="optionflags">optionFlags<a class="headerlink" href="#optionflags" title="Link to this heading">¶</a></h4>
@@ -2326,7 +2354,7 @@ or define your own as follows:</p>
   <small>
     
       Last update:
-      Aug 28, 2023
+      Sep 01, 2023
     
   </small>
 </div>
@@ -2403,7 +2431,7 @@ or define your own as follows:</p>
   
     Created using
     <a href="https://www.sphinx-doc.org/" target="_blank" rel="noopener">Sphinx</a>
-    7.2.4.
+    7.2.5.
      and
     <a href="https://github.com/jbms/sphinx-immaterial/" target="_blank" rel="noopener">Sphinx-Immaterial</a>
   
