@@ -138,7 +138,6 @@ func (r *MiniClusterReconciler) newServicePod(
 			ImagePullSecrets:   getImagePullSecrets(cluster),
 			ServiceAccountName: cluster.Spec.Pod.ServiceAccountName,
 			NodeSelector:       cluster.Spec.Pod.NodeSelector,
-			HostNetwork:        cluster.Spec.Pod.HostNetwork,
 		},
 	}
 

@@ -287,6 +287,29 @@ If you want to disable this cleanup:
 If you are streaming the logs with `kubectl logs` the steam would stop when the broker pod is completed,
 so typically you will get the logs as long as you are streaming when the job starts running.
 
+### network
+
+The network section exposes networking options for the Flux MiniCluster.
+
+#### headlessName
+
+Change the default headless service name (defaults to `flux-service`).
+
+```yaml
+network:
+  headlessName: my-network
+```
+
+#### hostNetwork
+
+Use the host network. This can make using devices easier, but you should fully understand [the implications](https://www.elastic.co/guide/en/security/current/kubernetes-pod-created-with-hostnetwork.html).
+
+```yaml
+network:
+  hostNetwork: true
+```
+
+
 ### flux
 
 Settings under the Flux directive typically refer to flux options, e.g., for the broker or similar.

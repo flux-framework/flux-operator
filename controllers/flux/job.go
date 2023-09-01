@@ -71,49 +71,17 @@ func NewMiniClusterJob(cluster *api.MiniCluster) (*batchv1.Job, error) {
 					ImagePullSecrets:      getImagePullSecrets(cluster),
 					ServiceAccountName:    cluster.Spec.Pod.ServiceAccountName,
 					NodeSelector:          cluster.Spec.Pod.NodeSelector,
-					Affinity: &corev1.Affinity{
-						// Prefer to schedule pods on the same zone
-						PodAffinity: &corev1.PodAffinity{
-							PreferredDuringSchedulingIgnoredDuringExecution: []corev1.WeightedPodAffinityTerm{
-								{
-									PodAffinityTerm: corev1.PodAffinityTerm{
-										LabelSelector: &metav1.LabelSelector{
-											MatchExpressions: []metav1.LabelSelectorRequirement{
-												{
-													Key:      podLabelAppName, // added in getPodLabels
-													Operator: metav1.LabelSelectorOpIn,
-													Values:   []string{cluster.Name},
-												},
-											},
-										},
-										TopologyKey: "topology.kubernetes.io/zone",
-									},
-								},
-							},
-						},
-						// Prefer to schedule pods on different nodes
-						PodAntiAffinity: &corev1.PodAntiAffinity{
-							PreferredDuringSchedulingIgnoredDuringExecution: []corev1.WeightedPodAffinityTerm{
-								{
-									PodAffinityTerm: corev1.PodAffinityTerm{
-										LabelSelector: &metav1.LabelSelector{
-											MatchExpressions: []metav1.LabelSelectorRequirement{
-												{
-													Key:      podLabelAppName, // added in getPodLabels
-													Operator: metav1.LabelSelectorOpIn,
-													Values:   []string{cluster.Name},
-												},
-											},
-										},
-										TopologyKey: "kubernetes.io/hostname",
-									},
-								},
-							},
-						},
-					},
+					HostNetwork:           cluster.Spec.Network.HostNetwork,
+					Affinity:              getAffinity(cluster),
 				},
 			},
 		},
+	}
+
+	// If hostnetwork is true, need to also change DNS policy
+	// https://kubernetes.io/docs/concepts/services-networking/dns-pod-service/#pod-s-dns-policy
+	if cluster.Spec.Network.HostNetwork {
+		job.Spec.Template.Spec.DNSPolicy = "ClusterFirstWithHostNet"
 	}
 
 	// Get resources for the pod
@@ -135,6 +103,50 @@ func NewMiniClusterJob(cluster *api.MiniCluster) (*batchv1.Job, error) {
 	)
 	job.Spec.Template.Spec.Containers = containers
 	return job, err
+}
+
+// getAffinity returns to pod affinity to ensure 1 address / node
+func getAffinity(cluster *api.MiniCluster) *corev1.Affinity {
+	return &corev1.Affinity{
+		// Prefer to schedule pods on the same zone
+		PodAffinity: &corev1.PodAffinity{
+			PreferredDuringSchedulingIgnoredDuringExecution: []corev1.WeightedPodAffinityTerm{
+				{
+					PodAffinityTerm: corev1.PodAffinityTerm{
+						LabelSelector: &metav1.LabelSelector{
+							MatchExpressions: []metav1.LabelSelectorRequirement{
+								{
+									Key:      podLabelAppName, // added in getPodLabels
+									Operator: metav1.LabelSelectorOpIn,
+									Values:   []string{cluster.Name},
+								},
+							},
+						},
+						TopologyKey: "topology.kubernetes.io/zone",
+					},
+				},
+			},
+		},
+		// Prefer to schedule pods on different nodes
+		PodAntiAffinity: &corev1.PodAntiAffinity{
+			PreferredDuringSchedulingIgnoredDuringExecution: []corev1.WeightedPodAffinityTerm{
+				{
+					PodAffinityTerm: corev1.PodAffinityTerm{
+						LabelSelector: &metav1.LabelSelector{
+							MatchExpressions: []metav1.LabelSelectorRequirement{
+								{
+									Key:      podLabelAppName, // added in getPodLabels
+									Operator: metav1.LabelSelectorOpIn,
+									Values:   []string{cluster.Name},
+								},
+							},
+						},
+						TopologyKey: "kubernetes.io/hostname",
+					},
+				},
+			},
+		},
+	}
 }
 
 // getImagePullSecrets returns a list of secret object references for each container.
