@@ -1,6 +1,8 @@
 # Flux Operator
 
 ![docs/development/the-operator.jpg](docs/development/the-operator.jpg)
+[![DOI](https://zenodo.org/badge/528650707.svg)](https://zenodo.org/badge/latestdoi/528650707)
+
 
 The Flux Operator is a Kubernetes Cluster [Operator](https://kubernetes.io/docs/concepts/extend-kubernetes/operator/)
 that you can install to your cluster to create and control [Flux Framework](https://flux-framework.org/) "Mini Clusters"
@@ -20,6 +22,7 @@ soon to report upstream.
 ## Presentations
 
  - [Kubecon 2023](https://t.co/vjRydPx1rb)
+ - [HPC Knowledge Meeting 2023](https://hpckp.org/talks/cloud-and-hpc-convergence-flux-for-job-management-on-kubernetes/)
 
 ## Organization
 
