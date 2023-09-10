@@ -304,6 +304,16 @@ network:
 
 Settings under the Flux directive typically refer to flux options, e.g., for the broker or similar.
 
+#### submitCommand
+
+If you need to use a container with a different version of flux (or an older one)
+you might want to edit the submit command. You can do that as follows:
+
+```yaml
+flux:
+   submitCommand: "flux mini submit"
+```
+
 #### optionFlags
 
 Often when you run flux, you need to provide an option flag. E.g.,:

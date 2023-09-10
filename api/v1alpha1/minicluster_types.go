@@ -354,6 +354,10 @@ type FluxSpec struct {
 	// +default="/usr"
 	InstallRoot string `json:"installRoot,omitempty"`
 
+	// Modify flux submit to be something else
+	// +optional
+	SubmitCommand string `json:"submitCommand,omitempty"`
+
 	// Commands for flux start --wrap
 	// +optional
 	Wrap string `json:"wrap,omitempty"`

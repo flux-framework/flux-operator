@@ -400,6 +400,13 @@ func schema__api_v1alpha1__FluxSpec(ref common.ReferenceCallback) common.OpenAPI
 							Format:      "",
 						},
 					},
+					"submitCommand": {
+						SchemaProps: spec.SchemaProps{
+							Description: "Modify flux submit to be something else",
+							Type:        []string{"string"},
+							Format:      "",
+						},
+					},
 					"wrap": {
 						SchemaProps: spec.SchemaProps{
 							Description: "Commands for flux start --wrap",
