@@ -44,6 +44,7 @@ class FluxSpec(object):
         'munge_secret': 'str',
         'option_flags': 'str',
         'scheduler': 'FluxScheduler',
+        'submit_command': 'str',
         'wrap': 'str'
     }
 
@@ -59,10 +60,11 @@ class FluxSpec(object):
         'munge_secret': 'mungeSecret',
         'option_flags': 'optionFlags',
         'scheduler': 'scheduler',
+        'submit_command': 'submitCommand',
         'wrap': 'wrap'
     }
 
-    def __init__(self, broker_config='', bursting=None, connect_timeout='5s', curve_cert='', curve_cert_secret='', install_root='/usr', log_level=6, minimal_service=False, munge_secret='', option_flags='', scheduler=None, wrap=None, local_vars_configuration=None):  # noqa: E501
+    def __init__(self, broker_config='', bursting=None, connect_timeout='5s', curve_cert='', curve_cert_secret='', install_root='/usr', log_level=6, minimal_service=False, munge_secret='', option_flags='', scheduler=None, submit_command=None, wrap=None, local_vars_configuration=None):  # noqa: E501
         """FluxSpec - a model defined in OpenAPI"""  # noqa: E501
         if local_vars_configuration is None:
             local_vars_configuration = Configuration.get_default_copy()
@@ -79,6 +81,7 @@ class FluxSpec(object):
         self._munge_secret = None
         self._option_flags = None
         self._scheduler = None
+        self._submit_command = None
         self._wrap = None
         self.discriminator = None
 
@@ -104,6 +107,8 @@ class FluxSpec(object):
             self.option_flags = option_flags
         if scheduler is not None:
             self.scheduler = scheduler
+        if submit_command is not None:
+            self.submit_command = submit_command
         if wrap is not None:
             self.wrap = wrap
 
@@ -355,6 +360,29 @@ class FluxSpec(object):
         """
 
         self._scheduler = scheduler
+
+    @property
+    def submit_command(self):
+        """Gets the submit_command of this FluxSpec.  # noqa: E501
+
+        Modify flux submit to be something else  # noqa: E501
+
+        :return: The submit_command of this FluxSpec.  # noqa: E501
+        :rtype: str
+        """
+        return self._submit_command
+
+    @submit_command.setter
+    def submit_command(self, submit_command):
+        """Sets the submit_command of this FluxSpec.
+
+        Modify flux submit to be something else  # noqa: E501
+
+        :param submit_command: The submit_command of this FluxSpec.  # noqa: E501
+        :type submit_command: str
+        """
+
+        self._submit_command = submit_command
 
     @property
     def wrap(self):

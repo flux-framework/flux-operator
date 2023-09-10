@@ -390,6 +390,9 @@ spec:
                           also be "easy"
                         type: string
                     type: object
+                  submitCommand:
+                    description: Modify flux submit to be something else
+                    type: string
                   wrap:
                     description: Commands for flux start --wrap
                     type: string

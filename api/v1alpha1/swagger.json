@@ -258,6 +258,10 @@
           "default": {},
           "$ref": "#/definitions/FluxScheduler"
         },
+        "submitCommand": {
+          "description": "Modify flux submit to be something else",
+          "type": "string"
+        },
         "wrap": {
           "description": "Commands for flux start --wrap",
           "type": "string"
