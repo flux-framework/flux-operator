@@ -650,6 +650,13 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
+  <a href="#submitcommand" class="md-nav__link">
+    <span title="/getting_started/custom-resource-definition.md#submitcommand (reference label)" class="md-ellipsis">submit<wbr>Command</span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#optionflags" class="md-nav__link">
     <span title="/getting_started/custom-resource-definition.md#optionflags (reference label)" class="md-ellipsis">option<wbr>Flags</span>
   </a>
@@ -1545,6 +1552,13 @@ so typically you will get the logs as long as you are streaming when the job sta
 </div>
 <h3 id="flux">flux<a class="headerlink" href="#flux" title="Link to this heading">¶</a></h3>
 <p>Settings under the Flux directive typically refer to flux options, e.g., for the broker or similar.</p>
+<h4 id="submitcommand">submitCommand<a class="headerlink" href="#submitcommand" title="Link to this heading">¶</a></h4>
+<p>If you need to use a container with a different version of flux (or an older one)
+you might want to edit the submit command. You can do that as follows:</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><code><span class="nt">flux</span><span class="p">:</span>
+<span class="w">   </span><span class="nt">submitCommand</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;flux</span><span class="nv"> </span><span class="s">mini</span><span class="nv"> </span><span class="s">submit&quot;</span>
+</code></pre></div>
+</div>
 <h4 id="optionflags">optionFlags<a class="headerlink" href="#optionflags" title="Link to this heading">¶</a></h4>
 <p>Often when you run flux, you need to provide an option flag. E.g.,:</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span>flux<span class="w"> </span>submit<span class="w"> </span>-ompi<span class="o">=</span>openmpi@5
@@ -2354,7 +2368,7 @@ or define your own as follows:</p>
   <small>
     
       Last update:
-      Sep 03, 2023
+      Sep 10, 2023
     
   </small>
 </div>
