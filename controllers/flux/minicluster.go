@@ -25,7 +25,7 @@ import (
 	"k8s.io/apimachinery/pkg/api/errors"
 	"k8s.io/apimachinery/pkg/types"
 
-	api "github.com/flux-framework/flux-operator/api/v1alpha1"
+	api "github.com/flux-framework/flux-operator/api/v1alpha2"
 )
 
 var (
@@ -44,24 +44,10 @@ func (r *MiniClusterReconciler) ensureMiniCluster(
 	cluster *api.MiniCluster,
 ) (ctrl.Result, error) {
 
-	// Ensure the configs are created (for volume sources)
-	_, result, err := r.getConfigMap(ctx, cluster, "flux-config", cluster.FluxConfigMapName())
+	// Initial config with entrypoints for flux and main containers
+	_, result, err := r.getConfigMap(ctx, cluster, cluster.EntrypointConfigMapName())
 	if err != nil {
 		return result, err
-	}
-
-	// Add initial config map with entrypoint scripts (wait.sh, start.sh, etc.)
-	_, result, err = r.getConfigMap(ctx, cluster, "entrypoint", cluster.EntrypointConfigMapName())
-	if err != nil {
-		return result, err
-	}
-
-	// Generate the curve certificate config map, unless already exists
-	if cluster.Spec.Flux.CurveCertSecret == "" {
-		_, result, err = r.getConfigMap(ctx, cluster, "cert", cluster.CurveConfigMapName())
-		if err != nil {
-			return result, err
-		}
 	}
 
 	// Prepare volumes, if requested, to be available to containers

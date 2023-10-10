@@ -15,7 +15,7 @@ import (
 	"fmt"
 	"path"
 
-	api "github.com/flux-framework/flux-operator/api/v1alpha1"
+	api "github.com/flux-framework/flux-operator/api/v1alpha2"
 
 	corev1 "k8s.io/api/core/v1"
 	"k8s.io/apimachinery/pkg/api/errors"
@@ -28,16 +28,15 @@ import (
 // Shared function to return consistent set of volume mounts
 func getVolumeMounts(cluster *api.MiniCluster) []corev1.VolumeMount {
 	mounts := []corev1.VolumeMount{
+
+		// The empty volume for Flux will go here
 		{
-			Name:      cluster.CurveConfigMapName(),
-			MountPath: "/mnt/curve/",
-			ReadOnly:  true,
+			Name:      cluster.Spec.Flux.Container.Name,
+			MountPath: cluster.Spec.Flux.Container.MountPath,
+			ReadOnly:  false,
 		},
-		{
-			Name:      cluster.FluxConfigMapName(),
-			MountPath: "/etc/flux/config",
-			ReadOnly:  true,
-		},
+
+		// Entrypoints will go here
 		{
 			Name:      cluster.EntrypointConfigMapName(),
 			MountPath: "/flux_operator/",
@@ -87,11 +86,13 @@ func getVolumes(cluster *api.MiniCluster) []corev1.Volume {
 		}
 	}
 
-	// If we have Multi User mode, we need to set permission 0644
-	brokerFile := corev1.KeyToPath{
-		Key:  "hostfile",
-		Path: "broker.toml",
+	// Add the flux init script
+	fluxScript := corev1.KeyToPath{
+		Key:  cluster.Spec.Flux.Container.Name,
+		Path: "flux-init.sh",
+		Mode: &makeExecutable,
 	}
+	runnerStartScripts = append(runnerStartScripts, fluxScript)
 
 	// Only used if we need to provide the munge.key
 	mungeKey := corev1.KeyToPath{
@@ -99,33 +100,12 @@ func getVolumes(cluster *api.MiniCluster) []corev1.Volume {
 		Path: "munge.key",
 	}
 
-	// /mnt/curve/curve.cert
-	curveKey := corev1.KeyToPath{
-		Key:  CurveCertKey,
-		Path: "curve.cert",
-	}
-
-	if cluster.MultiUser() {
-		mode := int32(0644)
-		brokerFile = corev1.KeyToPath{
-			Key:  "hostfile",
-			Path: "broker.toml",
-			Mode: &mode,
-		}
-	}
-
-	// Defaults volumes we always write - entrypoint and configs
+	// Defaults volumes we always write - entrypoint and empty volume
 	volumes := []corev1.Volume{
 		{
-			Name: cluster.FluxConfigMapName(),
+			Name: cluster.Spec.Flux.Container.Name,
 			VolumeSource: corev1.VolumeSource{
-				ConfigMap: &corev1.ConfigMapVolumeSource{
-					LocalObjectReference: corev1.LocalObjectReference{
-						Name: cluster.FluxConfigMapName(),
-					},
-					// /etc/flux/config
-					Items: []corev1.KeyToPath{brokerFile},
-				},
+				EmptyDir: &corev1.EmptyDirVolumeSource{},
 			},
 		},
 		{
@@ -142,36 +122,6 @@ func getVolumes(cluster *api.MiniCluster) []corev1.Volume {
 				},
 			},
 		},
-	}
-
-	// We either generate a curve.cert config map, or get it from secret
-	curveVolumeName := cluster.CurveConfigMapName()
-	if cluster.Spec.Flux.CurveCertSecret != "" {
-		curveVolume := corev1.Volume{
-			Name: curveVolumeName,
-			VolumeSource: corev1.VolumeSource{
-				Secret: &corev1.SecretVolumeSource{
-					SecretName: cluster.Spec.Flux.CurveCertSecret,
-					Items:      []corev1.KeyToPath{curveKey},
-				},
-			},
-		}
-		volumes = append(volumes, curveVolume)
-
-	} else {
-		curveVolume := corev1.Volume{
-			Name: curveVolumeName,
-			VolumeSource: corev1.VolumeSource{
-				ConfigMap: &corev1.ConfigMapVolumeSource{
-
-					// Namespace based on the cluster
-					LocalObjectReference: corev1.LocalObjectReference{
-						Name: cluster.CurveConfigMapName(),
-					},
-				},
-			},
-		}
-		volumes = append(volumes, curveVolume)
 	}
 
 	// Are we expecting a munge config map?

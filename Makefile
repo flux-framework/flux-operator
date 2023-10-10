@@ -4,7 +4,7 @@
 # - use the VERSION as arg of the bundle target (e.g make bundle VERSION=0.0.2)
 # - use environment variables to overwrite this value (e.g export VERSION=0.0.2)
 VERSION ?= 0.1.1
-API_VERSION ?= v1alpha1
+API_VERSION ?= v1alpha2
 
 # CHANNELS define the bundle channels used in the bundle.
 # Add a new line here if you would like to change its default config. (E.g CHANNELS = "candidate,fast,stable")
@@ -222,20 +222,20 @@ images:
 
 .PHONY: build
 build: generate fmt vet ## Build manager binary.
-	mv ./controllers/flux/keygen.go ./controllers/flux/keygen.go.backup
-	cp ./controllers/flux/keygen.go.template ./controllers/flux/keygen.go
+	mv ./pkg/flux/keygen.go ./pkg/flux/keygen.go.backup
+	cp ./pkg/flux/keygen.go.template ./pkg/flux/keygen.go
 	$(BUILDENVVAR) go build -o bin/manager main.go
-	mv ./controllers/flux/keygen.go.backup ./controllers/flux/keygen.go
+	mv ./pkg/flux/keygen.go.backup ./pkg/flux/keygen.go
 
 .PHONY: build-container
 build-container: generate fmt vet
-	cp ./controllers/flux/keygen.go.template ./controllers/flux/keygen.go
+	cp ./pkg/flux/keygen.go.template ./pkg/flux/keygen.go
 	$(BUILDENVVAR) go build -a -o ./manager main.go
 	$(BUILDENVVAR) go build -o ./bin/fluxoperator-gen cmd/gen/gen.go
 
 .PHONY: helpers
 helpers: $(LOCALBIN) 
-	cp ./controllers/flux/keygen.go.template ./controllers/flux/keygen.go
+	cp ./pkg/flux/keygen.go.template ./pkg/flux/keygen.go
 	$(BUILDENVVAR) go build -o ./bin/fluxoperator-gen cmd/gen/gen.go
 
 .PHONY: run
@@ -290,6 +290,11 @@ test-deploy: manifests kustomize
 	docker push ${DEVIMG}
 	cd config/manager && $(KUSTOMIZE) edit set image controller=${DEVIMG}
 	$(KUSTOMIZE) build config/default > examples/dist/flux-operator-dev.yaml
+
+.PHONY: test-deploy-recreate
+test-deploy-recreate: test-deploy
+	kubectl delete -f ./examples/dist/flux-operator-dev.yaml || echo "Already deleted"
+	kubectl apply -f ./examples/dist/flux-operator-dev.yaml
 
 .PHONY: arm-deploy
 arm-deploy: manifests kustomize

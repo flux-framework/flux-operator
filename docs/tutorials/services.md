@@ -14,11 +14,10 @@ to get a response from flux. Note that if you are interested in a more complex e
 provides a custom nginx.conf and shows how to interact with the flux restful API, see the [services/sidecar/nginx](https://github.com/flux-framework/flux-operator/blob/main/examples/services/sidecar/nginx) example.
 
 ```yaml
-apiVersion: flux-framework.org/v1alpha1
+apiVersion: flux-framework.org/v1alpha2
 kind: MiniCluster
 metadata:
   name: flux-sample
-  namespace: flux-operator
 spec:
 
   logging:
@@ -125,11 +124,10 @@ This example demonstrates bringing up a MiniCluster and then interacting with a 
 to push / pull artifacts. Here is our example custom resource definition:
 
 ```yaml
-apiVersion: flux-framework.org/v1alpha1
+apiVersion: flux-framework.org/v1alpha2
 kind: MiniCluster
 metadata:
   name: flux-sample
-  namespace: flux-operator
 spec:
 
   # Number of pods to create for MiniCluster

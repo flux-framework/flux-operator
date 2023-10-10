@@ -15,10 +15,36 @@ import (
 
 	corev1 "k8s.io/api/core/v1"
 
-	api "github.com/flux-framework/flux-operator/api/v1alpha1"
+	api "github.com/flux-framework/flux-operator/api/v1alpha2"
 )
 
+// getFluxContainers prepares the flux container to run the show!
+func getFluxContainer(
+	cluster *api.MiniCluster,
+	mounts []corev1.VolumeMount) corev1.Container {
+
+	// Allow dictating pulling on the level of the container
+	pullPolicy := corev1.PullIfNotPresent
+	if cluster.Spec.Flux.Container.PullAlways {
+		pullPolicy = corev1.PullAlways
+	}
+
+	return corev1.Container{
+
+		// Call this the driver container, number 0
+		Name:            cluster.Spec.Flux.Container.Name,
+		Image:           cluster.Spec.Flux.Container.Image,
+		Command:         []string{"/bin/bash", "/flux_operator/flux-init.sh"},
+		ImagePullPolicy: pullPolicy,
+		WorkingDir:      cluster.Spec.Flux.Container.WorkingDir,
+		VolumeMounts:    mounts,
+		Stdin:           true,
+		TTY:             true,
+	}
+}
+
 // getContainers gets containers for a MiniCluster job or external service
+
 func getContainers(
 	specs []api.MiniClusterContainer,
 	defaultName string,
@@ -29,6 +55,7 @@ func getContainers(
 	// Create the containers for the pod
 	containers := []corev1.Container{}
 
+	// Add on application and flux runner containers
 	for i, container := range specs {
 
 		// Allow dictating pulling on the level of the container
@@ -41,13 +68,14 @@ func getContainers(
 		containerName := container.Name
 		command := []string{}
 
-		// A Flux runner gets a custom wait.sh script for the container
-		// And also needs to have a consistent name to the cert generator
+		// A Flux runner will have a wait.sh script that waits for the flux view
+		// to copy over, and then wraps the original command in a submit
+		// It inherits the cluster name
 		if container.RunFlux {
 
 			// wait.sh path corresponds to container identifier
 			waitScript := fmt.Sprintf("/flux_operator/wait-%d.sh", i)
-			command = []string{"/bin/bash", waitScript, container.Command}
+			command = []string{"/bin/bash", waitScript}
 			containerName = defaultName
 		}
 
@@ -55,12 +83,14 @@ func getContainers(
 		// in a custom script if we know the entrypoint.
 		if container.GenerateEntrypoint() {
 			startScript := fmt.Sprintf("/flux_operator/start-%d.sh", i)
-			command = []string{"/bin/bash", startScript, container.Command}
+			command = []string{"/bin/bash", startScript}
 		}
 
 		// Prepare lifescycle commands for the container
 		lifecycle := createContainerLifecycle(container)
 
+		// Add extra volumes for the operator to create
+		// We already have our emptyVolume here
 		for volumeName, volume := range container.Volumes {
 			mount := corev1.VolumeMount{
 				Name:      volumeName,

@@ -1,8 +1,7 @@
-apiVersion: flux-framework.org/v1alpha1
+apiVersion: flux-framework.org/v1alpha2
 kind: MiniCluster
 metadata:
   name: flux-sample
-  namespace: flux-operator
 spec:
   # suppress all output except for test run
   logging:
@@ -10,8 +9,12 @@ spec:
 
   # Number of pods to create for MiniCluster
   size: 4
+  logging:
+    debug: true
+  flux:
+    logLevel: 7
 
   # This is a list because a pod can support multiple containers
   containers:
-    - image: ghcr.io/flux-framework/flux-restful-api:latest
+    - image: rockylinux:9
       command: echo hello world

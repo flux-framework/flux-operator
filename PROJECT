@@ -12,15 +12,7 @@ resources:
     namespaced: true
   controller: true
   domain: flux-framework.org
-  kind: Flux
-  path: flux-framework/flux-operator/api/v1alpha1
-  version: v1alpha1
-- api:
-    crdVersion: v1
-    namespaced: true
-  controller: true
-  domain: flux-framework.org
-  kind: FluxSetup
-  path: flux-framework/flux-operator/api/v1alpha1
-  version: v1alpha1
+  kind: MiniCluster
+  path: flux-framework/flux-operator/api/v1alpha2
+  version: v1alpha2
 version: "3"

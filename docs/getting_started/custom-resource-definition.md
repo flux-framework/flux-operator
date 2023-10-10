@@ -21,7 +21,7 @@ The yaml spec will normally have an API version, the kind `MiniCluster` and then
 a name and namespace to identify the custom resource definition followed by the spec for it.
 
 ```yaml
-apiVersion: flux-framework.org/v1alpha1
+apiVersion: flux-framework.org/v1alpha2
 kind: MiniCluster
 metadata:
   name: flux-sample
@@ -33,7 +33,7 @@ spec:
 ### Spec
 
 Under the spec, there are several variables to define. Descriptions are included below, and we
-recommend that you look at [config/samples](https://github.com/flux-framework/flux-operator/tree/main/config/samples)
+recommend that you look at [config/samples](https://github.com/flux-framework/flux-operator/tree/main/examples)
 in the repository  and the [flux-hpc](https://github.com/rse-ops/flux-hpc) repository to see
 more.
 
@@ -302,7 +302,29 @@ network:
 
 ### flux
 
-Settings under the Flux directive typically refer to flux options, e.g., for the broker or similar.
+The operator works to add Flux to your application container dynamically by way of using a provisioner container -
+one that is run as a sidecar alongside your container, and then the view is copied over and flux run as your
+active user. Settings under the Flux directive typically refer to flux options, e.g., for the broker or similar.
+
+#### container
+
+You can customize the flux container, and most attributes that are available for a standard container are available here.
+As an example:
+
+```yaml
+flux:
+   container:
+     image: ghcr.io/converged-computing/flux-view-rocky:tag-9
+     pythonPath: /mnt/flux/view/lib/python3.11
+```
+
+These containers are expected to have Flux built into a spack view, and in a particular way, so if you want to tweak or  contribute a new means it's recommended to look at the [build repository](https://github.com/converged-computing/flux-views).
+This means that (if desired) you can customize this container base. We provide the following bases of interest:
+
+ - [ghcr.io/converged-computing/flux-view-rocky:tag-9](https://github.com/converged-computing/flux-views/pkgs/container/flux-view-rocky)
+ - [ghcr.io/converged-computing/flux-view-rocky:tag-8](https://github.com/converged-computing/flux-views/pkgs/container/flux-view-rocky)
+
+More will be coming soon.
 
 #### submitCommand
 
@@ -348,26 +370,6 @@ The log level to provide to flux, given that test mode is not on.
 flux:
   logLevel: 7
 ```
-
-#### installRoot
-
-We traditionally install flux to `/usr`, however you might have a container
-with a non-traditional install location! You can edit this with the flux->installRoot
-directive:
-
-```yaml
-flux:
-  installRoot: /usr/local
-```
-
-Or for a spack container, with a view at `/opt/view`:
-
-```yaml
-flux:
-  installRoot: /opt/view
-```
-
-Note that the operator will still create assets for flux at `/etc/flux`.
 
 #### wrap
 
@@ -415,14 +417,14 @@ By default, the Flux MiniCluster will be created with a headless service across 
 meaning that all pods can ping one another via a fully qualified hostname. As an example,
 the 0 index (the lead broker) of an indexed job will be available at:
 
-```
-flux-sample-0.flux-service.flux-operator.svc.cluster.local: Nam
+```console
+flux-sample-0.flux-service.flux-operator.svc.cluster.local
 ```
 
 Where "flux-sample" is the name of the job. Index 1 would be at:
 
-```
-flux-sample-1.flux-service.flux-operator.svc.cluster.local: Nam
+```console
+flux-sample-1.flux-service.flux-operator.svc.cluster.local
 ```
 
 However, it's the case that only the lead broker (index 0) needs to be reachable
@@ -449,20 +451,6 @@ flux:
      ...
 ```
 
-#### curveCertSecret
-
-To provide the name of a secret with a key `curve.cert` with a curve certificate to
-the MiniCluster, you can define this variable. This is recommended (and likely)
-for bursting scenarios when you need to share your primary cluster certificate
-with an external one.
-
-```yaml
-flux:
-  curveCertSecret: curve-cert
-```
-
-This is recommended in favor of the plain text, below, and if both are
-provided the secret will be honored first.
 
 #### curveCert
 
@@ -474,22 +462,6 @@ flux:
   curveCert: |
      [exec]
      ...
-```
-
-#### mungeSecret
-
-In the case that you are also bursting, you'll need the shared munge key between clusters.
-Since this is a binary file, we recommend you create a secret from the file:
-
-```bash
-$ kubectl create secret --namespace flux-operator munge-key --from-file=/etc/munge/munge.key
-```
-
-And then tell the operator to expect it as a volume:
-
-```yaml
-flux:
-  mungeSecret: munge-key
 ```
 
 #### connectTimeout
@@ -720,36 +692,6 @@ This obviously requires that you have a persistent volume to save to that subseq
 can access! This also assumes we are OK updating the archive state (and don't want to save the original). This can
 be adjusted if needed.
 
-
-### users
-
-If you add a listing of users, minimally you need to provide a name for each one:
-
-```yaml
-users:
-  - name: peenut
-  - name: squidward
-  - name: avocadosaurus
-```
-
-The users will be created and added to the Flux Accounting database. If you don't provide passwords,
-they will be generated randomly (and you will need to retrieve them from the operator logs).
-You can also define them manually:
-
-```yaml
-users:
-  - name: peenut
-    password: butter
-  - name: squidward
-    password: underdac
-  - name: avocadosaurus
-    password: eathings
-```
-
-The passwords (if provided) are validated to be 8 or fewer characters.
-Note that although we don't validate this in the job, multi-user mode only makes sense to
-provide alongside a custom resource definition without a command, meaning you submit
-directly to the Flux Restful API server.```
 
 ### pod
 

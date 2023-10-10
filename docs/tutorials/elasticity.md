@@ -270,7 +270,7 @@ flux-sample-1-mjj7b   1/1     Running   0          6m50s
 Look at the scale endpoint of the MiniCluster with `kubectl` directly! Remember that we haven't installed a horizontal auto-scaler yet:
 
 ```bash
-$ kubectl get --raw /apis/flux-framework.org/v1alpha1/namespaces/flux-operator/miniclusters/flux-sample/scale | jq
+$ kubectl get --raw /apis/flux-framework.org/v1alpha2/namespaces/flux-operator/miniclusters/flux-sample/scale | jq
 ```
 ```console
 {
@@ -467,7 +467,7 @@ cool because it means you can create different HPAs for different job types (org
 Depending on how you stress the pods, it can easily go up to the max:
 
 ```bash
-kubectl get --raw /apis/flux-framework.org/v1alpha1/namespaces/flux-operator/miniclusters/flux-sample/scale | jq
+kubectl get --raw /apis/flux-framework.org/v1alpha2/namespaces/flux-operator/miniclusters/flux-sample/scale | jq
 ```
 ```console
 {

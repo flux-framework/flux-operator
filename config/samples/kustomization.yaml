@@ -1,4 +1,0 @@
-## Append samples you want in your CSV to this file as resources ##
-resources:
-- flux-framework.org_v1alpha1_minicluster.yaml
-#+kubebuilder:scaffold:manifestskustomizesamples

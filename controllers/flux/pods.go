@@ -20,7 +20,7 @@ import (
 	"k8s.io/apimachinery/pkg/api/errors"
 	"k8s.io/apimachinery/pkg/types"
 
-	api "github.com/flux-framework/flux-operator/api/v1alpha1"
+	api "github.com/flux-framework/flux-operator/api/v1alpha2"
 )
 
 const podLabelAppName = "app.kubernetes.io/name"

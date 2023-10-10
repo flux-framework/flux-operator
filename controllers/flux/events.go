@@ -18,7 +18,7 @@ package controllers
 import (
 	jobctrl "github.com/flux-framework/flux-operator/pkg/job"
 
-	api "github.com/flux-framework/flux-operator/api/v1alpha1"
+	api "github.com/flux-framework/flux-operator/api/v1alpha2"
 
 	"k8s.io/klog/v2"
 	"sigs.k8s.io/controller-runtime/pkg/event"

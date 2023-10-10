@@ -222,11 +222,10 @@ First, apply the CRD to create the MiniCluster. Note that we are asking for a si
 for a maximum size of 4. 
 
 ```yaml
-apiVersion: flux-framework.org/v1alpha1
+apiVersion: flux-framework.org/v1alpha2
 kind: MiniCluster
 metadata:
   name: flux-sample
-  namespace: flux-operator
 spec:
   # Number of pods to create for MiniCluster to start
   size: 2

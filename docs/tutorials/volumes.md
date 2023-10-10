@@ -90,11 +90,10 @@ The above mounts your hostpath `/tmp/workflow` to `/tmp/workflow` in the virtual
 and then pods will access it via a named volume in the minicluster.yaml:
 
 ```yaml
-apiVersion: flux-framework.org/v1alpha1
+apiVersion: flux-framework.org/v1alpha2
 kind: MiniCluster
 metadata:
   name: flux-sample
-  namespace: flux-operator
 spec:
 
   # Number of pods to create for MiniCluster
@@ -134,11 +133,10 @@ workflow that will use a pre-defined persistent volume claim:
 
 
 ```yaml
-apiVersion: flux-framework.org/v1alpha1
+apiVersion: flux-framework.org/v1alpha2
 kind: MiniCluster
 metadata:
   name: flux-sample
-  namespace: flux-operator
 spec:
 
   # Number of pods to create for MiniCluster
@@ -223,11 +221,10 @@ spec:
 Given our MiniCluster defined to use the claim named "data":
 
 ```yaml
-apiVersion: flux-framework.org/v1alpha1
+apiVersion: flux-framework.org/v1alpha2
 kind: MiniCluster
 metadata:
   name: flux-sample
-  namespace: flux-operator
 spec:
   # suppress all output except for test run
   logging:

@@ -22,12 +22,12 @@ jobs to finish and then dump the archive anew, we rely on issuing a command to t
 This example shows (via the Python SDK) how we can pause and stop a running queue and move
 the jobs to a new MiniCluster to continue.
 
- **[Tutorial File](https://github.com/flux-framework/flux-operator/blob/main/sdk/python/v1alpha1/examples/state-pending-jobs-minicluster.py)**
+ **[Tutorial File](https://github.com/flux-framework/flux-operator/blob/main/sdk/python/v1alpha2/examples/state-pending-jobs-minicluster.py)**
 
 To run this example:
 
 ```bash
-$ python sdk/python/v1alpha1/examples/state-pending-jobs-minicluster.py 
+$ python sdk/python/v1alpha2/examples/state-pending-jobs-minicluster.py 
 ```
 
 Using this example, we are able to (with slight modification) test:
@@ -88,11 +88,10 @@ multiple jobs interactively, we will do it that way. Here is the first miniclust
 
 
 ```yaml
-apiVersion: flux-framework.org/v1alpha1
+apiVersion: flux-framework.org/v1alpha2
 kind: MiniCluster
 metadata:
   name: flux-sample
-  namespace: flux-operator
 spec:
   # Number of pods to create for MiniCluster
   size: 2
@@ -358,7 +357,7 @@ $ kubectl delete -f examples/state/basic-job-completion/minicluster.yaml
 $ minikube ssh -- rm -rf /tmp/data/archive.tar.gz
 ```
 
-We also have this example demonstrated [entirely in Python](https://github.com/flux-framework/flux-operator/tree/main/sdk/python/v1alpha1/examples/state-basic-job-completion-minicluster.py) using the Flux Operator Python SDK.
+We also have this example demonstrated [entirely in Python](https://github.com/flux-framework/flux-operator/tree/main/sdk/python/v1alpha2/examples/state-basic-job-completion-minicluster.py) using the Flux Operator Python SDK.
 
 > What are next steps?
 

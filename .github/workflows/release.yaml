@@ -106,7 +106,7 @@ jobs:
       run: |
         export PATH="/usr/share/miniconda/bin:$PATH"
         source activate fo
-        cd sdk/python/v1alpha1/
+        cd sdk/python/v1alpha2/
         pip install -e .
         python setup.py sdist bdist_wheel
         cd dist

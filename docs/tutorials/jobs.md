@@ -40,7 +40,7 @@ $ kubectl logs -n flux-operator lammps-0-xxxxx
 
 We have early in development a [python SDK](https://github.com/flux-framework/flux-operator/tree/main/sdk/python)
 that interacts directly with the Kubernetes API and defines the MiniCluster CRD programmatically.
-You can see an early [directory of examples](https://github.com/flux-framework/flux-operator/tree/main/sdk/python/v1alpha1/examples).
+You can see an early [directory of examples](https://github.com/flux-framework/flux-operator/tree/main/sdk/python/v1alpha2/examples).
 Note that using this method you need to be pedantic - we use the [openapi generator](https://openapi-generator.tech/) and not all defaults
 get correctly carried through. As an example, the default deadline in seconds is a large
 number but it gets passed as 0, so if you don't define it, the Job will never start.
@@ -53,7 +53,7 @@ We start the broker, and essentially wait for you to interact with it. This can 
 the terminal with `kubectl exec` (as shown in the tutorial above) or writing a Python script using the Flux Operator
 Python SDK to proggrammatically interact. This is a really nice solution if you want to automate something,
 but don't want the extra dependency of the Flux RESTFul API and needing to port forward. If you are interested
-in this submit type, check out our [interactive-submit.py](https://github.com/flux-framework/flux-operator/tree/main/sdk/python/v1alpha1/examples/interactive-submit.py)
+in this submit type, check out our [interactive-submit.py](https://github.com/flux-framework/flux-operator/tree/main/sdk/python/v1alpha2/examples/interactive-submit.py)
 example.
 
 ## 3. Submit a MiniCluster CRD without a command for a persistent cluster

@@ -18,11 +18,10 @@ include:
 This example demonstrates pulling a Singularity container to all nodes prior to executing the SIF binary.
 
 ```yaml
-apiVersion: flux-framework.org/v1alpha1
+apiVersion: flux-framework.org/v1alpha2
 kind: MiniCluster
 metadata:
   name: flux-sample
-  namespace: flux-operator
 spec:
 
   # Number of pods to create for MiniCluster

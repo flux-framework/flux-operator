@@ -15,7 +15,7 @@ spec:
     singular: minicluster
   scope: Namespaced
   versions:
-  - name: v1alpha1
+  - name: v1alpha2
     schema:
       openAPIV3Schema:
         description: MiniCluster is the Schema for a Flux job launcher on K8s
@@ -86,22 +86,10 @@ spec:
                           description: Prefix to flux start / submit / broker Typically
                             used for a wrapper command to mount, etc.
                           type: string
-                        runFluxAsRoot:
-                          default: false
-                          description: Run flux start as root - required for some storage
-                            binds
-                          type: boolean
                         workerPre:
                           description: A command only for workers to run
                           type: string
                       type: object
-                    cores:
-                      description: Cores the container should use
-                      format: int32
-                      type: integer
-                    diagnostics:
-                      description: Run flux diagnostics on start instead of command
-                      type: boolean
                     environment:
                       additionalProperties:
                         type: string
@@ -137,18 +125,6 @@ spec:
                             type: string
                         type: object
                       description: Existing Volumes to add to the containers
-                      type: object
-                    fluxUser:
-                      description: Flux User, if created in the container
-                      properties:
-                        name:
-                          default: flux
-                          description: Flux user name
-                          type: string
-                        uid:
-                          default: 1000
-                          description: UID for the FluxUser
-                          type: integer
                       type: object
                     image:
                       default: ghcr.io/rse-ops/accounting:app-latest
@@ -211,7 +187,7 @@ spec:
                           type: object
                       type: object
                     runFlux:
-                      description: Main container to run flux (only should be one)
+                      description: Application container intended to run flux (broker)
                       type: boolean
                     secrets:
                       additionalProperties:
@@ -341,6 +317,44 @@ spec:
                     default: 5s
                     description: Single user executable to provide to flux start
                     type: string
+                  container:
+                    description: Container base for flux
+                    properties:
+                      cores:
+                        description: Cores flux should use
+                        format: int32
+                        type: integer
+                      image:
+                        default: ghcr.io/converged-computing/flux-view-rocky:tag-9
+                        type: string
+                      imagePullSecret:
+                        description: Allow the user to pull authenticated images By
+                          default no secret is selected. Setting this with the name
+                          of an already existing imagePullSecret will specify that secret
+                          in the pod spec.
+                        type: string
+                      mountPath:
+                        default: /mnt/flux
+                        description: Mount path for flux to be at (will be added to
+                          path)
+                        type: string
+                      name:
+                        default: flux-view
+                        description: Container name is only required for non flux runners
+                        type: string
+                      pullAlways:
+                        default: false
+                        description: Allow the user to dictate pulling By default we
+                          pull if not present. Setting this to true will indicate to
+                          pull always
+                        type: boolean
+                      pythonPath:
+                        description: Customize python path for flux
+                        type: string
+                      workingDir:
+                        description: Working directory to run command from
+                        type: string
+                    type: object
                   curveCert:
                     description: Optionally provide an already existing curve certificate
                       This is not recommended in favor of providing the secret name
@@ -349,10 +363,6 @@ spec:
                   curveCertSecret:
                     description: Expect a secret for a curve cert here. This is ideal
                       over the curveCert (as a string) above.
-                    type: string
-                  installRoot:
-                    default: /usr
-                    description: Install root location
                     type: string
                   logLevel:
                     default: 6
@@ -435,7 +445,7 @@ spec:
                       the test running
                     type: boolean
                   strict:
-                    default: true
+                    default: false
                     description: Strict mode ensures any failure will not continue in
                       the job entrypoint
                     type: boolean
@@ -527,22 +537,10 @@ spec:
                           description: Prefix to flux start / submit / broker Typically
                             used for a wrapper command to mount, etc.
                           type: string
-                        runFluxAsRoot:
-                          default: false
-                          description: Run flux start as root - required for some storage
-                            binds
-                          type: boolean
                         workerPre:
                           description: A command only for workers to run
                           type: string
                       type: object
-                    cores:
-                      description: Cores the container should use
-                      format: int32
-                      type: integer
-                    diagnostics:
-                      description: Run flux diagnostics on start instead of command
-                      type: boolean
                     environment:
                       additionalProperties:
                         type: string
@@ -578,18 +576,6 @@ spec:
                             type: string
                         type: object
                       description: Existing Volumes to add to the containers
-                      type: object
-                    fluxUser:
-                      description: Flux User, if created in the container
-                      properties:
-                        name:
-                          default: flux
-                          description: Flux user name
-                          type: string
-                        uid:
-                          default: 1000
-                          description: UID for the FluxUser
-                          type: integer
                       type: object
                     image:
                       default: ghcr.io/rse-ops/accounting:app-latest
@@ -652,7 +638,7 @@ spec:
                           type: object
                       type: object
                     runFlux:
-                      description: Main container to run flux (only should be one)
+                      description: Application container intended to run flux (broker)
                       type: boolean
                     secrets:
                       additionalProperties:

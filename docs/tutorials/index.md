@@ -76,7 +76,6 @@ The following tutorials are included in the rendered documentation here.
 :maxdepth: 2
 jobs
 singularity
-multi-tenancy
 interactive
 services
 scaling

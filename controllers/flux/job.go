@@ -15,7 +15,7 @@ import (
 	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 
-	api "github.com/flux-framework/flux-operator/api/v1alpha1"
+	api "github.com/flux-framework/flux-operator/api/v1alpha2"
 )
 
 // newMiniCluster is used to create the MiniCluster Job
@@ -87,6 +87,9 @@ func NewMiniClusterJob(cluster *api.MiniCluster) (*batchv1.Job, error) {
 	// Get volume mounts specific to operator, add on container specific ones
 	mounts := getVolumeMounts(cluster)
 
+	// Get the flux view container
+	fluxViewContainer := getFluxContainer(cluster, mounts)
+
 	// Prepare listing of containers for the MiniCluster
 	containers, err := getContainers(
 		cluster.Spec.Containers,
@@ -94,6 +97,9 @@ func NewMiniClusterJob(cluster *api.MiniCluster) (*batchv1.Job, error) {
 		cluster.Spec.FluxRestful.Port,
 		mounts,
 	)
+
+	// Add on the flux view container
+	containers = append(containers, fluxViewContainer)
 	job.Spec.Template.Spec.Containers = containers
 	return job, err
 }

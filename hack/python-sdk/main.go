@@ -10,7 +10,7 @@ import (
 	"k8s.io/kube-openapi/pkg/common"
 	"k8s.io/kube-openapi/pkg/validation/spec"
 
-	api "github.com/flux-framework/flux-operator/api/v1alpha1"
+	api "github.com/flux-framework/flux-operator/api/v1alpha2"
 )
 
 // Generate OpenAPI spec definitions for MPIJob Resource
@@ -56,8 +56,8 @@ func swaggify(name string) string {
 
 	// These are specific to the Flux Operator
 	name = strings.Replace(name, "github.com/flux-framework/flux-operator/api/v1alpha/", "", -1)
-	name = strings.Replace(name, "../api/v1alpha1/.", "", -1)
-	name = strings.Replace(name, "./api/v1alpha1/.", "", -1)
+	name = strings.Replace(name, "../api/v1alpha2/.", "", -1)
+	name = strings.Replace(name, "./api/v1alpha2/.", "", -1)
 
 	// k8s.io/apimachinery/pkg/apis/meta/v1.Condition -> v1Condition
 	name = strings.Replace(name, "k8s.io/apimachinery/pkg/apis/meta/v1.Condition", "v1Condition", -1)

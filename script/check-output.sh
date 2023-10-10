@@ -1,7 +1,7 @@
 #!/bin/bash
 
 NAME=${1:test}
-NAMESPACE=${2:-flux-operator}
+NAMESPACE=${2:-default}
 
 HERE=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 ROOT=$(dirname ${HERE})
@@ -37,7 +37,7 @@ if [[ -e "${expected}" ]]; then
 fi
 
 # Ensure all containers exit code 0
-for exitcode in $(kubectl get -n flux-operator pod --output=jsonpath={.items...containerStatuses..state.terminated.exitCode}); do
+for exitcode in $(kubectl get -n ${NAMESPACE} pod --output=jsonpath={.items...containerStatuses..state.terminated.exitCode}); do
    if [[ "${exitcode}" != "0" ]]; then
        echo "Container in ${NAME} had nonzero exit code"
        exit 1
