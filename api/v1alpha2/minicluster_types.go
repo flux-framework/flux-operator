@@ -782,6 +782,9 @@ func (f *MiniCluster) Validate() bool {
 	if f.Spec.Flux.Container.Image == "" {
 		f.Spec.Flux.Container.Image = "ghcr.io/converged-computing/flux-view-rocky:tag-9"
 	}
+	if f.Spec.Flux.Scheduler.QueuePolicy == "" {
+		f.Spec.Flux.Scheduler.QueuePolicy = "fcfs"
+	}
 
 	// Flux Restful default port
 	if f.Spec.FluxRestful.Port == 0 {

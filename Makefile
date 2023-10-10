@@ -145,7 +145,7 @@ test: manifests generate fmt vet envtest ## Run tests.
 
 .PHONY: list
 list:
-	kubectl get -n flux-operator pods
+	kubectl get pods
 
 .PHONY: reset
 reset:
@@ -162,11 +162,11 @@ clean:
 	# kubectl delete -n flux-operator secret --all --grace-period=0 --force
 	kubectl delete -n flux-operator cm --all --grace-period=0 --force
 	# pods, pvc, and pv need to be deleted in this order
-	kubectl delete -n flux-operator pods --all --grace-period=0 --force
+	kubectl delete pods --all --grace-period=0 --force
 	kubectl delete -n flux-operator pvc --all --grace-period=0 --force
 	kubectl delete -n flux-operator pv --all --grace-period=0 --force
-	kubectl delete -n flux-operator jobs --all --grace-period=0 --force
-	kubectl delete -n flux-operator MiniCluster --all --grace-period=0 --force
+	kubectl delete jobs --all --grace-period=0 --force
+	kubectl delete MiniCluster --all --grace-period=0 --force
 
 # This applies the basic minicluster (and not extended examples)
 apply:
@@ -185,9 +185,6 @@ example:
 redo: clean apply run
 redo_example: clean example run
 redo_test: clean applytest run
-
-log:
-	kubectl logs -n flux-operator job.batch/flux-sample $@
 
 ##@ Test
 # NOTE these are not fully developed yet

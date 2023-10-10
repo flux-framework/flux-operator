@@ -9,11 +9,7 @@ spec:
 
   # Number of pods to create for MiniCluster
   size: 4
-  logging:
-    debug: true
-  flux:
-    logLevel: 7
-
+  
   # This is a list because a pod can support multiple containers
   containers:
     - image: rockylinux:9

@@ -32,7 +32,6 @@ type ServiceTemplate struct {
 type WaitTemplate struct {
 	ViewBase  string // Where the mounted view with flux is expected to be
 	MainHost  string // Main host identifier
-	CurveCert string // curve certificate string
 	FluxToken string // Token to log into the UI, should be consistent across containers
 	Container api.MiniClusterContainer
 	Spec      api.MiniClusterSpec

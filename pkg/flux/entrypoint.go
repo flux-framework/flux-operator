@@ -46,7 +46,11 @@ func GenerateEntrypoints(cluster *api.MiniCluster) (map[string]string, error) {
 		}
 	}
 	// Main flux entrypoint for flux-view generation
-	data[cluster.Spec.Flux.Container.Name] = GenerateFluxEntrypoint(cluster)
+	script, err := GenerateFluxEntrypoint(cluster)
+	if err != nil {
+		return data, err
+	}
+	data[cluster.Spec.Flux.Container.Name] = script
 	return data, nil
 }
 
@@ -80,12 +84,6 @@ func generateEntrypointScript(
 	container := cluster.Spec.Containers[containerIndex]
 	mainHost := fmt.Sprintf("%s-0", cluster.Name)
 
-	// Generate the curve certificate
-	curveCert, err := GetCurveCert(cluster)
-	if err != nil {
-		return "", err
-	}
-
 	// Ensure Flux Restful has a secret key
 	cluster.Spec.FluxRestful.SecretKey = getRandomToken(cluster.Spec.FluxRestful.SecretKey)
 
@@ -99,7 +97,6 @@ func generateEntrypointScript(
 	wt := WaitTemplate{
 		RequiredRanks: requiredRanks,
 		ViewBase:      cluster.Spec.Flux.Container.MountPath,
-		CurveCert:     curveCert,
 		Container:     container,
 		MainHost:      mainHost,
 		Spec:          cluster.Spec,

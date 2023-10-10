@@ -16,7 +16,7 @@ jobs:
     - name: Check Spelling
       uses: crate-ci/typos@7ad296c72fa8265059cc03d1eda562fbdfcd6df2 # v1.9.0
       with:
-        files: ./docs/*/*.md ./docs/*/*/*.md ./docs/*.md ./README.md ./config/samples ./docs/*.md
+        files: ./docs/*/*.md ./docs/*/*/*.md ./docs/*.md ./README.md ./docs/*.md
 
   unit-tests:
     name: Unit Tests

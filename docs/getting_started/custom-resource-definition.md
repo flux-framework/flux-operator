@@ -323,6 +323,7 @@ This means that (if desired) you can customize this container base. We provide t
 
  - [ghcr.io/converged-computing/flux-view-rocky:tag-9](https://github.com/converged-computing/flux-views/pkgs/container/flux-view-rocky)
  - [ghcr.io/converged-computing/flux-view-rocky:tag-8](https://github.com/converged-computing/flux-views/pkgs/container/flux-view-rocky)
+ - [ghcr.io/converged-computing/flux-view-ubuntu:tag-focal](https://github.com/converged-computing/flux-views/pkgs/container/flux-view-ubuntu)
 
 More will be coming soon.
 

@@ -94,12 +94,20 @@ queue-policy = "%s"
 
 // generateFluxEntrypoint generates the flux entrypoint to prepare flux
 // This is run inside of the flux container that will be copied to the empty volume
-func GenerateFluxEntrypoint(cluster *api.MiniCluster) string {
+func GenerateFluxEntrypoint(cluster *api.MiniCluster) (string, error) {
 
 	// fluxRoot for the view is in /opt/view/lib
 	// This must be consistent between the flux-view containers
 	// github.com:converged-computing/flux-views.git
 	fluxRoot := "/opt/view"
+
+	mainHost := fmt.Sprintf("%s-0", cluster.Name)
+
+	// Generate the curve certificate
+	curveCert, err := GetCurveCert(cluster)
+	if err != nil {
+		return "", err
+	}
 
 	// Generate hostlists, this is the lead broker
 	hosts := generateHostlist(cluster, cluster.Spec.MaxSize)
@@ -107,10 +115,7 @@ func GenerateFluxEntrypoint(cluster *api.MiniCluster) string {
 
 	setup := `#!/bin/sh
 fluxroot=%s
-
-# The mount for the view will be at the user defined mount / view
-mount="%s/view"
-
+mainHost=%s
 echo "Hello I am hostname $(hostname) running setup."
 
 # Always use verbose, no reason to not here
@@ -149,7 +154,15 @@ cat ${fluxroot}/etc/flux/config/broker.toml
 mkdir -p ${fluxroot}/run/flux ${fluxroot}/etc/curve
 
 # Generate the certificate (ONLY if the lead broker)
-mkdir -p ${fluxroot}/etc/curve
+if [[ "$(hostname)" == "${mainHost}" ]]; then
+echo "Generating curve certificate at main host..."
+cat <<EOT >> ${fluxroot}/etc/curve/curve.cert
+%s
+EOT
+echo
+echo "🌟️ Curve Certificate"
+cat ${fluxroot}/etc/curve/curve.cert
+fi
 
 # Now prepare to copy finished spack view over
 echo "Moving content from /opt/view to be in shared volume at %s"
@@ -176,11 +189,12 @@ sleep infinity
 	return fmt.Sprintf(
 		setup,
 		fluxRoot,
-		cluster.Spec.Flux.Container.MountPath,
+		mainHost,
 		hosts,
 		brokerConfig,
+		curveCert,
 		cluster.Spec.Flux.Container.MountPath,
 		cluster.Spec.Flux.Container.MountPath,
 		cluster.Spec.Flux.Container.Name,
-	)
+	), nil
 }

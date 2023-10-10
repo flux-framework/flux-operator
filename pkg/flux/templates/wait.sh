@@ -56,21 +56,21 @@ echo "Hello user ${fluxuser}"{{ end }}
 # Add fluxuser to sudoers living... dangerously!
 if [[ "${fluxuser}" != "root" ]]; then
   echo "${fluxuser} ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers
-  sudo chown -R ${fluxuid} ${viewroot}/etc/curve
 fi
-
-# Write the curve certificate
-cat <<EOT >> ${viewroot}/etc/curve/curve.cert
-
-{{ .CurveCert }}
-
-EOT
 		
 # Ensure the flux user owns the curve.cert
+curvepath=${viewroot}/etc/curve/curve.cert
+{{ if not .Spec.Logging.Quiet }}
+echo 
+echo "🌟️ Curve Certificate"
+ls ${viewroot}/etc/curve/
+cat ${curvepath}
+{{ end }}
+
 # Remove group and other read
-chmod o-r ${viewroot}/etc/curve/curve.cert
-chmod g-r ${viewroot}/etc/curve/curve.cert
-chown -R ${fluxuid} ${viewroot}/etc/curve/curve.cert
+# chmod o-r ${curvepath}
+# chmod g-r ${curvepath}
+chown -R ${fluxuid} ${curvepath}
 
 foundroot=$(find $viewroot -maxdepth 2 -type d -path $viewroot/lib/python3\*)
 
@@ -158,9 +158,6 @@ if [[ -e "{{ .Spec.Archive.Path}}" ]]; then
 {{ if not .Spec.Logging.Quiet }}printf "🧊️ Found existing archive at {{ .Spec.Archive.Path}} loading into state directory\nBefore:\n"{{ end }}
 brokerOptions="${brokerOptions} -Scontent.restore={{ .Spec.Archive.Path}}"
 fi{{ end }}
-
-# We will copy the curve certificate if the lead, otherwise wait for it
-curvepath=${viewroot}/etc/curve/curve.cert
 
 # And pre command logic that isn't passed to the certificate generator
 {{ .Container.Commands.Pre}} {{ if .Spec.Logging.Quiet }}> /dev/null 2>&1{{ end }}
