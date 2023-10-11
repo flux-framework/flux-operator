@@ -65,7 +65,7 @@ allow-root-owner = true
 path = "%s/view/etc/flux/system/R"
 
 [bootstrap]
-curve_cert = "%s/view/etc/curve/curve.cert"
+curve_cert = "%s/view/curve/curve.cert"
 default_port = 8050
 default_bind = "%s"
 default_connect = "%s"
@@ -102,12 +102,6 @@ func GenerateFluxEntrypoint(cluster *api.MiniCluster) (string, error) {
 	fluxRoot := "/opt/view"
 
 	mainHost := fmt.Sprintf("%s-0", cluster.Name)
-
-	// Generate the curve certificate
-	curveCert, err := GetCurveCert(cluster)
-	if err != nil {
-		return "", err
-	}
 
 	// Generate hostlists, this is the lead broker
 	hosts := generateHostlist(cluster, cluster.Spec.MaxSize)
@@ -153,16 +147,9 @@ cat ${fluxroot}/etc/flux/config/broker.toml
 # Along with the state directory and curve certificate
 mkdir -p ${fluxroot}/run/flux ${fluxroot}/etc/curve
 
-# Generate the certificate (ONLY if the lead broker)
-if [[ "$(hostname)" == "${mainHost}" ]]; then
-echo "Generating curve certificate at main host..."
-cat <<EOT >> ${fluxroot}/etc/curve/curve.cert
-%s
-EOT
-echo
+# View the curve certificate
 echo "🌟️ Curve Certificate"
-cat ${fluxroot}/etc/curve/curve.cert
-fi
+cat /flux_operator/curve.cert
 
 # Now prepare to copy finished spack view over
 echo "Moving content from /opt/view to be in shared volume at %s"
@@ -192,7 +179,6 @@ sleep infinity
 		mainHost,
 		hosts,
 		brokerConfig,
-		curveCert,
 		cluster.Spec.Flux.Container.MountPath,
 		cluster.Spec.Flux.Container.MountPath,
 		cluster.Spec.Flux.Container.Name,

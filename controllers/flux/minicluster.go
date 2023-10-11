@@ -29,9 +29,7 @@ import (
 )
 
 var (
-	HostfileName   = "hostfile"
-	CurveCertKey   = "curve.cert"
-	mungeMountName = "munge-key"
+	CurveCertKey = "curve.cert"
 )
 
 // This is a MiniCluster! A MiniCluster is associated with a running MiniCluster and include:

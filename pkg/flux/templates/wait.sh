@@ -59,25 +59,30 @@ if [[ "${fluxuser}" != "root" ]]; then
 fi
 		
 # Ensure the flux user owns the curve.cert
-curvepath=${viewroot}/etc/curve/curve.cert
+# We need to move the curve.cert because config map volume is read only
+curvesrc=/flux_operator/curve.cert
+curvepath=$viewroot/curve/curve.cert
+
+mkdir -p $viewroot/curve
+cp $curvesrc $curvepath
 {{ if not .Spec.Logging.Quiet }}
 echo 
 echo "🌟️ Curve Certificate"
-ls ${viewroot}/etc/curve/
+ls $viewroot/curve
 cat ${curvepath}
 {{ end }}
 
 # Remove group and other read
-# chmod o-r ${curvepath}
-# chmod g-r ${curvepath}
+chmod o-r ${curvepath}
+chmod g-r ${curvepath}
 chown -R ${fluxuid} ${curvepath}
 
 foundroot=$(find $viewroot -maxdepth 2 -type d -path $viewroot/lib/python3\*)
 
 # Ensure we use flux's python (TODO update this to use variable)
 export PYTHONPATH={{ if .Spec.Flux.Container.PythonPath }}{{ .Spec.Flux.Container.PythonPath }}{{ else }}${foundroot}/site-packages{{ end }}
-echo "PYTHONPATH is ${PYTHONPATH}"
-echo "PATH is $PATH"
+echo "PYTHONPATH is ${PYTHONPATH}" {{ if .Spec.Logging.Quiet }}> /dev/null 2>&1{{ end }}
+echo "PATH is $PATH" {{ if .Spec.Logging.Quiet }}> /dev/null 2>&1{{ end }}
 
 # Put the state directory in /var/lib on shared view
 export STATE_DIR=${viewroot}/var/lib/flux
@@ -184,7 +189,7 @@ flux jobs -a{{ end }}
     # Commands only run by the broker
     {{ .Container.Commands.BrokerPre}} {{ if .Spec.Logging.Quiet }}> /dev/null 2>&1{{ end }}
 
-    echo "Command provided is: ${command}"
+    echo "Command provided is: ${command}" {{ if .Spec.Logging.Quiet }}> /dev/null 2>&1{{ end }}
     if [ "${command}" == "" ]; then
 
        # An interactive job also doesn't require a command

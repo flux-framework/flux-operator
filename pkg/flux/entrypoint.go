@@ -51,7 +51,11 @@ func GenerateEntrypoints(cluster *api.MiniCluster) (map[string]string, error) {
 		return data, err
 	}
 	data[cluster.Spec.Flux.Container.Name] = script
-	return data, nil
+
+	// Add the curve.cert
+	curveCert, err := GetCurveCert(cluster)
+	data["curve.cert"] = curveCert
+	return data, err
 }
 
 // generateServiceEntrypoint generates an entrypoint for a service container

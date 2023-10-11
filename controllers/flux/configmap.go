@@ -34,6 +34,7 @@ func (r *MiniClusterReconciler) getConfigMap(
 ) (*corev1.ConfigMap, ctrl.Result, error) {
 
 	// Look for the config map by name
+	r.log.Info("👀️ Looking for ConfigMap 👀️", "Type", configName)
 	existing := &corev1.ConfigMap{}
 	err := r.Get(
 		ctx,
@@ -78,7 +79,10 @@ func (r *MiniClusterReconciler) getConfigMap(
 			return dep, ctrl.Result{Requeue: true}, nil
 
 		} else if err != nil {
-			r.log.Error(err, "Failed to get MiniCluster ConfigMap")
+			r.log.Error(
+				err, "Failed to get MiniCluster ConfigMap",
+				"Type", configName,
+			)
 			return existing, ctrl.Result{}, err
 		}
 

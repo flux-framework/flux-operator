@@ -19,7 +19,6 @@ import (
 
 const (
 	entrypointSuffix  = "-entrypoint"
-	fluxConfigSuffix  = "-flux-config"
 	curveVolumeSuffix = "-curve-mount"
 )
 
@@ -753,6 +752,9 @@ func uniqueExistingVolumes(containers []MiniClusterContainer) map[string]MiniClu
 // Consistent functions to return config map names
 func (f *MiniCluster) EntrypointConfigMapName() string {
 	return f.Name + entrypointSuffix
+}
+func (f *MiniCluster) CurveConfigMapName() string {
+	return f.Name + curveVolumeSuffix
 }
 
 // Validate ensures we have data that is needed, and sets defaults if needed
