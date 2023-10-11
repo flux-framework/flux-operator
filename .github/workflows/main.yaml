@@ -27,7 +27,7 @@ jobs:
     - name: Setup Go
       uses: actions/setup-go@v3
       with:
-        go-version: ^1.18
+        go-version: ^1.20
     - name: fmt check
       run: make fmt
 
@@ -62,7 +62,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        test: [["hello-world", "ghcr.io/flux-framework/flux-restful-api:latest", 60]]
+        test: [["hello-world", "ghcr.io/converged-computing/flux-view-rocky:tag-9", 60]]
                #["custom-config", "ghcr.io/flux-framework/flux-restful-api:latest", 60],
                #["minimal-service", "ghcr.io/flux-framework/flux-restful-api:latest", 60],
                #["post", "ghcr.io/flux-framework/flux-restful-api:latest", 60],
@@ -86,7 +86,7 @@ jobs:
     - name: Setup Go
       uses: actions/setup-go@v3
       with:
-        go-version: ^1.18
+        go-version: ^1.20
 
     - name: Install zeromq
       run: sudo apt-get update && sudo apt-get install -y libsodium-dev libzmq3-dev libczmq-dev
