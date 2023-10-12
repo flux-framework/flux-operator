@@ -62,7 +62,7 @@ jobs:
       fail-fast: false
       matrix:
         test: [["hello-world", "", 60],
-               #["custom-config", "ghcr.io/flux-framework/flux-restful-api:latest", 60],
+               ["custom-config", "", 60],
                #["minimal-service", "ghcr.io/flux-framework/flux-restful-api:latest", 60],
                #["post", "ghcr.io/flux-framework/flux-restful-api:latest", 60],
                ["batch", "", 60],
