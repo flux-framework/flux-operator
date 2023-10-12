@@ -72,9 +72,9 @@ jobs:
                #["lammps", "ghcr.io/rse-ops/lammps:flux-sched-focal-v0.24.0", 60],
                #["pokemon", "ghcr.io/rse-ops/pokemon:app-latest", 60],
                #["timed", "ghcr.io/flux-framework/flux-restful-api:latest", 60],
-               #["debug", "ghcr.io/flux-framework/flux-restful-api:latest", 60],
+               ["debug", "", 60],
                #["flux-resource-list", "ghcr.io/flux-framework/flux-restful-api:latest", 60],
-               #["existing-volumes", "ghcr.io/flux-framework/flux-restful-api:latest", 60],
+               ["existing-volumes", "", 60],
                ["volumes", "", 60]]
                #["snakemake", "ghcr.io/rse-ops/atacseq:app-latest", 60]]
 
