@@ -22,7 +22,7 @@ spec:
   # This is a list because a pod can support multiple containers
   containers:
     - image: rockylinux:9
-      command: sleep
+      command: ls /data
       volumes:
         data:
           path: /data

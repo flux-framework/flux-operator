@@ -61,11 +61,11 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        test: [["hello-world", "ghcr.io/converged-computing/flux-view-rocky:tag-9", 60],
+        test: [["hello-world", "", 60],
                #["custom-config", "ghcr.io/flux-framework/flux-restful-api:latest", 60],
                #["minimal-service", "ghcr.io/flux-framework/flux-restful-api:latest", 60],
                #["post", "ghcr.io/flux-framework/flux-restful-api:latest", 60],
-               #["batch", "ghcr.io/flux-framework/flux-restful-api:latest", 60],
+               ["batch", "", 60],
                #["singularity", "ghcr.io/rse-ops/singularity:tag-mamba", 60],
                #["nginx-sidecar-service", "ghcr.io/flux-framework/flux-restful-api:latest", 60],
                #["nginx-service", "ghcr.io/flux-framework/flux-restful-api:latest", 60],
@@ -75,7 +75,7 @@ jobs:
                #["debug", "ghcr.io/flux-framework/flux-restful-api:latest", 60],
                #["flux-resource-list", "ghcr.io/flux-framework/flux-restful-api:latest", 60],
                #["existing-volumes", "ghcr.io/flux-framework/flux-restful-api:latest", 60],
-               ["volumes", "ghcr.io/converged-computing/flux-view-rocky:tag-9", 60]]
+               ["volumes", "", 60]]
                #["snakemake", "ghcr.io/rse-ops/atacseq:app-latest", 60]]
 
     steps:
@@ -93,9 +93,6 @@ jobs:
     - name: Start minikube
       uses: medyagh/setup-minikube@697f2b7aaed5f70bf2a94ee21a4ec3dde7b12f92 # v0.0.9
 
-    - name: Create the namespace
-      run: kubectl create namespace flux-operator
-
     - name: Pull Docker Containers to MiniKube
       env:
         container: ${{ matrix.test[1] }}
@@ -104,10 +101,13 @@ jobs:
       run: |
         export SHELL=/bin/bash
         eval $(minikube -p minikube docker-env)
-        minikube ssh docker pull ${container}
+        if [[ "${container}" != "" ]]; then
+            minikube ssh docker pull ${container}
+        fi
         if [[ "${test}" == "nginx-service" ]]; then
             minikube ssh docker pull nginx
         fi
+        minikube ssh docker pull ghcr.io/converged-computing/flux-view-rocky:tag-9
         make deploy-local
         minikube image load ghcr.io/flux-framework/flux-operator:test
         kubectl apply -f examples/dist/flux-operator-local.yaml

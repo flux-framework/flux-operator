@@ -178,7 +178,7 @@ if [ $(hostname) == "${mainHost}" ]; then
     echo "#!/bin/bash
 {{ if .Container.BatchRaw }}{{range $index, $line := .Batch}}{{ if $line }}{{$line}}{{ end }}
 {{ end }}
-{{ else }}{{range $index, $line := .Batch}}{{ if $line }}{{ if .Spec.Flux.SubmitCommand }}{{ .Spec.Flux.SubmitCommand }}{{ else }}flux submit {{ end }} --flags waitable --error=${FLUX_OUTPUT_DIR}/job-{{$index}}.err --output=${FLUX_OUTPUT_DIR}/job-{{$index}}.out {{$line}}{{ end }}
+{{ else }}{{range $index, $line := .Batch}}{{ if $line }}flux submit --flags waitable --error=${FLUX_OUTPUT_DIR}/job-{{$index}}.err --output=${FLUX_OUTPUT_DIR}/job-{{$index}}.out {{$line}}{{ end }}
 {{ end }}
 flux queue idle
 flux jobs -a{{ end }}

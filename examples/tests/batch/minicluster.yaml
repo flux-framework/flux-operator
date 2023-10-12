@@ -1,8 +1,7 @@
-apiVersion: flux-framework.org/v1alpha1
+apiVersion: flux-framework.org/v1alpha2
 kind: MiniCluster
 metadata:
   name: flux-sample
-  namespace: flux-operator
 spec:
   # suppress all output except for test run
   logging:
@@ -19,7 +18,7 @@ spec:
 
   # This is a list because a pod can support multiple containers
   containers:
-    - image: ghcr.io/flux-framework/flux-restful-api:latest
+    - image: rockylinux:9
 
       # Commands should be submit as batch
       batch: true
