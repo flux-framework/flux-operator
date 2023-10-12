@@ -28,7 +28,7 @@ cat ${actual}
 if [[ -e "${expected}" ]]; then
     echo "Expected:"
     cat ${expected}
-    diff ${expected} ${actual}
+    diff --strip-trailing-cr ${expected} ${actual}
     retval=$?
     if [[ "${retval}" != "0" ]]; then
         echo "Differences found."
