@@ -61,7 +61,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        test: [["hello-world", "ghcr.io/converged-computing/flux-view-rocky:tag-9", 60]]
+        test: [["hello-world", "ghcr.io/converged-computing/flux-view-rocky:tag-9", 60],
                #["custom-config", "ghcr.io/flux-framework/flux-restful-api:latest", 60],
                #["minimal-service", "ghcr.io/flux-framework/flux-restful-api:latest", 60],
                #["post", "ghcr.io/flux-framework/flux-restful-api:latest", 60],
@@ -75,7 +75,7 @@ jobs:
                #["debug", "ghcr.io/flux-framework/flux-restful-api:latest", 60],
                #["flux-resource-list", "ghcr.io/flux-framework/flux-restful-api:latest", 60],
                #["existing-volumes", "ghcr.io/flux-framework/flux-restful-api:latest", 60],
-               #["volumes", "ghcr.io/flux-framework/flux-restful-api:latest", 60],
+               ["volumes", "ghcr.io/converged-computing/flux-view-rocky:tag-9", 60]]
                #["snakemake", "ghcr.io/rse-ops/atacseq:app-latest", 60]]
 
     steps:

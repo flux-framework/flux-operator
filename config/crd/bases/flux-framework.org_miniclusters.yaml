@@ -363,10 +363,6 @@ spec:
                       This is not recommended in favor of providing the secret name
                       as curveCertSecret, below
                     type: string
-                  curveCertSecret:
-                    description: Expect a secret for a curve cert here. This is ideal
-                      over the curveCert (as a string) above.
-                    type: string
                   logLevel:
                     default: 6
                     description: Log level to use for flux logging (only in non TestMode)

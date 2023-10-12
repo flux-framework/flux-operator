@@ -41,7 +41,6 @@ class FluxSpec(object):
         'connect_timeout': 'str',
         'container': 'FluxContainer',
         'curve_cert': 'str',
-        'curve_cert_secret': 'str',
         'log_level': 'int',
         'minimal_service': 'bool',
         'munge_secret': 'str',
@@ -57,7 +56,6 @@ class FluxSpec(object):
         'connect_timeout': 'connectTimeout',
         'container': 'container',
         'curve_cert': 'curveCert',
-        'curve_cert_secret': 'curveCertSecret',
         'log_level': 'logLevel',
         'minimal_service': 'minimalService',
         'munge_secret': 'mungeSecret',
@@ -67,7 +65,7 @@ class FluxSpec(object):
         'wrap': 'wrap'
     }
 
-    def __init__(self, broker_config='', bursting=None, connect_timeout='5s', container=None, curve_cert='', curve_cert_secret='', log_level=6, minimal_service=False, munge_secret='', option_flags='', scheduler=None, submit_command=None, wrap=None, local_vars_configuration=None):  # noqa: E501
+    def __init__(self, broker_config='', bursting=None, connect_timeout='5s', container=None, curve_cert='', log_level=6, minimal_service=False, munge_secret='', option_flags='', scheduler=None, submit_command=None, wrap=None, local_vars_configuration=None):  # noqa: E501
         """FluxSpec - a model defined in OpenAPI"""  # noqa: E501
         if local_vars_configuration is None:
             local_vars_configuration = Configuration.get_default_copy()
@@ -78,7 +76,6 @@ class FluxSpec(object):
         self._connect_timeout = None
         self._container = None
         self._curve_cert = None
-        self._curve_cert_secret = None
         self._log_level = None
         self._minimal_service = None
         self._munge_secret = None
@@ -98,8 +95,6 @@ class FluxSpec(object):
             self.container = container
         if curve_cert is not None:
             self.curve_cert = curve_cert
-        if curve_cert_secret is not None:
-            self.curve_cert_secret = curve_cert_secret
         if log_level is not None:
             self.log_level = log_level
         if minimal_service is not None:
@@ -225,29 +220,6 @@ class FluxSpec(object):
         """
 
         self._curve_cert = curve_cert
-
-    @property
-    def curve_cert_secret(self):
-        """Gets the curve_cert_secret of this FluxSpec.  # noqa: E501
-
-        Expect a secret for a curve cert here. This is ideal over the curveCert (as a string) above.  # noqa: E501
-
-        :return: The curve_cert_secret of this FluxSpec.  # noqa: E501
-        :rtype: str
-        """
-        return self._curve_cert_secret
-
-    @curve_cert_secret.setter
-    def curve_cert_secret(self, curve_cert_secret):
-        """Sets the curve_cert_secret of this FluxSpec.
-
-        Expect a secret for a curve cert here. This is ideal over the curveCert (as a string) above.  # noqa: E501
-
-        :param curve_cert_secret: The curve_cert_secret of this FluxSpec.  # noqa: E501
-        :type curve_cert_secret: str
-        """
-
-        self._curve_cert_secret = curve_cert_secret
 
     @property
     def log_level(self):

@@ -115,37 +115,6 @@ func getVolumes(cluster *api.MiniCluster) []corev1.Volume {
 		},
 	}
 
-	// We either generate a curve.cert config map, or get it from secret
-	curveVolumeName := cluster.CurveConfigMapName()
-	if cluster.Spec.Flux.CurveCertSecret != "" {
-		curveVolume := corev1.Volume{
-			Name: curveVolumeName,
-			VolumeSource: corev1.VolumeSource{
-				Secret: &corev1.SecretVolumeSource{
-					SecretName: cluster.Spec.Flux.CurveCertSecret,
-					Items:      []corev1.KeyToPath{curveKey},
-				},
-			},
-		}
-
-		volumes = append(volumes, curveVolume)
-
-	} else {
-		curveVolume := corev1.Volume{
-			Name: curveVolumeName,
-			VolumeSource: corev1.VolumeSource{
-				ConfigMap: &corev1.ConfigMapVolumeSource{
-
-					// Namespace based on the cluster
-					LocalObjectReference: corev1.LocalObjectReference{
-						Name: cluster.CurveConfigMapName(),
-					},
-				},
-			},
-		}
-		volumes = append(volumes, curveVolume)
-	}
-
 	// Add volumes that already exist (not created by the Flux Operator)
 	// These are unique names and path/claim names across containers
 	// This can be a claim, secret, or config map

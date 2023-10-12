@@ -9,7 +9,6 @@ Name | Type | Description | Notes
 **connect_timeout** | **str** | Single user executable to provide to flux start | [optional] [default to '5s']
 **container** | [**FluxContainer**](FluxContainer.md) |  | [optional] 
 **curve_cert** | **str** | Optionally provide an already existing curve certificate This is not recommended in favor of providing the secret name as curveCertSecret, below | [optional] [default to '']
-**curve_cert_secret** | **str** | Expect a secret for a curve cert here. This is ideal over the curveCert (as a string) above. | [optional] [default to '']
 **log_level** | **int** | Log level to use for flux logging (only in non TestMode) | [optional] [default to 6]
 **minimal_service** | **bool** | Only expose the broker service (to reduce load on DNS) | [optional] [default to False]
 **munge_secret** | **str** | Expect a secret (named according to this string) for a munge key. This is intended for bursting. Assumed to be at /etc/munge/munge.key This is binary data. | [optional] [default to '']

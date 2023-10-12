@@ -268,11 +268,6 @@
           "type": "string",
           "default": ""
         },
-        "curveCertSecret": {
-          "description": "Expect a secret for a curve cert here. This is ideal over the curveCert (as a string) above.",
-          "type": "string",
-          "default": ""
-        },
         "logLevel": {
           "description": "Log level to use for flux logging (only in non TestMode)",
           "type": "integer",

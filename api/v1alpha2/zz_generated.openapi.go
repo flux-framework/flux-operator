@@ -521,14 +521,6 @@ func schema__api_v1alpha2__FluxSpec(ref common.ReferenceCallback) common.OpenAPI
 							Format:      "",
 						},
 					},
-					"curveCertSecret": {
-						SchemaProps: spec.SchemaProps{
-							Description: "Expect a secret for a curve cert here. This is ideal over the curveCert (as a string) above.",
-							Default:     "",
-							Type:        []string{"string"},
-							Format:      "",
-						},
-					},
 					"scheduler": {
 						SchemaProps: spec.SchemaProps{
 							Description: "Custom attributes for the fluxion scheduler",
