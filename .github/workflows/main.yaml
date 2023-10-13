@@ -61,22 +61,22 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        test: [["hello-world", "", 60],
-               ["custom-config", "", 60],
-               ["minimal-service", "", 60],
-               ["post", "", 60],
+        test: [["post", "", 60],
                ["batch", "", 60],
-               ["nginx-sidecar-service", "", 60],
-               ["nginx-service", "", 60],
                ["timed", "", 60],
                ["debug", "", 60],
-               ["flux-resource-list", "", 60],
-               ["existing-volumes", "", 60],
                ["volumes", "", 60],
-               ["singularity", "ghcr.io/rse-ops/singularity:tag-mamba", 60],
-               ["lammps", "ghcr.io/converged-computing/metric-lammps:latest", 60],
+               ["hello-world", "", 60],
+               ["nginx-service", "", 60],
+               ["custom-config", "", 60],
+               ["minimal-service", "", 60],               
+               ["existing-volumes", "", 60],
+               ["flux-resource-list", "", 60],
+               ["nginx-sidecar-service", "", 60],
                ["pokemon", "ghcr.io/rse-ops/pokemon:app-latest", 60],
-               ["snakemake", "ghcr.io/rse-ops/atacseq:app-latest", 60]]
+               ["snakemake", "ghcr.io/rse-ops/atacseq:app-latest", 60],
+               ["singularity", "ghcr.io/rse-ops/singularity:tag-mamba", 60],
+               ["lammps", "ghcr.io/converged-computing/metric-lammps:latest", 60]]
 
     steps:
     - name: Clone the code
