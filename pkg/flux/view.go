@@ -169,8 +169,13 @@ cp -R /opt/software $viewroot/
 touch $viewroot/flux-operator-done.txt
 
 # Sleep forever, the application needs to run and end
-echo "Sleeping forever so %s can be shared and used for application containers."
-sleep infinity
+echo "Sleeping to wait for application %s."
+
+while [ ! -f $viewroot/flux-operator-complete.txt ]
+do
+  sleep 10
+done
+echo "Application is done."
 `
 
 	return fmt.Sprintf(

@@ -848,6 +848,14 @@ func schema__api_v1alpha2__MiniClusterContainer(ref common.ReferenceCallback) co
 							Format:      "",
 						},
 					},
+					"noWrapEntrypoint": {
+						SchemaProps: spec.SchemaProps{
+							Description: "Do not wrap the entrypoint to wait for flux, add to path, etc?",
+							Default:     false,
+							Type:        []string{"boolean"},
+							Format:      "",
+						},
+					},
 					"volumes": {
 						SchemaProps: spec.SchemaProps{
 							Description: "Volumes that can be mounted (must be defined in volumes)",

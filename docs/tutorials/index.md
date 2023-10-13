@@ -50,6 +50,12 @@ The following tutorials are provided from their respective directories (and are 
  - [mpich](https://github.com/flux-framework/flux-operator/blob/main/examples/mpi/mpich)
 
 
+### Queue Interaction
+
+These examples show how to interact with your flux queue from a sidecar container (that has access to the flux broker of the pod):
+
+ - [flux-sidecar](https://github.com/flux-framework/flux-operator/blob/main/examples/tests/flux-sidecar) to see a sleep job in the main application queue
+
 ### Services
 
  - [Nginx](https://github.com/flux-framework/flux-operator/blob/main/examples/services/sidecar/nginx): to run alongisde your MiniCluster (and possibly expose functionality)

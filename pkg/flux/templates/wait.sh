@@ -9,34 +9,8 @@
 # If any initCommand logic is defined
 {{ .Container.Commands.Init}} {{ if .Spec.Logging.Quiet }}> /dev/null{{ end }}
 
-# This waiting script is intended to wait for the flux view, and then start running
-# Ensure the flux volume addition is complete.
-curl -L -O -s https://github.com/converged-computing/goshare/releases/download/2023-09-06/wait-fs {{ if .Spec.Logging.Quiet }}> /dev/null 2>&1{{ end }}
-chmod +x ./wait-fs
-mv ./wait-fs /usr/bin/goshare-wait-fs
-
-# Ensure spack view is on the path, wherever it is mounted
-viewbase="{{ .ViewBase }}"
-viewroot=${viewbase}/view
-software="${viewbase}/software"
-viewbin="${viewroot}/bin"
-fluxpath=${viewbin}/flux
-
-# Set the flux root
-{{ if not .Spec.Logging.Quiet }}
-echo
-echo "Flux install root: ${viewroot}"
-echo
-{{ end }}
-
-# Important to add AFTER in case software in container duplicated
-export PATH=$PATH:${viewbin}
-
-# Wait for marker (from spack.go) to indicate copy is done
-goshare-wait-fs -p ${viewbase}/flux-operator-done.txt {{ if .Spec.Logging.Quiet }}> /dev/null 2>&1{{ end }}
-
-# Copy mount software to /opt/software
-cp -R ${viewbase}/software /opt/software
+# Shared logic to wait for view
+{{template "wait-view" .}}
 
 # And pre command logic that isn't passed to the certificate generator
 {{ .Container.Commands.Pre}} {{ if .Spec.Logging.Quiet }}> /dev/null 2>&1{{ end }}
@@ -77,12 +51,7 @@ chmod o-r ${curvepath}
 chmod g-r ${curvepath}
 chown -R ${fluxuid} ${curvepath}
 
-foundroot=$(find $viewroot -maxdepth 2 -type d -path $viewroot/lib/python3\*)
-
-# Ensure we use flux's python (TODO update this to use variable)
-export PYTHONPATH={{ if .Spec.Flux.Container.PythonPath }}{{ .Spec.Flux.Container.PythonPath }}{{ else }}${foundroot}/site-packages{{ end }}
-echo "PYTHONPATH is ${PYTHONPATH}" {{ if .Spec.Logging.Quiet }}> /dev/null 2>&1{{ end }}
-echo "PATH is $PATH" {{ if .Spec.Logging.Quiet }}> /dev/null 2>&1{{ end }}
+{{template "paths" .}}
 
 # Put the state directory in /var/lib on shared view
 export STATE_DIR=${viewroot}/var/lib/flux
@@ -103,9 +72,9 @@ ls .
 
 brokerOptions="-Scron.directory=/etc/flux/system/cron.d \
   -Stbon.fanout=256 \
-  -Srundir=/run/flux {{ if .Spec.Interactive }}-Sbroker.rc2_none {{ end }} \
+  -Srundir=${viewroot}/run/flux {{ if .Spec.Interactive }}-Sbroker.rc2_none {{ end }} \
   -Sstatedir=${STATE_DIR} \
-  -Slocal-uri=local:///run/flux/local \
+  -Slocal-uri=local://$viewroot/run/flux/local \
 {{ if .Spec.Flux.ConnectTimeout }}-Stbon.connect_timeout={{ .Spec.Flux.ConnectTimeout }}{{ end }} \
 {{ if .RequiredRanks }}-Sbroker.quorum={{ .RequiredRanks }}{{ end }} \
 {{ if .Spec.Logging.Zeromq }}-Stbon.zmqdebug=1{{ end }} \
@@ -249,7 +218,9 @@ else
         echo "😪 Sleeping 15s to try again..."
         sleep 15
     done
-
 fi
 
 {{ .Container.Commands.Post}}
+
+# Marker for flux view provider to clean up (within 10 seconds)
+touch $viewbase/flux-operator-complete.txt

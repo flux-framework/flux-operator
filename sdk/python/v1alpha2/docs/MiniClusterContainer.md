@@ -16,6 +16,7 @@ Name | Type | Description | Notes
 **life_cycle** | [**LifeCycle**](LifeCycle.md) |  | [optional] 
 **logs** | **str** | Log output directory | [optional] [default to '']
 **name** | **str** | Container name is only required for non flux runners | [optional] [default to '']
+**no_wrap_entrypoint** | **bool** | Do not wrap the entrypoint to wait for flux, add to path, etc? | [optional] [default to False]
 **ports** | **list[int]** | Ports to be exposed to other containers in the cluster We take a single list of integers and map to the same | [optional] 
 **pull_always** | **bool** | Allow the user to dictate pulling By default we pull if not present. Setting this to true will indicate to pull always | [optional] [default to False]
 **resources** | [**ContainerResources**](ContainerResources.md) |  | [optional] 

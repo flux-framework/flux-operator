@@ -451,6 +451,11 @@
           "type": "string",
           "default": ""
         },
+        "noWrapEntrypoint": {
+          "description": "Do not wrap the entrypoint to wait for flux, add to path, etc?",
+          "type": "boolean",
+          "default": false
+        },
         "ports": {
           "description": "Ports to be exposed to other containers in the cluster We take a single list of integers and map to the same",
           "type": "array",

@@ -592,6 +592,10 @@ type MiniClusterContainer struct {
 	// +optional
 	RunFlux bool `json:"runFlux"`
 
+	// Do not wrap the entrypoint to wait for flux, add to path, etc?
+	// +optional
+	NoWrapEntrypoint bool `json:"noWrapEntrypoint"`
+
 	// Volumes that can be mounted (must be defined in volumes)
 	// +optional
 	Volumes map[string]ContainerVolume `json:"volumes"`
@@ -716,8 +720,9 @@ func (c *MiniClusterContainer) HasCommands() bool {
 }
 
 // Determine if we should generate a start.sh entrypoint for a sidecar
+// Only do so (for now) if we are customizing the command
 func (c *MiniClusterContainer) GenerateEntrypoint() bool {
-	return c.HasCommands() && !c.RunFlux && c.Command != ""
+	return !c.RunFlux && c.Command != "" && !c.NoWrapEntrypoint
 }
 
 // Return a lookup of all container existing volumes (for the higher level Pod)

@@ -1,8 +1,7 @@
-apiVersion: flux-framework.org/v1alpha1
+apiVersion: flux-framework.org/v1alpha2
 kind: MiniCluster
 metadata:
   name: flux-sample
-  namespace: flux-operator
 spec:
 
   # Number of pods to create for MiniCluster
@@ -44,9 +43,9 @@ spec:
 
       # Give the command directly to flux start, instead of wrapping in flux submit
       launcher: true
-      commands: 
-        pre: |
-          # Ensure the cache targets our flux user home
-          asFlux="sudo -u flux -E PYTHONPATH=$PYTHONPATH -E PATH=$PATH -E HOME=/home/flux"
+#      commands: 
+#        pre: |
+#          # Ensure the cache targets our flux user home
+#          asFlux="sudo -u flux -E PYTHONPATH=$PYTHONPATH -E PATH=$PATH -E HOME=/home/flux"
           # Add the flux user beforehand, and ensure we own the working directory with data
-          sudo adduser --disabled-password --uid 1000 --gecos "" flux > /dev/null 2>&1
+#          sudo adduser --disabled-password --uid 1000 --gecos "" flux > /dev/null 2>&1

@@ -48,6 +48,7 @@ class MiniClusterContainer(object):
         'life_cycle': 'LifeCycle',
         'logs': 'str',
         'name': 'str',
+        'no_wrap_entrypoint': 'bool',
         'ports': 'list[int]',
         'pull_always': 'bool',
         'resources': 'ContainerResources',
@@ -71,6 +72,7 @@ class MiniClusterContainer(object):
         'life_cycle': 'lifeCycle',
         'logs': 'logs',
         'name': 'name',
+        'no_wrap_entrypoint': 'noWrapEntrypoint',
         'ports': 'ports',
         'pull_always': 'pullAlways',
         'resources': 'resources',
@@ -81,7 +83,7 @@ class MiniClusterContainer(object):
         'working_dir': 'workingDir'
     }
 
-    def __init__(self, batch=False, batch_raw=False, command='', commands=None, environment=None, existing_volumes=None, image='ghcr.io/rse-ops/accounting:app-latest', image_pull_secret='', launcher=False, life_cycle=None, logs='', name='', ports=None, pull_always=False, resources=None, run_flux=False, secrets=None, security_context=None, volumes=None, working_dir='', local_vars_configuration=None):  # noqa: E501
+    def __init__(self, batch=False, batch_raw=False, command='', commands=None, environment=None, existing_volumes=None, image='ghcr.io/rse-ops/accounting:app-latest', image_pull_secret='', launcher=False, life_cycle=None, logs='', name='', no_wrap_entrypoint=False, ports=None, pull_always=False, resources=None, run_flux=False, secrets=None, security_context=None, volumes=None, working_dir='', local_vars_configuration=None):  # noqa: E501
         """MiniClusterContainer - a model defined in OpenAPI"""  # noqa: E501
         if local_vars_configuration is None:
             local_vars_configuration = Configuration.get_default_copy()
@@ -99,6 +101,7 @@ class MiniClusterContainer(object):
         self._life_cycle = None
         self._logs = None
         self._name = None
+        self._no_wrap_entrypoint = None
         self._ports = None
         self._pull_always = None
         self._resources = None
@@ -133,6 +136,8 @@ class MiniClusterContainer(object):
             self.logs = logs
         if name is not None:
             self.name = name
+        if no_wrap_entrypoint is not None:
+            self.no_wrap_entrypoint = no_wrap_entrypoint
         if ports is not None:
             self.ports = ports
         if pull_always is not None:
@@ -421,6 +426,29 @@ class MiniClusterContainer(object):
         """
 
         self._name = name
+
+    @property
+    def no_wrap_entrypoint(self):
+        """Gets the no_wrap_entrypoint of this MiniClusterContainer.  # noqa: E501
+
+        Do not wrap the entrypoint to wait for flux, add to path, etc?  # noqa: E501
+
+        :return: The no_wrap_entrypoint of this MiniClusterContainer.  # noqa: E501
+        :rtype: bool
+        """
+        return self._no_wrap_entrypoint
+
+    @no_wrap_entrypoint.setter
+    def no_wrap_entrypoint(self, no_wrap_entrypoint):
+        """Sets the no_wrap_entrypoint of this MiniClusterContainer.
+
+        Do not wrap the entrypoint to wait for flux, add to path, etc?  # noqa: E501
+
+        :param no_wrap_entrypoint: The no_wrap_entrypoint of this MiniClusterContainer.  # noqa: E501
+        :type no_wrap_entrypoint: bool
+        """
+
+        self._no_wrap_entrypoint = no_wrap_entrypoint
 
     @property
     def ports(self):

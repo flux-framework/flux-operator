@@ -14,7 +14,6 @@ import (
 	"bytes"
 	"fmt"
 	"strings"
-	"text/template"
 
 	api "github.com/flux-framework/flux-operator/api/v1alpha2"
 )
@@ -60,21 +59,24 @@ func GenerateEntrypoints(cluster *api.MiniCluster) (map[string]string, error) {
 
 // generateServiceEntrypoint generates an entrypoint for a service container
 func generateServiceEntrypoint(cluster *api.MiniCluster, container api.MiniClusterContainer) (string, error) {
-
 	st := ServiceTemplate{
+		ViewBase:  cluster.Spec.Flux.Container.MountPath,
 		Container: container,
 		Spec:      cluster.Spec,
 	}
-	t, err := template.New("start-sh").Parse(sidecarContainerTemplate)
+
+	// Wrap the named template to identify it later
+	startTemplate := `{{define "start"}}` + sidecarContainerTemplate + "{{end}}"
+
+	// We assemble different strings (including the components) into one!
+	t, err := combineTemplates(startComponents, startTemplate)
 	if err != nil {
 		return "", err
 	}
-
 	var output bytes.Buffer
-	if err := t.Execute(&output, st); err != nil {
+	if err := t.ExecuteTemplate(&output, "start", st); err != nil {
 		return "", err
 	}
-
 	return output.String(), nil
 
 }
@@ -107,15 +109,18 @@ func generateEntrypointScript(
 		FluxToken:     getRandomToken(cluster.Spec.FluxRestful.Token),
 		Batch:         batchCommand,
 	}
-	t, err := template.New("wait-sh").Parse(waitToStartTemplate)
+
+	// Wrap the named template to identify it later
+	startTemplate := `{{define "start"}}` + waitToStartTemplate + "{{end}}"
+
+	// We assemble different strings (including the components) into one!
+	t, err := combineTemplates(startComponents, startTemplate)
 	if err != nil {
 		return "", err
 	}
-
 	var output bytes.Buffer
-	if err := t.Execute(&output, wt); err != nil {
+	if err := t.ExecuteTemplate(&output, "start", wt); err != nil {
 		return "", err
 	}
-
 	return output.String(), nil
 }

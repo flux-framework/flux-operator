@@ -155,6 +155,10 @@ spec:
                     name:
                       description: Container name is only required for non flux runners
                       type: string
+                    noWrapEntrypoint:
+                      description: Do not wrap the entrypoint to wait for flux, add
+                        to path, etc?
+                      type: boolean
                     ports:
                       description: Ports to be exposed to other containers in the cluster
                         We take a single list of integers and map to the same
@@ -602,6 +606,10 @@ spec:
                     name:
                       description: Container name is only required for non flux runners
                       type: string
+                    noWrapEntrypoint:
+                      description: Do not wrap the entrypoint to wait for flux, add
+                        to path, etc?
+                      type: boolean
                     ports:
                       description: Ports to be exposed to other containers in the cluster
                         We take a single list of integers and map to the same

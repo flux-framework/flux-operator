@@ -12,6 +12,8 @@ package flux
 
 import (
 	_ "embed"
+	"fmt"
+	"text/template"
 
 	api "github.com/flux-framework/flux-operator/api/v1alpha2"
 )
@@ -22,8 +24,12 @@ var waitToStartTemplate string
 //go:embed templates/start.sh
 var sidecarContainerTemplate string
 
+//go:embed templates/components.sh
+var startComponents string
+
 // ServiceTemplate is for a separate service container
 type ServiceTemplate struct {
+	ViewBase  string // Where the mounted view with flux is expected to be
 	Container api.MiniClusterContainer
 	Spec      api.MiniClusterSpec
 }
@@ -42,4 +48,17 @@ type WaitTemplate struct {
 
 	// Batch commands split up
 	Batch []string
+}
+
+// combineTemplates into one common start
+func combineTemplates(listing ...string) (t *template.Template, err error) {
+	t = template.New("start")
+
+	for i, templ := range listing {
+		_, err = t.New(fmt.Sprint("_", i)).Parse(templ)
+		if err != nil {
+			return t, err
+		}
+	}
+	return t, nil
 }
