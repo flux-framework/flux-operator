@@ -167,14 +167,6 @@ cp -R /opt/software $viewroot/
 
 # This is a marker to indicate the copy is done
 touch $viewroot/flux-operator-done.txt
-
-# Sleep forever, the application needs to run and end
-echo "Sleeping to wait for application %s."
-
-while [ ! -f $viewroot/flux-operator-complete.txt ]
-do
-  sleep 10
-done
 echo "Application is done."
 `
 
@@ -186,6 +178,5 @@ echo "Application is done."
 		brokerConfig,
 		cluster.Spec.Flux.Container.MountPath,
 		cluster.Spec.Flux.Container.MountPath,
-		cluster.Spec.Flux.Container.Name,
 	), nil
 }

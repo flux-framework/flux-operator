@@ -99,7 +99,7 @@ func NewMiniClusterJob(cluster *api.MiniCluster) (*batchv1.Job, error) {
 	)
 
 	// Add on the flux view container
-	containers = append(containers, fluxViewContainer)
+	job.Spec.Template.Spec.InitContainers = []corev1.Container{fluxViewContainer}
 	job.Spec.Template.Spec.Containers = containers
 	return job, err
 }
