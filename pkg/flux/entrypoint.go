@@ -97,6 +97,7 @@ func generateEntrypointScript(
 	batchCommand := strings.Split(container.Command, "\n")
 
 	// Required quorum - might be smaller than initial list if size != maxsize
+	// This used to be a range, now it's a size
 	requiredRanks := getRequiredRanks(cluster)
 
 	// The token uuid is the same across images

@@ -7,7 +7,6 @@ flaw - the fact that the application logic was mixed with the logic for Flux. Th
 
 ## Summary
 
-
  - A **MiniCluster** is an [indexed job](https://kubernetes.io/docs/tasks/job/indexed-parallel-processing-static/) so we can create N copies of the "same" base containers.
    - A Flux Provisioner container provides a build of Flux (on some operator system) that is shared with the application container via an empty volume
    - Multiple containers are supported, and one is required to be the Flux runner
@@ -19,5 +18,9 @@ flaw - the fact that the application logic was mixed with the logic for Flux. Th
  - Security / generating a munge key is no longer supported (we assume a single-user mode)
  - Networking of the pods works via a headless service that includes the pod subdomain. 
 
+Some caveats or changes to the design:
+
+ - we use an init-container instead of sidecar so the indexed job completes
+ - links to python within the view will be broken because the original view path is not preserved, but instead you can target the versioned binary (e.g., python3.11 instead of python)
 
 - [Link on Excalidraw](https://excalidraw.com/#json=auIWjzPmpLnss1fP4FdjL,UY4HiAoQ0zH1tFTptDLCXw)

@@ -26,26 +26,20 @@ Create a kind cluster with Kubernetes version 1.27.0
 $ kind create cluster --config ./kind-config.yaml
 ```
 
-Create the flux-operator namespace:
-
-```bash
-$ kubectl create namespace flux-operator
-```
-
 Since we need custom permissions - to make requests from inside the cluster - we need to apply
 extra RBAC roles:
 
 ```bash
-$ kubectl apply -f ../../rbac.yaml
+$ kubectl apply -f ../rbac.yaml
 ```
 
 Note that this is not added to the operator proper because not everyone needs this level of permission,
 and we should be conservative. Likely the above can be better streamlined - I was in "get it working" mode
 when I wrote it! We could also likely create a more scoped service account as opposed to adding to
-the flux-operators. Then install the operator, and create the MiniCluster:
+the flux-operator's. Then install the operator, and create the MiniCluster:
 
 ```bash
-$ kubectl apply -f ../../../dist/flux-operator.yaml
+$ kubectl apply -f ../../dist/flux-operator.yaml
 $ kubectl apply -f ./minicluster.yaml
 ```
 

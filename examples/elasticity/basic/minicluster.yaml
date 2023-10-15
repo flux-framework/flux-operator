@@ -1,8 +1,7 @@
-apiVersion: flux-framework.org/v1alpha1
+apiVersion: flux-framework.org/v1alpha2
 kind: MiniCluster
 metadata:
   name: flux-sample
-  namespace: flux-operator
 spec:
   size: 2
   # If we don't set this, we won't be able to go above two!
@@ -15,22 +14,26 @@ spec:
       storageClass: hostpath
       path: /tmp/workflow
 
+  # Python is an ubuntu base
+  flux:
+    container:
+      image: ghcr.io/converged-computing/flux-view-ubuntu:tag-focal
+
   # This is a list because a pod can support multiple containers
   containers:
-    - image: ghcr.io/rse-ops/singularity:tag-mamba
-      command: python /data/three_bears.py
+    - image: python
+
+      # Use the same python alongside flux, this is the view location
+      command: /mnt/flux/view/bin/python3.11 /data/three_bears.py
       workingDir: /data
 
       # Launcher is true (and important) so we can watch in the logs
       # otherwise it would run on a specific pod (and we'd have to find it)
       launcher: true
-
-      # This pulls the container (once) by the broker to workingDir /data
       commands:
-        pre: pip install kubernetes
-
-      fluxUser:
-        name: fluxuser
+        pre: |
+          /mnt/flux/view/bin/python3.11 -m ensurepip
+          /mnt/flux/view/bin/python3.11 -m pip install kubernetes
 
       # Container will be pre-pulled here only by the broker
       volumes:

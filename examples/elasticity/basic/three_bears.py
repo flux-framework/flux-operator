@@ -26,7 +26,7 @@ def list_pods(v1, states=None):
     List pods with a newline, ensuring we only show pods in a particular state.
     """
     print("Hello pods... who is out there?")
-    pods = v1.list_namespaced_pod("flux-operator", watch=False)
+    pods = v1.list_namespaced_pod("default", watch=False)
     states = states or ["Running"]
     for pod in pods.items:
         if pod.status.phase not in states:
@@ -44,8 +44,8 @@ def get_minicluster_spec(crd_api, jobname):
     """
     resource = crd_api.list_namespaced_custom_object(
         group="flux-framework.org",
-        version="v1alpha1",
-        namespace="flux-operator",
+        version="v1alpha2",
+        namespace="default",
         plural="miniclusters",
     )
     for item in resource["items"]:
@@ -62,8 +62,8 @@ def resize_minicluster(crd_api, jobname, size):
     """
     minicluster_patch = {"spec": {"size": size}}
     return crd_api.patch_namespaced_custom_object(
-        version="v1alpha1",
-        namespace="flux-operator",
+        version="v1alpha2",
+        namespace="default",
         plural="miniclusters",
         name=jobname,
         body=minicluster_patch,
@@ -162,3 +162,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+

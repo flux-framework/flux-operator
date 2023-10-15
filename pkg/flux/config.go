@@ -89,7 +89,7 @@ func getRequiredRanks(cluster *api.MiniCluster) string {
 	}
 	// This is the quorum - the nodes required to be online - so we can start
 	// This can be less than the MaxSize
-	return generateRange(cluster.Spec.Size, 0)
+	return fmt.Sprintf("%d", cluster.Spec.Size)
 }
 
 // generateRange is a shared function to generate a range string

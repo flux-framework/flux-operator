@@ -9,7 +9,6 @@ flaw - the fact that the application logic was mixed with the logic for Flux. Th
 
 ![10-09-2023/flux-design-4.png](10-09-2023/flux-design-4.png)
 
-
 ## Early Designs
 
 It is often useful to think about many different designs, and iterate quickly before deciding on a direction
