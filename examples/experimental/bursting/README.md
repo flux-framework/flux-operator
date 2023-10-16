@@ -1,5 +1,7 @@
 # Design
 
+**not tested with new design yet, not currently working on**
+
 ### What we might need
 
 I expect for this kind of bursting to work I will need to be able to:

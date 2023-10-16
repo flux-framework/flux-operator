@@ -44,6 +44,7 @@ class FluxSpec(object):
         'log_level': 'int',
         'minimal_service': 'bool',
         'munge_secret': 'str',
+        'no_wait_socket': 'bool',
         'option_flags': 'str',
         'scheduler': 'FluxScheduler',
         'submit_command': 'str',
@@ -59,13 +60,14 @@ class FluxSpec(object):
         'log_level': 'logLevel',
         'minimal_service': 'minimalService',
         'munge_secret': 'mungeSecret',
+        'no_wait_socket': 'noWaitSocket',
         'option_flags': 'optionFlags',
         'scheduler': 'scheduler',
         'submit_command': 'submitCommand',
         'wrap': 'wrap'
     }
 
-    def __init__(self, broker_config='', bursting=None, connect_timeout='5s', container=None, curve_cert='', log_level=6, minimal_service=False, munge_secret='', option_flags='', scheduler=None, submit_command=None, wrap=None, local_vars_configuration=None):  # noqa: E501
+    def __init__(self, broker_config='', bursting=None, connect_timeout='5s', container=None, curve_cert='', log_level=6, minimal_service=False, munge_secret='', no_wait_socket=False, option_flags='', scheduler=None, submit_command=None, wrap=None, local_vars_configuration=None):  # noqa: E501
         """FluxSpec - a model defined in OpenAPI"""  # noqa: E501
         if local_vars_configuration is None:
             local_vars_configuration = Configuration.get_default_copy()
@@ -79,6 +81,7 @@ class FluxSpec(object):
         self._log_level = None
         self._minimal_service = None
         self._munge_secret = None
+        self._no_wait_socket = None
         self._option_flags = None
         self._scheduler = None
         self._submit_command = None
@@ -101,6 +104,8 @@ class FluxSpec(object):
             self.minimal_service = minimal_service
         if munge_secret is not None:
             self.munge_secret = munge_secret
+        if no_wait_socket is not None:
+            self.no_wait_socket = no_wait_socket
         if option_flags is not None:
             self.option_flags = option_flags
         if scheduler is not None:
@@ -289,6 +294,29 @@ class FluxSpec(object):
         """
 
         self._munge_secret = munge_secret
+
+    @property
+    def no_wait_socket(self):
+        """Gets the no_wait_socket of this FluxSpec.  # noqa: E501
+
+        Do not wait for the socket  # noqa: E501
+
+        :return: The no_wait_socket of this FluxSpec.  # noqa: E501
+        :rtype: bool
+        """
+        return self._no_wait_socket
+
+    @no_wait_socket.setter
+    def no_wait_socket(self, no_wait_socket):
+        """Sets the no_wait_socket of this FluxSpec.
+
+        Do not wait for the socket  # noqa: E501
+
+        :param no_wait_socket: The no_wait_socket of this FluxSpec.  # noqa: E501
+        :type no_wait_socket: bool
+        """
+
+        self._no_wait_socket = no_wait_socket
 
     @property
     def option_flags(self):

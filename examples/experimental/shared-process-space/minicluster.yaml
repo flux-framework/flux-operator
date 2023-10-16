@@ -1,8 +1,7 @@
-apiVersion: flux-framework.org/v1alpha1
+apiVersion: flux-framework.org/v1alpha2
 kind: MiniCluster
 metadata:
   name: flux-sample
-  namespace: flux-operator
 spec:
   size: 4
   shareProcessNamespace: true
@@ -11,6 +10,11 @@ spec:
   flux:
     logLevel: 7
 
+    # Don't wait for the socket
+    noWaitSocket: true
+    container:
+      image: ghcr.io/converged-computing/flux-view-ubuntu:tag-focal
+
   logging:
     zeromq: true
 
@@ -18,14 +22,14 @@ spec:
   containers:
   
      # The client container (issuing commands) has flux
-    - image: ghcr.io/flux-framework/flux-restful-api
+    - image: ubuntu
       runFlux: true
+
       # This is what we can run in interactive mode
       command: goshare-cli -s /proc/$(cat /goshare.pid)/root/dinosaur.sock echo hello world
       commands:
-        # users in both containers need to be same
-        runFluxAsRoot: true
         pre: |
+          apt-get update && apt-get install -y wget jq
           wget https://github.com/converged-computing/goshare/releases/download/2023-07-26-rc2/client
           chmod +x ./client
           mv ./client /bin/goshare-cli

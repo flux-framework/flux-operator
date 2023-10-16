@@ -387,6 +387,9 @@ spec:
                       for a munge key. This is intended for bursting. Assumed to be
                       at /etc/munge/munge.key This is binary data.
                     type: string
+                  noWaitSocket:
+                    description: Do not wait for the socket
+                    type: boolean
                   optionFlags:
                     description: Flux option flags, usually provided with -o optional
                       - if needed, default option flags for the server These can also

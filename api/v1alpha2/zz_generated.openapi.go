@@ -505,6 +505,14 @@ func schema__api_v1alpha2__FluxSpec(ref common.ReferenceCallback) common.OpenAPI
 							Format:      "",
 						},
 					},
+					"noWaitSocket": {
+						SchemaProps: spec.SchemaProps{
+							Description: "Do not wait for the socket",
+							Default:     false,
+							Type:        []string{"boolean"},
+							Format:      "",
+						},
+					},
 					"logLevel": {
 						SchemaProps: spec.SchemaProps{
 							Description: "Log level to use for flux logging (only in non TestMode)",

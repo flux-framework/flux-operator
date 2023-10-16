@@ -374,6 +374,10 @@ type FluxSpec struct {
 	// +optional
 	MinimalService bool `json:"minimalService"`
 
+	// Do not wait for the socket
+	// +optional
+	NoWaitSocket bool `json:"noWaitSocket"`
+
 	// Log level to use for flux logging (only in non TestMode)
 	// +kubebuilder:default=6
 	// +default=6
