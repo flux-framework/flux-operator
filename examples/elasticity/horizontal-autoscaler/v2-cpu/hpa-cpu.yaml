@@ -2,10 +2,9 @@ apiVersion: autoscaling/v2
 kind: HorizontalPodAutoscaler
 metadata:
   name: flux-sample-hpa
-  namespace: flux-operator
 spec:
   scaleTargetRef:
-    apiVersion: flux-framework.org/v1alpha1
+    apiVersion: flux-framework.org/v1alpha2
     kind: MiniCluster
     name: flux-sample
   minReplicas: 2

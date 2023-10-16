@@ -2,7 +2,6 @@ apiVersion: autoscaling/v1
 kind: HorizontalPodAutoscaler
 metadata:
   name: flux-sample-hpa
-  namespace: flux-operator
 spec:
   minReplicas: 2
   maxReplicas: 4
@@ -10,6 +9,6 @@ spec:
   # I need to read more about other metrics we can set
   targetCPUUtilizationPercentage: 2
   scaleTargetRef:
-    apiVersion: flux-framework.org/v1alpha1
+    apiVersion: flux-framework.org/v1alpha2
     kind: MiniCluster
     name: flux-sample

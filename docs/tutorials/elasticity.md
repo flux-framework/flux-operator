@@ -237,10 +237,9 @@ Create a kind cluster with Kubernetes version 1.27.0
 $ kind create cluster --config ./kind-config.yaml
 ```
 
-Create the flux-operator namespace and install the operator:
+Install the operator:
 
 ```bash
-$ kubectl create namespace flux-operator
 $ kubectl apply -f ../../../dist/flux-operator-dev.yaml
 ```
 
@@ -255,7 +254,7 @@ You'll need to wait for the container to pull (status `ContainerCreating` to `Ru
 At this point, wait until the containers go from creating to running.
 
 ```bash
-$ kubectl get -n flux-operator pods
+$ kubectl get pods
 NAME                  READY   STATUS    RESTARTS   AGE
 flux-sample-0-4wmmp   1/1     Running   0          6m50s
 flux-sample-1-mjj7b   1/1     Running   0          6m50s
@@ -264,7 +263,7 @@ flux-sample-1-mjj7b   1/1     Running   0          6m50s
 Look at the scale endpoint of the MiniCluster with `kubectl` directly! Remember that we haven't installed a horizontal auto-scaler yet:
 
 ```bash
-$ kubectl get --raw /apis/flux-framework.org/v1alpha2/namespaces/flux-operator/miniclusters/flux-sample/scale | jq
+$ kubectl get --raw /apis/flux-framework.org/v1alpha2/namespaces/default/miniclusters/flux-sample/scale | jq
 ```
 ```console
 {
@@ -272,10 +271,10 @@ $ kubectl get --raw /apis/flux-framework.org/v1alpha2/namespaces/flux-operator/m
   "apiVersion": "autoscaling/v1",
   "metadata": {
     "name": "flux-sample",
-    "namespace": "flux-operator",
-    "uid": "581c708a-0eb2-48da-84b1-3da7679d349d",
-    "resourceVersion": "3579",
-    "creationTimestamp": "2023-05-20T05:11:28Z"
+    "namespace": "default",
+    "uid": "3e5c568c-0367-4e76-bf7a-6e3215afdb1e",
+    "resourceVersion": "603",
+    "creationTimestamp": "2023-10-16T00:47:35Z"
   },
   "spec": {
     "replicas": 2
@@ -310,7 +309,6 @@ $ kubectl get deploy,svc -n kube-system | egrep metrics-server
 
 This first autoscaler will work based on CPU. We can create it as follows:
 
-
 ```bash
 $ kubectl apply -f hpa-cpu.yaml
 ```
@@ -321,7 +319,7 @@ horizontalpodautoscaler.autoscaling/flux-sample-hpa created
 Remember that when you first created your cluster, your size was two, and we had two?
 
 ```bash
-$ kubectl get -n flux-operator pods
+$ kubectl get pods
 NAME                  READY   STATUS    RESTARTS   AGE
 flux-sample-0-4wmmp   1/1     Running   0          6m50s
 flux-sample-1-mjj7b   1/1     Running   0          6m50s
@@ -332,30 +330,25 @@ see first that the resource usage changes (just by way of Flux starting):
 And to get it to change more, try shelling into your broker leader pod, connecting
 to the broker, and issuing commands:
 
+
 ```bash
-$ kubectl exec -it -n flux-operator flux-sample-0-p85cj bash
-$ sudo -u fluxuser -E $(env) -E HOME=/home/fluxuser flux proxy local:///run/flux/local bash
+kubectl exec -it flux-sample-0-p85cj bash
+
+# This is written by the operator to make it easy to add the view
+. /mnt/flux/flux-view.sh
+flux proxy local:///mnt/flux/view/run/flux/local bash
 $ openssl speed -multi 4
 ```
 
 You'll see it change (with updates between 15 seconds and 1.5 minutes!):
 
 ```
-$ kubectl get -n flux-operator hpa -w
+$ kubectl get hpa -w
 NAME              REFERENCE                 TARGETS   MINPODS   MAXPODS   REPLICAS   AGE
-flux-sample-hpa   MiniCluster/flux-sample   0%/2%     2         4         2          33m
-flux-sample-hpa   MiniCluster/flux-sample   0%/2%     2         4         2          34m
-flux-sample-hpa   MiniCluster/flux-sample   3%/2%     2         4         2          34m
-flux-sample-hpa   MiniCluster/flux-sample   0%/2%     2         4         3          34m
-```
-
-With the openssl command above, I got it to hit a much higher load:
-
-```bash
-flux-sample-hpa   MiniCluster/flux-sample   0%/2%          2         4         4          7m30s
-flux-sample-hpa   MiniCluster/flux-sample   21%/2%         2         4         4          8m30s
-flux-sample-hpa   MiniCluster/flux-sample   25%/2%         2         4         4          8m46s
-flux-sample-hpa   MiniCluster/flux-sample   25%/2%         2         4         4          9m1s
+flux-sample-hpa   MiniCluster/flux-sample   0%/2%     2         4         2          3m45s
+flux-sample-hpa   MiniCluster/flux-sample   0%/2%     2         4         2          3m45s
+flux-sample-hpa   MiniCluster/flux-sample   34%/2%    2         4         2          4m
+flux-sample-hpa   MiniCluster/flux-sample   49%/2%    2         4         4          4m15s
 ```
 
 See the [autoscaler/v1](#creating-the-v1-autoscaler) example for more detail about outputs. They have
@@ -403,10 +396,15 @@ $ kubectl apply -f hpa-v1.yaml
 horizontalpodautoscaler.autoscaling/flux-sample-hpa created
 ```
 
+Create the MiniCluster:
+
+```bash
+kubectl apply -f ./minicluster.yaml
+```
 Remember that when you first created your cluster, your size was two, and we had two?
 
 ```bash
-$ kubectl get -n flux-operator pods
+$ kubectl get pods
 NAME                  READY   STATUS    RESTARTS   AGE
 flux-sample-0-4wmmp   1/1     Running   0          6m50s
 flux-sample-1-mjj7b   1/1     Running   0          6m50s
@@ -418,15 +416,16 @@ And to get it to change more, try shelling into your broker leader pod, connecti
 to the broker, and issuing commands:
 
 ```bash
-$ kubectl exec -it -n flux-operator flux-sample-0-p85cj bash
-$ sudo -u fluxuser -E $(env) -E HOME=/home/fluxuser flux proxy local:///run/flux/local bash
-$ openssl speed -multi 4
+kubectl exec -it flux-sample-0-p85cj bash
+. /mnt/flux/flux-view.sh 
+flux proxy ${fluxsocket} bash
+openssl speed -multi 4
 ```
 
 You'll see it change (with updates between 15 seconds and 1.5 minutes!):
 
-```
-$ kubectl get -n flux-operator hpa -w
+```bash
+$ kubectl get hpa -w
 NAME              REFERENCE                 TARGETS   MINPODS   MAXPODS   REPLICAS   AGE
 flux-sample-hpa   MiniCluster/flux-sample   0%/2%     2         4         2          33m
 flux-sample-hpa   MiniCluster/flux-sample   0%/2%     2         4         2          34m
@@ -434,20 +433,11 @@ flux-sample-hpa   MiniCluster/flux-sample   3%/2%     2         4         2     
 flux-sample-hpa   MiniCluster/flux-sample   0%/2%     2         4         3          34m
 ```
 
-With the openssl command above, I got it to hit a much higher load:
-
-```bash
-flux-sample-hpa   MiniCluster/flux-sample   0%/2%          2         4         4          7m30s
-flux-sample-hpa   MiniCluster/flux-sample   21%/2%         2         4         4          8m30s
-flux-sample-hpa   MiniCluster/flux-sample   25%/2%         2         4         4          8m46s
-flux-sample-hpa   MiniCluster/flux-sample   25%/2%         2         4         4          9m1s
-```
-
 So basically, we are seeing the cluster increase in size accordingly! Note that another way to achieve this is just to set `interactive: true` to
 the minicluster.yaml. 
 
 ```bash
-kubectl get -n flux-operator pods
+kubectl get pods
 NAME                  READY   STATUS    RESTARTS   AGE
 flux-sample-0-blgsw   1/1     Running   0          56s
 flux-sample-1-k4m6s   1/1     Running   0          56s
@@ -461,7 +451,7 @@ cool because it means you can create different HPAs for different job types (org
 Depending on how you stress the pods, it can easily go up to the max:
 
 ```bash
-kubectl get --raw /apis/flux-framework.org/v1alpha2/namespaces/flux-operator/miniclusters/flux-sample/scale | jq
+kubectl get --raw /apis/flux-framework.org/v1alpha2/namespaces/default/miniclusters/flux-sample/scale | jq
 ```
 ```console
 {
@@ -469,10 +459,10 @@ kubectl get --raw /apis/flux-framework.org/v1alpha2/namespaces/flux-operator/min
   "apiVersion": "autoscaling/v1",
   "metadata": {
     "name": "flux-sample",
-    "namespace": "flux-operator",
-    "uid": "31a02984-d47c-4d96-bd7e-ab7f381ec660",
-    "resourceVersion": "8735",
-    "creationTimestamp": "2023-05-20T05:50:56Z"
+    "namespace": "default",
+    "uid": "a5455ad0-ed53-4408-b8e1-67478516ba14",
+    "resourceVersion": "3247",
+    "creationTimestamp": "2023-10-16T01:05:04Z"
   },
   "spec": {
     "replicas": 4
@@ -507,4 +497,3 @@ cluster itself. When you are done:
 ```bash
 $ kind delete cluster
 ```
-

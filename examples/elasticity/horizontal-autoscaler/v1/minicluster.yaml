@@ -1,21 +1,22 @@
-apiVersion: flux-framework.org/v1alpha1
+apiVersion: flux-framework.org/v1alpha2
 kind: MiniCluster
 metadata:
   name: flux-sample
-  namespace: flux-operator
 spec:
   size: 2
+
   # If we don't set this, we won't be able to go above two!
   maxSize: 10
 
+  # Interactive will start the broker to shell into
+  interactive: true
+
   # This is a list because a pod can support multiple containers
   containers:
-    - image: ghcr.io/rse-ops/singularity:tag-mamba
+    - image: rockylinux:9
       workingDir: /data
 
-      # We will use launcher here to just run the command
       # You can shell in to connect to the broker and issue commands that use CPU
-      launcher: true
       command: sleep infinity
 
       # Important! We need to have resource requests for the horizonal autoscaler
@@ -27,10 +28,3 @@ spec:
 
         requests:
           cpu: "1"
-      
-      # This pulls the container (once) by the broker to workingDir /data
-      commands:
-        pre: pip install kubernetes
-
-      fluxUser:
-        name: fluxuser

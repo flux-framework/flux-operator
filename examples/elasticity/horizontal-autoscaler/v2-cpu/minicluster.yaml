@@ -1,8 +1,7 @@
-apiVersion: flux-framework.org/v1alpha1
+apiVersion: flux-framework.org/v1alpha2
 kind: MiniCluster
 metadata:
   name: flux-sample
-  namespace: flux-operator
 spec:
   size: 2
 
@@ -14,7 +13,7 @@ spec:
 
   # This is a list because a pod can support multiple containers
   containers:
-    - image: ghcr.io/rse-ops/singularity:tag-mamba
+    - image: rockylinux:9
       workingDir: /data
 
       # You can shell in to connect to the broker and issue commands that use CPU
@@ -29,6 +28,3 @@ spec:
 
         requests:
           cpu: "1"
-
-      fluxUser:
-        name: fluxuser
