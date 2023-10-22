@@ -42,5 +42,5 @@ spec:
       commands:
         pre: |
           . /mnt/flux/flux-view.sh
-          python-3.11 -m ensurepip
-          python-3.11 -m pip install flux-metrics-api
+          python3.11 -m ensurepip
+          python3.11 -m pip install flux-metrics-api

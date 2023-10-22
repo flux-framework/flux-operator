@@ -1,28 +1,27 @@
-apiVersion: flux-framework.org/v1alpha1
+apiVersion: flux-framework.org/v1alpha2
 kind: MiniCluster
 metadata:
   name: flux-sample
-  namespace: flux-operator
 spec:
   # Number of pods to create for MiniCluster
   size: 4
+
+  flux:
+    # Option Flags for this flux runner wait.sh entrypoint
+    optionFlags: "-ompi=openmpi@5"
 
   # This is a list because a pod can support multiple containers
   containers:
     # The container URI to pull (currently needs to be public)
     - image: ghcr.io/rse-ops/conveyorlc-spack:test
 
-      # Option Flags for this flux runner wait.sh entrypoint
-      fluxOptionFlags: "-ompi=openmpi@5"
-
       # custom preCommand logic (run at start of script)
-      preCommand: |
-        # Flux is installed via spack, this activates the environment
-        cd /opt/spack-environment
-        . /opt/spack-environment/spack/share/spack/setup-env.sh
-        spack env activate .
-        cd -
-        asFlux="sudo -u flux -E PYTHONPATH=$PYTHONPATH PATH=$PATH"
+      commands:
+        pre: |
+          cd /opt/spack-environment
+          . /opt/spack-environment/spack/share/spack/setup-env.sh
+          spack env activate .
+          cd -
 
       # To run job in UI:
       # workdir: /code/scripts

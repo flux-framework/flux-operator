@@ -347,7 +347,7 @@ This is a dummy example and I didn't put too much thought into it beyond getting
 get a status from the hpa directly:
 
 ```console
-$ kubectl get hpa -n flux-operator flux-sample-hpa -o json | jq .status.conditions
+$ kubectl get hpa flux-sample-hpa -o json | jq .status.conditions
 [
   {
     "lastTransitionTime": "2023-05-31T19:50:20Z",
@@ -376,7 +376,7 @@ $ kubectl get hpa -n flux-operator flux-sample-hpa -o json | jq .status.conditio
 And note the scaling was done (we started at 2):
 
 ```bash
-$ kubectl get -n flux-operator pods
+$ kubectl get pods
 NAME                  READY   STATUS    RESTARTS   AGE
 flux-sample-0-kg8mq   1/1     Running   0          42m
 flux-sample-1-dntwk   1/1     Running   0          42m

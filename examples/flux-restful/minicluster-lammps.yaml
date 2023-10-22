@@ -1,8 +1,7 @@
-apiVersion: flux-framework.org/v1alpha1
+apiVersion: flux-framework.org/v1alpha2
 kind: MiniCluster
 metadata:
   name: flux-sample
-  namespace: flux-operator
 spec:
   # Number of pods to create for MiniCluster
   size: 4
@@ -10,4 +9,4 @@ spec:
   # This is a list because a pod can support multiple containers
   containers:
     # The container URI to pull (currently needs to be public)
-    - image: ghcr.io/rse-ops/lammps:flux-sched-focal-v0.24.0
+    - image: ghcr.io/converged-computing/metric-lammps:latest

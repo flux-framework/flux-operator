@@ -84,6 +84,9 @@ brokerOptions="-Scron.directory=/etc/flux/system/cron.d \
 
 function run_flux_restful() {
 
+    # Ensure we source python environment with flux
+    . ${viewbase}/flux-view.sh
+
     # Start restful API server
     branch={{if .Spec.FluxRestful.Branch}}{{.Spec.FluxRestful.Branch}}{{else}}main{{end}}
     startServer="uvicorn app.main:app --host=0.0.0.0 --port={{or .Spec.FluxRestful.Port 5000}}"
@@ -96,8 +99,10 @@ function run_flux_restful() {
     export FLUX_TOKEN={{ .FluxToken }}
     printf "🔒️ Credentials, my friend!\n    FLUX_USER: ${FLUX_USER}\n    FLUX_TOKEN: ${FLUX_TOKEN}\n\n"
 
+    {{template "ensure-pip" .}}
+
     # Install python requirements, with preference for python3
-    python3 -m pip install -r requirements.txt > /dev/null 2>&1 || python -m pip install -r requirements.txt > /dev/null 2>&1
+    ${pythonversion} -m pip install -r requirements.txt # > /dev/null 2>&1 || -m pip install -r requirements.txt > /dev/null 2>&1 || python -m pip install -r requirements.txt > /dev/null 2>&1
 
     # Prepare databases!
     alembic revision --autogenerate -m "Create intital tables"
