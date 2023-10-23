@@ -41,7 +41,6 @@ class MiniClusterSpec(object):
         'containers': 'list[MiniClusterContainer]',
         'deadline_seconds': 'int',
         'flux': 'FluxSpec',
-        'flux_restful': 'FluxRestful',
         'interactive': 'bool',
         'job_labels': 'dict[str, str]',
         'logging': 'LoggingSpec',
@@ -62,7 +61,6 @@ class MiniClusterSpec(object):
         'containers': 'containers',
         'deadline_seconds': 'deadlineSeconds',
         'flux': 'flux',
-        'flux_restful': 'fluxRestful',
         'interactive': 'interactive',
         'job_labels': 'jobLabels',
         'logging': 'logging',
@@ -77,7 +75,7 @@ class MiniClusterSpec(object):
         'volumes': 'volumes'
     }
 
-    def __init__(self, archive=None, cleanup=False, containers=None, deadline_seconds=31500000, flux=None, flux_restful=None, interactive=False, job_labels=None, logging=None, max_size=None, network=None, pod=None, services=None, share_process_namespace=False, size=1, tasks=1, users=None, volumes=None, local_vars_configuration=None):  # noqa: E501
+    def __init__(self, archive=None, cleanup=False, containers=None, deadline_seconds=31500000, flux=None, interactive=False, job_labels=None, logging=None, max_size=None, network=None, pod=None, services=None, share_process_namespace=False, size=1, tasks=1, users=None, volumes=None, local_vars_configuration=None):  # noqa: E501
         """MiniClusterSpec - a model defined in OpenAPI"""  # noqa: E501
         if local_vars_configuration is None:
             local_vars_configuration = Configuration.get_default_copy()
@@ -88,7 +86,6 @@ class MiniClusterSpec(object):
         self._containers = None
         self._deadline_seconds = None
         self._flux = None
-        self._flux_restful = None
         self._interactive = None
         self._job_labels = None
         self._logging = None
@@ -112,8 +109,6 @@ class MiniClusterSpec(object):
             self.deadline_seconds = deadline_seconds
         if flux is not None:
             self.flux = flux
-        if flux_restful is not None:
-            self.flux_restful = flux_restful
         if interactive is not None:
             self.interactive = interactive
         if job_labels is not None:
@@ -251,27 +246,6 @@ class MiniClusterSpec(object):
         """
 
         self._flux = flux
-
-    @property
-    def flux_restful(self):
-        """Gets the flux_restful of this MiniClusterSpec.  # noqa: E501
-
-
-        :return: The flux_restful of this MiniClusterSpec.  # noqa: E501
-        :rtype: FluxRestful
-        """
-        return self._flux_restful
-
-    @flux_restful.setter
-    def flux_restful(self, flux_restful):
-        """Sets the flux_restful of this MiniClusterSpec.
-
-
-        :param flux_restful: The flux_restful of this MiniClusterSpec.  # noqa: E501
-        :type flux_restful: FluxRestful
-        """
-
-        self._flux_restful = flux_restful
 
     @property
     def interactive(self):

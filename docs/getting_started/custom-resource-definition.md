@@ -806,11 +806,9 @@ This value when unset defaults to 1.
 Providing (or not providing) a command is going to dictate the behavior of your MiniCluster!
 
 1. Providing a custom command means the MiniCluster is ephemeral - it will run the command and clean up.
-2. Not providing a command means that we will create a persistent MiniCluster running a RESTFul API service (and GUI) to submit jobs to.
+2. Not providing a command means that we will create a persistent MiniCluster running in interactive mode.
 
 ```yaml
-    # Don't set a command unless you want to forgo running the restful server to submit
-    # commands to! E.g., instead of starting the server, it will just run your job command.
     command: lmp -v x 2 -v y 2 -v z 2 -in in.reaxc.hns -nocite
 ```
 
@@ -857,7 +855,7 @@ you don't need this. But we do hope you are able to practice open science and sh
 
 #### workingDir
 
-The container likely has a set working directory, and if you are running the RESTful API service (meaning
+The container likely has a set working directory, and if you are running an interactive cluster (meaning
 you start without a command, as shown above) this will likely be the application folder. If you are launching
 a job directly with flux start and require a particular working directory, set it here!
 
@@ -865,10 +863,6 @@ a job directly with flux start and require a particular working directory, set i
     # You can set the working directory if your container WORKDIR is not correct.
     workingDir: /home/flux/examples/reaxff/HNS
 ```
-
-Remember that if you don't provide a command and launch the RESTFul API, you can provide the working
-directory needed on the level of each job submit, and you don't need to define it here.
-In fact, if you are using the flux-restful-api server, it will be changed anyway.
 
 #### pullAlways
 
@@ -1074,7 +1068,7 @@ but then set batch to true:
 
 ```yaml
 containers:
-  - image: ghcr.io/flux-framework/flux-restful-api:latest
+  - image: rockylinux:9
 
     # Indicate this should be a batch job
     batch: true
@@ -1094,7 +1088,7 @@ jobs are numbered by the order you provide above. To change this path:
 
 ```yaml
 containers:
-  - image: ghcr.io/flux-framework/flux-restful-api:latest
+  - image: rockylinux:9
 
     # Indicate this should be a batch job
     batch: true
@@ -1273,42 +1267,3 @@ containers:
 ```
 
 The above shows an existing secret named "certs" that we will mount into `/etc/certs`.
-
-### fluxRestful
-
-The "fluxRestful" section has a few parameters to dictate the installation of the
-[Flux Restful API](https://github.com/flux-framework/flux-restful-api), which provides
-a user interface to submit jobs.
-
-#### branch
-
-The branch parameter controls if you want to clone a custom branch (e.g., for testing).
-It defaults to main.
-
-```yaml
-  fluxRestful:
-    branch: feature-branch
-```
-
-#### port
-
-The port parameter controls the port you want to run the FluxRestful server on,
-within the cluster. Remember that you can always forward this to something else!
-It defaults to 5000.
-
-```yaml
-  fluxRestful:
-    port: 5000
-```
-
-#### secretKey
-
-We use a secretKey to encode all payloads to the server. If you don't specify one,
-the Flux Operator will make one for you! If you intend to communicate with your
-MiniCluster outside of this context, you can either grab this from the logs
-or define your own as follows:
-
-```yaml
-  fluxRestful:
-    secretKey: notsosecrethoo
-```

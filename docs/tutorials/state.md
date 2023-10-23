@@ -113,7 +113,7 @@ spec:
 
   # This is a list because a pod can support multiple containers
   containers:
-    - image: ghcr.io/flux-framework/flux-restful-api:latest
+    - image: rockylinux:9
       volumes:
         data:
           path: /state
@@ -127,14 +127,7 @@ we will run `flux dump` to that same archive as an interactive command. Note thi
 that assumes we are OK replacing a previous state with a new one - for more complex workflows (where
 possibly we need to maintain an original state) we likely will need to do something differently. For
 the time being, let's create this first MiniCluster to submit jobs to, and the plan will be
-that the second MiniCluster can load previous job history. If you are using
-Minikube, make sure to pull first:
-
-```bash
-$ minikube ssh docker pull ghcr.io/flux-framework/flux-restful-api:latest
-```
-
-Now let's create it! You can either walk through this tutorial and learn about each step (continue)
+that the second MiniCluster can load previous job history. Now let's create it! You can either walk through this tutorial and learn about each step (continue)
 below with kubectl apply) or you can run a demo script that runs the commands on your behalf:
 
 ```bash
@@ -245,9 +238,8 @@ At this point you can proceed to either [Interactive Submit](#interactive-submit
 
 ### Interactive Submit
 
-And now we need to submit a bunch of jobs to run to completion. We can do this by shelling in (and
-note this could be done by the Flux Restful API for a more proggrammatic example). First,
-here is how to do this interactively:
+And now we need to submit a bunch of jobs to run to completion. We can do this by shelling in. 
+First, here is how to do this interactively:
 
 ```bash
 # Shell to the pod

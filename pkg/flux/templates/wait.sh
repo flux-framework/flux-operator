@@ -82,47 +82,6 @@ brokerOptions="-Scron.directory=/etc/flux/system/cron.d \
   -Slog-stderr-mode=local"
 
 
-function run_flux_restful() {
-
-    # Ensure we source python environment with flux
-    . ${viewbase}/flux-view.sh
-
-    # Start restful API server
-    branch={{if .Spec.FluxRestful.Branch}}{{.Spec.FluxRestful.Branch}}{{else}}main{{end}}
-    startServer="uvicorn app.main:app --host=0.0.0.0 --port={{or .Spec.FluxRestful.Port 5000}}"
-    printf "Cloning flux-framework/flux-restful-api branch ${branch}\n"
-    git clone -b ${branch} --depth 1 https://github.com/flux-framework/flux-restful-api ./flux-restful-api > /dev/null 2>&1
-    cd ./flux-restful-api
-            
-    # Export the main flux user and token "superuser"
-    export FLUX_USER=$(whoami)
-    export FLUX_TOKEN={{ .FluxToken }}
-    printf "🔒️ Credentials, my friend!\n    FLUX_USER: ${FLUX_USER}\n    FLUX_TOKEN: ${FLUX_TOKEN}\n\n"
-
-    {{template "ensure-pip" .}}
-
-    # Install python requirements, with preference for python3
-    ${pythonversion} -m pip install -r requirements.txt # > /dev/null 2>&1 || -m pip install -r requirements.txt > /dev/null 2>&1 || python -m pip install -r requirements.txt > /dev/null 2>&1
-
-    # Prepare databases!
-    alembic revision --autogenerate -m "Create intital tables"
-    alembic upgrade head
-    python3 app/db/init_db.py init || python app/db/init_db.py init
-
-    # Shared envars across user modes
-    # For the RestFul API, we can't easily scale this up so MaxSize is largely ignored
-    export FLUX_REQUIRE_AUTH=true
-    export FLUX_SECRET_KEY={{ .Spec.FluxRestful.SecretKey }}
-    export FLUX_NUMBER_NODES={{ .Spec.Size }}
-
-    printf "\n 🔑 Use your Flux user and token credentials to authenticate with the MiniCluster with flux-framework/flux-restful-api\n"
-
-    # -o is an "option" for the broker
-    # -S corresponds to a shortened --setattr=ATTR=VAL 
-    printf "\n🌀 {{.Container.Commands.Prefix}} flux broker --config-path ${cfg} ${brokerOptions} ${startServer}\n"
-    {{.Container.Commands.Prefix}} flux broker --config-path /etc/flux/config ${brokerOptions} ${startServer}
-}
-
 # Run an interactive cluster, giving no command to flux start
 function run_interactive_cluster() {
     echo "🌀 flux broker --config-path ${cfg} ${brokerOptions}"
@@ -167,7 +126,7 @@ flux jobs -a{{ end }}
     if [ "${command}" == "" ]; then
 
        # An interactive job also doesn't require a command
-       {{ if .Spec.Interactive }}run_interactive_cluster{{ else }}run_flux_restful{{ end }}
+       run_interactive_cluster
 
     else
     

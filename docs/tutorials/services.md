@@ -11,7 +11,7 @@ flux install, along with a service for the entire cluster (a deployment next to 
 
 This is one of the simplest examples, implemented as a test, to run a sidecar with NGINX and then curl localhost
 to get a response from flux. Note that if you are interested in a more complex example that does similar, but also
-provides a custom nginx.conf and shows how to interact with the flux restful API, see the [services/sidecar/nginx](https://github.com/flux-framework/flux-operator/blob/main/examples/services/sidecar/nginx) example.
+provides a custom nginx.conf see the [services/sidecar/nginx](https://github.com/flux-framework/flux-operator/blob/main/examples/services/sidecar/nginx) example.
 
 ```yaml
 apiVersion: flux-framework.org/v1alpha2
@@ -28,7 +28,7 @@ spec:
 
   # This is a list because a pod can support multiple containers
   containers:
-    - image: ghcr.io/flux-framework/flux-restful-api:latest
+    - image: rockylinux:9
       runFlux: true
       command: curl -s localhost
       commands:
@@ -139,7 +139,7 @@ spec:
   # This is a list because a pod can support multiple containers
   containers:
     # The container URI to pull (currently needs to be public)
-    - image: ghcr.io/flux-framework/flux-restful-api:latest
+    - image: rockylinux:9
       runFlux: true
       commands:
 
@@ -165,7 +165,6 @@ It's helpful to pull containers to MiniKube first:
 
 ```bash
 $ minikube ssh docker pull ghcr.io/oras-project/registry:latest
-$ minikube ssh docker pull ghcr.io/flux-framework/flux-restful-api:latest
 ```
 
 When interactive is true, we tell the Flux broker to start without a command. This means

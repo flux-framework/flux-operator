@@ -107,7 +107,7 @@ spec:
       path: /tmp/workflow
 
   containers:
-    - image: ghcr.io/flux-framework/flux-restful-api:latest
+    - image: rockylinux:9
       command: ls /data
 
       # The name (key) "data" corresponds to the one in "volumes" above
@@ -235,7 +235,7 @@ spec:
 
   # This is a list because a pod can support multiple containers
   containers:
-    - image: ghcr.io/flux-framework/flux-restful-api:latest
+    - image: rockylinux:9
       command: ls /data
       existingVolumes:
         data:

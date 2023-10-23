@@ -22,5 +22,6 @@ Some caveats or changes to the design:
 
  - we use an init-container instead of sidecar so the indexed job completes
  - links to python within the view will be broken because the original view path is not preserved, but instead you can target the versioned binary (e.g., python3.11 instead of python)
+ - flux restful is being removed, and (when refactored) will be provided as an example application
 
 - [Link on Excalidraw](https://excalidraw.com/#json=auIWjzPmpLnss1fP4FdjL,UY4HiAoQ0zH1tFTptDLCXw)

@@ -90,9 +90,6 @@ func generateEntrypointScript(
 	container := cluster.Spec.Containers[containerIndex]
 	mainHost := fmt.Sprintf("%s-0", cluster.Name)
 
-	// Ensure Flux Restful has a secret key
-	cluster.Spec.FluxRestful.SecretKey = getRandomToken(cluster.Spec.FluxRestful.SecretKey)
-
 	// Ensure if we have a batch command, it gets split up
 	batchCommand := strings.Split(container.Command, "\n")
 
@@ -107,7 +104,6 @@ func generateEntrypointScript(
 		Container:     container,
 		MainHost:      mainHost,
 		Spec:          cluster.Spec,
-		FluxToken:     getRandomToken(cluster.Spec.FluxRestful.Token),
 		Batch:         batchCommand,
 	}
 

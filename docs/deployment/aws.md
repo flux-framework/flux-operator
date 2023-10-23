@@ -211,11 +211,6 @@ flux-sample-2-zs4h6   1/1     Running   0          2m11s
 flux-sample-3-prtn9   1/1     Running   0          2m11s
 ```
 
-And when the containers are running, in the logs you'll see see lots of cute emojis to indicate progress, and then the
-start of your server! You'll need an exposed host to see the user interface, or you can interact to submit jobs via the RESTful API.
-A Python client is [available here](https://flux-framework.org/flux-restful-api/getting_started/user-guide.html#python).
-To use Flux Cloud to programmatically submit jobs, [see the guides here](https://converged-computing.github.io/flux-cloud/getting_started/aws.html).
-
 ### Run Snakemake with a Shared Filesystem
 
 This small tutorial will run a Snakemake workflow on AWS that requires a shared

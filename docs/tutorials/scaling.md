@@ -51,12 +51,6 @@ $ kubectl create namespace flux-operator
 $ kubectl apply -f examples/scaling/basic/minicluster.yaml
 ```
 
-You'll need to wait for the containers to create (the image is pulling) and you can
-help the pull via:
-
-```bash
-$ minikube ssh docker pull ghcr.io/flux-framework/flux-restful-api:latest
-```
 
 ### Check Initial Size
 
@@ -239,7 +233,7 @@ spec:
 
   # This is a list because a pod can support multiple containers
   containers:
-    - image: ghcr.io/flux-framework/flux-restful-api:latest
+    - image: rockylinux:9
 ```
 ```bash
 $ kubectl apply -f ./examples/scaling/expand/minicluster.yaml
