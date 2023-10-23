@@ -94,7 +94,6 @@ func NewMiniClusterJob(cluster *api.MiniCluster) (*batchv1.Job, error) {
 	containers, err := getContainers(
 		cluster.Spec.Containers,
 		cluster.Name,
-		cluster.Spec.FluxRestful.Port,
 		mounts,
 	)
 

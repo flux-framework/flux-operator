@@ -48,7 +48,6 @@ func getFluxContainer(
 func getContainers(
 	specs []api.MiniClusterContainer,
 	defaultName string,
-	servicePort int32,
 	mounts []corev1.VolumeMount,
 ) ([]corev1.Container, error) {
 
@@ -149,15 +148,6 @@ func getContainers(
 
 		ports := []corev1.ContainerPort{}
 		envars := []corev1.EnvVar{}
-
-		// If it's the FluxRunner, expose port 5000 for the service
-		if container.RunFlux {
-			newPort := corev1.ContainerPort{
-				ContainerPort: int32(servicePort),
-				Protocol:      "TCP",
-			}
-			ports = append(ports, newPort)
-		}
 
 		// For now we will take ports and have container port == exposed port
 		for _, port := range container.Ports {

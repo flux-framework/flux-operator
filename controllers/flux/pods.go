@@ -148,7 +148,6 @@ func (r *MiniClusterReconciler) newServicePod(
 	containers, err := getContainers(
 		cluster.Spec.Services,
 		podServiceName,
-		cluster.Spec.FluxRestful.Port,
 		mounts,
 	)
 
