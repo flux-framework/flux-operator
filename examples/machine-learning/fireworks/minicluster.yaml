@@ -1,8 +1,7 @@
-apiVersion: flux-framework.org/v1alpha1
+apiVersion: flux-framework.org/v1alpha2
 kind: MiniCluster
 metadata:
   name: flux-sample
-  namespace: flux-operator
 spec:
 
   # Note that the demo is hard coded for a size of 10
@@ -30,16 +29,13 @@ spec:
       command: python3 /tmp/workflow/run-workflow.py
       launcher: true
       environment:
-        MONGODB_URI: "mongodb://admin:password@flux-sample-services.flux-service.flux-operator.svc.cluster.local:27017/test?authSource=admin"
-        PYTHONPATH: /opt/conda/lib/python3.10/site-packages:/usr/lib/python3.10/site-packages
+        MONGODB_URI: "mongodb://admin:password@flux-sample-services.flux-service.default.svc.cluster.local:27017/test?authSource=admin"
+        PYTHONPATH: /opt/conda/lib/python3.10/site-packages:$PYTHONPATH
         DEMO_DIR: /tmp/workflow
 
       # This submits tasks to mongodb
       commands:
         brokerPre: python3 /tmp/workflow/submit-workflow.py
-
-      fluxUser:
-        name: fluxuser
 
       volumes:
         data:

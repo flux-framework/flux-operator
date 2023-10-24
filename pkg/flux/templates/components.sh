@@ -47,7 +47,7 @@ if [[ -f "${pythonversion}" ]]; then
 fi
 
 # Ensure we use flux's python (TODO update this to use variable)
-export PYTHONPATH={{ if .Spec.Flux.Container.PythonPath }}{{ .Spec.Flux.Container.PythonPath }}{{ else }}${foundroot}/site-packages{{ end }}
+export PYTHONPATH=$PYTHONPATH:{{ if .Spec.Flux.Container.PythonPath }}{{ .Spec.Flux.Container.PythonPath }}{{ else }}${foundroot}/site-packages{{ end }}
 echo "PYTHONPATH is ${PYTHONPATH}" {{ if .Spec.Logging.Quiet }}> /dev/null 2>&1{{ end }}
 echo "PATH is $PATH" {{ if .Spec.Logging.Quiet }}> /dev/null 2>&1{{ end }}
 
