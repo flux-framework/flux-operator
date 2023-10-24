@@ -1,8 +1,7 @@
-apiVersion: flux-framework.org/v1alpha1
+apiVersion: flux-framework.org/v1alpha2
 kind: MiniCluster
 metadata:
   name: flux-sample
-  namespace: flux-operator
 spec:
 
   # This example technically runs on one node -
@@ -28,9 +27,6 @@ spec:
           if [[ ! -f "tensorflow.sif" ]]; then
               singularity pull tensorflow.sif docker://nvcr.io/nvidia/tensorflow:22.09-tf2-py3
           fi
-
-      fluxUser:
-        name: fluxuser
 
       # Container will be pre-pulled here only by the broker
       volumes:
