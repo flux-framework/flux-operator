@@ -1,5 +1,8 @@
 ### Merlin OpenFoam
 
+**NOT UPDATED**
+
+This example is not updated to use the new Flux operator (or running as root) and likely will not work.
 This example will run openfoam via a Singularity container.
 
 Note that we derive this example from [this repository](https://github.com/rse-ops/flux-hpc/tree/main/merlin-demos)

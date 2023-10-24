@@ -75,6 +75,11 @@
           "type": "string",
           "default": ""
         },
+        "servicePre": {
+          "description": "A command only for service start.sh tor run",
+          "type": "string",
+          "default": ""
+        },
         "workerPre": {
           "description": "A command only for workers to run",
           "type": "string",

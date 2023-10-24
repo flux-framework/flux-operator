@@ -650,6 +650,10 @@ type Commands struct {
 	// A single command for only the broker to run
 	// +optional
 	BrokerPre string `json:"brokerPre"`
+
+	// A command only for service start.sh tor run
+	// +optional
+	ServicePre string `json:"servicePre"`
 }
 
 // ContainerResources include limits and requests

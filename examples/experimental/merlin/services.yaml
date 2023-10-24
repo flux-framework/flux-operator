@@ -6,7 +6,6 @@ items:
       labels:
         io.kompose.service: rabbitmq
       name: rabbitmq
-      namespace: flux-operator
     spec:
       ports:
         - name: "15672"
@@ -31,7 +30,6 @@ items:
       labels:
         io.kompose.service: redis
       name: redis
-      namespace: flux-operator
     spec:
       ports:
         - name: "6379"
@@ -44,7 +42,6 @@ items:
   - apiVersion: networking.k8s.io/v1
     kind: NetworkPolicy
     metadata:
-      namespace: flux-operator
       name: rabbitmq
     spec:
       ingress:
@@ -62,7 +59,6 @@ items:
         io.kompose.service: rabbitmq
         # Selector for cluster headless service
         job-name: flux-sample
-      namespace: flux-operator
       name: rabbitmq
     spec:
       replicas: 1
@@ -98,7 +94,6 @@ items:
         # Selector for cluster headless service
         job-name: flux-sample
       name: redis
-      namespace: flux-operator
     spec:
       replicas: 1
       selector:
@@ -117,6 +112,9 @@ items:
               name: redis
               ports:
                 - containerPort: 6379
+              env:
+                - name: C_FORCE_ROOT
+                  value: "true"
               resources: {}
               tty: true
           hostname: redis

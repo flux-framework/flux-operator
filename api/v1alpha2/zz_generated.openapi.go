@@ -181,6 +181,14 @@ func schema__api_v1alpha2__Commands(ref common.ReferenceCallback) common.OpenAPI
 							Format:      "",
 						},
 					},
+					"servicePre": {
+						SchemaProps: spec.SchemaProps{
+							Description: "A command only for service start.sh tor run",
+							Default:     "",
+							Type:        []string{"string"},
+							Format:      "",
+						},
+					},
 				},
 			},
 		},

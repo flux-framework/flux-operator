@@ -1,0 +1,21 @@
+apiVersion: flux-framework.org/v1alpha2
+kind: MiniCluster
+metadata:
+  name: flux-sample
+spec:
+  size: 4
+
+  # The various merlin commands use flux alloc, and also don't hang / wait until 
+  # we are done, so they need to be done interactively
+  interactive: true
+
+  containers:
+    - image: ghcr.io/rse-ops/merlin-demos-certs:merlin
+      workingDir: /workflow
+
+      commands:
+        pre: |
+          source /mnt/flux/flux-view.sh 
+          merlin example flux_par
+          cp ./flux_par.yaml ./flux/flux_par.yaml
+          merlin run flux/flux_par.yaml

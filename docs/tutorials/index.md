@@ -59,8 +59,6 @@ These examples show how to interact with your flux queue from a sidecar containe
 ### Services
 
  - [Nginx](https://github.com/flux-framework/flux-operator/blob/main/examples/services/sidecar/nginx): to run alongisde your MiniCluster (and possibly expose functionality)
- - [Merlin Basic](https://github.com/flux-framework/flux-operator/blob/main/examples/launchers/merlin/basic)
- - [Merlin Singularity Openfoam](https://github.com/flux-framework/flux-operator/blob/main/examples/launchers/merlin/singularity-openfoam)
 
 ### Workflows
 

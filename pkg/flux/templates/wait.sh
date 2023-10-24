@@ -11,6 +11,7 @@
 
 # Shared logic to wait for view
 {{template "wait-view" .}}
+{{template "paths" .}}
 
 # And pre command logic that isn't passed to the certificate generator
 {{ .Container.Commands.Pre}} {{ if .Spec.Logging.Quiet }}> /dev/null 2>&1{{ end }}
@@ -50,8 +51,6 @@ cat ${curvepath}
 chmod o-r ${curvepath}
 chmod g-r ${curvepath}
 chown -R ${fluxuid} ${curvepath}
-
-{{template "paths" .}}
 
 # Put the state directory in /var/lib on shared view
 export STATE_DIR=${viewroot}/var/lib/flux

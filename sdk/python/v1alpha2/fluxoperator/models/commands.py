@@ -41,6 +41,7 @@ class Commands(object):
         'post': 'str',
         'pre': 'str',
         'prefix': 'str',
+        'service_pre': 'str',
         'worker_pre': 'str'
     }
 
@@ -50,10 +51,11 @@ class Commands(object):
         'post': 'post',
         'pre': 'pre',
         'prefix': 'prefix',
+        'service_pre': 'servicePre',
         'worker_pre': 'workerPre'
     }
 
-    def __init__(self, broker_pre='', init='', post='', pre='', prefix='', worker_pre='', local_vars_configuration=None):  # noqa: E501
+    def __init__(self, broker_pre='', init='', post='', pre='', prefix='', service_pre='', worker_pre='', local_vars_configuration=None):  # noqa: E501
         """Commands - a model defined in OpenAPI"""  # noqa: E501
         if local_vars_configuration is None:
             local_vars_configuration = Configuration.get_default_copy()
@@ -64,6 +66,7 @@ class Commands(object):
         self._post = None
         self._pre = None
         self._prefix = None
+        self._service_pre = None
         self._worker_pre = None
         self.discriminator = None
 
@@ -77,6 +80,8 @@ class Commands(object):
             self.pre = pre
         if prefix is not None:
             self.prefix = prefix
+        if service_pre is not None:
+            self.service_pre = service_pre
         if worker_pre is not None:
             self.worker_pre = worker_pre
 
@@ -194,6 +199,29 @@ class Commands(object):
         """
 
         self._prefix = prefix
+
+    @property
+    def service_pre(self):
+        """Gets the service_pre of this Commands.  # noqa: E501
+
+        A command only for service start.sh tor run  # noqa: E501
+
+        :return: The service_pre of this Commands.  # noqa: E501
+        :rtype: str
+        """
+        return self._service_pre
+
+    @service_pre.setter
+    def service_pre(self, service_pre):
+        """Sets the service_pre of this Commands.
+
+        A command only for service start.sh tor run  # noqa: E501
+
+        :param service_pre: The service_pre of this Commands.  # noqa: E501
+        :type service_pre: str
+        """
+
+        self._service_pre = service_pre
 
     @property
     def worker_pre(self):
