@@ -52,6 +52,7 @@ We apologize for bugs you run into, and hope you tell us soon so we can work on 
 
  - add [jar](wget https://repo1.maven.org/maven2/org/openapitools/openapi-generator-cli/6.6.0/openapi-generator-cli-6.6.0.jar -O openapi-generator-cli.jar) to makefile
  - Ensure that curve.cert is a variable (path) in case we create a custom one.
+ - Convert ML (e.g., mnist and pytorch) to use base containers instead of Singularity
  - When JobSet is available we need it to say job is successful when main application container is done.
  - Investigate why initContainers approach is not working with emptyDir (asked but no response in wg-batch slack)
 

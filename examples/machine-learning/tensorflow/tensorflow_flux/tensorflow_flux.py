@@ -18,8 +18,8 @@ def tf_config_from_flux(ps_number, cluster_size=4, job_name="flux-sample", port_
     @return: a tuple containing cluster with fields cluster_spec,
              task_name and task_id 
     """
-    nodelist = os.environ.get("FLUX_JOB_NODELIST") or ["%s-%s.flux-service.flux-operator.svc.cluster.local" %(job_name, i) for i in range(cluster_size)]
-    nodename = os.environ.get("FLUX_NODENAME") or "%s.flux-service.flux-operator.svc.cluster.local" % socket.gethostname()
+    nodelist = os.environ.get("FLUX_JOB_NODELIST") or ["%s-%s.flux-service.default.svc.cluster.local" %(job_name, i) for i in range(cluster_size)]
+    nodename = os.environ.get("FLUX_NODENAME") or "%s.flux-service.default.svc.cluster.local" % socket.gethostname()
     num_nodes = int(os.getenv("FLUX_NUM_NODES") or cluster_size)
     
     if len(nodelist) != num_nodes:

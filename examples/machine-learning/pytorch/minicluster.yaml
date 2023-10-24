@@ -1,8 +1,7 @@
-apiVersion: flux-framework.org/v1alpha1
+apiVersion: flux-framework.org/v1alpha2
 kind: MiniCluster
 metadata:
   name: flux-sample
-  namespace: flux-operator
 spec:
 
   # This ensures we launch the main script on all the nodes
@@ -17,7 +16,6 @@ spec:
   containers:
     - image: ghcr.io/rse-ops/singularity:tag-mamba
       workingDir: /tmp/workflow
-      cores: 2
 
       # Where is flux? There he is!
       environment:
@@ -36,9 +34,6 @@ spec:
                singularity pull /tmp/workflow/pytorch.sif docker://gcr.io/deeplearning-platform-release/pytorch-gpu.1-12
            fi
            # TODO convert to single sandbox so all workers don't need to!
-
-      fluxUser:
-        name: fluxuser
 
       volumes:
         data:

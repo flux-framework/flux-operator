@@ -15,11 +15,10 @@ First, let's create a kind cluster. From the context of this directory:
 $ kind create cluster --config ../../kind-config.yaml
 ```
 
-And then install the operator, create the namespace, and apply the MiniCluster YAML here.
+And then install the operator and apply the MiniCluster YAML here.
 
 ```bash
 $ kubectl apply -f ../../dist/flux-operator.yaml
-$ kubectl create namespace flux-operator
 $ kubectl apply ./minicluster.yaml
 ```
 
@@ -27,7 +26,7 @@ You can then inspect logs, and see the training happening! Note that we adjusted
 to 2 (is very quick)!
 
 ```bash
-$ kubectl logs -n flux-operator flux-sample-0-7tx7s -f
+$ kubectl logs flux-sample-0-7tx7s -f
 ```
 ```console
 208 2 1.3872336 0.515625

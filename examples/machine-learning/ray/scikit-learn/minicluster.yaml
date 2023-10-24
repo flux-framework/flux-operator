@@ -1,8 +1,7 @@
-apiVersion: flux-framework.org/v1alpha1
+apiVersion: flux-framework.org/v1alpha2
 kind: MiniCluster
 metadata:
   name: flux-sample
-  namespace: flux-operator
 spec:
   # It is important to launch with tasks == nodes, so that the main start
   # command is told to run across nodes (and start.sh given to workers and leader)
@@ -27,10 +26,6 @@ spec:
         - 8786
         - 6379
       command: /bin/bash /tmp/workflow/start.sh
-
-      #launcher: true
-      fluxUser:
-        name: fluxuser
       volumes:
         data:
           path: /tmp/workflow
