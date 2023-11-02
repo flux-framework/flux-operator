@@ -1,0 +1,41 @@
+apiVersion: flux-framework.org/v1alpha2
+kind: MiniCluster
+metadata:
+  name: flux-sample
+spec:
+
+  # Number of pods to create for MiniCluster
+  size: 2
+
+  # Cleanup the storage volume (PVC and PV) after run
+  # Leave this to false so you can see the log in the pod output
+  cleanup: false
+  interactive: true
+
+  # Make this kind of persistent volume and claim available to pods
+  # This is a type of storage that will use Google Storage
+  volumes:
+    data:
+      storageClass: hostpath
+      path: /tmp/data
+
+  # This is a list because a pod can support multiple containers
+  containers:
+
+     # Yes I pushed to the wrong name and then was too lazy to change it, lol
+    - image: vanessa/somosie:latest
+
+      # We are saying to mount the "data" volume defined above to "/workflow"
+      # in the container
+      volumes:
+        data:
+          # This is where we will bind storage
+          # E.g., /mnt/s3data is bound to /var/s3 or /mnt/s3data:/var/s3
+          path: /var/s3
+          # readOnly defaults to false
+                
+      # This should be the directory with the Snakefile
+      workingDir: /var/s3/
+
+      # https://github.com/TauferLab/SOMOSPIE/blob/master/SOMOSPIE_pegasus/PredictionPipeline/SOMOSPIE.ipynb
+      command: sleep infinity
