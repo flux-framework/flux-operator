@@ -15,6 +15,35 @@ while we can have Flux automatically load a saved archive, for the process to wa
 jobs to finish and then dump the archive anew, we rely on issuing a command to the MiniCluster
 (done by a script or workflow tool). This can likely be improved upon.
 
+## Create hostpath volume
+
+Create the hostpath volume first:
+
+```yaml
+kind: PersistentVolume
+apiVersion: v1
+metadata:
+  name: data
+  labels:
+    type: local
+spec:
+  capacity:
+    storage: 1Gi
+  hostPath:
+    path: /tmp/data
+```
+
+TODO this needs to be re-written 
+
+  # This volume needs to persistent between MiniClusters so we can load the archive!
+  volumes:
+    data:
+      storageClass: hostpath
+      path: /tmp/data
+      labels:
+        type: "local"
+
+
 ## Saving Pending Jobs
 
 > Pausing scheduling and the queue in a populated queue
@@ -102,14 +131,6 @@ spec:
   # Define the archive load/save path here (in our volume mount that persists)
   archive:
     path: /state/archive.tar.gz
-
-  # This volume needs to persistent between MiniClusters so we can load the archive!
-  volumes:
-    data:
-      storageClass: hostpath
-      path: /tmp/data
-      labels:
-        type: "local"
 
   # This is a list because a pod can support multiple containers
   containers:

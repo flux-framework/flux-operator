@@ -125,168 +125,6 @@ If a Job is suspended (at creation or through an update), this timer will effect
   deadlineSeconds: 100
 ```
 
-### volumes
-
-Volumes can be defined on the level of the MiniCluster that are then used by containers.
-
- - For MiniKube, these volumes are expected to be inside of the VM, e.g., accessed via `minikube ssh`
- - For an actual cluster, they should be on the node running the pod.
-
-#### volume ids
-
-For each volume under "volumes" we enforce a unique name by way of using key values - e.g., "myvolume"
-in the example below can then be referenced for a container:
-
-```yaml
-volumes:
-  myvolume:
-    path: /full/path/to/volume
-    storageClass: hostpath
-```
-
-The "storageClass" above (which you can leave out) defaults to hostpath, and should be the storage class that your cluster provides.
-The Operator createst the "hostpath" volume claim. This currently is always created as a host path volume claim in MiniKube,
-and likely in the future will have different logic if it varies from that.
-
-#### labels
-
-You can add labels:
-
-
-```yaml
-volumes:
-  myvolume:
-    path: /full/path/to/volume
-    storageClass: hostpath
-    labels:
-      type: "local"
-```
-
-#### delete
-
-By default, we will cleanup the persistent volume. To not do this (e.g., for a more permanent mount) set delete
-to false:
-
-```yaml
-volumes:
-  myvolume:
-    path: /full/path/to/volume
-    storageClass: csi-gcs
-    delete: false
-```
-
-#### driver
-
-If you are using anything aside from hostpath, you'll need a reference to a storage driver (usually a plugin)
-you've installed separately. This can also be referenced as a provisioner. Here is an example for Google Cloud storage:
-
-```yaml
-volumes:
-  myvolume:
-    path: /full/path/to/volume
-    storageClass: csi-gcs
-    driver: gcs.csi.ofek.dev
-```
-
-#### volumeHandle
-
-If your volume handle differs from your storage class name, you can define it:
-
-```yaml
-volumes:
-  myvolume:
-    path: /full/path/to/volume
-    storageClass: csi-gcs
-    driver: gcs.csi.ofek.dev
-    volumeName: manualbucket/path
-```
-
-#### attributes
-
-If your volume has attributes, you can add them too:
-
-```yaml
-volumes:
-  myvolume:
-    attributes:
-    mounter: geesefs
-    capacity: 25Gi
-```
-
-
-#### request storage size
-
-By default, a capacity request is "5Gi", and we only do this because the field is required. However, keep in mind
-for many some cloud storage interfaces there is no concept of a max.
-This is defined as a string to be parsed. To tweak that, meaning
-that this container will request this amount of storage for the container (and here we show a different storageclass
-for Google Cloud)
-
-```yaml
-volumes:
-  myvolume:
-    path: /full/path/to/volume
-    capacity: 5Gi
-    storageClass: csi-gcs
-```
-
-Since storage classes are created separately (not by the operator) you should check with your storage
-class to ensure resource limits work with your selection above.
-
-#### secret
-
-For a CSI (container storage interface) you usually need to provide a secret reference. For example,
-for GKE we create a service account with the appropriate permissions, and then apply them as a secret named `csi-gks-secret`:
-
-```yaml
-volumes:
-  myvolume:
-    path: /full/path/to/volume
-    capacity: 1Gi
-    storageClass: csi-gcs
-    secret: "csi-gcs-secret"
-```
-
-The secret (for now) should be in the default namespace.
-
-#### annotations
-
-To add annotations for the volume use "annotations"
-
-```yaml
-volumes:
-  myvolume:
-    annotations:
-      provider.svc/attribute: value
-```
-
-#### claimAnnotations
-
-To set annotations for the claim:
-
-```yaml
-volumes:
-  myvolume:
-    claimAnnotations:
-      gcs.csi.ofek.dev/location: us-central1
-      gcs.csi.ofek.dev/project-id: my-project
-      gcs.csi.ofek.dev/bucket: flux-operator-storage
-```
-
-### cleanup
-
-If you add any kind of persistent volume to your MiniCluster, it will likely need a cleanup after the fact
-(after you bring the MiniCluster down). By default, the operator will perform this cleanup, checking if the
-Job status is "Completed" and then removing the pods, Persistent Volume Claims, and Persistent Volumes.
-If you want to disable this cleanup:
-
-```yaml
-  cleanup: false
-```
-
-If you are streaming the logs with `kubectl logs` the steam would stop when the broker pod is completed,
-so typically you will get the logs as long as you are streaming when the job starts running.
-
 ### network
 
 The network section exposes networking options for the Flux MiniCluster.
@@ -1151,32 +989,11 @@ lifeCycle:
   preStopExec: ...
 ```
 
-
 ### volumes
 
-Volumes that are defined on the level of the container must be defined at the top level of the MiniCluster.
-As an example, here is how we tell the container to use the already defined volume "myvolume" to be mounted
-in the container as "/data":
-
-```yaml
-volumes:
-  myvolume:
-    path: /data
-```
-
-The `myvolume` key must be defined in the MiniCluster set of volumes, and this is checked.
-If you want to change the readOnly status to true:
-
-```yaml
-volumes:
-  myvolume:
-    path: /data
-    readOnly: true
-```
-
-### existingVolumes
-
-An existing volume can be:
+As of version 0.2.0, the Flux Operator controlling its own volumes has been removed, and the concept of an "existingVolume" is now just a volume.
+We did this because volumes are complex and it was challenging to support every use case. Thus, our strategy is to allow the user to create
+the volumes and persistent volume claims that the MiniCluster needs, and simply tell it about them. A volume (that must exist) can be:
 
  - a persistent volume claim (PVC) and persistent volume (PV) that you've created
  - a secret that you've created
@@ -1198,7 +1015,7 @@ containers:
   - image: ghcr.io/rse-ops/atacseq:app-latest
 
     # This is an existing PVC (and associated PV) we created before the MiniCluster
-    existingVolumes:
+    volumes:
       data:
         path: /workflow
         claimName: data 
@@ -1219,7 +1036,7 @@ to `/etc/nginx/conf.d`
 services:
   - image: nginx
     name: nginx
-    existingVolumes:
+    volumes:
       nginx-conf:
         configMapName: nginx-conf 
         path: /etc/nginx/conf.d
@@ -1247,7 +1064,7 @@ data:
     }
 ```
 
-Note that the above block `existingVolumes` is valid to be under the
+Note that the above block `volumes` is valid to be under the
 MiniCluster->containers section too. Either MiniCluster containers OR service
 containers can have existingVolumes of any type.
 
@@ -1260,7 +1077,7 @@ to the indexed job container:
 containers:
   - image: ghcr.io/rse-ops/singularity:tag-mamba
     workingDir: /data
-    existingVolumes:
+    volumes:
       certs:
         path: /etc/certs
         secretName: certs

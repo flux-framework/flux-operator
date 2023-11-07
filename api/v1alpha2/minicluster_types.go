@@ -59,11 +59,6 @@ type MiniClusterSpec struct {
 	// +optional
 	Flux FluxSpec `json:"flux"`
 
-	// Volumes accessible to containers from a host
-	// Not all containers are required to use them
-	// +optional
-	Volumes map[string]MiniClusterVolume `json:"volumes"`
-
 	// Logging modes determine the output you see in the job log
 	// +optional
 	Logging LoggingSpec `json:"logging"`
@@ -214,64 +209,8 @@ type MiniClusterStatus struct {
 }
 
 // Mini Cluster local volumes available to mount (these are on the host)
-type MiniClusterVolume struct {
-	Path string `json:"path"`
 
-	// +optional
-	Labels map[string]string `json:"labels"`
-
-	// Annotations for the volume
-	// +optional
-	Annotations map[string]string `json:"annotations"`
-
-	// Annotations for the persistent volume claim
-	// +optional
-	ClaimAnnotations map[string]string `json:"claimAnnotations"`
-
-	// Optional volume attributes
-	// +optional
-	Attributes map[string]string `json:"attributes"`
-
-	// Volume handle, falls back to storage class name
-	// if not defined
-	// +optional
-	VolumeHandle string `json:"volumeHandle"`
-
-	// +kubebuilder:default="hostpath"
-	// +default="hostpath"
-	// +optional
-	StorageClass string `json:"storageClass,omitempty"`
-
-	// Storage driver, e.g., gcs.csi.ofek.dev
-	// Only needed if not using hostpath
-	// +optional
-	Driver string `json:"driver"`
-
-	// Delete the persistent volume on cleanup
-	// +kubebuilder:default=true
-	// +default=true
-	// +optional
-	Delete bool `json:"delete,omitempty"`
-
-	// Secret reference in Kubernetes with service account role
-	// +optional
-	Secret string `json:"secret"`
-
-	// Secret namespace
-	// +kubebuilder:default="default"
-	// +default="default"
-	// +optional
-	SecretNamespace string `json:"secretNamespace,omitempty"`
-
-	// Capacity (string) for PVC (storage request) to create PV
-	// +kubebuilder:default="5Gi"
-	// +default="5Gi"
-	// +optional
-	Capacity string `json:"capacity,omitempty"`
-}
-
-// Mini Cluster local volumes available to mount (these are on the host)
-type MiniClusterExistingVolume struct {
+type ContainerVolume struct {
 
 	// Path and claim name are always required if a secret isn't defined
 	// +optional
@@ -293,17 +232,6 @@ type MiniClusterExistingVolume struct {
 	// An existing secret
 	// +optional
 	SecretName string `json:"secretName,omitempty"`
-
-	// +kubebuilder:default=false
-	// +default=false
-	// +optional
-	ReadOnly bool `json:"readOnly,omitempty"`
-}
-
-// A Container volume must reference one defined for the MiniCluster
-// The path here is in the container
-type ContainerVolume struct {
-	Path string `json:"path"`
 
 	// +kubebuilder:default=false
 	// +default=false
@@ -566,13 +494,9 @@ type MiniClusterContainer struct {
 	// +optional
 	NoWrapEntrypoint bool `json:"noWrapEntrypoint"`
 
-	// Volumes that can be mounted (must be defined in volumes)
+	// Existing volumes that can be mounted
 	// +optional
 	Volumes map[string]ContainerVolume `json:"volumes"`
-
-	// Existing Volumes to add to the containers
-	// +optional
-	ExistingVolumes map[string]MiniClusterExistingVolume `json:"existingVolumes"`
 
 	// Lifecycle can handle post start commands, etc.
 	// +optional
@@ -701,21 +625,21 @@ func (c *MiniClusterContainer) GenerateEntrypoint() bool {
 
 // Return a lookup of all container existing volumes (for the higher level Pod)
 // Volumes are unique by name.
-func (f *MiniCluster) ExistingContainerVolumes() map[string]MiniClusterExistingVolume {
+func (f *MiniCluster) ExistingContainerVolumes() map[string]ContainerVolume {
 	return uniqueExistingVolumes(f.Spec.Containers)
 }
 
 // Return a lookup of all service existing volumes (for the higher level Pod)
 // Volumes are unique by name.
-func (f *MiniCluster) ExistingServiceVolumes() map[string]MiniClusterExistingVolume {
+func (f *MiniCluster) ExistingServiceVolumes() map[string]ContainerVolume {
 	return uniqueExistingVolumes(f.Spec.Services)
 }
 
 // uniqueExistingVolumes is a shared function to populate existing container or service volumes
-func uniqueExistingVolumes(containers []MiniClusterContainer) map[string]MiniClusterExistingVolume {
-	volumes := map[string]MiniClusterExistingVolume{}
+func uniqueExistingVolumes(containers []MiniClusterContainer) map[string]ContainerVolume {
+	volumes := map[string]ContainerVolume{}
 	for _, container := range containers {
-		for name, volume := range container.ExistingVolumes {
+		for name, volume := range container.Volumes {
 			volumes[name] = volume
 		}
 	}
@@ -869,27 +793,9 @@ func (f *MiniCluster) Validate() bool {
 				return false
 			}
 		}
-
-		// If we have volumes defined, they must be provided in the global
-		// volumes for the MiniCluster CRD.
-		for key, _ := range container.Volumes {
-			_, found := f.Spec.Volumes[key]
-			if !found {
-				fmt.Printf("😥️ %s defines a named volume %s but it is not defined for the MiniCluster\n", name, key)
-				return false
-			}
-		}
 	}
 	if fluxRunners != 1 {
 		valid = false
-	}
-
-	// For each volume, if it's not a hostvolume, we require a secret reference
-	for key, volume := range f.Spec.Volumes {
-		if volume.StorageClass != "hostpath" && volume.Secret == "" {
-			fmt.Printf("😥️ Found non-hostpath volume %s that is missing a secret\n", key)
-			valid = false
-		}
 	}
 
 	// For existing volumes, if it's a claim, a path is required.
@@ -906,7 +812,7 @@ func (f *MiniCluster) Validate() bool {
 }
 
 // validateExistingVolumes ensures secret names vs. volume paths are valid
-func (f *MiniCluster) validateExistingVolumes(existing map[string]MiniClusterExistingVolume) bool {
+func (f *MiniCluster) validateExistingVolumes(existing map[string]ContainerVolume) bool {
 	valid := true
 	for key, volume := range existing {
 

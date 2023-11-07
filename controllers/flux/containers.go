@@ -100,7 +100,7 @@ func getContainers(
 		}
 
 		// Add on existing volumes/claims
-		for volumeName, volume := range container.ExistingVolumes {
+		for volumeName, volume := range container.Volumes {
 			mount := corev1.VolumeMount{
 				Name:      volumeName,
 				MountPath: volume.Path,

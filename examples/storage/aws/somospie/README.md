@@ -5,17 +5,6 @@ You can start with [setup](#setup) and then move down to [examples](#examples).
 
 ## Setup
 
-### Build
-
-Note that we needed to be root in the container, so we have a custom build [Dockerfile](Dockerfile)
-
-```bash
-# Yes I built the wrong name and was too lazy to change it :)
-docker build -t vanessa/somosie:latest
-```
-
-And this is the container that we use here.
-
 ### Install
 
 You should first [install eksctrl](https://github.com/weaveworks/eksctl) and make sure you have access to an AWS cloud (e.g.,
@@ -41,7 +30,7 @@ ssh-keygen
 
 This is used so you can ssh (connect) to your workers!
 
-### Create Cluster
+https://datashim-io.github.io/datashim/https://datashim-io.github.io/datashim/### Create Cluster
 
 Next, let's create our cluster using eksctl "eks control." **IMPORTANT** you absolutely
 need to choose a size that has [IsTrunkingCompatible](https://github.com/aws/amazon-vpc-resource-controller-k8s/blob/master/pkg/aws/vpc/limits.go)
@@ -57,7 +46,7 @@ kind: ClusterConfig
 metadata:
   name: flux-operator
   region: us-east-1
-  version: "1.22"
+  version: "1.27"
 
 availabilityZones: ["us-east-1a", "us-east-1b", "us-east-1d"]
 managedNodeGroups:
@@ -73,6 +62,9 @@ managedNodeGroups:
 
 If you don't need an ssh key:
 
+
+
+
 ```yaml
 apiVersion: eksctl.io/v1alpha5
 kind: ClusterConfig
@@ -80,7 +72,7 @@ kind: ClusterConfig
 metadata:
   name: flux-operator
   region: us-east-1
-  version: "1.23"
+  version: "1.27"
 
 availabilityZones: ["us-east-1a", "us-east-1b", "us-east-1d"]
 managedNodeGroups:
@@ -172,6 +164,8 @@ operator-system   operator-controller-manager-6c699b7b94-bbp5q   2/2     Running
 ```
 
 ## Run SOMOSPIE
+
+https://datashim-io.github.io/datashim/
 
 ### Prepare S3 Storage
 
@@ -331,10 +325,11 @@ the service account. In case you need to see how we generated the original oidc.
 
 ```bash
 $ helm repo add otomount https://otomato-gh.github.io/s3-mounter
-$ helm template s3-mounter otomount/s3-otomount  --namespace otomount --set bucketName="somospie" \
+$ helm template s3-mounter otomount/s3-otomount  --namespace otomount --set bucketName="somospie" --set mountPath=/tmp/data --set hostPath=/tmp/data \
    --set iamRoleARN=arn:aws:iam::633731392008:policy/kubernetes-s3-access --create-namespace > ./oidc.yaml
 ```
 
+Note that the variables matter, see [here](https://dev.to/otomato_io/mount-s3-objects-to-kubernetes-pods-12f5).
 To install the mounter pods (that are going to run `goofys`), we create a daemon set that will do the work as follows:
 
 ```bash
@@ -424,8 +419,7 @@ $ aws iam delete-open-id-connect-provider --open-id-connect-provider-arn "arn:aw
 And then delete your cluster (e.g., one of the following)
 
 ```bash
-$ eksctl delete cluster -f examples/storage/aws/oidc/eksctl-config.yaml --wait
-$ eksctl delete cluster -f eksctl-config.yaml --wait
+$ eksctl delete cluster -f ./eksctl-config.yaml --wait
 ```
 
 Either way, it's good to check the web console too to ensure you didn't miss anything.

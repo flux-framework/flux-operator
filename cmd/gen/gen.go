@@ -41,7 +41,6 @@ func init() {
 type IncludePreference struct {
 
 	// By default, we generate all
-	GenVolumes bool
 	GenConfigs bool
 	GenService bool
 	GenJob     bool
@@ -51,13 +50,9 @@ type IncludePreference struct {
 func determineIncludes(includes string) IncludePreference {
 
 	// By default, we print all!
-	prefs := IncludePreference{true, true, true, true}
+	prefs := IncludePreference{true, true, true}
 	if includes == "" {
 		return prefs
-	}
-	// Volumes
-	if !strings.Contains(includes, "v") {
-		prefs.GenVolumes = false
 	}
 	// Config Maps
 	if !strings.Contains(includes, "c") {
@@ -111,17 +106,7 @@ func main() {
 				printYaml(cm)
 			}
 		}
-		// Generate the volumes
-		if prefs.GenVolumes {
-			pvs, pvcs := generateMiniClusterVolumes(cluster)
-			for _, pv := range pvs {
-				printYaml(pv)
-			}
-			for _, pvc := range pvcs {
-				printYaml(pvc)
-			}
-		}
-
+		// We no longer generate volumes - up to the users
 		// Service
 		if prefs.GenService {
 
@@ -152,26 +137,6 @@ func printYaml(obj runtime.Object) {
 	}
 	fmt.Println(separator)
 	fmt.Println(string(out))
-}
-
-// generateMiniCluster volumes
-func generateMiniClusterVolumes(cluster *api.MiniCluster) (
-	[]*corev1.PersistentVolume,
-	[]*corev1.PersistentVolumeClaim,
-) {
-
-	pvs := []*corev1.PersistentVolume{}
-	pvcs := []*corev1.PersistentVolumeClaim{}
-
-	// Prepare volumes, if requested, to be available to containers
-	for volumeName, volume := range cluster.Spec.Volumes {
-		pv := controllers.CreatePersistentVolume(cluster, volumeName, volume)
-		pvs = append(pvs, pv)
-
-		pvc := controllers.CreatePersistentVolumeClaim(cluster, volumeName, volume)
-		pvcs = append(pvcs, pvc)
-	}
-	return pvs, pvcs
 }
 
 // Generate the service for the MiniCluster

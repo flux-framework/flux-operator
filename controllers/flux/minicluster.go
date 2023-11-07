@@ -48,18 +48,6 @@ func (r *MiniClusterReconciler) ensureMiniCluster(
 		return result, err
 	}
 
-	// Prepare volumes, if requested, to be available to containers
-	for volumeName, volume := range cluster.Spec.Volumes {
-		_, result, err = r.getPersistentVolume(ctx, cluster, volumeName, volume)
-		if err != nil {
-			return result, err
-		}
-		_, result, err = r.getPersistentVolumeClaim(ctx, cluster, volumeName, volume)
-		if err != nil {
-			return result, err
-		}
-	}
-
 	// Any extra service containers (running alongside the cluster)
 	// For now run these in the same pod, one service pod
 	if len(cluster.Spec.Services) > 0 {
@@ -176,30 +164,6 @@ func (r *MiniClusterReconciler) cleanupPodsStorage(
 	// Delete the MiniCluster first
 	// If we don't, it will keep re-creating the assets and loop forever :)
 	r.Client.Delete(ctx, cluster)
-
-	// The job deletion should handle pods, next delete pvc and pv per each volume
-	// Must be deleted in that order, per internet advice :)
-	for volumeName := range cluster.Spec.Volumes {
-		volumeSpec := cluster.Spec.Volumes[volumeName]
-
-		claimName := fmt.Sprintf("%s-claim", volumeName)
-
-		// Only delete if we retrieve without error and user has requested
-		claim, err := r.getExistingPersistentVolumeClaim(ctx, cluster, claimName)
-		if err != nil {
-			r.log.Info("Volume Claim", "Deletion", claim.Name)
-			r.Client.Delete(ctx, claim)
-		}
-
-		// Different request to delete
-		if volumeSpec.Delete {
-			pv, err := r.getExistingPersistentVolume(ctx, cluster, volumeName)
-			if err != nil {
-				r.log.Info("Volume", "Deletion", pv.Name)
-				r.Client.Delete(ctx, pv)
-			}
-		}
-	}
 	return ctrl.Result{Requeue: false}, nil
 }
 

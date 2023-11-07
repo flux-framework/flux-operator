@@ -23,19 +23,25 @@ spec:
   containers:
 
      # Yes I pushed to the wrong name and then was too lazy to change it, lol
-    - image: vanessa/somosie:latest
+    - image: olayap/somospie-gdal-netcdf 
+      # image: vanessa/somosie:latest
+
+      # This is needed for fuse to work
+      securityContext:
+        privileged: true
+        addCapabilities:
+          - SYS_ADMIN
 
       # We are saying to mount the "data" volume defined above to "/workflow"
       # in the container
       volumes:
         data:
           # This is where we will bind storage
-          # E.g., /mnt/s3data is bound to /var/s3 or /mnt/s3data:/var/s3
-          path: /var/s3
+          path: /tmp/data
           # readOnly defaults to false
                 
       # This should be the directory with the Snakefile
-      workingDir: /var/s3/
+      workingDir: /tmp/data
 
       # https://github.com/TauferLab/SOMOSPIE/blob/master/SOMOSPIE_pegasus/PredictionPipeline/SOMOSPIE.ipynb
       command: sleep infinity

@@ -15,6 +15,7 @@ The versions coincide with releases on pip. Only major versions will be released
 
 ## [0.0.x](https://github.com/flux-framework/flux-operator/tree/main) (0.0.x)
  - refactor design to allow for any base image, v1alpha2 release (0.2.0)
+  - control of volumes removed (only support for existing volumes)
  - fluxoperator-gen command added and restructure for more modular generation (0.1.1)
  - First release supporting experimenting bursting / scaling and customization (0.1.0)
  - Support for automated testing of examples/tests (0.0.x)

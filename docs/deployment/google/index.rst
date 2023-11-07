@@ -14,5 +14,4 @@ different types of container storage interfaces.  If you have a question, please
   setup.md
   basic.md
   filestore.md
-  csi.md
   fusion.md

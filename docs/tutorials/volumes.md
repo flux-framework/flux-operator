@@ -155,7 +155,7 @@ spec:
     - image: ghcr.io/rse-ops/atacseq:app-latest
 
       # This is an existing PVC (and associated PV) we created before the MiniCluster
-      existingVolumes:
+      volumes:
         data:
           path: /workflow
           claimName: data 
@@ -237,7 +237,7 @@ spec:
   containers:
     - image: rockylinux:9
       command: ls /data
-      existingVolumes:
+      volumes:
         data:
           path: /data
           claimName: data
