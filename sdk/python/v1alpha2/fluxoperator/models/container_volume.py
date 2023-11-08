@@ -36,33 +36,152 @@ class ContainerVolume(object):
                             and the value is json key in definition.
     """
     openapi_types = {
+        'claim_name': 'str',
+        'config_map_name': 'str',
+        'host_path': 'str',
+        'items': 'dict[str, str]',
         'path': 'str',
-        'read_only': 'bool'
+        'read_only': 'bool',
+        'secret_name': 'str'
     }
 
     attribute_map = {
+        'claim_name': 'claimName',
+        'config_map_name': 'configMapName',
+        'host_path': 'hostPath',
+        'items': 'items',
         'path': 'path',
-        'read_only': 'readOnly'
+        'read_only': 'readOnly',
+        'secret_name': 'secretName'
     }
 
-    def __init__(self, path='', read_only=False, local_vars_configuration=None):  # noqa: E501
+    def __init__(self, claim_name=None, config_map_name=None, host_path=None, items=None, path=None, read_only=False, secret_name=None, local_vars_configuration=None):  # noqa: E501
         """ContainerVolume - a model defined in OpenAPI"""  # noqa: E501
         if local_vars_configuration is None:
             local_vars_configuration = Configuration.get_default_copy()
         self.local_vars_configuration = local_vars_configuration
 
+        self._claim_name = None
+        self._config_map_name = None
+        self._host_path = None
+        self._items = None
         self._path = None
         self._read_only = None
+        self._secret_name = None
         self.discriminator = None
 
-        self.path = path
+        if claim_name is not None:
+            self.claim_name = claim_name
+        if config_map_name is not None:
+            self.config_map_name = config_map_name
+        if host_path is not None:
+            self.host_path = host_path
+        if items is not None:
+            self.items = items
+        if path is not None:
+            self.path = path
         if read_only is not None:
             self.read_only = read_only
+        if secret_name is not None:
+            self.secret_name = secret_name
+
+    @property
+    def claim_name(self):
+        """Gets the claim_name of this ContainerVolume.  # noqa: E501
+
+        Claim name if the existing volume is a PVC  # noqa: E501
+
+        :return: The claim_name of this ContainerVolume.  # noqa: E501
+        :rtype: str
+        """
+        return self._claim_name
+
+    @claim_name.setter
+    def claim_name(self, claim_name):
+        """Sets the claim_name of this ContainerVolume.
+
+        Claim name if the existing volume is a PVC  # noqa: E501
+
+        :param claim_name: The claim_name of this ContainerVolume.  # noqa: E501
+        :type claim_name: str
+        """
+
+        self._claim_name = claim_name
+
+    @property
+    def config_map_name(self):
+        """Gets the config_map_name of this ContainerVolume.  # noqa: E501
+
+        Config map name if the existing volume is a config map You should also define items if you are using this  # noqa: E501
+
+        :return: The config_map_name of this ContainerVolume.  # noqa: E501
+        :rtype: str
+        """
+        return self._config_map_name
+
+    @config_map_name.setter
+    def config_map_name(self, config_map_name):
+        """Sets the config_map_name of this ContainerVolume.
+
+        Config map name if the existing volume is a config map You should also define items if you are using this  # noqa: E501
+
+        :param config_map_name: The config_map_name of this ContainerVolume.  # noqa: E501
+        :type config_map_name: str
+        """
+
+        self._config_map_name = config_map_name
+
+    @property
+    def host_path(self):
+        """Gets the host_path of this ContainerVolume.  # noqa: E501
+
+        An existing hostPath to bind to path  # noqa: E501
+
+        :return: The host_path of this ContainerVolume.  # noqa: E501
+        :rtype: str
+        """
+        return self._host_path
+
+    @host_path.setter
+    def host_path(self, host_path):
+        """Sets the host_path of this ContainerVolume.
+
+        An existing hostPath to bind to path  # noqa: E501
+
+        :param host_path: The host_path of this ContainerVolume.  # noqa: E501
+        :type host_path: str
+        """
+
+        self._host_path = host_path
+
+    @property
+    def items(self):
+        """Gets the items of this ContainerVolume.  # noqa: E501
+
+        Items (key and paths) for the config map  # noqa: E501
+
+        :return: The items of this ContainerVolume.  # noqa: E501
+        :rtype: dict[str, str]
+        """
+        return self._items
+
+    @items.setter
+    def items(self, items):
+        """Sets the items of this ContainerVolume.
+
+        Items (key and paths) for the config map  # noqa: E501
+
+        :param items: The items of this ContainerVolume.  # noqa: E501
+        :type items: dict[str, str]
+        """
+
+        self._items = items
 
     @property
     def path(self):
         """Gets the path of this ContainerVolume.  # noqa: E501
 
+        Path and claim name are always required if a secret isn't defined  # noqa: E501
 
         :return: The path of this ContainerVolume.  # noqa: E501
         :rtype: str
@@ -73,12 +192,11 @@ class ContainerVolume(object):
     def path(self, path):
         """Sets the path of this ContainerVolume.
 
+        Path and claim name are always required if a secret isn't defined  # noqa: E501
 
         :param path: The path of this ContainerVolume.  # noqa: E501
         :type path: str
         """
-        if self.local_vars_configuration.client_side_validation and path is None:  # noqa: E501
-            raise ValueError("Invalid value for `path`, must not be `None`")  # noqa: E501
 
         self._path = path
 
@@ -102,6 +220,29 @@ class ContainerVolume(object):
         """
 
         self._read_only = read_only
+
+    @property
+    def secret_name(self):
+        """Gets the secret_name of this ContainerVolume.  # noqa: E501
+
+        An existing secret  # noqa: E501
+
+        :return: The secret_name of this ContainerVolume.  # noqa: E501
+        :rtype: str
+        """
+        return self._secret_name
+
+    @secret_name.setter
+    def secret_name(self, secret_name):
+        """Sets the secret_name of this ContainerVolume.
+
+        An existing secret  # noqa: E501
+
+        :param secret_name: The secret_name of this ContainerVolume.  # noqa: E501
+        :type secret_name: str
+        """
+
+        self._secret_name = secret_name
 
     def to_dict(self, serialize=False):
         """Returns the model properties as a dict"""

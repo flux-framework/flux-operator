@@ -42,12 +42,10 @@ from fluxoperator.models.logging_spec import LoggingSpec
 from fluxoperator.models.mini_cluster import MiniCluster
 from fluxoperator.models.mini_cluster_archive import MiniClusterArchive
 from fluxoperator.models.mini_cluster_container import MiniClusterContainer
-from fluxoperator.models.mini_cluster_existing_volume import MiniClusterExistingVolume
 from fluxoperator.models.mini_cluster_list import MiniClusterList
 from fluxoperator.models.mini_cluster_spec import MiniClusterSpec
 from fluxoperator.models.mini_cluster_status import MiniClusterStatus
 from fluxoperator.models.mini_cluster_user import MiniClusterUser
-from fluxoperator.models.mini_cluster_volume import MiniClusterVolume
 from fluxoperator.models.network import Network
 from fluxoperator.models.pod_spec import PodSpec
 from fluxoperator.models.secret import Secret

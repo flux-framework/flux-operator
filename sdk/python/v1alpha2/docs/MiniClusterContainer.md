@@ -9,7 +9,6 @@ Name | Type | Description | Notes
 **command** | **str** | Single user executable to provide to flux start | [optional] [default to '']
 **commands** | [**Commands**](Commands.md) |  | [optional] 
 **environment** | **dict[str, str]** | Key/value pairs for the environment | [optional] 
-**existing_volumes** | [**dict[str, MiniClusterExistingVolume]**](MiniClusterExistingVolume.md) | Existing Volumes to add to the containers | [optional] 
 **image** | **str** | Container image must contain flux and flux-sched install | [optional] [default to 'ghcr.io/rse-ops/accounting:app-latest']
 **image_pull_secret** | **str** | Allow the user to pull authenticated images By default no secret is selected. Setting this with the name of an already existing imagePullSecret will specify that secret in the pod spec. | [optional] [default to '']
 **launcher** | **bool** | Indicate that the command is a launcher that will ask for its own jobs (and provided directly to flux start) | [optional] [default to False]
@@ -23,7 +22,7 @@ Name | Type | Description | Notes
 **run_flux** | **bool** | Application container intended to run flux (broker) | [optional] [default to False]
 **secrets** | [**dict[str, Secret]**](Secret.md) | Secrets that will be added to the environment The user is expected to create their own secrets for the operator to find | [optional] 
 **security_context** | [**SecurityContext**](SecurityContext.md) |  | [optional] 
-**volumes** | [**dict[str, ContainerVolume]**](ContainerVolume.md) | Volumes that can be mounted (must be defined in volumes) | [optional] 
+**volumes** | [**dict[str, ContainerVolume]**](ContainerVolume.md) | Existing volumes that can be mounted | [optional] 
 **working_dir** | **str** | Working directory to run command from | [optional] [default to '']
 
 [[Back to Model list]](../README.md#documentation-for-models) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to README]](../README.md)

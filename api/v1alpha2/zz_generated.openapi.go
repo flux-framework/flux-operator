@@ -24,30 +24,28 @@ import (
 
 func GetOpenAPIDefinitions(ref common.ReferenceCallback) map[string]common.OpenAPIDefinition {
 	return map[string]common.OpenAPIDefinition{
-		"./api/v1alpha2/.BurstedCluster":            schema__api_v1alpha2__BurstedCluster(ref),
-		"./api/v1alpha2/.Bursting":                  schema__api_v1alpha2__Bursting(ref),
-		"./api/v1alpha2/.Commands":                  schema__api_v1alpha2__Commands(ref),
-		"./api/v1alpha2/.ContainerResources":        schema__api_v1alpha2__ContainerResources(ref),
-		"./api/v1alpha2/.ContainerVolume":           schema__api_v1alpha2__ContainerVolume(ref),
-		"./api/v1alpha2/.FluxBroker":                schema__api_v1alpha2__FluxBroker(ref),
-		"./api/v1alpha2/.FluxContainer":             schema__api_v1alpha2__FluxContainer(ref),
-		"./api/v1alpha2/.FluxScheduler":             schema__api_v1alpha2__FluxScheduler(ref),
-		"./api/v1alpha2/.FluxSpec":                  schema__api_v1alpha2__FluxSpec(ref),
-		"./api/v1alpha2/.LifeCycle":                 schema__api_v1alpha2__LifeCycle(ref),
-		"./api/v1alpha2/.LoggingSpec":               schema__api_v1alpha2__LoggingSpec(ref),
-		"./api/v1alpha2/.MiniCluster":               schema__api_v1alpha2__MiniCluster(ref),
-		"./api/v1alpha2/.MiniClusterArchive":        schema__api_v1alpha2__MiniClusterArchive(ref),
-		"./api/v1alpha2/.MiniClusterContainer":      schema__api_v1alpha2__MiniClusterContainer(ref),
-		"./api/v1alpha2/.MiniClusterExistingVolume": schema__api_v1alpha2__MiniClusterExistingVolume(ref),
-		"./api/v1alpha2/.MiniClusterList":           schema__api_v1alpha2__MiniClusterList(ref),
-		"./api/v1alpha2/.MiniClusterSpec":           schema__api_v1alpha2__MiniClusterSpec(ref),
-		"./api/v1alpha2/.MiniClusterStatus":         schema__api_v1alpha2__MiniClusterStatus(ref),
-		"./api/v1alpha2/.MiniClusterUser":           schema__api_v1alpha2__MiniClusterUser(ref),
-		"./api/v1alpha2/.MiniClusterVolume":         schema__api_v1alpha2__MiniClusterVolume(ref),
-		"./api/v1alpha2/.Network":                   schema__api_v1alpha2__Network(ref),
-		"./api/v1alpha2/.PodSpec":                   schema__api_v1alpha2__PodSpec(ref),
-		"./api/v1alpha2/.Secret":                    schema__api_v1alpha2__Secret(ref),
-		"./api/v1alpha2/.SecurityContext":           schema__api_v1alpha2__SecurityContext(ref),
+		"./api/v1alpha2/.BurstedCluster":       schema__api_v1alpha2__BurstedCluster(ref),
+		"./api/v1alpha2/.Bursting":             schema__api_v1alpha2__Bursting(ref),
+		"./api/v1alpha2/.Commands":             schema__api_v1alpha2__Commands(ref),
+		"./api/v1alpha2/.ContainerResources":   schema__api_v1alpha2__ContainerResources(ref),
+		"./api/v1alpha2/.ContainerVolume":      schema__api_v1alpha2__ContainerVolume(ref),
+		"./api/v1alpha2/.FluxBroker":           schema__api_v1alpha2__FluxBroker(ref),
+		"./api/v1alpha2/.FluxContainer":        schema__api_v1alpha2__FluxContainer(ref),
+		"./api/v1alpha2/.FluxScheduler":        schema__api_v1alpha2__FluxScheduler(ref),
+		"./api/v1alpha2/.FluxSpec":             schema__api_v1alpha2__FluxSpec(ref),
+		"./api/v1alpha2/.LifeCycle":            schema__api_v1alpha2__LifeCycle(ref),
+		"./api/v1alpha2/.LoggingSpec":          schema__api_v1alpha2__LoggingSpec(ref),
+		"./api/v1alpha2/.MiniCluster":          schema__api_v1alpha2__MiniCluster(ref),
+		"./api/v1alpha2/.MiniClusterArchive":   schema__api_v1alpha2__MiniClusterArchive(ref),
+		"./api/v1alpha2/.MiniClusterContainer": schema__api_v1alpha2__MiniClusterContainer(ref),
+		"./api/v1alpha2/.MiniClusterList":      schema__api_v1alpha2__MiniClusterList(ref),
+		"./api/v1alpha2/.MiniClusterSpec":      schema__api_v1alpha2__MiniClusterSpec(ref),
+		"./api/v1alpha2/.MiniClusterStatus":    schema__api_v1alpha2__MiniClusterStatus(ref),
+		"./api/v1alpha2/.MiniClusterUser":      schema__api_v1alpha2__MiniClusterUser(ref),
+		"./api/v1alpha2/.Network":              schema__api_v1alpha2__Network(ref),
+		"./api/v1alpha2/.PodSpec":              schema__api_v1alpha2__PodSpec(ref),
+		"./api/v1alpha2/.Secret":               schema__api_v1alpha2__Secret(ref),
+		"./api/v1alpha2/.SecurityContext":      schema__api_v1alpha2__SecurityContext(ref),
 	}
 }
 
@@ -242,14 +240,57 @@ func schema__api_v1alpha2__ContainerVolume(ref common.ReferenceCallback) common.
 	return common.OpenAPIDefinition{
 		Schema: spec.Schema{
 			SchemaProps: spec.SchemaProps{
-				Description: "A Container volume must reference one defined for the MiniCluster The path here is in the container",
-				Type:        []string{"object"},
+				Type: []string{"object"},
 				Properties: map[string]spec.Schema{
 					"path": {
 						SchemaProps: spec.SchemaProps{
-							Default: "",
-							Type:    []string{"string"},
-							Format:  "",
+							Description: "Path and claim name are always required if a secret isn't defined",
+							Type:        []string{"string"},
+							Format:      "",
+						},
+					},
+					"hostPath": {
+						SchemaProps: spec.SchemaProps{
+							Description: "An existing hostPath to bind to path",
+							Type:        []string{"string"},
+							Format:      "",
+						},
+					},
+					"configMapName": {
+						SchemaProps: spec.SchemaProps{
+							Description: "Config map name if the existing volume is a config map You should also define items if you are using this",
+							Type:        []string{"string"},
+							Format:      "",
+						},
+					},
+					"items": {
+						SchemaProps: spec.SchemaProps{
+							Description: "Items (key and paths) for the config map",
+							Type:        []string{"object"},
+							AdditionalProperties: &spec.SchemaOrBool{
+								Allows: true,
+								Schema: &spec.Schema{
+									SchemaProps: spec.SchemaProps{
+										Default: "",
+										Type:    []string{"string"},
+										Format:  "",
+									},
+								},
+							},
+						},
+					},
+					"claimName": {
+						SchemaProps: spec.SchemaProps{
+							Description: "Claim name if the existing volume is a PVC",
+							Type:        []string{"string"},
+							Format:      "",
+						},
+					},
+					"secretName": {
+						SchemaProps: spec.SchemaProps{
+							Description: "An existing secret",
+							Type:        []string{"string"},
+							Format:      "",
 						},
 					},
 					"readOnly": {
@@ -260,7 +301,6 @@ func schema__api_v1alpha2__ContainerVolume(ref common.ReferenceCallback) common.
 						},
 					},
 				},
-				Required: []string{"path"},
 			},
 		},
 	}
@@ -821,7 +861,7 @@ func schema__api_v1alpha2__MiniClusterContainer(ref common.ReferenceCallback) co
 					},
 					"volumes": {
 						SchemaProps: spec.SchemaProps{
-							Description: "Volumes that can be mounted (must be defined in volumes)",
+							Description: "Existing volumes that can be mounted",
 							Type:        []string{"object"},
 							AdditionalProperties: &spec.SchemaOrBool{
 								Allows: true,
@@ -829,21 +869,6 @@ func schema__api_v1alpha2__MiniClusterContainer(ref common.ReferenceCallback) co
 									SchemaProps: spec.SchemaProps{
 										Default: map[string]interface{}{},
 										Ref:     ref("./api/v1alpha2/.ContainerVolume"),
-									},
-								},
-							},
-						},
-					},
-					"existingVolumes": {
-						SchemaProps: spec.SchemaProps{
-							Description: "Existing Volumes to add to the containers",
-							Type:        []string{"object"},
-							AdditionalProperties: &spec.SchemaOrBool{
-								Allows: true,
-								Schema: &spec.Schema{
-									SchemaProps: spec.SchemaProps{
-										Default: map[string]interface{}{},
-										Ref:     ref("./api/v1alpha2/.MiniClusterExistingVolume"),
 									},
 								},
 							},
@@ -881,71 +906,7 @@ func schema__api_v1alpha2__MiniClusterContainer(ref common.ReferenceCallback) co
 			},
 		},
 		Dependencies: []string{
-			"./api/v1alpha2/.Commands", "./api/v1alpha2/.ContainerResources", "./api/v1alpha2/.ContainerVolume", "./api/v1alpha2/.LifeCycle", "./api/v1alpha2/.MiniClusterExistingVolume", "./api/v1alpha2/.Secret", "./api/v1alpha2/.SecurityContext"},
-	}
-}
-
-func schema__api_v1alpha2__MiniClusterExistingVolume(ref common.ReferenceCallback) common.OpenAPIDefinition {
-	return common.OpenAPIDefinition{
-		Schema: spec.Schema{
-			SchemaProps: spec.SchemaProps{
-				Description: "Mini Cluster local volumes available to mount (these are on the host)",
-				Type:        []string{"object"},
-				Properties: map[string]spec.Schema{
-					"path": {
-						SchemaProps: spec.SchemaProps{
-							Description: "Path and claim name are always required if a secret isn't defined",
-							Type:        []string{"string"},
-							Format:      "",
-						},
-					},
-					"configMapName": {
-						SchemaProps: spec.SchemaProps{
-							Description: "Config map name if the existing volume is a config map You should also define items if you are using this",
-							Type:        []string{"string"},
-							Format:      "",
-						},
-					},
-					"items": {
-						SchemaProps: spec.SchemaProps{
-							Description: "Items (key and paths) for the config map",
-							Type:        []string{"object"},
-							AdditionalProperties: &spec.SchemaOrBool{
-								Allows: true,
-								Schema: &spec.Schema{
-									SchemaProps: spec.SchemaProps{
-										Default: "",
-										Type:    []string{"string"},
-										Format:  "",
-									},
-								},
-							},
-						},
-					},
-					"claimName": {
-						SchemaProps: spec.SchemaProps{
-							Description: "Claim name if the existing volume is a PVC",
-							Type:        []string{"string"},
-							Format:      "",
-						},
-					},
-					"secretName": {
-						SchemaProps: spec.SchemaProps{
-							Description: "An existing secret",
-							Type:        []string{"string"},
-							Format:      "",
-						},
-					},
-					"readOnly": {
-						SchemaProps: spec.SchemaProps{
-							Default: false,
-							Type:    []string{"boolean"},
-							Format:  "",
-						},
-					},
-				},
-			},
-		},
+			"./api/v1alpha2/.Commands", "./api/v1alpha2/.ContainerResources", "./api/v1alpha2/.ContainerVolume", "./api/v1alpha2/.LifeCycle", "./api/v1alpha2/.Secret", "./api/v1alpha2/.SecurityContext"},
 	}
 }
 
@@ -1050,25 +1011,6 @@ func schema__api_v1alpha2__MiniClusterSpec(ref common.ReferenceCallback) common.
 							Ref:         ref("./api/v1alpha2/.Network"),
 						},
 					},
-					"users": {
-						VendorExtensible: spec.VendorExtensible{
-							Extensions: spec.Extensions{
-								"x-kubernetes-list-type": "atomic",
-							},
-						},
-						SchemaProps: spec.SchemaProps{
-							Description: "Users of the MiniCluster",
-							Type:        []string{"array"},
-							Items: &spec.SchemaOrArray{
-								Schema: &spec.Schema{
-									SchemaProps: spec.SchemaProps{
-										Default: map[string]interface{}{},
-										Ref:     ref("./api/v1alpha2/.MiniClusterUser"),
-									},
-								},
-							},
-						},
-					},
 					"jobLabels": {
 						SchemaProps: spec.SchemaProps{
 							Description: "Labels for the job",
@@ -1098,21 +1040,6 @@ func schema__api_v1alpha2__MiniClusterSpec(ref common.ReferenceCallback) common.
 							Description: "Flux options for the broker, shared across cluster",
 							Default:     map[string]interface{}{},
 							Ref:         ref("./api/v1alpha2/.FluxSpec"),
-						},
-					},
-					"volumes": {
-						SchemaProps: spec.SchemaProps{
-							Description: "Volumes accessible to containers from a host Not all containers are required to use them",
-							Type:        []string{"object"},
-							AdditionalProperties: &spec.SchemaOrBool{
-								Allows: true,
-								Schema: &spec.Schema{
-									SchemaProps: spec.SchemaProps{
-										Default: map[string]interface{}{},
-										Ref:     ref("./api/v1alpha2/.MiniClusterVolume"),
-									},
-								},
-							},
 						},
 					},
 					"logging": {
@@ -1188,7 +1115,7 @@ func schema__api_v1alpha2__MiniClusterSpec(ref common.ReferenceCallback) common.
 			},
 		},
 		Dependencies: []string{
-			"./api/v1alpha2/.FluxSpec", "./api/v1alpha2/.LoggingSpec", "./api/v1alpha2/.MiniClusterArchive", "./api/v1alpha2/.MiniClusterContainer", "./api/v1alpha2/.MiniClusterUser", "./api/v1alpha2/.MiniClusterVolume", "./api/v1alpha2/.Network", "./api/v1alpha2/.PodSpec"},
+			"./api/v1alpha2/.FluxSpec", "./api/v1alpha2/.LoggingSpec", "./api/v1alpha2/.MiniClusterArchive", "./api/v1alpha2/.MiniClusterContainer", "./api/v1alpha2/.Network", "./api/v1alpha2/.PodSpec"},
 	}
 }
 
@@ -1281,145 +1208,6 @@ func schema__api_v1alpha2__MiniClusterUser(ref common.ReferenceCallback) common.
 					},
 				},
 				Required: []string{"name"},
-			},
-		},
-	}
-}
-
-func schema__api_v1alpha2__MiniClusterVolume(ref common.ReferenceCallback) common.OpenAPIDefinition {
-	return common.OpenAPIDefinition{
-		Schema: spec.Schema{
-			SchemaProps: spec.SchemaProps{
-				Description: "Mini Cluster local volumes available to mount (these are on the host)",
-				Type:        []string{"object"},
-				Properties: map[string]spec.Schema{
-					"path": {
-						SchemaProps: spec.SchemaProps{
-							Default: "",
-							Type:    []string{"string"},
-							Format:  "",
-						},
-					},
-					"labels": {
-						SchemaProps: spec.SchemaProps{
-							Type: []string{"object"},
-							AdditionalProperties: &spec.SchemaOrBool{
-								Allows: true,
-								Schema: &spec.Schema{
-									SchemaProps: spec.SchemaProps{
-										Default: "",
-										Type:    []string{"string"},
-										Format:  "",
-									},
-								},
-							},
-						},
-					},
-					"annotations": {
-						SchemaProps: spec.SchemaProps{
-							Description: "Annotations for the volume",
-							Type:        []string{"object"},
-							AdditionalProperties: &spec.SchemaOrBool{
-								Allows: true,
-								Schema: &spec.Schema{
-									SchemaProps: spec.SchemaProps{
-										Default: "",
-										Type:    []string{"string"},
-										Format:  "",
-									},
-								},
-							},
-						},
-					},
-					"claimAnnotations": {
-						SchemaProps: spec.SchemaProps{
-							Description: "Annotations for the persistent volume claim",
-							Type:        []string{"object"},
-							AdditionalProperties: &spec.SchemaOrBool{
-								Allows: true,
-								Schema: &spec.Schema{
-									SchemaProps: spec.SchemaProps{
-										Default: "",
-										Type:    []string{"string"},
-										Format:  "",
-									},
-								},
-							},
-						},
-					},
-					"attributes": {
-						SchemaProps: spec.SchemaProps{
-							Description: "Optional volume attributes",
-							Type:        []string{"object"},
-							AdditionalProperties: &spec.SchemaOrBool{
-								Allows: true,
-								Schema: &spec.Schema{
-									SchemaProps: spec.SchemaProps{
-										Default: "",
-										Type:    []string{"string"},
-										Format:  "",
-									},
-								},
-							},
-						},
-					},
-					"volumeHandle": {
-						SchemaProps: spec.SchemaProps{
-							Description: "Volume handle, falls back to storage class name if not defined",
-							Default:     "",
-							Type:        []string{"string"},
-							Format:      "",
-						},
-					},
-					"storageClass": {
-						SchemaProps: spec.SchemaProps{
-							Default: "hostpath",
-							Type:    []string{"string"},
-							Format:  "",
-						},
-					},
-					"driver": {
-						SchemaProps: spec.SchemaProps{
-							Description: "Storage driver, e.g., gcs.csi.ofek.dev Only needed if not using hostpath",
-							Default:     "",
-							Type:        []string{"string"},
-							Format:      "",
-						},
-					},
-					"delete": {
-						SchemaProps: spec.SchemaProps{
-							Description: "Delete the persistent volume on cleanup",
-							Default:     true,
-							Type:        []string{"boolean"},
-							Format:      "",
-						},
-					},
-					"secret": {
-						SchemaProps: spec.SchemaProps{
-							Description: "Secret reference in Kubernetes with service account role",
-							Default:     "",
-							Type:        []string{"string"},
-							Format:      "",
-						},
-					},
-					"secretNamespace": {
-						SchemaProps: spec.SchemaProps{
-							Description: "Secret namespace",
-							Default:     "default",
-							Type:        []string{"string"},
-							Format:      "",
-						},
-					},
-					"capacity": {
-						SchemaProps: spec.SchemaProps{
-							Description: "Capacity (string) for PVC (storage request) to create PV",
-							Default:     "5Gi",
-							Type:        []string{"string"},
-							Format:      "",
-						},
-					},
-				},
-				Required: []string{"path"},
 			},
 		},
 	}

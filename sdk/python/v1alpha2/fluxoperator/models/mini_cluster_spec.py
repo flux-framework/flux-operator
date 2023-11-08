@@ -50,9 +50,7 @@ class MiniClusterSpec(object):
         'services': 'list[MiniClusterContainer]',
         'share_process_namespace': 'bool',
         'size': 'int',
-        'tasks': 'int',
-        'users': 'list[MiniClusterUser]',
-        'volumes': 'dict[str, MiniClusterVolume]'
+        'tasks': 'int'
     }
 
     attribute_map = {
@@ -70,12 +68,10 @@ class MiniClusterSpec(object):
         'services': 'services',
         'share_process_namespace': 'shareProcessNamespace',
         'size': 'size',
-        'tasks': 'tasks',
-        'users': 'users',
-        'volumes': 'volumes'
+        'tasks': 'tasks'
     }
 
-    def __init__(self, archive=None, cleanup=False, containers=None, deadline_seconds=31500000, flux=None, interactive=False, job_labels=None, logging=None, max_size=None, network=None, pod=None, services=None, share_process_namespace=False, size=1, tasks=1, users=None, volumes=None, local_vars_configuration=None):  # noqa: E501
+    def __init__(self, archive=None, cleanup=False, containers=None, deadline_seconds=31500000, flux=None, interactive=False, job_labels=None, logging=None, max_size=None, network=None, pod=None, services=None, share_process_namespace=False, size=1, tasks=1, local_vars_configuration=None):  # noqa: E501
         """MiniClusterSpec - a model defined in OpenAPI"""  # noqa: E501
         if local_vars_configuration is None:
             local_vars_configuration = Configuration.get_default_copy()
@@ -96,8 +92,6 @@ class MiniClusterSpec(object):
         self._share_process_namespace = None
         self._size = None
         self._tasks = None
-        self._users = None
-        self._volumes = None
         self.discriminator = None
 
         if archive is not None:
@@ -129,10 +123,6 @@ class MiniClusterSpec(object):
             self.size = size
         if tasks is not None:
             self.tasks = tasks
-        if users is not None:
-            self.users = users
-        if volumes is not None:
-            self.volumes = volumes
 
     @property
     def archive(self):
@@ -470,52 +460,6 @@ class MiniClusterSpec(object):
         """
 
         self._tasks = tasks
-
-    @property
-    def users(self):
-        """Gets the users of this MiniClusterSpec.  # noqa: E501
-
-        Users of the MiniCluster  # noqa: E501
-
-        :return: The users of this MiniClusterSpec.  # noqa: E501
-        :rtype: list[MiniClusterUser]
-        """
-        return self._users
-
-    @users.setter
-    def users(self, users):
-        """Sets the users of this MiniClusterSpec.
-
-        Users of the MiniCluster  # noqa: E501
-
-        :param users: The users of this MiniClusterSpec.  # noqa: E501
-        :type users: list[MiniClusterUser]
-        """
-
-        self._users = users
-
-    @property
-    def volumes(self):
-        """Gets the volumes of this MiniClusterSpec.  # noqa: E501
-
-        Volumes accessible to containers from a host Not all containers are required to use them  # noqa: E501
-
-        :return: The volumes of this MiniClusterSpec.  # noqa: E501
-        :rtype: dict[str, MiniClusterVolume]
-        """
-        return self._volumes
-
-    @volumes.setter
-    def volumes(self, volumes):
-        """Sets the volumes of this MiniClusterSpec.
-
-        Volumes accessible to containers from a host Not all containers are required to use them  # noqa: E501
-
-        :param volumes: The volumes of this MiniClusterSpec.  # noqa: E501
-        :type volumes: dict[str, MiniClusterVolume]
-        """
-
-        self._volumes = volumes
 
     def to_dict(self, serialize=False):
         """Returns the model properties as a dict"""

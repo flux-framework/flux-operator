@@ -41,11 +41,6 @@ type MiniClusterSpec struct {
 	//+optional
 	Network Network `json:"network"`
 
-	// Users of the MiniCluster
-	// +optional
-	// +listType=atomic
-	Users []MiniClusterUser `json:"users"`
-
 	// Labels for the job
 	// +optional
 	JobLabels map[string]string `json:"jobLabels"`
@@ -215,6 +210,10 @@ type ContainerVolume struct {
 	// Path and claim name are always required if a secret isn't defined
 	// +optional
 	Path string `json:"path,omitempty"`
+
+	// An existing hostPath to bind to path
+	// +optional
+	HostPath string `json:"hostPath,omitempty"`
 
 	// Config map name if the existing volume is a config map
 	// You should also define items if you are using this
@@ -606,11 +605,6 @@ type MiniCluster struct {
 	Status MiniClusterStatus `json:"status,omitempty"`
 }
 
-// MultuUser returns boolean to indicate if we are in multi-user mode
-func (f *MiniCluster) MultiUser() bool {
-	return len(f.Spec.Users) > 0
-}
-
 // Determine if a MiniCluster container has custom commands
 // if we have custom commands and a command entrypoint we can support additional custom logic
 func (c *MiniClusterContainer) HasCommands() bool {
@@ -757,13 +751,6 @@ func (f *MiniCluster) Validate() bool {
 		f.Spec.JobLabels = map[string]string{}
 	}
 
-	// Validate user passwords. If provided, need to be 8 or fewer characters
-	for _, user := range f.Spec.Users {
-		if user.Password != "" && len(user.Password) > 8 {
-			fmt.Printf("😥️ %s has a password that is too long, can be no longer than 8 characters\n", user.Name)
-			return false
-		}
-	}
 	for i, container := range f.Spec.Containers {
 		name := fmt.Sprintf("MiniCluster.Container.%d", i)
 		fmt.Printf("🤓 %s.Image %s\n", name, container.Image)
@@ -826,14 +813,15 @@ func (f *MiniCluster) validateExistingVolumes(existing map[string]ContainerVolum
 			continue
 		}
 
-		// Case 3: claim desired without path
-		if volume.ClaimName == "" && volume.Path != "" {
-			fmt.Printf("😥️ Found existing volume %s with path %s that is missing a claim name\n", key, volume.Path)
-			valid = false
-		}
-		// Case 4: reverse of the above
+		// Case 3: claim name without path
 		if volume.ClaimName != "" && volume.Path == "" {
 			fmt.Printf("😥️ Found existing volume %s with claimName %s that is missing a path\n", key, volume.ClaimName)
+			valid = false
+		}
+
+		// Case 4: hostpath without path
+		if volume.HostPath != "" && volume.Path == "" {
+			fmt.Printf("😥️ Found existing volume %s with hostPath %s that is missing a path\n", key, volume.HostPath)
 			valid = false
 		}
 	}

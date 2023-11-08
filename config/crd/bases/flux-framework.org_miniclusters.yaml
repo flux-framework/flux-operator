@@ -209,6 +209,9 @@ spec:
                               a config map You should also define items if you are
                               using this
                             type: string
+                          hostPath:
+                            description: An existing hostPath to bind to path
+                            type: string
                           items:
                             additionalProperties:
                               type: string
@@ -629,6 +632,9 @@ spec:
                               a config map You should also define items if you are
                               using this
                             type: string
+                          hostPath:
+                            description: An existing hostPath to bind to path
+                            type: string
                           items:
                             additionalProperties:
                               type: string
@@ -667,20 +673,6 @@ spec:
                 description: Total number of CPUs being run across entire cluster
                 format: int32
                 type: integer
-              users:
-                description: Users of the MiniCluster
-                items:
-                  properties:
-                    name:
-                      description: If a user is defined, the username is required
-                      type: string
-                    password:
-                      type: string
-                  required:
-                  - name
-                  type: object
-                type: array
-                x-kubernetes-list-type: atomic
             required:
             - containers
             type: object

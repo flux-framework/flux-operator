@@ -41,7 +41,6 @@ class MiniClusterContainer(object):
         'command': 'str',
         'commands': 'Commands',
         'environment': 'dict[str, str]',
-        'existing_volumes': 'dict[str, MiniClusterExistingVolume]',
         'image': 'str',
         'image_pull_secret': 'str',
         'launcher': 'bool',
@@ -65,7 +64,6 @@ class MiniClusterContainer(object):
         'command': 'command',
         'commands': 'commands',
         'environment': 'environment',
-        'existing_volumes': 'existingVolumes',
         'image': 'image',
         'image_pull_secret': 'imagePullSecret',
         'launcher': 'launcher',
@@ -83,7 +81,7 @@ class MiniClusterContainer(object):
         'working_dir': 'workingDir'
     }
 
-    def __init__(self, batch=False, batch_raw=False, command='', commands=None, environment=None, existing_volumes=None, image='ghcr.io/rse-ops/accounting:app-latest', image_pull_secret='', launcher=False, life_cycle=None, logs='', name='', no_wrap_entrypoint=False, ports=None, pull_always=False, resources=None, run_flux=False, secrets=None, security_context=None, volumes=None, working_dir='', local_vars_configuration=None):  # noqa: E501
+    def __init__(self, batch=False, batch_raw=False, command='', commands=None, environment=None, image='ghcr.io/rse-ops/accounting:app-latest', image_pull_secret='', launcher=False, life_cycle=None, logs='', name='', no_wrap_entrypoint=False, ports=None, pull_always=False, resources=None, run_flux=False, secrets=None, security_context=None, volumes=None, working_dir='', local_vars_configuration=None):  # noqa: E501
         """MiniClusterContainer - a model defined in OpenAPI"""  # noqa: E501
         if local_vars_configuration is None:
             local_vars_configuration = Configuration.get_default_copy()
@@ -94,7 +92,6 @@ class MiniClusterContainer(object):
         self._command = None
         self._commands = None
         self._environment = None
-        self._existing_volumes = None
         self._image = None
         self._image_pull_secret = None
         self._launcher = None
@@ -122,8 +119,6 @@ class MiniClusterContainer(object):
             self.commands = commands
         if environment is not None:
             self.environment = environment
-        if existing_volumes is not None:
-            self.existing_volumes = existing_volumes
         if image is not None:
             self.image = image
         if image_pull_secret is not None:
@@ -267,29 +262,6 @@ class MiniClusterContainer(object):
         """
 
         self._environment = environment
-
-    @property
-    def existing_volumes(self):
-        """Gets the existing_volumes of this MiniClusterContainer.  # noqa: E501
-
-        Existing Volumes to add to the containers  # noqa: E501
-
-        :return: The existing_volumes of this MiniClusterContainer.  # noqa: E501
-        :rtype: dict[str, MiniClusterExistingVolume]
-        """
-        return self._existing_volumes
-
-    @existing_volumes.setter
-    def existing_volumes(self, existing_volumes):
-        """Sets the existing_volumes of this MiniClusterContainer.
-
-        Existing Volumes to add to the containers  # noqa: E501
-
-        :param existing_volumes: The existing_volumes of this MiniClusterContainer.  # noqa: E501
-        :type existing_volumes: dict[str, MiniClusterExistingVolume]
-        """
-
-        self._existing_volumes = existing_volumes
 
     @property
     def image(self):
@@ -588,7 +560,7 @@ class MiniClusterContainer(object):
     def volumes(self):
         """Gets the volumes of this MiniClusterContainer.  # noqa: E501
 
-        Volumes that can be mounted (must be defined in volumes)  # noqa: E501
+        Existing volumes that can be mounted  # noqa: E501
 
         :return: The volumes of this MiniClusterContainer.  # noqa: E501
         :rtype: dict[str, ContainerVolume]
@@ -599,7 +571,7 @@ class MiniClusterContainer(object):
     def volumes(self, volumes):
         """Sets the volumes of this MiniClusterContainer.
 
-        Volumes that can be mounted (must be defined in volumes)  # noqa: E501
+        Existing volumes that can be mounted  # noqa: E501
 
         :param volumes: The volumes of this MiniClusterContainer.  # noqa: E501
         :type volumes: dict[str, ContainerVolume]

@@ -88,17 +88,6 @@ func getContainers(
 		// Prepare lifescycle commands for the container
 		lifecycle := createContainerLifecycle(container)
 
-		// Add extra volumes for the operator to create
-		// We already have our emptyVolume here
-		for volumeName, volume := range container.Volumes {
-			mount := corev1.VolumeMount{
-				Name:      volumeName,
-				MountPath: volume.Path,
-				ReadOnly:  volume.ReadOnly,
-			}
-			mounts = append(mounts, mount)
-		}
-
 		// Add on existing volumes/claims
 		for volumeName, volume := range container.Volumes {
 			mount := corev1.VolumeMount{

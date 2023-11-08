@@ -104,37 +104,6 @@ spec:
                         type: string
                       description: Key/value pairs for the environment
                       type: object
-                    existingVolumes:
-                      additionalProperties:
-                        description: Mini Cluster local volumes available to mount
-                          (these are on the host)
-                        properties:
-                          claimName:
-                            description: Claim name if the existing volume is a PVC
-                            type: string
-                          configMapName:
-                            description: Config map name if the existing volume is
-                              a config map You should also define items if you are
-                              using this
-                            type: string
-                          items:
-                            additionalProperties:
-                              type: string
-                            description: Items (key and paths) for the config map
-                            type: object
-                          path:
-                            description: Path and claim name are always required if
-                              a secret isn't defined
-                            type: string
-                          readOnly:
-                            default: false
-                            type: boolean
-                          secretName:
-                            description: An existing secret
-                            type: string
-                        type: object
-                      description: Existing Volumes to add to the containers
-                      type: object
                     image:
                       default: ghcr.io/rse-ops/accounting:app-latest
                       description: Container image must contain flux and flux-sched
@@ -237,19 +206,35 @@ spec:
                       type: object
                     volumes:
                       additionalProperties:
-                        description: A Container volume must reference one defined
-                          for the MiniCluster The path here is in the container
                         properties:
+                          claimName:
+                            description: Claim name if the existing volume is a PVC
+                            type: string
+                          configMapName:
+                            description: Config map name if the existing volume is
+                              a config map You should also define items if you are
+                              using this
+                            type: string
+                          hostPath:
+                            description: An existing hostPath to bind to path
+                            type: string
+                          items:
+                            additionalProperties:
+                              type: string
+                            description: Items (key and paths) for the config map
+                            type: object
                           path:
+                            description: Path and claim name are always required if
+                              a secret isn't defined
                             type: string
                           readOnly:
                             default: false
                             type: boolean
-                        required:
-                        - path
+                          secretName:
+                            description: An existing secret
+                            type: string
                         type: object
-                      description: Volumes that can be mounted (must be defined in
-                        volumes)
+                      description: Existing volumes that can be mounted
                       type: object
                     workingDir:
                       description: Working directory to run command from
@@ -542,37 +527,6 @@ spec:
                         type: string
                       description: Key/value pairs for the environment
                       type: object
-                    existingVolumes:
-                      additionalProperties:
-                        description: Mini Cluster local volumes available to mount
-                          (these are on the host)
-                        properties:
-                          claimName:
-                            description: Claim name if the existing volume is a PVC
-                            type: string
-                          configMapName:
-                            description: Config map name if the existing volume is
-                              a config map You should also define items if you are
-                              using this
-                            type: string
-                          items:
-                            additionalProperties:
-                              type: string
-                            description: Items (key and paths) for the config map
-                            type: object
-                          path:
-                            description: Path and claim name are always required if
-                              a secret isn't defined
-                            type: string
-                          readOnly:
-                            default: false
-                            type: boolean
-                          secretName:
-                            description: An existing secret
-                            type: string
-                        type: object
-                      description: Existing Volumes to add to the containers
-                      type: object
                     image:
                       default: ghcr.io/rse-ops/accounting:app-latest
                       description: Container image must contain flux and flux-sched
@@ -675,19 +629,35 @@ spec:
                       type: object
                     volumes:
                       additionalProperties:
-                        description: A Container volume must reference one defined
-                          for the MiniCluster The path here is in the container
                         properties:
+                          claimName:
+                            description: Claim name if the existing volume is a PVC
+                            type: string
+                          configMapName:
+                            description: Config map name if the existing volume is
+                              a config map You should also define items if you are
+                              using this
+                            type: string
+                          hostPath:
+                            description: An existing hostPath to bind to path
+                            type: string
+                          items:
+                            additionalProperties:
+                              type: string
+                            description: Items (key and paths) for the config map
+                            type: object
                           path:
+                            description: Path and claim name are always required if
+                              a secret isn't defined
                             type: string
                           readOnly:
                             default: false
                             type: boolean
-                        required:
-                        - path
+                          secretName:
+                            description: An existing secret
+                            type: string
                         type: object
-                      description: Volumes that can be mounted (must be defined in
-                        volumes)
+                      description: Existing volumes that can be mounted
                       type: object
                     workingDir:
                       description: Working directory to run command from
@@ -709,80 +679,6 @@ spec:
                 description: Total number of CPUs being run across entire cluster
                 format: int32
                 type: integer
-              users:
-                description: Users of the MiniCluster
-                items:
-                  properties:
-                    name:
-                      description: If a user is defined, the username is required
-                      type: string
-                    password:
-                      type: string
-                  required:
-                  - name
-                  type: object
-                type: array
-                x-kubernetes-list-type: atomic
-              volumes:
-                additionalProperties:
-                  description: Mini Cluster local volumes available to mount (these
-                    are on the host)
-                  properties:
-                    annotations:
-                      additionalProperties:
-                        type: string
-                      description: Annotations for the volume
-                      type: object
-                    attributes:
-                      additionalProperties:
-                        type: string
-                      description: Optional volume attributes
-                      type: object
-                    capacity:
-                      default: 5Gi
-                      description: Capacity (string) for PVC (storage request) to
-                        create PV
-                      type: string
-                    claimAnnotations:
-                      additionalProperties:
-                        type: string
-                      description: Annotations for the persistent volume claim
-                      type: object
-                    delete:
-                      default: true
-                      description: Delete the persistent volume on cleanup
-                      type: boolean
-                    driver:
-                      description: Storage driver, e.g., gcs.csi.ofek.dev Only needed
-                        if not using hostpath
-                      type: string
-                    labels:
-                      additionalProperties:
-                        type: string
-                      type: object
-                    path:
-                      type: string
-                    secret:
-                      description: Secret reference in Kubernetes with service account
-                        role
-                      type: string
-                    secretNamespace:
-                      default: default
-                      description: Secret namespace
-                      type: string
-                    storageClass:
-                      default: hostpath
-                      type: string
-                    volumeHandle:
-                      description: Volume handle, falls back to storage class name
-                        if not defined
-                      type: string
-                  required:
-                  - path
-                  type: object
-                description: Volumes accessible to containers from a host Not all
-                  containers are required to use them
-                type: object
             required:
             - containers
             type: object

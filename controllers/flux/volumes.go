@@ -11,13 +11,11 @@ SPDX-License-Identifier: Apache-2.0
 package controllers
 
 import (
-	"context"
 	"fmt"
 
 	api "github.com/flux-framework/flux-operator/api/v1alpha2"
 
 	corev1 "k8s.io/api/core/v1"
-	"k8s.io/apimachinery/pkg/types"
 )
 
 // Shared function to return consistent set of volume mounts
@@ -134,6 +132,17 @@ func getExistingVolumes(existing map[string]api.ContainerVolume) []corev1.Volume
 				},
 			}
 
+		} else if volumeMeta.HostPath != "" {
+			newVolume = corev1.Volume{
+				Name: volumeName,
+				VolumeSource: corev1.VolumeSource{
+					// Empath path for type means no checks are done
+					HostPath: &corev1.HostPathVolumeSource{
+						Path: volumeMeta.Path,
+					},
+				},
+			}
+
 		} else if volumeMeta.ConfigMapName != "" {
 
 			// Prepare items as key to path
@@ -174,40 +183,4 @@ func getExistingVolumes(existing map[string]api.ContainerVolume) []corev1.Volume
 		volumes = append(volumes, newVolume)
 	}
 	return volumes
-}
-
-func (r *MiniClusterReconciler) getExistingPersistentVolume(
-	ctx context.Context,
-	cluster *api.MiniCluster,
-	volumeName string,
-) (*corev1.PersistentVolume, error) {
-
-	// First look for an existing persistent volume
-	existing := &corev1.PersistentVolume{}
-	err := r.Get(
-		ctx,
-		types.NamespacedName{
-			Name:      volumeName,
-			Namespace: cluster.Namespace},
-		existing,
-	)
-	return existing, err
-}
-
-// getExistingVolumeClaim gets an existing volume claim
-func (r *MiniClusterReconciler) getExistingPersistentVolumeClaim(
-	ctx context.Context,
-	cluster *api.MiniCluster,
-	claimName string,
-) (*corev1.PersistentVolumeClaim, error) {
-
-	existing := &corev1.PersistentVolumeClaim{}
-	err := r.Get(
-		ctx,
-		types.NamespacedName{
-			Name:      claimName,
-			Namespace: cluster.Namespace},
-		existing,
-	)
-	return existing, err
 }
