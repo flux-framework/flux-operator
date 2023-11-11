@@ -218,28 +218,6 @@ umount /tmp/data
 ## Clean up
 
 Make sure you clean everything up!
-Detach roles:
-
-```bash
-$ eksctl delete iamserviceaccount --name s3-mounter --namespace otomount --cluster flux-operator
-```
-
-Delete the flux operator in some way:
-
-```bash
-$ make undeploy
-$ kubectl delete -f ../../dist/flux-operator-dev.yaml
-```
-
-If you created roles, you probably want to clean these up too:
-
-```bash
-$ aws iam delete-role --role-name eks-otomounter-role
-$ aws iam delete-policy --policy-arn arn:aws:iam::633731392008:policy/kubernetes-s3-access
-$ aws iam delete-open-id-connect-provider --open-id-connect-provider-arn "arn:aws:iam::633731392008:oidc-provider/oidc.eks.us-east-1.amazonaws.com/id/xxxxxxxxxxxxxx"
-```
-
-And then delete your cluster (e.g., one of the following)
 
 ```bash
 $ eksctl delete cluster -f ./eksctl-config.yaml --wait

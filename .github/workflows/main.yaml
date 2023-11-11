@@ -65,7 +65,7 @@ jobs:
                ["batch", "", 90],
                ["timed", "", 90],
                ["debug", "", 90],
-               #["volumes", "", 90],
+               ["volumes", "", 90],
                ["hello-world", "", 90],
                ["nginx-service", "", 90],
                ["custom-config", "", 90],

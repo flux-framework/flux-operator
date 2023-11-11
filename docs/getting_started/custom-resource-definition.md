@@ -995,12 +995,62 @@ As of version 0.2.0, the Flux Operator controlling its own volumes has been remo
 We did this because volumes are complex and it was challenging to support every use case. Thus, our strategy is to allow the user to create
 the volumes and persistent volume claims that the MiniCluster needs, and simply tell it about them. A volume (that must exist) can be:
 
+ - a hostpath (good for local development)
  - a persistent volume claim (PVC) and persistent volume (PV) that you've created
  - a secret that you've created
  - a config map that you've created
 
 and for all of the above, you want to provide it to the operator, which will work either for a worker
 pod (in the indexed job) or a service. 
+
+#### hostpath example
+
+You might start by creating a pv and a pvc:
+
+```yaml
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: data
+spec:
+  storageClassName: manual
+  capacity:
+    storage: 5Gi
+  accessModes:
+    - ReadWriteMany
+  hostPath:
+    path: /data
+---
+apiVersion: v1 
+kind: PersistentVolumeClaim
+metadata: 
+  name: data
+spec: 
+  accessModes: 
+    - ReadWriteMany
+  resources: 
+    requests: 
+      storage: 1Gi
+```
+And then to add this PVC to your MiniCluster:
+
+```yaml
+apiVersion: flux-framework.org/v1alpha2
+kind: MiniCluster
+metadata:
+  name: flux-sample
+spec:
+  size: 2
+  containers:
+    - image: rockylinux:9
+      command: ls /data
+      volumes:
+        data:
+          path: /data
+          hostPath: /data
+```
+
+An example is provided in the [volumes test](https://github.com/flux-framework/flux-operator/tree/main/examples/tests/volumes).
 
 #### persistent volume claim example
 

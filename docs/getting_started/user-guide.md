@@ -85,14 +85,6 @@ TEST SUITE: None
 
 For developer instructions, please see our [developer documentation](../development/index.md).
 
-### Tool Install
-
-We maintain a tool [Flux Cloud](https://github.com/converged-computing/flux-cloud) that is able to bring up clusters, install the operator,
-and optionally run experiments and bring them down. We currently support a handful of clouds
-(AWS and Google) and if you find yourself wanting a way to easily generate and save results
-for experiments, this might be the way to go. If you have a cloud or environment you
-want to deploy to that isn't supported, please [let us know](https://github.com/converged-computing/flux-cloud/issues).
-
 ## Next Steps
 
 For next steps, you might do the following:

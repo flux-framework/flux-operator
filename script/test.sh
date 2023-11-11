@@ -23,6 +23,9 @@ make run > ${out} 2> ${err} &
 pid=$!
 echo "PID for running cluster is ${pid}"
 
+# If there are volumes to create
+kubectl apply -f examples/tests/${name}/volumes.yaml || true
+
 # If there is a pre-run script
 /bin/bash examples/tests/${name}/pre-run.sh || true
 kubectl apply -f examples/tests/${name}/minicluster.yaml
@@ -49,3 +52,6 @@ sleep ${jobtime}
 kill ${pid} || true
 kill $(lsof -t -i:8080) || true
 /bin/bash examples/tests/${name}/post-run.sh || true
+
+# If there are volumes to delete
+kubectl delete -f examples/tests/${name}/volumes.yaml || true
