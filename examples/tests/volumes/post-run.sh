@@ -1,4 +1,4 @@
 #!/bin/bash
 
-echo "Cleaning up /tmp/data in minikube"
-minikube ssh -- sudo rm -rf /tmp/data
+echo "Cleaning up /data in minikube"
+minikube ssh -- sudo rm -rf /data
