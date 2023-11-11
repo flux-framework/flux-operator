@@ -7,12 +7,6 @@ spec:
   logging:
     quiet: true
 
-  # Mount a volume where the output will be
-  volumes:
-    data:
-      storageClass: hostpath
-      path: /tmp/data
-
   # Number of pods to create for MiniCluster
   size: 2
 

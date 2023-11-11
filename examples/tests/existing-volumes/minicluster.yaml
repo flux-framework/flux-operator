@@ -14,7 +14,7 @@ spec:
   containers:
     - image: rockylinux:9
       command: ls /data
-      existingVolumes:
+      volumes:
         data:
           path: /data
           claimName: data
