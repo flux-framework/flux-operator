@@ -6,13 +6,7 @@ spec:
   size: 2
   # If we don't set this, we won't be able to go above two!
   maxSize: 10
-
-  # This is created with the kind-config.yaml
-  # You should only need to pull once (the container is pulled to bound volume)
-  volumes:
-    data:
-      storageClass: hostpath
-      path: /tmp/workflow
+  interactive: true
 
   # Python is an ubuntu base
   flux:
@@ -24,7 +18,6 @@ spec:
     - image: python
 
       # Use the same python alongside flux, this is the view location
-      command: /mnt/flux/view/bin/python3.11 /data/three_bears.py
       workingDir: /data
 
       # Launcher is true (and important) so we can watch in the logs
@@ -39,3 +32,4 @@ spec:
       volumes:
         data:
           path: /data
+          hostPath: /data

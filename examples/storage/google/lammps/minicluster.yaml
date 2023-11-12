@@ -1,0 +1,13 @@
+apiVersion: flux-framework.org/v1alpha2
+kind: MiniCluster
+metadata:
+  name: flux-sample
+spec:
+  # Number of pods to create for MiniCluster
+  size: 4
+  logging:
+    quiet: true
+  containers:
+    - image: ghcr.io/converged-computing/metric-lammps:latest
+      workingDir: /opt/lammps/examples/reaxff/HNS
+      command: lmp -v x 2 -v y 2 -v z 2 -in in.reaxc.hns -nocite

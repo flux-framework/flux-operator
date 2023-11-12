@@ -1,8 +1,7 @@
-apiVersion: flux-framework.org/v1alpha1
+apiVersion: flux-framework.org/v1alpha2
 kind: MiniCluster
 metadata:
   name: flux-sample
-  namespace: flux-operator
 spec:
 
   # Number of pods to create for MiniCluster
@@ -12,18 +11,17 @@ spec:
   # This is a list because a pod can support multiple containers
   containers:
     # The container URI to pull (currently needs to be public)
-    - image: ghcr.io/flux-framework/flux-restful-api:latest
+    - image: rockylinux:9
       runFlux: true
       commands:
 
         # This is going to install oras for the demo
         pre: |
-          apt-get update && apt-get install -y curl
           VERSION="1.0.0-rc.2"
           curl -LO "https://github.com/oras-project/oras/releases/download/v${VERSION}/oras_${VERSION}_linux_amd64.tar.gz"
           mkdir -p oras-install/
           tar -zxf oras_${VERSION}_*.tar.gz -C oras-install/
-          sudo mv oras-install/oras /usr/local/bin/
+          mv oras-install/oras /usr/local/bin/
           rm -rf oras_${VERSION}_*.tar.gz oras-install/
 
     - image: ghcr.io/oras-project/registry:latest

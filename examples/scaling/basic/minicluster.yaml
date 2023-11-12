@@ -1,19 +1,16 @@
-apiVersion: flux-framework.org/v1alpha1
+apiVersion: flux-framework.org/v1alpha2
 kind: MiniCluster
 metadata:
   name: flux-sample
-  namespace: flux-operator
 spec:
   # Number of pods to create for MiniCluster
   # Try creating this (waiting for running) and then:
   # 1. increasing the size will be denied (see operator pods)
   # 2. decreasing in size will terminate a pod (and flux resource list show as down)
   # 3. increasing again will restore to the original size
-  size: 4
+  size: 6
 
   # Make this interactive so we can launch a bunch of jobs!
   interactive: true
-
-  # This is a list because a pod can support multiple containers
   containers:
-    - image: ghcr.io/flux-framework/flux-restful-api:latest
+    - image: rockylinux:9

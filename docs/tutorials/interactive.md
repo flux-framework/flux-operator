@@ -1,7 +1,6 @@
 # Interactive
 
-The following tutorials demonstrate interactive MiniClusters, beyond using the Flux Restful API or
-launching a job to run and complete.
+The following tutorials demonstrate interactive MiniClusters.
 
 ## Persistent Cluster
 
@@ -18,15 +17,10 @@ kind: MiniCluster
 metadata:
   name: flux-sample
 spec:
-
-  # Number of pods to create for MiniCluster
   size: 2
   interactive: true
-
-# This is a list because a pod can support multiple containers
   containers:
-    - image: ghcr.io/rse-ops/pokemon:app-latest
-      fluxOptionFlags: "-ompi=openmpi@5"
+    - image: rockylinux:9
 ```
 
 When interactive is true, we tell the Flux broker to start without a command. This means
@@ -35,14 +29,13 @@ itself. The container you choose should have the software you are interested in 
 Given a running cluster, we can create the namespace and the MiniCluster as follows:
 
 ```bash
-$ kubectl create namespace flux-operator
 $ kubectl apply -f examples/interactive/minicluster-persistent.yaml
 ```
 
 We can then wait for our pods to be running
 
 ```bash
-$ kubectl get -n flux-operator pods
+$ kubectl get pods
 NAME                         READY   STATUS      RESTARTS   AGE
 flux-sample-0-p5xls          1/1     Running     0          7s
 flux-sample-1-nmtt7          1/1     Running     0          7s
@@ -51,31 +44,25 @@ flux-sample-1-nmtt7          1/1     Running     0          7s
 And then shell into the broker pod, index 0:
 
 ```bash
-$ kubectl exec -it  -n flux-operator flux-sample-0-p5xls -- bash
+$ kubectl exec -it flux-sample-0-p5xls -- bash
 ```
 
 At this point, remember the broker is running, and we need to connect to it. We do this via
 flux proxy and targeting the socket, which is a local reference at `/run/flux/local`:
 
 ```bash
-# Connect to the flux socket at /run/flux/local as the flux instance owner "flux"
-$ sudo -u flux flux proxy local:///run/flux/local
+source /mnt/flux/flux-view.sh
+flux proxy ${fluxsocket} bash
 ```
 
-At this point, you are the instance owner "flux":
-
-```bash
-$ whoami
-flux
-```
 And can also see the resources known to your instance!
 
 ```bash
-flux@flux-sample-0:/code$ flux resource list
-     STATE NNODES   NCORES NODELIST
-      free      2        2 flux-sample-[0-1]
- allocated      0        0
-      down      0        0 
+[root@flux-sample-0 /]# flux resource list
+     STATE NNODES   NCORES    NGPUS NODELIST
+      free      2       20        0 flux-sample-[0-1]
+ allocated      0        0        0 
+      down      0        0        0 
 ```
 
 If you see a node is down, it could be the worker node has not connected to the broker
@@ -92,7 +79,7 @@ Note that under flux jobs below, the first sleep (flux-sample-1) is the command
 originally given to the broker. The second, newer sleep is the job we just launched.
 
 ```bash
-flux@flux-sample-0:/code$ flux jobs
+[root@flux-sample-0 /]# flux jobs
        JOBID USER     NAME       ST NTASKS NNODES     TIME INFO
     ƒg4ZRVS7 flux     sleep       R      1      1   1.290s flux-sample-1
 ```
@@ -109,9 +96,3 @@ Or you could exit from the instance, and exit from the pod, and then delete the 
 ```bash
 $ kubectl delete -f examples/interactive/minicluster-persistent.yaml
 ```
-
-If your MiniCluster spec does not have `clean: true` you might need to run this 
-anyway with a shutdown. List pods if you aren't sure. Finally, interactive mode works
-very well when using the Flux Operator Python SDK. [Here is a full example](https://github.com/flux-framework/flux-operator/tree/main/sdk/python/v1alpha2/examples/interactive-submit.py).
-
-Have fun! 🦄

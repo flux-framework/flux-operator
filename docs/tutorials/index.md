@@ -79,12 +79,10 @@ The following tutorials are included in the rendered documentation here.
 ```{toctree}
 :maxdepth: 2
 jobs
-singularity
 interactive
 services
 scaling
 elasticity
-staging
 volumes
 state
 ```

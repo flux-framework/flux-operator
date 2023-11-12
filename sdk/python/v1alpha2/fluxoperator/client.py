@@ -55,13 +55,6 @@ class FluxMiniCluster:
         # Save the pods upfront so we don't have to query for them again.
         return self.wait_pods()
 
-    @property
-    def flux_user(self):
-        """
-        Derive the name of the flux instance owner.
-        """
-        return (self.metadata or {}).get("spec", {}).get("flux_user") or "flux"
-
     def wait_pods(self, retry_seconds=1, quiet=False):
         """
         A wrapper to wait for pods.
@@ -182,16 +175,16 @@ class FluxBrokerMiniCluster(FluxMiniCluster):
     A MiniCluster with a broker can have commands exec'd to the socket.
     """
 
-    def __init__(self, socket=None, *args, **kwargs):
+    def __init__(self, source_view=None, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.socket = socket or "local:///var/run/flux/local"
+        self.source_view = source_view or "/mnt/flux/flux-view.sh"
 
     def execute(self, command, print_result=True):
         """
         Wrap the kubectl_exec to add logic to issue to the broker instance.
         """
         res = self.ctrl.kubectl_exec(
-            f"sudo -u {self.flux_user} flux proxy {self.socket} {command}",
+            f". {self.source_view} && flux proxy $fluxsocket {command}",
             name=self.name,
             namespace=self.namespace,
             pod=self.broker_pod,
@@ -366,7 +359,7 @@ class FluxOperator:
     def delete_minicluster(self, name=None, namespace=None, **kwargs):
         """
         Deletion (and time the deletion of) the MiniCluster
-        """
+        """       
         namespace = namespace or self.namespace
         res = delete_minicluster(name, namespace, **kwargs)
         self.wait_termination_pods(name, namespace)

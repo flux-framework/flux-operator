@@ -17,7 +17,6 @@ from fluxoperator.models import (
     MiniClusterContainer,
     MiniClusterSpec,
     MiniClusterArchive,
-    MiniClusterVolume,
     ContainerVolume,
 )
 
@@ -25,21 +24,17 @@ from fluxoperator.models import (
 from fluxoperator.client import FluxBrokerMiniCluster
 
 # Set our namespace and name
-namespace = "flux-operator"
+namespace = "default"
 minicluster_name = "save-state"
-
+version = "v1alpha2"
 
 # Here is our main container, we will use this for both clusters
 container = MiniClusterContainer(
-    image="ghcr.io/flux-framework/flux-restful-api:latest",
-    volumes={"data": ContainerVolume(path="/state")},
-    cores=2,
+    image="rockylinux:9",
+    volumes={"data": ContainerVolume(path="/state", host_path="/data")},
     run_flux=True,
 )
 
-# In order to save state we need a persistent volume between the MiniClusters
-# it will be bound to /state, and the archive saved as "archive.tar.gz"
-volumes = {"data": MiniClusterVolume(storage_class="hostpath", path="/tmp/data")}
 archive = MiniClusterArchive(path="/state/archive.tar.gz")
 
 # This is creating the full minicluster
@@ -47,7 +42,7 @@ archive = MiniClusterArchive(path="/state/archive.tar.gz")
 # and then we can interact / submit as we please!
 minicluster = MiniCluster(
     kind="MiniCluster",
-    api_version="flux-framework.org/v1alpha1",
+    api_version=f"flux-framework.org/{version}",
     metadata=V1ObjectMeta(
         name=minicluster_name,
         namespace=namespace,
@@ -57,7 +52,6 @@ minicluster = MiniCluster(
         containers=[container],
         interactive=True,
         archive=archive,
-        volumes=volumes,
     ),
 )
 
@@ -72,7 +66,7 @@ crd_api = client.CustomObjectsApi()
 # And create the cluster
 result = crd_api.create_namespaced_custom_object(
     group="flux-framework.org",
-    version="v1alpha1",
+    version=version,
     namespace=namespace,
     plural="miniclusters",
     body=minicluster,
@@ -88,7 +82,7 @@ cli.load(result)
 # By default, this selects (and waits for) the broker pod
 
 print("✨️ Submitting a ton of jobs!")
-time.sleep(60)
+time.sleep(90)
 for iter in range(0, 30):
     res = cli.execute("flux submit sleep %s" % iter)
     assert res.startswith("ƒ")
@@ -127,7 +121,7 @@ minicluster.spec.size = 3
 print("\n🌀️ Creating second MiniCluster")
 result = crd_api.create_namespaced_custom_object(
     group="flux-framework.org",
-    version="v1alpha1",
+    version=version,
     namespace=namespace,
     plural="miniclusters",
     body=minicluster,

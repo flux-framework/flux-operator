@@ -17,32 +17,39 @@ jobs to finish and then dump the archive anew, we rely on issuing a command to t
 
 ## Create hostpath volume
 
-Create the hostpath volume first:
+Create the hostpath volume and pvc first:
 
 ```yaml
-kind: PersistentVolume
 apiVersion: v1
+kind: PersistentVolume
 metadata:
   name: data
-  labels:
-    type: local
 spec:
+  storageClassName: manual
   capacity:
-    storage: 1Gi
+    storage: 5Gi
+  accessModes:
+    - ReadWriteMany
   hostPath:
-    path: /tmp/data
+    path: /data
+---
+apiVersion: v1 
+kind: PersistentVolumeClaim
+metadata: 
+  name: data
+spec: 
+  accessModes: 
+    - ReadWriteMany
+  resources: 
+    requests: 
+      storage: 1Gi
 ```
 
-TODO this needs to be re-written 
+If the above is volumes.yaml:
 
-  # This volume needs to persistent between MiniClusters so we can load the archive!
-  volumes:
-    data:
-      storageClass: hostpath
-      path: /tmp/data
-      labels:
-        type: "local"
-
+```yaml
+kubectl apply -f volumes.yaml
+```
 
 ## Saving Pending Jobs
 
@@ -93,13 +100,13 @@ before the delete command at the end, and then interactively shell into the new 
 (when the node are running) and then look at jobs:
 
 ```bash
-$ kubectl exec -it -n flux-operator flux-sample-0-mbv54 -- sudo -u flux flux proxy local:///var/run/flux/local flux jobs -a
+$ kubectl exec -it flux-sample-0-mbv54 -- source /mnt/flux/flux-view.sh && flux proxy ${fluxsocket} flux jobs -a
 ```
 
 And always make sure to clean up your archive at the end!
 
 ```bash
-$ minikube ssh -- rm /tmp/data/archive.tar.gz
+$ minikube ssh -- rm /data/archive.tar.gz
 ```
 
 The next (basic) example goes through the same ideas, but manually for each step so you
@@ -247,136 +254,5 @@ minicluster.flux-framework.org "flux-sample" deleted
 
 </details>
 
-### Create the MiniCluster
 
-This is how to create the MiniCluster:
-
-```bash
-$ kubectl apply -f examples/state/basic-job-completion/minicluster.yaml 
-```
-
-At this point you can proceed to either [Interactive Submit](#interactive-submit) or [Programmatic Submit](#programmatic-submit).
-
-### Interactive Submit
-
-And now we need to submit a bunch of jobs to run to completion. We can do this by shelling in. 
-First, here is how to do this interactively:
-
-```bash
-# Shell to the pod
-$ kubectl exec -it -n flux-operator flux-sample-0-gzqfl -- bash
-```
-
-Check out the state directory! This is where Flux stores job metadata:
-
-```bash
-$ ls /var/lib/flux/
-```
-```console
-content.sqlite  content.sqlite-shm  content.sqlite-wal  job-archive.sqlite  job-archive.sqlite-shm  job-archive.sqlite-wal
-```
-
-Let's now connect to the Flux instance:
-
-```bash
-$ sudo -u flux flux proxy local:///var/run/flux/local
-```
-
-And now launch a bunch of jobs. It doesn't matter what they are, go crazy.
-
-```bash
-for i in {1..5}
-do
-   flux submit sleep ${i}
-   flux submit whoami
-done
-```
-These will be done very quickly! You should see them all green (to indicate success) via:
-
-```bash
-$ flux jobs -a
-```
-
-### Programmatic Submit
-
-Or just do the entire thing from the command line! First, confirm the archive path is empty:
-
-```bash
-$ minikube ssh ls /tmp/data
-# no output
-```
-
-Then submit jobs - either one or many:
-
-```bash
-kubectl exec -it -n flux-operator flux-sample-0-g6gv4 -- sudo -u flux flux proxy local:///var/run/flux/local flux submit sleep 2
-
-for i in {1..5}
-do
-   kubectl exec -it -n flux-operator flux-sample-0-g6gv4 -- sudo -u flux flux proxy local:///var/run/flux/local flux submit sleep ${i}
-   kubectl exec -it -n flux-operator flux-sample-0-g6gv4 -- sudo -u flux flux proxy local:///var/run/flux/local flux submit whoami
-done
-```
-
-When you are done, you can see all the jobs:
-
-```bash
-$ kubectl exec -it -n flux-operator flux-sample-0-mbv54 -- sudo -u flux flux proxy local:///var/run/flux/local flux jobs -a
-```
-
-Then you can stop the queue, wait for jobs to finish, and request the dump. Note that we do this
-as an interactive command and not automatically because (for large dumps 💩️) we cannot ensure that the time
-will be given for completion. 
-
-```bash
-$ kubectl exec -it -n flux-operator flux-sample-0-mbv54 -- sudo -u flux flux proxy local:///var/run/flux/local flux queue stop
-$ kubectl exec -it -n flux-operator flux-sample-0-mbv54 -- sudo -u flux flux proxy local:///var/run/flux/local flux queue idle
-$ kubectl exec -it -n flux-operator flux-sample-0-mbv54 -- sudo -u flux flux proxy local:///var/run/flux/local flux queue dump /state/archive.tar.gz
-```
-
-After that, outside of the shell (if you didn't already exit) let's delete the Minicluster.
-
-```bash
-$ kubectl delete -f examples/state/basic-job-completion/minicluster.yaml 
-```
-
-At this point, it should be the case that the same flux state directory is dumped to the archive path we requested, 
-which is located at `/tmp/data/archive.tar.gz` in the MiniKube vm (`/tmp/data` is bound to `/state` and the
-archive inside the container is asked to be saved to `/state/archive.tar.gz`).
-
-```bash
-$ minikube ssh -- ls -l /tmp/data/
-total 7
--rw-rw-r-- 1 docker docker 6231 Mar 12 07:44 archive.tar.gz
-```
-
-Next, let's bring up a second MiniCluster! This time, in the entry point it should find the existing archive,
-load into the broker, and then we will see them. We can use the same MiniCluster file!
-
-```bash
-$ kubectl apply -f examples/state/basic-job-completion/minicluster.yaml 
-```
-
-We then then test if this current setup has a memory of the jobs run on the first one:
-
-```bash
-$ kubectl exec -it -n flux-operator flux-sample-0-dpd42 -- sudo -u flux flux proxy local:///var/run/flux/local flux jobs -a
-```
-
-And of course, clean up when you are done.
-
-```bash
-$ kubectl delete -f examples/state/basic-job-completion/minicluster.yaml 
-$ minikube ssh -- rm -rf /tmp/data/archive.tar.gz
-```
-
-We also have this example demonstrated [entirely in Python](https://github.com/flux-framework/flux-operator/tree/main/sdk/python/v1alpha2/examples/state-basic-job-completion-minicluster.py) using the Flux Operator Python SDK.
-
-> What are next steps?
-
-This is really cool! Intuitively what we need to do for the next example (stopping a queue of jobs that are running,
-meaning waiting for running jobs to finish and pausing the rest) is to submit jobs that will take much longer to run,
-and then figure out how to issue a command to the cluster to stop scheduling, stop the queue, wait for running jobs to
-finish, and then to do the same archive. What isn't clear is how it will work when Flux reloads the archive - will
-the jobs that weren't run yet start? What commands should be the responsibility of the Operator vs. a client like
-the Python SDK? I'm not sure - we will find out! 
+You can look at that script to follow the logic and steps.

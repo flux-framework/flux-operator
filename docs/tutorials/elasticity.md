@@ -43,20 +43,27 @@ $ kubectl apply -f ../../dist/flux-operator.yaml
 $ kubectl apply -f ./minicluster.yaml
 ```
 
-At this point, wait until the containers go from creating to running.
+At this point, wait until the containers go from creating / init / to running.
 Note that it does take about a minute to pull.
 
 ```bash
-$ kubectl get -n flux-operator pods
+$ kubectl get pods
 NAME                  READY   STATUS    RESTARTS   AGE
 flux-sample-0-4wmmp   1/1     Running   0          6m50s
 flux-sample-1-mjj7b   1/1     Running   0          6m50s
 ```
 
-Then you can watch logs to see the demo!
+Copy the script into the container:
 
 ```bash
-$ kubectl logs -n flux-operator flux-sample-0-zkfp8 -f
+kubectl cp ./three_bears.py flux-sample-1-99tzj:/data/three-bears.py
+```
+
+And then run the example demo:
+
+```bash
+fluxsocket=local:///mnt/flux/view/run/flux/local
+kubectl exec -it flux-sample-0-pjpwn -- /bin/bash -c ". /mnt/flux/flux-view.sh && flux proxy $fluxsocket /mnt/flux/view/bin/python3.11 /data/three-bears.py"
 ```
 
 <details>
@@ -214,7 +221,6 @@ You'll need to ensure that:
 
 Details for how to inspect the above (and sample files) are provided below.
 
-
 ### Horizontal Autoscaler (v2) Example
 
 The version 2 API is more flexible than version 1 in allowing custom metrics. This means we can use a [prometheus-flux](https://github.com/converged-computing/prometheus-flux)
@@ -336,13 +342,13 @@ kubectl exec -it flux-sample-0-p85cj bash
 
 # This is written by the operator to make it easy to add the view
 . /mnt/flux/flux-view.sh
-flux proxy local:///mnt/flux/view/run/flux/local bash
-$ openssl speed -multi 4
+flux proxy $fluxsocket bash
+openssl speed -multi 4
 ```
 
 You'll see it change (with updates between 15 seconds and 1.5 minutes!):
 
-```
+```bash
 $ kubectl get hpa -w
 NAME              REFERENCE                 TARGETS   MINPODS   MAXPODS   REPLICAS   AGE
 flux-sample-hpa   MiniCluster/flux-sample   0%/2%     2         4         2          3m45s

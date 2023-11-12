@@ -212,55 +212,22 @@ $ make pre-push
 
 ## Container Requirements
 
-If you are looking to build a container to use with the Flux Operator, we have a set of
-example containers [here](https://github.com/rse-ops/flux-hpc) and general guidelines are below.
-Generally we recommend using the flux-sched base image
-so that install locations and users are consistent. This assumes that:
+Versions below 0.2.0 of the Flux Operator required Flux to be installed in the container.
+The new version (0.2.0 and later) does not have this requirement. Instead, we require:
 
- - we are currently starting focus on supporting debian bases
- - if you created the flux user, it has uid 1000 (unless you customize `fluxUser.Uid`)
- - sudo is available in the container (apt-get install -y sudo)
- - `/etc/flux` is used for configuration and general setup
- - `/usr/libexec/flux` has executables like flux-imp, flux-shell
- - flux-core / flux-sched with flux-security should be installed and ready to go.
- - If you haven't created a flux user, one will be created for you (with a common user id 1000 or `fluxuser.Uid`)
- - Any executables that the flux user needs for your job should be on the path (if launching command directly)
- - Do not have any requirements (data or executables in root's home)
- - The container (for now) should start with user root, and we run commands on behalf of flux.
- - You don't need to install the flux-restful-api (it will be installed by the operator)
- - munge should be install, and a key generated at `/etc/munge/munge.key`
+ - the active user to be root
+ - curl / wget installed
+ - a base image compatible with debian (ubuntu) or rocky linux
 
-For the last point, since all Flux running containers should have the same munge key
-in that location, we simply use it. The pipeline will fail if the key is missing from any
-Flux runner container.  For the curve.cert that we need to secure the cluster, we will
-be running your flux runner container before the indexed job is launched, generating
-the certificate, and then mapping it into the job pods via another config map.
-Note that we considered generating this natively in Gom, however the underlying library to do this
-generation that is [available in Go](https://pkg.go.dev/github.com/zeromq/goczmq#section-readme)
-requires system libraries, and thus would be annoying to add as a dependency.
+For older versions, we have a set of example containers [rse-ops/flux-hpc](https://github.com/rse-ops/flux-hpc) 
+that include Flux in the container. Our new bases are [rse-ops/hpc-apps](https://github.com/rse-ops/hpc-apps) that do not have flux.
+For our flux view, we take the following steps:
 
-These criteria are taken from the [flux-sched](https://github.com/flux-framework/flux-sched/blob/master/src/test/docker/focal/Dockerfile)
-base image [available on Docker hub](https://hub.docker.com/r/fluxrm/flux-sched) as `fluxrm/flux-sched:focal`,
-and we strongly suggest you use this for your base container to make development easier!
-If you intend to use the [Flux RESTful API](https://github.com/flux-framework/flux-restful-api)
-to interact with your cluster, ensure that flux (python bindings) are on the path, along with
-either python or python3 (depending on which you used to install Flux).
-If/when needed we can lift some of these constraints, but for now they are
-reasonable. If you use this image, you should have python3 and pip3 available to you,
-and the active user is `fluxuser`. This means if you want to add content, either you'll
-need to change the user to `root` in a build (and back to `fluxuser` at the end), use sudo, or
-install to `/home/fluxuser`.
+ - A sidecar (init container) is created to stage the flux view at /mnt/flux
+ - A file /mnt/flux/flux-view.sh is available to source for paths, python path, and a `$fluxsocket` variable
+ - All configuration files are under that root, and prepared by the init container.
 
-
-## Testing
-
-Testing is underway! From a high level, we want three kinds of testing:
-
- - Unit tests, which will be more traditional `*_test.go` files alongside others in the repository (not done yet)
- - End to end "e2e" tests, also within Go, to test an entire submission of a job, also within Go. (not done yet)
- - Integration testing, likely some within Go and some external to it. (in progress)
-
-### Integration
+### Testing
 
 For the integration testing outside of Go, we currently have basic tests written that allow the following:
 
@@ -291,46 +258,18 @@ hello world
 Expected:
 hello world
 ```
+
 What you don't see in the above is that we also use kubectl to ensure that the exit code for all containers
 (typically 4) is 0. Also note that the "sleep" time doesn't have to be exact, it's technically not necessary because we are waiting
 for the output to finish coming (and the job to stop). I added it to provide a courtesy message to the user and developer.
-Finally, note that for big containers it's suggested to pull them first, e.g.,:
+Finally, note that for big containers it's suggested to pull them first, e.g.,: 
 
 ```bash
 $ minikube ssh docker pull ghcr.io/rse-ops/lammps:flux-sched-focal-v0.24.0
 ```
 
-The tests above are headless, meaning they submit commands directly, and that way
-we don't need to do it in the UI and can programmatically determine if they were successful.
-Finally, note that if you have commands that you need to run before or after the tests,
-you can add a `pre-run.sh` or `post-run.sh` in the directory. As an example, because minikube
-is run inside of a VM, if you are using a host volume mount, it won't actually show up on your host!
-This is because it's inside the VM. This you might want to move files there before the test, e.g.,:
-
-```bash
-#!/bin/bash
-
-HERE=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
-
-echo "Copying local volume to /tmp/data-volumes in minikube"
-
-# We don't care if this works or not - mkdir -p seems to bork
-minikube ssh -- mkdir -p /tmp/data-volumes
-minikube cp ${HERE}/data/pancakes.txt /tmp/data-volumes/pancakes.txt
-minikube ssh ls /tmp/data-volumes
-```
-
-and then clean up after
-
-```bash
-#!/bin/bash
-
-echo "Cleaning up /tmp/data-volumes in minikube"
-minikube ssh -- sudo rm -rf /tmp/data-volumes
-```
-
-This would be the same for anytime you use minikube and want to create a local volume. It's not actually on your host,
-but rather in the VM. For an example test that does this, see the `examples/tests/volumes` example.
+You can see tests under [examples/tests](https://github.com/flux-framework/flux-operator/tree/main/examples/tests) for full examples of how this works,
+and the scripts under [script](https://github.com/flux-framework/flux-operator/tree/main/script).
 
 ## Documentation
 

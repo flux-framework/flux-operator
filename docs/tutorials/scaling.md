@@ -15,7 +15,6 @@ with the Flux Operator to enable it! Specifically:
    - The cluster will start with the minimum number of nodes `size`
    - You can go below the original size.
 
-
 <div class="result docutils container">
 <div class="info admonition">
 <p class="admonition-title">Note</p>
@@ -46,18 +45,16 @@ $ minikube start --kubernetes-version=1.27.0
 Install the operator, create the namespace, and create the MiniCluster:
 
 ```bash
-$ kubectl apply -f ./examples/dist/flux-operator.yaml
-$ kubectl create namespace flux-operator
-$ kubectl apply -f examples/scaling/basic/minicluster.yaml
+kubectl apply -f ./examples/dist/flux-operator.yaml
+kubectl apply -f examples/scaling/basic/minicluster.yaml
 ```
-
 
 ### Check Initial Size
 
 Wait until the cluster finishes, and you see the pods are ready to go (Running state):
 
 ```bash
-kubectl get -n flux-operator pods
+kubectl get pods
 NAME                  READY   STATUS    RESTARTS   AGE
 flux-sample-0-kfl7p   1/1     Running   0          76s
 flux-sample-1-2v57b   1/1     Running   0          76s
@@ -69,19 +66,20 @@ We recommend (in another terminal) shelling into the broker pod and connecting t
 so that you can follow the changes.
 
 ```bash
-$ kubectl exec -it -n flux-operator flux-sample-0-xd2gc -- bash
-root@flux-sample-0:/code# sudo -E $(env) -E HOME=/home/flux -u flux flux proxy local:///var/run/flux/local 
+$ kubectl exec -it flux-sample-0-xd2gc -- bash
+source /mnt/flux/flux-view.sh
+flux proxy $fluxsocket bash
 ```
 
 Here is how to look at the state of the cluster. When you first create it, we will have 4 pods, and all of them
 are up.
 
 ```bash
-flux@flux-sample-0:/code$ flux resource list
-     STATE NNODES   NCORES NODELIST
-      free      4       16 flux-sample-[0-3]
- allocated      0        0 
-      down      0        0 
+[root@flux-sample-0 /]# flux resource list
+     STATE NNODES   NCORES    NGPUS NODELIST
+      free      4       40        0 flux-sample-[0-3]
+ allocated      0        0        0 
+      down      0        0        0
 ```
 
 At this point we want to try changing the size.
@@ -127,9 +125,8 @@ $ kubectl apply -f examples/scaling/basic/minicluster.yaml
 
 The first thing you will notice is that a pod is terminating
 
-```
- make list
-kubectl get -n flux-operator pods
+```bash
+kubectl get pods
 NAME                  READY   STATUS        RESTARTS   AGE
 flux-sample-0-xd2gc   1/1     Running       0          30m
 flux-sample-1-tbj7c   1/1     Running       0          30m
@@ -206,7 +203,6 @@ Install the operator, create the namespace, and create the MiniCluster:
 
 ```bash
 $ kubectl apply -f ./examples/dist/flux-operator.yaml
-$ kubectl create namespace flux-operator
 $ kubectl apply -f examples/scaling/basic/minicluster.yaml
 ```
 
@@ -284,8 +280,9 @@ flux-sample-3-ndqvm   1/1     Running             0          2s
 We can again exec into the broker pod to inspect what resources Flux sees:
 
 ```bash
-$ kubectl exec -it -n flux-operator flux-sample-0-xd2gc -- bash
-root@flux-sample-0:/code# sudo -E $(env) -E HOME=/home/flux -u flux flux proxy local:///var/run/flux/local 
+kubectl exec -it flux-sample-0-xd2gc -- bash
+source /mnt/flux/flux-view.sh
+flux proxy ${fluxsocket} bash
 ```
 
 And just like they had been there all along, we have four nodes!

@@ -6,11 +6,8 @@ Given a running Kubernetes cluster, you have several modes for interaction, or s
   - a. Submit a minicluster.yaml via `kubectl` (<a href="#a-submit-a-minicluster-yaml-via-kubectl">#ref</a>)
   - b. Submit a MiniCluster custom resource definition via the Python SDK (<a href="#b-submit-a-minicluster-crd-via-the-python-sdk">#ref</a>)
 - 2. Submit in "interactive" mode, starting a Flux broker and instance, and interacting with your Flux instance. (<a href="submit-in-interactive-mode">#ref</a>)
-- 3. Submit a MiniCluster custom resource definition without a command to start a persistent MiniCluster. (<a href="#submit-a-minicluster-crd-without-a-command-for-a-persistent-cluster">#ref</a>)
-  - a. Submit jobs in the user interface (basic) (<a href="#a-submit-jobs-in-the-user-interface-basic">#ref</a>)
-- 4. Run a set of experiments (to make many MiniCluster in an automated fashion) with `flux-cloud` (<a href="#automated-experiments-with-flux-cloud">#ref</a>)
-- 5. Submit jobs interacting with Flux via ssh-ing to the pod (advanced) (<a href="#submit-jobs-directly-to-flux-via-ssh">#ref</a>)
-- 6. Submit batch jobs
+- 3. Submit jobs interacting with Flux via ssh-ing to the pod (advanced) (<a href="#submit-jobs-directly-to-flux-via-ssh">#ref</a>)
+- 4. Submit batch jobs
 
 The reason we have many options is because we are still testing and understanding what use cases are best matched for each!
 Each of the strategies above will be discussed here.
@@ -52,15 +49,7 @@ We start the broker, and essentially wait for you to interact with it. This can 
 the terminal with `kubectl exec` (as shown in the tutorial above) or writing a Python script using the Flux Operator
 Python SDK to proggrammatically interact. This is a really nice solution if you want to automate something.
 
-## 4. Automated Experiments with flux-cloud
-
-If you have a set of experiments you want to run on a production cluster, and especially
-if you don't want the cluster being up longer than it has to be, check out [Flux Cloud](https://github.com/converged-computing/flux-cloud).
-It's a small experiment runner wrapper that makes bringing up the cluster, installing
-the operator, running a matrix of experiments, and destroying the cluster much
-easier than all the copy pasting of commands typically required!
-
-## 5. Submit jobs directly to Flux via ssh
+## 3. Submit jobs directly to Flux via ssh
 
 You can also submit jobs interacting with Flux via ssh-ing to the pod! This is considered
 advanced, and is good for debugging. As you did before, get your pod listing:
@@ -78,7 +67,7 @@ Note that if you have more than one container, you'll need to include it's name 
 Also note that if you need to load any custom environments (e.g., something you'd define in the preCommand for a container)
 you'll likely need to do that when you shell in.
 
-## 5. Submit batch jobs
+## 4. Submit batch jobs
 
 If you are submitting many jobs, you are better off providing them to flux at once as a batch submission.
 This way, we won't stress any Kubernetes APIs to submit multiple. To do this, you can define a command as before,
@@ -134,4 +123,3 @@ containers:
 Note that the output is recommended to be a shared volume so all pods can write to it.
 If you can't use the filesystem for saving output, it's recommended to have some other
 service used in your jobs to send output.
-
