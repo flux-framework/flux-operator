@@ -8,10 +8,11 @@ spec:
     quiet: false
 
   # Number of pods to create for MiniCluster
-  # Set 4 tasks so hostname runs on each pod
   size: 4
-  tasks: 4
   interactive: true
   containers:
     - image: ghcr.io/rse-ops/ramble-gromacs:ubuntu-jammy
-      command: /bin/bash /tmp/ramble-on.sh
+      volumes:
+        data:
+          hostPath: /data
+          path: /tmp/workflow
