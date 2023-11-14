@@ -4,7 +4,6 @@ You should be able to create a MiniKube cluster, install the operator with creat
 
 ```bash
 $ minikube start
-$ kubectl create namespace flux-operator
 $ kubectl apply -f ../../dist/flux-operator.yaml
 ```
 
@@ -23,7 +22,7 @@ $ kubectl create -f minicluster.yaml
 And watch the example run!
 
 ```bash
-$ kubectl logs -n flux-operator flux-sample-0-5gjqt -f
+$ kubectl logs flux-sample-0-5gjqt -f
 ```
 
 A successful run will show four MPI ranks...

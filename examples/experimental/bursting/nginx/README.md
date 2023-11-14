@@ -31,7 +31,6 @@ Install the operator and create the minicluster
 
 ```bash
 kubectl apply -f ../../dist/flux-operator-dev.yaml
-kubectl create namespace flux-operator
 kubectl apply -f service/nginx.yaml
 kubectl apply -f minicluster.yaml
 kubectl apply -f service/service.yaml

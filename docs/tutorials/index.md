@@ -29,10 +29,6 @@ The following tutorials are provided from their respective directories (and are 
  - [Bursting to Compute Engine](https://github.com/flux-framework/flux-operator/tree/main/examples/experimental/bursting/broker-compute-engine) from a GKE broker to an external Compute Engine cluster.
  - [Bursting (nginx service)](https://github.com/flux-framework/flux-operator/tree/main/examples/experimental/bursting/nginx) design to use central router for bursting.
 
-#### Nested
-
- - [K3s](https://github.com/flux-framework/flux-operator/tree/main/examples/nested/k3s/basic): instiatiate k3s inside Flux, and deploy an app.
-
 #### Process Namespace
 
  - [shared-process-space](https://github.com/flux-framework/flux-operator/tree/main/examples/experimental/shared-process-space): Allow flux to execute a command into another container
@@ -46,9 +42,7 @@ The following tutorials are provided from their respective directories (and are 
 
 ### Message Passing Interface (MPI)
 
- - [openmpi](https://github.com/flux-framework/flux-operator/blob/main/examples/mpi/ompi)
  - [mpich](https://github.com/flux-framework/flux-operator/blob/main/examples/mpi/mpich)
-
 
 ### Queue Interaction
 
@@ -63,12 +57,6 @@ These examples show how to interact with your flux queue from a sidecar containe
 ### Workflows
 
  - [ramble](https://github.com/flux-framework/flux-operator/blob/main/examples/workflows/ramble): recommended if you require installation with spack.
-
-Although some of the others above are also workflows, these examples are going to use `flux tree` (in various contexts) to
-submit different job hierarchies and get around the etcd bottleneck in Kubernetes. 
-
- - [Basic Tree](https://github.com/flux-framework/flux-operator/blob/main/examples/workflows/tree)
- - [Instance Variables](https://github.com/flux-framework/flux-operator/blob/main/examples/workflows/tree-with-variables)
 
 We have just started this arm of our experiments and you can expect more as we go!
 

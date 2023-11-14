@@ -11,22 +11,27 @@ is in the container for anyone interested)!
 
 ## Usage
 
-First, let's create a kind cluster. From the context of this directory:
+When the cluster is created and the operator installed:
 
 ```bash
-$ kind create cluster --config ../../kind-config.yaml
-```
-
-And then install the operator, create the namespace, and apply the MiniCluster YAML here.
-
-```bash
-$ kubectl apply -f ../../dist/flux-operator.yaml
-$ kubectl create namespace flux-operator
 $ kubectl apply -f ./minicluster.yaml
 ```
 
-This will create the MiniCluster, and you can wait for the pods to be running (it took over 7 minutes for me)!
-Then look at the logs to see ramble run:
+This will create the MiniCluster, and you can wait for the pods to be running (it took over 7 minutes for me) to pull because the container is big! Then copy the ramble-on.sh script:
+
+```bash
+pod=
+kubectl cp ./ramble-on.sh ${pod}:/tmp/ramble-on.sh
+```
+Then shell in and connect to the instance and run the job:
+
+```bash
+kubectl exec -it $pod bash
+source /mnt/flux/flux-view.sh
+flux run -N 4 /bin/bash /tmp/ramble-on.sh
+```
+
+Then watch ramble run:
 
 ```bash
 ==>     Executing phase get_inputs
