@@ -396,10 +396,6 @@ type FluxContainer struct {
 	// +optional
 	ImagePullSecret string `json:"imagePullSecret"`
 
-	// Cores flux should use
-	// +optional
-	Cores int32 `json:"cores"`
-
 	// +kubebuilder:default="ghcr.io/converged-computing/flux-view-rocky:tag-9"
 	// +default="ghcr.io/converged-computing/flux-view-rocky:tag-9"
 	Image string `json:"image,omitempty"`

@@ -314,10 +314,6 @@ spec:
                   container:
                     description: Container base for flux
                     properties:
-                      cores:
-                        description: Cores flux should use
-                        format: int32
-                        type: integer
                       image:
                         default: ghcr.io/converged-computing/flux-view-rocky:tag-9
                         type: string

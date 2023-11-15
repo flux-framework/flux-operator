@@ -1,23 +1,18 @@
-apiVersion: flux-framework.org/v1alpha1
+apiVersion: flux-framework.org/v1alpha2
 kind: MiniCluster
 metadata:
   name: flux-sample
-  namespace: flux-operator
 spec:
   # Number of pods to create for MiniCluster
   size: 4
-
-  # Make this kind of persistent volume and claim available to pods
-  # This is a path in minikube (e.g., minikube ssh)
-  volumes:
-    data:
-      storageClass: hostpath
-      path: /tmp/workflow
+  interactive: true
+  flux:
+    container:
+      image: ghcr.io/converged-computing/flux-view-ubuntu:tag-focal
 
   containers:
     # The container URI to pull (currently needs to be public)
-    - image: ghcr.io/rse-ops/singularity:tag-mamba
-      cores: 4
+    - image: ghcr.io/rse-ops/sundials:tag-latest
 
       # There are many examples in the environment but they segfault
       # We would also need to source the spack environment, likely in a script
@@ -28,21 +23,9 @@ spec:
       workingDir: /data
 
       # This pulls the container (once) by the broker to workingDir /data
-      commands:
-        pre: spack env load sunenv
-        brokerPre: |
-           if [[ ! -e "sundials.sif" ]]; then
-               singularity pull /data/sundials.sif docker://ghcr.io/rse-ops/sundials:tag-latest
-           fi
-
-      fluxUser:
-        name: fluxuser
-
-      # Container will be pre-pulled here only by the broker
-      volumes:
-        data:
-          path: /data
-       
-      # Running a container in a container
-      securityContext:
-        privileged: true
+      #commands:
+      #  pre: spack env load sunenv
+      #  brokerPre: |
+      #     if [[ ! -e "sundials.sif" ]]; then
+      #         singularity pull /data/sundials.sif docker://ghcr.io/rse-ops/sundials:tag-latest
+      #     fi
