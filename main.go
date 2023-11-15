@@ -132,3 +132,4 @@ func setupChecks(mgr ctrl.Manager) {
 		os.Exit(1)
 	}
 }
+	

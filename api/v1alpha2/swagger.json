@@ -181,12 +181,6 @@
       "description": "A FluxContainer is equivalent to a MiniCluster container but has a different default image",
       "type": "object",
       "properties": {
-        "cores": {
-          "description": "Cores flux should use",
-          "type": "integer",
-          "format": "int32",
-          "default": 0
-        },
         "image": {
           "type": "string",
           "default": "ghcr.io/converged-computing/flux-view-rocky:tag-9"

@@ -391,14 +391,6 @@ func schema__api_v1alpha2__FluxContainer(ref common.ReferenceCallback) common.Op
 							Format:      "",
 						},
 					},
-					"cores": {
-						SchemaProps: spec.SchemaProps{
-							Description: "Cores flux should use",
-							Default:     0,
-							Type:        []string{"integer"},
-							Format:      "int32",
-						},
-					},
 					"image": {
 						SchemaProps: spec.SchemaProps{
 							Default: "ghcr.io/converged-computing/flux-view-rocky:tag-9",

@@ -36,7 +36,6 @@ class FluxContainer(object):
                             and the value is json key in definition.
     """
     openapi_types = {
-        'cores': 'int',
         'image': 'str',
         'image_pull_secret': 'str',
         'mount_path': 'str',
@@ -47,7 +46,6 @@ class FluxContainer(object):
     }
 
     attribute_map = {
-        'cores': 'cores',
         'image': 'image',
         'image_pull_secret': 'imagePullSecret',
         'mount_path': 'mountPath',
@@ -57,13 +55,12 @@ class FluxContainer(object):
         'working_dir': 'workingDir'
     }
 
-    def __init__(self, cores=0, image='ghcr.io/converged-computing/flux-view-rocky:tag-9', image_pull_secret='', mount_path='/mnt/flux', name='flux-view', pull_always=False, python_path='', working_dir='', local_vars_configuration=None):  # noqa: E501
+    def __init__(self, image='ghcr.io/converged-computing/flux-view-rocky:tag-9', image_pull_secret='', mount_path='/mnt/flux', name='flux-view', pull_always=False, python_path='', working_dir='', local_vars_configuration=None):  # noqa: E501
         """FluxContainer - a model defined in OpenAPI"""  # noqa: E501
         if local_vars_configuration is None:
             local_vars_configuration = Configuration.get_default_copy()
         self.local_vars_configuration = local_vars_configuration
 
-        self._cores = None
         self._image = None
         self._image_pull_secret = None
         self._mount_path = None
@@ -73,8 +70,6 @@ class FluxContainer(object):
         self._working_dir = None
         self.discriminator = None
 
-        if cores is not None:
-            self.cores = cores
         if image is not None:
             self.image = image
         if image_pull_secret is not None:
@@ -89,29 +84,6 @@ class FluxContainer(object):
             self.python_path = python_path
         if working_dir is not None:
             self.working_dir = working_dir
-
-    @property
-    def cores(self):
-        """Gets the cores of this FluxContainer.  # noqa: E501
-
-        Cores flux should use  # noqa: E501
-
-        :return: The cores of this FluxContainer.  # noqa: E501
-        :rtype: int
-        """
-        return self._cores
-
-    @cores.setter
-    def cores(self, cores):
-        """Sets the cores of this FluxContainer.
-
-        Cores flux should use  # noqa: E501
-
-        :param cores: The cores of this FluxContainer.  # noqa: E501
-        :type cores: int
-        """
-
-        self._cores = cores
 
     @property
     def image(self):
