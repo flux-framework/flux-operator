@@ -1,0 +1,29 @@
+apiVersion: flux-framework.org/v1alpha2
+kind: MiniCluster
+metadata:
+  name: flux-sample
+spec:
+
+  # Number of pods to create for MiniCluster
+  size: 2
+
+  # Cleanup the storage volume (PVC and PV) after run
+  # Leave this to false so you can see the log in the pod output
+  cleanup: false
+  interactive: true
+  
+  # This is a list because a pod can support multiple containers
+  containers:
+
+     # Yes I pushed to the wrong name and then was too lazy to change it, lol
+    - image: olayap/somospie-gdal-netcdf
+      volumes:
+        data:
+          claimName: s3-claim
+          path: /data
+
+      securityContext:
+        privileged: true
+
+      # https://github.com/TauferLab/SOMOSPIE/blob/master/SOMOSPIE_pegasus/PredictionPipeline/SOMOSPIE.ipynb
+      command: sleep infinity
