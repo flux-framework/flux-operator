@@ -71,10 +71,14 @@ func NewMiniClusterJob(cluster *api.MiniCluster) (*batchv1.Job, error) {
 					ImagePullSecrets:      getImagePullSecrets(cluster),
 					ServiceAccountName:    cluster.Spec.Pod.ServiceAccountName,
 					NodeSelector:          cluster.Spec.Pod.NodeSelector,
-					Affinity:              getAffinity(cluster),
 				},
 			},
 		},
+	}
+
+	// Add Affinity to map one pod / node only if the user hasn't disbaled it
+	if !cluster.Spec.Network.DisableAffinity {
+		job.Spec.Template.Spec.Affinity = getAffinity(cluster)
 	}
 
 	// Get resources for the pod

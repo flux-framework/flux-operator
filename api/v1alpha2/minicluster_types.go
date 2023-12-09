@@ -108,6 +108,10 @@ type Network struct {
 	// +default="flux-service"
 	// +optional
 	HeadlessName string `json:"headlessName,omitempty"`
+
+	// Disable affinity rules that guarantee one network address / node
+	// +optional
+	DisableAffinity bool `json:"disableAffinity,omitempty"`
 }
 
 type MiniClusterUser struct {

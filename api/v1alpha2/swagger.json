@@ -682,6 +682,10 @@
     "Network": {
       "type": "object",
       "properties": {
+        "disableAffinity": {
+          "description": "Disable affinity rules that guarantee one network address / node",
+          "type": "boolean"
+        },
         "headlessName": {
           "description": "Name for cluster headless service",
           "type": "string",

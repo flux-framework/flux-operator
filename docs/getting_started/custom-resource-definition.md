@@ -129,6 +129,20 @@ If a Job is suspended (at creation or through an update), this timer will effect
 
 The network section exposes networking options for the Flux MiniCluster.
 
+#### disableAffinity
+
+By default, the Flux Operator uses [Affinity](https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#affinity-and-anti-affinity) and AntiAffinity (specifically `topology.kubernetes.io/zone` and `kubernetes.io/hostname` to ensure
+that one pod is mapped per node. However, advanced use cases (assigning more than one pod per node) are allowed. You will need to disable the affinity rules to enable this:
+
+```yaml
+network:
+  disableAffinity: true
+```
+
+We put this under network due to the second rule that is about hostname, and (abstractly) you can imagine we are talking in the scope of at what level to assign a single worker associated with a hostname.
+When you disable these rules, you can use the pod resources and limits to finely control the amount of resources a single pod sees (done via cgroups) and validate with `flux resource list`.
+
+
 #### headlessName
 
 Change the default headless service name (defaults to `flux-service`).

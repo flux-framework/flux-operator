@@ -1219,6 +1219,13 @@ func schema__api_v1alpha2__Network(ref common.ReferenceCallback) common.OpenAPID
 							Format:      "",
 						},
 					},
+					"disableAffinity": {
+						SchemaProps: spec.SchemaProps{
+							Description: "Disable affinity rules that guarantee one network address / node",
+							Type:        []string{"boolean"},
+							Format:      "",
+						},
+					},
 				},
 			},
 		},

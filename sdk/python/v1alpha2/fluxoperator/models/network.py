@@ -36,24 +36,52 @@ class Network(object):
                             and the value is json key in definition.
     """
     openapi_types = {
+        'disable_affinity': 'bool',
         'headless_name': 'str'
     }
 
     attribute_map = {
+        'disable_affinity': 'disableAffinity',
         'headless_name': 'headlessName'
     }
 
-    def __init__(self, headless_name='flux-service', local_vars_configuration=None):  # noqa: E501
+    def __init__(self, disable_affinity=None, headless_name='flux-service', local_vars_configuration=None):  # noqa: E501
         """Network - a model defined in OpenAPI"""  # noqa: E501
         if local_vars_configuration is None:
             local_vars_configuration = Configuration.get_default_copy()
         self.local_vars_configuration = local_vars_configuration
 
+        self._disable_affinity = None
         self._headless_name = None
         self.discriminator = None
 
+        if disable_affinity is not None:
+            self.disable_affinity = disable_affinity
         if headless_name is not None:
             self.headless_name = headless_name
+
+    @property
+    def disable_affinity(self):
+        """Gets the disable_affinity of this Network.  # noqa: E501
+
+        Disable affinity rules that guarantee one network address / node  # noqa: E501
+
+        :return: The disable_affinity of this Network.  # noqa: E501
+        :rtype: bool
+        """
+        return self._disable_affinity
+
+    @disable_affinity.setter
+    def disable_affinity(self, disable_affinity):
+        """Sets the disable_affinity of this Network.
+
+        Disable affinity rules that guarantee one network address / node  # noqa: E501
+
+        :param disable_affinity: The disable_affinity of this Network.  # noqa: E501
+        :type disable_affinity: bool
+        """
+
+        self._disable_affinity = disable_affinity
 
     @property
     def headless_name(self):
