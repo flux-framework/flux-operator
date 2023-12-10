@@ -1,0 +1,28 @@
+name: build flux-operator refactor
+
+on:
+  pull_request: []
+  push:
+    branches:
+    - test-refactor-modular
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    name: make and build refactor container
+    steps:
+    - name: Checkout Repository
+      uses: actions/checkout@v4
+    - uses: actions/setup-go@v3
+      with:
+        go-version: ^1.20
+    - name: GHCR Login
+      uses: docker/login-action@v2
+      with:
+        registry: ghcr.io
+        username: ${{ github.actor }}
+        password: ${{ secrets.GITHUB_TOKEN }}
+
+    - name: Build and Deploy Container
+      run: make test-deploy DEVIMG=ghcr.io/flux-framework/flux-operator:refactor-0-2-0
