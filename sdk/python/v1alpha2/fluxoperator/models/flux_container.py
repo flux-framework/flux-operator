@@ -42,6 +42,7 @@ class FluxContainer(object):
         'name': 'str',
         'pull_always': 'bool',
         'python_path': 'str',
+        'resources': 'ContainerResources',
         'working_dir': 'str'
     }
 
@@ -52,10 +53,11 @@ class FluxContainer(object):
         'name': 'name',
         'pull_always': 'pullAlways',
         'python_path': 'pythonPath',
+        'resources': 'resources',
         'working_dir': 'workingDir'
     }
 
-    def __init__(self, image='ghcr.io/converged-computing/flux-view-rocky:tag-9', image_pull_secret='', mount_path='/mnt/flux', name='flux-view', pull_always=False, python_path='', working_dir='', local_vars_configuration=None):  # noqa: E501
+    def __init__(self, image='ghcr.io/converged-computing/flux-view-rocky:tag-9', image_pull_secret='', mount_path='/mnt/flux', name='flux-view', pull_always=False, python_path='', resources=None, working_dir='', local_vars_configuration=None):  # noqa: E501
         """FluxContainer - a model defined in OpenAPI"""  # noqa: E501
         if local_vars_configuration is None:
             local_vars_configuration = Configuration.get_default_copy()
@@ -67,6 +69,7 @@ class FluxContainer(object):
         self._name = None
         self._pull_always = None
         self._python_path = None
+        self._resources = None
         self._working_dir = None
         self.discriminator = None
 
@@ -82,6 +85,8 @@ class FluxContainer(object):
             self.pull_always = pull_always
         if python_path is not None:
             self.python_path = python_path
+        if resources is not None:
+            self.resources = resources
         if working_dir is not None:
             self.working_dir = working_dir
 
@@ -220,6 +225,27 @@ class FluxContainer(object):
         """
 
         self._python_path = python_path
+
+    @property
+    def resources(self):
+        """Gets the resources of this FluxContainer.  # noqa: E501
+
+
+        :return: The resources of this FluxContainer.  # noqa: E501
+        :rtype: ContainerResources
+        """
+        return self._resources
+
+    @resources.setter
+    def resources(self, resources):
+        """Sets the resources of this FluxContainer.
+
+
+        :param resources: The resources of this FluxContainer.  # noqa: E501
+        :type resources: ContainerResources
+        """
+
+        self._resources = resources
 
     @property
     def working_dir(self):

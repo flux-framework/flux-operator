@@ -132,7 +132,7 @@ The network section exposes networking options for the Flux MiniCluster.
 #### disableAffinity
 
 By default, the Flux Operator uses [Affinity](https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#affinity-and-anti-affinity) and AntiAffinity (specifically `topology.kubernetes.io/zone` and `kubernetes.io/hostname` to ensure
-that one pod is mapped per node. However, advanced use cases (assigning more than one pod per node) are allowed. You will need to disable the affinity rules to enable this:
+that one pod is mapped per node. However, advanced use cases might warrant removing these. You can disable them as follows:
 
 ```yaml
 network:
@@ -140,7 +140,7 @@ network:
 ```
 
 We put this under network due to the second rule that is about hostname, and (abstractly) you can imagine we are talking in the scope of at what level to assign a single worker associated with a hostname.
-When you disable these rules, you can use the pod resources and limits to finely control the amount of resources a single pod sees (done via cgroups) and validate with `flux resource list`.
+If you need finer-tuned control than disabling entirely, please open an issue to let us know.
 
 
 #### headlessName
@@ -177,7 +177,39 @@ This means that (if desired) you can customize this container base. We provide t
  - [ghcr.io/converged-computing/flux-view-rocky:tag-8](https://github.com/converged-computing/flux-views/pkgs/container/flux-view-rocky)
  - [ghcr.io/converged-computing/flux-view-ubuntu:tag-focal](https://github.com/converged-computing/flux-views/pkgs/container/flux-view-ubuntu)
 
-More will be coming soon.
+Please let us know if you'd like a base not provided.  Finally, the flux container can also take a specification of resources, just like a regular flux MiniCluster container:
+
+```yaml
+flux:
+   container:
+      resources:
+        requests:
+          cpu: "40"
+          memory: "200M"
+        limits:
+          cpu: "40"
+          memory: "200M"         
+```
+
+Note that if you expect to be able to schedule more than one pod per node, you will need to create pods with [Guaranteed](https://kubernetes.io/docs/tasks/configure-pod-container/quality-service-pod/#create-a-pod-that-gets-assigned-a-qos-class-of-guaranteed) QoS, 
+in addition to creating your cluster with a config that specifies the cpu manager policy to be [static](https://kubernetes.io/docs/tasks/administer-cluster/cpu-management-policies/#static-policy):
+
+
+```yaml
+kubeletConfig:
+  cpuManagerPolicy: static
+linuxConfig:
+ sysctl:
+   net.core.somaxconn: '2048'
+   net.ipv4.tcp_rmem: '4096 87380 16777216'
+   net.ipv4.tcp_wmem: '4096 16384 16777216'
+```
+
+And then your pod containers also both need to have memory and cpu defined.  In summary:
+
+1. Ensure cpuManagerPolicy is static
+2. Create all pod containers (including the init container) in the MiniCluster to have a cpu and memory definition.
+
 
 #### submitCommand
 

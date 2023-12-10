@@ -392,6 +392,12 @@ type FluxContainer struct {
 	// +optional
 	PythonPath string `json:"pythonPath"`
 
+	// Resources include limits and requests
+	// These must be defined for cpu and memory
+	// for the QoS to be Guaranteed
+	// +optional
+	Resources ContainerResources `json:"resources"`
+
 	// Allow the user to pull authenticated images
 	// By default no secret is selected. Setting
 	// this with the name of an already existing

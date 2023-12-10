@@ -11,6 +11,7 @@ Name | Type | Description | Notes
 **name** | **str** | Container name is only required for non flux runners | [optional] [default to 'flux-view']
 **pull_always** | **bool** | Allow the user to dictate pulling By default we pull if not present. Setting this to true will indicate to pull always | [optional] [default to False]
 **python_path** | **str** | Customize python path for flux | [optional] [default to '']
+**resources** | [**ContainerResources**](ContainerResources.md) |  | [optional] 
 **working_dir** | **str** | Working directory to run command from | [optional] [default to '']
 
 [[Back to Model list]](../README.md#documentation-for-models) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to README]](../README.md)

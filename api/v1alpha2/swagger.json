@@ -210,6 +210,11 @@
           "type": "string",
           "default": ""
         },
+        "resources": {
+          "description": "Resources include limits and requests These must be defined for cpu and memory for the QoS to be Guaranteed",
+          "default": {},
+          "$ref": "#/definitions/ContainerResources"
+        },
         "workingDir": {
           "description": "Working directory to run command from",
           "type": "string",

@@ -21,7 +21,7 @@ import (
 // getFluxContainers prepares the flux container to run the show!
 func getFluxContainer(
 	cluster *api.MiniCluster,
-	mounts []corev1.VolumeMount) corev1.Container {
+	mounts []corev1.VolumeMount) (corev1.Container, error) {
 
 	// Allow dictating pulling on the level of the container
 	pullPolicy := corev1.PullIfNotPresent
@@ -29,7 +29,11 @@ func getFluxContainer(
 		pullPolicy = corev1.PullAlways
 	}
 
-	return corev1.Container{
+	resources, err := getFluxContainerResources(cluster.Spec.Flux.Container)
+	if err != nil {
+		return corev1.Container{}, err
+	}
+	initContainer := corev1.Container{
 
 		// Call this the driver container, number 0
 		Name:            cluster.Spec.Flux.Container.Name,
@@ -40,7 +44,9 @@ func getFluxContainer(
 		VolumeMounts:    mounts,
 		Stdin:           true,
 		TTY:             true,
+		Resources:       resources,
 	}
+	return initContainer, nil
 }
 
 // getContainers gets containers for a MiniCluster job or external service
@@ -99,6 +105,10 @@ func getContainers(
 		}
 
 		// Prepare container resources
+		// Note that for the QoS to be guaranteed (to assign more than one per node)
+		// We need specific requests for memory and CPU, and not just on the pod, but the init container too.
+		// There is a function in API that will return True if we need resources for init,
+		// and then a static amount is defined
 		resources, err := getContainerResources(&container)
 		if err != nil {
 			return containers, err

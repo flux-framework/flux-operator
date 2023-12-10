@@ -1,0 +1,38 @@
+apiVersion: flux-framework.org/v1alpha2
+kind: MiniCluster
+metadata:
+  name: flux-sample
+spec:
+  size: 7
+
+  # shell in, and then:
+  # source /mnt/flux/flux-view.sh 
+  # flux proxy $fluxsocket bash
+  # flux resource list
+  # In this experiment we are asking for a size 8 cluster, but limiting each pod to 20
+  # still. So we should see a total of 8 "nodes" (pods) (on an actual 4 node cluster)!
+  # This node type has 	448 GB memory, so we can do 
+
+  # This is essential for the init container to have memory and cpu too,
+  # so the QoS (you can see in pod describe) is "Guaranteed" instead of Burstable.
+  flux:
+    container:
+      resources:
+        requests:
+          cpu: "20"
+          memory: "60M"
+        limits:
+          cpu: "20"
+          memory: "60M"
+  
+  # This starts the flux broker without a command (interactive)
+  interactive: true
+  containers:
+    - image: rockylinux:9
+      resources:
+        requests:
+          cpu: "20"
+          memory: "60M"
+        limits:
+          cpu: "20"
+          memory: "60M"

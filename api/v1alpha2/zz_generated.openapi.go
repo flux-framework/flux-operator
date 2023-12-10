@@ -383,6 +383,13 @@ func schema__api_v1alpha2__FluxContainer(ref common.ReferenceCallback) common.Op
 							Format:      "",
 						},
 					},
+					"resources": {
+						SchemaProps: spec.SchemaProps{
+							Description: "Resources include limits and requests These must be defined for cpu and memory for the QoS to be Guaranteed",
+							Default:     map[string]interface{}{},
+							Ref:         ref("./api/v1alpha2/.ContainerResources"),
+						},
+					},
 					"imagePullSecret": {
 						SchemaProps: spec.SchemaProps{
 							Description: "Allow the user to pull authenticated images By default no secret is selected. Setting this with the name of an already existing imagePullSecret will specify that secret in the pod spec.",
@@ -417,6 +424,8 @@ func schema__api_v1alpha2__FluxContainer(ref common.ReferenceCallback) common.Op
 				},
 			},
 		},
+		Dependencies: []string{
+			"./api/v1alpha2/.ContainerResources"},
 	}
 }
 

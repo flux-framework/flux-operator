@@ -29,6 +29,7 @@ The following tutorials are provided from their respective directories (and are 
 
 #### Process Namespace
 
+ - [multiple-pods-per-node](https://github.com/flux-framework/flux-operator/tree/main/examples/experimental/multiple-pods-per-node): Allow multiple pods to be scheduled per node (controlled by cgroups)
  - [shared-process-space](https://github.com/flux-framework/flux-operator/tree/main/examples/experimental/shared-process-space): Allow flux to execute a command into another container
 
 ### Machine Learning

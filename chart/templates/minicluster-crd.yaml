@@ -340,6 +340,25 @@ spec:
                       pythonPath:
                         description: Customize python path for flux
                         type: string
+                      resources:
+                        description: Resources include limits and requests These must
+                          be defined for cpu and memory for the QoS to be Guaranteed
+                        properties:
+                          limits:
+                            additionalProperties:
+                              anyOf:
+                              - type: integer
+                              - type: string
+                              x-kubernetes-int-or-string: true
+                            type: object
+                          requests:
+                            additionalProperties:
+                              anyOf:
+                              - type: integer
+                              - type: string
+                              x-kubernetes-int-or-string: true
+                            type: object
+                        type: object
                       workingDir:
                         description: Working directory to run command from
                         type: string

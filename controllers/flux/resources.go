@@ -55,6 +55,31 @@ func getResourceGroup(items api.ContainerResource) (corev1.ResourceList, error) 
 	return list, nil
 }
 
+// A pre-set function to give the init container resources
+// We do this if all the containers in the pod have memory and cpu.
+// This means the QoS class likely is desired to be guaranteed
+func getFluxContainerResources(container api.FluxContainer) (corev1.ResourceRequirements, error) {
+
+	// memory int, setCPURequest, setCPULimit, setGPULimit int64
+	resources := corev1.ResourceRequirements{}
+
+	// Limits
+	limits, err := getResourceGroup(container.Resources.Limits)
+	if err != nil {
+		return resources, err
+	}
+	resources.Limits = limits
+
+	// Requests
+	requests, err := getResourceGroup(container.Resources.Requests)
+	if err != nil {
+		return resources, err
+	}
+	resources.Requests = requests
+	return resources, nil
+
+}
+
 // getContainerResources determines if any resources are requested via the spec
 func getContainerResources(container *api.MiniClusterContainer) (corev1.ResourceRequirements, error) {
 

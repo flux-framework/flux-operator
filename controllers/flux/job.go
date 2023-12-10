@@ -81,7 +81,6 @@ func NewMiniClusterJob(cluster *api.MiniCluster) (*batchv1.Job, error) {
 		job.Spec.Template.Spec.Affinity = getAffinity(cluster)
 	}
 
-	// Get resources for the pod
 	resources, err := getPodResources(cluster)
 	if err != nil {
 		return job, err
@@ -92,7 +91,10 @@ func NewMiniClusterJob(cluster *api.MiniCluster) (*batchv1.Job, error) {
 	mounts := getVolumeMounts(cluster)
 
 	// Get the flux view container
-	fluxViewContainer := getFluxContainer(cluster, mounts)
+	fluxViewContainer, err := getFluxContainer(cluster, mounts)
+	if err != nil {
+		return job, err
+	}
 
 	// Prepare listing of containers for the MiniCluster
 	containers, err := getContainers(
