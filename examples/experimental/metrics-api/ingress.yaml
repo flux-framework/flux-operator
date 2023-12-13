@@ -1,0 +1,29 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: metrics-service
+spec:
+  selector:
+    job-index: "0"
+    job-name: flux-sample
+  ports:
+  - protocol: TCP
+    port: 5000
+    targetPort: 5000
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: metrics-ingress
+spec:
+  rules:
+  - host: localhost
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: metrics-service
+            port: 
+              number: 5000

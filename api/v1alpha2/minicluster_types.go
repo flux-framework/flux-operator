@@ -620,7 +620,7 @@ func (c *MiniClusterContainer) HasCommands() bool {
 // Determine if we should generate a start.sh entrypoint for a sidecar
 // Only do so (for now) if we are customizing the command
 func (c *MiniClusterContainer) GenerateEntrypoint() bool {
-	return !c.RunFlux && c.Command != "" && !c.NoWrapEntrypoint
+	return !c.RunFlux && !c.NoWrapEntrypoint
 }
 
 // Return a lookup of all container existing volumes (for the higher level Pod)
@@ -763,12 +763,6 @@ func (f *MiniCluster) Validate() bool {
 		fmt.Printf("🤓 %s.Command %s\n", name, container.Command)
 		fmt.Printf("🤓 %s.FluxRunner %t\n", name, container.RunFlux)
 
-		// A non-flux runner container with any commands also needs a command
-		// Don't allow the user to specify commands without a main command!
-		if !container.RunFlux && container.HasCommands() && container.Command == "" {
-			fmt.Printf("😥️ %s has commands, but not a main entrypoint command. Both are required to customize entrypoint logic..\n", name)
-			return false
-		}
 		// Launcher mode does not work with batch
 		if container.Launcher && container.Batch {
 			fmt.Printf("😥️ %s is indicated for batch and launcher, choose one.\n", name)

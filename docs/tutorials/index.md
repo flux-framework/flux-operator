@@ -51,6 +51,7 @@ These examples show how to interact with your flux queue from a sidecar containe
 
 ### Services
 
+ - [Flux Metrics API](https://github.com/flux-framework/flux-operator/blob/main/examples/experimental/metrics-api): run a custom metrics API directly from the lead broker to help with autoscaling
  - [Nginx](https://github.com/flux-framework/flux-operator/blob/main/examples/services/sidecar/nginx): to run alongisde your MiniCluster (and possibly expose functionality)
  - [Flux Restful](https://github.com/flux-framework/flux-operator/blob/main/examples/interactive/flux-restful): to run a restful API server alongside your cluster.
 
