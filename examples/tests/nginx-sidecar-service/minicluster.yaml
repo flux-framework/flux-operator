@@ -17,5 +17,6 @@ spec:
       command: curl -s localhost
     - image: nginx
       name: nginx
+      noWrapEntrypoint: true
       ports:
         - 80
