@@ -26,3 +26,29 @@ jobs:
 
     - name: Build and Deploy Container
       run: make test-deploy DEVIMG=ghcr.io/flux-framework/flux-operator:refactor-0-2-0
+
+  # Only build arm image on merge, takes too long otherwise
+  build-arm:
+    runs-on: ubuntu-latest
+    name: make and build arm
+    steps:
+    - name: Checkout Repository
+      uses: actions/checkout@v4
+    - uses: actions/setup-go@v3
+      with:
+        go-version: ^1.20
+    - name: GHCR Login
+      uses: docker/login-action@v2
+      with:
+        registry: ghcr.io
+        username: ${{ github.actor }}
+        password: ${{ secrets.GITHUB_TOKEN }}
+
+    - name: Add custom buildx ARM builder
+      run: |
+       docker buildx create --name armbuilder
+       docker buildx use armbuilder
+       docker buildx inspect --bootstrap
+
+    - name: Deploy ARM Container
+      run: make arm-deploy ARMIMG=ghcr.io/flux-framework/flux-operator:refactor-arm-0-2-0
