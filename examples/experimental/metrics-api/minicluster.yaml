@@ -10,6 +10,8 @@ spec:
     # runFlux tells the operator this is the main application container to run the lead broker from
     - image: rockylinux:9
       runFlux: true
+
+    # if you use flux->container->disable here, you'll need flux installed in this container too
     - image: rockylinux:9
       name: metrics
       commands:

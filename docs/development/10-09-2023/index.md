@@ -24,5 +24,6 @@ Some caveats or changes to the design:
  - links to python within the view will be broken because the original view path is not preserved, but instead you can target the versioned binary (e.g., python3.11 instead of python)
  - flux restful is being removed, and (when refactored) will be provided as an example application
  - Sidecar service containers are required to have a command. If they don't, they will exit.
+ - The sidecar approach does not work with ARM because spack is [not able to build it](https://github.com/spack/spack/issues/41708).
 
 - [Link on Excalidraw](https://excalidraw.com/#json=auIWjzPmpLnss1fP4FdjL,UY4HiAoQ0zH1tFTptDLCXw)

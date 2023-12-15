@@ -379,6 +379,11 @@ type FluxBroker struct {
 // A FluxContainer is equivalent to a MiniCluster container but has a different default image
 type FluxContainer struct {
 
+	// Disable the sidecar container, assuming that the main application container has flux
+	// +kubebuilder:default=false
+	// +default=false
+	Disable bool `json:"disable,omitempty"`
+
 	// Container name is only required for non flux runners
 	// +kubebuilder:default="flux-view"
 	// +default="flux-view"

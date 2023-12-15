@@ -359,6 +359,14 @@ func schema__api_v1alpha2__FluxContainer(ref common.ReferenceCallback) common.Op
 				Description: "A FluxContainer is equivalent to a MiniCluster container but has a different default image",
 				Type:        []string{"object"},
 				Properties: map[string]spec.Schema{
+					"disable": {
+						SchemaProps: spec.SchemaProps{
+							Description: "Disable the sidecar container, assuming that the main application container has flux",
+							Default:     false,
+							Type:        []string{"boolean"},
+							Format:      "",
+						},
+					},
 					"name": {
 						SchemaProps: spec.SchemaProps{
 							Description: "Container name is only required for non flux runners",

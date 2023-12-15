@@ -11,7 +11,7 @@
 
 # Shared logic to wait for view
 {{template "wait-view" .}}
-{{template "paths" .}}
+{{ if not .Spec.Flux.Container.Disable }}{{template "paths" .}}{{ end }}
 
 # And pre command logic that isn't passed to the certificate generator
 {{ .Container.Commands.Pre}} {{ if .Spec.Logging.Quiet }}> /dev/null 2>&1{{ end }}
@@ -51,6 +51,16 @@ cat ${curvepath}
 chmod o-r ${curvepath}
 chmod g-r ${curvepath}
 chown -R ${fluxuid} ${curvepath}
+
+# If we have disabled the view, we need to use the flux here to generate resources
+{{ if .Spec.Flux.Container.Disable }}
+hosts=$(cat ${viewroot}/etc/flux/system/hostlist)
+echo
+echo "📦 Resources"
+echo "flux R encode --hosts=${hosts} --local"
+flux R encode --hosts=${hosts} --local > ${viewroot}/etc/flux/system/R
+cat ${viewroot}/etc/flux/system/R
+{{ end }}
 
 # Put the state directory in /var/lib on shared view
 export STATE_DIR=${viewroot}/var/lib/flux
@@ -104,7 +114,7 @@ fi{{ end }}
 
 # Start flux with the original entrypoint
 if [ $(hostname) == "${mainHost}" ]; then
-
+    
     # If it's a batch job, we write the script for the broker to run
     {{ if .Container.Batch }}rm -rf flux-job.batch
     echo "#!/bin/bash

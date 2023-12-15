@@ -90,7 +90,7 @@ func NewMiniClusterJob(cluster *api.MiniCluster) (*batchv1.Job, error) {
 	// Get volume mounts specific to operator, add on container specific ones
 	mounts := getVolumeMounts(cluster)
 
-	// Get the flux view container
+	// Get the flux view container (only if requested)
 	fluxViewContainer, err := getFluxContainer(cluster, mounts)
 	if err != nil {
 		return job, err

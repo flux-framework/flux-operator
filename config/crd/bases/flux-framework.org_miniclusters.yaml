@@ -314,6 +314,11 @@ spec:
                   container:
                     description: Container base for flux
                     properties:
+                      disable:
+                        default: false
+                        description: Disable the sidecar container, assuming that
+                          the main application container has flux
+                        type: boolean
                       image:
                         default: ghcr.io/converged-computing/flux-view-rocky:tag-9
                         type: string

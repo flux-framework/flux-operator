@@ -76,7 +76,8 @@ jobs:
                ["pokemon", "ghcr.io/rse-ops/pokemon:app-latest", 90],
                ["snakemake", "ghcr.io/rse-ops/atacseq:app-latest", 90],
                ["singularity", "ghcr.io/rse-ops/singularity:tag-mamba", 90],
-               ["lammps", "ghcr.io/converged-computing/metric-lammps:latest", 90]]
+               ["lammps", "ghcr.io/converged-computing/metric-lammps:latest", 90],
+               ["lammps", "ghcr.io/rse-ops/lammps:flux-sched-focal", 90]]
 
     steps:
     - name: Clone the code

@@ -5,6 +5,7 @@ A FluxContainer is equivalent to a MiniCluster container but has a different def
 ## Properties
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
+**disable** | **bool** | Disable the sidecar container, assuming that the main application container has flux | [optional] [default to False]
 **image** | **str** |  | [optional] [default to 'ghcr.io/converged-computing/flux-view-rocky:tag-9']
 **image_pull_secret** | **str** | Allow the user to pull authenticated images By default no secret is selected. Setting this with the name of an already existing imagePullSecret will specify that secret in the pod spec. | [optional] [default to '']
 **mount_path** | **str** | Mount path for flux to be at (will be added to path) | [optional] [default to '/mnt/flux']

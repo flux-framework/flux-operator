@@ -36,6 +36,7 @@ class FluxContainer(object):
                             and the value is json key in definition.
     """
     openapi_types = {
+        'disable': 'bool',
         'image': 'str',
         'image_pull_secret': 'str',
         'mount_path': 'str',
@@ -47,6 +48,7 @@ class FluxContainer(object):
     }
 
     attribute_map = {
+        'disable': 'disable',
         'image': 'image',
         'image_pull_secret': 'imagePullSecret',
         'mount_path': 'mountPath',
@@ -57,12 +59,13 @@ class FluxContainer(object):
         'working_dir': 'workingDir'
     }
 
-    def __init__(self, image='ghcr.io/converged-computing/flux-view-rocky:tag-9', image_pull_secret='', mount_path='/mnt/flux', name='flux-view', pull_always=False, python_path='', resources=None, working_dir='', local_vars_configuration=None):  # noqa: E501
+    def __init__(self, disable=False, image='ghcr.io/converged-computing/flux-view-rocky:tag-9', image_pull_secret='', mount_path='/mnt/flux', name='flux-view', pull_always=False, python_path='', resources=None, working_dir='', local_vars_configuration=None):  # noqa: E501
         """FluxContainer - a model defined in OpenAPI"""  # noqa: E501
         if local_vars_configuration is None:
             local_vars_configuration = Configuration.get_default_copy()
         self.local_vars_configuration = local_vars_configuration
 
+        self._disable = None
         self._image = None
         self._image_pull_secret = None
         self._mount_path = None
@@ -73,6 +76,8 @@ class FluxContainer(object):
         self._working_dir = None
         self.discriminator = None
 
+        if disable is not None:
+            self.disable = disable
         if image is not None:
             self.image = image
         if image_pull_secret is not None:
@@ -89,6 +94,29 @@ class FluxContainer(object):
             self.resources = resources
         if working_dir is not None:
             self.working_dir = working_dir
+
+    @property
+    def disable(self):
+        """Gets the disable of this FluxContainer.  # noqa: E501
+
+        Disable the sidecar container, assuming that the main application container has flux  # noqa: E501
+
+        :return: The disable of this FluxContainer.  # noqa: E501
+        :rtype: bool
+        """
+        return self._disable
+
+    @disable.setter
+    def disable(self, disable):
+        """Sets the disable of this FluxContainer.
+
+        Disable the sidecar container, assuming that the main application container has flux  # noqa: E501
+
+        :param disable: The disable of this FluxContainer.  # noqa: E501
+        :type disable: bool
+        """
+
+        self._disable = disable
 
     @property
     def image(self):

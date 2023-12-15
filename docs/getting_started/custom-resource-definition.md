@@ -170,12 +170,29 @@ flux:
      pythonPath: /mnt/flux/view/lib/python3.11
 ```
 
-These containers are expected to have Flux built into a spack view, and in a particular way, so if you want to tweak or  contribute a new means it's recommended to look at the [build repository](https://github.com/converged-computing/flux-views).
-This means that (if desired) you can customize this container base. We provide the following bases of interest:
+When enabled, meaning that we use flux from a view within the container, these containers are expected to have Flux built into a spack view, and in a particular way, so if you want to tweak or contribute a new means it's recommended to look at the [build repository](https://github.com/converged-computing/flux-views). This means that (if desired) you can customize this container base. We provide the following bases of interest:
 
  - [ghcr.io/converged-computing/flux-view-rocky:tag-9](https://github.com/converged-computing/flux-views/pkgs/container/flux-view-rocky)
  - [ghcr.io/converged-computing/flux-view-rocky:tag-8](https://github.com/converged-computing/flux-views/pkgs/container/flux-view-rocky)
  - [ghcr.io/converged-computing/flux-view-ubuntu:tag-focal](https://github.com/converged-computing/flux-views/pkgs/container/flux-view-ubuntu)
+
+If you don't want to use Flux from a view (and want to use the v1apha1 design of the Flux Operator that had the application alongside Flux) you can do that by way of disabling
+the flux view:
+
+```yaml
+flux:
+   container:
+     image: ubuntu:focal
+     disable: true
+```
+
+In the above, the Flux Operator won't expect Flux to be installed in the container you specify. We require a container to be specified,
+however, because we still use the init strategy to set up configuration files. Everything except for the flux resources `R` file
+is generated in that step (the broker configs and paths for archives and the broker socket). Keep in mind that if you intend
+to deploy a sidecar container alongside your application container, you will still have access to this shared location to connect
+to the socket, however you will need to provide your own install of Flux (ideally to match the one your application uses) to connect
+to it. For a simple example of running lammps with this setup (without the sidecar) see the [disable-view](https://github.com/flux-framework/flux-operator/blob/main/examples/tests/disable-view)
+example.
 
 Please let us know if you'd like a base not provided.  Finally, the flux container can also take a specification of resources, just like a regular flux MiniCluster container:
 

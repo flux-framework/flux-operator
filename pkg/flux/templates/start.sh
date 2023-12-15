@@ -10,10 +10,10 @@
 # If we are not in strict, don't set strict mode
 {{ if .Spec.Logging.Strict }}set -eEu -o pipefail{{ end }}
 
-# Shared logic to wait for view
+# Shared logic to wait for view. If flux is disabled, we don't use any paths
+# but we still wait for the view that has configs we need in it.
 {{template "wait-view" .}}
-
-{{template "paths" .}}
+{{ if not .Spec.Flux.Container.Disable }}{{template "paths" .}}{{ end }}
 
 {{ .Container.Commands.ServicePre}} {{ if .Spec.Logging.Quiet }}> /dev/null 2>&1{{ end }}
 

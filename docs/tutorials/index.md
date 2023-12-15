@@ -43,6 +43,10 @@ The following tutorials are provided from their respective directories (and are 
 
  - [mpich](https://github.com/flux-framework/flux-operator/blob/main/examples/mpi/mpich)
 
+#### Niche Use Cases
+
+ - [disable-view](https://github.com/flux-framework/flux-operator/blob/main/examples/tests/disable-view): Use the flux packaged in your application container, and customize the flux view to some other container (required)
+
 ### Queue Interaction
 
 These examples show how to interact with your flux queue from a sidecar container (that has access to the flux broker of the pod):

@@ -181,6 +181,11 @@
       "description": "A FluxContainer is equivalent to a MiniCluster container but has a different default image",
       "type": "object",
       "properties": {
+        "disable": {
+          "description": "Disable the sidecar container, assuming that the main application container has flux",
+          "type": "boolean",
+          "default": false
+        },
         "image": {
           "type": "string",
           "default": "ghcr.io/converged-computing/flux-view-rocky:tag-9"

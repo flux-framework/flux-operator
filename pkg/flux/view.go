@@ -94,6 +94,8 @@ queue-policy = "%s"
 
 // generateFluxEntrypoint generates the flux entrypoint to prepare flux
 // This is run inside of the flux container that will be copied to the empty volume
+// If the flux container is disabled, we still add an init container with
+// the broker config, etc., but we don't expect a flux view there.
 func GenerateFluxEntrypoint(cluster *api.MiniCluster) (string, error) {
 
 	// fluxRoot for the view is in /opt/view/lib
@@ -107,6 +109,40 @@ func GenerateFluxEntrypoint(cluster *api.MiniCluster) (string, error) {
 	hosts := generateHostlist(cluster, cluster.Spec.MaxSize)
 	brokerConfig := generateBrokerConfig(cluster, hosts)
 
+	// If we are disabling the view, it won't have flux (or extra spack copies)
+	// We copy our faux flux config directory (not a symlink) to the mount path
+	spackView := fmt.Sprintf(`mkdir -p $viewroot/software
+cp -R /opt/view/* %s/view`,
+		cluster.Spec.Flux.Container.MountPath,
+	)
+
+	generateHosts := `echo '📦 Flux view disabled, not generating resources here.'
+mkdir -p ${fluxroot}/etc/flux/system
+`
+	if !cluster.Spec.Flux.Container.Disable {
+		generateHosts = `
+echo "flux R encode --hosts=${hosts} --local"
+flux R encode --hosts=${hosts} --local > ${fluxroot}/etc/flux/system/R
+
+echo
+echo "📦 Resources"
+cat ${fluxroot}/etc/flux/system/R`
+
+		spackView = `# Now prepare to copy finished spack view over
+echo "Moving content from /opt/view to be in shared volume at %s"
+# Note that /opt/view is a symlink to here!
+view=$(ls /opt/views/._view/)
+view="/opt/views/._view/${view}"
+
+# Give a little extra wait time
+sleep 10
+
+# We have to move both of these paths, *sigh*
+cp -R ${view}/* $viewroot/view
+cp -R /opt/software $viewroot/
+`
+	}
+
 	setup := `#!/bin/sh
 fluxroot=%s
 mainHost=%s
@@ -116,8 +152,11 @@ echo "Hello I am hostname $(hostname) running setup."
 echo "Flux install root: ${fluxroot}"
 export fluxroot
 
-# Add flux to the path
+# Add flux to the path (if using view)
 export PATH=/opt/view/bin:$PATH
+
+# If the view doesn't exist, ensure basic paths do
+mkdir -p $fluxroot/bin
 
 # Cron directory
 mkdir -p $fluxroot/etc/flux/system/cron.d
@@ -126,12 +165,10 @@ mkdir -p $fluxroot/var/lib/flux
 # These actions need to happen on all hosts
 mkdir -p $fluxroot/etc/flux/system
 hosts="%s"
-echo "flux R encode --hosts=${hosts} --local"
-flux R encode --hosts=${hosts} --local > ${fluxroot}/etc/flux/system/R
 
-echo
-echo "📦 Resources"
-cat ${fluxroot}/etc/flux/system/R
+# Echo hosts here in case the main container needs to generate
+echo "${hosts}" > ${fluxroot}/etc/flux/system/hostlist
+%s
 
 # Write the broker configuration
 mkdir -p ${fluxroot}/etc/flux/config
@@ -151,19 +188,10 @@ mkdir -p ${fluxroot}/run/flux ${fluxroot}/etc/curve
 echo "🌟️ Curve Certificate"
 cat /flux_operator/curve.cert
 
-# Now prepare to copy finished spack view over
-echo "Moving content from /opt/view to be in shared volume at %s"
-view=$(ls /opt/views/._view/)
-view="/opt/views/._view/${view}"
-
-# Give a little extra wait time
-sleep 10
-
 viewroot="%s"
 mkdir -p $viewroot/view
-# We have to move both of these paths, *sigh*
-cp -R ${view}/* $viewroot/view
-cp -R /opt/software $viewroot/
+
+%s
 
 # This is a marker to indicate the copy is done
 touch $viewroot/flux-operator-done.txt
@@ -175,8 +203,9 @@ echo "Application is done."
 		fluxRoot,
 		mainHost,
 		hosts,
+		generateHosts,
 		brokerConfig,
 		cluster.Spec.Flux.Container.MountPath,
-		cluster.Spec.Flux.Container.MountPath,
+		spackView,
 	), nil
 }
