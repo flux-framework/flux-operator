@@ -492,6 +492,9 @@ spec:
                       x-kubernetes-int-or-string: true
                     description: Resources include limits and requests
                     type: object
+                  schedulerName:
+                    description: Scheduler name for the pod
+                    type: string
                   serviceAccountName:
                     description: Service account name for the pod
                     type: string

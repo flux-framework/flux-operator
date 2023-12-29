@@ -638,6 +638,17 @@ pod:
     cpu: 4
 ```
 
+#### schedulerName
+
+Request that the pod be scheduled by a custom scheduler.
+
+```yaml
+pod:
+  schedulerName: fluence
+```
+
+For fluence you can see the custom scheduler plugin at [flux-framework/flux-k8s](https://github.com/flux-framework/flux-k8s).
+
 #### serviceAccountName
 
 To give a service account name to your pods, simply do:

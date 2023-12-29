@@ -40,6 +40,7 @@ class PodSpec(object):
         'labels': 'dict[str, str]',
         'node_selector': 'dict[str, str]',
         'resources': 'dict[str, IntOrString]',
+        'scheduler_name': 'str',
         'service_account_name': 'str'
     }
 
@@ -48,10 +49,11 @@ class PodSpec(object):
         'labels': 'labels',
         'node_selector': 'nodeSelector',
         'resources': 'resources',
+        'scheduler_name': 'schedulerName',
         'service_account_name': 'serviceAccountName'
     }
 
-    def __init__(self, annotations=None, labels=None, node_selector=None, resources=None, service_account_name=None, local_vars_configuration=None):  # noqa: E501
+    def __init__(self, annotations=None, labels=None, node_selector=None, resources=None, scheduler_name=None, service_account_name=None, local_vars_configuration=None):  # noqa: E501
         """PodSpec - a model defined in OpenAPI"""  # noqa: E501
         if local_vars_configuration is None:
             local_vars_configuration = Configuration.get_default_copy()
@@ -61,6 +63,7 @@ class PodSpec(object):
         self._labels = None
         self._node_selector = None
         self._resources = None
+        self._scheduler_name = None
         self._service_account_name = None
         self.discriminator = None
 
@@ -72,6 +75,8 @@ class PodSpec(object):
             self.node_selector = node_selector
         if resources is not None:
             self.resources = resources
+        if scheduler_name is not None:
+            self.scheduler_name = scheduler_name
         if service_account_name is not None:
             self.service_account_name = service_account_name
 
@@ -166,6 +171,29 @@ class PodSpec(object):
         """
 
         self._resources = resources
+
+    @property
+    def scheduler_name(self):
+        """Gets the scheduler_name of this PodSpec.  # noqa: E501
+
+        Scheduler name for the pod  # noqa: E501
+
+        :return: The scheduler_name of this PodSpec.  # noqa: E501
+        :rtype: str
+        """
+        return self._scheduler_name
+
+    @scheduler_name.setter
+    def scheduler_name(self, scheduler_name):
+        """Sets the scheduler_name of this PodSpec.
+
+        Scheduler name for the pod  # noqa: E501
+
+        :param scheduler_name: The scheduler_name of this PodSpec.  # noqa: E501
+        :type scheduler_name: str
+        """
+
+        self._scheduler_name = scheduler_name
 
     @property
     def service_account_name(self):

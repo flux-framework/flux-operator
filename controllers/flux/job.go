@@ -71,6 +71,7 @@ func NewMiniClusterJob(cluster *api.MiniCluster) (*batchv1.Job, error) {
 					ImagePullSecrets:      getImagePullSecrets(cluster),
 					ServiceAccountName:    cluster.Spec.Pod.ServiceAccountName,
 					NodeSelector:          cluster.Spec.Pod.NodeSelector,
+					SchedulerName:         cluster.Spec.Pod.SchedulerName,
 				},
 			},
 		},

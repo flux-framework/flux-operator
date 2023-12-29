@@ -1295,6 +1295,13 @@ func schema__api_v1alpha2__PodSpec(ref common.ReferenceCallback) common.OpenAPID
 							Format:      "",
 						},
 					},
+					"schedulerName": {
+						SchemaProps: spec.SchemaProps{
+							Description: "Scheduler name for the pod",
+							Type:        []string{"string"},
+							Format:      "",
+						},
+					},
 					"nodeSelector": {
 						SchemaProps: spec.SchemaProps{
 							Description: "NodeSelectors for a pod",

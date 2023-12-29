@@ -178,6 +178,10 @@ type PodSpec struct {
 	// +optional
 	ServiceAccountName string `json:"serviceAccountName,omitempty"`
 
+	// Scheduler name for the pod
+	// +optional
+	SchedulerName string `json:"schedulerName,omitempty"`
+
 	// NodeSelectors for a pod
 	// +optional
 	NodeSelector map[string]string `json:"nodeSelector,omitempty"`

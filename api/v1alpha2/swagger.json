@@ -739,6 +739,10 @@
             "$ref": "#/definitions/IntOrString"
           }
         },
+        "schedulerName": {
+          "description": "Scheduler name for the pod",
+          "type": "string"
+        },
         "serviceAccountName": {
           "description": "Service account name for the pod",
           "type": "string"
