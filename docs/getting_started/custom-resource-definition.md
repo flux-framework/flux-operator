@@ -54,6 +54,8 @@ of course you will want to be careful about the state of your cluster when you d
 down, you cannot go below 1 node, and if you scale up, you cannot exceed the maximum of the `size` or
 `maxsize`.
 
+Note that if you don't define tasks, you'll by default get a submit/batch or start command that defaults to 1 task, assuming testing, e.g., `-n 1`. If you define more tasks than nodes (size), you'll get `-N <size> and -n <tasks>`. If you only want to get `-N <size>` then sets tasks explicitly to 0.
+
 ### maxSize
 
 The `maxSize` variable is typically used when you want elasticity. E.g., it is the largest size of cluster that
@@ -75,7 +77,7 @@ The `tasks` variable under the spec is the number of tasks that each pod in the 
   tasks: 4
 ```
 
-This value defaults to 1.
+This value defaults to 1. Note that if you don't define tasks, you'll by default get a submit/batch or start command that defaults to 1, assuming testing, e.g., `-n 1`. If you define more tasks than nodes (size), you'll get `-N <size> and -n <tasks>`. If you only want to get `-N <size>` then sets tasks explicitly to 0.
 
 ### interactive
 
@@ -176,8 +178,8 @@ When enabled, meaning that we use flux from a view within the container, these c
  - [ghcr.io/converged-computing/flux-view-rocky:tag-8](https://github.com/converged-computing/flux-views/pkgs/container/flux-view-rocky)
  - [ghcr.io/converged-computing/flux-view-ubuntu:tag-focal](https://github.com/converged-computing/flux-views/pkgs/container/flux-view-ubuntu)
 
-If you don't want to use Flux from a view (and want to use the v1apha1 design of the Flux Operator that had the application alongside Flux) you can do that by way of disabling
-the flux view:
+Note that we have [arm builds](https://github.com/converged-computing/flux-views/tree/main/arm) available for each of rocky and ubuntu as well.
+If you don't want to use Flux from a view (and want to use the v1apha1 design of the Flux Operator that had the application alongside Flux) you can do that by way of disabling the flux view:
 
 ```yaml
 flux:

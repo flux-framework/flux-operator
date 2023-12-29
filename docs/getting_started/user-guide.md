@@ -7,7 +7,11 @@ on new functionality or features for the Flux Operator, see our [Developer Guide
 
 ## Containers Available
 
-All containers are provided under [ghcr.io/flux-framework/flux-operator](https://github.com/flux-framework/flux-operator/pkgs/container/flux-operator). The latest tag is the current main branch, a "bleeding edge" version, and we also provide [releases](https://github.com/flux-framework/flux-operator/releases), each of which has YAML for x86 or ARM associated with a release container. For dates before June 30, 2023, we provide the other pinned containers in case you want a previous version:
+All containers are provided under [ghcr.io/flux-framework/flux-operator](https://github.com/flux-framework/flux-operator/pkgs/container/flux-operator). The latest tag is the current main branch, a "bleeding edge" version, and we also provide [releases](https://github.com/flux-framework/flux-operator/releases), each of which has YAML for x86 or ARM associated with a release container. 
+
+## v1alpha1 
+
+For dates before June 30, 2023 (that must be used with the corresponding GitHub releases or yamls) we provide the other pinned containers in case you want a previous version:
 
  - [ghcr.io/flux-framework/flux-operator:feb-2023](https://github.com/flux-framework/flux-operator/pkgs/container/flux-operator): the version used for Kubecon experiments, and before storage (minikube and Google Cloud example) were added.
  - [ghcr.io/flux-framework/flux-operator:april-2023](https://github.com/flux-framework/flux-operator/pkgs/container/flux-operator): the version directly before the refactor to remove the certificate generator pod (3.3)

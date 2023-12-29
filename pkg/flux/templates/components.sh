@@ -1,3 +1,12 @@
+{{define "flags"}}
+
+# If tasks are == 0, then only define nodes
+node_spec="{{ if ge .Spec.Tasks .Spec.Size }} -N {{.Spec.Size}}{{ end }} -n {{.Spec.Tasks}}"
+node_spec="{{ if eq .Spec.Tasks 0 }} -N {{.Spec.Size}}{{ else }}${node_spec}{{ end }}"
+flags="${node_spec} {{ if .Spec.Flux.OptionFlags }}{{ .Spec.Flux.OptionFlags}}{{ end }} {{ if .Spec.Logging.Debug }} -vvv{{ end }}"
+echo "Flags for flux are ${flags}"
+{{ end }}
+
 {{define "wait-view"}}
 
 # This waiting script is intended to wait for the flux view, and then start running

@@ -144,8 +144,7 @@ flux jobs -a{{ end }}
         {{ if not .Spec.Logging.Quiet }}printf "✨️ Prepared Batch Job:\n"
         cat flux-job.batch
         {{ end }}
-
-        flags="{{ if ge .Spec.Tasks .Spec.Size }} -N {{.Spec.Size}}{{ end }} -n {{.Spec.Tasks}} {{ if .Spec.Flux.OptionFlags }}{{ .Spec.Flux.OptionFlags}}{{ end }} {{ if .Spec.Logging.Debug }} -vvv{{ end }}"
+        {{template "flags" .}}
         {{ if not .Spec.Logging.Quiet }}          
         printf "\n🌀 Batch Mode: flux start {{ if .Spec.Flux.Wrap }}--wrap={{ .Spec.Flux.Wrap }} {{ end }}-o --config ${cfg} ${brokerOptions} {{.Container.Commands.Prefix}} sh -c 'flux batch ${flags} --flags waitable ./flux-job.batch && flux job wait --all'\n"
         {{ end }}
@@ -157,14 +156,16 @@ flux jobs -a{{ end }}
         {{ if .Container.Launcher }}
         printf "\n🌀 Launcher Mode: flux start {{ if .Spec.Flux.Wrap }}--wrap={{ .Spec.Flux.Wrap }} {{ end }}-o --config ${cfg} ${brokerOptions} {{.Container.Commands.Prefix}} $@\n"
         {{ else }}
-        printf "\n🌀 Submit Mode: flux start {{ if .Spec.Flux.Wrap }}--wrap={{ .Spec.Flux.Wrap }} {{ end }}-o --config ${cfg} ${brokerOptions} {{.Container.Commands.Prefix}} {{ if .Spec.Flux.SubmitCommand }}{{ .Spec.Flux.SubmitCommand }}{{ else }}flux submit {{ end }} {{ if ge .Spec.Tasks .Spec.Size }} -N {{.Spec.Size}}{{ end }} -n {{.Spec.Tasks}} --quiet {{ if .Spec.Flux.OptionFlags }}{{ .Spec.Flux.OptionFlags}}{{ end }} --watch{{ if .Spec.Logging.Debug }} -vvv{{ end }} ${command}\n"
+        {{template "flags" .}}
+        printf "\n🌀 Submit Mode: flux start {{ if .Spec.Flux.Wrap }}--wrap={{ .Spec.Flux.Wrap }} {{ end }}-o --config ${cfg} ${brokerOptions} {{.Container.Commands.Prefix}} {{ if .Spec.Flux.SubmitCommand }}{{ .Spec.Flux.SubmitCommand }}{{ else }}flux submit {{ end }} ${flags} --quiet --watch ${command}\n"
         {{ end }}
       {{ end }}
 
       {{ if .Container.Launcher }}
       {{ if .Spec.Logging.Timed }}/usr/bin/time -f "FLUXTIME fluxstart wall time %E" {{ end }}flux start {{ if .Spec.Flux.Wrap }}--wrap={{ .Spec.Flux.Wrap }} {{ end }}-o --config ${cfg} ${brokerOptions} {{ if .Spec.Logging.Timed }}/usr/bin/time -f "FLUXTIME fluxsubmit wall time %E" {{ end }} {{.Container.Commands.Prefix}} ${command}
       {{ else }}
-      {{ if .Spec.Logging.Timed }}/usr/bin/time -f "FLUXTIME fluxstart wall time %E" {{ end }}flux start {{ if .Spec.Flux.Wrap }}--wrap={{ .Spec.Flux.Wrap }} {{ end }} -o --config ${cfg} ${brokerOptions} {{ if .Spec.Logging.Timed }}/usr/bin/time -f "FLUXTIME fluxsubmit wall time %E" {{ end }} {{.Container.Commands.Prefix}} {{ if .Spec.Flux.SubmitCommand }}{{ .Spec.Flux.SubmitCommand }}{{ else }}flux submit {{ end }} {{ if ge .Spec.Tasks .Spec.Size }} -N {{.Spec.Size}}{{ end }} -n {{.Spec.Tasks}} --quiet {{ if .Spec.Flux.OptionFlags }}{{ .Spec.Flux.OptionFlags}}{{ end }} --watch{{ if .Spec.Logging.Debug }} -vvv{{ end }} ${command}
+      {{template "flags" .}}
+      {{ if .Spec.Logging.Timed }}/usr/bin/time -f "FLUXTIME fluxstart wall time %E" {{ end }}flux start {{ if .Spec.Flux.Wrap }}--wrap={{ .Spec.Flux.Wrap }} {{ end }} -o --config ${cfg} ${brokerOptions} {{ if .Spec.Logging.Timed }}/usr/bin/time -f "FLUXTIME fluxsubmit wall time %E" {{ end }} {{.Container.Commands.Prefix}} {{ if .Spec.Flux.SubmitCommand }}{{ .Spec.Flux.SubmitCommand }}{{ else }}flux submit {{ end }} ${flags} --watch ${command}
       {{ end }} # end if container.launcher
       {{ end }} # end if container.batch
     fi
