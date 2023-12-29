@@ -145,10 +145,13 @@ func (r *MiniClusterReconciler) newServicePod(
 	mounts := []corev1.VolumeMount{}
 
 	// Get containers for the service pods
+	// true boolean indicates this is a service container - do not generate
+	// a custom entrypoint, etc.
 	containers, err := getContainers(
 		cluster.Spec.Services,
 		podServiceName,
 		mounts,
+		true,
 	)
 
 	if err != nil {

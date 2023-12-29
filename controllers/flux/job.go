@@ -101,6 +101,7 @@ func NewMiniClusterJob(cluster *api.MiniCluster) (*batchv1.Job, error) {
 		cluster.Spec.Containers,
 		cluster.Name,
 		mounts,
+		false,
 	)
 
 	// Add on the flux view container

@@ -55,6 +55,7 @@ func getContainers(
 	specs []api.MiniClusterContainer,
 	defaultName string,
 	mounts []corev1.VolumeMount,
+	serviceContainer bool,
 ) ([]corev1.Container, error) {
 
 	// Create the containers for the pod
@@ -86,7 +87,7 @@ func getContainers(
 
 		// A container not running flux can only have pre/post sections
 		// in a custom script if we know the entrypoint.
-		if container.GenerateEntrypoint() {
+		if container.GenerateEntrypoint() && !serviceContainer {
 			startScript := fmt.Sprintf("/flux_operator/start-%d.sh", i)
 			command = []string{"/bin/bash", startScript}
 		}
