@@ -4,7 +4,7 @@
 node_spec="{{ if ge .Spec.Tasks .Spec.Size }} -N {{.Spec.Size}}{{ end }} -n {{.Spec.Tasks}}"
 node_spec="{{ if eq .Spec.Tasks 0 }} -N {{.Spec.Size}}{{ else }}${node_spec}{{ end }}"
 flags="${node_spec} {{ if .Spec.Flux.OptionFlags }}{{ .Spec.Flux.OptionFlags}}{{ end }} {{ if .Spec.Logging.Debug }} -vvv{{ end }}"
-echo "Flags for flux are ${flags}"
+echo "Flags for flux are ${flags}" {{ if .Spec.Logging.Quiet }}> /dev/null 2>&1{{ end }}
 {{ end }}
 
 {{define "wait-view"}}
