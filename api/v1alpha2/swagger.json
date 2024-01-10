@@ -94,14 +94,12 @@
         "limits": {
           "type": "object",
           "additionalProperties": {
-            "default": {},
             "$ref": "#/definitions/IntOrString"
           }
         },
         "requests": {
           "type": "object",
           "additionalProperties": {
-            "default": {},
             "$ref": "#/definitions/IntOrString"
           }
         }
@@ -622,6 +620,11 @@
           "format": "int32",
           "default": 1
         },
+        "suspendWorkers": {
+          "description": "Restart failed workers (defaults to true) This is setting backoffLimitPerIndex to 0 on the backend This requires an additional feature gate to be enabled.",
+          "type": "boolean",
+          "default": false
+        },
         "tasks": {
           "description": "Total number of CPUs being run across entire cluster",
           "type": "integer",
@@ -735,7 +738,6 @@
           "description": "Resources include limits and requests",
           "type": "object",
           "additionalProperties": {
-            "default": {},
             "$ref": "#/definitions/IntOrString"
           }
         },

@@ -50,6 +50,7 @@ class MiniClusterSpec(object):
         'services': 'list[MiniClusterContainer]',
         'share_process_namespace': 'bool',
         'size': 'int',
+        'suspend_workers': 'bool',
         'tasks': 'int'
     }
 
@@ -68,10 +69,11 @@ class MiniClusterSpec(object):
         'services': 'services',
         'share_process_namespace': 'shareProcessNamespace',
         'size': 'size',
+        'suspend_workers': 'suspendWorkers',
         'tasks': 'tasks'
     }
 
-    def __init__(self, archive=None, cleanup=False, containers=None, deadline_seconds=31500000, flux=None, interactive=False, job_labels=None, logging=None, max_size=None, network=None, pod=None, services=None, share_process_namespace=False, size=1, tasks=1, local_vars_configuration=None):  # noqa: E501
+    def __init__(self, archive=None, cleanup=False, containers=None, deadline_seconds=31500000, flux=None, interactive=False, job_labels=None, logging=None, max_size=None, network=None, pod=None, services=None, share_process_namespace=False, size=1, suspend_workers=False, tasks=1, local_vars_configuration=None):  # noqa: E501
         """MiniClusterSpec - a model defined in OpenAPI"""  # noqa: E501
         if local_vars_configuration is None:
             local_vars_configuration = Configuration.get_default_copy()
@@ -91,6 +93,7 @@ class MiniClusterSpec(object):
         self._services = None
         self._share_process_namespace = None
         self._size = None
+        self._suspend_workers = None
         self._tasks = None
         self.discriminator = None
 
@@ -121,6 +124,8 @@ class MiniClusterSpec(object):
             self.share_process_namespace = share_process_namespace
         if size is not None:
             self.size = size
+        if suspend_workers is not None:
+            self.suspend_workers = suspend_workers
         if tasks is not None:
             self.tasks = tasks
 
@@ -437,6 +442,29 @@ class MiniClusterSpec(object):
         """
 
         self._size = size
+
+    @property
+    def suspend_workers(self):
+        """Gets the suspend_workers of this MiniClusterSpec.  # noqa: E501
+
+        Restart failed workers (defaults to true) This is setting backoffLimitPerIndex to 0 on the backend This requires an additional feature gate to be enabled.  # noqa: E501
+
+        :return: The suspend_workers of this MiniClusterSpec.  # noqa: E501
+        :rtype: bool
+        """
+        return self._suspend_workers
+
+    @suspend_workers.setter
+    def suspend_workers(self, suspend_workers):
+        """Sets the suspend_workers of this MiniClusterSpec.
+
+        Restart failed workers (defaults to true) This is setting backoffLimitPerIndex to 0 on the backend This requires an additional feature gate to be enabled.  # noqa: E501
+
+        :param suspend_workers: The suspend_workers of this MiniClusterSpec.  # noqa: E501
+        :type suspend_workers: bool
+        """
+
+        self._suspend_workers = suspend_workers
 
     @property
     def tasks(self):

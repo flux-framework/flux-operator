@@ -81,7 +81,7 @@ jobs:
 
     steps:
     - name: Clone the code
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
 
     - name: Setup Go
       uses: actions/setup-go@v3
@@ -92,7 +92,7 @@ jobs:
       run: sudo apt-get update && sudo apt-get install -y libsodium-dev libzmq3-dev libczmq-dev
 
     - name: Start minikube
-      uses: medyagh/setup-minikube@697f2b7aaed5f70bf2a94ee21a4ec3dde7b12f92 # v0.0.9
+      uses: medyagh/setup-minikube@master
 
     - name: Pull Docker Containers to MiniKube
       env:

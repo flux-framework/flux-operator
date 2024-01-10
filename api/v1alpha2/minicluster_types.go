@@ -66,6 +66,12 @@ type MiniClusterSpec struct {
 	// +optional
 	ShareProcessNamespace bool `json:"shareProcessNamespace"`
 
+	// Restart failed workers (defaults to true)
+	// This is setting backoffLimitPerIndex to 0 on the backend
+	// This requires an additional feature gate to be enabled.
+	// +optional
+	SuspendWorkers bool `json:"suspendWorkers"`
+
 	// Cleanup the pods and storage when the index broker pod is complete
 	// +kubebuilder:default=false
 	// +default=false

@@ -92,6 +92,19 @@ This would be equivalent to giving a start command of `sleep infinity` however o
 (e.g., if there is a flux shutdown from within the Flux instance) the sleep command would
 not exit with a failed code.
 
+### suspendWorkers
+
+By default, when a pod fails it is attempted to restart. When you use the [JobBackoffPerIndex](https://kubernetes.io/blog/2023/08/21/kubernetes-1-28-jobapi-update/#backoff-limit-per-index) feature gate (Kubernetes 1.28) you can set this to an explicit number of failures allowed. For example, a value of 0 will mean the pod is only allowed to fail once (and not recreated).
+Since we want this primarily to be a case of "restart the workers" or "don't restart them" we expose this as a boolean.
+Setting `suspendWorkers` to true indicates that on a failure, we do not restart.
+
+```yaml
+spec:
+  suspendWorkers: true
+```
+
+This can be useful for cases of autoscaling in the down direction when you need to drain a node, and then delete the pod.
+
 ### launcher
 
 If you are using an executor that launches Flux Jobs (e.g., workflow managers such as Snakemake and Nextflow do!)

@@ -207,8 +207,7 @@ func schema__api_v1alpha2__ContainerResources(ref common.ReferenceCallback) comm
 								Allows: true,
 								Schema: &spec.Schema{
 									SchemaProps: spec.SchemaProps{
-										Default: map[string]interface{}{},
-										Ref:     ref("k8s.io/apimachinery/pkg/util/intstr.IntOrString"),
+										Ref: ref("k8s.io/apimachinery/pkg/util/intstr.IntOrString"),
 									},
 								},
 							},
@@ -221,8 +220,7 @@ func schema__api_v1alpha2__ContainerResources(ref common.ReferenceCallback) comm
 								Allows: true,
 								Schema: &spec.Schema{
 									SchemaProps: spec.SchemaProps{
-										Default: map[string]interface{}{},
-										Ref:     ref("k8s.io/apimachinery/pkg/util/intstr.IntOrString"),
+										Ref: ref("k8s.io/apimachinery/pkg/util/intstr.IntOrString"),
 									},
 								},
 							},
@@ -1073,6 +1071,14 @@ func schema__api_v1alpha2__MiniClusterSpec(ref common.ReferenceCallback) common.
 							Format:      "",
 						},
 					},
+					"suspendWorkers": {
+						SchemaProps: spec.SchemaProps{
+							Description: "Restart failed workers (defaults to true) This is setting backoffLimitPerIndex to 0 on the backend This requires an additional feature gate to be enabled.",
+							Default:     false,
+							Type:        []string{"boolean"},
+							Format:      "",
+						},
+					},
 					"cleanup": {
 						SchemaProps: spec.SchemaProps{
 							Description: "Cleanup the pods and storage when the index broker pod is complete",
@@ -1326,8 +1332,7 @@ func schema__api_v1alpha2__PodSpec(ref common.ReferenceCallback) common.OpenAPID
 								Allows: true,
 								Schema: &spec.Schema{
 									SchemaProps: spec.SchemaProps{
-										Default: map[string]interface{}{},
-										Ref:     ref("k8s.io/apimachinery/pkg/util/intstr.IntOrString"),
+										Ref: ref("k8s.io/apimachinery/pkg/util/intstr.IntOrString"),
 									},
 								},
 							},

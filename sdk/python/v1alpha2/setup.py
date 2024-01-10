@@ -30,7 +30,7 @@ except Exception:
 if __name__ == "__main__":
     setup(
         name="fluxoperator",
-        version="0.2.0",
+        version="0.2.0-rc0",
         author="Vanessasaurus",
         author_email="vsoch@users.noreply.github.com",
         maintainer="Vanessasaurus",

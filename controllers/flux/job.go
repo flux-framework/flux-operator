@@ -77,6 +77,12 @@ func NewMiniClusterJob(cluster *api.MiniCluster) (*batchv1.Job, error) {
 		},
 	}
 
+	// Does the user want backoff limit per index?
+	if cluster.Spec.SuspendWorkers {
+		var backoffLimitPerIndex int32 = 0
+		job.Spec.BackoffLimitPerIndex = &backoffLimitPerIndex
+	}
+
 	// Add Affinity to map one pod / node only if the user hasn't disbaled it
 	if !cluster.Spec.Network.DisableAffinity {
 		job.Spec.Template.Spec.Affinity = getAffinity(cluster)
