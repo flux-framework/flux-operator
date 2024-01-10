@@ -1,0 +1,11 @@
+apiVersion: flux-framework.org/v1alpha2
+kind: MiniCluster
+metadata:
+  name: flux-sample
+spec:
+  size: 4
+  maxSize: 10
+  suspendWorkers: true
+  interactive: true
+  containers:
+    - image: rockylinux:9

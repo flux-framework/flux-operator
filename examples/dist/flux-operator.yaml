@@ -701,6 +701,11 @@ spec:
                   in pods) This is also the minimum number required to start Flux
                 format: int32
                 type: integer
+              suspendWorkers:
+                description: Restart failed workers (defaults to true) This is setting
+                  backoffLimitPerIndex to 0 on the backend This requires an additional
+                  feature gate to be enabled.
+                type: boolean
               tasks:
                 default: 1
                 description: Total number of CPUs being run across entire cluster
