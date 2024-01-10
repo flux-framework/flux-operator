@@ -3,7 +3,7 @@ kind: MiniCluster
 metadata:
   name: flux-sample
 spec:
-  size: 6
+  size: 4
   maxSize: 10
   suspendWorkers: true
   interactive: true

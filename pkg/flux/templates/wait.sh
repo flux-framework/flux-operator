@@ -184,7 +184,8 @@ else
     do
         flux start -o --config ${viewroot}/etc/flux/config ${brokerOptions}
         retval=$?
-        if [[ "${retval}" -eq 0 ]]; then
+        # We exit cleanly if the return value is 0, OR we are asking to suspendWorkers
+        if [[ "${retval}" -eq 0 ]] || [[ "{{ .Spec.SuspendWorkers }}" == "true" ]]; then
              echo "The follower worker exited cleanly. Goodbye!"
              break
         fi
