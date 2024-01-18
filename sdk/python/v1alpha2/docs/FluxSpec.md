@@ -4,8 +4,10 @@
 ## Properties
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
+**arch** | **str** | Change the arch string - determines the binaries that are downloaded to run the entrypoint | [optional] 
 **broker_config** | **str** | Optionally provide a manually created broker config this is intended for bursting to remote clusters | [optional] [default to '']
 **bursting** | [**Bursting**](Bursting.md) |  | [optional] 
+**complete_workers** | **bool** | Complete workers when they fail This is ideal if you don&#39;t want them to restart | [optional] [default to False]
 **connect_timeout** | **str** | Single user executable to provide to flux start | [optional] [default to '5s']
 **container** | [**FluxContainer**](FluxContainer.md) |  | [optional] 
 **curve_cert** | **str** | Optionally provide an already existing curve certificate This is not recommended in favor of providing the secret name as curveCertSecret, below | [optional] [default to '']

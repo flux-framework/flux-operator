@@ -180,11 +180,12 @@ else
     echo "🌀 flux start {{ if .Spec.Flux.Wrap }}--wrap={{ .Spec.Flux.Wrap }} {{ end }} -o --config ${viewroot}/etc/flux/config ${brokerOptions}"
 
     # We can keep trying forever, don't care if worker is successful or not
+    # Unless retry count is set, in which case we stop after retries
     while true
     do
         flux start -o --config ${viewroot}/etc/flux/config ${brokerOptions}
         retval=$?
-        if [[ "${retval}" -eq 0 ]]; then
+        if [[ "${retval}" -eq 0 ]] || [[ "{{ .Spec.Flux.CompleteWorkers }}" == "true" ]]; then
              echo "The follower worker exited cleanly. Goodbye!"
              break
         fi

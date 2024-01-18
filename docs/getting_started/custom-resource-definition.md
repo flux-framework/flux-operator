@@ -160,6 +160,18 @@ The operator works to add Flux to your application container dynamically by way 
 one that is run as a sidecar alongside your container, and then the view is copied over and flux run as your
 active user. Settings under the Flux directive typically refer to flux options, e.g., for the broker or similar.
 
+#### arch
+
+If you are using an arm based container, ensure to add the architecture flag to designate that.
+
+```yaml
+flux:
+   arch: "arm"
+```
+
+Note that this doesn't edit the container, but rather the binaries installed for it (e.g., to wait for files).
+
+
 #### container
 
 You can customize the flux container, and most attributes that are available for a standard container are available here.
@@ -229,6 +241,18 @@ And then your pod containers also both need to have memory and cpu defined.  In 
 1. Ensure cpuManagerPolicy is static
 2. Create all pod containers (including the init container) in the MiniCluster to have a cpu and memory definition.
 
+### completeWorkers
+
+By default, when a follower broker is killed it is attempted to restart. While we could use [JobBackoffPerIndex](https://kubernetes.io/blog/2023/08/21/kubernetes-1-28-jobapi-update/#backoff-limit-per-index) to prevent it from restarting under
+any conditions, this currently requires a feature gate (Kubernetes 1.28) so we are opting for a more simple approach. You can set `completeWorkers` to true, in which case when a lead broker is killed, it will Complete and not recreate.
+
+```yaml
+spec:
+  flux:
+    completeWorkers: true
+```
+
+This can be useful for cases of autoscaling in the down direction when you need to drain a node, and then delete the pod.
 
 #### submitCommand
 

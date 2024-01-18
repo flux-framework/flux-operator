@@ -83,6 +83,12 @@ type MiniClusterSpec struct {
 	// +optional
 	MaxSize int32 `json:"maxSize,omitempty"`
 
+	// MinSize (minimum number of pods that must be up for Flux)
+	// Note that this option does not edit the number of tasks,
+	// so a job could run with fewer (and then not start)
+	// +optional
+	MinSize int32 `json:"minSize,omitempty"`
+
 	// Total number of CPUs being run across entire cluster
 	// +kubebuilder:default=1
 	// +default=1
@@ -249,7 +255,13 @@ type ContainerVolume struct {
 type FluxSpec struct {
 
 	// Container base for flux
+	// +optional
 	Container FluxContainer `json:"container,omitempty"`
+
+	// Change the arch string - determines the binaries
+	// that are downloaded to run the entrypoint
+	// +optional
+	Arch string `json:"arch,omitempty"`
 
 	// Modify flux submit to be something else
 	// +optional
@@ -278,6 +290,11 @@ type FluxSpec struct {
 	// Do not wait for the socket
 	// +optional
 	NoWaitSocket bool `json:"noWaitSocket"`
+
+	// Complete workers when they fail
+	// This is ideal if you don't want them to restart
+	// +optional
+	CompleteWorkers bool `json:"completeWorkers"`
 
 	// Log level to use for flux logging (only in non TestMode)
 	// +kubebuilder:default=6
@@ -671,6 +688,16 @@ func (f *MiniCluster) Validate() bool {
 	// If MaxSize is set, it must be greater than size
 	if f.Spec.MaxSize != 0 && f.Spec.MaxSize < f.Spec.Size {
 		fmt.Printf("😥️ MaxSize of cluster must be greater than size.\n")
+		return false
+	}
+
+	// If MinSize is set, it must be <= MaxSize and Size
+	if f.Spec.MinSize != 0 && f.Spec.MaxSize != 0 && f.Spec.MinSize > f.Spec.MaxSize {
+		fmt.Printf("😥️ MinSize of cluster must be less than MaxSize.\n")
+		return false
+	}
+	if f.Spec.MinSize != 0 && f.Spec.MinSize > f.Spec.Size {
+		fmt.Printf("😥️ MinSize of cluster must be less than size.\n")
 		return false
 	}
 

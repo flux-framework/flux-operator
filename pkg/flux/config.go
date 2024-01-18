@@ -84,9 +84,16 @@ func getRequiredRanks(cluster *api.MiniCluster) string {
 	// Use the Flux default - all ranks must be online
 	// Because our maximum size is == our starting size
 	requiredRanks := ""
+
+	// If the user has requested a custom, different number of ranks
+	if cluster.Spec.MinSize != 0 {
+		return fmt.Sprintf("%d", cluster.Spec.MinSize)
+	}
+
 	if cluster.Spec.MaxSize == cluster.Spec.Size {
 		return requiredRanks
 	}
+	
 	// This is the quorum - the nodes required to be online - so we can start
 	// This can be less than the MaxSize
 	return fmt.Sprintf("%d", cluster.Spec.Size)

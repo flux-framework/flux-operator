@@ -14,6 +14,7 @@ Name | Type | Description | Notes
 **job_labels** | **dict[str, str]** | Labels for the job | [optional] 
 **logging** | [**LoggingSpec**](LoggingSpec.md) |  | [optional] 
 **max_size** | **int** | MaxSize (maximum number of pods to allow scaling to) | [optional] 
+**min_size** | **int** | MinSize (minimum number of pods that must be up for Flux) Note that this option does not edit the number of tasks, so a job could run with fewer (and then not start) | [optional] 
 **network** | [**Network**](Network.md) |  | [optional] 
 **pod** | [**PodSpec**](PodSpec.md) |  | [optional] 
 **services** | [**list[MiniClusterContainer]**](MiniClusterContainer.md) | Services are one or more service containers to bring up alongside the MiniCluster. | [optional] 

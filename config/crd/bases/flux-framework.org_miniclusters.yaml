@@ -245,6 +245,10 @@ spec:
               flux:
                 description: Flux options for the broker, shared across cluster
                 properties:
+                  arch:
+                    description: Change the arch string - determines the binaries
+                      that are downloaded to run the entrypoint
+                    type: string
                   brokerConfig:
                     description: Optionally provide a manually created broker config
                       this is intended for bursting to remote clusters
@@ -307,6 +311,10 @@ spec:
                         - size
                         type: object
                     type: object
+                  completeWorkers:
+                    description: Complete workers when they fail This is ideal if
+                      you don't want them to restart
+                    type: boolean
                   connectTimeout:
                     default: 5s
                     description: Single user executable to provide to flux start
@@ -451,6 +459,12 @@ spec:
                 type: object
               maxSize:
                 description: MaxSize (maximum number of pods to allow scaling to)
+                format: int32
+                type: integer
+              minSize:
+                description: MinSize (minimum number of pods that must be up for Flux)
+                  Note that this option does not edit the number of tasks, so a job
+                  could run with fewer (and then not start)
                 format: int32
                 type: integer
               network:

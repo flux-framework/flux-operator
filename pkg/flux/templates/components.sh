@@ -9,10 +9,17 @@ echo "Flags for flux are ${flags}" {{ if .Spec.Logging.Quiet }}> /dev/null 2>&1{
 
 {{define "wait-view"}}
 
+# This is the baseurl for a wait script.
+goshareUrl=https://github.com/converged-computing/goshare/releases/download/2024-01-18
+
+# Ensure the flux volume addition is complete. We default to linux, fall back to arm
+url=$goshareUrl/wait-fs
+{{ if .Spec.Flux.Arch }}
+url=$goshareUrl/wait-fs-{{ .Spec.Flux.Arch }}
+{{ end }}
+
 # This waiting script is intended to wait for the flux view, and then start running
-# Ensure the flux volume addition is complete.
-url=https://github.com/converged-computing/goshare/releases/download/2023-09-06/wait-fs
-curl -L -O -s ${url} {{ if .Spec.Logging.Quiet }}> /dev/null 2>&1{{ end }} || wget ${url} {{ if .Spec.Logging.Quiet }}> /dev/null 2>&1{{ end }}
+curl -L -O -s -o ./wait-fs -s ${url} {{ if .Spec.Logging.Quiet }}> /dev/null 2>&1{{ end }} || wget ${url} -q -O ./wait-fs {{ if .Spec.Logging.Quiet }}> /dev/null 2>&1{{ end }}
 chmod +x ./wait-fs
 mv ./wait-fs /usr/bin/goshare-wait-fs
 

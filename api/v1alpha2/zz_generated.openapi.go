@@ -207,8 +207,7 @@ func schema__api_v1alpha2__ContainerResources(ref common.ReferenceCallback) comm
 								Allows: true,
 								Schema: &spec.Schema{
 									SchemaProps: spec.SchemaProps{
-										Default: map[string]interface{}{},
-										Ref:     ref("k8s.io/apimachinery/pkg/util/intstr.IntOrString"),
+										Ref: ref("k8s.io/apimachinery/pkg/util/intstr.IntOrString"),
 									},
 								},
 							},
@@ -221,8 +220,7 @@ func schema__api_v1alpha2__ContainerResources(ref common.ReferenceCallback) comm
 								Allows: true,
 								Schema: &spec.Schema{
 									SchemaProps: spec.SchemaProps{
-										Default: map[string]interface{}{},
-										Ref:     ref("k8s.io/apimachinery/pkg/util/intstr.IntOrString"),
+										Ref: ref("k8s.io/apimachinery/pkg/util/intstr.IntOrString"),
 									},
 								},
 							},
@@ -471,6 +469,13 @@ func schema__api_v1alpha2__FluxSpec(ref common.ReferenceCallback) common.OpenAPI
 							Ref:         ref("./api/v1alpha2/.FluxContainer"),
 						},
 					},
+					"arch": {
+						SchemaProps: spec.SchemaProps{
+							Description: "Change the arch string - determines the binaries that are downloaded to run the entrypoint",
+							Type:        []string{"string"},
+							Format:      "",
+						},
+					},
 					"submitCommand": {
 						SchemaProps: spec.SchemaProps{
 							Description: "Modify flux submit to be something else",
@@ -512,6 +517,14 @@ func schema__api_v1alpha2__FluxSpec(ref common.ReferenceCallback) common.OpenAPI
 					"noWaitSocket": {
 						SchemaProps: spec.SchemaProps{
 							Description: "Do not wait for the socket",
+							Default:     false,
+							Type:        []string{"boolean"},
+							Format:      "",
+						},
+					},
+					"completeWorkers": {
+						SchemaProps: spec.SchemaProps{
+							Description: "Complete workers when they fail This is ideal if you don't want them to restart",
 							Default:     false,
 							Type:        []string{"boolean"},
 							Format:      "",
@@ -1096,6 +1109,13 @@ func schema__api_v1alpha2__MiniClusterSpec(ref common.ReferenceCallback) common.
 							Format:      "int32",
 						},
 					},
+					"minSize": {
+						SchemaProps: spec.SchemaProps{
+							Description: "MinSize (minimum number of pods that must be up for Flux) Note that this option does not edit the number of tasks, so a job could run with fewer (and then not start)",
+							Type:        []string{"integer"},
+							Format:      "int32",
+						},
+					},
 					"tasks": {
 						SchemaProps: spec.SchemaProps{
 							Description: "Total number of CPUs being run across entire cluster",
@@ -1326,8 +1346,7 @@ func schema__api_v1alpha2__PodSpec(ref common.ReferenceCallback) common.OpenAPID
 								Allows: true,
 								Schema: &spec.Schema{
 									SchemaProps: spec.SchemaProps{
-										Default: map[string]interface{}{},
-										Ref:     ref("k8s.io/apimachinery/pkg/util/intstr.IntOrString"),
+										Ref: ref("k8s.io/apimachinery/pkg/util/intstr.IntOrString"),
 									},
 								},
 							},

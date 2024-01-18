@@ -94,14 +94,12 @@
         "limits": {
           "type": "object",
           "additionalProperties": {
-            "default": {},
             "$ref": "#/definitions/IntOrString"
           }
         },
         "requests": {
           "type": "object",
           "additionalProperties": {
-            "default": {},
             "$ref": "#/definitions/IntOrString"
           }
         }
@@ -241,6 +239,10 @@
     "FluxSpec": {
       "type": "object",
       "properties": {
+        "arch": {
+          "description": "Change the arch string - determines the binaries that are downloaded to run the entrypoint",
+          "type": "string"
+        },
         "brokerConfig": {
           "description": "Optionally provide a manually created broker config this is intended for bursting to remote clusters",
           "type": "string",
@@ -250,6 +252,11 @@
           "description": "Bursting - one or more external clusters to burst to We assume a single, central MiniCluster with an ipaddress that all connect to.",
           "default": {},
           "$ref": "#/definitions/Bursting"
+        },
+        "completeWorkers": {
+          "description": "Complete workers when they fail This is ideal if you don't want them to restart",
+          "type": "boolean",
+          "default": false
         },
         "connectTimeout": {
           "description": "Single user executable to provide to flux start",
@@ -592,6 +599,11 @@
           "type": "integer",
           "format": "int32"
         },
+        "minSize": {
+          "description": "MinSize (minimum number of pods that must be up for Flux) Note that this option does not edit the number of tasks, so a job could run with fewer (and then not start)",
+          "type": "integer",
+          "format": "int32"
+        },
         "network": {
           "description": "A spec for exposing or defining the cluster headless service",
           "default": {},
@@ -735,7 +747,6 @@
           "description": "Resources include limits and requests",
           "type": "object",
           "additionalProperties": {
-            "default": {},
             "$ref": "#/definitions/IntOrString"
           }
         },

@@ -36,8 +36,10 @@ class FluxSpec(object):
                             and the value is json key in definition.
     """
     openapi_types = {
+        'arch': 'str',
         'broker_config': 'str',
         'bursting': 'Bursting',
+        'complete_workers': 'bool',
         'connect_timeout': 'str',
         'container': 'FluxContainer',
         'curve_cert': 'str',
@@ -52,8 +54,10 @@ class FluxSpec(object):
     }
 
     attribute_map = {
+        'arch': 'arch',
         'broker_config': 'brokerConfig',
         'bursting': 'bursting',
+        'complete_workers': 'completeWorkers',
         'connect_timeout': 'connectTimeout',
         'container': 'container',
         'curve_cert': 'curveCert',
@@ -67,14 +71,16 @@ class FluxSpec(object):
         'wrap': 'wrap'
     }
 
-    def __init__(self, broker_config='', bursting=None, connect_timeout='5s', container=None, curve_cert='', log_level=6, minimal_service=False, munge_secret='', no_wait_socket=False, option_flags='', scheduler=None, submit_command=None, wrap=None, local_vars_configuration=None):  # noqa: E501
+    def __init__(self, arch=None, broker_config='', bursting=None, complete_workers=False, connect_timeout='5s', container=None, curve_cert='', log_level=6, minimal_service=False, munge_secret='', no_wait_socket=False, option_flags='', scheduler=None, submit_command=None, wrap=None, local_vars_configuration=None):  # noqa: E501
         """FluxSpec - a model defined in OpenAPI"""  # noqa: E501
         if local_vars_configuration is None:
             local_vars_configuration = Configuration.get_default_copy()
         self.local_vars_configuration = local_vars_configuration
 
+        self._arch = None
         self._broker_config = None
         self._bursting = None
+        self._complete_workers = None
         self._connect_timeout = None
         self._container = None
         self._curve_cert = None
@@ -88,10 +94,14 @@ class FluxSpec(object):
         self._wrap = None
         self.discriminator = None
 
+        if arch is not None:
+            self.arch = arch
         if broker_config is not None:
             self.broker_config = broker_config
         if bursting is not None:
             self.bursting = bursting
+        if complete_workers is not None:
+            self.complete_workers = complete_workers
         if connect_timeout is not None:
             self.connect_timeout = connect_timeout
         if container is not None:
@@ -114,6 +124,29 @@ class FluxSpec(object):
             self.submit_command = submit_command
         if wrap is not None:
             self.wrap = wrap
+
+    @property
+    def arch(self):
+        """Gets the arch of this FluxSpec.  # noqa: E501
+
+        Change the arch string - determines the binaries that are downloaded to run the entrypoint  # noqa: E501
+
+        :return: The arch of this FluxSpec.  # noqa: E501
+        :rtype: str
+        """
+        return self._arch
+
+    @arch.setter
+    def arch(self, arch):
+        """Sets the arch of this FluxSpec.
+
+        Change the arch string - determines the binaries that are downloaded to run the entrypoint  # noqa: E501
+
+        :param arch: The arch of this FluxSpec.  # noqa: E501
+        :type arch: str
+        """
+
+        self._arch = arch
 
     @property
     def broker_config(self):
@@ -158,6 +191,29 @@ class FluxSpec(object):
         """
 
         self._bursting = bursting
+
+    @property
+    def complete_workers(self):
+        """Gets the complete_workers of this FluxSpec.  # noqa: E501
+
+        Complete workers when they fail This is ideal if you don't want them to restart  # noqa: E501
+
+        :return: The complete_workers of this FluxSpec.  # noqa: E501
+        :rtype: bool
+        """
+        return self._complete_workers
+
+    @complete_workers.setter
+    def complete_workers(self, complete_workers):
+        """Sets the complete_workers of this FluxSpec.
+
+        Complete workers when they fail This is ideal if you don't want them to restart  # noqa: E501
+
+        :param complete_workers: The complete_workers of this FluxSpec.  # noqa: E501
+        :type complete_workers: bool
+        """
+
+        self._complete_workers = complete_workers
 
     @property
     def connect_timeout(self):

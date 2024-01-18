@@ -45,6 +45,7 @@ class MiniClusterSpec(object):
         'job_labels': 'dict[str, str]',
         'logging': 'LoggingSpec',
         'max_size': 'int',
+        'min_size': 'int',
         'network': 'Network',
         'pod': 'PodSpec',
         'services': 'list[MiniClusterContainer]',
@@ -63,6 +64,7 @@ class MiniClusterSpec(object):
         'job_labels': 'jobLabels',
         'logging': 'logging',
         'max_size': 'maxSize',
+        'min_size': 'minSize',
         'network': 'network',
         'pod': 'pod',
         'services': 'services',
@@ -71,7 +73,7 @@ class MiniClusterSpec(object):
         'tasks': 'tasks'
     }
 
-    def __init__(self, archive=None, cleanup=False, containers=None, deadline_seconds=31500000, flux=None, interactive=False, job_labels=None, logging=None, max_size=None, network=None, pod=None, services=None, share_process_namespace=False, size=1, tasks=1, local_vars_configuration=None):  # noqa: E501
+    def __init__(self, archive=None, cleanup=False, containers=None, deadline_seconds=31500000, flux=None, interactive=False, job_labels=None, logging=None, max_size=None, min_size=None, network=None, pod=None, services=None, share_process_namespace=False, size=1, tasks=1, local_vars_configuration=None):  # noqa: E501
         """MiniClusterSpec - a model defined in OpenAPI"""  # noqa: E501
         if local_vars_configuration is None:
             local_vars_configuration = Configuration.get_default_copy()
@@ -86,6 +88,7 @@ class MiniClusterSpec(object):
         self._job_labels = None
         self._logging = None
         self._max_size = None
+        self._min_size = None
         self._network = None
         self._pod = None
         self._services = None
@@ -111,6 +114,8 @@ class MiniClusterSpec(object):
             self.logging = logging
         if max_size is not None:
             self.max_size = max_size
+        if min_size is not None:
+            self.min_size = min_size
         if network is not None:
             self.network = network
         if pod is not None:
@@ -326,6 +331,29 @@ class MiniClusterSpec(object):
         """
 
         self._max_size = max_size
+
+    @property
+    def min_size(self):
+        """Gets the min_size of this MiniClusterSpec.  # noqa: E501
+
+        MinSize (minimum number of pods that must be up for Flux) Note that this option does not edit the number of tasks, so a job could run with fewer (and then not start)  # noqa: E501
+
+        :return: The min_size of this MiniClusterSpec.  # noqa: E501
+        :rtype: int
+        """
+        return self._min_size
+
+    @min_size.setter
+    def min_size(self, min_size):
+        """Sets the min_size of this MiniClusterSpec.
+
+        MinSize (minimum number of pods that must be up for Flux) Note that this option does not edit the number of tasks, so a job could run with fewer (and then not start)  # noqa: E501
+
+        :param min_size: The min_size of this MiniClusterSpec.  # noqa: E501
+        :type min_size: int
+        """
+
+        self._min_size = min_size
 
     @property
     def network(self):
