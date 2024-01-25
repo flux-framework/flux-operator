@@ -13,6 +13,7 @@ package core
 import (
 	controllers "github.com/flux-framework/flux-operator/controllers/flux"
 
+	api "flux-framework/flux-operator/api/v1alpha1"
 	"k8s.io/client-go/rest"
 	ctrl "sigs.k8s.io/controller-runtime"
 )
@@ -36,5 +37,14 @@ func SetupControllers(mgr ctrl.Manager, restClient rest.Interface) (string, erro
 		setupLog.Error(err, "unable to create controller", "controller", "MiniCluster")
 		return "MiniCluster", err
 	}
+	setupLog.Info("🌈 Success controller created", "controller", "MiniCluster")
+
+	if err := (&api.MiniCluster{}).SetupWebhookWithManager(mgr); err != nil {
+		setupLog.Error(err, "unable to create webhook", "webhook", "MiniCluster")
+		return "MiniCluster", err
+	}
+	//+kubebuilder:scaffold:builder
+
+	setupLog.Info("🌈 Success webhook manager created", "webhook", "MiniCluster")
 	return "", nil
 }

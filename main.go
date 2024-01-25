@@ -110,7 +110,6 @@ func main() {
 		setupLog.Error(err, "Unable to create controller", "controller", failedCtrl)
 		os.Exit(1)
 	}
-	//+kubebuilder:scaffold:builder
 
 	// The scheduler right now is a loop to move waiting jobs to the heap
 	setupChecks(mgr)
