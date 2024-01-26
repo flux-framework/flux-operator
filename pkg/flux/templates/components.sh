@@ -44,7 +44,12 @@ export PATH=$PATH:${viewbin}
 goshare-wait-fs -p ${viewbase}/flux-operator-done.txt {{ if .Spec.Logging.Quiet }}> /dev/null 2>&1{{ end }}
 
 # Copy mount software to /opt/software
-cp -R ${viewbase}/software /opt/software
+# If /opt/software already exists, we need to copy into it
+if [[ -e  "/opt/software" ]]; then
+  cp -R ${viewbase}/software/* /opt/software/
+else
+  cp -R ${viewbase}/software /opt/software
+fi
 {{end}}
 
 {{define "paths"}}
