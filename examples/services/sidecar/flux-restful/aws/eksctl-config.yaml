@@ -1,0 +1,19 @@
+apiVersion: eksctl.io/v1alpha5
+kind: ClusterConfig
+
+metadata:
+  name: flux-restful
+  region: us-east-2
+  version: "1.27"
+        
+availabilityZones: ["us-east-2b", "us-east-2c"]
+managedNodeGroups:
+  - name: chonkmaster
+    availabilityZones: ["us-east-2b"]
+    instanceType: m5.2xlarge
+    minSize: 6
+    maxSize: 6
+    labels: {"dinosaur": "true"}
+    ssh:
+      allow: true
+      publicKeyPath: ~/.ssh/id_eks.pub

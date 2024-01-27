@@ -2,10 +2,13 @@
 
 This example demonstrates installing and running a basic Flux Restful Server as a sidecar service alongside the lead broker. 
 We might want to do this to easily community from one Flux Cluster to a second Flux cluster, possibly in an entirely different environment
-(e.g, HPC to cloud). In this example we will jump right to using the cloud, since we don't care about a local cluster.
+(e.g, HPC to cloud). In this example we will jump right to using the cloud, since we don't care about a local cluster. We take two approaches:
 
-If you want to learn more about Flux Restful (currently in Python) see [the repository](https://github.com/flux-framework/flux-restful-api) for details.
-Ideally we will be able to develop a similar API in Go, however this would require Go bindings to flux-core (which do not exist yet).
+ - Google Cloud: uses a simple ingress (provided natively in GKS) with a NodePort, and we connect directly to the node
+ - AWS: requires created a load balancer for the service and then connecting to it.
+
+For both cases, we can interact with the Flux Restful Service via an IP address (and port if needed), and both have authentication of a base64 encoded username and password to first connect, and then tokens generated and passed back and forth between the client and server. They are also encrypted with a shared secret so sniffing wouldn't be problematic. I'm not a security person, but that's the best setup I could throw together at the time. There is also a web interface (with the same auth) but I find it a bit janky to login (you need to go to the FastAPI docs page). 
+It needs more work to preserve the login state, which I never went back to. If you want to learn more about Flux Restful (currently in Python) see [the repository](https://github.com/flux-framework/flux-restful-api) for details. Ideally we will be able to develop a similar API in Go, however this would require Go bindings to flux-core (which do not exist yet).
 
 ## Usage
 
@@ -96,7 +99,7 @@ kubectl get pod flux-sample-0-lpb5n -o json | jq .metadata.labels
 Specifically the job-index and job-name above. Create it.
 
 ```bash
-kubectl apply -f ingress.yaml
+kubectl apply -f google/ingress.yaml
 ```
 
 Note that for Google cloud you need to create a firewall rule, but only once. I already had done this:
@@ -304,3 +307,312 @@ Oh man, that was fun! When you are done, clean up.
 ```bash
 gcloud container clusters delete flux-cluster --zone us-central1-a
 ```
+
+### AWS
+
+Note that for AWS [there are several approaches](https://aws.amazon.com/blogs/containers/exposing-kubernetes-applications-part-1-service-and-ingress-resources/) that can be taken that vary on how production they are (e.g., nginx ingress is simpler with fine tuned control, but the load balancer approaches are touted to be more robust).
+I decided to follow the [steps here](https://aws.amazon.com/blogs/containers/exposing-kubernetes-applications-part-1-service-and-ingress-resources/) and first try for nginx ingress. That approach sucked - it didn't work, and would only work with a port-forward, which kind of defeats the purpose. Let's create the cluster with eksctl using our config:
+
+```bash
+eksctl create cluster --config-file ./aws/eksctl-config.yaml
+```
+
+Again install the operator:
+
+```bash
+kubectl apply -f https://raw.githubusercontent.com/flux-framework/flux-operator/test-refactor-modular/examples/dist/flux-operator-refactor.yaml
+```
+
+Let's try the [instructions from here](https://kubernetes-sigs.github.io/aws-load-balancer-controller/v2.6/deploy/installation/).
+
+```bash
+eksctl utils associate-iam-oidc-provider \
+    --region us-east-2 \
+    --cluster flux-restful \
+    --approve
+```
+
+Download the policy junk 🥫️:
+
+```bash
+curl -o aws/iam-policy.json https://raw.githubusercontent.com/kubernetes-sigs/aws-load-balancer-controller/v2.6.1/docs/install/iam_policy.json
+```
+
+Create the policy
+
+```bash
+aws iam create-policy \
+    --policy-name AWSLoadBalancerControllerIAMPolicy \
+    --policy-document file://aws/iam-policy.json
+```
+
+Create a service account with the ARN printed to the screen.
+
+```bash
+eksctl create iamserviceaccount \
+--cluster=flux-restful \
+--namespace=kube-system \
+--name=aws-load-balancer-controller \
+--attach-policy-arn=arn:aws:iam::<AWS_ACCOUNT_ID>:policy/AWSLoadBalancerControllerIAMPolicy \
+--override-existing-serviceaccounts \
+--region us-east-2 \
+--approve
+```
+
+Install the load balancer
+
+```
+helm repo add eks https://aws.github.io/eks-charts
+helm install aws-load-balancer-controller eks/aws-load-balancer-controller --set clusterName=flux-restful -n kube-system --set serviceAccount.create=false --set serviceAccount.name=aws-load-balancer-controller
+```
+
+Now get subnets from here (note that these can be auto-discovered, but aws sucks so I'm going to tell it exactly what I want):
+
+```
+eksctl get cluster flux-restful --region us-east-2
+```
+
+**Note** in the above the output shows you how to setup TLS. We will eventually want that.
+Then create the auth minicluster this time (no point in having something without auth):
+
+```bash
+kubectl apply -f minicluster-auth.yaml
+```
+
+Wait until pods are running (you can use the same approaches detailed above to see logs for each):
+
+```bash
+kubectl get pods --watch
+```
+
+Let's again create ingress, but with the aws one. The only difference here is that we've added some annotations for ingress.
+
+```bash
+kubectl apply -f aws/ingress.yaml
+```
+
+We won't need to look up an ip address of a pod->node because we are using the load balancer.
+I think this is how we see that the load balancer created the service?
+
+```bash
+kubectl logs -n kube-system --tail -1 -l app.kubernetes.io/name=aws-load-balancer-controller | grep restful
+```
+
+If I look at the logs of the pod, I can see something regularly hitting it (I suppose a health check):
+
+```console
+🍓 Require auth: True
+🍓  Server mode: single-user
+🍓   Secret key ****************
+🍓    Flux user: ********
+🍓   Flux token: ********
+INFO:     Started server process [220]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://0.0.0.0:5000 (Press CTRL+C to quit)
+INFO:     192.168.2.156:51672 - "GET / HTTP/1.1" 200 OK
+INFO:     192.168.2.156:16220 - "GET / HTTP/1.1" 200 OK
+INFO:     192.168.43.228:28068 - "GET / HTTP/1.1" 200 OK
+INFO:     192.168.2.156:44508 - "GET / HTTP/1.1" 200 OK
+INFO:     192.168.43.228:57280 - "GET / HTTP/1.1" 200 OK
+```
+
+Great - so how do *I* hit it? lol. This looks right too (note that I tried this many times and often saw errors here):
+
+```
+$ kubectl describe ingress
+Name:             restful-ingress
+Labels:           <none>
+Namespace:        default
+Address:          k8s-default-restfuli-4c464cb6e8-1303342880.us-east-2.elb.amazonaws.com
+Ingress Class:    alb
+Default backend:  <default>
+Rules:
+  Host        Path  Backends
+  ----        ----  --------
+  *           
+              /   restful-service:30093 (192.168.3.130:5000)
+Annotations:  alb.ingress.kubernetes.io/scheme: internet-facing
+              alb.ingress.kubernetes.io/target-type: ip
+Events:
+  Type    Reason                  Age                  From     Message
+  ----    ------                  ----                 ----     -------
+  Normal  SuccessfullyReconciled  87s (x2 over 5m34s)  ingress  Successfully reconciled
+```
+
+Oh hold the phone! 📞️ That's an address for the load balancer I think? Let's stupidly try it.
+I also just realized phones don't even look like that anymore. Oh god.
+
+```bash
+curl -k k8s-default-restfuli-4c464cb6e8-1303342880.us-east-2.elb.amazonaws.com/v1/jobs | jq
+```
+```console
+{
+  "detail": "Not authenticated"
+}
+```
+
+Nice! That is working - we haven't provided auth. Let's run the submit script with our same envars forwarded for that.
+
+```bash
+export export FLUX_USER=pinkyand
+export FLUX_TOKEN=thebrain
+export FLUX_SECRET_KEY=takeovertheworld
+python submit.py http://k8s-default-restfuli-4c464cb6e8-1303342880.us-east-2.elb.amazonaws.com
+```
+
+Here is output (I don't need to do another asciinema):
+
+<details>
+
+<summary>Output of submit.py</summary>
+
+```console
+🐭️ What are we going to do tonight, Brain?
+🐀️ The same thing we do every night, Pinky...
+🐀️ Try to submit jobs to a remote Flux instance! 🌀️
+     (diabolical laugher) 🦹️
+
+ -- Cluster nodes -- 
+{
+    "nodes": [
+        "flux-sample-0",
+        "flux-sample-1",
+        "flux-sample-3",
+        "flux-sample-2"
+    ]
+}
+
+ -- Submit hostname to 1 node -- 
+{'Message': 'Job submit.', 'id': 16971093508096}
+Flux job id 16971093508096
+
+ -- Flux job metadata -- 
+{
+    "id": 16971093508096,
+    "userid": 0,
+    "urgency": 16,
+    "priority": 16,
+    "t_submit": 1706386406.0884726,
+    "t_depend": 1706386406.1005688,
+    "t_run": 1706386406.1142974,
+    "t_cleanup": 1706386406.1338692,
+    "t_inactive": 1706386406.1369689,
+    "state": "INACTIVE",
+    "name": "hostname",
+    "ntasks": 1,
+    "ncores": 1,
+    "duration": 0.0,
+    "nnodes": 1,
+    "ranks": "0",
+    "nodelist": "flux-sample-0",
+    "success": true,
+    "exception_occurred": false,
+    "result": "COMPLETED",
+    "expiration": 0.0,
+    "annotations": {
+        "sched": {
+            "resource_summary": "rank0/core0"
+        }
+    },
+    "waitstatus": 0,
+    "returncode": 0,
+    "runtime": 0.019571781158447266,
+    "exception": {
+        "occurred": false,
+        "severity": "",
+        "type": "",
+        "note": ""
+    }
+}
+ -- Output --
+flux-sample-0
+     (MOOOOOAR!) 🦹️
+
+ -- Submit hostname to 4 node -- 
+{'Message': 'Job submit.', 'id': 17333984690176}
+Flux job id 17333984690176
+
+ -- Flux job metadata -- 
+{
+    "id": 17333984690176,
+    "userid": 0,
+    "urgency": 16,
+    "priority": 16,
+    "t_submit": 1706386427.7192323,
+    "t_depend": 1706386427.7312093,
+    "t_run": 1706386427.7446625,
+    "t_cleanup": 1706386427.7707143,
+    "t_inactive": 1706386427.773685,
+    "state": "INACTIVE",
+    "name": "hostname",
+    "ntasks": 4,
+    "ncores": 4,
+    "duration": 0.0,
+    "nnodes": 4,
+    "ranks": "[0-3]",
+    "nodelist": "flux-sample-[0-3]",
+    "success": true,
+    "exception_occurred": false,
+    "result": "COMPLETED",
+    "expiration": 0.0,
+    "annotations": {
+        "sched": {
+            "resource_summary": "rank[0-3]/core0"
+        }
+    },
+    "waitstatus": 0,
+    "returncode": 0,
+    "runtime": 0.026051759719848633,
+    "exception": {
+        "occurred": false,
+        "severity": "",
+        "type": "",
+        "note": ""
+    }
+}
+ -- Output --
+flux-sample-0
+flux-sample-2
+flux-sample-1
+flux-sample-3
+     (BWAHAHAH!) 🦹️
+
+🐭️ Ok brain, but as long as we can get tacos after 🌮️
+```
+
+</details>
+
+
+Oh 💩️ we can open up the web interface too! 
+
+![img/flux-restful-aws.png](img/flux-restful-aws.png). I think this would have worked on Google too, I just forgot it was there.
+
+The auth is a little janky (needs work, and I definitely can) but I don't see that as a priority for now.
+
+![img/api.png](img/api.png)
+![img/flux-restful-aws.png](img/flux-restful-aws.png)
+![img/job-info.png](img/job-info.png)
+![img/submit-job.png](img/submit-job.png)
+
+Let's clean up, that's good enough for today. It certainly was painful figuring out all that aws nonsense. 😆️😭️
+
+```bash
+kubectl delete -f aws/ingress.yaml
+kubectl delete -f minicluster-auth.yaml
+```
+
+And then delete the cloud formation hodge podge:
+
+```bash
+eksctl delete cluster --config-file ./aws/eksctl-config.yaml
+```
+
+Note that during deletion eksctl can struggle to evict pods. You can help.
+
+```bash
+kubectl delete deployments.apps -n operator-system operator-controller-manager 
+kubectl delete pods -n kube-system --all
+```
+
+Honestly I'm surprised I got that working - the above approach was my third attempt because AWS comes with a native network load balancer, and has another approach to use nginx ingress, and neither of those were successful attempts. This was the last one, and the documentation was not great (scattered across AWS, a custom GitHub pages site, and GitHub) and it's amazing the pieces somehow came together.
