@@ -1,0 +1,50 @@
+apiVersion: flux-framework.org/v1alpha2
+kind: MiniCluster
+metadata:
+  name: flux-sample
+spec:
+  size: 4
+
+  # Interactive is true here so our main container stays running
+  interactive: true
+
+  containers:
+    # runFlux tells the operator this is the main application container to run the lead broker from
+    - image: rockylinux:9 
+      runFlux: true
+
+    # This is our sidecar container that connects to the same flux broker and exposes the API
+    # We check the job index because we only want the server to start from the lead broker!
+    - image: rockylinux:9
+      name: restful
+      commands:
+        post: |
+          if [[ ${JOB_COMPLETION_INDEX} -eq 0 ]]; then
+            dnf install -y git
+            # Finalize the view so we can use Python (not default for a sidecar)
+            cp -R /mnt/flux/software /opt/software
+
+            # IMPORTANT - this is where you define the username and token for your single user cluster.
+            git clone --depth 1 https://github.com/flux-framework/flux-restful-api /flux-restful-api
+            cd /flux-restful-api
+
+            # This is how we constrain the number of nodes.
+            # This is manually set here because theoretically, we could eventually allow
+            # submitting a different number than is actually available
+            export FLUX_NUMBER_NODES=4
+
+            # Note that this is the python in the view
+            source /mnt/flux/flux-view.sh
+            /mnt/flux/view/bin/python3.11 -m ensurepip
+            /mnt/flux/view/bin/python3.11 -m pip install -r requirements.txt
+  
+            # This generates database tables for the application
+            alembic revision --autogenerate -m "Create intital tables"
+            alembic upgrade head
+            /mnt/flux/view/bin/python3.11 app/db/init_db.py init
+            export FLUX_URI=$fluxsocket
+            unset LD_LIBRARY_PATH PYTHONPATH
+            uvicorn app.main:app --host=0.0.0.0 --port=5000
+          else
+            sleep infinity
+          fi
