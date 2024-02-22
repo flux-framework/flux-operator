@@ -93,7 +93,7 @@ func getRequiredRanks(cluster *api.MiniCluster) string {
 	if cluster.Spec.MaxSize == cluster.Spec.Size {
 		return requiredRanks
 	}
-	
+
 	// This is the quorum - the nodes required to be online - so we can start
 	// This can be less than the MaxSize
 	return fmt.Sprintf("%d", cluster.Spec.Size)
