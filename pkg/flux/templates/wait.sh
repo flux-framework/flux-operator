@@ -13,9 +13,6 @@
 {{template "wait-view" .}}
 {{ if not .Spec.Flux.Container.Disable }}{{template "paths" .}}{{ end }}
 
-# And pre command logic that isn't passed to the certificate generator
-{{ .Container.Commands.Pre}} {{ if .Spec.Logging.Quiet }}> /dev/null 2>&1{{ end }}
-
 # Set the flux user and id from the getgo
 fluxuser=$(whoami)
 fluxuid=$(id -u $fluxuser)
