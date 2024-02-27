@@ -347,7 +347,7 @@ $(CONTROLLER_GEN): $(LOCALBIN)
 .PHONY: openapi-gen
 openapi-gen: $(OPENAPI_GEN) ## Download controller-gen locally if necessary.
 $(OPENAPI_GEN): $(LOCALBIN)
-	which ${OPENAPI_GEN} > /dev/null || (git clone --depth 1 https://github.com/kubernetes/kube-openapi /tmp/kube-openapi && cd /tmp/kube-openapi && go build -o ${OPENAPI_GEN} ./cmd/openapi-gen)
+	which ${OPENAPI_GEN} > /dev/null || (git clone https://github.com/kubernetes/kube-openapi /tmp/kube-openapi && cd /tmp/kube-openapi && git checkout 582cce78233bcb0195bc9a84f80662b9502325ee && go build -o ${OPENAPI_GEN} ./cmd/openapi-gen)
 
 .PHONY: swagger-jar
 swagger-jar: $(SWAGGER_JAR) ## Download controller-gen locally if necessary.

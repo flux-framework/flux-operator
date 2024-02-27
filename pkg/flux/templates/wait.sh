@@ -10,6 +10,7 @@
 {{ .Container.Commands.Init}} {{ if .Spec.Logging.Quiet }}> /dev/null{{ end }}
 
 # Shared logic to wait for view
+# We include the view even for disabling flux because it generates needed config files
 {{template "wait-view" .}}
 {{ if not .Spec.Flux.Container.Disable }}{{template "paths" .}}{{ end }}
 
@@ -52,11 +53,13 @@ chown -R ${fluxuid} ${curvepath}
 # If we have disabled the view, we need to use the flux here to generate resources
 {{ if .Spec.Flux.Container.Disable }}
 hosts=$(cat ${viewroot}/etc/flux/system/hostlist)
+{{ if not .Spec.Logging.Quiet }}
 echo
 echo "📦 Resources"
 echo "flux R encode --hosts=${hosts} --local"
+{{ end }}
 flux R encode --hosts=${hosts} --local > ${viewroot}/etc/flux/system/R
-cat ${viewroot}/etc/flux/system/R
+{{ if not .Spec.Logging.Quiet }}cat ${viewroot}/etc/flux/system/R{{ end }}
 {{ end }}
 
 # Put the state directory in /var/lib on shared view

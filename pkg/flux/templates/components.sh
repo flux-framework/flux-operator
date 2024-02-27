@@ -30,15 +30,16 @@ software="${viewbase}/software"
 viewbin="${viewroot}/bin"
 fluxpath=${viewbin}/flux
 
-# Set the flux root
-{{ if not .Spec.Logging.Quiet }}
+# Set the flux root, don't show the viewer if view is disabled (can be confusing)
+# The view is used to have configs and that is it
+{{ if not .Spec.Logging.Quiet }}{{ if not .Spec.Flux.Container.Disable }}
 echo
 echo "Flux install root: ${viewroot}"
 echo
-{{ end }}
+{{ end }}{{ end }}
 
 # Important to add AFTER in case software in container duplicated
-export PATH=$PATH:${viewbin}
+{{ if not .Spec.Flux.Container.Disable }}export PATH=$PATH:${viewbin}{{ end }}
 
 # Wait for marker (from spack.go) to indicate copy is done
 goshare-wait-fs -p ${viewbase}/flux-operator-done.txt {{ if .Spec.Logging.Quiet }}> /dev/null 2>&1{{ end }}
