@@ -55,7 +55,7 @@ func main() {
 func swaggify(name string) string {
 
 	// These are specific to the Flux Operator
-	name = strings.Replace(name, "github.com/flux-framework/flux-operator/api/v1alpha/", "", -1)
+	name = strings.Replace(name, "github.com/flux-framework/flux-operator/api/v1alpha2.", "", -1)
 	name = strings.Replace(name, "../api/v1alpha2/.", "", -1)
 	name = strings.Replace(name, "./api/v1alpha2/.", "", -1)
 

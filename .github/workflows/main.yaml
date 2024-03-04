@@ -61,23 +61,23 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        test: [["post", "", 90],
-               ["batch", "", 90],
-               ["timed", "", 90],
-               ["debug", "", 90],
-               ["volumes", "", 90],
-               ["hello-world", "", 90],
-               ["nginx-service", "", 90],
-               ["custom-config", "", 90],
-               ["minimal-service", "", 90],               
-               ["existing-volumes", "", 90],
-               ["flux-resource-list", "", 90],
-               ["nginx-sidecar-service", "", 90],
-               ["pokemon", "ghcr.io/rse-ops/pokemon:app-latest", 90],
-               ["snakemake", "ghcr.io/rse-ops/atacseq:app-latest", 90],
-               ["singularity", "ghcr.io/rse-ops/singularity:tag-mamba", 90],
-               ["lammps", "ghcr.io/converged-computing/metric-lammps:latest", 90],
-               ["disable-view", "ghcr.io/rse-ops/lammps:flux-sched-focal", 90]]
+        test: [["post", "", 100],
+               ["batch", "", 100],
+               ["timed", "", 100],
+               ["debug", "", 100],
+               ["volumes", "", 100],
+               ["hello-world", "", 100],
+               ["nginx-service", "", 100],
+               ["custom-config", "", 100],
+               ["minimal-service", "", 100],               
+               ["existing-volumes", "", 100],
+               ["flux-resource-list", "", 100],
+               ["nginx-sidecar-service", "", 100],
+               ["pokemon", "ghcr.io/rse-ops/pokemon:app-latest", 100],
+               ["snakemake", "ghcr.io/rse-ops/atacseq:app-latest", 100],
+               ["singularity", "ghcr.io/rse-ops/singularity:tag-mamba", 100],
+               ["lammps", "ghcr.io/converged-computing/metric-lammps:latest", 100],
+               ["disable-view", "ghcr.io/rse-ops/lammps:flux-sched-focal", 100]]
 
     steps:
     - name: Clone the code

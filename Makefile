@@ -107,7 +107,8 @@ manifests: controller-gen
 .PHONY: generate
 generate: controller-gen openapi-gen
 	$(CONTROLLER_GEN) object:headerFile="hack/boilerplate.go.txt" paths="./..."
-	${OPENAPI_GEN} --logtostderr=true -i ./api/${API_VERSION}/ -o "" -O zz_generated.openapi -p ./api/${API_VERSION}/ -h ./hack/boilerplate.go.txt -r "-"
+	rm -rf ./api/${API_VERSION}/zz_generated.openapi.go
+	${OPENAPI_GEN} --logtostderr=true  --output-file zz_generated.openapi.go --output-pkg "github.com/flux-framework/flux-operator/api/${API_VERSION}" --output-dir ./api/${API_VERSION}/ --go-header-file ./hack/boilerplate.go.txt -r "-" ./api/${API_VERSION}/
 
 .PHONY: api
 api: generate api
@@ -347,7 +348,7 @@ $(CONTROLLER_GEN): $(LOCALBIN)
 .PHONY: openapi-gen
 openapi-gen: $(OPENAPI_GEN) ## Download controller-gen locally if necessary.
 $(OPENAPI_GEN): $(LOCALBIN)
-	which ${OPENAPI_GEN} > /dev/null || (git clone https://github.com/kubernetes/kube-openapi /tmp/kube-openapi && cd /tmp/kube-openapi && git checkout 582cce78233bcb0195bc9a84f80662b9502325ee && go build -o ${OPENAPI_GEN} ./cmd/openapi-gen)
+	which ${OPENAPI_GEN} > /dev/null || (git clone https://github.com/kubernetes/kube-openapi /tmp/kube-openapi && cd /tmp/kube-openapi && go build -o ${OPENAPI_GEN} ./cmd/openapi-gen)
 
 .PHONY: swagger-jar
 swagger-jar: $(SWAGGER_JAR) ## Download controller-gen locally if necessary.
