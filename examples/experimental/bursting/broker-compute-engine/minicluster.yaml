@@ -1,8 +1,7 @@
-apiVersion: flux-framework.org/v1alpha1
+apiVersion: flux-framework.org/v1alpha2
 kind: MiniCluster
 metadata:
   name: flux-sample
-  namespace: flux-operator
 spec:
   size: 2
   # If we don't set this, we won't be able to go above two
@@ -28,13 +27,14 @@ spec:
 
   # This is a list because a pod can support multiple containers
   containers:
-    - image: ghcr.io/flux-framework/flux-restful-api
+    - image: rockylinux:9
       workingDir: /tmp/workflow
 
       # Commands to support installing flux-burst plugins
       # We also need terraform, which is how the plugin works
       commands:
         pre: |
+          dnf update && dnf install -y python3-pip
           pip install flux-burst[kubernetes]
           pip install flux-burst-compute-engine
           apt-get update && apt-get install -y unzip
@@ -46,10 +46,6 @@ spec:
       # This should not be done in production
       environment:
         GOOGLE_APPLICATION_CREDENTIALS: /tmp/workflow/application_default_credentials.json
-
-      # The fluxuser uid must match the name / uid in the container
-      fluxUser:
-        uid: 	1004
 
       # Important! We need to have resource requests for the horizonal autoscaler
       # The Flux Operator doesn't know you want to use it, so it's up to you

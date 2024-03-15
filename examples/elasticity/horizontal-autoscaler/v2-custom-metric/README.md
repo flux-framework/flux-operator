@@ -28,10 +28,9 @@ Create a kind cluster with Kubernetes version 1.27.0
 $ kind create cluster --config ./kind-config.yaml
 ```
 
-Create the flux-operator namespace and install the operator:
+Install the operator:
 
 ```bash
-$ kubectl create namespace flux-operator
 $ kubectl apply -f ../../../dist/flux-operator-dev.yaml
 ```
 
@@ -67,13 +66,13 @@ Since this is being served from the `flux-operator` namespace we will add it the
 it's scoped and belonging to the MiniCluster (for now).
 
 ```bash
-$ kubectl create secret tls -n flux-operator certs --cert=server.crt --key=server.key
+$ kubectl create secret tls certs --cert=server.crt --key=server.key
 ```
 
 Make sure that you can see it!
 
 ```bash
-$ kubectl get secret -n flux-operator 
+$ kubectl get secret
 NAME    TYPE                DATA   AGE
 certs   kubernetes.io/tls   2      4s
 ```
@@ -101,7 +100,7 @@ You'll need to wait for the container to pull (status `ContainerCreating` to `Ru
 At this point, wait until the containers go from creating to running.
 
 ```bash
-$ kubectl get -n flux-operator pods
+$ kubectl get pods
 NAME                  READY   STATUS    RESTARTS   AGE
 flux-sample-0-4wmmp   1/1     Running   0          6m50s
 flux-sample-1-mjj7b   1/1     Running   0          6m50s
@@ -110,7 +109,7 @@ flux-sample-1-mjj7b   1/1     Running   0          6m50s
 If you describe the pods in the operator namespace, you should see the secret mounted at `/etc/certs`. This is important!
 
 ```bash
-$ kubectl describe -n flux-operator pods
+$ kubectl describe pods
 ...
 Volumes:
 ...
@@ -123,7 +122,7 @@ Volumes:
 Look at the scale endpoint of the MiniCluster with `kubectl` directly! Remember that we haven't installed a horizontal auto-scaler yet:
 
 ```bash
-$ kubectl get --raw /apis/flux-framework.org/v1alpha1/namespaces/flux-operator/miniclusters/flux-sample/scale | jq
+$ kubectl get --raw /apis/flux-framework.org/v1alpha2/namespaces/default/miniclusters/flux-sample/scale | jq
 ```
 ```console
 {
@@ -131,7 +130,7 @@ $ kubectl get --raw /apis/flux-framework.org/v1alpha1/namespaces/flux-operator/m
   "apiVersion": "autoscaling/v1",
   "metadata": {
     "name": "flux-sample",
-    "namespace": "flux-operator",
+    "namespace": "default",
     "uid": "581c708a-0eb2-48da-84b1-3da7679d349d",
     "resourceVersion": "3579",
     "creationTimestamp": "2023-05-20T05:11:28Z"
@@ -150,6 +149,7 @@ The above knows the selector to use to get pods (and look at current resource us
 the reference to "autoscaling/v1" does not mean we cannot use autoscaling/v1 for the one we create.
 This threw me off for a bit!
 
+
 ## Custom Metrics API Service
 
 We next want to setup our custom metrics API service. We will walk through the steps
@@ -157,25 +157,30 @@ to start an interactive cluster. You'll want to first shell into the broker pod,
 then connect to the broker and running the server from there:
 
 ```bash
-$ kubectl exec -it -n flux-operator flux-sample-0-p85cj -- bash
-$ sudo -u fluxuser -E $(env) -E HOME=/home/fluxuser flux proxy local:///run/flux/local bash
+kubectl exec -it flux-sample-0-p85cj -- bash
+. /mnt/flux/flux-view.sh 
+flux proxy $fluxsocket bash
 ```
 
 This is how to start the metrics exporter (using defaults). Note that the default port should match
 the one in our servica.yaml and we are pointing to the certificates to use!
 
 ```bash
-$ flux-metrics-api start --port 8443 --ssl-certfile /etc/certs/tls.crt --ssl-keyfile /etc/certs/tls.key --namespace flux-operator --service-name custom-metrics-apiserver
+$ flux-metrics-api start --port 8443 --namespace default --service-name custom-metrics-apiserver
 ```
 
 Note that most of these are defaults, but it doesn't hurt to set them explicitly.
 The easiest thing to do is run the above in the background OR open a separate terminal (recommended so you can continue to monitor the server output).
-Once you have issued the two commands above again in a different terminal, test the endpoint (any of these should work):
+Once you have issued the two commands above again in a different terminal, test the endpoint (any of these should work). I'm disabling the certificates for now (leaving out `--ssl-certfile /etc/certs/tls.crt --ssl-keyfile /etc/certs/tls.key`).
+
+This is from inside the pod:
 
 ```bash
-$ curl -s http://0.0.0.0:8080/apis/custom.metrics.k8s.io/v1beta2/namespaces/flux-operator/metrics/node_up_count | jq
-$ curl -s http://flux-sample-0:8080/apis/custom.metrics.k8s.io/v1beta2/namespaces/flux-operator/metrics/node_up_count | jq
-$ curl -s http://flux-sample-0.flux-service.flux-operator.svc.cluster.local:8080/apis/custom.metrics.k8s.io/v1beta2/namespaces/flux-operator/metrics/node_up_count | jq
+kubectl exec -it flux-sample-0-xxxx bash
+dnf update && dnf install -y jq
+curl -s http://0.0.0.0:8443/apis/custom.metrics.k8s.io/v1beta2/namespaces/default/metrics/node_up_count | jq
+curl -s http://flux-sample-0:8443/apis/custom.metrics.k8s.io/v1beta2/namespaces/default/metrics/node_up_count | jq
+curl -s http://flux-sample-0.flux-service.default.svc.cluster.local:8443/apis/custom.metrics.k8s.io/v1beta2/namespaces/default/metrics/node_up_count | jq
 ```
 ```console
 {
@@ -189,7 +194,7 @@ $ curl -s http://flux-sample-0.flux-service.flux-operator.svc.cluster.local:8080
       "windowSeconds": 0,
       "describedObject": {
         "kind": "Service",
-        "namespace": "flux-operator",
+        "namespace": "default",
         "name": "custom-metrics-apiserver",
         "apiVersion": "v1beta2"
       }
@@ -225,7 +230,7 @@ It's Kubernetes so the order of operations (and figuring this out to begin with)
 Let's do those steps one at a time. First, adding the selector label to the leader broker pod:
 
 ```bash
-$ kubectl label pods -n flux-operator flux-sample-0-xxx api-server=custom-metrics
+$ kubectl label pods flux-sample-0-xxx api-server=custom-metrics
 ```
 
 Now let's create the service that knows how to select that.
@@ -237,7 +242,7 @@ $ kubectl apply -f ./scripts/service.yaml
 We want to see that there is a cluster IP address serving a secure port:
 
 ```bash
-kubectl get svc -n flux-operator 
+kubectl get svc
 NAME                       TYPE        CLUSTER-IP     EXTERNAL-IP   PORT(S)   AGE
 custom-metrics-apiserver   ClusterIP   10.96.20.246   <none>        443/TCP   5s
 flux-service               ClusterIP   None           <none>        <none>    12m
@@ -314,7 +319,7 @@ $ kubectl apply -f hpa-flux.yaml
 We should also be able to ping our new metrics server directly with kubectl. This is to look at the node up count:
 
 ```bash
-$ kubectl get --raw /apis/custom.metrics.k8s.io/v1beta2/namespaces/flux-operator/services/custom-metrics-service/node_up_count | jq
+$ kubectl get --raw /apis/custom.metrics.k8s.io/v1beta2/namespaces/default/services/custom-metrics-service/node_up_count | jq
 ```
 
 Note that when I was working on this, I first hit [this error](https://github.com/kubernetes/kubernetes/blob/18e3f01deda3bc1ea62751553df0b689598de7a7/staging/src/k8s.io/metrics/pkg/client/custom_metrics/discovery.go#L101) and had to find that spot in the source code, and then realize that 
@@ -342,7 +347,7 @@ This is a dummy example and I didn't put too much thought into it beyond getting
 get a status from the hpa directly:
 
 ```console
-$ kubectl get hpa -n flux-operator flux-sample-hpa -o json | jq .status.conditions
+$ kubectl get hpa flux-sample-hpa -o json | jq .status.conditions
 [
   {
     "lastTransitionTime": "2023-05-31T19:50:20Z",
@@ -371,7 +376,7 @@ $ kubectl get hpa -n flux-operator flux-sample-hpa -o json | jq .status.conditio
 And note the scaling was done (we started at 2):
 
 ```bash
-$ kubectl get -n flux-operator pods
+$ kubectl get pods
 NAME                  READY   STATUS    RESTARTS   AGE
 flux-sample-0-kg8mq   1/1     Running   0          42m
 flux-sample-1-dntwk   1/1     Running   0          42m

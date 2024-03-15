@@ -1,8 +1,7 @@
-apiVersion: flux-framework.org/v1alpha1
+apiVersion: flux-framework.org/v1alpha2
 kind: MiniCluster
 metadata:
   name: flux-sample
-  namespace: flux-operator
 spec:
 
   # Number of pods to create for MiniCluster
@@ -14,15 +13,6 @@ spec:
   # suppress all output except for test run
   logging:
     quiet: true
-
-  # Make this kind of persistent volume and claim available to pods
-  # This is a path in minikube (e.g., minikube ssh)
-  volumes:
-    data:
-      storageClass: hostpath
-      path: /tmp/data
-      labels:
-        type: "local"
 
   # This is a list because a pod can support multiple containers
   containers:
@@ -36,7 +26,7 @@ spec:
       volumes:
         data:
           path: /workflow
-          # readOnly defaults to false
+          hostPath: /data
 
       # This is the directory we will bind the data to
       workingDir: /workflow
@@ -44,9 +34,3 @@ spec:
 
       # Give the command directly to flux start, instead of wrapping in flux submit
       launcher: true
-      commands: 
-        pre: |
-          # Ensure the cache targets our flux user home
-          asFlux="sudo -u flux -E PYTHONPATH=$PYTHONPATH -E PATH=$PATH -E HOME=/home/flux"
-          # Add the flux user beforehand, and ensure we own the working directory with data
-          sudo adduser --disabled-password --uid 1000 --gecos "" flux > /dev/null 2>&1

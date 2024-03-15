@@ -10,5 +10,5 @@ mkdir -p /tmp/workflow/scripts
 wget -O /tmp/workflow/scripts/plot-quals.py https://raw.githubusercontent.com/rse-ops/flux-hpc/main/snakemake/atacseq/scripts/plot-quals.py
 
 echo "Preparing to mount into MiniKube"
-minikube ssh -- mkdir -p /tmp/data
-minikube mount /tmp/workflow:/tmp/data &
+minikube ssh -- mkdir -p /data
+minikube mount /tmp/workflow:/data &

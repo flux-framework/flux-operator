@@ -9,4 +9,4 @@ echo "I am hostname $(hostname) and rank ${FLUX_TASK_RANK} of ${nodes} nodes. Th
 export LOCAL_RANK=${FLUX_TASK_RANK}
 
 # Not ideal, but it kind of works
-torchrun --node_rank ${LOCAL_RANK} --nnodes ${nodes} --nproc_per_node 2 --master_addr ${job_name}-0.flux-service.flux-operator.svc.cluster.local --master_port ${job_port} ./main.py
+torchrun --node_rank ${LOCAL_RANK} --nnodes ${nodes} --nproc_per_node 2 --master_addr ${job_name}-0.flux-service.default.svc.cluster.local --master_port ${job_port} ./main.py

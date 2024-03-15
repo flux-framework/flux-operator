@@ -2,7 +2,6 @@ kind: PersistentVolumeClaim
 apiVersion: v1
 metadata:
   name: data
-  namespace: flux-operator
 spec:
   accessModes:
     - ReadWriteMany

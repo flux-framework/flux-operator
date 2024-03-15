@@ -45,7 +45,6 @@ Note that if you aren't using a development version, you can apply `flux-operato
 
 ```bash
 kubectl apply -f ../../../dist/flux-operator-dev.yaml
-kubectl create namespace flux-operator
 kubectl apply -f minicluster.yaml
 # Expose broker pod port 8050 to 30093
 kubectl apply -f service/broker-service.yaml
@@ -60,7 +59,7 @@ gcloud compute firewall-rules create flux-cluster-test-node-port --allow tcp:300
 Then figure out the node that the service is running from (we are interested in lead broker flux-sample-0-*)
 
 ```bash
-$ kubectl get pods -o wide -n flux-operator 
+$ kubectl get pods -o wide
 NAME                   READY   STATUS    RESTARTS   AGE     IP           NODE                                          NOMINATED NODE   READINESS GATES
 flux-sample-0-kktl7    1/1     Running   0          7m22s   10.116.2.4   gke-flux-cluster-default-pool-4dea9d5c-0b0d   <none>           <none>
 flux-sample-1-s7r69    1/1     Running   0          7m22s   10.116.1.4   gke-flux-cluster-default-pool-4dea9d5c-1h6q   <none>           <none>
@@ -84,13 +83,13 @@ Finally, when the broker index 0 pod is running, copy your scripts and configs o
 
 ```bash
 # This should be the index 0
-POD=$(kubectl get pods -n flux-operator -o json | jq -r .items[0].metadata.name)
+POD=$(kubectl get pods -o json | jq -r .items[0].metadata.name)
 
 # This will copy configs / create directories for it
-kubectl cp -n flux-operator ./run-burst.py ${POD}:/tmp/workflow/run-burst.py -c flux-sample
-kubectl cp -n flux-operator ./application_default_credentials.json ${POD}:/tmp/workflow/application_default_credentials.json -c flux-sample
-kubectl exec -it -n flux-operator ${POD} -- mkdir -p /tmp/workflow/external-config
-kubectl cp -n flux-operator ../../../dist/flux-operator-dev.yaml ${POD}:/tmp/workflow/external-config/flux-operator-dev.yaml -c flux-sample
+kubectl cp ./run-burst.py ${POD}:/tmp/workflow/run-burst.py -c flux-sample
+kubectl cp ./application_default_credentials.json ${POD}:/tmp/workflow/application_default_credentials.json -c flux-sample
+kubectl exec -it ${POD} -- mkdir -p /tmp/workflow/external-config
+kubectl cp ../../../dist/flux-operator-dev.yaml ${POD}:/tmp/workflow/external-config/flux-operator-dev.yaml -c flux-sample
 ```
 
 ## Burstable Job
@@ -102,7 +101,7 @@ and then determining if a burst can be scheduled for some given burst plugin (e.
 we ensure the job doesn't run locally because we've asked for more nodes than we have. Shell into your broker pod:
 
 ```bash
-$ kubectl exec -it -n flux-operator ${POD} bash
+$ kubectl exec -it ${POD} bash
 ```
 
 Connect to the broker socket. If this issues an error, it's likely the install scripts are still running (you can check
@@ -187,13 +186,14 @@ MiniCluster resources, and the result of hostname will include the external host
 from another terminal:
 
 ```bash
-$ POD=$(kubectl get pods -n flux-operator -o json | jq -r .items[0].metadata.name)
-$ kubectl exec -it -n flux-operator ${POD} bash
-$ sudo -u flux -E $(env) -E HOME=/home/flux flux proxy local:///run/flux/local bash
+POD=$(kubectl get pods -o json | jq -r .items[0].metadata.name)
+kubectl exec -it ${POD} bash
+source /mnt/flux/flux-view.sh
+flux proxy local:///run/flux/local bash
 ```
 
 ```bash
-flux@flux-sample-0:/tmp/workflow$ flux resource list
+$ flux resource list
      STATE NNODES   NCORES NODELIST
       free      6       24 flux-sample-[0-1],burst-0-[0-3]
  allocated      0        0 
@@ -202,7 +202,7 @@ flux@flux-sample-0:/tmp/workflow$ flux resource list
 Our job has run:
 
 ```bash
-flux@flux-sample-0:/tmp/workflow$ flux jobs -a 
+$ flux jobs -a 
        JOBID USER     NAME       ST NTASKS NNODES     TIME INFO
   ƒ2S9iZpoJw flux     hostname   CD      4      4   0.027s flux-sample-1,burst-0-[0,2-3]
    ƒ3i2dgyDq flux     hostname   CD      4      4   0.035s flux-sample-[0-1,3],burst-0-0
@@ -211,7 +211,7 @@ flux@flux-sample-0:/tmp/workflow$ flux jobs -a
 And we can see output! Note that the error is because the working directory where it was launched doesn't exist on the remote.
 
 ```bash
-flux@flux-sample-0:/tmp/workflow$ flux job attach ƒ2S9iZpoJw
+$ flux job attach ƒ2S9iZpoJw
 flux-sample-0
 flux-sample-1
 burst-0-2
@@ -221,7 +221,7 @@ burst-0-0
 You can also launch a new job that asks to hit all the nodes (6):
 
 ```bash
-flux@flux-sample-0:/tmp/workflow$ flux run -N 6 --cwd /tmp hostname
+$ flux run -N 6 --cwd /tmp hostname
 flux-sample-0
 burst-0-3
 burst-0-2

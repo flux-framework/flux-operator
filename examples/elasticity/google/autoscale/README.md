@@ -11,7 +11,10 @@ See the [elasticity page](https://flux-framework.org/flux-operator/tutorials/ela
 
 To start, however, we just want to look at some basic elasticity or scaling for Kubernetes by itself.
 All experiments use the shared class in [fluxcluster.py](fluxcluster.py), and an example experiment
-is [test-scale.py](test-scale.py).
+is [test-scale.py](test-scale.py). 
+
+**Note** that these classes are now part of [Kubescaler](https://github.com/converged-computing/kubescaler)
+and that is the recommended approach to use.
 
 
 ### Dependencies

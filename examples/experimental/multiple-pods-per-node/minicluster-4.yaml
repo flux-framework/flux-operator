@@ -1,0 +1,37 @@
+apiVersion: flux-framework.org/v1alpha2
+kind: MiniCluster
+metadata:
+  name: flux-sample
+spec:
+  size: 4
+
+  # shell in, and then:
+  # source /mnt/flux/flux-view.sh 
+  # flux proxy $fluxsocket bash
+  # flux resource list
+  # Despite having 112 vCPU or 88 actual cores, we should only see a subset
+  # The resource limits below set this to 40, so we should only see 4x40 == 160!
+   
+  # This is essential for the init container to have memory and cpu too,
+  # so the QoS (you can see in pod describe) is "Guaranteed" instead of Burstable.
+  flux:
+    container:
+      resources:
+        requests:
+          cpu: "40"
+          memory: "200M"
+        limits:
+          cpu: "40"
+          memory: "200M"         
+  
+  # This starts the flux broker without a command (interactive)
+  interactive: true
+  containers:
+    - image: rockylinux:9
+      resources:
+        requests:
+          cpu: "40"
+          memory: "200M"
+        limits:
+          cpu: "40"
+          memory: "200M"

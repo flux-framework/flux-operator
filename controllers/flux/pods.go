@@ -20,7 +20,7 @@ import (
 	"k8s.io/apimachinery/pkg/api/errors"
 	"k8s.io/apimachinery/pkg/types"
 
-	api "github.com/flux-framework/flux-operator/api/v1alpha1"
+	api "github.com/flux-framework/flux-operator/api/v1alpha2"
 )
 
 const podLabelAppName = "app.kubernetes.io/name"
@@ -145,11 +145,13 @@ func (r *MiniClusterReconciler) newServicePod(
 	mounts := []corev1.VolumeMount{}
 
 	// Get containers for the service pods
+	// true boolean indicates this is a service container - do not generate
+	// a custom entrypoint, etc.
 	containers, err := getContainers(
 		cluster.Spec.Services,
 		podServiceName,
-		cluster.Spec.FluxRestful.Port,
 		mounts,
+		true,
 	)
 
 	if err != nil {

@@ -1,0 +1,15 @@
+apiVersion: flux-framework.org/v1alpha2
+kind: MiniCluster
+metadata:
+  name: flux-sample
+spec:
+  size: 4
+  maxSize: 10
+  interactive: true
+  flux:
+    completeWorkers: true
+  containers:
+    - image: rockylinux:9
+      commands:
+        # It is suggested to put a small sleep here to ensure that the lead broker absolutely starts first
+        workerPre: sleep 5

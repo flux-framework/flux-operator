@@ -11,11 +11,10 @@ First, let's create a kind cluster. From the context of this directory:
 $ kind create cluster --config ../../kind-config.yaml
 ```
 
-And then install the operator, create the namespace, and apply the MiniCluster YAML here.
+And then install the operator and apply the MiniCluster YAML here.
 
 ```bash
 $ kubectl apply -f ../../dist/flux-operator.yaml
-$ kubectl create namespace flux-operator
 $ kubectl apply -f ./minicluster.yaml
 ```
 
@@ -24,7 +23,7 @@ Pytorch. Pulling the container is the slowest step (took 10+ minutes), and if yo
 a persistent volume. You can see all logs from the broker with this command:
 
 ```bash
-$ kubectl logs -n flux-operator flux-sample-0-7tx7s -f
+$ kubectl logs flux-sample-0-7tx7s -f
 ```
 
 And first you'll see the broker start and wait for the workers, and then each converting the SIF to a sandbox. 

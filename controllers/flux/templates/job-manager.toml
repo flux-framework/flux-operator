@@ -1,4 +1,0 @@
-[job-manager]
-plugins = [
-  { load = "mf_priority.so" },
-]

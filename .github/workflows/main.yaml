@@ -8,7 +8,7 @@ jobs:
     name: Formatting
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
 
     - name: Setup black linter
       run: conda create --quiet --name black pyflakes
@@ -16,18 +16,17 @@ jobs:
     - name: Check Spelling
       uses: crate-ci/typos@7ad296c72fa8265059cc03d1eda562fbdfcd6df2 # v1.9.0
       with:
-        files: ./docs/*/*.md ./docs/*/*/*.md ./docs/*.md ./README.md ./config/samples ./docs/*.md
+        files: ./docs/*/*.md ./docs/*/*/*.md ./docs/*.md ./README.md ./docs/*.md
 
   unit-tests:
     name: Unit Tests
     runs-on: ubuntu-latest
-
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
     - name: Setup Go
       uses: actions/setup-go@v3
       with:
-        go-version: ^1.18
+        go-version: ^1.20
     - name: fmt check
       run: make fmt
 
@@ -62,22 +61,23 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        test: [["hello-world", "ghcr.io/flux-framework/flux-restful-api:latest", 60],
-               ["custom-config", "ghcr.io/flux-framework/flux-restful-api:latest", 60],
-               ["minimal-service", "ghcr.io/flux-framework/flux-restful-api:latest", 60],
-               ["post", "ghcr.io/flux-framework/flux-restful-api:latest", 60],
-               ["batch", "ghcr.io/flux-framework/flux-restful-api:latest", 60],
-               ["singularity", "ghcr.io/rse-ops/singularity:tag-mamba", 60],
-               ["nginx-sidecar-service", "ghcr.io/flux-framework/flux-restful-api:latest", 60],
-               ["nginx-service", "ghcr.io/flux-framework/flux-restful-api:latest", 60],
-               ["lammps", "ghcr.io/rse-ops/lammps:flux-sched-focal-v0.24.0", 60],
-               ["pokemon", "ghcr.io/rse-ops/pokemon:app-latest", 60],
-               ["timed", "ghcr.io/flux-framework/flux-restful-api:latest", 60],
-               ["debug", "ghcr.io/flux-framework/flux-restful-api:latest", 60],
-               ["flux-resource-list", "ghcr.io/flux-framework/flux-restful-api:latest", 60],
-               ["existing-volumes", "ghcr.io/flux-framework/flux-restful-api:latest", 60],
-               ["volumes", "ghcr.io/flux-framework/flux-restful-api:latest", 60],
-               ["snakemake", "ghcr.io/rse-ops/atacseq:app-latest", 60]]
+        test: [["post", "", 100],
+               ["batch", "", 100],
+               ["timed", "", 100],
+               ["debug", "", 100],
+               ["volumes", "", 100],
+               ["hello-world", "", 100],
+               ["nginx-service", "", 100],
+               ["custom-config", "", 100],
+               ["minimal-service", "", 100],               
+               ["existing-volumes", "", 100],
+               ["flux-resource-list", "", 100],
+               ["nginx-sidecar-service", "", 100],
+               ["pokemon", "ghcr.io/rse-ops/pokemon:app-latest", 100],
+               ["snakemake", "ghcr.io/rse-ops/atacseq:app-latest", 100],
+               ["singularity", "ghcr.io/rse-ops/singularity:tag-mamba", 100],
+               ["lammps", "ghcr.io/converged-computing/metric-lammps:latest", 100],
+               ["disable-view", "ghcr.io/rse-ops/lammps:flux-sched-focal", 100]]
 
     steps:
     - name: Clone the code
@@ -86,16 +86,13 @@ jobs:
     - name: Setup Go
       uses: actions/setup-go@v3
       with:
-        go-version: ^1.18
+        go-version: ^1.20
 
     - name: Install zeromq
       run: sudo apt-get update && sudo apt-get install -y libsodium-dev libzmq3-dev libczmq-dev
 
     - name: Start minikube
       uses: medyagh/setup-minikube@697f2b7aaed5f70bf2a94ee21a4ec3dde7b12f92 # v0.0.9
-
-    - name: Create the namespace
-      run: kubectl create namespace flux-operator
 
     - name: Pull Docker Containers to MiniKube
       env:
@@ -105,10 +102,13 @@ jobs:
       run: |
         export SHELL=/bin/bash
         eval $(minikube -p minikube docker-env)
-        minikube ssh docker pull ${container}
+        if [[ "${container}" != "" ]]; then
+            minikube ssh docker pull ${container}
+        fi
         if [[ "${test}" == "nginx-service" ]]; then
             minikube ssh docker pull nginx
         fi
+        minikube ssh docker pull ghcr.io/converged-computing/flux-view-rocky:tag-9
         make deploy-local
         minikube image load ghcr.io/flux-framework/flux-operator:test
         kubectl apply -f examples/dist/flux-operator-local.yaml

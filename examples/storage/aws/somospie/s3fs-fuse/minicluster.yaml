@@ -1,0 +1,48 @@
+apiVersion: flux-framework.org/v1alpha2
+kind: MiniCluster
+metadata:
+  name: flux-sample
+spec:
+
+  # Number of pods to create for MiniCluster
+  size: 2
+
+  # Cleanup the storage volume (PVC and PV) after run
+  # Leave this to false so you can see the log in the pod output
+  cleanup: false
+  interactive: true
+  
+  # This is a list because a pod can support multiple containers
+  containers:
+
+     # Yes I pushed to the wrong name and then was too lazy to change it, lol
+    - image: olayap/somospie-gdal-netcdf
+      volumes:
+        data:
+          secretName: s3secret
+
+          # We are the root user, so this is our home
+          # This binds the secret as a directory, with the names of
+          # The files as the secret keys
+          path: /root/s3secret
+
+      commands:
+        # which s3fs
+        pre: |
+          apt-get update && apt-get install -y s3fs
+          mkdir -p /tmp/data
+          export AWS_ACCESS_KEY_ID=$(cat /root/s3secret/id)
+          export AWS_SECRET_ACCESS_KEY=$(cat /root/s3secret/password)
+          export AWS_SESSION_TOKEN=$(cat /root/s3secret/token)
+          sleep 5
+          echo "s3fs somospie /tmp/data"
+          s3fs somospie /tmp/data
+          # debug: s3fs somospie /tmp/data -o dbglevel=info -f -o curldbg
+          # Before cleanup call
+          # umount /tmp/data
+
+      securityContext:
+        privileged: true
+
+      # https://github.com/TauferLab/SOMOSPIE/blob/master/SOMOSPIE_pegasus/PredictionPipeline/SOMOSPIE.ipynb
+      command: sleep infinity

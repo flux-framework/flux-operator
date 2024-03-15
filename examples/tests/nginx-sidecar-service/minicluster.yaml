@@ -1,8 +1,7 @@
-apiVersion: flux-framework.org/v1alpha1
+apiVersion: flux-framework.org/v1alpha2
 kind: MiniCluster
 metadata:
   name: flux-sample
-  namespace: flux-operator
 spec:
 
   logging:
@@ -13,12 +12,11 @@ spec:
 
   # This is a list because a pod can support multiple containers
   containers:
-    - image: ghcr.io/flux-framework/flux-restful-api:latest
+    - image: rockylinux:9
       runFlux: true
       command: curl -s localhost
-      commands:
-        pre: apt-get update > /dev/null && apt-get install -y curl > /dev/null
     - image: nginx
       name: nginx
+      noWrapEntrypoint: true
       ports:
         - 80

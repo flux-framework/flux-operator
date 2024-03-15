@@ -6,7 +6,7 @@ name=$(hostname)
 echo "Hello I am ${name}"
 
 # We only care about the head node address
-address="flux-sample-0.flux-service.flux-operator.svc.cluster.local"
+address="flux-sample-0.flux-service.default.svc.cluster.local"
 port="6379"
 password="austinpowersyeahbaby"
 echo "Head node address is ${address}:${port}"

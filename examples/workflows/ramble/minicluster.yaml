@@ -1,28 +1,18 @@
-apiVersion: flux-framework.org/v1alpha1
+apiVersion: flux-framework.org/v1alpha2
 kind: MiniCluster
 metadata:
   name: flux-sample
-  namespace: flux-operator
 spec:
   # suppress all output except for test run
   logging:
     quiet: false
 
   # Number of pods to create for MiniCluster
-  # Set 4 tasks so hostname runs on each pod
   size: 4
-  tasks: 4
-
-  # Make this kind of persistent volume and claim available to pods
-  # We are just doing this to see the output results
-  volumes:
-    data:
-      storageClass: hostpath
-      path: /tmp/workflow
-
+  interactive: true
   containers:
-    - image: ghcr.io/rse-ops/ramble-gromacs:flux-sched-focal
-      command: /bin/bash /tmp/workflow/ramble-on.sh   
+    - image: ghcr.io/rse-ops/ramble-gromacs:ubuntu-jammy
       volumes:
         data:
+          hostPath: /data
           path: /tmp/workflow

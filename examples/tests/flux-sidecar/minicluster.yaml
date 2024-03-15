@@ -1,0 +1,18 @@
+apiVersion: flux-framework.org/v1alpha2
+kind: MiniCluster
+metadata:
+  name: flux-sample
+spec:
+  # Number of pods to create for MiniCluster
+  size: 2
+  containers:
+
+    # This is some main application container (job submit to flux)
+    - image: rockylinux:9
+      runFlux: true
+      command: sleep 200
+
+    # This sidecar can watch / interact with the queue
+    - image: rockylinux:9
+      name: flux-queue
+      command: sleep 10 && flux proxy ${fluxsocket} flux jobs -a

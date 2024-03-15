@@ -1,8 +1,7 @@
-apiVersion: flux-framework.org/v1alpha1
+apiVersion: flux-framework.org/v1alpha2
 kind: MiniCluster
 metadata:
   name: flux-sample
-  namespace: flux-operator
 spec:
 
   # This ensures we launch the main script on all the nodes
@@ -11,7 +10,12 @@ spec:
   volumes:
     data:
       storageClass: hostpath
-      path: /tmp/workflow
+      path: /tmp/
+      
+  # We need an ubuntu base
+  flux:
+    container:
+      image: ghcr.io/converged-computing/flux-view-ubuntu:tag-focal
 
   # This is a list because a pod can support multiple containers
   containers:
@@ -34,10 +38,7 @@ spec:
           cd /tmp/workflow
           pip install .
           cd -
-          
-      fluxUser:
-        name: fluxuser
-
+           
       volumes:
         data:
           path: /tmp/workflow

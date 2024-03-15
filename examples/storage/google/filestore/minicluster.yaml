@@ -1,27 +1,26 @@
-apiVersion: flux-framework.org/v1alpha1
+apiVersion: flux-framework.org/v1alpha2
 kind: MiniCluster
 metadata:
   name: flux-sample
-  namespace: flux-operator
 spec:
 
   # Number of pods to create for MiniCluster
   size: 4
-
-  # Keep the cluster running in interactive mode
   interactive: true
+  flux:
+    container:
+      image: ghcr.io/converged-computing/flux-view-ubuntu:tag-focal
 
-  # This is a list because a pod can support multiple containers
   containers:
 
       # This image has snakemake installed, and although it has data, we will
       # provide it as a volume to the container to demonstrate that (and share it)
-    - image: ghcr.io/rse-ops/atacseq:app-latest
+    - image: ghcr.io/rse-ops/snakemake:python-3.11
 
       # Mount Google Filestore to our cluster
       # see pvc.yaml for creating this first
       # https://cloud.google.com/filestore/docs/csi-driver#access
-      existingVolumes:
+      volumes:
         data:
           path: /workflow
           claimName: data 

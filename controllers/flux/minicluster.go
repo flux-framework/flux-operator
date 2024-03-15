@@ -25,13 +25,11 @@ import (
 	"k8s.io/apimachinery/pkg/api/errors"
 	"k8s.io/apimachinery/pkg/types"
 
-	api "github.com/flux-framework/flux-operator/api/v1alpha1"
+	api "github.com/flux-framework/flux-operator/api/v1alpha2"
 )
 
 var (
-	HostfileName   = "hostfile"
-	CurveCertKey   = "curve.cert"
-	mungeMountName = "munge-key"
+	CurveCertKey = "curve.cert"
 )
 
 // This is a MiniCluster! A MiniCluster is associated with a running MiniCluster and include:
@@ -44,36 +42,10 @@ func (r *MiniClusterReconciler) ensureMiniCluster(
 	cluster *api.MiniCluster,
 ) (ctrl.Result, error) {
 
-	// Ensure the configs are created (for volume sources)
-	_, result, err := r.getConfigMap(ctx, cluster, "flux-config", cluster.FluxConfigMapName())
+	// Initial config with entrypoints for flux and main containers
+	_, result, err := r.getConfigMap(ctx, cluster, cluster.EntrypointConfigMapName())
 	if err != nil {
 		return result, err
-	}
-
-	// Add initial config map with entrypoint scripts (wait.sh, start.sh, etc.)
-	_, result, err = r.getConfigMap(ctx, cluster, "entrypoint", cluster.EntrypointConfigMapName())
-	if err != nil {
-		return result, err
-	}
-
-	// Generate the curve certificate config map, unless already exists
-	if cluster.Spec.Flux.CurveCertSecret == "" {
-		_, result, err = r.getConfigMap(ctx, cluster, "cert", cluster.CurveConfigMapName())
-		if err != nil {
-			return result, err
-		}
-	}
-
-	// Prepare volumes, if requested, to be available to containers
-	for volumeName, volume := range cluster.Spec.Volumes {
-		_, result, err = r.getPersistentVolume(ctx, cluster, volumeName, volume)
-		if err != nil {
-			return result, err
-		}
-		_, result, err = r.getPersistentVolumeClaim(ctx, cluster, volumeName, volume)
-		if err != nil {
-			return result, err
-		}
 	}
 
 	// Any extra service containers (running alongside the cluster)
@@ -192,30 +164,6 @@ func (r *MiniClusterReconciler) cleanupPodsStorage(
 	// Delete the MiniCluster first
 	// If we don't, it will keep re-creating the assets and loop forever :)
 	r.Client.Delete(ctx, cluster)
-
-	// The job deletion should handle pods, next delete pvc and pv per each volume
-	// Must be deleted in that order, per internet advice :)
-	for volumeName := range cluster.Spec.Volumes {
-		volumeSpec := cluster.Spec.Volumes[volumeName]
-
-		claimName := fmt.Sprintf("%s-claim", volumeName)
-
-		// Only delete if we retrieve without error and user has requested
-		claim, err := r.getExistingPersistentVolumeClaim(ctx, cluster, claimName)
-		if err != nil {
-			r.log.Info("Volume Claim", "Deletion", claim.Name)
-			r.Client.Delete(ctx, claim)
-		}
-
-		// Different request to delete
-		if volumeSpec.Delete {
-			pv, err := r.getExistingPersistentVolume(ctx, cluster, volumeName)
-			if err != nil {
-				r.log.Info("Volume", "Deletion", pv.Name)
-				r.Client.Delete(ctx, pv)
-			}
-		}
-	}
 	return ctrl.Result{Requeue: false}, nil
 }
 

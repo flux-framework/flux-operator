@@ -22,11 +22,6 @@ $ gcloud container clusters create flux-cluster --project $GOOGLE_PROJECT \
     --num-nodes=4 --enable-network-policy --tags=flux-cluster --enable-intra-node-visibility
 ```
 
-Create the Flux Operator namespace:
-
-```bash
-$ kubectl create namespace flux-operator
-```
 
 ## Install the Flux Operator
 
@@ -45,7 +40,6 @@ kind: PersistentVolumeClaim
 apiVersion: v1
 metadata:
   name: data
-  namespace: flux-operator
 spec:
   accessModes:
     - ReadWriteMany
@@ -86,10 +80,11 @@ Filestore to be available as a persistent volume claim - and I want all of it - 
 ```bash
 $ kubectl apply -f examples/storage/google/filestore/pvc.yaml
 ```
+
 And check on the status:
 
 ```bash
-$ kubectl get -n flux-operator pvc
+$ kubectl get pvc
 NAME   STATUS    VOLUME   CAPACITY   ACCESS MODES   STORAGECLASS   AGE
 data   Pending                                      standard-rwx   6s
 ```
@@ -103,8 +98,7 @@ $ kubectl apply -f examples/storage/google/filestore/minicluster.yaml
 We can now look at the pods:
 
 ```bash
-$ make list
-kubectl get -n flux-operator pods
+kubectl get pods
 ```
 ```console
 NAME                         READY   STATUS      RESTARTS   AGE
@@ -127,7 +121,7 @@ give it a few minutes to (hopefully) resolve as it did for me!
 Let's shell into the broker (index 0) and play with our Filesystem!
 
 ```bash
-$ kubectl exec -it -n flux-operator flux-sample-0-vb59t bash
+$ kubectl exec -it flux-sample-0-vb59t bash
 ```
 
 Is it there? How big is it?
@@ -154,7 +148,7 @@ dinosaur-fart  lost+found
 And now exit and shell into another pod...
 
 ```bash
-$ kubectl exec -it -n flux-operator flux-sample-1-xnf56 bash
+$ kubectl exec -it flux-sample-1-xnf56 bash
 ```
 Is the dinosaur fart there?
 
@@ -171,29 +165,23 @@ Let's now run Snakemake! Since we haven't properly set up permissions, we need t
 and then give ownership to the flux user. Let's prepare snakemake data in `/workflow` and run it.
 
 ```bash
-$ git clone --depth 1 https://github.com/snakemake/snakemake-tutorial-data /workflow/snakemake-workflow
+git clone --depth 1 https://github.com/snakemake/snakemake-tutorial-data /workflow/snakemake-workflow
 ```
 
 You'll want to add the [Snakefile](https://github.com/rse-ops/flux-hpc/blob/main/snakemake/atacseq/Snakefile) for your workflow
 along with a [plotting script](https://github.com/rse-ops/flux-hpc/blob/main/snakemake/atacseq/scripts/plot-quals.py):
 
 ```bash
-$ wget -O /workflow/snakemake-workflow/Snakefile https://raw.githubusercontent.com/rse-ops/flux-hpc/main/snakemake/atacseq/Snakefile
-$ mkdir -p /workflow/snakemake-workflow/scripts
-$ wget -O /workflow/snakemake-workflow/scripts/plot-quals.py https://raw.githubusercontent.com/rse-ops/flux-hpc/main/snakemake/atacseq/scripts/plot-quals.py
+wget -O /workflow/snakemake-workflow/Snakefile https://raw.githubusercontent.com/rse-ops/flux-hpc/main/snakemake/atacseq/Snakefile
+mkdir -p /workflow/snakemake-workflow/scripts
+wget -O /workflow/snakemake-workflow/scripts/plot-quals.py https://raw.githubusercontent.com/rse-ops/flux-hpc/main/snakemake/atacseq/scripts/plot-quals.py
 ```
 
-The workflow is now ready, but we need to give ownership to the flux user.
+Now let's run it! Remember that we are in interactive mode, so the broker is already running and we need to connect to it. Let's do that first.
 
 ```bash
-$ sudo chown flux -R /workflow/snakemake-workflow
-```
-
-Now let's run it! Remember that we are in interactive mode, so the broker is already running and we need to connect to it,
-and as the flux user. Let's do that first.
-
-```bash
-$ sudo -u flux -E $(env) -E HOME=/home/flux flux proxy local:///run/flux/local bash
+source /mnt/flux/flux-view.sh
+flux proxy $fluxsocket bash
 ```
 
 Before snakemake, let's run a test job. You should see some subset of nodes:
@@ -216,20 +204,12 @@ $ flux resource list
       down      0        0 
 ```
 
-Note that you are now the flux user:
+Let's go to the worklow directory and run Snakemake using Flux.
 
-```bash
-flux@flux-sample-1:/code$ whoami
-```
-```console
-flux
-```
-
-Let's go to the worklow directory and run Snakemake using Flux!
 
 ```bash
 $ cd /workflow/snakemake-workflow
-$ snakemake --cores 1 --flux --jobs 4
+$ snakemake --cores 1 --exeutor flux --jobs 4
 ```
 
 <details>

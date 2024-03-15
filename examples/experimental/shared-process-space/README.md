@@ -1,6 +1,9 @@
 # Testing Communication between Containers
 
 We are going to test running this application in the context of a [shared process namespace between containers in a pod](https://kubernetes.io/docs/tasks/configure-pod-container/share-process-namespace/).
+Update:
+
+ - This is implemented as an addon to the [metrics-operator](https://converged-computing.github.io/metrics-operator/getting_started/addons.html#workload-flux) and also the design is honored here via an init-container.
 
 ## Go Experiment
 
@@ -13,9 +16,10 @@ kubectl apply -f ../../dist/flux-operator-dev.yaml
 
 Create the interactive Minicluster. The [goshare](https://github.com/converged-computing/goshare) client and server will
 be installed to two containers. The server has the application we want to run, and the client has flux.
+Note that it takes a little longer than normal because we run dnf update and install a few things in
+the application container.
 
 ```bash
-$ kubectl create namespace flux-operator
 $ kubectl apply -f minicluster.yaml
 ```
 
@@ -28,7 +32,7 @@ We will test this interactively for now. In the future we will want to:
 Wait until your pods are all running:
 
 ```bash
-$ kubectl get pods -n flux-operator 
+$ kubectl get pods
 ```
 ```console
 NAME                  READY   STATUS    RESTARTS   AGE
@@ -40,7 +44,7 @@ flux-sample-3-jggrg   2/2     Running   0          7m36s
 
 You can then watch the logs of a server container to see the command being run.
 ```bash
-$ kubectl logs -n flux-operator flux-sample-0-wpsnj -c server
+$ kubectl logs flux-sample-0-wpsnj -c server
 ```
 ```console
 task: [build] GOOS=linux GOARCH=amd64 CGO_ENABLED=0 go build -o bin/client cmd/client/client.go

@@ -3,8 +3,8 @@
 # To re-generate a bundle for another specific version without changing the standard setup, you can:
 # - use the VERSION as arg of the bundle target (e.g make bundle VERSION=0.0.2)
 # - use environment variables to overwrite this value (e.g export VERSION=0.0.2)
-VERSION ?= 0.1.1
-API_VERSION ?= v1alpha1
+VERSION ?= 0.2.0
+API_VERSION ?= v1alpha2
 
 # CHANNELS define the bundle channels used in the bundle.
 # Add a new line here if you would like to change its default config. (E.g CHANNELS = "candidate,fast,stable")
@@ -107,7 +107,8 @@ manifests: controller-gen
 .PHONY: generate
 generate: controller-gen openapi-gen
 	$(CONTROLLER_GEN) object:headerFile="hack/boilerplate.go.txt" paths="./..."
-	${OPENAPI_GEN} --logtostderr=true -i ./api/${API_VERSION}/ -o "" -O zz_generated.openapi -p ./api/${API_VERSION}/ -h ./hack/boilerplate.go.txt -r "-"
+	rm -rf ./api/${API_VERSION}/zz_generated.openapi.go
+	${OPENAPI_GEN} --logtostderr=true  --output-file zz_generated.openapi.go --output-pkg "github.com/flux-framework/flux-operator/api/${API_VERSION}" --output-dir ./api/${API_VERSION}/ --go-header-file ./hack/boilerplate.go.txt -r "-" ./api/${API_VERSION}/
 
 .PHONY: api
 api: generate api
@@ -145,7 +146,7 @@ test: manifests generate fmt vet envtest ## Run tests.
 
 .PHONY: list
 list:
-	kubectl get -n flux-operator pods
+	kubectl get pods
 
 .PHONY: reset
 reset:
@@ -162,11 +163,11 @@ clean:
 	# kubectl delete -n flux-operator secret --all --grace-period=0 --force
 	kubectl delete -n flux-operator cm --all --grace-period=0 --force
 	# pods, pvc, and pv need to be deleted in this order
-	kubectl delete -n flux-operator pods --all --grace-period=0 --force
+	kubectl delete pods --all --grace-period=0 --force
 	kubectl delete -n flux-operator pvc --all --grace-period=0 --force
 	kubectl delete -n flux-operator pv --all --grace-period=0 --force
-	kubectl delete -n flux-operator jobs --all --grace-period=0 --force
-	kubectl delete -n flux-operator MiniCluster --all --grace-period=0 --force
+	kubectl delete jobs --all --grace-period=0 --force
+	kubectl delete MiniCluster --all --grace-period=0 --force
 
 # This applies the basic minicluster (and not extended examples)
 apply:
@@ -185,9 +186,6 @@ example:
 redo: clean apply run
 redo_example: clean example run
 redo_test: clean applytest run
-
-log:
-	kubectl logs -n flux-operator job.batch/flux-sample $@
 
 ##@ Test
 # NOTE these are not fully developed yet
@@ -222,20 +220,20 @@ images:
 
 .PHONY: build
 build: generate fmt vet ## Build manager binary.
-	mv ./controllers/flux/keygen.go ./controllers/flux/keygen.go.backup
-	cp ./controllers/flux/keygen.go.template ./controllers/flux/keygen.go
+	mv ./pkg/flux/keygen.go ./pkg/flux/keygen.go.backup
+	cp ./pkg/flux/keygen.go.template ./pkg/flux/keygen.go
 	$(BUILDENVVAR) go build -o bin/manager main.go
-	mv ./controllers/flux/keygen.go.backup ./controllers/flux/keygen.go
+	mv ./pkg/flux/keygen.go.backup ./pkg/flux/keygen.go
 
 .PHONY: build-container
 build-container: generate fmt vet
-	cp ./controllers/flux/keygen.go.template ./controllers/flux/keygen.go
+	cp ./pkg/flux/keygen.go.template ./pkg/flux/keygen.go
 	$(BUILDENVVAR) go build -a -o ./manager main.go
 	$(BUILDENVVAR) go build -o ./bin/fluxoperator-gen cmd/gen/gen.go
 
 .PHONY: helpers
 helpers: $(LOCALBIN) 
-	cp ./controllers/flux/keygen.go.template ./controllers/flux/keygen.go
+	cp ./pkg/flux/keygen.go.template ./pkg/flux/keygen.go
 	$(BUILDENVVAR) go build -o ./bin/fluxoperator-gen cmd/gen/gen.go
 
 .PHONY: run
@@ -291,6 +289,11 @@ test-deploy: manifests kustomize
 	cd config/manager && $(KUSTOMIZE) edit set image controller=${DEVIMG}
 	$(KUSTOMIZE) build config/default > examples/dist/flux-operator-dev.yaml
 
+.PHONY: test-deploy-recreate
+test-deploy-recreate: test-deploy
+	kubectl delete -f ./examples/dist/flux-operator-dev.yaml || echo "Already deleted"
+	kubectl apply -f ./examples/dist/flux-operator-dev.yaml
+
 .PHONY: arm-deploy
 arm-deploy: manifests kustomize
 	docker buildx build --platform linux/arm64 --push -t ${ARMIMG} .
@@ -328,7 +331,7 @@ SWAGGER_API_JSON ?= ./api/${API_VERSION}/swagger.json
 
 ## Tool Versions
 KUSTOMIZE_VERSION ?= v3.8.7
-CONTROLLER_TOOLS_VERSION ?= v0.9.0
+CONTROLLER_TOOLS_VERSION ?= v0.14.0
 
 KUSTOMIZE_INSTALL_SCRIPT ?= "https://raw.githubusercontent.com/kubernetes-sigs/kustomize/master/hack/install_kustomize.sh"
 .PHONY: kustomize
@@ -345,7 +348,7 @@ $(CONTROLLER_GEN): $(LOCALBIN)
 .PHONY: openapi-gen
 openapi-gen: $(OPENAPI_GEN) ## Download controller-gen locally if necessary.
 $(OPENAPI_GEN): $(LOCALBIN)
-	which ${OPENAPI_GEN} > /dev/null || (git clone --depth 1 https://github.com/kubernetes/kube-openapi /tmp/kube-openapi && cd /tmp/kube-openapi && go build -o ${OPENAPI_GEN} ./cmd/openapi-gen)
+	which ${OPENAPI_GEN} > /dev/null || (git clone https://github.com/kubernetes/kube-openapi /tmp/kube-openapi && cd /tmp/kube-openapi && go build -o ${OPENAPI_GEN} ./cmd/openapi-gen)
 
 .PHONY: swagger-jar
 swagger-jar: $(SWAGGER_JAR) ## Download controller-gen locally if necessary.

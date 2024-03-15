@@ -1,8 +1,7 @@
-apiVersion: flux-framework.org/v1alpha1
+apiVersion: flux-framework.org/v1alpha2
 kind: MiniCluster
 metadata:
   name: flux-sample
-  namespace: flux-operator
 spec:
   size: 2
   # If we don't set this, we won't be able to go above two
@@ -31,7 +30,7 @@ spec:
   services:
     - image: nginx
       name: nginx
-      existingVolumes:
+      volumes:
         nginx-conf:
           configMapName: nginx-conf 
           path: /etc/nginx/conf.d
@@ -40,7 +39,7 @@ spec:
 
   # This is a list because a pod can support multiple containers
   containers:
-    - image: ghcr.io/flux-framework/flux-restful-api
+    - image: rockylinux:9
       workingDir: /tmp/workflow
 
       # We will use launcher here to just run the command

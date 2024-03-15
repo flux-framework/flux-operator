@@ -1,19 +1,16 @@
-apiVersion: flux-framework.org/v1alpha1
+apiVersion: flux-framework.org/v1alpha2
 kind: MiniCluster
 metadata:
   name: flux-sample
-  namespace: flux-operator
 spec:
-
-  # Number of pods to create for MiniCluster
   size: 2
+
+  # shell in, and then:
+  # source /mnt/flux/flux-view.sh 
+  # flux proxy $fluxsocket bash
+  # flux resource list
 
   # This starts the flux broker without a command (interactive)
   interactive: true
-  flux:
-    optionFlags: "-ompi=openmpi@5"
-
-  # This is a list because a pod can support multiple containers
   containers:
-    - image: ghcr.io/rse-ops/pokemon:app-latest
-      
+    - image: rockylinux:9 

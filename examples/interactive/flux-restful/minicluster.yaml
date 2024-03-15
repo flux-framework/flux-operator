@@ -1,0 +1,28 @@
+apiVersion: flux-framework.org/v1alpha2
+kind: MiniCluster
+metadata:
+  name: flux-sample
+spec:
+  size: 2
+
+  # This starts the flux broker without a command (interactive)
+  containers:
+    - image: rockylinux:9 
+      launcher: true
+
+      command: uvicorn app.main:app --host=0.0.0.0 --port=5000
+      commands:
+        pre: |
+          /mnt/flux/view/bin/python3.11 -m ensurepip
+          dnf install -y git
+          git clone --depth 1 https://github.com/flux-framework/flux-restful-api /flux-restful-api
+          cd /flux-restful-api
+          export FLUX_USER=root
+          export FLUX_TOKEN=root
+          /mnt/flux/view/bin/python3.11 -m pip install -r requirements.txt
+          alembic revision --autogenerate -m "Create intital tables"
+          alembic upgrade head
+          /mnt/flux/view/bin/python3.11 app/db/init_db.py init
+          # export FLUX_REQUIRE_AUTH=true
+          # export FLUX_SECRET_KEY=root
+          export FLUX_NUMBER_NODES=2

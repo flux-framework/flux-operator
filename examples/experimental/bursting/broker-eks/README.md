@@ -53,12 +53,6 @@ ip-192-168-49-92.ec2.internal    Ready    <none>   5m3s    v1.22.12-eks-be74326
 ip-192-168-79-92.ec2.internal    Ready    <none>   4m57s   v1.22.12-eks-be74326
 ```
 
-When it's done, create the flux operator namespace:
-
-```bash
-$ kubectl create namespace flux-operator
-```
-
 ## Environment Credentials
 
 **If you are using a config file, skip this step**
@@ -82,7 +76,6 @@ apiVersion: v1
 kind: Secret
 metadata:
   name: flux-operator-burst
-  namespace: flux-operator
 type: Opaque
 data:
   AWS_ACCESS_KEY_ID: RkFLRUFXU0FDQ0VTU0tFWUlE
@@ -134,7 +127,7 @@ aws ec2 authorize-security-group-ingress --region us-east-1 --group-id ${SECURIT
 Then figure out the node that the service is running from (we are interested in lead broker flux-sample-0-*)
 
 ```bash
-$ kubectl get pods -o wide -n flux-operator 
+$ kubectl get pods -o wide
 NAME                  READY   STATUS    RESTARTS   AGE   IP              NODE                             NOMINATED NODE   READINESS GATES
 flux-sample-0-4dk46   1/1     Running   0          53s   192.168.59.57   ip-192-168-48-220.ec2.internal   <none>           <none>
 flux-sample-1-564n4   1/1     Running   0          53s   192.168.4.44    ip-192-168-27-240.ec2.internal   <none>           <none>
@@ -157,12 +150,12 @@ Finally, when the broker index 0 pod is running, copy your scripts and configs o
 
 ```bash
 # This should be the index 0
-POD=$(kubectl get pods -n flux-operator -o json | jq -r .items[0].metadata.name)
+POD=$(kubectl get pods -o json | jq -r .items[0].metadata.name)
 
 # This will copy configs / create directories for it
-kubectl cp -n flux-operator ./run-burst.py ${POD}:/tmp/workflow/run-burst.py -c flux-sample
-kubectl exec -it -n flux-operator ${POD} -- mkdir -p /tmp/workflow/external-config
-kubectl cp -n flux-operator ../../../dist/flux-operator-dev.yaml ${POD}:/tmp/workflow/external-config/flux-operator-dev.yaml -c flux-sample
+kubectl cp ./run-burst.py ${POD}:/tmp/workflow/run-burst.py -c flux-sample
+kubectl exec -it ${POD} -- mkdir -p /tmp/workflow/external-config
+kubectl cp ../../../dist/flux-operator-dev.yaml ${POD}:/tmp/workflow/external-config/flux-operator-dev.yaml -c flux-sample
 ```
 
 ## Config File Credentials
@@ -173,8 +166,8 @@ As an alternative to environment variables, you can copy over your config. You s
 nobody else can access the machine, and it's a development context.
 
 ```bash
-kubectl exec -it -n flux-operator ${POD} -- mkdir -p /home/flux/.aws
-kubectl cp -n flux-operator $HOME/.aws/config ${POD}:/home/flux/.aws/config -c flux-sample
+kubectl exec -it ${POD} -- mkdir -p /home/flux/.aws
+kubectl cp $HOME/.aws/config ${POD}:/home/flux/.aws/config -c flux-sample
 ```
 
 **Do not do this for a production cluster!**
@@ -188,7 +181,7 @@ and then determining if a burst can be scheduled for some given burst plugin (e.
 we ensure the job doesn't run locally because we've asked for more nodes than we have. Shell into your broker pod:
 
 ```bash
-$ kubectl exec -it -n flux-operator ${POD} bash
+$ kubectl exec -it ${POD} bash
 ```
 
 If you used environment credentials, double check your AWS credentials are there!
@@ -200,7 +193,8 @@ $ env | grep AWS
 Connect to the broker socket (and note if you can't yet, the nodes are probably still installing stuff):
 
 ```bash
-$ sudo -u flux -E $(env) -E HOME=/home/flux flux proxy local:///run/flux/local bash
+source /mnt/flux/flux-view.sh
+flux proxy $fluxsocket bash
 ```
 
 The libraries we need should be installed in the minicluster.yaml.
@@ -244,8 +238,7 @@ flux-job: ƒQURAmBXV waiting for resources
 Get a variant of the munge key we can see (it's owned by root so this ensures we can see/own it as the flux user)
 
 ```bash
-sudo cp /etc/munge/munge.key ./munge.key
-sudo chown $USER munge.key
+cp /etc/munge/munge.key ./munge.key
 ```
 
 Now we can run our script to find the jobs based on this attribute!
@@ -273,13 +266,14 @@ MiniCluster resources, and the result of hostname will include the external host
 from another terminal:
 
 ```bash
-$ POD=$(kubectl get pods -n flux-operator -o json | jq -r .items[0].metadata.name)
-$ kubectl exec -it -n flux-operator ${POD} bash
-$ sudo -u flux -E $(env) -E HOME=/home/flux flux proxy local:///run/flux/local bash
+POD=$(kubectl get pods -o json | jq -r .items[0].metadata.name)
+kubectl exec -it ${POD} bash
+source /mnt/flux/flux-view.sh
+flux proxy $fluxsocket bash
 ```
 
 ```bash
-flux@flux-sample-0:/tmp/workflow$ flux resource list
+$ flux resource list
      STATE NNODES   NCORES NODELIST
       free      6       24 flux-sample-[0-1],burst-0-[0-3]
  allocated      0        0 
@@ -290,7 +284,7 @@ Note that flux sample 2-3 have been left if we wanted to expand the local cluste
 Also notice that (along with the burst resources being online), our job has run:
 
 ```bash
-flux@flux-sample-0:/tmp/workflow$ flux jobs -a 
+$ flux jobs -a 
        JOBID USER     NAME       ST NTASKS NNODES     TIME INFO
    ƒ2XwYQ37M flux     hostname   CD      4      4   0.049s flux-sample-[0-1],burst-0-[2-3]
 ```
@@ -298,7 +292,7 @@ flux@flux-sample-0:/tmp/workflow$ flux jobs -a
 And we can see output! Note that the error is because the working directory where it was launched doesn't exist on the remote.
 
 ```bash
-flux@flux-sample-0:/tmp/workflow$ flux job attach ƒ2XwYQ37M
+$ flux job attach ƒ2XwYQ37M
 flux-sample-1
 burst-0-3
 burst-0-1

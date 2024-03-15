@@ -15,7 +15,7 @@ import (
 	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 
-	api "github.com/flux-framework/flux-operator/api/v1alpha1"
+	api "github.com/flux-framework/flux-operator/api/v1alpha2"
 )
 
 // newMiniCluster is used to create the MiniCluster Job
@@ -71,13 +71,17 @@ func NewMiniClusterJob(cluster *api.MiniCluster) (*batchv1.Job, error) {
 					ImagePullSecrets:      getImagePullSecrets(cluster),
 					ServiceAccountName:    cluster.Spec.Pod.ServiceAccountName,
 					NodeSelector:          cluster.Spec.Pod.NodeSelector,
-					Affinity:              getAffinity(cluster),
+					SchedulerName:         cluster.Spec.Pod.SchedulerName,
 				},
 			},
 		},
 	}
 
-	// Get resources for the pod
+	// Add Affinity to map one pod / node only if the user hasn't disbaled it
+	if !cluster.Spec.Network.DisableAffinity {
+		job.Spec.Template.Spec.Affinity = getAffinity(cluster)
+	}
+
 	resources, err := getPodResources(cluster)
 	if err != nil {
 		return job, err
@@ -87,13 +91,22 @@ func NewMiniClusterJob(cluster *api.MiniCluster) (*batchv1.Job, error) {
 	// Get volume mounts specific to operator, add on container specific ones
 	mounts := getVolumeMounts(cluster)
 
+	// Get the flux view container (only if requested)
+	fluxViewContainer, err := getFluxContainer(cluster, mounts)
+	if err != nil {
+		return job, err
+	}
+
 	// Prepare listing of containers for the MiniCluster
 	containers, err := getContainers(
 		cluster.Spec.Containers,
 		cluster.Name,
-		cluster.Spec.FluxRestful.Port,
 		mounts,
+		false,
 	)
+
+	// Add on the flux view container
+	job.Spec.Template.Spec.InitContainers = []corev1.Container{fluxViewContainer}
 	job.Spec.Template.Spec.Containers = containers
 	return job, err
 }

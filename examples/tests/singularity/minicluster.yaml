@@ -1,8 +1,7 @@
-apiVersion: flux-framework.org/v1alpha1
+apiVersion: flux-framework.org/v1alpha2
 kind: MiniCluster
 metadata:
   name: flux-sample
-  namespace: flux-operator
 spec:
 
   # Number of pods to create for MiniCluster
@@ -13,8 +12,6 @@ spec:
 
   containers:
     - image: ghcr.io/rse-ops/singularity:tag-mamba
-      fluxUser:
-        name: fluxuser
       command: singularity exec ubuntu_latest.sif echo hello world
 
       # This pulls the container (separately) to each worker

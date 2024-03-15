@@ -1,8 +1,7 @@
-apiVersion: flux-framework.org/v1alpha1
+apiVersion: flux-framework.org/v1alpha2
 kind: MiniCluster
 metadata:
   name: flux-sample
-  namespace: flux-operator
 spec:
   size: 4
   tasks: 2
@@ -10,25 +9,14 @@ spec:
   logging:
     strict: false
 
-  volumes:
-    data:
-      storageClass: hostpath
-      path: /tmp/data
-
   # kubectl apply -f ./examples/launchers/parsl/molecular-design/minicluster.yaml
   containers:
     - image: ghcr.io/rse-ops/molecular-design-parsl:tag-mamba
-      cores: 2
       workingDir: /workflow
       launcher: true
 
       # Calculating workers as 4 nodes X 2 cpu
       command: /bin/bash ./scripts/run_0.sh --outdir /workflow --workers 8
-
-      # Custom flux user
-      fluxUser: 
-        name: fluxuser
-
       commands:
         pre: |
           export LD_LIBRARY_PATH=/opt/conda/lib
@@ -38,3 +26,4 @@ spec:
       volumes:
         data:
           path: /data
+          hostPath: /data

@@ -30,7 +30,7 @@ import (
 	logf "sigs.k8s.io/controller-runtime/pkg/log"
 	"sigs.k8s.io/controller-runtime/pkg/log/zap"
 
-	mydomainv1alpha1 "github.com/flux-framework/flux-operator/api/v1alpha1"
+	mydomainv1alpha1 "github.com/flux-framework/flux-operator/api/v1alpha2"
 	//+kubebuilder:scaffold:imports
 )
 

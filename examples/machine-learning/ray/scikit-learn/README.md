@@ -14,11 +14,10 @@ First, let's create a kind cluster.
 $ kind create cluster --config ../../../kind-config.yaml
 ```
 
-And then install the operator, create the namespace, and apply the MiniCluster YAML here.
+And then install the operator, and apply the MiniCluster YAML here.
 
 ```bash
 $ kubectl apply -f ../../../dist/flux-operator.yaml
-$ kubectl create namespace flux-operator
 $ kubectl apply -f ./minicluster.yaml
 ```
 
@@ -27,7 +26,7 @@ the current directory (in the pods as `/tmp/workflow`). We run the [start.sh](st
 to start the cluster. You can watch doing the following:
 
 ```bash
-$ kubectl logs -n flux-operator flux-sample-0-7tx7s -f
+$ kubectl logs flux-sample-0-7tx7s -f
 ```
 
 <details>
@@ -42,16 +41,16 @@ $ kubectl logs -n flux-operator flux-sample-0-7tx7s -f
 2023-05-10 22:52:47,567 INFO scripts.py:908 -- To terminate the Ray runtime, run
 2023-05-10 22:52:47,567 INFO scripts.py:909 --   ray stop
 2023-05-10 22:52:44,300 INFO usage_lib.py:372 -- Usage stats collection is disabled.
-2023-05-10 22:52:44,300 INFO scripts.py:710 -- Local node IP: flux-sample-0.flux-service.flux-operator.svc.cluster.local
+2023-05-10 22:52:44,300 INFO scripts.py:710 -- Local node IP: flux-sample-0.flux-service.default.svc.cluster.local
 2023-05-10 22:52:47,605 SUCC scripts.py:747 -- --------------------
 2023-05-10 22:52:47,605 SUCC scripts.py:748 -- Ray runtime started.
 2023-05-10 22:52:47,605 SUCC scripts.py:749 -- --------------------
 2023-05-10 22:52:47,605 INFO scripts.py:751 -- Next steps
 2023-05-10 22:52:47,605 INFO scripts.py:754 -- To add another node to this Ray cluster, run
-2023-05-10 22:52:47,605 INFO scripts.py:757 --   ray start --address='flux-sample-0.flux-service.flux-operator.svc.cluster.local:6379'
+2023-05-10 22:52:47,605 INFO scripts.py:757 --   ray start --address='flux-sample-0.flux-service.default.svc.cluster.local:6379'
 2023-05-10 22:52:47,605 INFO scripts.py:766 -- To connect to this Ray cluster:
 2023-05-10 22:52:47,605 INFO scripts.py:768 -- import ray
-2023-05-10 22:52:47,606 INFO scripts.py:769 -- ray.init(_node_ip_address='flux-sample-0.flux-service.flux-operator.svc.cluster.local')
+2023-05-10 22:52:47,606 INFO scripts.py:769 -- ray.init(_node_ip_address='flux-sample-0.flux-service.default.svc.cluster.local')
 2023-05-10 22:52:47,606 INFO scripts.py:781 -- To submit a Ray job using the Ray Jobs CLI:
 2023-05-10 22:52:47,606 INFO scripts.py:782 --   RAY_ADDRESS='http://127.0.0.1:8265' ray job submit --working-dir . -- python my_script.py
 2023-05-10 22:52:47,622 INFO scripts.py:791 -- See https://docs.ray.io/en/latest/cluster/running-applications/job-submission/index.html 
@@ -85,8 +84,9 @@ $ kubectl logs -n flux-operator flux-sample-0-7tx7s -f
 Let's shell into the broker pod and connect to the broker flux instance:
 
 ```bash
-$ kubectl exec -it -n flux-operator flux-sample-0-jlsp6 bash
-$ sudo -u fluxuser -E $(env) -E HOME=/home/fluxuser flux proxy local:///run/flux/local bash
+kubectl exec -it flux-sample-0-jlsp6 bash
+source /mnt/flux/flux-view.sh
+flux proxy $fluxsocket bash
 ```
 
 At this point, since this main pod is running the show, we can run our Python example that
@@ -99,9 +99,11 @@ $ python3 ray_tune.py
 Note that you could also give this to the broker as the command directly (and no need for bash above):
 
 ```bash
-$ kubectl exec -it -n flux-operator flux-sample-0-jlsp6 bash
-$ sudo -u fluxuser -E $(env) -E HOME=/home/fluxuser flux proxy local:///run/flux/local python3 ray_tune.py
+kubectl exec -it flux-sample-0-jlsp6 bash
+source /mnt/flux/flux-view.sh
+flux proxy $fluxsocket python3 ray_tune.py
 ```
+
 For either approach, you should see the training logs across the cluster:
 
 ```console

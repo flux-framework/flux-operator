@@ -1,8 +1,7 @@
-apiVersion: flux-framework.org/v1alpha1
+apiVersion: flux-framework.org/v1alpha2
 kind: MiniCluster
 metadata:
   name: flux-sample
-  namespace: flux-operator
 spec:
   # Number of pods to create for MiniCluster
   size: 4
@@ -12,20 +11,13 @@ spec:
     quiet: true
     strict: false
 
+  flux:
+    container:
+      image: ghcr.io/converged-computing/flux-view-ubuntu:tag-focal
+
   # kubectl apply -f ./examples/simulations/laghos-demos/minicluster.yaml
   # Then watch logs of the broker pod: kubectl logs -n flux-operator <pod> -f
   containers:
-    - image: ghcr.io/rse-ops/laghos-demos:tag-mamba
-      cores: 2
-
-      # Note that you can also set launcher to true, and the command to "make tests"
-      # so that mpirun is given directly to flux start
-      # launcher: true
-
-      # Flux user has a different name
-      fluxUser:
-        name: fluxuser
-
-      # You can set the working directory if your container WORKDIR is not correct.
+    - image: ghcr.io/rse-ops/laghos:tag-jammy
       workingDir: /workflow/Laghos
       command: ./laghos -p 0 -dim 2 -rs 3 -tf 0.75 -pa -vs 100

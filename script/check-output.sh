@@ -1,7 +1,7 @@
 #!/bin/bash
 
 NAME=${1:test}
-NAMESPACE=${2:-flux-operator}
+NAMESPACE=${2:-default}
 
 HERE=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 ROOT=$(dirname ${HERE})
@@ -17,9 +17,7 @@ echo "Pod: ${pod}"
 # Prepare actual and tested comparison
 expected=${TEST_DIR}/test.out.correct
 actual=${TEST_DIR}/test.out
-
-# Fallback to assuming more than one container (and wanting to see flux)
-kubectl logs -n ${NAMESPACE} ${pod} -f > ${actual} 2>&1 || kubectl logs -n ${NAMESPACE} ${pod} flux-sample-1 -f > ${actual} 2>&1
+kubectl logs -n ${NAMESPACE} ${pod} -c flux-sample -f > ${actual} 2>&1
 
 echo "Actual:"
 cat ${actual}
@@ -28,7 +26,7 @@ cat ${actual}
 if [[ -e "${expected}" ]]; then
     echo "Expected:"
     cat ${expected}
-    diff ${expected} ${actual}
+    diff --strip-trailing-cr ${expected} ${actual}
     retval=$?
     if [[ "${retval}" != "0" ]]; then
         echo "Differences found."
@@ -37,7 +35,7 @@ if [[ -e "${expected}" ]]; then
 fi
 
 # Ensure all containers exit code 0
-for exitcode in $(kubectl get -n flux-operator pod --output=jsonpath={.items...containerStatuses..state.terminated.exitCode}); do
+for exitcode in $(kubectl get -n ${NAMESPACE} pod --output=jsonpath={.items...containerStatuses..state.terminated.exitCode}); do
    if [[ "${exitcode}" != "0" ]]; then
        echo "Container in ${NAME} had nonzero exit code"
        exit 1

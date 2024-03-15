@@ -90,11 +90,10 @@ The above mounts your hostpath `/tmp/workflow` to `/tmp/workflow` in the virtual
 and then pods will access it via a named volume in the minicluster.yaml:
 
 ```yaml
-apiVersion: flux-framework.org/v1alpha1
+apiVersion: flux-framework.org/v1alpha2
 kind: MiniCluster
 metadata:
   name: flux-sample
-  namespace: flux-operator
 spec:
 
   # Number of pods to create for MiniCluster
@@ -108,7 +107,7 @@ spec:
       path: /tmp/workflow
 
   containers:
-    - image: ghcr.io/flux-framework/flux-restful-api:latest
+    - image: rockylinux:9
       command: ls /data
 
       # The name (key) "data" corresponds to the one in "volumes" above
@@ -134,11 +133,10 @@ workflow that will use a pre-defined persistent volume claim:
 
 
 ```yaml
-apiVersion: flux-framework.org/v1alpha1
+apiVersion: flux-framework.org/v1alpha2
 kind: MiniCluster
 metadata:
   name: flux-sample
-  namespace: flux-operator
 spec:
 
   # Number of pods to create for MiniCluster
@@ -157,7 +155,7 @@ spec:
     - image: ghcr.io/rse-ops/atacseq:app-latest
 
       # This is an existing PVC (and associated PV) we created before the MiniCluster
-      existingVolumes:
+      volumes:
         data:
           path: /workflow
           claimName: data 
@@ -223,11 +221,10 @@ spec:
 Given our MiniCluster defined to use the claim named "data":
 
 ```yaml
-apiVersion: flux-framework.org/v1alpha1
+apiVersion: flux-framework.org/v1alpha2
 kind: MiniCluster
 metadata:
   name: flux-sample
-  namespace: flux-operator
 spec:
   # suppress all output except for test run
   logging:
@@ -238,9 +235,9 @@ spec:
 
   # This is a list because a pod can support multiple containers
   containers:
-    - image: ghcr.io/flux-framework/flux-restful-api:latest
+    - image: rockylinux:9
       command: ls /data
-      existingVolumes:
+      volumes:
         data:
           path: /data
           claimName: data

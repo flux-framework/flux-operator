@@ -1,5 +1,8 @@
 # Design
 
+**Note** the configs have been updated, but not tested with verison 0.2.0 yet!
+We can do this when we come back to bursting.
+
 ### What we might need
 
 I expect for this kind of bursting to work I will need to be able to:
@@ -33,6 +36,6 @@ We will eventually need to do the following:
 
 ### History
 
-This example was originally implemented as a standalone script, and that setup is preserved in [v1](v1).
+This example was originally implemented as a standalone script.
 The version here has been updated to use the [flux-burst](https://github.com/converged-computing/flux-burst)
 module and the GKE plugin for it, [flux-burst-gke](https://github.com/converged-computing/flux-burst-gke).

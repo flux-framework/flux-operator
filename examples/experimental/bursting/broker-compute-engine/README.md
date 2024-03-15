@@ -76,7 +76,6 @@ Note that if you aren't using a development version, you can apply `flux-operato
 
 ```bash
 kubectl apply -f ../../../dist/flux-operator-dev.yaml
-kubectl create namespace flux-operator
 kubectl apply -f minicluster.yaml
 # Expose broker pod port 8050 to 30093
 kubectl apply -f service/broker-service.yaml
@@ -91,7 +90,7 @@ gcloud compute firewall-rules create flux-cluster-test-node-port --allow tcp:300
 Then figure out the node that the service is running from (we are interested in lead broker flux-sample-0-*)
 
 ```bash
-$ kubectl get pods -o wide -n flux-operator 
+$ kubectl get pods -o wide
 NAME                   READY   STATUS    RESTARTS   AGE     IP           NODE                                          NOMINATED NODE   READINESS GATES
 flux-sample-0-kktl7    1/1     Running   0          7m22s   10.116.2.4   gke-flux-cluster-default-pool-4dea9d5c-0b0d   <none>           <none>
 flux-sample-1-s7r69    1/1     Running   0          7m22s   10.116.1.4   gke-flux-cluster-default-pool-4dea9d5c-1h6q   <none>           <none>
@@ -110,13 +109,13 @@ Finally, when the broker index 0 pod is running, copy your scripts and configs o
 
 ```bash
 # This should be the index 0
-POD=$(kubectl get pods -n flux-operator -o json | jq -r .items[0].metadata.name)
+POD=$(kubectl get pods -o json | jq -r .items[0].metadata.name)
 
 # This will copy configs / create directories for it
-kubectl cp -n flux-operator ./run-burst.py ${POD}:/tmp/workflow/run-burst.py -c flux-sample
-kubectl cp -n flux-operator ./application_default_credentials.json ${POD}:/tmp/workflow/application_default_credentials.json -c flux-sample
-kubectl exec -it -n flux-operator ${POD} -- mkdir -p /tmp/workflow/external-config
-kubectl cp -n flux-operator ../../../dist/flux-operator-dev.yaml ${POD}:/tmp/workflow/external-config/flux-operator-dev.yaml -c flux-sample
+kubectl cp ./run-burst.py ${POD}:/tmp/workflow/run-burst.py -c flux-sample
+kubectl cp ./application_default_credentials.json ${POD}:/tmp/workflow/application_default_credentials.json -c flux-sample
+kubectl exec -it ${POD} -- mkdir -p /tmp/workflow/external-config
+kubectl cp ../../../dist/flux-operator-dev.yaml ${POD}:/tmp/workflow/external-config/flux-operator-dev.yaml -c flux-sample
 ```
 
 ## Burstable Job
@@ -128,14 +127,15 @@ and then determining if a burst can be scheduled for some given burst plugin (e.
 we ensure the job doesn't run locally because we've asked for more nodes than we have. Shell into your broker pod:
 
 ```bash
-$ kubectl exec -it -n flux-operator ${POD} bash
+$ kubectl exec -it ${POD} bash
 ```
 
 Connect to the broker socket. If this issues an error, it's likely the install scripts are still running (you can check
 the logs and wait a minute!)
 
 ```bash
-$ sudo -u flux -E $(env) -E HOME=/home/flux flux proxy local:///run/flux/local bash
+source /mnt/flux/flux-view.sh
+flux proxy local:///run/flux/local bash
 ```
 
 The libraries we need should be installed in the minicluster.yaml.
@@ -180,8 +180,7 @@ flux-job: ƒQURAmBXV waiting for resources
 Get a variant of the munge key we can see (it's owned by root so this ensures we can see/own it as the flux user)
 
 ```bash
-sudo cp /etc/munge/munge.key ./munge.key
-sudo chown $USER munge.key
+cp /etc/munge/munge.key ./munge.key
 ```
 
 Now we can run our script to find the jobs based on this attribute!
@@ -208,15 +207,16 @@ You'll then be prompted to press ENTER when you want to destroy the burst. This 
 to see the outcome. Here is how to shell into the cluster from another terminal:
 
 ```bash
-$ POD=$(kubectl get pods -n flux-operator -o json | jq -r .items[0].metadata.name)
-$ kubectl exec -it -n flux-operator ${POD} bash
-$ sudo -u flux -E $(env) -E HOME=/home/flux flux proxy local:///run/flux/local bash
+POD=$(kubectl get pods -o json | jq -r .items[0].metadata.name)
+kubectl exec -it ${POD} bash
+source /mnt/flux/flux-view.sh
+flux proxy $fluxsocket bash
 ```
 
 Resources are now allocated:
 
 ```bash
-flux@flux-sample-0:/tmp/workflow$ flux resource list
+$ flux resource list
      STATE NNODES   NCORES NODELIST
       free      5       10 flux-sample-[0-1],gffw-compute-a-[001-003]
  allocated      0        0 
@@ -236,7 +236,7 @@ Note that we get an error about resources (I think) because we haven't done any 
 This is probably OK for now and we will need to tweak further to allow the template to include them.
 
 ```bash
-flux@flux-sample-0:/tmp/workflow$ flux job attach ƒXmSxZFm
+$ flux job attach ƒXmSxZFm
 ```
 ```console
 1352.660s: flux-shell[3]:  WARN: rlimit: nofile exceeds current max, raising value to hard limit
@@ -254,7 +254,7 @@ gffw-compute-a-001
 You can also launch a new job to see it interactively:
 
 ```bash
-flux@flux-sample-0:/tmp/workflow$ flux run -N 6 --cwd /tmp hostname
+$ flux run -N 6 --cwd /tmp hostname
 ...
 flux-sample-0
 gffw-compute-a-002

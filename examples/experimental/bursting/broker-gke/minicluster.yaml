@@ -1,8 +1,7 @@
-apiVersion: flux-framework.org/v1alpha1
+apiVersion: flux-framework.org/v1alpha2
 kind: MiniCluster
 metadata:
   name: flux-sample
-  namespace: flux-operator
 spec:
   size: 2
   # If we don't set this, we won't be able to go above two
@@ -27,12 +26,13 @@ spec:
 
   # This is a list because a pod can support multiple containers
   containers:
-    - image: ghcr.io/flux-framework/flux-restful-api
+    - image: rockylinux:9
       workingDir: /tmp/workflow
 
       # Commands to support installing flux-burst plugins
       commands:
         pre: |
+          dnf update && dnf install -y python3-pip
           pip install flux-burst[kubernetes]
           pip install flux-burst-gke
           pip install kubescaler[all]
