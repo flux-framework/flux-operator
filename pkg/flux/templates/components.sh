@@ -19,9 +19,9 @@ url=$goshareUrl/wait-fs-{{ .Spec.Flux.Arch }}
 {{ end }}
 
 # This waiting script is intended to wait for the flux view, and then start running
-curl -L -O -s -o ./wait-fs -s ${url} {{ if .Spec.Logging.Quiet }}> /dev/null 2>&1{{ end }} || wget ${url} -q -O ./wait-fs {{ if .Spec.Logging.Quiet }}> /dev/null 2>&1{{ end }}
-chmod +x ./wait-fs
-mv ./wait-fs /usr/bin/goshare-wait-fs
+curl -L -O -s -o ./wait-fs -s ${url} {{ if .Spec.Logging.Quiet }}> /dev/null 2>&1{{ end }} || wget ${url} -q -O ./wait-fs {{ if .Spec.Logging.Quiet }}> /dev/null 2>&1{{ end }} || true
+chmod +x ./wait-fs || true
+mv ./wait-fs /usr/bin/goshare-wait-fs || true
 
 # Ensure spack view is on the path, wherever it is mounted
 viewbase="{{ .ViewBase }}"
@@ -42,14 +42,14 @@ echo
 {{ if not .Spec.Flux.Container.Disable }}export PATH=$PATH:${viewbin}{{ end }}
 
 # Wait for marker (from spack.go) to indicate copy is done
-goshare-wait-fs -p ${viewbase}/flux-operator-done.txt {{ if .Spec.Logging.Quiet }}> /dev/null 2>&1{{ end }}
+goshare-wait-fs -p ${viewbase}/flux-operator-done.txt {{ if .Spec.Logging.Quiet }}> /dev/null 2>&1{{ end }} || true
 
 # Copy mount software to /opt/software
 # If /opt/software already exists, we need to copy into it
 if [[ -e  "/opt/software" ]]; then
-  cp -R ${viewbase}/software/* /opt/software/
+  cp -R ${viewbase}/software/* /opt/software/ || true
 else
-  cp -R ${viewbase}/software /opt/software
+  cp -R ${viewbase}/software /opt/software || true
 fi
 {{end}}
 
