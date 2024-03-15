@@ -33,7 +33,7 @@
         <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
       
     
-        <link rel="stylesheet" type="text/css" href="../_static/sphinx_immaterial_theme.a60204c58f5e4ff66.min.css?v=f7c3c3dc" />
+        <link rel="stylesheet" type="text/css" href="../_static/sphinx_immaterial_theme.359ec555e2989f00f.min.css?v=379f618b" />
         <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=d68d0989" />
     <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
     
@@ -545,19 +545,12 @@
     <span title="/development/developer-guide.md#container-requirements (reference label)" class="md-ellipsis">Container Requirements</span>
   </a>
   
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#testing" class="md-nav__link">
-    <span title="/development/developer-guide.md#testing (reference label)" class="md-ellipsis">Testing</span>
-  </a>
-  
-    <nav class="md-nav" aria-label="Testing">
+    <nav class="md-nav" aria-label="Container Requirements">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#integration" class="md-nav__link">
-    <span title="/development/developer-guide.md#integration (reference label)" class="md-ellipsis">Integration</span>
+  <a href="#testing" class="md-nav__link">
+    <span title="/development/developer-guide.md#testing (reference label)" class="md-ellipsis">Testing</span>
   </a>
   
 </li>
@@ -998,51 +991,22 @@ We have a courtesy command for that:</p>
 </code></pre></div>
 </div>
 <h2 id="container-requirements">Container Requirements<a class="headerlink" href="#container-requirements" title="Link to this heading">¶</a></h2>
-<p>If you are looking to build a container to use with the Flux Operator, we have a set of
-example containers <a class="reference external" href="https://github.com/rse-ops/flux-hpc">here</a> and general guidelines are below.
-Generally we recommend using the flux-sched base image
-so that install locations and users are consistent. This assumes that:</p>
+<p>Versions below 0.2.0 of the Flux Operator required Flux to be installed in the container.
+The new version (0.2.0 and later) does not have this requirement. Instead, we require:</p>
 <ul class="simple">
-<li><p>we are currently starting focus on supporting debian bases</p></li>
-<li><p>if you created the flux user, it has uid 1000 (unless you customize <code class="docutils literal notranslate"><span class="pre">fluxUser.Uid</span></code>)</p></li>
-<li><p>sudo is available in the container (apt-get install -y sudo)</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">/etc/flux</span></code> is used for configuration and general setup</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">/usr/libexec/flux</span></code> has executables like flux-imp, flux-shell</p></li>
-<li><p>flux-core / flux-sched with flux-security should be installed and ready to go.</p></li>
-<li><p>If you haven’t created a flux user, one will be created for you (with a common user id 1000 or <code class="docutils literal notranslate"><span class="pre">fluxuser.Uid</span></code>)</p></li>
-<li><p>Any executables that the flux user needs for your job should be on the path (if launching command directly)</p></li>
-<li><p>Do not have any requirements (data or executables in root’s home)</p></li>
-<li><p>The container (for now) should start with user root, and we run commands on behalf of flux.</p></li>
-<li><p>You don’t need to install the flux-restful-api (it will be installed by the operator)</p></li>
-<li><p>munge should be install, and a key generated at <code class="docutils literal notranslate"><span class="pre">/etc/munge/munge.key</span></code></p></li>
+<li><p>the active user to be root</p></li>
+<li><p>curl / wget installed</p></li>
+<li><p>a base image compatible with debian (ubuntu) or rocky linux</p></li>
 </ul>
-<p>For the last point, since all Flux running containers should have the same munge key
-in that location, we simply use it. The pipeline will fail if the key is missing from any
-Flux runner container.  For the curve.cert that we need to secure the cluster, we will
-be running your flux runner container before the indexed job is launched, generating
-the certificate, and then mapping it into the job pods via another config map.
-Note that we considered generating this natively in Gom, however the underlying library to do this
-generation that is <a class="reference external" href="https://pkg.go.dev/github.com/zeromq/goczmq#section-readme">available in Go</a>
-requires system libraries, and thus would be annoying to add as a dependency.</p>
-<p>These criteria are taken from the <a class="reference external" href="https://github.com/flux-framework/flux-sched/blob/master/src/test/docker/focal/Dockerfile">flux-sched</a>
-base image <a class="reference external" href="https://hub.docker.com/r/fluxrm/flux-sched">available on Docker hub</a> as <code class="docutils literal notranslate"><span class="pre">fluxrm/flux-sched:focal</span></code>,
-and we strongly suggest you use this for your base container to make development easier!
-If you intend to use the <a class="reference external" href="https://github.com/flux-framework/flux-restful-api">Flux RESTful API</a>
-to interact with your cluster, ensure that flux (python bindings) are on the path, along with
-either python or python3 (depending on which you used to install Flux).
-If/when needed we can lift some of these constraints, but for now they are
-reasonable. If you use this image, you should have python3 and pip3 available to you,
-and the active user is <code class="docutils literal notranslate"><span class="pre">fluxuser</span></code>. This means if you want to add content, either you’ll
-need to change the user to <code class="docutils literal notranslate"><span class="pre">root</span></code> in a build (and back to <code class="docutils literal notranslate"><span class="pre">fluxuser</span></code> at the end), use sudo, or
-install to <code class="docutils literal notranslate"><span class="pre">/home/fluxuser</span></code>.</p>
-<h2 id="testing">Testing<a class="headerlink" href="#testing" title="Link to this heading">¶</a></h2>
-<p>Testing is underway! From a high level, we want three kinds of testing:</p>
+<p>For older versions, we have a set of example containers <a class="reference external" href="https://github.com/rse-ops/flux-hpc">rse-ops/flux-hpc</a>
+that include Flux in the container. Our new bases are <a class="reference external" href="https://github.com/rse-ops/hpc-apps">rse-ops/hpc-apps</a> that do not have flux.
+For our flux view, we take the following steps:</p>
 <ul class="simple">
-<li><p>Unit tests, which will be more traditional <code class="docutils literal notranslate"><span class="pre">*_test.go</span></code> files alongside others in the repository (not done yet)</p></li>
-<li><p>End to end “e2e” tests, also within Go, to test an entire submission of a job, also within Go. (not done yet)</p></li>
-<li><p>Integration testing, likely some within Go and some external to it. (in progress)</p></li>
+<li><p>A sidecar (init container) is created to stage the flux view at /mnt/flux</p></li>
+<li><p>A file /mnt/flux/flux-view.sh is available to source for paths, python path, and a <code class="docutils literal notranslate"><span class="pre">$fluxsocket</span></code> variable</p></li>
+<li><p>All configuration files are under that root, and prepared by the init container.</p></li>
 </ul>
-<h3 id="integration">Integration<a class="headerlink" href="#integration" title="Link to this heading">¶</a></h3>
+<h3 id="testing">Testing<a class="headerlink" href="#testing" title="Link to this heading">¶</a></h3>
 <p>For the integration testing outside of Go, we currently have basic tests written that allow the following:</p>
 <ol class="arabic simple">
 <li><p>Write a custom resource definition (CRD) for a named MiniCluster under <code class="docutils literal notranslate"><span class="pre">examples/tests/${name}</span></code> as <code class="docutils literal notranslate"><span class="pre">minicluster.yaml</span></code>.</p></li>
@@ -1078,33 +1042,8 @@ Finally, note that for big containers it’s suggested to pull them first, e.g.,
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span>minikube<span class="w"> </span>ssh<span class="w"> </span>docker<span class="w"> </span>pull<span class="w"> </span>ghcr.io/rse-ops/lammps:flux-sched-focal-v0.24.0
 </code></pre></div>
 </div>
-<p>The tests above are headless, meaning they submit commands directly, and that way
-we don’t need to do it in the UI and can programmatically determine if they were successful.
-Finally, note that if you have commands that you need to run before or after the tests,
-you can add a <code class="docutils literal notranslate"><span class="pre">pre-run.sh</span></code> or <code class="docutils literal notranslate"><span class="pre">post-run.sh</span></code> in the directory. As an example, because minikube
-is run inside of a VM, if you are using a host volume mount, it won’t actually show up on your host!
-This is because it’s inside the VM. This you might want to move files there before the test, e.g.,:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code><span class="ch">#!/bin/bash</span>
-
-<span class="nv">HERE</span><span class="o">=</span><span class="k">$(</span><span class="w"> </span><span class="nb">cd</span><span class="w"> </span>--<span class="w"> </span><span class="s2">&quot;</span><span class="k">$(</span><span class="w"> </span>dirname<span class="w"> </span>--<span class="w"> </span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">BASH_SOURCE</span><span class="p">[0]</span><span class="si">}</span><span class="s2">&quot;</span><span class="w"> </span><span class="k">)</span><span class="s2">&quot;</span><span class="w"> </span><span class="p">&amp;</span>&gt;<span class="w"> </span>/dev/null<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="nb">pwd</span><span class="w"> </span><span class="k">)</span>
-
-<span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;Copying local volume to /tmp/data-volumes in minikube&quot;</span>
-
-<span class="c1"># We don&#39;t care if this works or not - mkdir -p seems to bork</span>
-minikube<span class="w"> </span>ssh<span class="w"> </span>--<span class="w"> </span>mkdir<span class="w"> </span>-p<span class="w"> </span>/tmp/data-volumes
-minikube<span class="w"> </span>cp<span class="w"> </span><span class="si">${</span><span class="nv">HERE</span><span class="si">}</span>/data/pancakes.txt<span class="w"> </span>/tmp/data-volumes/pancakes.txt
-minikube<span class="w"> </span>ssh<span class="w"> </span>ls<span class="w"> </span>/tmp/data-volumes
-</code></pre></div>
-</div>
-<p>and then clean up after</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code><span class="ch">#!/bin/bash</span>
-
-<span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;Cleaning up /tmp/data-volumes in minikube&quot;</span>
-minikube<span class="w"> </span>ssh<span class="w"> </span>--<span class="w"> </span>sudo<span class="w"> </span>rm<span class="w"> </span>-rf<span class="w"> </span>/tmp/data-volumes
-</code></pre></div>
-</div>
-<p>This would be the same for anytime you use minikube and want to create a local volume. It’s not actually on your host,
-but rather in the VM. For an example test that does this, see the <code class="docutils literal notranslate"><span class="pre">examples/tests/volumes</span></code> example.</p>
+<p>You can see tests under <a class="reference external" href="https://github.com/flux-framework/flux-operator/tree/main/examples/tests">examples/tests</a> for full examples of how this works,
+and the scripts under <a class="reference external" href="https://github.com/flux-framework/flux-operator/tree/main/script">script</a>.</p>
 <h2 id="documentation">Documentation<a class="headerlink" href="#documentation" title="Link to this heading">¶</a></h2>
 <p>The documentation is provided in the <code class="docutils literal notranslate"><span class="pre">docs</span></code> folder of the repository, and generally most content that you might want to add is under
 <code class="docutils literal notranslate"><span class="pre">getting_started</span></code>. For ease of contribution, files that are likely to be updated by contributors (e.g., mostly everything but the module generated files)
@@ -1141,7 +1080,7 @@ server to preview:</p>
   <small>
     
       Last update:
-      Sep 10, 2023
+      Mar 15, 2024
     
   </small>
 </div>
@@ -1218,7 +1157,7 @@ server to preview:</p>
   
     Created using
     <a href="https://www.sphinx-doc.org/" target="_blank" rel="noopener">Sphinx</a>
-    7.2.5.
+    7.2.6.
      and
     <a href="https://github.com/jbms/sphinx-immaterial/" target="_blank" rel="noopener">Sphinx-Immaterial</a>
   
@@ -1253,7 +1192,7 @@ server to preview:</p>
     <script id="__config" type="application/json">{"base": "..", "features": ["navigation.expand", "navigation.tabs", "toc.integrate", "navigation.sections", "navigation.instant", "header.autohide", "navigation.top", "navigation.tracking", "search.highlight", "search.share", "toc.follow", "toc.sticky", "content.tabs.link", "announce.dismiss"], "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version.title": "Select version"}}</script>
     
       
-        <script src="../_static/sphinx_immaterial_theme.1b5b7a2d5891aec19.min.js?v=14bafe8d"></script>
+        <script src="../_static/sphinx_immaterial_theme.f9d9eeeb247ace16c.min.js?v=9a299579"></script>
         <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
     
   </body>

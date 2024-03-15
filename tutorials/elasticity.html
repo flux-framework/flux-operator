@@ -33,7 +33,7 @@
         <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
       
     
-        <link rel="stylesheet" type="text/css" href="../_static/sphinx_immaterial_theme.a60204c58f5e4ff66.min.css?v=f7c3c3dc" />
+        <link rel="stylesheet" type="text/css" href="../_static/sphinx_immaterial_theme.359ec555e2989f00f.min.css?v=379f618b" />
         <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=d68d0989" />
     <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
     
@@ -526,36 +526,6 @@
   
   
     <li class="md-nav__item">
-      <a href="singularity.html" class="md-nav__link">
-        <span title="/tutorials/singularity.md (reference label)" class="md-ellipsis">Singularity</span>
-      </a>
-    </li>
-  
-
-            
-          
-            
-              
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="multi-tenancy.html" class="md-nav__link">
-        <span title="/tutorials/multi-tenancy.md (reference label)" class="md-ellipsis">Multi-<wbr>tenancy</span>
-      </a>
-    </li>
-  
-
-            
-          
-            
-              
-  
-  
-  
-  
-    <li class="md-nav__item">
       <a href="interactive.html" class="md-nav__link">
         <span title="/tutorials/interactive.md (reference label)" class="md-ellipsis">Interactive</span>
       </a>
@@ -723,21 +693,6 @@
   
 </nav>
       
-    </li>
-  
-
-            
-          
-            
-              
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="staging.html" class="md-nav__link">
-        <span title="/tutorials/staging.md (reference label)" class="md-ellipsis">Staging</span>
-      </a>
     </li>
   
 
@@ -934,33 +889,34 @@ or down.</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span>kind<span class="w"> </span>create<span class="w"> </span>cluster<span class="w"> </span>--config<span class="w"> </span>./kind-config.yaml
 </code></pre></div>
 </div>
-<p>Create the flux-operator namespace:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span>kubectl<span class="w"> </span>create<span class="w"> </span>namespace<span class="w"> </span>flux-operator
-</code></pre></div>
-</div>
 <p>Since we need custom permissions - to make requests from inside the cluster - we need to apply
 extra RBAC roles:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span>kubectl<span class="w"> </span>apply<span class="w"> </span>-f<span class="w"> </span>../../rbac.yaml
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span>kubectl<span class="w"> </span>apply<span class="w"> </span>-f<span class="w"> </span>../rbac.yaml
 </code></pre></div>
 </div>
 <p>Note that this is not added to the operator proper because not everyone needs this level of permission,
 and we should be conservative. Likely the above can be better streamlined - I was in “get it working” mode
 when I wrote it! We could also likely create a more scoped service account as opposed to adding to
-the flux-operators. Then install the operator, and create the MiniCluster:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span>kubectl<span class="w"> </span>apply<span class="w"> </span>-f<span class="w"> </span>../../../dist/flux-operator.yaml
+the flux-operator’s. Then install the operator, and create the MiniCluster:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span>kubectl<span class="w"> </span>apply<span class="w"> </span>-f<span class="w"> </span>../../dist/flux-operator.yaml
 $<span class="w"> </span>kubectl<span class="w"> </span>apply<span class="w"> </span>-f<span class="w"> </span>./minicluster.yaml
 </code></pre></div>
 </div>
-<p>At this point, wait until the containers go from creating to running.
+<p>At this point, wait until the containers go from creating / init / to running.
 Note that it does take about a minute to pull.</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span>kubectl<span class="w"> </span>get<span class="w"> </span>-n<span class="w"> </span>flux-operator<span class="w"> </span>pods
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span>kubectl<span class="w"> </span>get<span class="w"> </span>pods
 NAME<span class="w">                  </span>READY<span class="w">   </span>STATUS<span class="w">    </span>RESTARTS<span class="w">   </span>AGE
 flux-sample-0-4wmmp<span class="w">   </span><span class="m">1</span>/1<span class="w">     </span>Running<span class="w">   </span><span class="m">0</span><span class="w">          </span>6m50s
 flux-sample-1-mjj7b<span class="w">   </span><span class="m">1</span>/1<span class="w">     </span>Running<span class="w">   </span><span class="m">0</span><span class="w">          </span>6m50s
 </code></pre></div>
 </div>
-<p>Then you can watch logs to see the demo!</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span>kubectl<span class="w"> </span>logs<span class="w"> </span>-n<span class="w"> </span>flux-operator<span class="w"> </span>flux-sample-0-zkfp8<span class="w"> </span>-f
+<p>Copy the script into the container:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>kubectl<span class="w"> </span>cp<span class="w"> </span>./three_bears.py<span class="w"> </span>flux-sample-1-99tzj:/data/three-bears.py
+</code></pre></div>
+</div>
+<p>And then run the example demo:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code><span class="nv">fluxsocket</span><span class="o">=</span>local:///mnt/flux/view/run/flux/local
+kubectl<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>-it<span class="w"> </span>flux-sample-0-pjpwn<span class="w"> </span>--<span class="w"> </span>/bin/bash<span class="w"> </span>-c<span class="w"> </span><span class="s2">&quot;. /mnt/flux/flux-view.sh &amp;&amp; flux proxy </span><span class="nv">$fluxsocket</span><span class="s2"> /mnt/flux/view/bin/python3.11 /data/three-bears.py&quot;</span>
 </code></pre></div>
 </div>
 <details>
@@ -1118,9 +1074,8 @@ based on CPU, and then one based on custom metrics.</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span>kind<span class="w"> </span>create<span class="w"> </span>cluster<span class="w"> </span>--config<span class="w"> </span>./kind-config.yaml
 </code></pre></div>
 </div>
-<p>Create the flux-operator namespace and install the operator:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span>kubectl<span class="w"> </span>create<span class="w"> </span>namespace<span class="w"> </span>flux-operator
-$<span class="w"> </span>kubectl<span class="w"> </span>apply<span class="w"> </span>-f<span class="w"> </span>../../../dist/flux-operator-dev.yaml
+<p>Install the operator:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span>kubectl<span class="w"> </span>apply<span class="w"> </span>-f<span class="w"> </span>../../../dist/flux-operator-dev.yaml
 </code></pre></div>
 </div>
 <p>And then create a very simply interactive cluster (it’s small, 2 pods, but importantly has a maxsize of 10).
@@ -1130,14 +1085,14 @@ Note that we are going to limit the HPA to a size of 4, because we assume you ar
 </div>
 <p>You’ll need to wait for the container to pull (status <code class="docutils literal notranslate"><span class="pre">ContainerCreating</span></code> to <code class="docutils literal notranslate"><span class="pre">Running</span></code>).
 At this point, wait until the containers go from creating to running.</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span>kubectl<span class="w"> </span>get<span class="w"> </span>-n<span class="w"> </span>flux-operator<span class="w"> </span>pods
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span>kubectl<span class="w"> </span>get<span class="w"> </span>pods
 NAME<span class="w">                  </span>READY<span class="w">   </span>STATUS<span class="w">    </span>RESTARTS<span class="w">   </span>AGE
 flux-sample-0-4wmmp<span class="w">   </span><span class="m">1</span>/1<span class="w">     </span>Running<span class="w">   </span><span class="m">0</span><span class="w">          </span>6m50s
 flux-sample-1-mjj7b<span class="w">   </span><span class="m">1</span>/1<span class="w">     </span>Running<span class="w">   </span><span class="m">0</span><span class="w">          </span>6m50s
 </code></pre></div>
 </div>
 <p>Look at the scale endpoint of the MiniCluster with <code class="docutils literal notranslate"><span class="pre">kubectl</span></code> directly! Remember that we haven’t installed a horizontal auto-scaler yet:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span>kubectl<span class="w"> </span>get<span class="w"> </span>--raw<span class="w"> </span>/apis/flux-framework.org/v1alpha1/namespaces/flux-operator/miniclusters/flux-sample/scale<span class="w"> </span><span class="p">|</span><span class="w"> </span>jq
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span>kubectl<span class="w"> </span>get<span class="w"> </span>--raw<span class="w"> </span>/apis/flux-framework.org/v1alpha2/namespaces/default/miniclusters/flux-sample/scale<span class="w"> </span><span class="p">|</span><span class="w"> </span>jq
 </code></pre></div>
 </div>
 <div class="highlight-console notranslate"><div class="highlight"><pre><span></span><code><span class="go">{</span>
@@ -1145,10 +1100,10 @@ flux-sample-1-mjj7b<span class="w">   </span><span class="m">1</span>/1<span cla
 <span class="go">  &quot;apiVersion&quot;: &quot;autoscaling/v1&quot;,</span>
 <span class="go">  &quot;metadata&quot;: {</span>
 <span class="go">    &quot;name&quot;: &quot;flux-sample&quot;,</span>
-<span class="go">    &quot;namespace&quot;: &quot;flux-operator&quot;,</span>
-<span class="go">    &quot;uid&quot;: &quot;581c708a-0eb2-48da-84b1-3da7679d349d&quot;,</span>
-<span class="go">    &quot;resourceVersion&quot;: &quot;3579&quot;,</span>
-<span class="go">    &quot;creationTimestamp&quot;: &quot;2023-05-20T05:11:28Z&quot;</span>
+<span class="go">    &quot;namespace&quot;: &quot;default&quot;,</span>
+<span class="go">    &quot;uid&quot;: &quot;3e5c568c-0367-4e76-bf7a-6e3215afdb1e&quot;,</span>
+<span class="go">    &quot;resourceVersion&quot;: &quot;603&quot;,</span>
+<span class="go">    &quot;creationTimestamp&quot;: &quot;2023-10-16T00:47:35Z&quot;</span>
 <span class="go">  },</span>
 <span class="go">  &quot;spec&quot;: {</span>
 <span class="go">    &quot;replicas&quot;: 2</span>
@@ -1183,7 +1138,7 @@ it’s running:</p>
 </code></pre></div>
 </div>
 <p>Remember that when you first created your cluster, your size was two, and we had two?</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span>kubectl<span class="w"> </span>get<span class="w"> </span>-n<span class="w"> </span>flux-operator<span class="w"> </span>pods
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span>kubectl<span class="w"> </span>get<span class="w"> </span>pods
 NAME<span class="w">                  </span>READY<span class="w">   </span>STATUS<span class="w">    </span>RESTARTS<span class="w">   </span>AGE
 flux-sample-0-4wmmp<span class="w">   </span><span class="m">1</span>/1<span class="w">     </span>Running<span class="w">   </span><span class="m">0</span><span class="w">          </span>6m50s
 flux-sample-1-mjj7b<span class="w">   </span><span class="m">1</span>/1<span class="w">     </span>Running<span class="w">   </span><span class="m">0</span><span class="w">          </span>6m50s
@@ -1193,25 +1148,21 @@ flux-sample-1-mjj7b<span class="w">   </span><span class="m">1</span>/1<span cla
 see first that the resource usage changes (just by way of Flux starting):
 And to get it to change more, try shelling into your broker leader pod, connecting
 to the broker, and issuing commands:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span>kubectl<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>-it<span class="w"> </span>-n<span class="w"> </span>flux-operator<span class="w"> </span>flux-sample-0-p85cj<span class="w"> </span>bash
-$<span class="w"> </span>sudo<span class="w"> </span>-u<span class="w"> </span>fluxuser<span class="w"> </span>-E<span class="w"> </span><span class="k">$(</span>env<span class="k">)</span><span class="w"> </span>-E<span class="w"> </span><span class="nv">HOME</span><span class="o">=</span>/home/fluxuser<span class="w"> </span>flux<span class="w"> </span>proxy<span class="w"> </span>local:///run/flux/local<span class="w"> </span>bash
-$<span class="w"> </span>openssl<span class="w"> </span>speed<span class="w"> </span>-multi<span class="w"> </span><span class="m">4</span>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>kubectl<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>-it<span class="w"> </span>flux-sample-0-p85cj<span class="w"> </span>bash
+
+<span class="c1"># This is written by the operator to make it easy to add the view</span>
+.<span class="w"> </span>/mnt/flux/flux-view.sh
+flux<span class="w"> </span>proxy<span class="w"> </span><span class="nv">$fluxsocket</span><span class="w"> </span>bash
+openssl<span class="w"> </span>speed<span class="w"> </span>-multi<span class="w"> </span><span class="m">4</span>
 </code></pre></div>
 </div>
 <p>You’ll see it change (with updates between 15 seconds and 1.5 minutes!):</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><code>$ kubectl get -n flux-operator hpa -w
-NAME              REFERENCE                 TARGETS   MINPODS   MAXPODS   REPLICAS   AGE
-flux-sample-hpa   MiniCluster/flux-sample   0%/2%     2         4         2          33m
-flux-sample-hpa   MiniCluster/flux-sample   0%/2%     2         4         2          34m
-flux-sample-hpa   MiniCluster/flux-sample   3%/2%     2         4         2          34m
-flux-sample-hpa   MiniCluster/flux-sample   0%/2%     2         4         3          34m
-</code></pre></div>
-</div>
-<p>With the openssl command above, I got it to hit a much higher load:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>flux-sample-hpa<span class="w">   </span>MiniCluster/flux-sample<span class="w">   </span><span class="m">0</span>%/2%<span class="w">          </span><span class="m">2</span><span class="w">         </span><span class="m">4</span><span class="w">         </span><span class="m">4</span><span class="w">          </span>7m30s
-flux-sample-hpa<span class="w">   </span>MiniCluster/flux-sample<span class="w">   </span><span class="m">21</span>%/2%<span class="w">         </span><span class="m">2</span><span class="w">         </span><span class="m">4</span><span class="w">         </span><span class="m">4</span><span class="w">          </span>8m30s
-flux-sample-hpa<span class="w">   </span>MiniCluster/flux-sample<span class="w">   </span><span class="m">25</span>%/2%<span class="w">         </span><span class="m">2</span><span class="w">         </span><span class="m">4</span><span class="w">         </span><span class="m">4</span><span class="w">          </span>8m46s
-flux-sample-hpa<span class="w">   </span>MiniCluster/flux-sample<span class="w">   </span><span class="m">25</span>%/2%<span class="w">         </span><span class="m">2</span><span class="w">         </span><span class="m">4</span><span class="w">         </span><span class="m">4</span><span class="w">          </span>9m1s
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span>kubectl<span class="w"> </span>get<span class="w"> </span>hpa<span class="w"> </span>-w
+NAME<span class="w">              </span>REFERENCE<span class="w">                 </span>TARGETS<span class="w">   </span>MINPODS<span class="w">   </span>MAXPODS<span class="w">   </span>REPLICAS<span class="w">   </span>AGE
+flux-sample-hpa<span class="w">   </span>MiniCluster/flux-sample<span class="w">   </span><span class="m">0</span>%/2%<span class="w">     </span><span class="m">2</span><span class="w">         </span><span class="m">4</span><span class="w">         </span><span class="m">2</span><span class="w">          </span>3m45s
+flux-sample-hpa<span class="w">   </span>MiniCluster/flux-sample<span class="w">   </span><span class="m">0</span>%/2%<span class="w">     </span><span class="m">2</span><span class="w">         </span><span class="m">4</span><span class="w">         </span><span class="m">2</span><span class="w">          </span>3m45s
+flux-sample-hpa<span class="w">   </span>MiniCluster/flux-sample<span class="w">   </span><span class="m">34</span>%/2%<span class="w">    </span><span class="m">2</span><span class="w">         </span><span class="m">4</span><span class="w">         </span><span class="m">2</span><span class="w">          </span>4m
+flux-sample-hpa<span class="w">   </span>MiniCluster/flux-sample<span class="w">   </span><span class="m">49</span>%/2%<span class="w">    </span><span class="m">2</span><span class="w">         </span><span class="m">4</span><span class="w">         </span><span class="m">4</span><span class="w">          </span>4m15s
 </code></pre></div>
 </div>
 <p>See the <a class="reference internal" href="#creating-the-v1-autoscaler"><span class="std std-ref">autoscaler/v1</span></a> example for more detail about outputs. They have
@@ -1244,8 +1195,12 @@ To run this example, you’ll want to first cd to the example directory:</p>
 <div class="highlight-console notranslate"><div class="highlight"><pre><span></span><code><span class="go">horizontalpodautoscaler.autoscaling/flux-sample-hpa created</span>
 </code></pre></div>
 </div>
+<p>Create the MiniCluster:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>kubectl<span class="w"> </span>apply<span class="w"> </span>-f<span class="w"> </span>./minicluster.yaml
+</code></pre></div>
+</div>
 <p>Remember that when you first created your cluster, your size was two, and we had two?</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span>kubectl<span class="w"> </span>get<span class="w"> </span>-n<span class="w"> </span>flux-operator<span class="w"> </span>pods
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span>kubectl<span class="w"> </span>get<span class="w"> </span>pods
 NAME<span class="w">                  </span>READY<span class="w">   </span>STATUS<span class="w">    </span>RESTARTS<span class="w">   </span>AGE
 flux-sample-0-4wmmp<span class="w">   </span><span class="m">1</span>/1<span class="w">     </span>Running<span class="w">   </span><span class="m">0</span><span class="w">          </span>6m50s
 flux-sample-1-mjj7b<span class="w">   </span><span class="m">1</span>/1<span class="w">     </span>Running<span class="w">   </span><span class="m">0</span><span class="w">          </span>6m50s
@@ -1255,30 +1210,24 @@ flux-sample-1-mjj7b<span class="w">   </span><span class="m">1</span>/1<span cla
 see first that the resource usage changes (just by way of Flux starting):
 And to get it to change more, try shelling into your broker leader pod, connecting
 to the broker, and issuing commands:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span>kubectl<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>-it<span class="w"> </span>-n<span class="w"> </span>flux-operator<span class="w"> </span>flux-sample-0-p85cj<span class="w"> </span>bash
-$<span class="w"> </span>sudo<span class="w"> </span>-u<span class="w"> </span>fluxuser<span class="w"> </span>-E<span class="w"> </span><span class="k">$(</span>env<span class="k">)</span><span class="w"> </span>-E<span class="w"> </span><span class="nv">HOME</span><span class="o">=</span>/home/fluxuser<span class="w"> </span>flux<span class="w"> </span>proxy<span class="w"> </span>local:///run/flux/local<span class="w"> </span>bash
-$<span class="w"> </span>openssl<span class="w"> </span>speed<span class="w"> </span>-multi<span class="w"> </span><span class="m">4</span>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>kubectl<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>-it<span class="w"> </span>flux-sample-0-p85cj<span class="w"> </span>bash
+.<span class="w"> </span>/mnt/flux/flux-view.sh<span class="w"> </span>
+flux<span class="w"> </span>proxy<span class="w"> </span><span class="si">${</span><span class="nv">fluxsocket</span><span class="si">}</span><span class="w"> </span>bash
+openssl<span class="w"> </span>speed<span class="w"> </span>-multi<span class="w"> </span><span class="m">4</span>
 </code></pre></div>
 </div>
 <p>You’ll see it change (with updates between 15 seconds and 1.5 minutes!):</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><code>$ kubectl get -n flux-operator hpa -w
-NAME              REFERENCE                 TARGETS   MINPODS   MAXPODS   REPLICAS   AGE
-flux-sample-hpa   MiniCluster/flux-sample   0%/2%     2         4         2          33m
-flux-sample-hpa   MiniCluster/flux-sample   0%/2%     2         4         2          34m
-flux-sample-hpa   MiniCluster/flux-sample   3%/2%     2         4         2          34m
-flux-sample-hpa   MiniCluster/flux-sample   0%/2%     2         4         3          34m
-</code></pre></div>
-</div>
-<p>With the openssl command above, I got it to hit a much higher load:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>flux-sample-hpa<span class="w">   </span>MiniCluster/flux-sample<span class="w">   </span><span class="m">0</span>%/2%<span class="w">          </span><span class="m">2</span><span class="w">         </span><span class="m">4</span><span class="w">         </span><span class="m">4</span><span class="w">          </span>7m30s
-flux-sample-hpa<span class="w">   </span>MiniCluster/flux-sample<span class="w">   </span><span class="m">21</span>%/2%<span class="w">         </span><span class="m">2</span><span class="w">         </span><span class="m">4</span><span class="w">         </span><span class="m">4</span><span class="w">          </span>8m30s
-flux-sample-hpa<span class="w">   </span>MiniCluster/flux-sample<span class="w">   </span><span class="m">25</span>%/2%<span class="w">         </span><span class="m">2</span><span class="w">         </span><span class="m">4</span><span class="w">         </span><span class="m">4</span><span class="w">          </span>8m46s
-flux-sample-hpa<span class="w">   </span>MiniCluster/flux-sample<span class="w">   </span><span class="m">25</span>%/2%<span class="w">         </span><span class="m">2</span><span class="w">         </span><span class="m">4</span><span class="w">         </span><span class="m">4</span><span class="w">          </span>9m1s
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span>kubectl<span class="w"> </span>get<span class="w"> </span>hpa<span class="w"> </span>-w
+NAME<span class="w">              </span>REFERENCE<span class="w">                 </span>TARGETS<span class="w">   </span>MINPODS<span class="w">   </span>MAXPODS<span class="w">   </span>REPLICAS<span class="w">   </span>AGE
+flux-sample-hpa<span class="w">   </span>MiniCluster/flux-sample<span class="w">   </span><span class="m">0</span>%/2%<span class="w">     </span><span class="m">2</span><span class="w">         </span><span class="m">4</span><span class="w">         </span><span class="m">2</span><span class="w">          </span>33m
+flux-sample-hpa<span class="w">   </span>MiniCluster/flux-sample<span class="w">   </span><span class="m">0</span>%/2%<span class="w">     </span><span class="m">2</span><span class="w">         </span><span class="m">4</span><span class="w">         </span><span class="m">2</span><span class="w">          </span>34m
+flux-sample-hpa<span class="w">   </span>MiniCluster/flux-sample<span class="w">   </span><span class="m">3</span>%/2%<span class="w">     </span><span class="m">2</span><span class="w">         </span><span class="m">4</span><span class="w">         </span><span class="m">2</span><span class="w">          </span>34m
+flux-sample-hpa<span class="w">   </span>MiniCluster/flux-sample<span class="w">   </span><span class="m">0</span>%/2%<span class="w">     </span><span class="m">2</span><span class="w">         </span><span class="m">4</span><span class="w">         </span><span class="m">3</span><span class="w">          </span>34m
 </code></pre></div>
 </div>
 <p>So basically, we are seeing the cluster increase in size accordingly! Note that another way to achieve this is just to set <code class="docutils literal notranslate"><span class="pre">interactive:</span> <span class="pre">true</span></code> to
 the minicluster.yaml.</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>kubectl<span class="w"> </span>get<span class="w"> </span>-n<span class="w"> </span>flux-operator<span class="w"> </span>pods
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>kubectl<span class="w"> </span>get<span class="w"> </span>pods
 NAME<span class="w">                  </span>READY<span class="w">   </span>STATUS<span class="w">    </span>RESTARTS<span class="w">   </span>AGE
 flux-sample-0-blgsw<span class="w">   </span><span class="m">1</span>/1<span class="w">     </span>Running<span class="w">   </span><span class="m">0</span><span class="w">          </span>56s
 flux-sample-1-k4m6s<span class="w">   </span><span class="m">1</span>/1<span class="w">     </span>Running<span class="w">   </span><span class="m">0</span><span class="w">          </span>56s
@@ -1290,7 +1239,7 @@ This is because we can install the autoscaler once, and then use it for the same
 namespace and job name, even if you wind up deleting and re-creating. That’s pretty
 cool because it means you can create different HPAs for different job types (organized by name).
 Depending on how you stress the pods, it can easily go up to the max:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>kubectl<span class="w"> </span>get<span class="w"> </span>--raw<span class="w"> </span>/apis/flux-framework.org/v1alpha1/namespaces/flux-operator/miniclusters/flux-sample/scale<span class="w"> </span><span class="p">|</span><span class="w"> </span>jq
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>kubectl<span class="w"> </span>get<span class="w"> </span>--raw<span class="w"> </span>/apis/flux-framework.org/v1alpha2/namespaces/default/miniclusters/flux-sample/scale<span class="w"> </span><span class="p">|</span><span class="w"> </span>jq
 </code></pre></div>
 </div>
 <div class="highlight-console notranslate"><div class="highlight"><pre><span></span><code><span class="go">{</span>
@@ -1298,10 +1247,10 @@ Depending on how you stress the pods, it can easily go up to the max:</p>
 <span class="go">  &quot;apiVersion&quot;: &quot;autoscaling/v1&quot;,</span>
 <span class="go">  &quot;metadata&quot;: {</span>
 <span class="go">    &quot;name&quot;: &quot;flux-sample&quot;,</span>
-<span class="go">    &quot;namespace&quot;: &quot;flux-operator&quot;,</span>
-<span class="go">    &quot;uid&quot;: &quot;31a02984-d47c-4d96-bd7e-ab7f381ec660&quot;,</span>
-<span class="go">    &quot;resourceVersion&quot;: &quot;8735&quot;,</span>
-<span class="go">    &quot;creationTimestamp&quot;: &quot;2023-05-20T05:50:56Z&quot;</span>
+<span class="go">    &quot;namespace&quot;: &quot;default&quot;,</span>
+<span class="go">    &quot;uid&quot;: &quot;a5455ad0-ed53-4408-b8e1-67478516ba14&quot;,</span>
+<span class="go">    &quot;resourceVersion&quot;: &quot;3247&quot;,</span>
+<span class="go">    &quot;creationTimestamp&quot;: &quot;2023-10-16T01:05:04Z&quot;</span>
 <span class="go">  },</span>
 <span class="go">  &quot;spec&quot;: {</span>
 <span class="go">    &quot;replicas&quot;: 4</span>
@@ -1339,7 +1288,7 @@ cluster itself. When you are done:</p>
   <small>
     
       Last update:
-      Sep 10, 2023
+      Mar 15, 2024
     
   </small>
 </div>
@@ -1386,13 +1335,13 @@ cluster itself. When you are done:</p>
       
       
         
-        <a href="staging.html" class="md-footer__link md-footer__link--next" aria-label="Next: Staging" rel="next">
+        <a href="volumes.html" class="md-footer__link md-footer__link--next" aria-label="Next: Volumes" rel="next">
           <div class="md-footer__title">
             <div class="md-ellipsis">
               <span class="md-footer__direction">
                 Next
               </span>
-              Staging
+              Volumes
             </div>
           </div>
           <div class="md-footer__button md-icon">
@@ -1416,7 +1365,7 @@ cluster itself. When you are done:</p>
   
     Created using
     <a href="https://www.sphinx-doc.org/" target="_blank" rel="noopener">Sphinx</a>
-    7.2.5.
+    7.2.6.
      and
     <a href="https://github.com/jbms/sphinx-immaterial/" target="_blank" rel="noopener">Sphinx-Immaterial</a>
   
@@ -1451,7 +1400,7 @@ cluster itself. When you are done:</p>
     <script id="__config" type="application/json">{"base": "..", "features": ["navigation.expand", "navigation.tabs", "toc.integrate", "navigation.sections", "navigation.instant", "header.autohide", "navigation.top", "navigation.tracking", "search.highlight", "search.share", "toc.follow", "toc.sticky", "content.tabs.link", "announce.dismiss"], "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version.title": "Select version"}}</script>
     
       
-        <script src="../_static/sphinx_immaterial_theme.1b5b7a2d5891aec19.min.js?v=14bafe8d"></script>
+        <script src="../_static/sphinx_immaterial_theme.f9d9eeeb247ace16c.min.js?v=9a299579"></script>
         <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
     
   </body>

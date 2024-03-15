@@ -33,7 +33,7 @@
         <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
       
     
-        <link rel="stylesheet" type="text/css" href="../../_static/sphinx_immaterial_theme.a60204c58f5e4ff66.min.css?v=f7c3c3dc" />
+        <link rel="stylesheet" type="text/css" href="../../_static/sphinx_immaterial_theme.359ec555e2989f00f.min.css?v=379f618b" />
         <link rel="stylesheet" type="text/css" href="../../_static/custom.css?v=d68d0989" />
     <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
     
@@ -540,21 +540,6 @@
               
   
   
-  
-  
-    <li class="md-nav__item">
-      <a href="../ibm.html" class="md-nav__link">
-        <span title="/deployment/ibm.md (reference label)" class="md-ellipsis">IBM Cloud</span>
-      </a>
-    </li>
-  
-
-            
-          
-            
-              
-  
-  
     
   
   
@@ -562,7 +547,7 @@
     <li class="md-nav__item md-nav__item--active md-nav__item--nested">
       
       
-        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_3_1_4" type="checkbox" id="__nav_3_1_4" checked>
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_3_1_3" type="checkbox" id="__nav_3_1_3" checked>
       
       
       
@@ -570,14 +555,14 @@
         <div class="md-nav__link md-nav__link--index ">
           <a href="index.html"><span title="/deployment/google/index.rst (reference label)" class="md-ellipsis">Google Cloud</span></a>
           
-            <label for="__nav_3_1_4">
+            <label for="__nav_3_1_3">
               <span class="md-nav__icon md-icon"></span>
             </label>
           
         </div>
       
       <nav class="md-nav" aria-label="Google Cloud" data-md-level="3">
-        <label class="md-nav__title" for="__nav_3_1_4">
+        <label class="md-nav__title" for="__nav_3_1_3">
           <span class="md-nav__icon md-icon"></span>
           <span title="/deployment/google/index.rst (reference label)" class="md-ellipsis">Google Cloud</span>
         </label>
@@ -694,36 +679,6 @@
 
             
           
-            
-              
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="csi.html" class="md-nav__link">
-        <span title="/deployment/google/csi.md (reference label)" class="md-ellipsis">CSI for Cloud Storage</span>
-      </a>
-    </li>
-  
-
-            
-          
-            
-              
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="fusion.html" class="md-nav__link">
-        <span title="/deployment/google/fusion.md (reference label)" class="md-ellipsis">Fusion Storage</span>
-      </a>
-    </li>
-  
-
-            
-          
         </ul>
       </nav>
     </li>
@@ -833,10 +788,6 @@ Filestore before, you should largely be good to go.</p>
 <span class="w">    </span>--num-nodes<span class="o">=</span><span class="m">4</span><span class="w"> </span>--enable-network-policy<span class="w"> </span>--tags<span class="o">=</span>flux-cluster<span class="w"> </span>--enable-intra-node-visibility
 </code></pre></div>
 </div>
-<p>Create the Flux Operator namespace:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span>kubectl<span class="w"> </span>create<span class="w"> </span>namespace<span class="w"> </span>flux-operator
-</code></pre></div>
-</div>
 <h2 id="install-the-flux-operator">Install the Flux Operator<a class="headerlink" href="#install-the-flux-operator" title="Link to this heading">¶</a></h2>
 <p>Let’s next install the operator. You can <a class="reference external" href="https://flux-framework.org/flux-operator/getting_started/user-guide.html#production-install">choose one of the options here</a>.
 E.g., to deploy from the cloned repository:</p>
@@ -849,7 +800,6 @@ storage drivers installed already to our cluster (via the creation command).</p>
 <span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">v1</span>
 <span class="nt">metadata</span><span class="p">:</span>
 <span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">data</span>
-<span class="w">  </span><span class="nt">namespace</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">flux-operator</span>
 <span class="nt">spec</span><span class="p">:</span>
 <span class="w">  </span><span class="nt">accessModes</span><span class="p">:</span>
 <span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ReadWriteMany</span>
@@ -884,7 +834,7 @@ Filestore to be available as a persistent volume claim - and I want all of it - 
 </code></pre></div>
 </div>
 <p>And check on the status:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span>kubectl<span class="w"> </span>get<span class="w"> </span>-n<span class="w"> </span>flux-operator<span class="w"> </span>pvc
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span>kubectl<span class="w"> </span>get<span class="w"> </span>pvc
 NAME<span class="w">   </span>STATUS<span class="w">    </span>VOLUME<span class="w">   </span>CAPACITY<span class="w">   </span>ACCESS<span class="w"> </span>MODES<span class="w">   </span>STORAGECLASS<span class="w">   </span>AGE
 data<span class="w">   </span>Pending<span class="w">                                      </span>standard-rwx<span class="w">   </span>6s
 </code></pre></div>
@@ -894,8 +844,7 @@ data<span class="w">   </span>Pending<span class="w">                           
 </code></pre></div>
 </div>
 <p>We can now look at the pods:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span>make<span class="w"> </span>list
-kubectl<span class="w"> </span>get<span class="w"> </span>-n<span class="w"> </span>flux-operator<span class="w"> </span>pods
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>kubectl<span class="w"> </span>get<span class="w"> </span>pods
 </code></pre></div>
 </div>
 <div class="highlight-console notranslate"><div class="highlight"><pre><span></span><code><span class="go">NAME                         READY   STATUS      RESTARTS   AGE</span>
@@ -913,7 +862,7 @@ kubectl<span class="w"> </span>get<span class="w"> </span>-n<span class="w"> </s
 give it a few minutes to (hopefully) resolve as it did for me!</p>
 <h2 id="test-your-storage">Test your Storage<a class="headerlink" href="#test-your-storage" title="Link to this heading">¶</a></h2>
 <p>Let’s shell into the broker (index 0) and play with our Filesystem!</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span>kubectl<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>-it<span class="w"> </span>-n<span class="w"> </span>flux-operator<span class="w"> </span>flux-sample-0-vb59t<span class="w"> </span>bash
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span>kubectl<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>-it<span class="w"> </span>flux-sample-0-vb59t<span class="w"> </span>bash
 </code></pre></div>
 </div>
 <p>Is it there? How big is it?</p>
@@ -932,7 +881,7 @@ dinosaur-fart<span class="w">  </span>lost+found
 </code></pre></div>
 </div>
 <p>And now exit and shell into another pod…</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span>kubectl<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>-it<span class="w"> </span>-n<span class="w"> </span>flux-operator<span class="w"> </span>flux-sample-1-xnf56<span class="w"> </span>bash
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span>kubectl<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>-it<span class="w"> </span>flux-sample-1-xnf56<span class="w"> </span>bash
 </code></pre></div>
 </div>
 <p>Is the dinosaur fart there?</p>
@@ -944,23 +893,19 @@ dinosaur-fart<span class="w">  </span>lost+found
 <h2 id="run-snakemake">Run Snakemake<a class="headerlink" href="#run-snakemake" title="Link to this heading">¶</a></h2>
 <p>Let’s now run Snakemake! Since we haven’t properly set up permissions, we need to set up the workspace as root,
 and then give ownership to the flux user. Let’s prepare snakemake data in <code class="docutils literal notranslate"><span class="pre">/workflow</span></code> and run it.</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span>git<span class="w"> </span>clone<span class="w"> </span>--depth<span class="w"> </span><span class="m">1</span><span class="w"> </span>https://github.com/snakemake/snakemake-tutorial-data<span class="w"> </span>/workflow/snakemake-workflow
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>git<span class="w"> </span>clone<span class="w"> </span>--depth<span class="w"> </span><span class="m">1</span><span class="w"> </span>https://github.com/snakemake/snakemake-tutorial-data<span class="w"> </span>/workflow/snakemake-workflow
 </code></pre></div>
 </div>
 <p>You’ll want to add the <a class="reference external" href="https://github.com/rse-ops/flux-hpc/blob/main/snakemake/atacseq/Snakefile">Snakefile</a> for your workflow
 along with a <a class="reference external" href="https://github.com/rse-ops/flux-hpc/blob/main/snakemake/atacseq/scripts/plot-quals.py">plotting script</a>:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span>wget<span class="w"> </span>-O<span class="w"> </span>/workflow/snakemake-workflow/Snakefile<span class="w"> </span>https://raw.githubusercontent.com/rse-ops/flux-hpc/main/snakemake/atacseq/Snakefile
-$<span class="w"> </span>mkdir<span class="w"> </span>-p<span class="w"> </span>/workflow/snakemake-workflow/scripts
-$<span class="w"> </span>wget<span class="w"> </span>-O<span class="w"> </span>/workflow/snakemake-workflow/scripts/plot-quals.py<span class="w"> </span>https://raw.githubusercontent.com/rse-ops/flux-hpc/main/snakemake/atacseq/scripts/plot-quals.py
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>wget<span class="w"> </span>-O<span class="w"> </span>/workflow/snakemake-workflow/Snakefile<span class="w"> </span>https://raw.githubusercontent.com/rse-ops/flux-hpc/main/snakemake/atacseq/Snakefile
+mkdir<span class="w"> </span>-p<span class="w"> </span>/workflow/snakemake-workflow/scripts
+wget<span class="w"> </span>-O<span class="w"> </span>/workflow/snakemake-workflow/scripts/plot-quals.py<span class="w"> </span>https://raw.githubusercontent.com/rse-ops/flux-hpc/main/snakemake/atacseq/scripts/plot-quals.py
 </code></pre></div>
 </div>
-<p>The workflow is now ready, but we need to give ownership to the flux user.</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span>sudo<span class="w"> </span>chown<span class="w"> </span>flux<span class="w"> </span>-R<span class="w"> </span>/workflow/snakemake-workflow
-</code></pre></div>
-</div>
-<p>Now let’s run it! Remember that we are in interactive mode, so the broker is already running and we need to connect to it,
-and as the flux user. Let’s do that first.</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span>sudo<span class="w"> </span>-u<span class="w"> </span>flux<span class="w"> </span>-E<span class="w"> </span><span class="k">$(</span>env<span class="k">)</span><span class="w"> </span>-E<span class="w"> </span><span class="nv">HOME</span><span class="o">=</span>/home/flux<span class="w"> </span>flux<span class="w"> </span>proxy<span class="w"> </span>local:///run/flux/local<span class="w"> </span>bash
+<p>Now let’s run it! Remember that we are in interactive mode, so the broker is already running and we need to connect to it. Let’s do that first.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code><span class="nb">source</span><span class="w"> </span>/mnt/flux/flux-view.sh
+flux<span class="w"> </span>proxy<span class="w"> </span><span class="nv">$fluxsocket</span><span class="w"> </span>bash
 </code></pre></div>
 </div>
 <p>Before snakemake, let’s run a test job. You should see some subset of nodes:</p>
@@ -979,16 +924,9 @@ flux-sample-1
 <span class="w">      </span>down<span class="w">      </span><span class="m">0</span><span class="w">        </span><span class="m">0</span><span class="w"> </span>
 </code></pre></div>
 </div>
-<p>Note that you are now the flux user:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>flux@flux-sample-1:/code$<span class="w"> </span>whoami
-</code></pre></div>
-</div>
-<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><code><span class="go">flux</span>
-</code></pre></div>
-</div>
-<p>Let’s go to the worklow directory and run Snakemake using Flux!</p>
+<p>Let’s go to the worklow directory and run Snakemake using Flux.</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span><span class="nb">cd</span><span class="w"> </span>/workflow/snakemake-workflow
-$<span class="w"> </span>snakemake<span class="w"> </span>--cores<span class="w"> </span><span class="m">1</span><span class="w"> </span>--flux<span class="w"> </span>--jobs<span class="w"> </span><span class="m">4</span>
+$<span class="w"> </span>snakemake<span class="w"> </span>--cores<span class="w"> </span><span class="m">1</span><span class="w"> </span>--exeutor<span class="w"> </span>flux<span class="w"> </span>--jobs<span class="w"> </span><span class="m">4</span>
 </code></pre></div>
 </div>
 <details>
@@ -1203,7 +1141,7 @@ up the storage. The Filestore instance is created with your PVC, and it’s clea
   <small>
     
       Last update:
-      Sep 10, 2023
+      Mar 15, 2024
     
   </small>
 </div>
@@ -1250,13 +1188,13 @@ up the storage. The Filestore instance is created with your PVC, and it’s clea
       
       
         
-        <a href="csi.html" class="md-footer__link md-footer__link--next" aria-label="Next: CSI for Cloud Storage" rel="next">
+        <a href="../../about/index.html" class="md-footer__link md-footer__link--next" aria-label="Next: About the Flux Operator" rel="next">
           <div class="md-footer__title">
             <div class="md-ellipsis">
               <span class="md-footer__direction">
                 Next
               </span>
-              CSI for Cloud Storage
+              About the Flux Operator
             </div>
           </div>
           <div class="md-footer__button md-icon">
@@ -1280,7 +1218,7 @@ up the storage. The Filestore instance is created with your PVC, and it’s clea
   
     Created using
     <a href="https://www.sphinx-doc.org/" target="_blank" rel="noopener">Sphinx</a>
-    7.2.5.
+    7.2.6.
      and
     <a href="https://github.com/jbms/sphinx-immaterial/" target="_blank" rel="noopener">Sphinx-Immaterial</a>
   
@@ -1315,7 +1253,7 @@ up the storage. The Filestore instance is created with your PVC, and it’s clea
     <script id="__config" type="application/json">{"base": "../..", "features": ["navigation.expand", "navigation.tabs", "toc.integrate", "navigation.sections", "navigation.instant", "header.autohide", "navigation.top", "navigation.tracking", "search.highlight", "search.share", "toc.follow", "toc.sticky", "content.tabs.link", "announce.dismiss"], "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version.title": "Select version"}}</script>
     
       
-        <script src="../../_static/sphinx_immaterial_theme.1b5b7a2d5891aec19.min.js?v=14bafe8d"></script>
+        <script src="../../_static/sphinx_immaterial_theme.f9d9eeeb247ace16c.min.js?v=9a299579"></script>
         <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
     
   </body>

@@ -21,7 +21,7 @@ The yaml spec will normally have an API version, the kind `MiniCluster` and then
 a name and namespace to identify the custom resource definition followed by the spec for it.
 
 ```yaml
-apiVersion: flux-framework.org/v1alpha1
+apiVersion: flux-framework.org/v1alpha2
 kind: MiniCluster
 metadata:
   name: flux-sample
@@ -33,7 +33,7 @@ spec:
 ### Spec
 
 Under the spec, there are several variables to define. Descriptions are included below, and we
-recommend that you look at [config/samples](https://github.com/flux-framework/flux-operator/tree/main/config/samples)
+recommend that you look at [config/samples](https://github.com/flux-framework/flux-operator/tree/main/examples)
 in the repository  and the [flux-hpc](https://github.com/rse-ops/flux-hpc) repository to see
 more.
 
@@ -53,6 +53,8 @@ scale smaller, you can re-apply the CRD to scale down. Flux will see the nodes a
 of course you will want to be careful about the state of your cluster when you do this. If you scale
 down, you cannot go below 1 node, and if you scale up, you cannot exceed the maximum of the `size` or
 `maxsize`.
+
+Note that if you don't define tasks, you'll by default get a submit/batch or start command that defaults to 1 task, assuming testing, e.g., `-n 1`. If you define more tasks than nodes (size), you'll get `-N <size> and -n <tasks>`. If you only want to get `-N <size>` then sets tasks explicitly to 0.
 
 ### maxSize
 
@@ -75,7 +77,7 @@ The `tasks` variable under the spec is the number of tasks that each pod in the 
   tasks: 4
 ```
 
-This value defaults to 1.
+This value defaults to 1. Note that if you don't define tasks, you'll by default get a submit/batch or start command that defaults to 1, assuming testing, e.g., `-n 1`. If you define more tasks than nodes (size), you'll get `-N <size> and -n <tasks>`. If you only want to get `-N <size>` then sets tasks explicitly to 0.
 
 ### interactive
 
@@ -125,171 +127,23 @@ If a Job is suspended (at creation or through an update), this timer will effect
   deadlineSeconds: 100
 ```
 
-### volumes
-
-Volumes can be defined on the level of the MiniCluster that are then used by containers.
-
- - For MiniKube, these volumes are expected to be inside of the VM, e.g., accessed via `minikube ssh`
- - For an actual cluster, they should be on the node running the pod.
-
-#### volume ids
-
-For each volume under "volumes" we enforce a unique name by way of using key values - e.g., "myvolume"
-in the example below can then be referenced for a container:
-
-```yaml
-volumes:
-  myvolume:
-    path: /full/path/to/volume
-    storageClass: hostpath
-```
-
-The "storageClass" above (which you can leave out) defaults to hostpath, and should be the storage class that your cluster provides.
-The Operator createst the "hostpath" volume claim. This currently is always created as a host path volume claim in MiniKube,
-and likely in the future will have different logic if it varies from that.
-
-#### labels
-
-You can add labels:
-
-
-```yaml
-volumes:
-  myvolume:
-    path: /full/path/to/volume
-    storageClass: hostpath
-    labels:
-      type: "local"
-```
-
-#### delete
-
-By default, we will cleanup the persistent volume. To not do this (e.g., for a more permanent mount) set delete
-to false:
-
-```yaml
-volumes:
-  myvolume:
-    path: /full/path/to/volume
-    storageClass: csi-gcs
-    delete: false
-```
-
-#### driver
-
-If you are using anything aside from hostpath, you'll need a reference to a storage driver (usually a plugin)
-you've installed separately. This can also be referenced as a provisioner. Here is an example for Google Cloud storage:
-
-```yaml
-volumes:
-  myvolume:
-    path: /full/path/to/volume
-    storageClass: csi-gcs
-    driver: gcs.csi.ofek.dev
-```
-
-#### volumeHandle
-
-If your volume handle differs from your storage class name, you can define it:
-
-```yaml
-volumes:
-  myvolume:
-    path: /full/path/to/volume
-    storageClass: csi-gcs
-    driver: gcs.csi.ofek.dev
-    volumeName: manualbucket/path
-```
-
-#### attributes
-
-If your volume has attributes, you can add them too:
-
-```yaml
-volumes:
-  myvolume:
-    attributes:
-    mounter: geesefs
-    capacity: 25Gi
-```
-
-
-#### request storage size
-
-By default, a capacity request is "5Gi", and we only do this because the field is required. However, keep in mind
-for many some cloud storage interfaces there is no concept of a max.
-This is defined as a string to be parsed. To tweak that, meaning
-that this container will request this amount of storage for the container (and here we show a different storageclass
-for Google Cloud)
-
-```yaml
-volumes:
-  myvolume:
-    path: /full/path/to/volume
-    capacity: 5Gi
-    storageClass: csi-gcs
-```
-
-Since storage classes are created separately (not by the operator) you should check with your storage
-class to ensure resource limits work with your selection above.
-
-#### secret
-
-For a CSI (container storage interface) you usually need to provide a secret reference. For example,
-for GKE we create a service account with the appropriate permissions, and then apply them as a secret named `csi-gks-secret`:
-
-```yaml
-volumes:
-  myvolume:
-    path: /full/path/to/volume
-    capacity: 1Gi
-    storageClass: csi-gcs
-    secret: "csi-gcs-secret"
-```
-
-The secret (for now) should be in the default namespace.
-
-#### annotations
-
-To add annotations for the volume use "annotations"
-
-```yaml
-volumes:
-  myvolume:
-    annotations:
-      provider.svc/attribute: value
-```
-
-#### claimAnnotations
-
-To set annotations for the claim:
-
-```yaml
-volumes:
-  myvolume:
-    claimAnnotations:
-      gcs.csi.ofek.dev/location: us-central1
-      gcs.csi.ofek.dev/project-id: my-project
-      gcs.csi.ofek.dev/bucket: flux-operator-storage
-```
-
-### cleanup
-
-If you add any kind of persistent volume to your MiniCluster, it will likely need a cleanup after the fact
-(after you bring the MiniCluster down). By default, the operator will perform this cleanup, checking if the
-Job status is "Completed" and then removing the pods, Persistent Volume Claims, and Persistent Volumes.
-If you want to disable this cleanup:
-
-```yaml
-  cleanup: false
-```
-
-If you are streaming the logs with `kubectl logs` the steam would stop when the broker pod is completed,
-so typically you will get the logs as long as you are streaming when the job starts running.
-
 ### network
 
 The network section exposes networking options for the Flux MiniCluster.
+
+#### disableAffinity
+
+By default, the Flux Operator uses [Affinity](https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#affinity-and-anti-affinity) and AntiAffinity (specifically `topology.kubernetes.io/zone` and `kubernetes.io/hostname` to ensure
+that one pod is mapped per node. However, advanced use cases might warrant removing these. You can disable them as follows:
+
+```yaml
+network:
+  disableAffinity: true
+```
+
+We put this under network due to the second rule that is about hostname, and (abstractly) you can imagine we are talking in the scope of at what level to assign a single worker associated with a hostname.
+If you need finer-tuned control than disabling entirely, please open an issue to let us know.
+
 
 #### headlessName
 
@@ -302,7 +156,103 @@ network:
 
 ### flux
 
-Settings under the Flux directive typically refer to flux options, e.g., for the broker or similar.
+The operator works to add Flux to your application container dynamically by way of using a provisioner container -
+one that is run as a sidecar alongside your container, and then the view is copied over and flux run as your
+active user. Settings under the Flux directive typically refer to flux options, e.g., for the broker or similar.
+
+#### arch
+
+If you are using an arm based container, ensure to add the architecture flag to designate that.
+
+```yaml
+flux:
+   arch: "arm"
+```
+
+Note that this doesn't edit the container, but rather the binaries installed for it (e.g., to wait for files).
+
+
+#### container
+
+You can customize the flux container, and most attributes that are available for a standard container are available here.
+As an example:
+
+```yaml
+flux:
+   container:
+     image: ghcr.io/converged-computing/flux-view-rocky:tag-9
+     pythonPath: /mnt/flux/view/lib/python3.11
+```
+
+When enabled, meaning that we use flux from a view within the container, these containers are expected to have Flux built into a spack view, and in a particular way, so if you want to tweak or contribute a new means it's recommended to look at the [build repository](https://github.com/converged-computing/flux-views). This means that (if desired) you can customize this container base. We provide the following bases of interest:
+
+ - [ghcr.io/converged-computing/flux-view-rocky:tag-9](https://github.com/converged-computing/flux-views/pkgs/container/flux-view-rocky)
+ - [ghcr.io/converged-computing/flux-view-rocky:tag-8](https://github.com/converged-computing/flux-views/pkgs/container/flux-view-rocky)
+ - [ghcr.io/converged-computing/flux-view-ubuntu:tag-focal](https://github.com/converged-computing/flux-views/pkgs/container/flux-view-ubuntu)
+
+Note that we have [arm builds](https://github.com/converged-computing/flux-views/tree/main/arm) available for each of rocky and ubuntu as well.
+If you don't want to use Flux from a view (and want to use the v1apha1 design of the Flux Operator that had the application alongside Flux) you can do that by way of disabling the flux view:
+
+```yaml
+flux:
+   container:
+     image: ubuntu:focal
+     disable: true
+```
+
+In the above, the Flux Operator won't expect Flux to be installed in the container you specify. We require a container to be specified,
+however, because we still use the init strategy to set up configuration files. Everything except for the flux resources `R` file
+is generated in that step (the broker configs and paths for archives and the broker socket). Keep in mind that if you intend
+to deploy a sidecar container alongside your application container, you will still have access to this shared location to connect
+to the socket, however you will need to provide your own install of Flux (ideally to match the one your application uses) to connect
+to it. For a simple example of running lammps with this setup (without the sidecar) see the [disable-view](https://github.com/flux-framework/flux-operator/blob/main/examples/tests/disable-view)
+example.
+
+Please let us know if you'd like a base not provided.  Finally, the flux container can also take a specification of resources, just like a regular flux MiniCluster container:
+
+```yaml
+flux:
+   container:
+      resources:
+        requests:
+          cpu: "40"
+          memory: "200M"
+        limits:
+          cpu: "40"
+          memory: "200M"         
+```
+
+Note that if you expect to be able to schedule more than one pod per node, you will need to create pods with [Guaranteed](https://kubernetes.io/docs/tasks/configure-pod-container/quality-service-pod/#create-a-pod-that-gets-assigned-a-qos-class-of-guaranteed) QoS, 
+in addition to creating your cluster with a config that specifies the cpu manager policy to be [static](https://kubernetes.io/docs/tasks/administer-cluster/cpu-management-policies/#static-policy):
+
+
+```yaml
+kubeletConfig:
+  cpuManagerPolicy: static
+linuxConfig:
+ sysctl:
+   net.core.somaxconn: '2048'
+   net.ipv4.tcp_rmem: '4096 87380 16777216'
+   net.ipv4.tcp_wmem: '4096 16384 16777216'
+```
+
+And then your pod containers also both need to have memory and cpu defined.  In summary:
+
+1. Ensure cpuManagerPolicy is static
+2. Create all pod containers (including the init container) in the MiniCluster to have a cpu and memory definition.
+
+### completeWorkers
+
+By default, when a follower broker is killed it is attempted to restart. While we could use [JobBackoffPerIndex](https://kubernetes.io/blog/2023/08/21/kubernetes-1-28-jobapi-update/#backoff-limit-per-index) to prevent it from restarting under
+any conditions, this currently requires a feature gate (Kubernetes 1.28) so we are opting for a more simple approach. You can set `completeWorkers` to true, in which case when a lead broker is killed, it will Complete and not recreate.
+
+```yaml
+spec:
+  flux:
+    completeWorkers: true
+```
+
+This can be useful for cases of autoscaling in the down direction when you need to drain a node, and then delete the pod.
 
 #### submitCommand
 
@@ -348,26 +298,6 @@ The log level to provide to flux, given that test mode is not on.
 flux:
   logLevel: 7
 ```
-
-#### installRoot
-
-We traditionally install flux to `/usr`, however you might have a container
-with a non-traditional install location! You can edit this with the flux->installRoot
-directive:
-
-```yaml
-flux:
-  installRoot: /usr/local
-```
-
-Or for a spack container, with a view at `/opt/view`:
-
-```yaml
-flux:
-  installRoot: /opt/view
-```
-
-Note that the operator will still create assets for flux at `/etc/flux`.
 
 #### wrap
 
@@ -415,14 +345,14 @@ By default, the Flux MiniCluster will be created with a headless service across 
 meaning that all pods can ping one another via a fully qualified hostname. As an example,
 the 0 index (the lead broker) of an indexed job will be available at:
 
-```
-flux-sample-0.flux-service.flux-operator.svc.cluster.local: Nam
+```console
+flux-sample-0.flux-service.flux-operator.svc.cluster.local
 ```
 
 Where "flux-sample" is the name of the job. Index 1 would be at:
 
-```
-flux-sample-1.flux-service.flux-operator.svc.cluster.local: Nam
+```console
+flux-sample-1.flux-service.flux-operator.svc.cluster.local
 ```
 
 However, it's the case that only the lead broker (index 0) needs to be reachable
@@ -449,20 +379,6 @@ flux:
      ...
 ```
 
-#### curveCertSecret
-
-To provide the name of a secret with a key `curve.cert` with a curve certificate to
-the MiniCluster, you can define this variable. This is recommended (and likely)
-for bursting scenarios when you need to share your primary cluster certificate
-with an external one.
-
-```yaml
-flux:
-  curveCertSecret: curve-cert
-```
-
-This is recommended in favor of the plain text, below, and if both are
-provided the secret will be honored first.
 
 #### curveCert
 
@@ -474,22 +390,6 @@ flux:
   curveCert: |
      [exec]
      ...
-```
-
-#### mungeSecret
-
-In the case that you are also bursting, you'll need the shared munge key between clusters.
-Since this is a binary file, we recommend you create a secret from the file:
-
-```bash
-$ kubectl create secret --namespace flux-operator munge-key --from-file=/etc/munge/munge.key
-```
-
-And then tell the operator to expect it as a volume:
-
-```yaml
-flux:
-  mungeSecret: munge-key
 ```
 
 #### connectTimeout
@@ -721,36 +621,6 @@ can access! This also assumes we are OK updating the archive state (and don't wa
 be adjusted if needed.
 
 
-### users
-
-If you add a listing of users, minimally you need to provide a name for each one:
-
-```yaml
-users:
-  - name: peenut
-  - name: squidward
-  - name: avocadosaurus
-```
-
-The users will be created and added to the Flux Accounting database. If you don't provide passwords,
-they will be generated randomly (and you will need to retrieve them from the operator logs).
-You can also define them manually:
-
-```yaml
-users:
-  - name: peenut
-    password: butter
-  - name: squidward
-    password: underdac
-  - name: avocadosaurus
-    password: eathings
-```
-
-The passwords (if provided) are validated to be 8 or fewer characters.
-Note that although we don't validate this in the job, multi-user mode only makes sense to
-provide alongside a custom resource definition without a command, meaning you submit
-directly to the Flux Restful API server.```
-
 ### pod
 
 Variables and attributes for each pod in the Indexed job.
@@ -791,6 +661,17 @@ pod:
     memory: 500M
     cpu: 4
 ```
+
+#### schedulerName
+
+Request that the pod be scheduled by a custom scheduler.
+
+```yaml
+pod:
+  schedulerName: fluence
+```
+
+For fluence you can see the custom scheduler plugin at [flux-framework/flux-k8s](https://github.com/flux-framework/flux-k8s).
 
 #### serviceAccountName
 
@@ -863,11 +744,9 @@ This value when unset defaults to 1.
 Providing (or not providing) a command is going to dictate the behavior of your MiniCluster!
 
 1. Providing a custom command means the MiniCluster is ephemeral - it will run the command and clean up.
-2. Not providing a command means that we will create a persistent MiniCluster running a RESTFul API service (and GUI) to submit jobs to.
+2. Not providing a command means that we will create a persistent MiniCluster running in interactive mode.
 
 ```yaml
-    # Don't set a command unless you want to forgo running the restful server to submit
-    # commands to! E.g., instead of starting the server, it will just run your job command.
     command: lmp -v x 2 -v y 2 -v z 2 -in in.reaxc.hns -nocite
 ```
 
@@ -914,7 +793,7 @@ you don't need this. But we do hope you are able to practice open science and sh
 
 #### workingDir
 
-The container likely has a set working directory, and if you are running the RESTful API service (meaning
+The container likely has a set working directory, and if you are running an interactive cluster (meaning
 you start without a command, as shown above) this will likely be the application folder. If you are launching
 a job directly with flux start and require a particular working directory, set it here!
 
@@ -922,10 +801,6 @@ a job directly with flux start and require a particular working directory, set i
     # You can set the working directory if your container WORKDIR is not correct.
     workingDir: /home/flux/examples/reaxff/HNS
 ```
-
-Remember that if you don't provide a command and launch the RESTFul API, you can provide the working
-directory needed on the level of each job submit, and you don't need to define it here.
-In fact, if you are using the flux-restful-api server, it will be changed anyway.
 
 #### pullAlways
 
@@ -1131,7 +1006,7 @@ but then set batch to true:
 
 ```yaml
 containers:
-  - image: ghcr.io/flux-framework/flux-restful-api:latest
+  - image: rockylinux:9
 
     # Indicate this should be a batch job
     batch: true
@@ -1151,7 +1026,7 @@ jobs are numbered by the order you provide above. To change this path:
 
 ```yaml
 containers:
-  - image: ghcr.io/flux-framework/flux-restful-api:latest
+  - image: rockylinux:9
 
     # Indicate this should be a batch job
     batch: true
@@ -1214,39 +1089,68 @@ lifeCycle:
   preStopExec: ...
 ```
 
-
 ### volumes
 
-Volumes that are defined on the level of the container must be defined at the top level of the MiniCluster.
-As an example, here is how we tell the container to use the already defined volume "myvolume" to be mounted
-in the container as "/data":
+As of version 0.2.0, the Flux Operator controlling its own volumes has been removed, and the concept of an "existingVolume" is now just a volume.
+We did this because volumes are complex and it was challenging to support every use case. Thus, our strategy is to allow the user to create
+the volumes and persistent volume claims that the MiniCluster needs, and simply tell it about them. A volume (that must exist) can be:
 
-```yaml
-volumes:
-  myvolume:
-    path: /data
-```
-
-The `myvolume` key must be defined in the MiniCluster set of volumes, and this is checked.
-If you want to change the readOnly status to true:
-
-```yaml
-volumes:
-  myvolume:
-    path: /data
-    readOnly: true
-```
-
-### existingVolumes
-
-An existing volume can be:
-
+ - a hostpath (good for local development)
  - a persistent volume claim (PVC) and persistent volume (PV) that you've created
  - a secret that you've created
  - a config map that you've created
 
 and for all of the above, you want to provide it to the operator, which will work either for a worker
 pod (in the indexed job) or a service. 
+
+#### hostpath example
+
+You might start by creating a pv and a pvc:
+
+```yaml
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: data
+spec:
+  storageClassName: manual
+  capacity:
+    storage: 5Gi
+  accessModes:
+    - ReadWriteMany
+  hostPath:
+    path: /data
+---
+apiVersion: v1 
+kind: PersistentVolumeClaim
+metadata: 
+  name: data
+spec: 
+  accessModes: 
+    - ReadWriteMany
+  resources: 
+    requests: 
+      storage: 1Gi
+```
+And then to add this PVC to your MiniCluster:
+
+```yaml
+apiVersion: flux-framework.org/v1alpha2
+kind: MiniCluster
+metadata:
+  name: flux-sample
+spec:
+  size: 2
+  containers:
+    - image: rockylinux:9
+      command: ls /data
+      volumes:
+        data:
+          path: /data
+          hostPath: /data
+```
+
+An example is provided in the [volumes test](https://github.com/flux-framework/flux-operator/tree/main/examples/tests/volumes).
 
 #### persistent volume claim example
 
@@ -1261,7 +1165,7 @@ containers:
   - image: ghcr.io/rse-ops/atacseq:app-latest
 
     # This is an existing PVC (and associated PV) we created before the MiniCluster
-    existingVolumes:
+    volumes:
       data:
         path: /workflow
         claimName: data 
@@ -1282,7 +1186,7 @@ to `/etc/nginx/conf.d`
 services:
   - image: nginx
     name: nginx
-    existingVolumes:
+    volumes:
       nginx-conf:
         configMapName: nginx-conf 
         path: /etc/nginx/conf.d
@@ -1310,7 +1214,7 @@ data:
     }
 ```
 
-Note that the above block `existingVolumes` is valid to be under the
+Note that the above block `volumes` is valid to be under the
 MiniCluster->containers section too. Either MiniCluster containers OR service
 containers can have existingVolumes of any type.
 
@@ -1323,49 +1227,10 @@ to the indexed job container:
 containers:
   - image: ghcr.io/rse-ops/singularity:tag-mamba
     workingDir: /data
-    existingVolumes:
+    volumes:
       certs:
         path: /etc/certs
         secretName: certs
 ```
 
 The above shows an existing secret named "certs" that we will mount into `/etc/certs`.
-
-### fluxRestful
-
-The "fluxRestful" section has a few parameters to dictate the installation of the
-[Flux Restful API](https://github.com/flux-framework/flux-restful-api), which provides
-a user interface to submit jobs.
-
-#### branch
-
-The branch parameter controls if you want to clone a custom branch (e.g., for testing).
-It defaults to main.
-
-```yaml
-  fluxRestful:
-    branch: feature-branch
-```
-
-#### port
-
-The port parameter controls the port you want to run the FluxRestful server on,
-within the cluster. Remember that you can always forward this to something else!
-It defaults to 5000.
-
-```yaml
-  fluxRestful:
-    port: 5000
-```
-
-#### secretKey
-
-We use a secretKey to encode all payloads to the server. If you don't specify one,
-the Flux Operator will make one for you! If you intend to communicate with your
-MiniCluster outside of this context, you can either grab this from the logs
-or define your own as follows:
-
-```yaml
-  fluxRestful:
-    secretKey: notsosecrethoo
-```

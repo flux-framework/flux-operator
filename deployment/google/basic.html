@@ -33,7 +33,7 @@
         <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
       
     
-        <link rel="stylesheet" type="text/css" href="../../_static/sphinx_immaterial_theme.a60204c58f5e4ff66.min.css?v=f7c3c3dc" />
+        <link rel="stylesheet" type="text/css" href="../../_static/sphinx_immaterial_theme.359ec555e2989f00f.min.css?v=379f618b" />
         <link rel="stylesheet" type="text/css" href="../../_static/custom.css?v=d68d0989" />
     <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
     
@@ -540,21 +540,6 @@
               
   
   
-  
-  
-    <li class="md-nav__item">
-      <a href="../ibm.html" class="md-nav__link">
-        <span title="/deployment/ibm.md (reference label)" class="md-ellipsis">IBM Cloud</span>
-      </a>
-    </li>
-  
-
-            
-          
-            
-              
-  
-  
     
   
   
@@ -562,7 +547,7 @@
     <li class="md-nav__item md-nav__item--active md-nav__item--nested">
       
       
-        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_3_1_4" type="checkbox" id="__nav_3_1_4" checked>
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_3_1_3" type="checkbox" id="__nav_3_1_3" checked>
       
       
       
@@ -570,14 +555,14 @@
         <div class="md-nav__link md-nav__link--index ">
           <a href="index.html"><span title="/deployment/google/index.rst (reference label)" class="md-ellipsis">Google Cloud</span></a>
           
-            <label for="__nav_3_1_4">
+            <label for="__nav_3_1_3">
               <span class="md-nav__icon md-icon"></span>
             </label>
           
         </div>
       
       <nav class="md-nav" aria-label="Google Cloud" data-md-level="3">
-        <label class="md-nav__title" for="__nav_3_1_4">
+        <label class="md-nav__title" for="__nav_3_1_3">
           <span class="md-nav__icon md-icon"></span>
           <span title="/deployment/google/index.rst (reference label)" class="md-ellipsis">Google Cloud</span>
         </label>
@@ -657,13 +642,6 @@
   
 </li>
         
-          <li class="md-nav__item">
-  <a href="#create-flux-operator-namespace" class="md-nav__link">
-    <span title="/deployment/google/basic.md#create-flux-operator-namespace (reference label)" class="md-ellipsis">Create Flux Operator namespace</span>
-  </a>
-  
-</li>
-        
       </ul>
     </nav>
   
@@ -728,36 +706,6 @@
     <li class="md-nav__item">
       <a href="filestore.html" class="md-nav__link">
         <span title="/deployment/google/filestore.md (reference label)" class="md-ellipsis">Filestore <wbr>(NFS)</span>
-      </a>
-    </li>
-  
-
-            
-          
-            
-              
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="csi.html" class="md-nav__link">
-        <span title="/deployment/google/csi.md (reference label)" class="md-ellipsis">CSI for Cloud Storage</span>
-      </a>
-    </li>
-  
-
-            
-          
-            
-              
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="fusion.html" class="md-nav__link">
-        <span title="/deployment/google/fusion.md (reference label)" class="md-ellipsis">Fusion Storage</span>
       </a>
     </li>
   
@@ -856,8 +804,10 @@
   </a>
 
 <h1 id="lammps-on-google-cloud">Lammps on Google Cloud<a class="headerlink" href="#lammps-on-google-cloud" title="Link to this heading">¶</a></h1>
+<p><strong><a class="reference external" href="https://github.com/flux-framework/flux-operator/blob/main/examples/storage/google/lammps/minicluster.yaml">MiniCluster YAML</a></strong></p>
 <p>This basic tutorial will walk through creating a MiniCluster to run LAMMPS! You should have
 already <a class="reference internal" href="setup.html"><span class="std std-doc">setup your workspace</span></a></p>
+<p><strong>Note</strong> this has not been tested with the Version 2 Flux Operator.</p>
 <h2 id="create-cluster">Create Cluster<a class="headerlink" href="#create-cluster" title="Link to this heading">¶</a></h2>
 <p>Let’s use gcloud to create a cluster, and we are purposefully going to choose
 a very small node type to test. Note that I choose us-central1-a because it tends
@@ -989,103 +939,62 @@ No<span class="w"> </span>LimitRange<span class="w"> </span>resource.
 <span class="go">operator-system   operator-controller-manager-56b5bcf9fd-m8wg4               2/2     Running   0          73s</span>
 </code></pre></div>
 </div>
-<h3 id="create-flux-operator-namespace">Create Flux Operator namespace<a class="headerlink" href="#create-flux-operator-namespace" title="Link to this heading">¶</a></h3>
-<p>Make your namespace for the flux-operator custom resource definition (CRD), which is the yaml file above that generates the MiniCluster:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span>kubectl<span class="w"> </span>create<span class="w"> </span>namespace<span class="w"> </span>flux-operator
-</code></pre></div>
-</div>
 <p>Now let’s run a short experiment with LAMMPS!</p>
 <h2 id="custom-resource-definition">Custom Resource Definition<a class="headerlink" href="#custom-resource-definition" title="Link to this heading">¶</a></h2>
 <p>The Custom Resource Definition (CRD) defines our MiniCluster, and is what we hand to the flux
 operator to create it.  Here is the CRD for a small lammps run.</p>
-<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><code><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">flux-framework.org/v1alpha1</span>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><code><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">flux-framework.org/v1alpha2</span>
 <span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">MiniCluster</span>
 <span class="nt">metadata</span><span class="p">:</span>
 <span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">flux-sample</span>
-<span class="w">  </span><span class="nt">namespace</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">flux-operator</span>
 <span class="nt">spec</span><span class="p">:</span>
-<span class="w">  </span><span class="c1"># Number of pods to create for MiniCluster</span>
 <span class="w">  </span><span class="nt">size</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">4</span>
-
-<span class="w">  </span><span class="c1"># Disable verbose output</span>
 <span class="w">  </span><span class="nt">logging</span><span class="p">:</span>
 <span class="w">    </span><span class="nt">quiet</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
-
-<span class="w">  </span><span class="c1"># This is a list because a pod can support multiple containers</span>
 <span class="w">  </span><span class="nt">containers</span><span class="p">:</span>
-<span class="w">    </span><span class="c1"># The container URI to pull (currently needs to be public)</span>
-<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">image</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ghcr.io/rse-ops/lammps:flux-sched-focal-v0.24.0</span>
-
-<span class="w">      </span><span class="c1"># You can set the working directory if your container WORKDIR is not correct.</span>
-<span class="w">      </span><span class="nt">workingDir</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">/home/flux/examples/reaxff/HNS</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">image</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ghcr.io/converged-computing/metric-lammps:latest</span>
+<span class="w">      </span><span class="nt">workingDir</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">/opt/lammps/examples/reaxff/HNS</span>
 <span class="w">      </span><span class="nt">command</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">lmp -v x 2 -v y 2 -v z 2 -in in.reaxc.hns -nocite</span>
 </code></pre></div>
 </div>
-<p>You can save the above file as <code class="docutils literal notranslate"><span class="pre">minicluster-lammps.yaml</span></code> to get started.</p>
 <h2 id="create-the-lammps-job">Create the Lammps Job<a class="headerlink" href="#create-the-lammps-job" title="Link to this heading">¶</a></h2>
 <p>Now let’s apply the custom resource definition to create the lammps MiniCluster!
-The file we generated above should be in your present working directory.
-Importantly, we have set <code class="docutils literal notranslate"><span class="pre">localDeploy</span></code> to false because we need to create volume
-claims and not local host mounts for shared resources.</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span>kubectl<span class="w"> </span>apply<span class="w"> </span>-f<span class="w"> </span>minicluster-lammps.yaml
+The file we generated above should be in your present working directory.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span>kubectl<span class="w"> </span>apply<span class="w"> </span>-f<span class="w"> </span>minicluster.yaml
 </code></pre></div>
 </div>
 <p>There are different ways to see logs for pods. First, see pods running and state.
-You probably want to wait until the state changes from <code class="docutils literal notranslate"><span class="pre">ContainersCreating</span></code> to <code class="docutils literal notranslate"><span class="pre">Running</span></code>
+You probably want to wait until the state changes to <code class="docutils literal notranslate"><span class="pre">Running</span></code>
 because this is where we are pulling the chonker containers.</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span>kubectl<span class="w"> </span>get<span class="w"> </span>-n<span class="w"> </span>flux-operator<span class="w"> </span>pods
 </code></pre></div>
 </div>
 <p>If you need to debug (or see general output for a pod about creation) you can do:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span>kubectl<span class="w"> </span>-n<span class="w"> </span>flux-operator<span class="w"> </span>describe<span class="w"> </span>pods<span class="w"> </span>flux-sample-0-742bm
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span>kubectl<span class="w"> </span>describe<span class="w"> </span>pods<span class="w"> </span>flux-sample-0-742bm
 </code></pre></div>
 </div>
 <p>And finally, the most meaty piece of metadata is the log for the pod,
 where the Flux Operator will be setting things up and starting flux.</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code><span class="c1"># Add the -f to keep it hanging</span>
-$<span class="w"> </span>kubectl<span class="w"> </span>-n<span class="w"> </span>flux-operator<span class="w"> </span>logs<span class="w"> </span>flux-sample-0-742bm<span class="w"> </span>-f
-</code></pre></div>
-</div>
-<p>To shell into a pod to look around (noting where important flux stuff is)</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span>kubectl<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>--stdin<span class="w"> </span>--tty<span class="w"> </span>-n<span class="w"> </span>flux-operator<span class="w"> </span>flux-sample-0-742bm<span class="w"> </span>--<span class="w"> </span>/bin/bash
-</code></pre></div>
-</div>
-<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><code><span class="go">ls /mnt/curve</span>
-<span class="go">ls /etc/flux</span>
-<span class="go">ls /etc/flux/config</span>
+$<span class="w"> </span>kubectl<span class="w">  </span>logs<span class="w"> </span>flux-sample-0-742bm<span class="w"> </span>-f
 </code></pre></div>
 </div>
 <p>To get logs for the operator itself:</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span>kubectl<span class="w"> </span>logs<span class="w"> </span>-n<span class="w"> </span>operator-system<span class="w"> </span>operator-controller-manager-56b5bcf9fd-j2g75
 </code></pre></div>
 </div>
-<p>If you need to run in verbose (non-test) mode, set test to false in the <a class="reference internal" href="#minicluster-lammps.yaml"><span class="xref myst">minicluster-lammps.yaml</span></a>.
-And make sure to clean up first:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span>kubectl<span class="w"> </span>delete<span class="w"> </span>-f<span class="w"> </span>minicluster-lammps.yaml
+<p>And when you are done:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span>kubectl<span class="w"> </span>delete<span class="w"> </span>-f<span class="w"> </span>minicluster.yaml
 </code></pre></div>
 </div>
-<p>and wait until the pods are gone:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span>kubectl<span class="w"> </span>get<span class="w"> </span>-n<span class="w"> </span>flux-operator<span class="w"> </span>pods
+<p>and wait until the pods are gone.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span>kubectl<span class="w"> </span>get<span class="w"> </span>pods
 No<span class="w"> </span>resources<span class="w"> </span>found<span class="w"> </span><span class="k">in</span><span class="w"> </span>flux-operator<span class="w"> </span>namespace.
-</code></pre></div>
-</div>
-<p>Observations about comparing this to MiniKube (local):</p>
-<ul class="simple">
-<li><p>The containers that are large actually pull!</p></li>
-<li><p>The startup times of the different pods vary quite a bit.</p></li>
-</ul>
-<p>If you want to run the same workflow again, use <code class="docutils literal notranslate"><span class="pre">kubectl</span> <span class="pre">delete</span> <span class="pre">-f</span></code> with the file
-and apply it again. I wound up running with test set to true, and then saving the logs:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span>kubectl<span class="w"> </span>-n<span class="w"> </span>flux-operator<span class="w"> </span>logs<span class="w"> </span>flux-sample-0-qc5z2<span class="w"> </span>&gt;<span class="w"> </span>lammps.out
 </code></pre></div>
 </div>
 <p>For fun, here is the first successful run of Lammps using the Flux Operator on GCP
 ever!</p>
 <p><img alt="img/lammps.png" src="../../_images/lammps.png" /></p>
-<p>Then to delete your lammps MiniCluster:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span>kubectl<span class="w"> </span>delete<span class="w"> </span>-f<span class="w"> </span>minicluster-lammps.yaml
-</code></pre></div>
-</div>
 <h2 id="clean-up">Clean up<a class="headerlink" href="#clean-up" title="Link to this heading">¶</a></h2>
 <p>Whatever tutorial you choose, don’t forget to clean up at the end!
 You can optionally undeploy the operator (this is again at the root of the operator repository clone)</p>
@@ -1117,7 +1026,7 @@ flags for networking, and looked at firewalls as follows:</p>
   <small>
     
       Last update:
-      Sep 10, 2023
+      Mar 15, 2024
     
   </small>
 </div>
@@ -1194,7 +1103,7 @@ flags for networking, and looked at firewalls as follows:</p>
   
     Created using
     <a href="https://www.sphinx-doc.org/" target="_blank" rel="noopener">Sphinx</a>
-    7.2.5.
+    7.2.6.
      and
     <a href="https://github.com/jbms/sphinx-immaterial/" target="_blank" rel="noopener">Sphinx-Immaterial</a>
   
@@ -1229,7 +1138,7 @@ flags for networking, and looked at firewalls as follows:</p>
     <script id="__config" type="application/json">{"base": "../..", "features": ["navigation.expand", "navigation.tabs", "toc.integrate", "navigation.sections", "navigation.instant", "header.autohide", "navigation.top", "navigation.tracking", "search.highlight", "search.share", "toc.follow", "toc.sticky", "content.tabs.link", "announce.dismiss"], "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version.title": "Select version"}}</script>
     
       
-        <script src="../../_static/sphinx_immaterial_theme.1b5b7a2d5891aec19.min.js?v=14bafe8d"></script>
+        <script src="../../_static/sphinx_immaterial_theme.f9d9eeeb247ace16c.min.js?v=9a299579"></script>
         <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
     
   </body>

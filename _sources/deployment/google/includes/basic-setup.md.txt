@@ -160,11 +160,3 @@ $ kubectl get pod --all-namespaces
       <none>
 operator-system   operator-controller-manager-56b5bcf9fd-m8wg4               2/2     Running   0          73s
 ```
-
-### Create Flux Operator namespace
-
-Make your namespace for the flux-operator custom resource definition (CRD), which is the yaml file above that generates the MiniCluster:
-
-```bash
-$ kubectl create namespace flux-operator
-```

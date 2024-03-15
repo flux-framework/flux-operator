@@ -33,7 +33,7 @@
         <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
       
     
-        <link rel="stylesheet" type="text/css" href="../_static/sphinx_immaterial_theme.a60204c58f5e4ff66.min.css?v=f7c3c3dc" />
+        <link rel="stylesheet" type="text/css" href="../_static/sphinx_immaterial_theme.359ec555e2989f00f.min.css?v=379f618b" />
         <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=d68d0989" />
     <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
     
@@ -438,6 +438,13 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#v1alpha1" class="md-nav__link">
+    <span title="/getting_started/user-guide.md#v1alpha1 (reference label)" class="md-ellipsis">v1alpha1</span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#install" class="md-nav__link">
     <span title="/getting_started/user-guide.md#install (reference label)" class="md-ellipsis">Install</span>
   </a>
@@ -462,13 +469,6 @@
           <li class="md-nav__item">
   <a href="#development-install" class="md-nav__link">
     <span title="/getting_started/user-guide.md#development-install (reference label)" class="md-ellipsis">Development Install</span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#tool-install" class="md-nav__link">
-    <span title="/getting_started/user-guide.md#tool-install (reference label)" class="md-ellipsis">Tool Install</span>
   </a>
   
 </li>
@@ -760,7 +760,9 @@ with the Flux Operator installed and are interested to submit your own <a class=
 to create a MiniCluster, or that someone has already done it for you. If you are a developer wanting to work
 on new functionality or features for the Flux Operator, see our <a class="reference internal" href="../development/index.html"><span class="std std-doc">Developer Guides</span></a> instead.</p>
 <h2 id="containers-available">Containers Available<a class="headerlink" href="#containers-available" title="Link to this heading">¶</a></h2>
-<p>All containers are provided under <a class="reference external" href="https://github.com/flux-framework/flux-operator/pkgs/container/flux-operator">ghcr.io/flux-framework/flux-operator</a>. The latest tag is the current main branch, a “bleeding edge” version, and we also provide <a class="reference external" href="https://github.com/flux-framework/flux-operator/releases">releases</a>, each of which has YAML for x86 or ARM associated with a release container. For dates before June 30, 2023, we provide the other pinned containers in case you want a previous version:</p>
+<p>All containers are provided under <a class="reference external" href="https://github.com/flux-framework/flux-operator/pkgs/container/flux-operator">ghcr.io/flux-framework/flux-operator</a>. The latest tag is the current main branch, a “bleeding edge” version, and we also provide <a class="reference external" href="https://github.com/flux-framework/flux-operator/releases">releases</a>, each of which has YAML for x86 or ARM associated with a release container.</p>
+<h2 id="v1alpha1">v1alpha1<a class="headerlink" href="#v1alpha1" title="Link to this heading">¶</a></h2>
+<p>For dates before June 30, 2023 (that must be used with the corresponding GitHub releases or yamls) we provide the other pinned containers in case you want a previous version:</p>
 <ul class="simple">
 <li><p><a class="reference external" href="https://github.com/flux-framework/flux-operator/pkgs/container/flux-operator">ghcr.io/flux-framework/flux-operator:feb-2023</a>: the version used for Kubecon experiments, and before storage (minikube and Google Cloud example) were added.</p></li>
 <li><p><a class="reference external" href="https://github.com/flux-framework/flux-operator/pkgs/container/flux-operator">ghcr.io/flux-framework/flux-operator:april-2023</a>: the version directly before the refactor to remove the certificate generator pod (3.3)</p></li>
@@ -819,12 +821,6 @@ $<span class="w"> </span>helm<span class="w"> </span>pull<span class="w"> </span
 </div>
 <h3 id="development-install">Development Install<a class="headerlink" href="#development-install" title="Link to this heading">¶</a></h3>
 <p>For developer instructions, please see our <a class="reference internal" href="../development/index.html"><span class="std std-doc">developer documentation</span></a>.</p>
-<h3 id="tool-install">Tool Install<a class="headerlink" href="#tool-install" title="Link to this heading">¶</a></h3>
-<p>We maintain a tool <a class="reference external" href="https://github.com/converged-computing/flux-cloud">Flux Cloud</a> that is able to bring up clusters, install the operator,
-and optionally run experiments and bring them down. We currently support a handful of clouds
-(AWS and Google) and if you find yourself wanting a way to easily generate and save results
-for experiments, this might be the way to go. If you have a cloud or environment you
-want to deploy to that isn’t supported, please <a class="reference external" href="https://github.com/converged-computing/flux-cloud/issues">let us know</a>.</p>
 <h2 id="next-steps">Next Steps<a class="headerlink" href="#next-steps" title="Link to this heading">¶</a></h2>
 <p>For next steps, you might do the following:</p>
 <h3 id="verify-install">1. Verify Install<a class="headerlink" href="#verify-install" title="Link to this heading">¶</a></h3>
@@ -899,7 +895,7 @@ Next, you might be interested in <a class="reference internal" href="#jobs.md"><
   <small>
     
       Last update:
-      Sep 10, 2023
+      Mar 15, 2024
     
   </small>
 </div>
@@ -976,7 +972,7 @@ Next, you might be interested in <a class="reference internal" href="#jobs.md"><
   
     Created using
     <a href="https://www.sphinx-doc.org/" target="_blank" rel="noopener">Sphinx</a>
-    7.2.5.
+    7.2.6.
      and
     <a href="https://github.com/jbms/sphinx-immaterial/" target="_blank" rel="noopener">Sphinx-Immaterial</a>
   
@@ -1011,7 +1007,7 @@ Next, you might be interested in <a class="reference internal" href="#jobs.md"><
     <script id="__config" type="application/json">{"base": "..", "features": ["navigation.expand", "navigation.tabs", "toc.integrate", "navigation.sections", "navigation.instant", "header.autohide", "navigation.top", "navigation.tracking", "search.highlight", "search.share", "toc.follow", "toc.sticky", "content.tabs.link", "announce.dismiss"], "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version.title": "Select version"}}</script>
     
       
-        <script src="../_static/sphinx_immaterial_theme.1b5b7a2d5891aec19.min.js?v=14bafe8d"></script>
+        <script src="../_static/sphinx_immaterial_theme.f9d9eeeb247ace16c.min.js?v=9a299579"></script>
         <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
     
   </body>

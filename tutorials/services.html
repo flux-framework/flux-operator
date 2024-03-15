@@ -33,7 +33,7 @@
         <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
       
     
-        <link rel="stylesheet" type="text/css" href="../_static/sphinx_immaterial_theme.a60204c58f5e4ff66.min.css?v=f7c3c3dc" />
+        <link rel="stylesheet" type="text/css" href="../_static/sphinx_immaterial_theme.359ec555e2989f00f.min.css?v=379f618b" />
         <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=d68d0989" />
     <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
     
@@ -526,36 +526,6 @@
   
   
     <li class="md-nav__item">
-      <a href="singularity.html" class="md-nav__link">
-        <span title="/tutorials/singularity.md (reference label)" class="md-ellipsis">Singularity</span>
-      </a>
-    </li>
-  
-
-            
-          
-            
-              
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="multi-tenancy.html" class="md-nav__link">
-        <span title="/tutorials/multi-tenancy.md (reference label)" class="md-ellipsis">Multi-<wbr>tenancy</span>
-      </a>
-    </li>
-  
-
-            
-          
-            
-              
-  
-  
-  
-  
-    <li class="md-nav__item">
       <a href="interactive.html" class="md-nav__link">
         <span title="/tutorials/interactive.md (reference label)" class="md-ellipsis">Interactive</span>
       </a>
@@ -641,19 +611,6 @@
     <span title="/tutorials/services.md#registry-service (reference label)" class="md-ellipsis">Registry Service</span>
   </a>
   
-    <nav class="md-nav" aria-label="Registry Service">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#development-notes" class="md-nav__link">
-    <span title="/tutorials/services.md#development-notes (reference label)" class="md-ellipsis">Development Notes</span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
 </li>
         
       </ul>
@@ -694,21 +651,6 @@
     <li class="md-nav__item">
       <a href="elasticity.html" class="md-nav__link">
         <span title="/tutorials/elasticity.md (reference label)" class="md-ellipsis">Elasticity</span>
-      </a>
-    </li>
-  
-
-            
-          
-            
-              
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="staging.html" class="md-nav__link">
-        <span title="/tutorials/staging.md (reference label)" class="md-ellipsis">Staging</span>
       </a>
     </li>
   
@@ -892,13 +834,11 @@ flux install, along with a service for the entire cluster (a deployment next to 
 <h3 id="sidecar-nginx-container">Sidecar NGINX Container<a class="headerlink" href="#sidecar-nginx-container" title="Link to this heading">¶</a></h3>
 <p><strong><a class="reference external" href="https://github.com/flux-framework/flux-operator/blob/main/examples/tests/nginx-sidecar-service/minicluster.yaml">Tutorial File</a></strong></p>
 <p>This is one of the simplest examples, implemented as a test, to run a sidecar with NGINX and then curl localhost
-to get a response from flux. Note that if you are interested in a more complex example that does similar, but also
-provides a custom nginx.conf and shows how to interact with the flux restful API, see the <a class="reference external" href="https://github.com/flux-framework/flux-operator/blob/main/examples/services/sidecar/nginx">services/sidecar/nginx</a> example.</p>
-<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><code><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">flux-framework.org/v1alpha1</span>
+to get a response from flux.</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><code><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">flux-framework.org/v1alpha2</span>
 <span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">MiniCluster</span>
 <span class="nt">metadata</span><span class="p">:</span>
 <span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">flux-sample</span>
-<span class="w">  </span><span class="nt">namespace</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">flux-operator</span>
 <span class="nt">spec</span><span class="p">:</span>
 
 <span class="w">  </span><span class="nt">logging</span><span class="p">:</span>
@@ -909,11 +849,9 @@ provides a custom nginx.conf and shows how to interact with the flux restful API
 
 <span class="w">  </span><span class="c1"># This is a list because a pod can support multiple containers</span>
 <span class="w">  </span><span class="nt">containers</span><span class="p">:</span>
-<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">image</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ghcr.io/flux-framework/flux-restful-api:latest</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">image</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">rockylinux:9</span>
 <span class="w">      </span><span class="nt">runFlux</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
 <span class="w">      </span><span class="nt">command</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">curl -s localhost</span>
-<span class="w">      </span><span class="nt">commands</span><span class="p">:</span>
-<span class="w">        </span><span class="nt">pre</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">apt-get update &gt; /dev/null &amp;&amp; apt-get install -y curl &gt; /dev/null</span>
 <span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">image</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">nginx</span>
 <span class="w">      </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">nginx</span>
 <span class="w">      </span><span class="nt">ports</span><span class="p">:</span>
@@ -925,7 +863,7 @@ provides a custom nginx.conf and shows how to interact with the flux restful API
 </code></pre></div>
 </div>
 <p>See nginx is running:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span>kubectl<span class="w"> </span>-n<span class="w"> </span>flux-operator<span class="w"> </span>logs<span class="w"> </span>flux-sample-0-zlpwx<span class="w"> </span>-c<span class="w"> </span>nginx<span class="w"> </span>-f
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span>kubectl<span class="w"> </span>logs<span class="w"> </span>flux-sample-0-zlpwx<span class="w"> </span>-c<span class="w"> </span>nginx<span class="w"> </span>-f
 </code></pre></div>
 </div>
 <div class="highlight-console notranslate"><div class="highlight"><pre><span></span><code><span class="go">/docker-entrypoint.sh: /docker-entrypoint.d/ is not empty, will attempt to perform configuration</span>
@@ -949,7 +887,7 @@ provides a custom nginx.conf and shows how to interact with the flux restful API
 </code></pre></div>
 </div>
 <p>And then look at the main logs to see the output of curl, run by Flux:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span>kubectl<span class="w"> </span>-n<span class="w"> </span>flux-operator<span class="w"> </span>logs<span class="w"> </span>flux-sample-0-zlpwx<span class="w"> </span>-c<span class="w"> </span>flux-sample<span class="w"> </span>-f
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span>kubectl<span class="w"> </span>logs<span class="w"> </span>flux-sample-0-zlpwx<span class="w"> </span>-c<span class="w"> </span>flux-sample<span class="w"> </span>-f
 </code></pre></div>
 </div>
 <div class="highlight-console notranslate"><div class="highlight"><pre><span></span><code><span class="go">&lt;!DOCTYPE html&gt;</span>
@@ -993,11 +931,10 @@ for your analysis.</p>
 <p><strong><a class="reference external" href="https://github.com/flux-framework/flux-operator/blob/main/examples/services/sidecar/minicluster-registry.yaml">Tutorial File</a></strong></p>
 <p>This example demonstrates bringing up a MiniCluster and then interacting with a service (a registry)
 to push / pull artifacts. Here is our example custom resource definition:</p>
-<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><code><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">flux-framework.org/v1alpha1</span>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><code><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">flux-framework.org/v1alpha2</span>
 <span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">MiniCluster</span>
 <span class="nt">metadata</span><span class="p">:</span>
 <span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">flux-sample</span>
-<span class="w">  </span><span class="nt">namespace</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">flux-operator</span>
 <span class="nt">spec</span><span class="p">:</span>
 
 <span class="w">  </span><span class="c1"># Number of pods to create for MiniCluster</span>
@@ -1009,13 +946,12 @@ to push / pull artifacts. Here is our example custom resource definition:</p>
 <span class="w">  </span><span class="c1"># This is a list because a pod can support multiple containers</span>
 <span class="w">  </span><span class="nt">containers</span><span class="p">:</span>
 <span class="w">    </span><span class="c1"># The container URI to pull (currently needs to be public)</span>
-<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">image</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ghcr.io/flux-framework/flux-restful-api:latest</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">image</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">rockylinux:9</span>
 <span class="w">      </span><span class="nt">runFlux</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
 <span class="w">      </span><span class="nt">commands</span><span class="p">:</span>
 
 <span class="w">        </span><span class="c1"># This is going to install oras for the demo</span>
 <span class="w">        </span><span class="nt">pre</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">|</span>
-<span class="w">          </span><span class="no">apt-get update &amp;&amp; apt-get install -y curl</span>
 <span class="w">          </span><span class="no">VERSION=&quot;1.0.0-rc.2&quot;</span>
 <span class="w">          </span><span class="no">curl -LO &quot;https://github.com/oras-project/oras/releases/download/v${VERSION}/oras_${VERSION}_linux_amd64.tar.gz&quot;</span>
 <span class="w">          </span><span class="no">mkdir -p oras-install/</span>
@@ -1030,26 +966,15 @@ to push / pull artifacts. Here is our example custom resource definition:</p>
 <span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">5000</span>
 </code></pre></div>
 </div>
-<p>It’s helpful to pull containers to MiniKube first:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span>minikube<span class="w"> </span>ssh<span class="w"> </span>docker<span class="w"> </span>pull<span class="w"> </span>ghcr.io/oras-project/registry:latest
-$<span class="w"> </span>minikube<span class="w"> </span>ssh<span class="w"> </span>docker<span class="w"> </span>pull<span class="w"> </span>ghcr.io/flux-framework/flux-restful-api:latest
-</code></pre></div>
-</div>
 <p>When interactive is true, we tell the Flux broker to start without a command. This means
 the cluster will remain running until you shutdown Flux or <code class="docutils literal notranslate"><span class="pre">kubectl</span> <span class="pre">delete</span></code> the MiniCluster
 itself. The container you choose should have the software you are interested in having for each node.
-Given a running cluster, we can create the namespace and the MiniCluster as follows:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span>kubectl<span class="w"> </span>create<span class="w"> </span>namespace<span class="w"> </span>flux-operator
-</code></pre></div>
-</div>
-<p>And apply the MiniCluster CRD:</p>
+Apply the MiniCluster CRD:</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span>kubectl<span class="w"> </span>apply<span class="w"> </span>-f<span class="w"> </span>examples/services/sidecar/minicluster-registry.yaml
 </code></pre></div>
 </div>
-<p>If you are curious, the entrypoint for the service sidecar container is <code class="docutils literal notranslate"><span class="pre">registry</span> <span class="pre">serve</span> <span class="pre">/etc/docker/registry/config.yml</span></code>
-to start the registry. Since it’s not a flux runner, not providing an entrypoint means we use the container’s default
-entrypoint. We can then wait for our pods to be running</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span>kubectl<span class="w"> </span>get<span class="w"> </span>-n<span class="w"> </span>flux-operator<span class="w"> </span>pods
+<p>If you are curious, the entrypoint for the service sidecar container is <code class="docutils literal notranslate"><span class="pre">registry</span> <span class="pre">serve</span> <span class="pre">/etc/docker/registry/config.yml</span></code> to start the registry. Since it’s not a flux runner, not providing an entrypoint means we use the container’s default entrypoint. We can then wait for our pods to be running</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span>kubectl<span class="w"> </span>get<span class="w"> </span>pods
 NAME<span class="w">                         </span>READY<span class="w">   </span>STATUS<span class="w">      </span>RESTARTS<span class="w">   </span>AGE
 flux-sample-0-p5xls<span class="w">          </span><span class="m">1</span>/1<span class="w">     </span>Running<span class="w">     </span><span class="m">0</span><span class="w">          </span>7s
 flux-sample-1-nmtt7<span class="w">          </span><span class="m">1</span>/1<span class="w">     </span>Running<span class="w">     </span><span class="m">0</span><span class="w">          </span>7s
@@ -1057,27 +982,26 @@ flux-sample-1-nmtt7<span class="w">          </span><span class="m">1</span>/1<s
 </div>
 <p>To see logs, since we have 2 containers per pod, you can either leave out the pod (and get the first or default)
 or specify a container with <code class="docutils literal notranslate"><span class="pre">-c</span></code>:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span>kubectl<span class="w"> </span>logs<span class="w"> </span>-n<span class="w"> </span>flux-operator<span class="w"> </span>flux-sample-0-d5jbb<span class="w"> </span>-c<span class="w"> </span>registry
-$<span class="w"> </span>kubectl<span class="w"> </span>logs<span class="w"> </span>-n<span class="w"> </span>flux-operator<span class="w"> </span>flux-sample-0-d5jbb<span class="w"> </span>-c<span class="w"> </span>flux-sample
-$<span class="w"> </span>kubectl<span class="w"> </span>logs<span class="w"> </span>-n<span class="w"> </span>flux-operator<span class="w"> </span>flux-sample-0-d5jbb
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span>kubectl<span class="w"> </span>logs<span class="w"> </span>flux-sample-0-d5jbb<span class="w"> </span>-c<span class="w"> </span>registry
+$<span class="w"> </span>kubectl<span class="w"> </span>logs<span class="w"> </span>flux-sample-0-d5jbb<span class="w"> </span>-c<span class="w"> </span>flux-sample
+$<span class="w"> </span>kubectl<span class="w"> </span>logs<span class="w"> </span>flux-sample-0-d5jbb
 </code></pre></div>
 </div>
 <p>And then shell into the broker pod, index 0, which is “flux-sample”</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span>kubectl<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>-it<span class="w">  </span>-n<span class="w"> </span>flux-operator<span class="w"> </span>flux-sample-0-d5jbb<span class="w"> </span>-c<span class="w"> </span>flux-sample<span class="w"> </span>--<span class="w"> </span>bash
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span>kubectl<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>-it<span class="w"> </span>flux-sample-0-d5jbb<span class="w"> </span>-c<span class="w"> </span>flux-sample<span class="w"> </span>--<span class="w"> </span>bash
 </code></pre></div>
 </div>
 <p>Let’s first make and push an artifact. First, just using oras natively (no flux)</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code><span class="nb">cd</span><span class="w"> </span>/tmp
-
-<span class="c1"># Assume we would be running from inside the flux instance</span>
-sudo<span class="w"> </span>-u<span class="w"> </span>flux<span class="w"> </span><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;hello dinosaur&quot;</span><span class="w"> </span>&gt;<span class="w"> </span>artifact.txt
+<span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;hello dinosaur&quot;</span><span class="w"> </span>&gt;<span class="w"> </span>artifact.txt
 </code></pre></div>
 </div>
 <p>And push! The registry, by way of being a container in the same pod, is on port 5000:</p>
 <p>At this point, remember the broker is running, and we need to connect to it. We do this via
 flux proxy and targeting the socket, which is a local reference at <code class="docutils literal notranslate"><span class="pre">/run/flux/local</span></code>:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code><span class="c1"># Connect to the flux socket at /run/flux/local as the flux instance owner &quot;flux&quot;</span>
-$<span class="w"> </span>sudo<span class="w"> </span>-u<span class="w"> </span>flux<span class="w"> </span>flux<span class="w"> </span>proxy<span class="w"> </span>local:///run/flux/local<span class="w"> </span>oras<span class="w"> </span>push<span class="w"> </span>localhost:5000/dinosaur/artifact:v1<span class="w"> </span><span class="se">\</span>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code><span class="nb">source</span><span class="w"> </span>/mnt/flux/flux-view.sh
+<span class="c1"># Connect to the flux socket at /run/flux/local as the flux instance owner &quot;flux&quot;</span>
+$<span class="w"> </span>flux<span class="w"> </span>proxy<span class="w"> </span><span class="nv">$fluxsocket</span><span class="w"> </span>oras<span class="w"> </span>push<span class="w"> </span>localhost:5000/dinosaur/artifact:v1<span class="w"> </span><span class="se">\</span>
 <span class="w">   </span>--artifact-type<span class="w"> </span>application/vnd.acme.rocket.config<span class="w"> </span><span class="se">\</span>
 <span class="w">   </span>./artifact.txt
 </code></pre></div>
@@ -1090,14 +1014,14 @@ $<span class="w"> </span>sudo<span class="w"> </span>-u<span class="w"> </span>f
 </div>
 <p>Now try pulling, deleting the original first, and again without flux:</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>rm<span class="w"> </span>-f<span class="w"> </span>artifact.txt
-sudo<span class="w"> </span>-u<span class="w"> </span>flux<span class="w"> </span>flux<span class="w"> </span>proxy<span class="w"> </span>local:///run/flux/local<span class="w"> </span>oras<span class="w"> </span>pull<span class="w"> </span>localhost:5000/dinosaur/artifact:v1
+flux<span class="w"> </span>proxy<span class="w"> </span><span class="nv">$fluxsocket</span><span class="w"> </span>oras<span class="w"> </span>pull<span class="w"> </span>localhost:5000/dinosaur/artifact:v1
 cat<span class="w"> </span>artifact.txt
 </code></pre></div>
 </div>
 <div class="highlight-console notranslate"><div class="highlight"><pre><span></span><code><span class="go">hello dinosaur</span>
 </code></pre></div>
 </div>
-<p>We did this under the broker (and flux user) assuming your actual use case will be running
+<p>We did this under the broker assuming your actual use case will be running
 in the Flux instance. Feel free to play with oras outside of that context!
 When you are done, exit from the instance, and exit from the pod, and then delete the MiniCluster.</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span>kubectl<span class="w"> </span>delete<span class="w"> </span>-f<span class="w"> </span>examples/services/sidecar/minicluster-registry.yaml
@@ -1110,11 +1034,7 @@ When you are done, exit from the instance, and exit from the pod, and then delet
 <p>Unlike the example above, it’s more reasonable that you would want a single registry that your pods can access. E.g., perhaps
 you use it like a pull-through cache - first pulling to this service node (or pushing from another pod) and then having
 your worker pods pull from there. Let’s do that now. If you are using MiniKube, remember to pull large
-containers first. Create the namespace:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span>kubectl<span class="w"> </span>create<span class="w"> </span>namespace<span class="w"> </span>flux-operator
-</code></pre></div>
-</div>
-<p>And apply the MiniCluster CRD:</p>
+containers first. Apply the MiniCluster CRD:</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span>kubectl<span class="w"> </span>apply<span class="w"> </span>-f<span class="w"> </span>examples/services/single/minicluster-registry.yaml
 </code></pre></div>
 </div>
@@ -1128,7 +1048,7 @@ flux-sample-services<span class="w">         </span><span class="m">1</span>/1<s
 </code></pre></div>
 </div>
 <p>And then shell into the broker pod, index 0, which is “flux-sample”</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span>kubectl<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>-it<span class="w">  </span>-n<span class="w"> </span>flux-operator<span class="w"> </span>flux-sample-0-d5jbb<span class="w"> </span>--<span class="w"> </span>bash
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span>kubectl<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>-it<span class="w"> </span>flux-sample-0-d5jbb<span class="w"> </span>--<span class="w"> </span>bash
 </code></pre></div>
 </div>
 <p>The registry hostname should be in the environment (it’s defined in the CRD):</p>
@@ -1136,50 +1056,21 @@ flux-sample-services<span class="w">         </span><span class="m">1</span>/1<s
 flux-sample-services.flux-service.flux-operator.svc.cluster.local
 </code></pre></div>
 </div>
-<p>Both oras and Singularity are installed. Conceptually, we should be able to pull a container
-with Singularity, and push it to the registry with oras.  This is a relatively small container
-and should be quick:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span>singularity<span class="w"> </span>pull<span class="w"> </span>docker://vanessa/salad
-</code></pre></div>
-</div>
-<p>Give it a run!</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span>singularity<span class="w"> </span>run<span class="w"> </span>salad_latest.sif<span class="w"> </span>
-</code></pre></div>
-</div>
-<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><code><span class="go"> In Go an array is a slice. Utensil discrimination!  </span>
-
-<span class="go">          _________________  .========</span>
-<span class="go">         [_________________&gt;&lt; :======</span>
-<span class="go">                             &#39;======== </span>
+<p>Let’s make an artifact to push.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;hello dinosaur&quot;</span><span class="w"> </span>&gt;<span class="w"> </span>artifact.txt
 </code></pre></div>
 </div>
 <p>Now let’s push to the oras registry</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span>oras<span class="w"> </span>push<span class="w"> </span><span class="nv">$REGISTRY</span>:5000/vanessa/salad:latest<span class="w"> </span>--artifact-type<span class="w"> </span>appliciation/vnd.sylabs.sif.layer.tar<span class="w"> </span>./salad_latest.sif<span class="w">  </span>--plain-http
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span>oras<span class="w"> </span>push<span class="w"> </span><span class="nv">$REGISTRY</span>:5000/vanessa/artifact:latest<span class="w"> </span>./artifact.txt<span class="w">  </span>--plain-http
 </code></pre></div>
 </div>
 <p>Great! Now you could, theoretically, push a single SIF to your registry (as a local cache) and have the other nodes pull it!
 Here is an example, shelling in to the second worker:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span>oras<span class="w"> </span>pull<span class="w"> </span><span class="nv">$REGISTRY</span>:5000/vanessa/salad:latest<span class="w"> </span>--plain-http
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>rm<span class="w"> </span>artifact.txt
+oras<span class="w"> </span>pull<span class="w"> </span><span class="nv">$REGISTRY</span>:5000/vanessa/artifact:latest<span class="w"> </span>--plain-http
 </code></pre></div>
 </div>
-<p>Super cool! We will have more examples in the <code class="docutils literal notranslate"><span class="pre">examples</span></code> folder of how this can be used for workflow containers.</p>
-<h4 id="development-notes">Development Notes<a class="headerlink" href="#development-notes" title="Link to this heading">¶</a></h4>
-<p>I did some digging into the logic, and found that the underlying submission was a flux submit -&gt; flux exec
-to start a celery worker:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span>flux<span class="w"> </span>alloc<span class="w"> </span>-N<span class="w"> </span><span class="m">2</span><span class="w"> </span>--exclusive<span class="w"> </span>--job-name<span class="o">=</span>merlin<span class="w"> </span>flux<span class="w"> </span><span class="nb">exec</span><span class="w"> </span><span class="sb">`</span>which<span class="w"> </span>/bin/bash<span class="sb">`</span><span class="w"> </span>-c<span class="w"> </span><span class="s2">&quot;celery -A merlin worker -l INFO --concurrency 1 --prefetch-multiplier 1 -Ofair -Q \&#39;[merlin]_flux_par\&#39;&quot;</span>
-</code></pre></div>
-</div>
-<p>I think this should be changed to:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span>flux<span class="w"> </span>alloc<span class="w"> </span>-N<span class="w"> </span><span class="m">2</span><span class="w"> </span>--exclusive<span class="w"> </span>--job-name<span class="o">=</span>merlin<span class="w"> </span>/bin/bash<span class="w"> </span>-c<span class="w"> </span><span class="s2">&quot;celery -A merlin worker -l INFO --concurrency 1 --prefetch-multiplier 1 -Ofair -Q \&#39;[merlin]_flux_par\&#39;&quot;</span>
-</code></pre></div>
-</div>
-<ul class="simple">
-<li><p>I don’t think we need flux exec</p></li>
-<li><p>Why would there be more than one /bin/bash?</p></li>
-</ul>
-<p>I don’t fully understand the relationship between the celery queue and Flux - I think Flux should be used to submit jobs directly to,
-as opposed to just using it to start a celery working. It also seems like there is one too many layers of complexity. If we have a Flux queue
-why do we also need a celery queue?</p>
+<p>And artifact.txt is back. Super cool! We will have more examples in the <code class="docutils literal notranslate"><span class="pre">examples</span></code> folder of how this can be used for workflow containers.</p>
 
 
   <hr>
@@ -1187,7 +1078,7 @@ why do we also need a celery queue?</p>
   <small>
     
       Last update:
-      Sep 10, 2023
+      Mar 15, 2024
     
   </small>
 </div>
@@ -1264,7 +1155,7 @@ why do we also need a celery queue?</p>
   
     Created using
     <a href="https://www.sphinx-doc.org/" target="_blank" rel="noopener">Sphinx</a>
-    7.2.5.
+    7.2.6.
      and
     <a href="https://github.com/jbms/sphinx-immaterial/" target="_blank" rel="noopener">Sphinx-Immaterial</a>
   
@@ -1299,7 +1190,7 @@ why do we also need a celery queue?</p>
     <script id="__config" type="application/json">{"base": "..", "features": ["navigation.expand", "navigation.tabs", "toc.integrate", "navigation.sections", "navigation.instant", "header.autohide", "navigation.top", "navigation.tracking", "search.highlight", "search.share", "toc.follow", "toc.sticky", "content.tabs.link", "announce.dismiss"], "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version.title": "Select version"}}</script>
     
       
-        <script src="../_static/sphinx_immaterial_theme.1b5b7a2d5891aec19.min.js?v=14bafe8d"></script>
+        <script src="../_static/sphinx_immaterial_theme.f9d9eeeb247ace16c.min.js?v=9a299579"></script>
         <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
     
   </body>

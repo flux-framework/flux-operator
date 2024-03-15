@@ -2,11 +2,12 @@
 
 ## Active Design
 
-> 3.4
+> 4.0
 
-![04-26-2023/the-operator.png](04-26-2023/the-operator.png)
+We found a solution via the [metrics operator](https://converged-computing.github.io/metrics-operator/getting_started/addons.html#workload-flux) (developed by the same maintainers) for how to fix a huge design
+flaw - the fact that the application logic was mixed with the logic for Flux. This design solves that.
 
- - [See the Design](04-26-2023/index.md)
+![10-09-2023/flux-design-4.png](10-09-2023/flux-design-4.png)
 
 ## Early Designs
 
@@ -14,6 +15,10 @@ It is often useful to think about many different designs, and iterate quickly be
 to take, and this is what we did in the first days of the Flux Operator. The final design (at the top)
 is what we decided to focus on, and the others are described (and illustrated) in detail at their respective
 links. This is a review of various early designs we've thought about, presented in reverse order (newest to latest).
+
+### Design 3.4
+
+ - [See the Design](04-26-2023/index.md)
 
 ### Design 3.3
 

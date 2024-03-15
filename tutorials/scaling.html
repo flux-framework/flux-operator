@@ -33,7 +33,7 @@
         <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
       
     
-        <link rel="stylesheet" type="text/css" href="../_static/sphinx_immaterial_theme.a60204c58f5e4ff66.min.css?v=f7c3c3dc" />
+        <link rel="stylesheet" type="text/css" href="../_static/sphinx_immaterial_theme.359ec555e2989f00f.min.css?v=379f618b" />
         <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=d68d0989" />
     <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
     
@@ -526,36 +526,6 @@
   
   
     <li class="md-nav__item">
-      <a href="singularity.html" class="md-nav__link">
-        <span title="/tutorials/singularity.md (reference label)" class="md-ellipsis">Singularity</span>
-      </a>
-    </li>
-  
-
-            
-          
-            
-              
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="multi-tenancy.html" class="md-nav__link">
-        <span title="/tutorials/multi-tenancy.md (reference label)" class="md-ellipsis">Multi-<wbr>tenancy</span>
-      </a>
-    </li>
-  
-
-            
-          
-            
-              
-  
-  
-  
-  
-    <li class="md-nav__item">
       <a href="interactive.html" class="md-nav__link">
         <span title="/tutorials/interactive.md (reference label)" class="md-ellipsis">Interactive</span>
       </a>
@@ -695,21 +665,6 @@
     <li class="md-nav__item">
       <a href="elasticity.html" class="md-nav__link">
         <span title="/tutorials/elasticity.md (reference label)" class="md-ellipsis">Elasticity</span>
-      </a>
-    </li>
-  
-
-            
-          
-            
-              
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="staging.html" class="md-nav__link">
-        <span title="/tutorials/staging.md (reference label)" class="md-ellipsis">Staging</span>
       </a>
     </li>
   
@@ -930,19 +885,13 @@ mind for what to do with the new resources.
 </code></pre></div>
 </div>
 <p>Install the operator, create the namespace, and create the MiniCluster:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span>kubectl<span class="w"> </span>apply<span class="w"> </span>-f<span class="w"> </span>./examples/dist/flux-operator.yaml
-$<span class="w"> </span>kubectl<span class="w"> </span>create<span class="w"> </span>namespace<span class="w"> </span>flux-operator
-$<span class="w"> </span>kubectl<span class="w"> </span>apply<span class="w"> </span>-f<span class="w"> </span>examples/scaling/basic/minicluster.yaml
-</code></pre></div>
-</div>
-<p>You’ll need to wait for the containers to create (the image is pulling) and you can
-help the pull via:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span>minikube<span class="w"> </span>ssh<span class="w"> </span>docker<span class="w"> </span>pull<span class="w"> </span>ghcr.io/flux-framework/flux-restful-api:latest
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>kubectl<span class="w"> </span>apply<span class="w"> </span>-f<span class="w"> </span>./examples/dist/flux-operator.yaml
+kubectl<span class="w"> </span>apply<span class="w"> </span>-f<span class="w"> </span>examples/scaling/basic/minicluster.yaml
 </code></pre></div>
 </div>
 <h3 id="check-initial-size">Check Initial Size<a class="headerlink" href="#check-initial-size" title="Link to this heading">¶</a></h3>
 <p>Wait until the cluster finishes, and you see the pods are ready to go (Running state):</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>kubectl<span class="w"> </span>get<span class="w"> </span>-n<span class="w"> </span>flux-operator<span class="w"> </span>pods
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>kubectl<span class="w"> </span>get<span class="w"> </span>pods
 NAME<span class="w">                  </span>READY<span class="w">   </span>STATUS<span class="w">    </span>RESTARTS<span class="w">   </span>AGE
 flux-sample-0-kfl7p<span class="w">   </span><span class="m">1</span>/1<span class="w">     </span>Running<span class="w">   </span><span class="m">0</span><span class="w">          </span>76s
 flux-sample-1-2v57b<span class="w">   </span><span class="m">1</span>/1<span class="w">     </span>Running<span class="w">   </span><span class="m">0</span><span class="w">          </span>76s
@@ -952,17 +901,18 @@ flux-sample-3-zkmvq<span class="w">   </span><span class="m">1</span>/1<span cla
 </div>
 <p>We recommend (in another terminal) shelling into the broker pod and connecting to the broker’s Flux instance
 so that you can follow the changes.</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span>kubectl<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>-it<span class="w"> </span>-n<span class="w"> </span>flux-operator<span class="w"> </span>flux-sample-0-xd2gc<span class="w"> </span>--<span class="w"> </span>bash
-root@flux-sample-0:/code#<span class="w"> </span>sudo<span class="w"> </span>-E<span class="w"> </span><span class="k">$(</span>env<span class="k">)</span><span class="w"> </span>-E<span class="w"> </span><span class="nv">HOME</span><span class="o">=</span>/home/flux<span class="w"> </span>-u<span class="w"> </span>flux<span class="w"> </span>flux<span class="w"> </span>proxy<span class="w"> </span>local:///var/run/flux/local<span class="w"> </span>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span>kubectl<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>-it<span class="w"> </span>flux-sample-0-xd2gc<span class="w"> </span>--<span class="w"> </span>bash
+<span class="nb">source</span><span class="w"> </span>/mnt/flux/flux-view.sh
+flux<span class="w"> </span>proxy<span class="w"> </span><span class="nv">$fluxsocket</span><span class="w"> </span>bash
 </code></pre></div>
 </div>
 <p>Here is how to look at the state of the cluster. When you first create it, we will have 4 pods, and all of them
 are up.</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>flux@flux-sample-0:/code$<span class="w"> </span>flux<span class="w"> </span>resource<span class="w"> </span>list
-<span class="w">     </span>STATE<span class="w"> </span>NNODES<span class="w">   </span>NCORES<span class="w"> </span>NODELIST
-<span class="w">      </span>free<span class="w">      </span><span class="m">4</span><span class="w">       </span><span class="m">16</span><span class="w"> </span>flux-sample-<span class="o">[</span><span class="m">0</span>-3<span class="o">]</span>
-<span class="w"> </span>allocated<span class="w">      </span><span class="m">0</span><span class="w">        </span><span class="m">0</span><span class="w"> </span>
-<span class="w">      </span>down<span class="w">      </span><span class="m">0</span><span class="w">        </span><span class="m">0</span><span class="w"> </span>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code><span class="o">[</span>root@flux-sample-0<span class="w"> </span>/<span class="o">]</span><span class="c1"># flux resource list</span>
+<span class="w">     </span>STATE<span class="w"> </span>NNODES<span class="w">   </span>NCORES<span class="w">    </span>NGPUS<span class="w"> </span>NODELIST
+<span class="w">      </span>free<span class="w">      </span><span class="m">4</span><span class="w">       </span><span class="m">40</span><span class="w">        </span><span class="m">0</span><span class="w"> </span>flux-sample-<span class="o">[</span><span class="m">0</span>-3<span class="o">]</span>
+<span class="w"> </span>allocated<span class="w">      </span><span class="m">0</span><span class="w">        </span><span class="m">0</span><span class="w">        </span><span class="m">0</span><span class="w"> </span>
+<span class="w">      </span>down<span class="w">      </span><span class="m">0</span><span class="w">        </span><span class="m">0</span><span class="w">        </span><span class="m">0</span>
 </code></pre></div>
 </div>
 <p>At this point we want to try changing the size.</p>
@@ -995,13 +945,12 @@ you’ll see this in the operator logs:</p>
 </code></pre></div>
 </div>
 <p>The first thing you will notice is that a pod is terminating</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><code> <span class="n">make</span> <span class="nb">list</span>
-<span class="n">kubectl</span> <span class="n">get</span> <span class="o">-</span><span class="n">n</span> <span class="n">flux</span><span class="o">-</span><span class="n">operator</span> <span class="n">pods</span>
-<span class="n">NAME</span>                  <span class="n">READY</span>   <span class="n">STATUS</span>        <span class="n">RESTARTS</span>   <span class="n">AGE</span>
-<span class="n">flux</span><span class="o">-</span><span class="n">sample</span><span class="o">-</span><span class="mi">0</span><span class="o">-</span><span class="n">xd2gc</span>   <span class="mi">1</span><span class="o">/</span><span class="mi">1</span>     <span class="n">Running</span>       <span class="mi">0</span>          <span class="mi">30</span><span class="n">m</span>
-<span class="n">flux</span><span class="o">-</span><span class="n">sample</span><span class="o">-</span><span class="mi">1</span><span class="o">-</span><span class="n">tbj7c</span>   <span class="mi">1</span><span class="o">/</span><span class="mi">1</span>     <span class="n">Running</span>       <span class="mi">0</span>          <span class="mi">30</span><span class="n">m</span>
-<span class="n">flux</span><span class="o">-</span><span class="n">sample</span><span class="o">-</span><span class="mi">2</span><span class="o">-</span><span class="n">wbpf9</span>   <span class="mi">1</span><span class="o">/</span><span class="mi">1</span>     <span class="n">Running</span>       <span class="mi">0</span>          <span class="mi">30</span><span class="n">m</span>
-<span class="n">flux</span><span class="o">-</span><span class="n">sample</span><span class="o">-</span><span class="mi">3</span><span class="o">-</span><span class="n">cfs6c</span>   <span class="mi">1</span><span class="o">/</span><span class="mi">1</span>     <span class="n">Terminating</span>   <span class="mi">0</span>          <span class="mi">26</span><span class="n">m</span>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>kubectl<span class="w"> </span>get<span class="w"> </span>pods
+NAME<span class="w">                  </span>READY<span class="w">   </span>STATUS<span class="w">        </span>RESTARTS<span class="w">   </span>AGE
+flux-sample-0-xd2gc<span class="w">   </span><span class="m">1</span>/1<span class="w">     </span>Running<span class="w">       </span><span class="m">0</span><span class="w">          </span>30m
+flux-sample-1-tbj7c<span class="w">   </span><span class="m">1</span>/1<span class="w">     </span>Running<span class="w">       </span><span class="m">0</span><span class="w">          </span>30m
+flux-sample-2-wbpf9<span class="w">   </span><span class="m">1</span>/1<span class="w">     </span>Running<span class="w">       </span><span class="m">0</span><span class="w">          </span>30m
+flux-sample-3-cfs6c<span class="w">   </span><span class="m">1</span>/1<span class="w">     </span>Terminating<span class="w">   </span><span class="m">0</span><span class="w">          </span>26m
 </code></pre></div>
 </div>
 <p>When the pod is gone, if (in your second terminal) you look at the resource status, Flux
@@ -1056,18 +1005,16 @@ the hosts to be greater than nodes currently, so we haven’t added this yet.</p
 </div>
 <p>Install the operator, create the namespace, and create the MiniCluster:</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span>kubectl<span class="w"> </span>apply<span class="w"> </span>-f<span class="w"> </span>./examples/dist/flux-operator.yaml
-$<span class="w"> </span>kubectl<span class="w"> </span>create<span class="w"> </span>namespace<span class="w"> </span>flux-operator
 $<span class="w"> </span>kubectl<span class="w"> </span>apply<span class="w"> </span>-f<span class="w"> </span>examples/scaling/basic/minicluster.yaml
 </code></pre></div>
 </div>
 <h3 id="create-the-cluster">Create the cluster<a class="headerlink" href="#create-the-cluster" title="Link to this heading">¶</a></h3>
 <p>First, apply the CRD to create the MiniCluster. Note that we are asking for a size of 2, but allowing
 for a maximum size of 4.</p>
-<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><code><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">flux-framework.org/v1alpha1</span>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><code><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">flux-framework.org/v1alpha2</span>
 <span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">MiniCluster</span>
 <span class="nt">metadata</span><span class="p">:</span>
 <span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">flux-sample</span>
-<span class="w">  </span><span class="nt">namespace</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">flux-operator</span>
 <span class="nt">spec</span><span class="p">:</span>
 <span class="w">  </span><span class="c1"># Number of pods to create for MiniCluster to start</span>
 <span class="w">  </span><span class="nt">size</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">2</span>
@@ -1081,7 +1028,7 @@ for a maximum size of 4.</p>
 
 <span class="w">  </span><span class="c1"># This is a list because a pod can support multiple containers</span>
 <span class="w">  </span><span class="nt">containers</span><span class="p">:</span>
-<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">image</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ghcr.io/flux-framework/flux-restful-api:latest</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">image</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">rockylinux:9</span>
 </code></pre></div>
 </div>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span>kubectl<span class="w"> </span>apply<span class="w"> </span>-f<span class="w"> </span>./examples/scaling/expand/minicluster.yaml
@@ -1121,8 +1068,9 @@ flux-sample-3-ndqvm<span class="w">   </span><span class="m">1</span>/1<span cla
 </code></pre></div>
 </div>
 <p>We can again exec into the broker pod to inspect what resources Flux sees:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span>kubectl<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>-it<span class="w"> </span>-n<span class="w"> </span>flux-operator<span class="w"> </span>flux-sample-0-xd2gc<span class="w"> </span>--<span class="w"> </span>bash
-root@flux-sample-0:/code#<span class="w"> </span>sudo<span class="w"> </span>-E<span class="w"> </span><span class="k">$(</span>env<span class="k">)</span><span class="w"> </span>-E<span class="w"> </span><span class="nv">HOME</span><span class="o">=</span>/home/flux<span class="w"> </span>-u<span class="w"> </span>flux<span class="w"> </span>flux<span class="w"> </span>proxy<span class="w"> </span>local:///var/run/flux/local<span class="w"> </span>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>kubectl<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>-it<span class="w"> </span>flux-sample-0-xd2gc<span class="w"> </span>--<span class="w"> </span>bash
+<span class="nb">source</span><span class="w"> </span>/mnt/flux/flux-view.sh
+flux<span class="w"> </span>proxy<span class="w"> </span><span class="si">${</span><span class="nv">fluxsocket</span><span class="si">}</span><span class="w"> </span>bash
 </code></pre></div>
 </div>
 <p>And just like they had been there all along, we have four nodes!</p>
@@ -1161,7 +1109,7 @@ if you want to delete the MiniCluster, just do that. :)</p>
   <small>
     
       Last update:
-      Sep 10, 2023
+      Mar 15, 2024
     
   </small>
 </div>
@@ -1238,7 +1186,7 @@ if you want to delete the MiniCluster, just do that. :)</p>
   
     Created using
     <a href="https://www.sphinx-doc.org/" target="_blank" rel="noopener">Sphinx</a>
-    7.2.5.
+    7.2.6.
      and
     <a href="https://github.com/jbms/sphinx-immaterial/" target="_blank" rel="noopener">Sphinx-Immaterial</a>
   
@@ -1273,7 +1221,7 @@ if you want to delete the MiniCluster, just do that. :)</p>
     <script id="__config" type="application/json">{"base": "..", "features": ["navigation.expand", "navigation.tabs", "toc.integrate", "navigation.sections", "navigation.instant", "header.autohide", "navigation.top", "navigation.tracking", "search.highlight", "search.share", "toc.follow", "toc.sticky", "content.tabs.link", "announce.dismiss"], "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version.title": "Select version"}}</script>
     
       
-        <script src="../_static/sphinx_immaterial_theme.1b5b7a2d5891aec19.min.js?v=14bafe8d"></script>
+        <script src="../_static/sphinx_immaterial_theme.f9d9eeeb247ace16c.min.js?v=9a299579"></script>
         <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
     
   </body>

@@ -33,7 +33,7 @@
         <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
       
     
-        <link rel="stylesheet" type="text/css" href="../_static/sphinx_immaterial_theme.a60204c58f5e4ff66.min.css?v=f7c3c3dc" />
+        <link rel="stylesheet" type="text/css" href="../_static/sphinx_immaterial_theme.359ec555e2989f00f.min.css?v=379f618b" />
         <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=d68d0989" />
     <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
     
@@ -526,36 +526,6 @@
   
   
     <li class="md-nav__item">
-      <a href="singularity.html" class="md-nav__link">
-        <span title="/tutorials/singularity.md (reference label)" class="md-ellipsis">Singularity</span>
-      </a>
-    </li>
-  
-
-            
-          
-            
-              
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="multi-tenancy.html" class="md-nav__link">
-        <span title="/tutorials/multi-tenancy.md (reference label)" class="md-ellipsis">Multi-<wbr>tenancy</span>
-      </a>
-    </li>
-  
-
-            
-          
-            
-              
-  
-  
-  
-  
-    <li class="md-nav__item">
       <a href="interactive.html" class="md-nav__link">
         <span title="/tutorials/interactive.md (reference label)" class="md-ellipsis">Interactive</span>
       </a>
@@ -616,21 +586,6 @@
   
   
     <li class="md-nav__item">
-      <a href="staging.html" class="md-nav__link">
-        <span title="/tutorials/staging.md (reference label)" class="md-ellipsis">Staging</span>
-      </a>
-    </li>
-  
-
-            
-          
-            
-              
-  
-  
-  
-  
-    <li class="md-nav__item">
       <a href="volumes.html" class="md-nav__link">
         <span title="/tutorials/volumes.md (reference label)" class="md-ellipsis">Volumes</span>
       </a>
@@ -677,6 +632,13 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
+  <a href="#create-hostpath-volume" class="md-nav__link">
+    <span title="/tutorials/state.md#create-hostpath-volume (reference label)" class="md-ellipsis">Create hostpath volume</span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#saving-pending-jobs" class="md-nav__link">
     <span title="/tutorials/state.md#saving-pending-jobs (reference label)" class="md-ellipsis">Saving Pending Jobs</span>
   </a>
@@ -687,33 +649,6 @@
   <a href="#basic-saving-jobs-and-metadata" class="md-nav__link">
     <span title="/tutorials/state.md#basic-saving-jobs-and-metadata (reference label)" class="md-ellipsis">Basic Saving Jobs and Metadata</span>
   </a>
-  
-    <nav class="md-nav" aria-label="Basic Saving Jobs and Metadata">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#create-the-minicluster" class="md-nav__link">
-    <span title="/tutorials/state.md#create-the-minicluster (reference label)" class="md-ellipsis">Create the Mini<wbr>Cluster</span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#interactive-submit" class="md-nav__link">
-    <span title="/tutorials/state.md#interactive-submit (reference label)" class="md-ellipsis">Interactive Submit</span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#programmatic-submit" class="md-nav__link">
-    <span title="/tutorials/state.md#programmatic-submit (reference label)" class="md-ellipsis">Programmatic Submit</span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
   
 </li>
       
@@ -881,15 +816,46 @@ as well. One important note is that since we cannot control the timing of a pod 
 while we can have Flux automatically load a saved archive, for the process to wait for
 jobs to finish and then dump the archive anew, we rely on issuing a command to the MiniCluster
 (done by a script or workflow tool). This can likely be improved upon.</p>
+<h2 id="create-hostpath-volume">Create hostpath volume<a class="headerlink" href="#create-hostpath-volume" title="Link to this heading">¶</a></h2>
+<p>Create the hostpath volume and pvc first:</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><code><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">v1</span>
+<span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">PersistentVolume</span>
+<span class="nt">metadata</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">data</span>
+<span class="nt">spec</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">storageClassName</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">manual</span>
+<span class="w">  </span><span class="nt">capacity</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">storage</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">5Gi</span>
+<span class="w">  </span><span class="nt">accessModes</span><span class="p">:</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ReadWriteMany</span>
+<span class="w">  </span><span class="nt">hostPath</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">path</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">/data</span>
+<span class="nn">---</span>
+<span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">v1</span><span class="w"> </span>
+<span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">PersistentVolumeClaim</span>
+<span class="nt">metadata</span><span class="p">:</span><span class="w"> </span>
+<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">data</span>
+<span class="nt">spec</span><span class="p">:</span><span class="w"> </span>
+<span class="w">  </span><span class="nt">accessModes</span><span class="p">:</span><span class="w"> </span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ReadWriteMany</span>
+<span class="w">  </span><span class="nt">resources</span><span class="p">:</span><span class="w"> </span>
+<span class="w">    </span><span class="nt">requests</span><span class="p">:</span><span class="w"> </span>
+<span class="w">      </span><span class="nt">storage</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1Gi</span>
+</code></pre></div>
+</div>
+<p>If the above is volumes.yaml:</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><code><span class="l l-Scalar l-Scalar-Plain">kubectl apply -f volumes.yaml</span>
+</code></pre></div>
+</div>
 <h2 id="saving-pending-jobs">Saving Pending Jobs<a class="headerlink" href="#saving-pending-jobs" title="Link to this heading">¶</a></h2>
 <blockquote>
 <div><p>Pausing scheduling and the queue in a populated queue</p>
 </div></blockquote>
 <p>This example shows (via the Python SDK) how we can pause and stop a running queue and move
 the jobs to a new MiniCluster to continue.</p>
-<p><strong><a class="reference external" href="https://github.com/flux-framework/flux-operator/blob/main/sdk/python/v1alpha1/examples/state-pending-jobs-minicluster.py">Tutorial File</a></strong></p>
+<p><strong><a class="reference external" href="https://github.com/flux-framework/flux-operator/blob/main/sdk/python/v1alpha2/examples/state-pending-jobs-minicluster.py">Tutorial File</a></strong></p>
 <p>To run this example:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span>python<span class="w"> </span>sdk/python/v1alpha1/examples/state-pending-jobs-minicluster.py<span class="w"> </span>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span>python<span class="w"> </span>sdk/python/v1alpha2/examples/state-pending-jobs-minicluster.py<span class="w"> </span>
 </code></pre></div>
 </div>
 <p>Using this example, we are able to (with slight modification) test:</p>
@@ -920,11 +886,11 @@ flux<span class="w"> </span>dump<span class="w"> </span>/state/archive.tar.gz
 into the next cluster. If you run the example you might want to insert an <code class="docutils literal notranslate"><span class="pre">IPython.embed()</span></code>
 before the delete command at the end, and then interactively shell into the new MiniCluster
 (when the node are running) and then look at jobs:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span>kubectl<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>-it<span class="w"> </span>-n<span class="w"> </span>flux-operator<span class="w"> </span>flux-sample-0-mbv54<span class="w"> </span>--<span class="w"> </span>sudo<span class="w"> </span>-u<span class="w"> </span>flux<span class="w"> </span>flux<span class="w"> </span>proxy<span class="w"> </span>local:///var/run/flux/local<span class="w"> </span>flux<span class="w"> </span><span class="nb">jobs</span><span class="w"> </span>-a
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span>kubectl<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>-it<span class="w"> </span>flux-sample-0-mbv54<span class="w"> </span>--<span class="w"> </span><span class="nb">source</span><span class="w"> </span>/mnt/flux/flux-view.sh<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span>flux<span class="w"> </span>proxy<span class="w"> </span><span class="si">${</span><span class="nv">fluxsocket</span><span class="si">}</span><span class="w"> </span>flux<span class="w"> </span><span class="nb">jobs</span><span class="w"> </span>-a
 </code></pre></div>
 </div>
 <p>And always make sure to clean up your archive at the end!</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span>minikube<span class="w"> </span>ssh<span class="w"> </span>--<span class="w"> </span>rm<span class="w"> </span>/tmp/data/archive.tar.gz
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span>minikube<span class="w"> </span>ssh<span class="w"> </span>--<span class="w"> </span>rm<span class="w"> </span>/data/archive.tar.gz
 </code></pre></div>
 </div>
 <p>The next (basic) example goes through the same ideas, but manually for each step so you
@@ -938,11 +904,10 @@ and the second cluster then loading those states. The assets for these files are
 <a class="reference external" href="https://github.com/flux-framework/flux-operator/tree/main/examples">examples/state/basic-job-completion</a>.
 Note that in order for this to work, a shared storage location is required. Since it’s easier to submit
 multiple jobs interactively, we will do it that way. Here is the first minicluster.yaml to create:</p>
-<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><code><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">flux-framework.org/v1alpha1</span>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><code><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">flux-framework.org/v1alpha2</span>
 <span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">MiniCluster</span>
 <span class="nt">metadata</span><span class="p">:</span>
 <span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">flux-sample</span>
-<span class="w">  </span><span class="nt">namespace</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">flux-operator</span>
 <span class="nt">spec</span><span class="p">:</span>
 <span class="w">  </span><span class="c1"># Number of pods to create for MiniCluster</span>
 <span class="w">  </span><span class="nt">size</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">2</span>
@@ -954,17 +919,9 @@ multiple jobs interactively, we will do it that way. Here is the first miniclust
 <span class="w">  </span><span class="nt">archive</span><span class="p">:</span>
 <span class="w">    </span><span class="nt">path</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">/state/archive.tar.gz</span>
 
-<span class="w">  </span><span class="c1"># This volume needs to persistent between MiniClusters so we can load the archive!</span>
-<span class="w">  </span><span class="nt">volumes</span><span class="p">:</span>
-<span class="w">    </span><span class="nt">data</span><span class="p">:</span>
-<span class="w">      </span><span class="nt">storageClass</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">hostpath</span>
-<span class="w">      </span><span class="nt">path</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">/tmp/data</span>
-<span class="w">      </span><span class="nt">labels</span><span class="p">:</span>
-<span class="w">        </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;local&quot;</span>
-
 <span class="w">  </span><span class="c1"># This is a list because a pod can support multiple containers</span>
 <span class="w">  </span><span class="nt">containers</span><span class="p">:</span>
-<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">image</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ghcr.io/flux-framework/flux-restful-api:latest</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">image</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">rockylinux:9</span>
 <span class="w">      </span><span class="nt">volumes</span><span class="p">:</span>
 <span class="w">        </span><span class="nt">data</span><span class="p">:</span>
 <span class="w">          </span><span class="nt">path</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">/state</span>
@@ -978,12 +935,7 @@ we will run <code class="docutils literal notranslate"><span class="pre">flux</s
 that assumes we are OK replacing a previous state with a new one - for more complex workflows (where
 possibly we need to maintain an original state) we likely will need to do something differently. For
 the time being, let’s create this first MiniCluster to submit jobs to, and the plan will be
-that the second MiniCluster can load previous job history. If you are using
-Minikube, make sure to pull first:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span>minikube<span class="w"> </span>ssh<span class="w"> </span>docker<span class="w"> </span>pull<span class="w"> </span>ghcr.io/flux-framework/flux-restful-api:latest
-</code></pre></div>
-</div>
-<p>Now let’s create it! You can either walk through this tutorial and learn about each step (continue)
+that the second MiniCluster can load previous job history. Now let’s create it! You can either walk through this tutorial and learn about each step (continue)
 below with kubectl apply) or you can run a demo script that runs the commands on your behalf:</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span>/bin/bash<span class="w"> </span>./examples/state/basic-job-completion/example.sh
 </code></pre></div>
@@ -1074,107 +1026,7 @@ below with kubectl apply) or you can run a demo script that runs the commands on
 </code></pre></div>
 </div>
 </details>
-<h3 id="create-the-minicluster">Create the MiniCluster<a class="headerlink" href="#create-the-minicluster" title="Link to this heading">¶</a></h3>
-<p>This is how to create the MiniCluster:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span>kubectl<span class="w"> </span>apply<span class="w"> </span>-f<span class="w"> </span>examples/state/basic-job-completion/minicluster.yaml<span class="w"> </span>
-</code></pre></div>
-</div>
-<p>At this point you can proceed to either <a class="reference internal" href="#interactive-submit"><span class="std std-ref">Interactive Submit</span></a> or <a class="reference internal" href="#programmatic-submit"><span class="std std-ref">Programmatic Submit</span></a>.</p>
-<h3 id="interactive-submit">Interactive Submit<a class="headerlink" href="#interactive-submit" title="Link to this heading">¶</a></h3>
-<p>And now we need to submit a bunch of jobs to run to completion. We can do this by shelling in (and
-note this could be done by the Flux Restful API for a more proggrammatic example). First,
-here is how to do this interactively:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code><span class="c1"># Shell to the pod</span>
-$<span class="w"> </span>kubectl<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>-it<span class="w"> </span>-n<span class="w"> </span>flux-operator<span class="w"> </span>flux-sample-0-gzqfl<span class="w"> </span>--<span class="w"> </span>bash
-</code></pre></div>
-</div>
-<p>Check out the state directory! This is where Flux stores job metadata:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span>ls<span class="w"> </span>/var/lib/flux/
-</code></pre></div>
-</div>
-<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><code><span class="go">content.sqlite  content.sqlite-shm  content.sqlite-wal  job-archive.sqlite  job-archive.sqlite-shm  job-archive.sqlite-wal</span>
-</code></pre></div>
-</div>
-<p>Let’s now connect to the Flux instance:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span>sudo<span class="w"> </span>-u<span class="w"> </span>flux<span class="w"> </span>flux<span class="w"> </span>proxy<span class="w"> </span>local:///var/run/flux/local
-</code></pre></div>
-</div>
-<p>And now launch a bunch of jobs. It doesn’t matter what they are, go crazy.</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code><span class="k">for</span><span class="w"> </span>i<span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="o">{</span><span class="m">1</span>..5<span class="o">}</span>
-<span class="k">do</span>
-<span class="w">   </span>flux<span class="w"> </span>submit<span class="w"> </span>sleep<span class="w"> </span><span class="si">${</span><span class="nv">i</span><span class="si">}</span>
-<span class="w">   </span>flux<span class="w"> </span>submit<span class="w"> </span>whoami
-<span class="k">done</span>
-</code></pre></div>
-</div>
-<p>These will be done very quickly! You should see them all green (to indicate success) via:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span>flux<span class="w"> </span><span class="nb">jobs</span><span class="w"> </span>-a
-</code></pre></div>
-</div>
-<h3 id="programmatic-submit">Programmatic Submit<a class="headerlink" href="#programmatic-submit" title="Link to this heading">¶</a></h3>
-<p>Or just do the entire thing from the command line! First, confirm the archive path is empty:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span>minikube<span class="w"> </span>ssh<span class="w"> </span>ls<span class="w"> </span>/tmp/data
-<span class="c1"># no output</span>
-</code></pre></div>
-</div>
-<p>Then submit jobs - either one or many:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>kubectl<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>-it<span class="w"> </span>-n<span class="w"> </span>flux-operator<span class="w"> </span>flux-sample-0-g6gv4<span class="w"> </span>--<span class="w"> </span>sudo<span class="w"> </span>-u<span class="w"> </span>flux<span class="w"> </span>flux<span class="w"> </span>proxy<span class="w"> </span>local:///var/run/flux/local<span class="w"> </span>flux<span class="w"> </span>submit<span class="w"> </span>sleep<span class="w"> </span><span class="m">2</span>
-
-<span class="k">for</span><span class="w"> </span>i<span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="o">{</span><span class="m">1</span>..5<span class="o">}</span>
-<span class="k">do</span>
-<span class="w">   </span>kubectl<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>-it<span class="w"> </span>-n<span class="w"> </span>flux-operator<span class="w"> </span>flux-sample-0-g6gv4<span class="w"> </span>--<span class="w"> </span>sudo<span class="w"> </span>-u<span class="w"> </span>flux<span class="w"> </span>flux<span class="w"> </span>proxy<span class="w"> </span>local:///var/run/flux/local<span class="w"> </span>flux<span class="w"> </span>submit<span class="w"> </span>sleep<span class="w"> </span><span class="si">${</span><span class="nv">i</span><span class="si">}</span>
-<span class="w">   </span>kubectl<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>-it<span class="w"> </span>-n<span class="w"> </span>flux-operator<span class="w"> </span>flux-sample-0-g6gv4<span class="w"> </span>--<span class="w"> </span>sudo<span class="w"> </span>-u<span class="w"> </span>flux<span class="w"> </span>flux<span class="w"> </span>proxy<span class="w"> </span>local:///var/run/flux/local<span class="w"> </span>flux<span class="w"> </span>submit<span class="w"> </span>whoami
-<span class="k">done</span>
-</code></pre></div>
-</div>
-<p>When you are done, you can see all the jobs:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span>kubectl<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>-it<span class="w"> </span>-n<span class="w"> </span>flux-operator<span class="w"> </span>flux-sample-0-mbv54<span class="w"> </span>--<span class="w"> </span>sudo<span class="w"> </span>-u<span class="w"> </span>flux<span class="w"> </span>flux<span class="w"> </span>proxy<span class="w"> </span>local:///var/run/flux/local<span class="w"> </span>flux<span class="w"> </span><span class="nb">jobs</span><span class="w"> </span>-a
-</code></pre></div>
-</div>
-<p>Then you can stop the queue, wait for jobs to finish, and request the dump. Note that we do this
-as an interactive command and not automatically because (for large dumps 💩️) we cannot ensure that the time
-will be given for completion.</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span>kubectl<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>-it<span class="w"> </span>-n<span class="w"> </span>flux-operator<span class="w"> </span>flux-sample-0-mbv54<span class="w"> </span>--<span class="w"> </span>sudo<span class="w"> </span>-u<span class="w"> </span>flux<span class="w"> </span>flux<span class="w"> </span>proxy<span class="w"> </span>local:///var/run/flux/local<span class="w"> </span>flux<span class="w"> </span>queue<span class="w"> </span>stop
-$<span class="w"> </span>kubectl<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>-it<span class="w"> </span>-n<span class="w"> </span>flux-operator<span class="w"> </span>flux-sample-0-mbv54<span class="w"> </span>--<span class="w"> </span>sudo<span class="w"> </span>-u<span class="w"> </span>flux<span class="w"> </span>flux<span class="w"> </span>proxy<span class="w"> </span>local:///var/run/flux/local<span class="w"> </span>flux<span class="w"> </span>queue<span class="w"> </span>idle
-$<span class="w"> </span>kubectl<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>-it<span class="w"> </span>-n<span class="w"> </span>flux-operator<span class="w"> </span>flux-sample-0-mbv54<span class="w"> </span>--<span class="w"> </span>sudo<span class="w"> </span>-u<span class="w"> </span>flux<span class="w"> </span>flux<span class="w"> </span>proxy<span class="w"> </span>local:///var/run/flux/local<span class="w"> </span>flux<span class="w"> </span>queue<span class="w"> </span>dump<span class="w"> </span>/state/archive.tar.gz
-</code></pre></div>
-</div>
-<p>After that, outside of the shell (if you didn’t already exit) let’s delete the Minicluster.</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span>kubectl<span class="w"> </span>delete<span class="w"> </span>-f<span class="w"> </span>examples/state/basic-job-completion/minicluster.yaml<span class="w"> </span>
-</code></pre></div>
-</div>
-<p>At this point, it should be the case that the same flux state directory is dumped to the archive path we requested,
-which is located at <code class="docutils literal notranslate"><span class="pre">/tmp/data/archive.tar.gz</span></code> in the MiniKube vm (<code class="docutils literal notranslate"><span class="pre">/tmp/data</span></code> is bound to <code class="docutils literal notranslate"><span class="pre">/state</span></code> and the
-archive inside the container is asked to be saved to <code class="docutils literal notranslate"><span class="pre">/state/archive.tar.gz</span></code>).</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span>minikube<span class="w"> </span>ssh<span class="w"> </span>--<span class="w"> </span>ls<span class="w"> </span>-l<span class="w"> </span>/tmp/data/
-total<span class="w"> </span><span class="m">7</span>
--rw-rw-r--<span class="w"> </span><span class="m">1</span><span class="w"> </span>docker<span class="w"> </span>docker<span class="w"> </span><span class="m">6231</span><span class="w"> </span>Mar<span class="w"> </span><span class="m">12</span><span class="w"> </span><span class="m">07</span>:44<span class="w"> </span>archive.tar.gz
-</code></pre></div>
-</div>
-<p>Next, let’s bring up a second MiniCluster! This time, in the entry point it should find the existing archive,
-load into the broker, and then we will see them. We can use the same MiniCluster file!</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span>kubectl<span class="w"> </span>apply<span class="w"> </span>-f<span class="w"> </span>examples/state/basic-job-completion/minicluster.yaml<span class="w"> </span>
-</code></pre></div>
-</div>
-<p>We then then test if this current setup has a memory of the jobs run on the first one:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span>kubectl<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>-it<span class="w"> </span>-n<span class="w"> </span>flux-operator<span class="w"> </span>flux-sample-0-dpd42<span class="w"> </span>--<span class="w"> </span>sudo<span class="w"> </span>-u<span class="w"> </span>flux<span class="w"> </span>flux<span class="w"> </span>proxy<span class="w"> </span>local:///var/run/flux/local<span class="w"> </span>flux<span class="w"> </span><span class="nb">jobs</span><span class="w"> </span>-a
-</code></pre></div>
-</div>
-<p>And of course, clean up when you are done.</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code>$<span class="w"> </span>kubectl<span class="w"> </span>delete<span class="w"> </span>-f<span class="w"> </span>examples/state/basic-job-completion/minicluster.yaml<span class="w"> </span>
-$<span class="w"> </span>minikube<span class="w"> </span>ssh<span class="w"> </span>--<span class="w"> </span>rm<span class="w"> </span>-rf<span class="w"> </span>/tmp/data/archive.tar.gz
-</code></pre></div>
-</div>
-<p>We also have this example demonstrated <a class="reference external" href="https://github.com/flux-framework/flux-operator/tree/main/sdk/python/v1alpha1/examples/state-basic-job-completion-minicluster.py">entirely in Python</a> using the Flux Operator Python SDK.</p>
-<blockquote>
-<div><p>What are next steps?</p>
-</div></blockquote>
-<p>This is really cool! Intuitively what we need to do for the next example (stopping a queue of jobs that are running,
-meaning waiting for running jobs to finish and pausing the rest) is to submit jobs that will take much longer to run,
-and then figure out how to issue a command to the cluster to stop scheduling, stop the queue, wait for running jobs to
-finish, and then to do the same archive. What isn’t clear is how it will work when Flux reloads the archive - will
-the jobs that weren’t run yet start? What commands should be the responsibility of the Operator vs. a client like
-the Python SDK? I’m not sure - we will find out!</p>
+<p>You can look at that script to follow the logic and steps.</p>
 
 
   <hr>
@@ -1182,7 +1034,7 @@ the Python SDK? I’m not sure - we will find out!</p>
   <small>
     
       Last update:
-      Sep 10, 2023
+      Mar 15, 2024
     
   </small>
 </div>
@@ -1259,7 +1111,7 @@ the Python SDK? I’m not sure - we will find out!</p>
   
     Created using
     <a href="https://www.sphinx-doc.org/" target="_blank" rel="noopener">Sphinx</a>
-    7.2.5.
+    7.2.6.
      and
     <a href="https://github.com/jbms/sphinx-immaterial/" target="_blank" rel="noopener">Sphinx-Immaterial</a>
   
@@ -1294,7 +1146,7 @@ the Python SDK? I’m not sure - we will find out!</p>
     <script id="__config" type="application/json">{"base": "..", "features": ["navigation.expand", "navigation.tabs", "toc.integrate", "navigation.sections", "navigation.instant", "header.autohide", "navigation.top", "navigation.tracking", "search.highlight", "search.share", "toc.follow", "toc.sticky", "content.tabs.link", "announce.dismiss"], "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version.title": "Select version"}}</script>
     
       
-        <script src="../_static/sphinx_immaterial_theme.1b5b7a2d5891aec19.min.js?v=14bafe8d"></script>
+        <script src="../_static/sphinx_immaterial_theme.f9d9eeeb247ace16c.min.js?v=9a299579"></script>
         <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
     
   </body>

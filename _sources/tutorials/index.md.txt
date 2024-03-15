@@ -12,8 +12,6 @@ The following tutorials are provided from their respective directories (and are 
 ### Simulations
 
  - [Laghos](https://github.com/flux-framework/flux-operator/blob/main/examples/simulations/laghos-demos/minicluster.yaml)
- - [Lulesh](https://github.com/flux-framework/flux-operator/tree/main/examples/simulations/lulesh/minicluster.yaml)
- - [Qmcpack](https://github.com/flux-framework/flux-operator/tree/main/examples/simulations/qmcpack/minicluster.yaml)
  - [Exaworks Ball Bounce](https://github.com/flux-framework/flux-operator/tree/main/examples/simulations/exaworks-ball-bounce/minicluster.yaml)
 
 ### Launchers
@@ -29,12 +27,9 @@ The following tutorials are provided from their respective directories (and are 
  - [Bursting to Compute Engine](https://github.com/flux-framework/flux-operator/tree/main/examples/experimental/bursting/broker-compute-engine) from a GKE broker to an external Compute Engine cluster.
  - [Bursting (nginx service)](https://github.com/flux-framework/flux-operator/tree/main/examples/experimental/bursting/nginx) design to use central router for bursting.
 
-#### Nested
-
- - [K3s](https://github.com/flux-framework/flux-operator/tree/main/examples/nested/k3s/basic): instiatiate k3s inside Flux, and deploy an app.
-
 #### Process Namespace
 
+ - [multiple-pods-per-node](https://github.com/flux-framework/flux-operator/tree/main/examples/experimental/multiple-pods-per-node): Allow multiple pods to be scheduled per node (controlled by cgroups)
  - [shared-process-space](https://github.com/flux-framework/flux-operator/tree/main/examples/experimental/shared-process-space): Allow flux to execute a command into another container
 
 ### Machine Learning
@@ -46,25 +41,27 @@ The following tutorials are provided from their respective directories (and are 
 
 ### Message Passing Interface (MPI)
 
- - [openmpi](https://github.com/flux-framework/flux-operator/blob/main/examples/mpi/ompi)
  - [mpich](https://github.com/flux-framework/flux-operator/blob/main/examples/mpi/mpich)
 
+#### Niche Use Cases
+
+ - [disable-view](https://github.com/flux-framework/flux-operator/blob/main/examples/tests/disable-view): Use the flux packaged in your application container, and customize the flux view to some other container (required)
+
+### Queue Interaction
+
+These examples show how to interact with your flux queue from a sidecar container (that has access to the flux broker of the pod):
+
+ - [flux-sidecar](https://github.com/flux-framework/flux-operator/blob/main/examples/tests/flux-sidecar) to see a sleep job in the main application queue
 
 ### Services
 
+ - [Flux Metrics API](https://github.com/flux-framework/flux-operator/blob/main/examples/experimental/metrics-api): run a custom metrics API directly from the lead broker to help with autoscaling
  - [Nginx](https://github.com/flux-framework/flux-operator/blob/main/examples/services/sidecar/nginx): to run alongisde your MiniCluster (and possibly expose functionality)
- - [Merlin Basic](https://github.com/flux-framework/flux-operator/blob/main/examples/launchers/merlin/basic)
- - [Merlin Singularity Openfoam](https://github.com/flux-framework/flux-operator/blob/main/examples/launchers/merlin/singularity-openfoam)
+ - [Flux Restful](https://github.com/flux-framework/flux-operator/blob/main/examples/interactive/flux-restful): to run a restful API server alongside your cluster.
 
 ### Workflows
 
  - [ramble](https://github.com/flux-framework/flux-operator/blob/main/examples/workflows/ramble): recommended if you require installation with spack.
-
-Although some of the others above are also workflows, these examples are going to use `flux tree` (in various contexts) to
-submit different job hierarchies and get around the etcd bottleneck in Kubernetes. 
-
- - [Basic Tree](https://github.com/flux-framework/flux-operator/blob/main/examples/workflows/tree)
- - [Instance Variables](https://github.com/flux-framework/flux-operator/blob/main/examples/workflows/tree-with-variables)
 
 We have just started this arm of our experiments and you can expect more as we go!
 
@@ -75,13 +72,10 @@ The following tutorials are included in the rendered documentation here.
 ```{toctree}
 :maxdepth: 2
 jobs
-singularity
-multi-tenancy
 interactive
 services
 scaling
 elasticity
-staging
 volumes
 state
 ```

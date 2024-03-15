@@ -33,7 +33,7 @@
         <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
       
     
-        <link rel="stylesheet" type="text/css" href="../_static/sphinx_immaterial_theme.a60204c58f5e4ff66.min.css?v=f7c3c3dc" />
+        <link rel="stylesheet" type="text/css" href="../_static/sphinx_immaterial_theme.359ec555e2989f00f.min.css?v=379f618b" />
         <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=d68d0989" />
     <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
     
@@ -524,13 +524,6 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="ibm.html" class="md-nav__link">
-    <span title="/deployment/ibm.md (reference label)" class="md-ellipsis">IBM Cloud</span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
   <a href="google/index.html" class="md-nav__link">
     <span title="/deployment/google/index.rst (reference label)" class="md-ellipsis">Google Cloud</span>
   </a>
@@ -623,7 +616,9 @@
 
 <h1 id="clouds">Clouds<a class="headerlink" href="#clouds" title="Link to this heading">¶</a></h1>
 <p>Looking to deploy the Flux Operator in a cloudy place? You’ve come to the right spot! If you have
-any questions, please <a class="reference external" href="https://github.com/flux-framework/flux-operator/issues">let us know</a></p>
+any questions, please <a class="reference external" href="https://github.com/flux-framework/flux-operator/issues">let us know</a>
+Note that we have removed previous tutorials (e.g., IBM cloud) that have not been tested
+for version 2 of the operator yet.</p>
 <div class="toctree-wrapper compound">
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="minikube.html">MiniKube</a><ul>
@@ -643,41 +638,7 @@ any questions, please <a class="reference external" href="https://github.com/flu
 </li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="aws.html">Amazon Web Services</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="aws.html#setup">Setup</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="aws.html#install">Install</a></li>
-<li class="toctree-l3"><a class="reference internal" href="aws.html#setup-ssh">Setup SSH</a></li>
-<li class="toctree-l3"><a class="reference internal" href="aws.html#create-cluster">Create Cluster</a></li>
-<li class="toctree-l3"><a class="reference internal" href="aws.html#deploy-operator">Deploy Operator</a></li>
-<li class="toctree-l3"><a class="reference internal" href="aws.html#create-the-flux-operator-namespace">Create the flux-operator namespace</a></li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="aws.html#examples">Examples</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="aws.html#run-lammps">Run LAMMPS</a></li>
-<li class="toctree-l3"><a class="reference internal" href="aws.html#run-snakemake-with-a-shared-filesystem">Run Snakemake with a Shared Filesystem</a></li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="aws.html#clean-up">Clean up</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="ibm.html">IBM Cloud</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="ibm.html#setup">Setup</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="ibm.html#credentials">Credentials</a></li>
-<li class="toctree-l3"><a class="reference internal" href="ibm.html#install">Install</a></li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="ibm.html#accessing-storage-on-ibm-cloud">Accessing Storage on IBM Cloud</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="ibm.html#prepare-data">Prepare Data</a></li>
-<li class="toctree-l3"><a class="reference internal" href="ibm.html#create-cluster">Create Cluster</a></li>
-<li class="toctree-l3"><a class="reference internal" href="ibm.html#deploy-operator">Deploy Operator</a></li>
-<li class="toctree-l3"><a class="reference internal" href="ibm.html#create-flux-operator-namespace">Create Flux Operator namespace</a></li>
-<li class="toctree-l3"><a class="reference internal" href="ibm.html#install-the-container-storage-plugin">Install the Container Storage Plugin</a></li>
-<li class="toctree-l3"><a class="reference internal" href="ibm.html#example-minicluster">Example MiniCluster</a></li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="ibm.html#clean-up">Clean up</a></li>
-</ul>
-</li>
+<li class="toctree-l1"><a class="reference internal" href="aws.html">Amazon Web Services</a></li>
 </ul>
 </div>
 <div class="toctree-wrapper compound">
@@ -706,22 +667,6 @@ any questions, please <a class="reference external" href="https://github.com/flu
 <li class="toctree-l3"><a class="reference internal" href="google/filestore.html#clean-up">Clean Up</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="google/csi.html">CSI for Cloud Storage</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="google/csi.html#create-cluster">Create Cluster</a></li>
-<li class="toctree-l3"><a class="reference internal" href="google/csi.html#get-credentials">Get Credentials</a></li>
-<li class="toctree-l3"><a class="reference internal" href="google/csi.html#install-the-csi">Install the CSI</a></li>
-<li class="toctree-l3"><a class="reference internal" href="google/csi.html#storage-class">Storage Class</a></li>
-<li class="toctree-l3"><a class="reference internal" href="google/csi.html#snakemake-minicluster">Snakemake MiniCluster</a></li>
-<li class="toctree-l3"><a class="reference internal" href="google/csi.html#clean-up">Clean up</a></li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="google/fusion.html">Fusion Storage</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="google/fusion.html#create-cluster">Create Cluster</a></li>
-<li class="toctree-l3"><a class="reference internal" href="google/fusion.html#running-snakemake">Running Snakemake</a></li>
-<li class="toctree-l3"><a class="reference internal" href="google/fusion.html#clean-up">Clean up</a></li>
-<li class="toctree-l3"><a class="reference internal" href="google/fusion.html#how-does-it-work">How does it work?</a></li>
-</ul>
-</li>
 </ul>
 </li>
 </ul>
@@ -733,7 +678,7 @@ any questions, please <a class="reference external" href="https://github.com/flu
   <small>
     
       Last update:
-      Sep 10, 2023
+      Mar 15, 2024
     
   </small>
 </div>
@@ -810,7 +755,7 @@ any questions, please <a class="reference external" href="https://github.com/flu
   
     Created using
     <a href="https://www.sphinx-doc.org/" target="_blank" rel="noopener">Sphinx</a>
-    7.2.5.
+    7.2.6.
      and
     <a href="https://github.com/jbms/sphinx-immaterial/" target="_blank" rel="noopener">Sphinx-Immaterial</a>
   
@@ -845,7 +790,7 @@ any questions, please <a class="reference external" href="https://github.com/flu
     <script id="__config" type="application/json">{"base": "..", "features": ["navigation.expand", "navigation.tabs", "toc.integrate", "navigation.sections", "navigation.instant", "header.autohide", "navigation.top", "navigation.tracking", "search.highlight", "search.share", "toc.follow", "toc.sticky", "content.tabs.link", "announce.dismiss"], "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version.title": "Select version"}}</script>
     
       
-        <script src="../_static/sphinx_immaterial_theme.1b5b7a2d5891aec19.min.js?v=14bafe8d"></script>
+        <script src="../_static/sphinx_immaterial_theme.f9d9eeeb247ace16c.min.js?v=9a299579"></script>
         <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
     
   </body>
