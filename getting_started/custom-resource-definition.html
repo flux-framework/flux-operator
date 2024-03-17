@@ -920,6 +920,13 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#script" class="md-nav__link">
+    <span title="/getting_started/custom-resource-definition.md#script (reference label)" class="md-ellipsis">script</span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#workerpre-and-brokerpre" class="md-nav__link">
     <span title="/getting_started/custom-resource-definition.md#workerpre-and-brokerpre (reference label)" class="md-ellipsis">worker<wbr>Pre and broker<wbr>Pre</span>
   </a>
@@ -1930,6 +1937,21 @@ early environment variables are set (e.g., asFlux). Here is an example:</p>
 <span class="w">        </span><span class="no">ls /workdir</span>
 </code></pre></div>
 </div>
+<h5 id="script">script<a class="headerlink" href="#script" title="Link to this heading">¶</a></h5>
+<p>If you want to write a custom entrypoint script (that will be chmod +x and provided to flux submit) you
+can do so with script. For example:</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><code><span class="nt">containers</span><span class="p">:</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">image</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">my-flux-image</span>
+<span class="w">    </span><span class="l l-Scalar l-Scalar-Plain">...</span>
+<span class="w">    </span><span class="nt">commands</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">script</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">|</span>
+<span class="w">        </span><span class="no">#!/bin/bash</span>
+<span class="w">        </span><span class="no">echo &quot;This is my custom script&quot;</span>
+<span class="w">        </span><span class="no">echo &quot;This is rank \${FLUX_TASK_RANK}</span>
+</code></pre></div>
+</div>
+<p>Note that the environment variable <span class="math notranslate nohighlight">\(\)</span> is escaped.
+For a container that is running flux you are not allowed to provide a script and command, and validation will check this.</p>
 <h5 id="workerpre-and-brokerpre">workerPre and brokerPre<a class="headerlink" href="#workerpre-and-brokerpre" title="Link to this heading">¶</a></h5>
 <p>This is akin to pre, but only for the broker OR the workers.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><code><span class="n">containers</span><span class="p">:</span>
@@ -2194,7 +2216,7 @@ to the indexed job container:</p>
   <small>
     
       Last update:
-      Mar 15, 2024
+      Mar 17, 2024
     
   </small>
 </div>
@@ -2308,6 +2330,8 @@ to the indexed job container:</p>
       
         <script src="../_static/sphinx_immaterial_theme.f9d9eeeb247ace16c.min.js?v=9a299579"></script>
         <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+        <script>window.MathJax = {"tex": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true}, "options": {"ignoreHtmlClass": "tex2jax_ignore|mathjax_ignore|document", "processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+        <script id="MathJax-script" src="../_static/mathjax/tex-mml-chtml.js?v=cadf963e"></script>
     
   </body>
 </html>
