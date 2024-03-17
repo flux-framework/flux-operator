@@ -26,6 +26,9 @@ fluxsocket=${viewroot}/run/flux/local
 # Ensure fluxsocket has local
 fluxsocket="local://$fluxsocket"
 
+# Is a custom script provided?
+{{template "custom-script" .}}
+
 {{ .Container.Command }}
 
 {{ .Container.Commands.Post}}

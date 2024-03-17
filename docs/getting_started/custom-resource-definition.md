@@ -924,6 +924,25 @@ containers:
         ls /workdir
 ```
 
+##### script
+
+If you want to write a custom entrypoint script (that will be chmod +x and provided to flux submit) you
+can do so with script. For example:
+
+```yaml
+containers:
+  - image: my-flux-image
+    ...
+    commands:
+      script: |
+        #!/bin/bash
+        echo "This is my custom script"
+        echo "This is rank \${FLUX_TASK_RANK}
+```
+
+Note that the environment variable `$` is escaped.
+For a container that is running flux you are not allowed to provide a script and command, and validation will check this.
+
 ##### workerPre and brokerPre
 
 This is akin to pre, but only for the broker OR the workers.

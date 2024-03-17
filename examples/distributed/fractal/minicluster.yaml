@@ -1,0 +1,29 @@
+apiVersion: flux-framework.org/v1alpha2
+kind: MiniCluster
+metadata:
+  name: flux-sample
+spec:
+  size: 4
+  tasks: 4
+  flux:
+    container: 
+      image: ghcr.io/converged-computing/flux-view-ubuntu:tag-jammy
+  containers:
+  - image: ghcr.io/converged-computing/distributed-fractal
+    commands:
+      script: |
+        #!/bin/bash
+        start_fractal() {
+           sleep 5
+           curl -X POST http://localhost:9092/start       
+        }
+        echo "This is task \${FLUX_TASK_RANK}"
+        if [[ "\${FLUX_TASK_RANK}" == "0" ]]; then
+           start_fractal &
+           fractal leader --host 0.0.0.0:50051 --force-exit
+           # How to wait for all other ranks to be ready?
+        else
+           fractal worker --host flux-sample-0.flux-service.default.svc.cluster.local:50051
+        fi
+        ls
+        

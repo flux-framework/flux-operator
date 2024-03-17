@@ -41,6 +41,7 @@ class Commands(object):
         'post': 'str',
         'pre': 'str',
         'prefix': 'str',
+        'script': 'str',
         'service_pre': 'str',
         'worker_pre': 'str'
     }
@@ -51,11 +52,12 @@ class Commands(object):
         'post': 'post',
         'pre': 'pre',
         'prefix': 'prefix',
+        'script': 'script',
         'service_pre': 'servicePre',
         'worker_pre': 'workerPre'
     }
 
-    def __init__(self, broker_pre='', init='', post='', pre='', prefix='', service_pre='', worker_pre='', local_vars_configuration=None):  # noqa: E501
+    def __init__(self, broker_pre='', init='', post='', pre='', prefix='', script='', service_pre='', worker_pre='', local_vars_configuration=None):  # noqa: E501
         """Commands - a model defined in OpenAPI"""  # noqa: E501
         if local_vars_configuration is None:
             local_vars_configuration = Configuration.get_default_copy()
@@ -66,6 +68,7 @@ class Commands(object):
         self._post = None
         self._pre = None
         self._prefix = None
+        self._script = None
         self._service_pre = None
         self._worker_pre = None
         self.discriminator = None
@@ -80,6 +83,8 @@ class Commands(object):
             self.pre = pre
         if prefix is not None:
             self.prefix = prefix
+        if script is not None:
+            self.script = script
         if service_pre is not None:
             self.service_pre = service_pre
         if worker_pre is not None:
@@ -199,6 +204,29 @@ class Commands(object):
         """
 
         self._prefix = prefix
+
+    @property
+    def script(self):
+        """Gets the script of this Commands.  # noqa: E501
+
+        Custom script for submit (e.g., multiple lines)  # noqa: E501
+
+        :return: The script of this Commands.  # noqa: E501
+        :rtype: str
+        """
+        return self._script
+
+    @script.setter
+    def script(self, script):
+        """Sets the script of this Commands.
+
+        Custom script for submit (e.g., multiple lines)  # noqa: E501
+
+        :param script: The script of this Commands.  # noqa: E501
+        :type script: str
+        """
+
+        self._script = script
 
     @property
     def service_pre(self):

@@ -75,6 +75,11 @@
           "type": "string",
           "default": ""
         },
+        "script": {
+          "description": "Custom script for submit (e.g., multiple lines)",
+          "type": "string",
+          "default": ""
+        },
         "servicePre": {
           "description": "A command only for service start.sh tor run",
           "type": "string",

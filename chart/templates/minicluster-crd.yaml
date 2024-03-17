@@ -93,6 +93,9 @@ spec:
                             Prefix to flux start / submit / broker
                             Typically used for a wrapper command to mount, etc.
                           type: string
+                        script:
+                          description: Custom script for submit (e.g., multiple lines)
+                          type: string
                         servicePre:
                           description: A command only for service start.sh tor run
                           type: string
@@ -582,6 +585,9 @@ spec:
                           description: |-
                             Prefix to flux start / submit / broker
                             Typically used for a wrapper command to mount, etc.
+                          type: string
+                        script:
+                          description: Custom script for submit (e.g., multiple lines)
                           type: string
                         servicePre:
                           description: A command only for service start.sh tor run
