@@ -22,6 +22,9 @@ fluxuid=$(id -u $fluxuser)
 cfg="${viewroot}/etc/flux/config"
 command="{{ .Container.Command }}"
 
+# Is a custom script provided? This will override command
+{{template "custom-script" .}}
+
 {{ if not .Spec.Logging.Quiet }}
 echo 
 echo "Hello user ${fluxuser}"{{ end }}

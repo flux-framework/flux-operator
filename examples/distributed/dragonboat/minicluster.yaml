@@ -1,0 +1,13 @@
+apiVersion: flux-framework.org/v1alpha2
+kind: MiniCluster
+metadata:
+  name: flux-sample
+spec:
+  size: 4
+  tasks: 4
+  flux:
+    container: 
+      image: ghcr.io/converged-computing/flux-view-ubuntu:tag-focal
+  containers:
+  - image: vanessa/dragonboat-hello-workd
+    command: /entrypoint.sh

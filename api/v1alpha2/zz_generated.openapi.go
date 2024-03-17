@@ -137,6 +137,14 @@ func schema_flux_framework_flux_operator_api_v1alpha2_Commands(ref common.Refere
 							Format:      "",
 						},
 					},
+					"script": {
+						SchemaProps: spec.SchemaProps{
+							Description: "Custom script for submit (e.g., multiple lines)",
+							Default:     "",
+							Type:        []string{"string"},
+							Format:      "",
+						},
+					},
 					"init": {
 						SchemaProps: spec.SchemaProps{
 							Description: "init command is run before anything",

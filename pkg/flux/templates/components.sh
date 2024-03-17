@@ -53,6 +53,16 @@ else
 fi
 {{end}}
 
+{{define "custom-script"}}
+{{ if .Container.Commands.Script }}
+cat <<EOF > ./custom-entrypoint.sh
+{{ .Container.Commands.Script }}
+EOF
+chmod +x ./custom-entrypoint.sh
+command="/bin/bash ./custom-entrypoint.sh"
+{{end}}
+{{end}}
+
 {{define "paths"}}
 foundroot=$(find $viewroot -maxdepth 2 -type d -path $viewroot/lib/python3\*) {{ if .Spec.Logging.Quiet }}> /dev/null 2>&1{{ end }}
 pythonversion=$(basename ${foundroot})

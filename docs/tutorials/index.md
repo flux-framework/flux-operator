@@ -20,6 +20,11 @@ The following tutorials are provided from their respective directories (and are 
 
 ### Experimental
 
+#### Distributed
+
+ - [Distributed-fractal](https://github.com/flux-framework/flux-operator/tree/main/examples/distributed/fractal/minicluster.yaml): Using [distributed-fractal](https://github.com/converged-computing/distributed-fractal) to generate a fractal across nodes with GRPC. You might want to use a volume or other means to keep the cluster running (sleep infinity post command) to retrieve the image.
+ - [dragonboat](https://github.com/flux-framework/flux-operator/tree/main/examples/distributed/dragonboat/minicluster.yaml): simple consensus algorithm-driven state machine demonstration using the flux operator. See [this repository](https://github.com/researchapps/dragonboat-example).
+
 #### Bursting
 
  - [Bursting to GKE](https://github.com/flux-framework/flux-operator/tree/main/examples/experimental/bursting/broker-gke) from a local broker to an external Google Kubernetes Engine cluster.

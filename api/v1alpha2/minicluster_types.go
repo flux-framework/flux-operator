@@ -586,6 +586,10 @@ type Commands struct {
 	// +optional
 	Prefix string `json:"prefix"`
 
+	// Custom script for submit (e.g., multiple lines)
+	// +optional
+	Script string `json:"script"`
+
 	// init command is run before anything
 	// +optional
 	Init string `json:"init"`
@@ -815,6 +819,12 @@ func (f *MiniCluster) Validate() bool {
 				fmt.Printf("😥️ %s is missing a name\n", name)
 				return false
 			}
+		}
+
+		// If a custom script is provided AND a command, no go
+		if (container.Commands.Script != "" && container.Command != "") && container.RunFlux {
+			fmt.Printf("😥️ %s has both a script and command provided, choose one\n", name)
+			return false
 		}
 	}
 	if fluxRunners != 1 {
