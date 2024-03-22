@@ -5,17 +5,16 @@
 Welcome to the Flux Operator Documentation!
 
 The Flux Operator is a Kubernetes Cluster [Operator](https://kubernetes.io/docs/concepts/extend-kubernetes/operator/)
-that you can install to your cluster to create and control [Flux Framework](https://flux-framework.org/) `MiniCluster`s
+that you can install to your cluster to create and control a [Flux Framework](https://flux-framework.org/) `MiniCluster`
 to launch jobs to. With the Flux Operator you can:
 
 1. Create an ephemeral MiniCluster to run one job
 2. Create a persistent MiniCluster to submit jobs to via user interface, command line, or language SDK.
 3. View logs and job information via the same interfaces!
 
-The Flux Operator is currently 🚧️ Under Construction! 🚧️
-We are working on core functionality along with providing a library of
-examples from HPC. This is a *converged computing* project that aims
-to unite the worlds and technologies typical of cloud computing and
+The Flux Operator is recently [published](https://f1000research.com/articles/13-203/v1)
+and we are actively using it to run HPC workloads in cloud environments.
+This is a *converged computing* project that aims to unite the worlds and technologies typical of cloud computing and
 high performance computing.
 
 To get started, check out the links below!
