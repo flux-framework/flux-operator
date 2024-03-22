@@ -1,0 +1,19 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite it as below."
+authors:
+  - family-names: Sochat
+    given-names: Vanessa
+    orcid: https://orcid.org/0000-0002-4387-3819
+  - family-names: Culquicondor
+    given-names: Aldo
+  - family-names: Ojea
+    given-names: Antonio
+  - family-names: Milroy
+    given-names: Daniel
+    orcid: https://orcid.org/0000-0001-6500-3227
+title: "The Flux Operator"
+version: 0.2.0
+identifiers:
+  - type: doi
+    value: 10.12688/f1000research.147989.1
+date-released: 2024-03-21
