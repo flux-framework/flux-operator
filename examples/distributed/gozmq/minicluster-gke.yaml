@@ -1,0 +1,22 @@
+apiVersion: flux-framework.org/v1alpha2
+kind: MiniCluster
+metadata:
+  name: flux-sample
+spec:
+  # This will be one task per node
+  size: 8
+  tasks: 8
+  logging:
+    quiet: true
+  flux:
+    container: 
+      image: ghcr.io/converged-computing/flux-view-ubuntu:tag-jammy
+  containers:
+  - image: vanessa/gozmq:0
+    command: /bin/bash /code/entrypoint.sh 8
+    # c2d-standard-8 has 4 physical cores
+    resources:
+      limits:
+        cpu: 3
+      requests:
+        cpu: 3
