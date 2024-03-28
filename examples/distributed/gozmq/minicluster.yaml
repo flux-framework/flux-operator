@@ -1,0 +1,15 @@
+apiVersion: flux-framework.org/v1alpha2
+kind: MiniCluster
+metadata:
+  name: flux-sample
+spec:
+  size: 2
+  tasks: 2
+  logging:
+    quiet: true
+  flux:
+    container: 
+      image: ghcr.io/converged-computing/flux-view-ubuntu:tag-jammy
+  containers:
+  - image: gozmq
+    command: /bin/bash /code/entrypoint.sh

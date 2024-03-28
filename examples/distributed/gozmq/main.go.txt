@@ -1,0 +1,147 @@
+package main
+
+import (
+	"log"
+	"os"
+	"strings"
+
+	"github.com/akamensky/argparse"
+	zmq "github.com/pebbe/zmq4"
+
+	"fmt"
+	"math/rand"
+	"time"
+)
+
+func workerTask(toHost, fromHost string) {
+	worker, err := zmq.NewSocket(zmq.DEALER)
+	if err != nil {
+		log.Fatalf("Error", err)
+	}
+	defer worker.Close()
+	set_id(worker) //  Set a printable identity
+	worker.Connect(fmt.Sprintf("tcp://%s", toHost))
+
+	total := 0
+	for {
+		//  Tell the broker we're ready for work
+		worker.Send("", zmq.SNDMORE)
+		worker.Send("Ready to serve!", 0)
+
+		//  Get workload from broker, until finished
+		worker.Recv(0) //  Envelope delimiter
+		workload, _ := worker.Recv(0)
+		if workload == "Done" {
+			fmt.Printf("Completed: from %s to %s: %d tasks\n", fromHost, toHost, total)
+			break
+		}
+		total++
+
+		//  Do some random work
+		time.Sleep(time.Duration(rand.Intn(500)+1) * time.Millisecond)
+	}
+}
+
+func main() {
+
+	parser := argparse.NewParser("gozmq", "Playing with ZeroMQ in Go")
+	runCmd := parser.NewCommand("run", "Run the example")
+	prefix := runCmd.String("p", "prefix", &argparse.Options{Help: "Hostname prefix (e.g., flux-sample)"})
+	size := runCmd.Int("s", "size", &argparse.Options{Help: "Number of hosts (count starts at 0)"})
+	rank := runCmd.Int("r", "rank", &argparse.Options{Help: "Rank of this host"})
+	tasks := runCmd.Int("t", "tasks", &argparse.Options{Help: "Number of tasks (workers) per node", Default: 1})
+	measurements := runCmd.Int("m", "measurements", &argparse.Options{Help: "Number of measurements to take (to average over)", Default: 10})
+	suffix := runCmd.String("", "suffix", &argparse.Options{Help: "Hostname suffix (e.g. .flux-service.default.svc.cluster.local)"})
+	port := runCmd.String("", "port", &argparse.Options{Help: "Port to use", Default: "5671"})
+
+	err := parser.Parse(os.Args)
+	if err != nil {
+		fmt.Println(parser.Usage(err))
+		return
+	}
+
+	if runCmd.Happened() {
+
+		// Start the broker on the host
+		thisHost := fmt.Sprintf("%s-%d.%s:%s", *prefix, *rank, *suffix, *port)
+
+		broker, err := zmq.NewSocket(zmq.ROUTER)
+		if err != nil {
+			log.Fatalf("Error", err)
+		}
+		defer broker.Close()
+
+		brokerHost := fmt.Sprintf("tcp://*:%s", *port)
+		broker.Bind(brokerHost)
+
+		// Run a client task for each host
+		for i := 0; i < *size; i++ {
+
+			// Don't send to self?
+			if i == *rank {
+				continue
+			}
+
+			host := fmt.Sprintf("%s-%d.%s:%s", *prefix, i, *suffix, *port)
+
+			// Note that we can run more than one worker task here,
+			// I'm choosing one to mimic(?) point to point (maybe)?
+			for w := 0; w < *tasks; w++ {
+				go workerTask(host, thisHost)
+			}
+
+			// Keep matrix of elapsed times
+			times := make([]time.Duration, *measurements)
+			for m := 0; m < *measurements; m++ {
+
+				//  Next message gives us least recently used worker
+				identity, err := broker.Recv(0)
+				if err != nil {
+					log.Fatalf("Error", err)
+				}
+				start := time.Now()
+				broker.Send(identity, zmq.SNDMORE)
+
+				// This is the envelope delimiter
+				broker.Recv(0)
+
+				// This is the response from the worker
+				// This is the round trip time
+				broker.Recv(0)
+				end := time.Now()
+				elapsed := end.Sub(start)
+
+				// Add the entry to our matrix
+				times[m] = elapsed
+				broker.Send("", zmq.SNDMORE)
+
+				// Workers need to keep going until experiment done
+				broker.Send("Keep going", 0)
+			}
+
+			// Tell the worker it's done
+			toHostPrefix := strings.Split(host, ".")
+			fromHostPrefix := strings.Split(thisHost, ".")
+			fmt.Printf("  ⭐️ Times for %s to %s: %s\n", fromHostPrefix[0], toHostPrefix[0], times)
+		}
+
+		// Give some time for everyone to finish
+		time.Sleep(time.Second * 10)
+		broker.Send("Done", 0)
+	}
+}
+
+// calculateMean calculates the mean duration
+// TODO get this working, units are weird
+func calculateMean(times []time.Duration) time.Duration {
+	total := time.Duration(0)
+	for _, t := range times {
+		total += t
+	}
+	return (total / time.Duration(len(times))) * time.Nanosecond
+}
+
+func set_id(soc *zmq.Socket) {
+	identity := fmt.Sprintf("%04X-%04X", rand.Intn(0x10000), rand.Intn(0x10000))
+	soc.SetIdentity(identity)
+}
