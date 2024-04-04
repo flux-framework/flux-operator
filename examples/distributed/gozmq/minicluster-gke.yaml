@@ -13,6 +13,7 @@ spec:
       image: ghcr.io/converged-computing/flux-view-ubuntu:tag-jammy
   containers:
   - image: vanessa/gozmq:0
+    pullAlways: true
     command: /bin/bash /code/entrypoint.sh 8
     # c2d-standard-8 has 4 physical cores
     resources:
