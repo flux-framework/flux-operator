@@ -1185,7 +1185,7 @@ spec:
   size: 2
   containers:
     - image: rockylinux:9
-      command: ls /data
+      command: df -h /dev/shm
       volumes:
         # must be lowercase!
         my-empty-dir:
@@ -1212,8 +1212,25 @@ spec:
           emptyDirMedium: "memory"
 ```
 
-The default binds to the path `/dev/shm` and is not customizable. This can be changed if needed.
+The default binds to the path `/dev/shm` and is not customizable. This can be changed if needed. When you have the "memory" medium added,
+you should see all the shared memory from the host, which is [calculated here](https://github.com/kubernetes/kubernetes/blob/e6616033cb844516b1e91b3ec7cd30f8c5d1ea50/pkg/volume/emptydir/empty_dir.go#L148-L157).
+As an example, here is output from a local run with kind when shared memory is added:
 
+```console
+$ kubectl logs flux-sample-0-smflk 
+Defaulted container "flux-sample" out of: flux-sample, flux-view (init)
+Filesystem      Size  Used Avail Use% Mounted on
+tmpfs            32G     0   32G   0% /dev/shm
+```
+
+And here is the same MiniCluster with the volume removed (64M is the default):
+
+```console
+$ kubectl logs flux-sample-0-4bwjf -f
+Defaulted container "flux-sample" out of: flux-sample, flux-view (init)
+Filesystem      Size  Used Avail Use% Mounted on
+shm              64M     0   64M   0% /dev/shm
+```
 
 #### persistent volume claim example
 
