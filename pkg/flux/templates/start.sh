@@ -29,6 +29,8 @@ fluxsocket="local://$fluxsocket"
 # Is a custom script provided?
 {{template "custom-script" .}}
 
+{{template "worker-broker" .}}
+
 {{ .Container.Command }}
 
 {{ .Container.Commands.Post}}

@@ -63,6 +63,43 @@ command="/bin/bash ./custom-entrypoint.sh"
 {{end}}
 {{end}}
 
+{{define "broker"}}
+brokerOptions="-Scron.directory=/etc/flux/system/cron.d \
+  -Stbon.fanout=256 \
+  -Srundir=${viewroot}/run/flux {{ if .Spec.Interactive }}-Sbroker.rc2_none {{ end }} \
+  -Sstatedir=${STATE_DIR} \
+  -Slocal-uri=local://$viewroot/run/flux/local \
+{{ if .Spec.Flux.ConnectTimeout }}-Stbon.connect_timeout={{ .Spec.Flux.ConnectTimeout }}{{ end }} \
+{{ if .RequiredRanks }}-Sbroker.quorum={{ .RequiredRanks }}{{ end }} \
+{{ if .Spec.Logging.Zeromq }}-Stbon.zmqdebug=1{{ end }} \
+{{ if not .Spec.Logging.Quiet }} -Slog-stderr-level={{or .Spec.Flux.LogLevel 6}} {{ else }} -Slog-stderr-level=0 {{ end }} \
+  -Slog-stderr-mode=local"
+
+
+# Run an interactive cluster, giving no command to flux start
+function run_interactive_cluster() {
+    echo "🌀 flux broker --config-path ${cfg} ${brokerOptions}"
+    flux broker --config-path ${cfg} ${brokerOptions}
+}
+{{end}}
+
+{{define "worker-broker"}}
+cfg="${viewroot}/etc/flux/config"
+brokerOptions="-Stbon.fanout=256 \
+  -Srundir=${viewroot}/run/flux {{ if .Spec.Interactive }}-Sbroker.rc2_none {{ end }} \
+  -Slocal-uri=local://$viewroot/run/flux/local \
+{{ if .Spec.Flux.ConnectTimeout }}-Stbon.connect_timeout={{ .Spec.Flux.ConnectTimeout }}{{ end }} \
+{{ if .Spec.Logging.Zeromq }}-Stbon.zmqdebug=1{{ end }} \
+{{ if not .Spec.Logging.Quiet }} -Slog-stderr-level={{or .Spec.Flux.LogLevel 6}} {{ else }} -Slog-stderr-level=0 {{ end }} \
+  -Slog-stderr-mode=local"
+
+# This is provided as an optional function for a worker
+function run_interactive_cluster() {
+    echo "🌀 flux broker --config-path ${cfg} ${brokerOptions}"
+    flux broker --config-path ${cfg} ${brokerOptions}
+}
+{{end}}
+
 {{define "paths"}}
 foundroot=$(find $viewroot -maxdepth 2 -type d -path $viewroot/lib/python3\*) {{ if .Spec.Logging.Quiet }}> /dev/null 2>&1{{ end }}
 pythonversion=$(basename ${foundroot})
