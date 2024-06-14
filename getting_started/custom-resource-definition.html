@@ -33,7 +33,7 @@
         <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
       
     
-        <link rel="stylesheet" type="text/css" href="../_static/sphinx_immaterial_theme.359ec555e2989f00f.min.css?v=379f618b" />
+        <link rel="stylesheet" type="text/css" href="../_static/sphinx_immaterial_theme.e0b5691b38cca82da.min.css?v=564375aa" />
         <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=d68d0989" />
     <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
     
@@ -1010,6 +1010,13 @@
           <li class="md-nav__item">
   <a href="#hostpath-example" class="md-nav__link">
     <span title="/getting_started/custom-resource-definition.md#hostpath-example (reference label)" class="md-ellipsis">hostpath example</span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#emptydir-example" class="md-nav__link">
+    <span title="/getting_started/custom-resource-definition.md#emptydir-example (reference label)" class="md-ellipsis">empty<wbr>Dir example</span>
   </a>
   
 </li>
@@ -2090,6 +2097,7 @@ We did this because volumes are complex and it was challenging to support every 
 the volumes and persistent volume claims that the MiniCluster needs, and simply tell it about them. A volume (that must exist) can be:</p>
 <ul class="simple">
 <li><p>a hostpath (good for local development)</p></li>
+<li><p>an empty directory (and of a particular custom type, such as Memory)</p></li>
 <li><p>a persistent volume claim (PVC) and persistent volume (PV) that you’ve created</p></li>
 <li><p>a secret that you’ve created</p></li>
 <li><p>a config map that you’ve created</p></li>
@@ -2140,6 +2148,56 @@ pod (in the indexed job) or a service.</p>
 </code></pre></div>
 </div>
 <p>An example is provided in the <a class="reference external" href="https://github.com/flux-framework/flux-operator/tree/main/examples/tests/volumes">volumes test</a>.</p>
+<h4 id="emptydir-example">emptyDir example<a class="headerlink" href="#emptydir-example" title="Link to this heading">¶</a></h4>
+<p>A standard empty directory might look like this:</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><code><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">flux-framework.org/v1alpha2</span>
+<span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">MiniCluster</span>
+<span class="nt">metadata</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">flux-sample</span>
+<span class="nt">spec</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">size</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">2</span>
+<span class="w">  </span><span class="nt">containers</span><span class="p">:</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">image</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">rockylinux:9</span>
+<span class="w">      </span><span class="nt">command</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">df -h /dev/shm</span>
+<span class="w">      </span><span class="nt">volumes</span><span class="p">:</span>
+<span class="w">        </span><span class="c1"># must be lowercase!</span>
+<span class="w">        </span><span class="nt">my-empty-dir</span><span class="p">:</span>
+<span class="w">          </span><span class="nt">emptyDir</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+</code></pre></div>
+</div>
+<p>And one for shared memory (to inherit the host) like this:</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><code><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">flux-framework.org/v1alpha2</span>
+<span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">MiniCluster</span>
+<span class="nt">metadata</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">flux-sample</span>
+<span class="nt">spec</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">size</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">2</span>
+<span class="w">  </span><span class="nt">containers</span><span class="p">:</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">image</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">rockylinux:9</span>
+<span class="w">      </span><span class="nt">command</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ls /data</span>
+<span class="w">      </span><span class="nt">volumes</span><span class="p">:</span>
+<span class="w">        </span><span class="c1"># must be lowercase!</span>
+<span class="w">        </span><span class="nt">my-empty-dir</span><span class="p">:</span>
+<span class="w">          </span><span class="nt">emptyDir</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+<span class="w">          </span><span class="nt">emptyDirMedium</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;memory&quot;</span>
+</code></pre></div>
+</div>
+<p>The default binds to the path <code class="docutils literal notranslate"><span class="pre">/dev/shm</span></code> and is not customizable. This can be changed if needed. When you have the “memory” medium added,
+you should see all the shared memory from the host, which is <a class="reference external" href="https://github.com/kubernetes/kubernetes/blob/e6616033cb844516b1e91b3ec7cd30f8c5d1ea50/pkg/volume/emptydir/empty_dir.go#L148-L157">calculated here</a>.
+As an example, here is output from a local run with kind when shared memory is added:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><code><span class="gp">$ </span>kubectl<span class="w"> </span>logs<span class="w"> </span>flux-sample-0-smflk<span class="w"> </span>
+<span class="go">Defaulted container &quot;flux-sample&quot; out of: flux-sample, flux-view (init)</span>
+<span class="go">Filesystem      Size  Used Avail Use% Mounted on</span>
+<span class="go">tmpfs            32G     0   32G   0% /dev/shm</span>
+</code></pre></div>
+</div>
+<p>And here is the same MiniCluster with the volume removed (64M is the default):</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><code><span class="gp">$ </span>kubectl<span class="w"> </span>logs<span class="w"> </span>flux-sample-0-4bwjf<span class="w"> </span>-f
+<span class="go">Defaulted container &quot;flux-sample&quot; out of: flux-sample, flux-view (init)</span>
+<span class="go">Filesystem      Size  Used Avail Use% Mounted on</span>
+<span class="go">shm              64M     0   64M   0% /dev/shm</span>
+</code></pre></div>
+</div>
 <h4 id="persistent-volume-claim-example">persistent volume claim example<a class="headerlink" href="#persistent-volume-claim-example" title="Link to this heading">¶</a></h4>
 <p>As an example, the IBM plugin we use to setup takes this approach, and then we define the existing volume on the level of the container:</p>
 <div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><code><span class="c1"># This is a list because a pod can support multiple containers</span>
@@ -2216,7 +2274,7 @@ to the indexed job container:</p>
   <small>
     
       Last update:
-      Apr 04, 2024
+      Jun 14, 2024
     
   </small>
 </div>
@@ -2293,7 +2351,7 @@ to the indexed job container:</p>
   
     Created using
     <a href="https://www.sphinx-doc.org/" target="_blank" rel="noopener">Sphinx</a>
-    7.2.6.
+    7.3.7.
      and
     <a href="https://github.com/jbms/sphinx-immaterial/" target="_blank" rel="noopener">Sphinx-Immaterial</a>
   
