@@ -10,7 +10,7 @@ spec:
   # This is a list because a pod can support multiple containers
   containers:
     - image: rockylinux:9
-      command: ls /data
+      command: cat /proc/meminfo
       volumes:
         # This must be all lowercase!
         my-empty-dir:

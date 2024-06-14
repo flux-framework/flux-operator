@@ -304,6 +304,20 @@ func schema_flux_framework_flux_operator_api_v1alpha2_ContainerVolume(ref common
 							Format:  "",
 						},
 					},
+					"emptyDirMedium": {
+						SchemaProps: spec.SchemaProps{
+							Description: "Add an empty directory custom type",
+							Type:        []string{"string"},
+							Format:      "",
+						},
+					},
+					"emptyDir": {
+						SchemaProps: spec.SchemaProps{
+							Default: false,
+							Type:    []string{"boolean"},
+							Format:  "",
+						},
+					},
 				},
 			},
 		},

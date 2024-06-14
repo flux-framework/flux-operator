@@ -232,6 +232,12 @@ spec:
                               Config map name if the existing volume is a config map
                               You should also define items if you are using this
                             type: string
+                          emptyDir:
+                            default: false
+                            type: boolean
+                          emptyDirMedium:
+                            description: Add an empty directory custom type
+                            type: string
                           hostPath:
                             description: An existing hostPath to bind to path
                             type: string
@@ -728,6 +734,12 @@ spec:
                             description: |-
                               Config map name if the existing volume is a config map
                               You should also define items if you are using this
+                            type: string
+                          emptyDir:
+                            default: false
+                            type: boolean
+                          emptyDirMedium:
+                            description: Add an empty directory custom type
                             type: string
                           hostPath:
                             description: An existing hostPath to bind to path

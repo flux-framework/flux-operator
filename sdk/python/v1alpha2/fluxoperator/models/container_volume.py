@@ -38,6 +38,8 @@ class ContainerVolume(object):
     openapi_types = {
         'claim_name': 'str',
         'config_map_name': 'str',
+        'empty_dir': 'bool',
+        'empty_dir_medium': 'str',
         'host_path': 'str',
         'items': 'dict[str, str]',
         'path': 'str',
@@ -48,6 +50,8 @@ class ContainerVolume(object):
     attribute_map = {
         'claim_name': 'claimName',
         'config_map_name': 'configMapName',
+        'empty_dir': 'emptyDir',
+        'empty_dir_medium': 'emptyDirMedium',
         'host_path': 'hostPath',
         'items': 'items',
         'path': 'path',
@@ -55,7 +59,7 @@ class ContainerVolume(object):
         'secret_name': 'secretName'
     }
 
-    def __init__(self, claim_name=None, config_map_name=None, host_path=None, items=None, path=None, read_only=False, secret_name=None, local_vars_configuration=None):  # noqa: E501
+    def __init__(self, claim_name=None, config_map_name=None, empty_dir=False, empty_dir_medium=None, host_path=None, items=None, path=None, read_only=False, secret_name=None, local_vars_configuration=None):  # noqa: E501
         """ContainerVolume - a model defined in OpenAPI"""  # noqa: E501
         if local_vars_configuration is None:
             local_vars_configuration = Configuration.get_default_copy()
@@ -63,6 +67,8 @@ class ContainerVolume(object):
 
         self._claim_name = None
         self._config_map_name = None
+        self._empty_dir = None
+        self._empty_dir_medium = None
         self._host_path = None
         self._items = None
         self._path = None
@@ -74,6 +80,10 @@ class ContainerVolume(object):
             self.claim_name = claim_name
         if config_map_name is not None:
             self.config_map_name = config_map_name
+        if empty_dir is not None:
+            self.empty_dir = empty_dir
+        if empty_dir_medium is not None:
+            self.empty_dir_medium = empty_dir_medium
         if host_path is not None:
             self.host_path = host_path
         if items is not None:
@@ -130,6 +140,50 @@ class ContainerVolume(object):
         """
 
         self._config_map_name = config_map_name
+
+    @property
+    def empty_dir(self):
+        """Gets the empty_dir of this ContainerVolume.  # noqa: E501
+
+
+        :return: The empty_dir of this ContainerVolume.  # noqa: E501
+        :rtype: bool
+        """
+        return self._empty_dir
+
+    @empty_dir.setter
+    def empty_dir(self, empty_dir):
+        """Sets the empty_dir of this ContainerVolume.
+
+
+        :param empty_dir: The empty_dir of this ContainerVolume.  # noqa: E501
+        :type empty_dir: bool
+        """
+
+        self._empty_dir = empty_dir
+
+    @property
+    def empty_dir_medium(self):
+        """Gets the empty_dir_medium of this ContainerVolume.  # noqa: E501
+
+        Add an empty directory custom type  # noqa: E501
+
+        :return: The empty_dir_medium of this ContainerVolume.  # noqa: E501
+        :rtype: str
+        """
+        return self._empty_dir_medium
+
+    @empty_dir_medium.setter
+    def empty_dir_medium(self, empty_dir_medium):
+        """Sets the empty_dir_medium of this ContainerVolume.
+
+        Add an empty directory custom type  # noqa: E501
+
+        :param empty_dir_medium: The empty_dir_medium of this ContainerVolume.  # noqa: E501
+        :type empty_dir_medium: str
+        """
+
+        self._empty_dir_medium = empty_dir_medium
 
     @property
     def host_path(self):
