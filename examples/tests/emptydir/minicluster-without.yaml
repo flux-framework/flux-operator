@@ -1,0 +1,13 @@
+apiVersion: flux-framework.org/v1alpha2
+kind: MiniCluster
+metadata:
+  name: flux-sample
+spec:
+  size: 2
+  logging:
+    quiet: true
+
+  # This example shows the default shared memory (64M) without the empty dir
+  containers:
+    - image: rockylinux:9
+      command: df -h /dev/shm

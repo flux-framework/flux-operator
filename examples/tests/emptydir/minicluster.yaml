@@ -7,10 +7,10 @@ spec:
   logging:
     quiet: true
 
-  # This is a list because a pod can support multiple containers
+  # This example should show all the shared memory available on the node
   containers:
     - image: rockylinux:9
-      command: cat /proc/meminfo
+      command: df -h /dev/shm
       volumes:
         # This must be all lowercase!
         my-empty-dir:
