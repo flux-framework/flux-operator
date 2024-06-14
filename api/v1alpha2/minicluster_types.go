@@ -250,6 +250,15 @@ type ContainerVolume struct {
 	// +default=false
 	// +optional
 	ReadOnly bool `json:"readOnly,omitempty"`
+
+	// Add an empty directory custom type
+	// +optional
+	EmptyDirMedium string `json:"emptyDirMedium,omitempty"`
+
+	// +kubebuilder:default=false
+	// +default=false
+	// +optional
+	EmptyDir bool `json:"emptyDir,omitempty"`
 }
 
 type FluxSpec struct {

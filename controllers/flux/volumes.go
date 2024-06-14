@@ -132,11 +132,27 @@ func getExistingVolumes(existing map[string]api.ContainerVolume) []corev1.Volume
 				},
 			}
 
+		} else if volumeMeta.EmptyDir {
+
+			// The Flux Operator supports default and memory
+			medium := corev1.StorageMediumDefault
+			if volumeMeta.EmptyDirMedium == "memory" {
+				medium = corev1.StorageMediumMemory
+			}
+			newVolume = corev1.Volume{
+				Name: volumeName,
+				VolumeSource: corev1.VolumeSource{
+					EmptyDir: &corev1.EmptyDirVolumeSource{
+						Medium: medium,
+					},
+				},
+			}
+
 		} else if volumeMeta.HostPath != "" {
 			newVolume = corev1.Volume{
 				Name: volumeName,
 				VolumeSource: corev1.VolumeSource{
-					// Empath path for type means no checks are done
+					// Empty path for type means no checks are done
 					HostPath: &corev1.HostPathVolumeSource{
 						Path: volumeMeta.Path,
 					},
