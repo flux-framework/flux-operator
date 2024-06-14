@@ -1,0 +1,18 @@
+apiVersion: flux-framework.org/v1alpha2
+kind: MiniCluster
+metadata:
+  name: flux-sample
+spec:
+  size: 2
+  logging:
+    quiet: true
+
+  # This is a list because a pod can support multiple containers
+  containers:
+    - image: rockylinux:9
+      command: ls /data
+      volumes:
+        # This must be all lowercase!
+        my-empty-dir:
+          emptyDir: true
+          emptyDirMedium: "memory"

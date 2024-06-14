@@ -1115,6 +1115,7 @@ We did this because volumes are complex and it was challenging to support every 
 the volumes and persistent volume claims that the MiniCluster needs, and simply tell it about them. A volume (that must exist) can be:
 
  - a hostpath (good for local development)
+ - an empty directory (and of a particular custom type, such as Memory)
  - a persistent volume claim (PVC) and persistent volume (PV) that you've created
  - a secret that you've created
  - a config map that you've created
@@ -1170,6 +1171,49 @@ spec:
 ```
 
 An example is provided in the [volumes test](https://github.com/flux-framework/flux-operator/tree/main/examples/tests/volumes).
+
+#### emptyDir example
+
+A standard empty directory might look like this:
+
+```yaml
+apiVersion: flux-framework.org/v1alpha2
+kind: MiniCluster
+metadata:
+  name: flux-sample
+spec:
+  size: 2
+  containers:
+    - image: rockylinux:9
+      command: ls /data
+      volumes:
+        # must be lowercase!
+        my-empty-dir:
+          emptyDir: true
+```
+
+And one for shared memory (to inherit the host) like this:
+
+
+```yaml
+apiVersion: flux-framework.org/v1alpha2
+kind: MiniCluster
+metadata:
+  name: flux-sample
+spec:
+  size: 2
+  containers:
+    - image: rockylinux:9
+      command: ls /data
+      volumes:
+        # must be lowercase!
+        my-empty-dir:
+          emptyDir: true
+          emptyDirMedium: "memory"
+```
+
+The default binds to the path `/dev/shm` and is not customizable. This can be changed if needed.
+
 
 #### persistent volume claim example
 

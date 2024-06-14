@@ -97,10 +97,21 @@ func getContainers(
 
 		// Add on existing volumes/claims
 		for volumeName, volume := range container.Volumes {
-			mount := corev1.VolumeMount{
-				Name:      volumeName,
-				MountPath: volume.Path,
-				ReadOnly:  volume.ReadOnly,
+
+			var mount corev1.VolumeMount
+			if volume.EmptyDir {
+
+				// We assume bindings to /dev/shm
+				mount = corev1.VolumeMount{
+					Name:      volumeName,
+					MountPath: "/dev/shm",
+				}
+			} else {
+				mount = corev1.VolumeMount{
+					Name:      volumeName,
+					MountPath: volume.Path,
+					ReadOnly:  volume.ReadOnly,
+				}
 			}
 			mounts = append(mounts, mount)
 		}
