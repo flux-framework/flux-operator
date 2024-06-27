@@ -526,6 +526,10 @@ spec:
                     description: Name for cluster headless service
                     type: string
                 type: object
+              oversubscribe:
+                default: false
+                description: Allow >1 Flux running (oversubscribing resources)
+                type: boolean
               pod:
                 description: Pod spec details
                 properties:

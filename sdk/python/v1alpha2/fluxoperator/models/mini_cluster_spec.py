@@ -47,6 +47,7 @@ class MiniClusterSpec(object):
         'max_size': 'int',
         'min_size': 'int',
         'network': 'Network',
+        'oversubscribe': 'bool',
         'pod': 'PodSpec',
         'services': 'list[MiniClusterContainer]',
         'share_process_namespace': 'bool',
@@ -66,6 +67,7 @@ class MiniClusterSpec(object):
         'max_size': 'maxSize',
         'min_size': 'minSize',
         'network': 'network',
+        'oversubscribe': 'oversubscribe',
         'pod': 'pod',
         'services': 'services',
         'share_process_namespace': 'shareProcessNamespace',
@@ -73,7 +75,7 @@ class MiniClusterSpec(object):
         'tasks': 'tasks'
     }
 
-    def __init__(self, archive=None, cleanup=False, containers=None, deadline_seconds=31500000, flux=None, interactive=False, job_labels=None, logging=None, max_size=None, min_size=None, network=None, pod=None, services=None, share_process_namespace=False, size=1, tasks=1, local_vars_configuration=None):  # noqa: E501
+    def __init__(self, archive=None, cleanup=False, containers=None, deadline_seconds=31500000, flux=None, interactive=False, job_labels=None, logging=None, max_size=None, min_size=None, network=None, oversubscribe=False, pod=None, services=None, share_process_namespace=False, size=1, tasks=1, local_vars_configuration=None):  # noqa: E501
         """MiniClusterSpec - a model defined in OpenAPI"""  # noqa: E501
         if local_vars_configuration is None:
             local_vars_configuration = Configuration.get_default_copy()
@@ -90,6 +92,7 @@ class MiniClusterSpec(object):
         self._max_size = None
         self._min_size = None
         self._network = None
+        self._oversubscribe = None
         self._pod = None
         self._services = None
         self._share_process_namespace = None
@@ -118,6 +121,8 @@ class MiniClusterSpec(object):
             self.min_size = min_size
         if network is not None:
             self.network = network
+        if oversubscribe is not None:
+            self.oversubscribe = oversubscribe
         if pod is not None:
             self.pod = pod
         if services is not None:
@@ -375,6 +380,29 @@ class MiniClusterSpec(object):
         """
 
         self._network = network
+
+    @property
+    def oversubscribe(self):
+        """Gets the oversubscribe of this MiniClusterSpec.  # noqa: E501
+
+        Allow >1 Flux running (oversubscribing resources)  # noqa: E501
+
+        :return: The oversubscribe of this MiniClusterSpec.  # noqa: E501
+        :rtype: bool
+        """
+        return self._oversubscribe
+
+    @oversubscribe.setter
+    def oversubscribe(self, oversubscribe):
+        """Sets the oversubscribe of this MiniClusterSpec.
+
+        Allow >1 Flux running (oversubscribing resources)  # noqa: E501
+
+        :param oversubscribe: The oversubscribe of this MiniClusterSpec.  # noqa: E501
+        :type oversubscribe: bool
+        """
+
+        self._oversubscribe = oversubscribe
 
     @property
     def pod(self):

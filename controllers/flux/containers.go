@@ -53,7 +53,7 @@ func getFluxContainer(
 
 func getContainers(
 	specs []api.MiniClusterContainer,
-	defaultName string,
+	customName string,
 	mounts []corev1.VolumeMount,
 	serviceContainer bool,
 ) ([]corev1.Container, error) {
@@ -82,9 +82,11 @@ func getContainers(
 			// wait.sh path corresponds to container identifier
 			waitScript := fmt.Sprintf("/flux_operator/wait-%d.sh", i)
 			command = []string{"/bin/bash", waitScript}
-			containerName = defaultName
 		}
 
+		if customName != "" {
+			containerName = customName
+		}
 		// A container not running flux can only have pre/post sections
 		// in a custom script if we know the entrypoint.
 		if container.GenerateEntrypoint() && !serviceContainer {

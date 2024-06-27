@@ -64,11 +64,11 @@ command="/bin/bash ./custom-entrypoint.sh"
 {{end}}
 
 {{define "broker"}}
-brokerOptions="-Scron.directory=/etc/flux/system/cron.d \
+brokerOptions="-Scron.directory=/etc/flux/system/cron-{{ .ContainerIndex }}.d \
   -Stbon.fanout=256 \
   -Srundir=${viewroot}/run/flux {{ if .Spec.Interactive }}-Sbroker.rc2_none {{ end }} \
   -Sstatedir=${STATE_DIR} \
-  -Slocal-uri=local://$viewroot/run/flux/local \
+  -Slocal-uri=local://$viewroot/run/flux/local-{{ .ContainerIndex }} \
 {{ if .Spec.Flux.ConnectTimeout }}-Stbon.connect_timeout={{ .Spec.Flux.ConnectTimeout }}{{ end }} \
 {{ if .RequiredRanks }}-Sbroker.quorum={{ .RequiredRanks }}{{ end }} \
 {{ if .Spec.Logging.Zeromq }}-Stbon.zmqdebug=1{{ end }} \
@@ -84,10 +84,10 @@ function run_interactive_cluster() {
 {{end}}
 
 {{define "worker-broker"}}
-cfg="${viewroot}/etc/flux/config"
+cfg="${viewroot}/etc/flux/config-{{ .ContainerIndex }}"
 brokerOptions="-Stbon.fanout=256 \
   -Srundir=${viewroot}/run/flux {{ if .Spec.Interactive }}-Sbroker.rc2_none {{ end }} \
-  -Slocal-uri=local://$viewroot/run/flux/local \
+  -Slocal-uri=local://$viewroot/run/flux/local-{{ .ContainerIndex }} \
 {{ if .Spec.Flux.ConnectTimeout }}-Stbon.connect_timeout={{ .Spec.Flux.ConnectTimeout }}{{ end }} \
 {{ if .Spec.Logging.Zeromq }}-Stbon.zmqdebug=1{{ end }} \
 {{ if not .Spec.Logging.Quiet }} -Slog-stderr-level={{or .Spec.Flux.LogLevel 6}} {{ else }} -Slog-stderr-level=0 {{ end }} \
@@ -129,7 +129,7 @@ cat <<EOT >> ${viewbase}/flux-view.sh
 export PATH=$PATH
 export PYTHONPATH=$PYTHONPATH
 export LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:$viewroot/lib
-export fluxsocket=local://${viewroot}/run/flux/local
+export fluxsocket=local://${viewroot}/run/flux/local-{{ .ContainerIndex }}
 EOT
 {{end}}
 {{define "ensure-pip"}}
