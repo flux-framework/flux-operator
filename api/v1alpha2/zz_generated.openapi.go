@@ -1077,6 +1077,14 @@ func schema_flux_framework_flux_operator_api_v1alpha2_MiniClusterSpec(ref common
 							Format:      "",
 						},
 					},
+					"oversubscribe": {
+						SchemaProps: spec.SchemaProps{
+							Description: "Allow >1 Flux running (oversubscribing resources)",
+							Default:     false,
+							Type:        []string{"boolean"},
+							Format:      "",
+						},
+					},
 					"flux": {
 						SchemaProps: spec.SchemaProps{
 							Description: "Flux options for the broker, shared across cluster",
