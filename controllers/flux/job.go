@@ -98,9 +98,11 @@ func NewMiniClusterJob(cluster *api.MiniCluster) (*batchv1.Job, error) {
 	}
 
 	// Prepare listing of containers for the MiniCluster
+	// We don't provide a default name because defaults are provided in Validate()
+	// Only service containers have a custom name here
 	containers, err := getContainers(
 		cluster.Spec.Containers,
-		cluster.Name,
+		"",
 		mounts,
 		false,
 	)

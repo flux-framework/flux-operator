@@ -29,8 +29,8 @@ func generateHostBlock(hosts string, cluster *api.MiniCluster) string {
 	// Unless we have a bursting broker address
 	if cluster.Spec.Flux.Bursting.LeadBroker.Address != "" {
 
-		hostTemplate = `hosts = [{host="%s", bind="tcp://eth0:%s", connect="tcp://%s:%s"},
-		 {host="%s"}]`
+		hostTemplate = `hosts = [{host="%s", bind="tcp://eth0:%s", connect="tcp://%s:%d"},
+		 {host="%d"}]`
 
 		hostBlock = fmt.Sprintf(
 			hostTemplate,
@@ -43,12 +43,18 @@ func generateHostBlock(hosts string, cluster *api.MiniCluster) string {
 	return hostBlock
 }
 
-func generateBrokerConfig(cluster *api.MiniCluster, hosts string) string {
+func generateBrokerConfig(
+	cluster *api.MiniCluster,
+	hosts string,
+	containerIndex int,
+) string {
 
 	if cluster.Spec.Flux.BrokerConfig != "" {
 		return cluster.Spec.Flux.BrokerConfig
 	}
 
+	// Port assembled based on index. Right now this only supports up
+	defaultPort := 8050 + containerIndex
 	hostBlock := generateHostBlock(hosts, cluster)
 	fqdn := fmt.Sprintf("%s.%s.svc.cluster.local", cluster.Spec.Network.HeadlessName, cluster.Namespace)
 
@@ -62,17 +68,17 @@ allow-root-owner = true
 
 # Point to resource definition generated with flux-R(1).
 [resource]
-path = "%s/view/etc/flux/system/R"
+path = "%s/view/etc/flux/system/R-%d"
 
 [bootstrap]
 curve_cert = "%s/view/curve/curve.cert"
-default_port = 8050
+default_port = %d
 default_bind = "%s"
 default_connect = "%s"
 %s
 
 [archive]
-dbpath = "%s/view/var/lib/flux/job-archive.sqlite"
+dbpath = "%s/view/var/lib/flux/job-archive-%d.sqlite"
 period = "1m"
 busytimeout = "50s"
 
@@ -82,11 +88,14 @@ queue-policy = "%s"
 	return fmt.Sprintf(
 		template,
 		cluster.Spec.Flux.Container.MountPath,
+		containerIndex,
 		cluster.Spec.Flux.Container.MountPath,
+		defaultPort,
 		defaultBind,
 		defaultConnect,
 		hostBlock,
 		cluster.Spec.Flux.Container.MountPath,
+		containerIndex,
 		cluster.Spec.Flux.Scheduler.QueuePolicy,
 	)
 
@@ -96,37 +105,28 @@ queue-policy = "%s"
 // This is run inside of the flux container that will be copied to the empty volume
 // If the flux container is disabled, we still add an init container with
 // the broker config, etc., but we don't expect a flux view there.
-func GenerateFluxEntrypoint(cluster *api.MiniCluster) (string, error) {
+func GenerateFluxEntrypoint(
+	cluster *api.MiniCluster,
+) (string, error) {
 
 	// fluxRoot for the view is in /opt/view/lib
 	// This must be consistent between the flux-view containers
 	// github.com:converged-computing/flux-views.git
 	fluxRoot := "/opt/view"
 
-	mainHost := fmt.Sprintf("%s-0", cluster.Name)
-
-	// Generate hostlists, this is the lead broker
-	hosts := generateHostlist(cluster, cluster.Spec.MaxSize)
-	brokerConfig := generateBrokerConfig(cluster, hosts)
-
 	// If we are disabling the view, it won't have flux (or extra spack copies)
 	// We copy our faux flux config directory (not a symlink) to the mount path
 	spackView := fmt.Sprintf(`mkdir -p $viewroot/software
-cp -R /opt/view/* %s/view`,
+  cp -R /opt/view/* %s/view`,
 		cluster.Spec.Flux.Container.MountPath,
 	)
 
 	generateHosts := `echo '📦 Flux view disabled, not generating resources here.'
-mkdir -p ${fluxroot}/etc/flux/system
-`
-	if !cluster.Spec.Flux.Container.Disable {
-		generateHosts = `
-echo "flux R encode --hosts=${hosts} --local"
-flux R encode --hosts=${hosts} --local > ${fluxroot}/etc/flux/system/R
+  mkdir -p ${fluxroot}/etc/flux/system
+  `
 
-echo
-echo "📦 Resources"
-cat ${fluxroot}/etc/flux/system/R`
+	// Create a different broker.toml for each runFlux container
+	if !cluster.Spec.Flux.Container.Disable {
 
 		spackView = `# Now prepare to copy finished spack view over
 echo "Moving content from /opt/view to be in shared volume at %s"
@@ -143,9 +143,57 @@ cp -R /opt/software $viewroot/
 `
 	}
 
+	// Generate a broker config for each potential running flux container
+	brokerConfigs := ""
+	for i, container := range cluster.Spec.Containers {
+		if !container.RunFlux {
+			continue
+		}
+
+		// Generate hostlists, this is the lead broker
+		hosts := generateHostlist(cluster, container, cluster.Spec.MaxSize)
+
+		// Create a different broker.toml for each runFlux container
+		if !cluster.Spec.Flux.Container.Disable {
+			generateHosts = fmt.Sprintf(`
+echo "flux R encode --hosts=${hosts} --local"
+flux R encode --hosts=${hosts} --local > ${fluxroot}/etc/flux/system/R-%d
+  
+echo
+echo "📦 Resources"
+cat ${fluxroot}/etc/flux/system/R-%d`, i, i)
+		}
+
+		brokerConfig := generateBrokerConfig(cluster, hosts, i)
+		brokerConfigs += fmt.Sprintf(`
+# Write the broker configuration
+mkdir -p ${fluxroot}/etc/flux/config-%d
+
+cat <<EOT >> ${fluxroot}/etc/flux/config-%d/broker.toml
+%s
+EOT
+
+# These actions need to happen on all hosts
+mkdir -p $fluxroot/etc/flux/system
+hosts="%s"
+
+# Echo hosts here in case the main container needs to generate
+echo "${hosts}" > ${fluxroot}/etc/flux/system/hostlist-%d
+%s
+
+# Cron directory
+mkdir -p $fluxroot/etc/flux/system/cron-%d.d
+mkdir -p $fluxroot/var/lib/flux
+
+# The rundir needs to be created first, and owned by user flux
+# Along with the state directory and curve certificate
+mkdir -p ${fluxroot}/run/flux ${fluxroot}/etc/curve
+
+`, i, i, brokerConfig, hosts, i, generateHosts, i)
+	}
+
 	setup := `#!/bin/sh
 fluxroot=%s
-mainHost=%s
 echo "Hello I am hostname $(hostname) running setup."
 
 # Always use verbose, no reason to not here
@@ -158,31 +206,14 @@ export PATH=/opt/view/bin:$PATH
 # If the view doesn't exist, ensure basic paths do
 mkdir -p $fluxroot/bin
 
-# Cron directory
-mkdir -p $fluxroot/etc/flux/system/cron.d
-mkdir -p $fluxroot/var/lib/flux
-
-# These actions need to happen on all hosts
-mkdir -p $fluxroot/etc/flux/system
-hosts="%s"
-
-# Echo hosts here in case the main container needs to generate
-echo "${hosts}" > ${fluxroot}/etc/flux/system/hostlist
 %s
-
-# Write the broker configuration
-mkdir -p ${fluxroot}/etc/flux/config
-cat <<EOT >> ${fluxroot}/etc/flux/config/broker.toml
-%s
-EOT
 
 echo
 echo "🐸 Broker Configuration"
-cat ${fluxroot}/etc/flux/config/broker.toml
-
-# The rundir needs to be created first, and owned by user flux
-# Along with the state directory and curve certificate
-mkdir -p ${fluxroot}/run/flux ${fluxroot}/etc/curve
+for filename in $(find ${fluxroot}/etc/flux -name broker.toml)
+  do
+  cat $filename
+done
 
 # View the curve certificate
 echo "🌟️ Curve Certificate"
@@ -201,10 +232,7 @@ echo "Application is done."
 	return fmt.Sprintf(
 		setup,
 		fluxRoot,
-		mainHost,
-		hosts,
-		generateHosts,
-		brokerConfig,
+		brokerConfigs,
 		cluster.Spec.Flux.Container.MountPath,
 		spackView,
 	), nil

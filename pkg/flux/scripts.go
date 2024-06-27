@@ -29,9 +29,10 @@ var startComponents string
 
 // ServiceTemplate is for a separate service container
 type ServiceTemplate struct {
-	ViewBase  string // Where the mounted view with flux is expected to be
-	Container api.MiniClusterContainer
-	Spec      api.MiniClusterSpec
+	ViewBase       string // Where the mounted view with flux is expected to be
+	Container      api.MiniClusterContainer
+	ContainerIndex int
+	Spec           api.MiniClusterSpec
 }
 
 // WaitTemplate populates wait.sh for an application container entrypoint
@@ -40,7 +41,10 @@ type WaitTemplate struct {
 	MainHost  string // Main host identifier
 	FluxToken string // Token to log into the UI, should be consistent across containers
 	Container api.MiniClusterContainer
-	Spec      api.MiniClusterSpec
+
+	// Index for container, for generation of unique socket path
+	ContainerIndex int
+	Spec           api.MiniClusterSpec
 
 	// Broker initial quorum that must be online to start
 	// This is used if the cluster MaxSize > Size
