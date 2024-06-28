@@ -16,6 +16,7 @@ import (
 	api "github.com/flux-framework/flux-operator/api/v1alpha2"
 
 	corev1 "k8s.io/api/core/v1"
+	"k8s.io/apimachinery/pkg/api/resource"
 )
 
 // Shared function to return consistent set of volume mounts
@@ -146,6 +147,10 @@ func getExistingVolumes(existing map[string]api.ContainerVolume) []corev1.Volume
 						Medium: medium,
 					},
 				},
+			}
+			if volumeMeta.EmptyDirSizeLimit != "" {
+				sizeLimit := resource.MustParse(volumeMeta.EmptyDirSizeLimit)
+				newVolume.VolumeSource.EmptyDir.SizeLimit = &sizeLimit
 			}
 
 		} else if volumeMeta.HostPath != "" {

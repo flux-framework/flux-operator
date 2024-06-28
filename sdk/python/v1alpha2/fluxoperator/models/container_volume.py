@@ -40,6 +40,7 @@ class ContainerVolume(object):
         'config_map_name': 'str',
         'empty_dir': 'bool',
         'empty_dir_medium': 'str',
+        'empty_dir_size_limit': 'str',
         'host_path': 'str',
         'items': 'dict[str, str]',
         'path': 'str',
@@ -52,6 +53,7 @@ class ContainerVolume(object):
         'config_map_name': 'configMapName',
         'empty_dir': 'emptyDir',
         'empty_dir_medium': 'emptyDirMedium',
+        'empty_dir_size_limit': 'emptyDirSizeLimit',
         'host_path': 'hostPath',
         'items': 'items',
         'path': 'path',
@@ -59,7 +61,7 @@ class ContainerVolume(object):
         'secret_name': 'secretName'
     }
 
-    def __init__(self, claim_name=None, config_map_name=None, empty_dir=False, empty_dir_medium=None, host_path=None, items=None, path=None, read_only=False, secret_name=None, local_vars_configuration=None):  # noqa: E501
+    def __init__(self, claim_name=None, config_map_name=None, empty_dir=False, empty_dir_medium=None, empty_dir_size_limit=None, host_path=None, items=None, path=None, read_only=False, secret_name=None, local_vars_configuration=None):  # noqa: E501
         """ContainerVolume - a model defined in OpenAPI"""  # noqa: E501
         if local_vars_configuration is None:
             local_vars_configuration = Configuration.get_default_copy()
@@ -69,6 +71,7 @@ class ContainerVolume(object):
         self._config_map_name = None
         self._empty_dir = None
         self._empty_dir_medium = None
+        self._empty_dir_size_limit = None
         self._host_path = None
         self._items = None
         self._path = None
@@ -84,6 +87,8 @@ class ContainerVolume(object):
             self.empty_dir = empty_dir
         if empty_dir_medium is not None:
             self.empty_dir_medium = empty_dir_medium
+        if empty_dir_size_limit is not None:
+            self.empty_dir_size_limit = empty_dir_size_limit
         if host_path is not None:
             self.host_path = host_path
         if items is not None:
@@ -184,6 +189,29 @@ class ContainerVolume(object):
         """
 
         self._empty_dir_medium = empty_dir_medium
+
+    @property
+    def empty_dir_size_limit(self):
+        """Gets the empty_dir_size_limit of this ContainerVolume.  # noqa: E501
+
+        Add an empty directory sizeLimit  # noqa: E501
+
+        :return: The empty_dir_size_limit of this ContainerVolume.  # noqa: E501
+        :rtype: str
+        """
+        return self._empty_dir_size_limit
+
+    @empty_dir_size_limit.setter
+    def empty_dir_size_limit(self, empty_dir_size_limit):
+        """Sets the empty_dir_size_limit of this ContainerVolume.
+
+        Add an empty directory sizeLimit  # noqa: E501
+
+        :param empty_dir_size_limit: The empty_dir_size_limit of this ContainerVolume.  # noqa: E501
+        :type empty_dir_size_limit: str
+        """
+
+        self._empty_dir_size_limit = empty_dir_size_limit
 
     @property
     def host_path(self):

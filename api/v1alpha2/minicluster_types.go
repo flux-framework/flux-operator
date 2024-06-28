@@ -255,6 +255,10 @@ type ContainerVolume struct {
 	// +optional
 	EmptyDirMedium string `json:"emptyDirMedium,omitempty"`
 
+	// Add an empty directory sizeLimit
+	// +optional
+	EmptyDirSizeLimit string `json:"emptyDirSizeLimit,omitempty"`
+
 	// +kubebuilder:default=false
 	// +default=false
 	// +optional

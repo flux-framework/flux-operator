@@ -8,6 +8,7 @@ Name | Type | Description | Notes
 **config_map_name** | **str** | Config map name if the existing volume is a config map You should also define items if you are using this | [optional] 
 **empty_dir** | **bool** |  | [optional] [default to False]
 **empty_dir_medium** | **str** | Add an empty directory custom type | [optional] 
+**empty_dir_size_limit** | **str** | Add an empty directory sizeLimit | [optional] 
 **host_path** | **str** | An existing hostPath to bind to path | [optional] 
 **items** | **dict[str, str]** | Items (key and paths) for the config map | [optional] 
 **path** | **str** | Path and claim name are always required if a secret isn&#39;t defined | [optional] 
