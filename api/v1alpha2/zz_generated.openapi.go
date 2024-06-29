@@ -311,6 +311,13 @@ func schema_flux_framework_flux_operator_api_v1alpha2_ContainerVolume(ref common
 							Format:      "",
 						},
 					},
+					"emptyDirSizeLimit": {
+						SchemaProps: spec.SchemaProps{
+							Description: "Add an empty directory sizeLimit",
+							Type:        []string{"string"},
+							Format:      "",
+						},
+					},
 					"emptyDir": {
 						SchemaProps: spec.SchemaProps{
 							Default: false,

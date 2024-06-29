@@ -232,6 +232,9 @@ spec:
                           emptyDirMedium:
                             description: Add an empty directory custom type
                             type: string
+                          emptyDirSizeLimit:
+                            description: Add an empty directory sizeLimit
+                            type: string
                           hostPath:
                             description: An existing hostPath to bind to path
                             type: string
@@ -734,6 +737,9 @@ spec:
                             type: boolean
                           emptyDirMedium:
                             description: Add an empty directory custom type
+                            type: string
+                          emptyDirSizeLimit:
+                            description: Add an empty directory sizeLimit
                             type: string
                           hostPath:
                             description: An existing hostPath to bind to path
