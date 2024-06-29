@@ -2183,8 +2183,15 @@ pod (in the indexed job) or a service.</p>
 </code></pre></div>
 </div>
 <p>The default binds to the path <code class="docutils literal notranslate"><span class="pre">/dev/shm</span></code> and is not customizable. This can be changed if needed. When you have the “memory” medium added,
-you should see all the shared memory from the host, which is <a class="reference external" href="https://github.com/kubernetes/kubernetes/blob/e6616033cb844516b1e91b3ec7cd30f8c5d1ea50/pkg/volume/emptydir/empty_dir.go#L148-L157">calculated here</a>.
-As an example, here is output from a local run with kind when shared memory is added:</p>
+you should see all the shared memory from the host, which is <a class="reference external" href="https://github.com/kubernetes/kubernetes/blob/e6616033cb844516b1e91b3ec7cd30f8c5d1ea50/pkg/volume/emptydir/empty_dir.go#L148-L157">calculated here</a>. In addition, you can set a sizeLimit:</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><code><span class="w">        </span><span class="c1"># must be lowercase!</span>
+<span class="w">        </span><span class="nt">my-empty-dir</span><span class="p">:</span>
+<span class="w">          </span><span class="nt">emptyDir</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+<span class="w">          </span><span class="nt">emptyDirMedium</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;memory&quot;</span>
+<span class="w">          </span><span class="nt">sizeLimit</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;64Gi&quot;</span>
+</code></pre></div>
+</div>
+<p>As an example, here is output from a local run with kind when shared memory is added:</p>
 <div class="highlight-console notranslate"><div class="highlight"><pre><span></span><code><span class="gp">$ </span>kubectl<span class="w"> </span>logs<span class="w"> </span>flux-sample-0-smflk<span class="w"> </span>
 <span class="go">Defaulted container &quot;flux-sample&quot; out of: flux-sample, flux-view (init)</span>
 <span class="go">Filesystem      Size  Used Avail Use% Mounted on</span>
@@ -2274,7 +2281,7 @@ to the indexed job container:</p>
   <small>
     
       Last update:
-      Jun 14, 2024
+      Jun 29, 2024
     
   </small>
 </div>
