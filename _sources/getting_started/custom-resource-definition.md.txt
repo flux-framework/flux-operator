@@ -1220,7 +1220,7 @@ you should see all the shared memory from the host, which is [calculated here](h
         my-empty-dir:
           emptyDir: true
           emptyDirMedium: "memory"
-          sizeLimit: "64Gi"
+          emptyDirSizeLimit: "64Gi"
 ```
 
 As an example, here is output from a local run with kind when shared memory is added:
