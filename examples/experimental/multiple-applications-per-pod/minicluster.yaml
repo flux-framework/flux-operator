@@ -4,8 +4,6 @@ metadata:
   name: flux-sample
 spec:
   size: 4
-  interactive: true
-
   flux:
     container:
       image: ghcr.io/converged-computing/flux-view-ubuntu:tag-focal
@@ -15,9 +13,6 @@ spec:
     - image: ghcr.io/converged-computing/fluxion:latest
       command: /code/bin/server --host 0.0.0.0
       name: fluxion
-
-  # This starts the flux broker without a command (interactive)
-  interactive: true
 
   # A required marker from the user that they want multiple runFlux
   # to work. This is considered an advanced use case.
@@ -32,11 +27,20 @@ spec:
       name: queue
       commands:
         pre: |
-          yum install -y git
+          yum install -y git wget
           /mnt/flux/view/bin/python3.11 -m ensurepip
           /mnt/flux/view/bin/python3.11 -m pip install Flask requests
           /mnt/flux/view/bin/python3.11 -m pip install -e "git+https://github.com/converged-computing/fluxion.git#egg=fluxion&subdirectory=python/v1"
+          wget -O /mnt/flux/view/fluxion_controller.py https://raw.githubusercontent.com/flux-framework/flux-operator/multiple-applications-per-pod/examples/experimental/multiple-applications-per-pod/fluxion_controller.py
+          # By the time we get here, the other brokers have started.
+          for socket in $(ls /mnt/flux/view/run/flux/)
+            do
+              echo "Enabling alloc bypass for $socket"
+              flux proxy local:///mnt/flux/view/run/flux/$socket flux jobtap load /mnt/flux/view/lib/flux/job-manager/plugins/alloc-bypass.so 
+            done
+
       runFlux: true
+      command: /mnt/flux/view/bin/python3.11 /mnt/flux/view/fluxion_controller.py start
 
       # command: lmp -v x 2 -v y 2 -v z 2 -in in.reaxc.hns -nocite 
     - image: ghcr.io/rse-ops/lammps-matrix:mpich-ubuntu-20.04-amd64

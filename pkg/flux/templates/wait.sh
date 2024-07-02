@@ -71,7 +71,7 @@ export FLUX_OUTPUT_DIR={{ if .Container.Logs }}{{.Container.Logs}}{{ else }}/tmp
 mkdir -p ${STATE_DIR} ${FLUX_OUTPUT_DIR}
 
 # Main host <name>-0 and the fully qualified domain name
-mainHost="{{ .MainHost }}"
+mainHost="{{ .Container.Name }}-0"
 workdir=$(pwd)
 
 {{ if .Spec.Logging.Quiet }}{{ else }}
@@ -100,7 +100,7 @@ fi{{ end }}
 {{ if not .Spec.Logging.Quiet }}echo "🚩️ Flux Option Flags defined"{{ end }}
 
 # Start flux with the original entrypoint
-if [ $(hostname) == "${mainHost}" ]; then
+if [ "{{ .Container.Name }}-{{ .ContainerIndex }}" == "${mainHost}" ]; then
     
     # If it's a batch job, we write the script for the broker to run
     {{ if .Container.Batch }}rm -rf flux-job.batch

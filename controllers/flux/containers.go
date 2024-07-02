@@ -70,8 +70,15 @@ func getContainers(
 			pullPolicy = corev1.PullAlways
 		}
 
-		// Fluxrunner will use the namespace name
-		containerName := container.Name
+		// Give all flux containers a name, if not provided
+		if container.Name == "" {
+			// Maintain previous behavior to have name == main flux runner
+			if i == 0 {
+				container.Name = customName
+			} else {
+				container.Name = fmt.Sprintf("%s-%d", container.Name, i)
+			}
+		}
 		command := []string{}
 
 		// A Flux runner will have a wait.sh script that waits for the flux view
@@ -84,9 +91,6 @@ func getContainers(
 			command = []string{"/bin/bash", waitScript}
 		}
 
-		if customName != "" {
-			containerName = customName
-		}
 		// A container not running flux can only have pre/post sections
 		// in a custom script if we know the entrypoint.
 		if container.GenerateEntrypoint() && !serviceContainer {
@@ -142,7 +146,7 @@ func getContainers(
 		newContainer := corev1.Container{
 
 			// Call this the driver container, number 0
-			Name:            containerName,
+			Name:            container.Name,
 			Image:           container.Image,
 			ImagePullPolicy: pullPolicy,
 			WorkingDir:      container.WorkingDir,

@@ -832,16 +832,6 @@ func (f *MiniCluster) Validate() bool {
 			fluxRunners += 1
 		}
 
-		// Give all flux containers a name, if not provided
-		if container.Name == "" {
-
-			// Maintain previous behavior to have name == main flux runner
-			if i == 0 {
-				container.Name = f.Name
-			}
-			container.Name = fmt.Sprintf("%s-%d", container.Name, i)
-		}
-
 		// If a custom script is provided AND a command, no go
 		if (container.Commands.Script != "" && container.Command != "") && container.RunFlux {
 			fmt.Printf("😥️ %s has both a script and command provided, choose one\n", name)

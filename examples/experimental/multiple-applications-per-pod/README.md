@@ -52,14 +52,27 @@ flux-sample-services   1/1     Running   0          15m
 Here is the neat thing - each container running inside each pod is an independent broker that sees all resources! The lead broker (for each) is at index 0. You can confirm this by selecting to see logs for any specific container:
 
 ```bash
+# This is running the queue orchestrator
+kubectl logs flux-sample-0-zgsgp -c queue
+
+# These are application containers
 kubectl logs flux-sample-0-zgsgp -c lammps
 kubectl logs flux-sample-0-zgsgp -c chatterbug
 kubectl logs flux-sample-0-zgsgp -c ior
 ```
 
+And this is the fluxion graph server, which is running as the scheduler for the entire cluster!
+
+```bash
+$ kubectl logs flux-sample-services 
+🦩️ This is the fluxion graph server
+[GRPCServer] gRPC Listening on [::]:4242
+```
+
 #### 2. Load the bypass plugin
 
-We are going to use a plugin that allows us to schedule directly and avoid the flux scheduler.
+When the "queue" broker comes up, it loads a plugin on each of the application brokers that
+ensures we can give scheduling decisions directly to those brokers from the fluxion service:
 
 ```bash
 for socket in $(ls /mnt/flux/view/run/flux/)
@@ -69,8 +82,25 @@ done
 ```
 
 This will allow us to bypass the scheduler, and pass forward exactly the decision from fluxion. We do this so that
-we can schedule down to the CPU and not have resource oversubscription.
+we can schedule down to the CPU and not have resource oversubscription. When all the containers are running and the queue starts, you should see:
 
+```bash
+job-manager.err[0]: jobtap: job.new: callback returned error
+⭐️ Found application      queue: index 0
+⭐️ Found application chatterbug: index 3
+⭐️ Found application        ior: index 2
+⭐️ Found application     lammps: index 1
+✅️ Init of Fluxion resource graph success!
+ * Serving Flask app 'fluxion_controller'
+ * Debug mode: off
+WARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://10.244.0.50:5000
+Press CTRL+C to quit
+```
+
+We are ready to submit jobs!
 
 #### 3. Connect to the Queue
 
@@ -89,13 +119,13 @@ Notice in the message above we see all the containers running - and we are shell
 you need to wait for that to finish before you see the flux socket for the queue show up. When it's done, it will be the index 0 here:
 
 ```bash
- ls /mnt/flux/view/run/flux/
+ls /mnt/flux/view/run/flux/
 local-0  local-1  local-2  local-3
 ```
 The indices correspond with the other containers. You can see the mapping here in the "meta" directory:
 
 ```bash
- ls /mnt/flux/view/etc/flux/meta/
+ls /mnt/flux/view/etc/flux/meta/
 0-queue  1-lammps  2-ior  3-chatterbug
 ```
 
@@ -120,38 +150,22 @@ flux resource list
       down      0        0        0 
 ```
 
-What we are seeing in the above is the set of resources that need to be shared across the containers (brokers). We don't want to oversubscribe, or for example, tell any specific
-broker that it can use all the resources while we tell the same to the others. We have to be careful that we use the Python install that is alongside the Flux install.
+What we are seeing in the above is the set of resources that need to be shared across the containers (brokers). We don't want to oversubscribe, or for example, tell any specific broker that it can use all the resources while we tell the same to the others. We have to be careful that we use the Python install that is alongside the Flux install. Note that *you should not run this* but I want to show you how the queue was started. You can issue `--help` to see all the options to customize:
 
 ```bash
-/mnt/flux/view/bin/python3.11 fluxion_controller.py start --help
+/mnt/flux/view/bin/python3.11 /mnt/flux/view/fluxion_controller.py start --help
 
-# Start using the defaults
-/mnt/flux/view/bin/python3.11 fluxion_controller.py start
-```
-```console
-# /mnt/flux/view/bin/python3.11 fluxion_controller.py start
-⭐️ Found application      queue: index 0
-⭐️ Found application chatterbug: index 3
-⭐️ Found application        ior: index 2
-⭐️ Found application     lammps: index 1
-✅️ Init of Fluxion resource graph success!
-* Serving Flask app 'fluxion_controller'
- * Debug mode: off
-WARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.
- * Running on all addresses (0.0.0.0)
- * Running on http://127.0.0.1:5000
- * Running on http://10.244.0.18:5000
-Press CTRL+C to quit
+# This is how it was started using the defaults (do not run this again)
+/mnt/flux/view/bin/python3.11 /mnt/flux/view/fluxion_controller.py start
 ```
 
-Above we can see the start command is starting a service that can be hit from any container. To submit a job, (and you can do this from anywhere) - it will be hitting a web service that the Python script is exposing from the queue!
+To submit a job, (and you can do this from any of the flux container brokers) - it will be hitting a web service that the Python script is exposing from the queue!
 
 ```bash
-/mnt/flux/view/bin/python3.11 fluxion_controller.py submit --help
+/mnt/flux/view/bin/python3.11 /mnt/flux/view/fluxion_controller.py submit --help
 
 # The command is the last bit here (ior)                                           # command
-/mnt/flux/view/bin/python3.11 fluxion_controller.py submit --cpu 4 --container ior ior
+/mnt/flux/view/bin/python3.11 /mnt/flux/view/fluxion_controller.py submit --cpu 4 --container ior ior
 ```
 
 And then we see from where we submit:
@@ -161,7 +175,7 @@ And then we see from where we submit:
 ⭐️ Found application chatterbug: index 3
 ⭐️ Found application        ior: index 2
 ⭐️ Found application     lammps: index 1
-{'annotations': {}, 'bank': '', 'container': 'ior', 'cwd': '', 'dependencies': [], 'duration': 3600.0, 'exception': {'note': '', 'occurred': '', 'severity': '', 'type': ''}, 'expiration': 0.0, 'fluxion': 1, 'id': 1218602178969600, 'name': 'ior', 'ncores': 4, 'nnodes': '', 'nodelist': '', 'ntasks': 1, 'priority': '', 'project': '', 'queue': '', 'ranks': '', 'result': '', 'returncode': '', 'runtime': 0.0, 'state': 'DEPEND', 'status': 'DEPEND', 'success': '', 't_cleanup': 0.0, 't_depend': 1719878142.77479, 't_inactive': 0.0, 't_remaining': 0.0, 't_run': 0.0, 't_submit': 1719878142.7618496, 'urgency': 16, 'userid': 0, 'username': 'root', 'waitstatus': ''}
+{'annotations': {}, 'bank': '', 'container': 'ior', 'cwd': '', 'dependencies': [], 'duration': 3600.0, 'exception': {'note': '', 'occurred': False, 'severity': '', 'type': ''}, 'expiration': 0.0, 'fluxion': 1, 'id': 19001371525120, 'name': 'ior', 'ncores': 4, 'nnodes': 1, 'nodelist': 'flux-sample-3', 'ntasks': 1, 'priority': 16, 'project': '', 'queue': '', 'ranks': '3', 'result': 'COMPLETED', 'returncode': 0, 'runtime': 0.5983412265777588, 'state': 'INACTIVE', 'status': 'COMPLETED', 'success': True, 't_cleanup': 1719904964.2517486, 't_depend': 1719904963.6396549, 't_inactive': 1719904964.254762, 't_remaining': 0.0, 't_run': 1719904963.6534073, 't_submit': 1719904963.6277533, 'urgency': 16, 'userid': 0, 'username': 'root', 'waitstatus': 0}
 ```
 
 And from the Fluxion service script:
@@ -175,6 +189,6 @@ And from the Fluxion service script:
 ✅️ Cancel of jobid 1 success!
 ```
 
-I am calling this "pancake elasticity" since we can theoretically deploy many application containers and then use them when needed, essentially expanding the one running out (resource wise) while the others remain flat (not using resources). 
+I am calling this "pancake elasticity" since we can theoretically deploy many application containers and then use them when needed, essentially expanding the one running out (resource wise) while the others remain flat (not using resources). This isn't entirely ready yet (still testing) but a lot of the automation is in place.
 
 It's so super cool!! :D This is going to likely inspire the next round of work for thinking about scheduling and fluxion.
