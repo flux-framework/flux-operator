@@ -53,7 +53,7 @@ func getFluxContainer(
 
 func getContainers(
 	specs []api.MiniClusterContainer,
-	defaultName string,
+	customName string,
 	mounts []corev1.VolumeMount,
 	serviceContainer bool,
 ) ([]corev1.Container, error) {
@@ -70,8 +70,15 @@ func getContainers(
 			pullPolicy = corev1.PullAlways
 		}
 
-		// Fluxrunner will use the namespace name
-		containerName := container.Name
+		// Give all flux containers a name, if not provided
+		if container.Name == "" {
+			// Maintain previous behavior to have name == main flux runner
+			if i == 0 {
+				container.Name = customName
+			} else {
+				container.Name = fmt.Sprintf("%s-%d", container.Name, i)
+			}
+		}
 		command := []string{}
 
 		// A Flux runner will have a wait.sh script that waits for the flux view
@@ -82,7 +89,6 @@ func getContainers(
 			// wait.sh path corresponds to container identifier
 			waitScript := fmt.Sprintf("/flux_operator/wait-%d.sh", i)
 			command = []string{"/bin/bash", waitScript}
-			containerName = defaultName
 		}
 
 		// A container not running flux can only have pre/post sections
@@ -140,7 +146,7 @@ func getContainers(
 		newContainer := corev1.Container{
 
 			// Call this the driver container, number 0
-			Name:            containerName,
+			Name:            container.Name,
 			Image:           container.Image,
 			ImagePullPolicy: pullPolicy,
 			WorkingDir:      container.WorkingDir,

@@ -37,7 +37,7 @@ func GenerateEntrypoints(cluster *api.MiniCluster) (map[string]string, error) {
 		// Custom logic for a sidecar container alongside flux
 		if container.GenerateEntrypoint() {
 			startScriptID := fmt.Sprintf("start-%d", i)
-			startScript, err := generateServiceEntrypoint(cluster, container)
+			startScript, err := generateServiceEntrypoint(cluster, container, i)
 			if err != nil {
 				return data, err
 			}
@@ -58,11 +58,16 @@ func GenerateEntrypoints(cluster *api.MiniCluster) (map[string]string, error) {
 }
 
 // generateServiceEntrypoint generates an entrypoint for a service container
-func generateServiceEntrypoint(cluster *api.MiniCluster, container api.MiniClusterContainer) (string, error) {
+func generateServiceEntrypoint(
+	cluster *api.MiniCluster,
+	container api.MiniClusterContainer,
+	containerIndex int) (string, error) {
+
 	st := ServiceTemplate{
-		ViewBase:  cluster.Spec.Flux.Container.MountPath,
-		Container: container,
-		Spec:      cluster.Spec,
+		ViewBase:       cluster.Spec.Flux.Container.MountPath,
+		Container:      container,
+		ContainerIndex: containerIndex,
+		Spec:           cluster.Spec,
 	}
 
 	// Wrap the named template to identify it later
@@ -88,7 +93,7 @@ func generateEntrypointScript(
 ) (string, error) {
 
 	container := cluster.Spec.Containers[containerIndex]
-	mainHost := fmt.Sprintf("%s-0", cluster.Name)
+	mainHost := fmt.Sprintf("%s-0", container.Name)
 
 	// Ensure if we have a batch command, it gets split up
 	batchCommand := strings.Split(container.Command, "\n")
@@ -99,12 +104,13 @@ func generateEntrypointScript(
 
 	// The token uuid is the same across images
 	wt := WaitTemplate{
-		RequiredRanks: requiredRanks,
-		ViewBase:      cluster.Spec.Flux.Container.MountPath,
-		Container:     container,
-		MainHost:      mainHost,
-		Spec:          cluster.Spec,
-		Batch:         batchCommand,
+		RequiredRanks:  requiredRanks,
+		ViewBase:       cluster.Spec.Flux.Container.MountPath,
+		ContainerIndex: containerIndex,
+		Container:      container,
+		MainHost:       mainHost,
+		Spec:           cluster.Spec,
+		Batch:          batchCommand,
 	}
 
 	// Wrap the named template to identify it later

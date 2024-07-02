@@ -50,6 +50,11 @@ type MiniClusterSpec struct {
 	// +optional
 	Interactive bool `json:"interactive"`
 
+	// Allow >1 Flux running (oversubscribing resources)
+	// +kubebuilder:default=false
+	// +optional
+	Oversubscribe bool `json:"oversubscribe"`
+
 	// Flux options for the broker, shared across cluster
 	// +optional
 	Flux FluxSpec `json:"flux"`
@@ -825,13 +830,6 @@ func (f *MiniCluster) Validate() bool {
 		// Count the FluxRunners
 		if container.RunFlux {
 			fluxRunners += 1
-
-			// Non flux-runners are required to have a name
-		} else {
-			if container.Name == "" {
-				fmt.Printf("😥️ %s is missing a name\n", name)
-				return false
-			}
 		}
 
 		// If a custom script is provided AND a command, no go
@@ -840,7 +838,16 @@ func (f *MiniCluster) Validate() bool {
 			return false
 		}
 	}
-	if fluxRunners != 1 {
+
+	// If we have more than one flux runner, must explicitly oversubscribe
+	if fluxRunners > 1 && !f.Spec.Oversubscribe {
+		fmt.Printf("😥️ More than one flux runner requires oversubscribe: true\n")
+		valid = false
+	}
+
+	// More than one container can run Flux (and the brokers see the same resources)
+	// But we need at least one!
+	if fluxRunners < 1 {
 		valid = false
 	}
 

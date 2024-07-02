@@ -34,7 +34,13 @@ func getRandomToken(requested string) string {
 }
 
 // generateHostlist for a specific size given the cluster namespace and a size
-func generateHostlist(cluster *api.MiniCluster, size int32) string {
+// Note that we don't customize on the level of the container, but I'm
+// generating them separately anticipating wanting slightly different setups.
+func generateHostlist(
+	cluster *api.MiniCluster,
+	container api.MiniClusterContainer,
+	size int32,
+) string {
 
 	var hosts string
 	if cluster.Spec.Flux.Bursting.Hostlist != "" {

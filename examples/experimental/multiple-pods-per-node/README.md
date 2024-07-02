@@ -27,17 +27,11 @@ gcloud container clusters create test-cluster \
 
 ### Install the Flux Operator
 
-We are going to install the Flux operator from the refactor branch (with the feature added to disable affinity).
+As follows:
 
 ```bash
-git clone -b test-refactor-modular 
-cd test-refactor-modular
-
-# You might need other dependencies, etc. here or to specify your own registry you can push to.
-make test-deploy-recreate
+kubectl apply -f https://raw.githubusercontent.com/flux-framework/flux-operator/main/examples/dist/flux-operator.yaml
 ```
-
-If/when this is released, you can install from a release.
 
 ### Experiments
 

@@ -92,6 +92,16 @@ This would be equivalent to giving a start command of `sleep infinity` however o
 (e.g., if there is a flux shutdown from within the Flux instance) the sleep command would
 not exit with a failed code.
 
+### oversubscribe
+
+By default, we treat your single application container _or_ the single container in a MiniCluster pod designated to "runFlux" as the only Flux broker. When oversubscribe is set to true, you are allowed to define more than one "runFlux" container, meaning that multiple brokers will be sharing the same resources.
+
+```yaml
+  oversubscribe: true
+```
+
+We created this use case with the intention of having a service container running fluxion alongside the MiniCluster to orchestrate the N containers. This is consiedered an advanced use case and you should use it with caution!
+
 ### launcher
 
 If you are using an executor that launches Flux Jobs (e.g., workflow managers such as Snakemake and Nextflow do!)

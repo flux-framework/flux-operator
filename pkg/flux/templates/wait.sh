@@ -19,7 +19,7 @@ fluxuser=$(whoami)
 fluxuid=$(id -u $fluxuser)
 
 # Variables we can use again
-cfg="${viewroot}/etc/flux/config"
+cfg="${viewroot}/etc/flux/config-{{ .ContainerIndex }}"
 command="{{ .Container.Command }}"
 
 # Is a custom script provided? This will override command
@@ -55,23 +55,23 @@ chown -R ${fluxuid} ${curvepath}
 
 # If we have disabled the view, we need to use the flux here to generate resources
 {{ if .Spec.Flux.Container.Disable }}
-hosts=$(cat ${viewroot}/etc/flux/system/hostlist)
+hosts=$(cat ${viewroot}/etc/flux/system/hostlist-{{ .ContainerIndex }})
 {{ if not .Spec.Logging.Quiet }}
 echo
 echo "📦 Resources"
 echo "flux R encode --hosts=${hosts} --local"
 {{ end }}
-flux R encode --hosts=${hosts} --local > ${viewroot}/etc/flux/system/R
-{{ if not .Spec.Logging.Quiet }}cat ${viewroot}/etc/flux/system/R{{ end }}
+flux R encode --hosts=${hosts} --local > ${viewroot}/etc/flux/system/R-{{ .ContainerIndex }}
+{{ if not .Spec.Logging.Quiet }}cat ${viewroot}/etc/flux/system/R-{{ .ContainerIndex }}{{ end }}
 {{ end }}
 
 # Put the state directory in /var/lib on shared view
-export STATE_DIR=${viewroot}/var/lib/flux
+export STATE_DIR=${viewroot}/var/lib/flux-{{ .ContainerIndex }}
 export FLUX_OUTPUT_DIR={{ if .Container.Logs }}{{.Container.Logs}}{{ else }}/tmp/fluxout{{ end }}
 mkdir -p ${STATE_DIR} ${FLUX_OUTPUT_DIR}
 
 # Main host <name>-0 and the fully qualified domain name
-mainHost="{{ .MainHost }}"
+mainHost="{{ .Container.Name }}-0"
 workdir=$(pwd)
 
 {{ if .Spec.Logging.Quiet }}{{ else }}
@@ -82,23 +82,7 @@ echo "The working directory is ${workdir}, contents include:"
 ls .
 {{ end }}
 
-brokerOptions="-Scron.directory=/etc/flux/system/cron.d \
-  -Stbon.fanout=256 \
-  -Srundir=${viewroot}/run/flux {{ if .Spec.Interactive }}-Sbroker.rc2_none {{ end }} \
-  -Sstatedir=${STATE_DIR} \
-  -Slocal-uri=local://$viewroot/run/flux/local \
-{{ if .Spec.Flux.ConnectTimeout }}-Stbon.connect_timeout={{ .Spec.Flux.ConnectTimeout }}{{ end }} \
-{{ if .RequiredRanks }}-Sbroker.quorum={{ .RequiredRanks }}{{ end }} \
-{{ if .Spec.Logging.Zeromq }}-Stbon.zmqdebug=1{{ end }} \
-{{ if not .Spec.Logging.Quiet }} -Slog-stderr-level={{or .Spec.Flux.LogLevel 6}} {{ else }} -Slog-stderr-level=0 {{ end }} \
-  -Slog-stderr-mode=local"
-
-
-# Run an interactive cluster, giving no command to flux start
-function run_interactive_cluster() {
-    echo "🌀 flux broker --config-path ${cfg} ${brokerOptions}"
-    flux broker --config-path ${cfg} ${brokerOptions}
-}
+{{template "broker" .}}
 
 # if we are given an archive to use, load first, not required to exist
 # Note that we ask the user to dump in interactive mode - I am not
@@ -116,7 +100,7 @@ fi{{ end }}
 {{ if not .Spec.Logging.Quiet }}echo "🚩️ Flux Option Flags defined"{{ end }}
 
 # Start flux with the original entrypoint
-if [ $(hostname) == "${mainHost}" ]; then
+if [ "{{ .Container.Name }}-{{ .ContainerIndex }}" == "${mainHost}" ]; then
     
     # If it's a batch job, we write the script for the broker to run
     {{ if .Container.Batch }}rm -rf flux-job.batch
@@ -180,13 +164,13 @@ else
    {{ .Container.Commands.WorkerPre}} {{ if .Spec.Logging.Quiet }}> /dev/null 2>&1{{ end }}
 
     # We basically sleep/wait until the lead broker is ready
-    echo "🌀 flux start {{ if .Spec.Flux.Wrap }}--wrap={{ .Spec.Flux.Wrap }} {{ end }} -o --config ${viewroot}/etc/flux/config ${brokerOptions}"
+    echo "🌀 flux start {{ if .Spec.Flux.Wrap }}--wrap={{ .Spec.Flux.Wrap }} {{ end }} -o --config ${cfg} ${brokerOptions}"
 
     # We can keep trying forever, don't care if worker is successful or not
     # Unless retry count is set, in which case we stop after retries
     while true
     do
-        flux start -o --config ${viewroot}/etc/flux/config ${brokerOptions}
+        flux start -o --config ${cfg} ${brokerOptions}
         retval=$?
         if [[ "${retval}" -eq 0 ]] || [[ "{{ .Spec.Flux.CompleteWorkers }}" == "true" ]]; then
              echo "The follower worker exited cleanly. Goodbye!"
