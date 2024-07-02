@@ -385,7 +385,7 @@ class FluxionController:
             info = flux.job.get_job(handle, jobid)
 
             # These should be all states that come before running or finished
-            if info["state"] in ["depend", "priority", "sched"]:
+            if info["state"] in ["DEPEND", "PRIORITY", "SCHED"]:
                 time.sleep(self.heartbeat_seconds)
                 continue
             break
