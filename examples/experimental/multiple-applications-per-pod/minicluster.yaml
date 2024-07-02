@@ -6,28 +6,6 @@ spec:
   size: 4
   interactive: true
 
-  # shell in, and then:
-  # source /mnt/flux/flux-view.sh 
-  # flux proxy $fluxsocket bash
-  # flux resource list
-
-# 1. Create resource graph independent of what hwloc does. 
-# 2. Will need to pass JGF into fluxion when it starts (try this out for R and starting the broker)
-# 3. crearte resource graph with double number of resources we want. If we want N brokers, increase by factor of N.
-# 4. Each brokers needs to get one 1/N of thart resource graph 
-# 5. When we submit jobspec, we need to submit with entire resource graph (request 4x the number of resouresce we want)
-# the entire resource graph is allocated to that job
-#  for the executable we have to specify which part of graph we are execurting.
-# all brokers at node level
-
-  # Note that:
-  # 1. all the containers here have an ubuntu 20.04 base!
-  # 2. The non-flux runners also need a name.
-  # 3. Since we control the logic of the sidecars, we need to add
-  #    an entrypoint that keeps them running. Otherwise, it jumps to
-  #    "not ready"
-  # 4. The issue we will run into is that the job won't complete when
-  #    the main flux running shuts down. It will need to be deleted.
   flux:
     container:
       image: ghcr.io/converged-computing/flux-view-ubuntu:tag-focal
@@ -48,19 +26,25 @@ spec:
   containers:
 
     # This is a faux "queue only" broker container. It will be
-    # the interface to which we submit jobs. We don't run Flux
-    # but we will orchestrate running things.
+    # the interface to which we submit jobs. We install the
+    # fluxion library to interact with the corresponding service.
     - image: rockylinux:9
       name: queue
+      commands:
+        pre: |
+          yum install -y git
+          /mnt/flux/view/bin/python3.11 -m ensurepip
+          /mnt/flux/view/bin/python3.11 -m pip install Flask requests
+          /mnt/flux/view/bin/python3.11 -m pip install -e "git+https://github.com/converged-computing/fluxion.git#egg=fluxion&subdirectory=python/v1"
+      runFlux: true
 
-    # TODO we will need to allow the other ones to still see flux
+      # command: lmp -v x 2 -v y 2 -v z 2 -in in.reaxc.hns -nocite 
     - image: ghcr.io/rse-ops/lammps-matrix:mpich-ubuntu-20.04-amd64
       name: lammps
       workingDir: /opt/lammps/examples/reaxff/HNS
       command: run_interactive_cluster
       runFlux: true
 
-      # command: lmp -v x 2 -v y 2 -v z 2 -in in.reaxc.hns -nocite 
     - image: ghcr.io/converged-computing/metric-ior:latest
       name: ior
       command: run_interactive_cluster

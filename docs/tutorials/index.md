@@ -56,7 +56,7 @@ The following tutorials are provided from their respective directories (and are 
 
 These examples show how to interact with your flux queue from a sidecar container (that has access to the flux broker of the pod):
 
- - [multiple-applications-per-pod](https://github.com/flux-framework/flux-operator/tree/main/examples/experimental/multiple-applications-per-pod): Allow multiple pods to be scheduled per node (controlled by cgroups)
+ - [multiple-applications-per-pod](https://github.com/flux-framework/flux-operator/tree/main/examples/experimental/multiple-applications-per-pod): Allow multiple applications to run in a single pod aided by a Fluxion service orchestrator.
  - [flux-sidecar](https://github.com/flux-framework/flux-operator/blob/main/examples/tests/flux-sidecar) to see a sleep job in the main application queue
 
 ### Services

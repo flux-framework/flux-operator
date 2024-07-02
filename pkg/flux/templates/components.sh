@@ -131,6 +131,10 @@ export PYTHONPATH=$PYTHONPATH
 export LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:$viewroot/lib
 export fluxsocket=local://${viewroot}/run/flux/local-{{ .ContainerIndex }}
 EOT
+
+# Also write a file that indicates the container name at the index
+mkdir -p $viewroot/etc/flux/meta
+touch "${viewroot}/etc/flux/meta/{{ .ContainerIndex }}-{{ .Container.Name }}"
 {{end}}
 {{define "ensure-pip"}}
 ${pythonversion} -m pip --version || ${pythonversion} -m ensurepip || (wget https://bootstrap.pypa.io/get-pip.py && ${pythonversion} ./get-pip.py) {{ if .Spec.Logging.Quiet }}> /dev/null 2>&1{{ end }}
