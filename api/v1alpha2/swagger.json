@@ -626,6 +626,11 @@
           "default": {},
           "$ref": "#/definitions/Network"
         },
+        "oversubscribe": {
+          "description": "Allow \u003e1 Flux running (oversubscribing resources)",
+          "type": "boolean",
+          "default": false
+        },
         "pod": {
           "description": "Pod spec details",
           "default": {},

@@ -18,7 +18,7 @@
 {{ .Container.Commands.ServicePre}} {{ if .Spec.Logging.Quiet }}> /dev/null 2>&1{{ end }}
 
 # Ensure socket path is envar for user
-fluxsocket=${viewroot}/run/flux/local
+fluxsocket=${viewroot}/run/flux/local-{{ .ContainerIndex }}
 
 # Wait for it to exist (application is running)
 {{ if .Spec.Flux.NoWaitSocket }}{{ else }}goshare-wait-fs -p ${fluxsocket} {{ if .Spec.Logging.Quiet }}> /dev/null 2>&1{{ end }}{{ end }}
@@ -28,6 +28,8 @@ fluxsocket="local://$fluxsocket"
 
 # Is a custom script provided?
 {{template "custom-script" .}}
+
+{{template "worker-broker" .}}
 
 {{ .Container.Command }}
 
