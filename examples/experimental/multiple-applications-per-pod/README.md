@@ -153,13 +153,21 @@ flux resource list
 What we are seeing in the above is the set of resources that need to be shared across the containers (brokers). We don't want to oversubscribe, or for example, tell any specific broker that it can use all the resources while we tell the same to the others. We have to be careful that we use the Python install that is alongside the Flux install. Note that *you should not run this* but I want to show you how the queue was started. You can issue `--help` to see all the options to customize:
 
 ```bash
+# You can look at help...
 /mnt/flux/view/bin/python3.11 /mnt/flux/view/fluxion_controller.py start --help
 
-# This is how it was started using the defaults (do not run this again)
+# But DO NOT RUN THIS! It's already running.
+# This is how the fluxion controller was started using the defaults (do not run this again)
 /mnt/flux/view/bin/python3.11 /mnt/flux/view/fluxion_controller.py start
 ```
 
-To submit a job, (and you can do this from any of the flux container brokers) - it will be hitting a web service that the Python script is exposing from the queue!
+You might want to watch the main fluxion controller in a different terminal before submitting the job:
+
+```bash
+kubectl logs flux-sample-0-wxxkp -f
+```
+
+Then from your interactive terminal, let's submit a job! To do that (and you can do this from any of the flux container brokers) - it will be hitting a web service that the Python script is exposing from the queue!
 
 ```bash
 /mnt/flux/view/bin/python3.11 /mnt/flux/view/fluxion_controller.py submit --help
@@ -181,14 +189,63 @@ And then we see from where we submit:
 And from the Fluxion service script:
 
 ```console
-{'command': ['ior'], 'cpu': '4', 'container': 'ior'}
-🙏️ Requesting to submit: ior
-✅️ Match of jobspec to Fluxion graph success!
-10.244.0.18 - - [01/Jul/2024 23:55:42] "POST /submit HTTP/1.1" 200 -
-👉️ Job on ior 1 is complete.
-✅️ Cancel of jobid 1 success!
+INFO:werkzeug:Press CTRL+C to quit
+INFO:fluxion_controller:{'command': ['ior'], 'cpu': '4', 'container': 'ior', 'duration': None, 'workdir': None}
+INFO:fluxion_controller:{'t_depend': 1720132156.9946244, 't_run': 1720132157.0078795, 't_cleanup': 1720132157.5837069, 't_inactive': 1720132157.5849578, 'duration': 3600.0, 'expiration': 0.0, 'name': 'ior', 'cwd': '', 'queue': '', 'project': '', 'bank': '', 'ntasks': 1, 'ncores': 4, 'nnodes': 1, 'priority': 16, 'ranks': '3', 'nodelist': 'flux-sample-3', 'success': True, 'result': 'COMPLETED', 'waitstatus': 0, 'id': JobID(13180046671872), 't_submit': 1720132156.9826128, 't_remaining': 0.0, 'state': 'INACTIVE', 'username': 'root', 'userid': 0, 'urgency': 16, 'runtime': 0.5758273601531982, 'status': 'COMPLETED', 'returncode': 0, 'dependencies': [], 'annotations': {}, 'exception': {'occurred': False, 'severity': '', 'type': '', 'note': ''}, 'container': 'ior', 'fluxion': 1}
+INFO:werkzeug:10.244.0.27 - - [04/Jul/2024 22:29:18] "POST /submit HTTP/1.1" 200 -
+INFO:fluxion_controller:👉️ Job on ior 1 is complete.
+INFO:fluxion_controller:✅️ Cancel of jobid 1 success!
 ```
 
-I am calling this "pancake elasticity" since we can theoretically deploy many application containers and then use them when needed, essentially expanding the one running out (resource wise) while the others remain flat (not using resources). This isn't entirely ready yet (still testing) but a lot of the automation is in place.
+Let's try submitting a job to the lammps application broker (container) now (note the container working directory has the input files)
+
+```bash
+/mnt/flux/view/bin/python3.11 /mnt/flux/view/fluxion_controller.py submit --cpu 4 --container lammps lmp -v x 2 -v y 2 -v z 2 -in in.reaxc.hns -nocite 
+```
+
+This one actually takes more than a second to run, so wait for that, and you'll eventually see the fluxion detect it is finished and clean up:
+
+```bash
+INFO:werkzeug:10.244.0.27 - - [04/Jul/2024 22:30:41] "POST /submit HTTP/1.1" 200 -
+INFO:fluxion_controller:👉️ Job on lammps 2 is complete.
+INFO:fluxion_controller:✅️ Cancel of jobid 2 success!
+```
+
+Let's now list jobs for one container...
+
+```bash
+/mnt/flux/view/bin/python3.11 /mnt/flux/view/fluxion_controller.py jobs --container lammps
+```
+```console
+                                       Jobs for Lammps                                       
+┏━━━━━━━━━━━┳━━━━━━━━━━┳━━━━━━┳━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━┳━━━━━━━┳━━━━━━━━━┳━━━━━━━━━━━━┓
+┃ Container ┃ Id       ┃ Name ┃ Status               ┃ Nodes ┃ Cores ┃ Runtime ┃ Returncode ┃
+┡━━━━━━━━━━━╇━━━━━━━━━━╇━━━━━━╇━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━━╇━━━━━━━╇━━━━━━━━━╇━━━━━━━━━━━━┩
+│    lammps │ ƒXBNj4c7 │ lmp  │ INACTIVE (COMPLETED) │ 1     │ 4     │ 27      │          0 │
+└───────────┴──────────┴──────┴──────────────────────┴───────┴───────┴─────────┴────────────┘
+```
+
+Or all containers!
+
+
+```bash
+/mnt/flux/view/bin/python3.11 /mnt/flux/view/fluxion_controller.py jobs
+```
+```console
+⭐️ Found application      queue: index 0
+⭐️ Found application chatterbug: index 3
+⭐️ Found application        ior: index 2
+⭐️ Found application     lammps: index 1
+                              Jobs for Queue, Chatterbug, Ior, Lammps                              
+┏━━━━━━━━━━━┳━━━━━━━━━━┳━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━┳━━━━━━━┳━━━━━━━━━┳━━━━━━━━━━━━┓
+┃ Container ┃ Id       ┃ Name       ┃ Status               ┃ Nodes ┃ Cores ┃ Runtime ┃ Returncode ┃
+┡━━━━━━━━━━━╇━━━━━━━━━━╇━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━━╇━━━━━━━╇━━━━━━━━━╇━━━━━━━━━━━━┩
+│     queue │ ƒ4WEiYej │ python3.11 │ RUN                  │ 1     │ 1     │ 45      │            │
+│       ior │ ƒU1BWHuH │ ior        │ INACTIVE (COMPLETED) │ 1     │ 4     │ 0       │          0 │
+│    lammps │ ƒXBNj4c7 │ lmp        │ INACTIVE (COMPLETED) │ 1     │ 4     │ 27      │          0 │
+└───────────┴──────────┴────────────┴──────────────────────┴───────┴───────┴─────────┴────────────┘
+```
+
+Lammps will show up like that when it is finished. I am calling this "pancake elasticity" since we can theoretically deploy many application containers and then use them when needed, essentially expanding the one running out (resource wise) while the others remain flat (not using resources). This isn't entirely ready yet (still testing) but a lot of the automation is in place.
 
 It's so super cool!! :D This is going to likely inspire the next round of work for thinking about scheduling and fluxion.

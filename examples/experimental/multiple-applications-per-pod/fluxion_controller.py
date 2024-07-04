@@ -5,7 +5,12 @@ import time
 import argparse
 import requests
 import threading
+import logging
 from flask import Flask, jsonify, request
+
+from rich.console import Console
+from rich.table import Table
+
 
 try:
     import flux
@@ -28,6 +33,8 @@ except:
 ctrl = None
 app = Flask(__name__)
 
+logging.basicConfig(level=logging.DEBUG)
+
 
 @app.route("/submit", methods=["POST"])
 def submit_job():
@@ -37,12 +44,19 @@ def submit_job():
     global ctrl
 
     data = request.get_json()
-    print(data)
+    app.logger.info(data)
     for required in ["command", "cpu", "container"]:
         if required not in data or not data[required]:
             return jsonify({"error": f"{required} is required."})
 
-    response = ctrl.submit_job(data["container"], data["cpu"], data["command"])
+    response = ctrl.submit_job(
+        data["container"],
+        data["cpu"],
+        data["command"],
+        workdir=data["workdir"],
+        duration=data["duration"],
+    )
+    app.logger.info(response)
     return jsonify(response)
 
 
@@ -133,12 +147,11 @@ class FluxionController:
     def populate_jobs(self):
         """
         Given running queues, populate with current jobs
+
+        TBA: this will handle restoring from shutdown state.
+        Not supported yet.
         """
         pass
-        # TODO how do we do this? We essentially need to restore state
-        import IPython
-
-        IPython.embed()
 
     def discover_containers(self):
         """
@@ -249,7 +262,9 @@ class FluxionController:
                     # Get the status of the job from the handle
                     info = flux.job.get_job(handle, jobset["container"])
                     if info["result"] == "COMPLETED":
-                        print(f"👉️ Job on {container} {jobset['fluxion']} is complete.")
+                        app.logger.info(
+                            f"👉️ Job on {container} {jobset['fluxion']} is complete."
+                        )
                         self.cancel(jobset["fluxion"])
                         continue
                     # Otherwise add back to jobs set
@@ -267,16 +282,94 @@ class FluxionController:
         try:
             response = self.cli.cancel(jobid=jobid)
             if response.status == fluxion_pb2.CancelResponse.ResultType.CANCEL_SUCCESS:
-                print(f"✅️ Cancel of jobid {jobid} success!")
+                app.logger.info(f"✅️ Cancel of jobid {jobid} success!")
             else:
-                print(f"Issue with cancel, return code {response.status}")
+                app.logger.info(f"Issue with cancel, return code {response.status}")
         except:
-            print(f"✅️ jobid {jobid} is already inactive.")
+            app.logger.info(f"✅️ jobid {jobid} is already inactive.")
 
-    def submit_job(self, container, cpu_count, command):
+    def submit_error(self, message):
+        """
+        Given a message, print (for the developer log) and return as json
+        """
+        print(message)
+        return {"error": message}
+
+    def list_jobs(self, containers):
+        """
+        List jobs for one or more containers
+        """
+        if not containers:
+            containers = list(self.handles.keys())
+            if not containers:
+                sys.exit(
+                    "One or more application target containers are required (--container)"
+                )
+
+        # Create a pretty table!
+        names = ", ".join(x.capitalize() for x in containers)
+        table = Table(title=f"Jobs for {names}")
+
+        # These are the header columns
+        table.add_column("Container", justify="right", style="cyan", no_wrap=True)
+        table.add_column("Id", style="magenta")
+        table.add_column("Name", style="magenta")
+        table.add_column("Status", style="magenta")
+        table.add_column("Nodes", style="magenta")
+        table.add_column("Cores", style="magenta")
+        table.add_column("Runtime", style="magenta")
+        table.add_column("Returncode", justify="right", style="green")
+
+        # They are asking for a broker container handle that doesn't exist
+        for container in containers:
+            table = self.list_container_jobs(container, table)
+
+        console = Console()
+        console.print(table)
+
+    def list_container_jobs(self, container, table):
+        """
+        List jobs for a single container, adding to a single table
+        """
+        # Allow failure and continue
+        if container not in self.handles:
+            print(f"Application container handle for {container} does not exist.")
+            return
+
+        # Our broker hook to the container
+        handle = self.handles[container]
+        jobs = flux.job.job_list(handle).get()["jobs"]
+
+        for info in jobs:
+            job = flux.job.get_job(handle, info["id"])
+            status = f"{job['state']} ({job['status']})"
+            if job["status"] == job["state"]:
+                status = job["state"]
+            runtime = str(int(job["runtime"]))
+            jobid = str(job["id"])
+            table.add_row(
+                container,
+                jobid,
+                job["name"],
+                status,
+                str(job["nnodes"]),
+                str(job["ncores"]),
+                runtime,
+                str(job["returncode"]),
+            )
+        return table
+
+    def submit_job(
+        self,
+        container,
+        cpu_count,
+        command,
+        workdir=None,
+        duration=None,
+        environment=None,
+    ):
         """
         Demo of submitting a job. We will want a more robust way to do this.
-        TODO: add working directory, duration, environment, etc.
 
         This currently just asks for the command and total cores across nodes.
         We let fluxion decide how to distribute that across physical nodes.
@@ -291,7 +384,7 @@ class FluxionController:
         # They are asking for a broker container handle that doesn't exist
         if container not in self.handles:
             choices = ",".join(list(self.handles.keys()))
-            sys.exit(
+            return self.submit_error(
                 f"Application container handle for {container} does not exist - choices are {choices}."
             )
 
@@ -303,17 +396,23 @@ class FluxionController:
         print(f"🙏️ Requesting to submit: {' '.join(command)}")
         jobspec["tasks"][0]["command"] = command
 
+        # Add additional system parameters
+        if duration is not None:
+            jobspec["attributes"]["system"]["duration"] = duration
+        if workdir is not None:
+            jobspec["attributes"]["system"]["cwd"] = workdir
+        if environment is not None and isinstance(environment, dict):
+            jobspec["attributes"]["system"]["environment"] = environment
+
         # This asks fluxion if we can schedule it
         self.cli = FluxionClient(host=self.fluxion_host)
         response = self.cli.match(json.dumps(jobspec))
         if response.status == fluxion_pb2.MatchResponse.ResultType.MATCH_SUCCESS:
             print("✅️ Match of jobspec to Fluxion graph success!")
         else:
-            msg = (
+            return self.submit_error(
                 f"Issue with match, return code {response.status}, cannot schedule now"
             )
-            print(msg)
-            return {"error": msg}
 
         # We need the exact allocation to pass forward to the container broker
         alloc = json.loads(response.allocation)
@@ -381,8 +480,11 @@ class FluxionController:
         # Wait until it's running (and thus don't submit other jobs)
         # This assumes running one client to submit, and prevents race
         jobid = fluxjob.get_id()
+        print(f"⭐️ Submit job {jobid} to container {container}")
+
         while True:
             info = flux.job.get_job(handle, jobid)
+            print(f"Job is in state {info['state']}")
 
             # These should be all states that come before running or finished
             if info["state"] in ["DEPEND", "PRIORITY", "SCHED"]:
@@ -432,21 +534,36 @@ def get_parser():
     start = subparsers.add_parser(
         "start", description="initialize and start fluxion (only do this once)!"
     )
+    jobs = subparsers.add_parser(
+        "jobs",
+        description="list jobs for a specific application broker",
+        formatter_class=argparse.RawTextHelpFormatter,
+    )
     submit = subparsers.add_parser(
         "submit",
         description="submit a JobSpec for a specific application broker",
         formatter_class=argparse.RawTextHelpFormatter,
     )
 
-    submit.add_argument("--container", help="Application container to submit to")
+    # Submit enforces just one container
+    for command in [submit, jobs]:
+        command.add_argument(
+            "-c", "--container", help="Application container to target", action="append"
+        )
     submit.add_argument("--cpu", help="Total CPU across N nodes to request under slot")
+    submit.add_argument("--workdir", help="Working directory for application")
+    submit.add_argument(
+        "--timeout",
+        help="Total runtime seconds (timeout) for application, defaults to 3600",
+        type=int,
+    )
     submit.add_argument(
         "--host",
         help="MiniCluster hostname running the service",
         default="flux-sample-0.flux-service.default.svc.cluster.local:5000",
     )
 
-    for command in [start, submit]:
+    for command in [start, submit, jobs]:
         command.add_argument("--fluxion-host", help="Fluxion service host")
         command.add_argument(
             "--resource-dir", help="MiniCluster resource (R) directory"
@@ -477,11 +594,22 @@ def main():
     if args.command == "start":
         ctrl.init_fluxion()
 
+    elif args.command == "jobs":
+        ctrl.list_jobs(args.container)
+
     # The submit issues a post to the running server
     elif args.command == "submit":
+        if not args.container or len(args.container) > 1:
+            sys.exit("Submit requires exactly one container.")
         response = requests.post(
             f"http://{args.host}/submit",
-            json={"command": command, "cpu": args.cpu, "container": args.container},
+            json={
+                "command": command,
+                "cpu": args.cpu,
+                "container": args.container[0],
+                "duration": args.timeout,
+                "workdir": args.workdir,
+            },
         )
         print(response.json())
 

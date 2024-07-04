@@ -29,7 +29,7 @@ spec:
         pre: |
           yum install -y git wget
           /mnt/flux/view/bin/python3.11 -m ensurepip
-          /mnt/flux/view/bin/python3.11 -m pip install Flask requests
+          /mnt/flux/view/bin/python3.11 -m pip install Flask requests rich
           /mnt/flux/view/bin/python3.11 -m pip install -e "git+https://github.com/converged-computing/fluxion.git#egg=fluxion&subdirectory=python/v1"
           wget -O /mnt/flux/view/fluxion_controller.py https://raw.githubusercontent.com/flux-framework/flux-operator/multiple-applications-per-pod/examples/experimental/multiple-applications-per-pod/fluxion_controller.py
           # By the time we get here, the other brokers have started.
