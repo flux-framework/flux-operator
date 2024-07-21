@@ -534,6 +534,9 @@ spec:
                       type: string
                     description: Annotations for each pod
                     type: object
+                  automountServiceAccountToken:
+                    description: Automatically mount the service account name
+                    type: boolean
                   labels:
                     additionalProperties:
                       type: string
@@ -552,6 +555,9 @@ spec:
                       x-kubernetes-int-or-string: true
                     description: Resources include limits and requests
                     type: object
+                  restartPolicy:
+                    description: Restart Policy
+                    type: string
                   schedulerName:
                     description: Scheduler name for the pod
                     type: string

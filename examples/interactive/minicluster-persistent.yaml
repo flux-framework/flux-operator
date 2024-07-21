@@ -9,6 +9,7 @@ spec:
   # source /mnt/flux/flux-view.sh 
   # flux proxy $fluxsocket bash
   # flux resource list
+  # flux getattr broker.rc1_path
 
   # This starts the flux broker without a command (interactive)
   interactive: true

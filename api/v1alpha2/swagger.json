@@ -744,6 +744,10 @@
             "default": ""
           }
         },
+        "automountServiceAccountToken": {
+          "description": "Automatically mount the service account name",
+          "type": "boolean"
+        },
         "labels": {
           "description": "Labels for each pod",
           "type": "object",
@@ -766,6 +770,10 @@
           "additionalProperties": {
             "$ref": "#/definitions/IntOrString"
           }
+        },
+        "restartPolicy": {
+          "description": "Restart Policy",
+          "type": "string"
         },
         "schedulerName": {
           "description": "Scheduler name for the pod",

@@ -1335,10 +1335,24 @@ func schema_flux_framework_flux_operator_api_v1alpha2_PodSpec(ref common.Referen
 							},
 						},
 					},
+					"restartPolicy": {
+						SchemaProps: spec.SchemaProps{
+							Description: "Restart Policy",
+							Type:        []string{"string"},
+							Format:      "",
+						},
+					},
 					"serviceAccountName": {
 						SchemaProps: spec.SchemaProps{
 							Description: "Service account name for the pod",
 							Type:        []string{"string"},
+							Format:      "",
+						},
+					},
+					"automountServiceAccountToken": {
+						SchemaProps: spec.SchemaProps{
+							Description: "Automatically mount the service account name",
+							Type:        []string{"boolean"},
 							Format:      "",
 						},
 					},

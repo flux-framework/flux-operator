@@ -180,9 +180,17 @@ type PodSpec struct {
 	// +optional
 	Labels map[string]string `json:"labels"`
 
+	// Restart Policy
+	// +optional
+	RestartPolicy string `json:"restartPolicy,omitempty"`
+
 	// Service account name for the pod
 	// +optional
 	ServiceAccountName string `json:"serviceAccountName,omitempty"`
+
+	// Automatically mount the service account name
+	// +optional
+	AutomountServiceAccountToken bool `json:"automountServiceAccountToken,omitempty"`
 
 	// Scheduler name for the pod
 	// +optional
