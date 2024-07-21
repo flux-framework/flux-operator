@@ -37,44 +37,54 @@ class PodSpec(object):
     """
     openapi_types = {
         'annotations': 'dict[str, str]',
+        'automount_service_account_token': 'bool',
         'labels': 'dict[str, str]',
         'node_selector': 'dict[str, str]',
         'resources': 'dict[str, IntOrString]',
+        'restart_policy': 'str',
         'scheduler_name': 'str',
         'service_account_name': 'str'
     }
 
     attribute_map = {
         'annotations': 'annotations',
+        'automount_service_account_token': 'automountServiceAccountToken',
         'labels': 'labels',
         'node_selector': 'nodeSelector',
         'resources': 'resources',
+        'restart_policy': 'restartPolicy',
         'scheduler_name': 'schedulerName',
         'service_account_name': 'serviceAccountName'
     }
 
-    def __init__(self, annotations=None, labels=None, node_selector=None, resources=None, scheduler_name=None, service_account_name=None, local_vars_configuration=None):  # noqa: E501
+    def __init__(self, annotations=None, automount_service_account_token=None, labels=None, node_selector=None, resources=None, restart_policy=None, scheduler_name=None, service_account_name=None, local_vars_configuration=None):  # noqa: E501
         """PodSpec - a model defined in OpenAPI"""  # noqa: E501
         if local_vars_configuration is None:
             local_vars_configuration = Configuration.get_default_copy()
         self.local_vars_configuration = local_vars_configuration
 
         self._annotations = None
+        self._automount_service_account_token = None
         self._labels = None
         self._node_selector = None
         self._resources = None
+        self._restart_policy = None
         self._scheduler_name = None
         self._service_account_name = None
         self.discriminator = None
 
         if annotations is not None:
             self.annotations = annotations
+        if automount_service_account_token is not None:
+            self.automount_service_account_token = automount_service_account_token
         if labels is not None:
             self.labels = labels
         if node_selector is not None:
             self.node_selector = node_selector
         if resources is not None:
             self.resources = resources
+        if restart_policy is not None:
+            self.restart_policy = restart_policy
         if scheduler_name is not None:
             self.scheduler_name = scheduler_name
         if service_account_name is not None:
@@ -102,6 +112,29 @@ class PodSpec(object):
         """
 
         self._annotations = annotations
+
+    @property
+    def automount_service_account_token(self):
+        """Gets the automount_service_account_token of this PodSpec.  # noqa: E501
+
+        Automatically mount the service account name  # noqa: E501
+
+        :return: The automount_service_account_token of this PodSpec.  # noqa: E501
+        :rtype: bool
+        """
+        return self._automount_service_account_token
+
+    @automount_service_account_token.setter
+    def automount_service_account_token(self, automount_service_account_token):
+        """Sets the automount_service_account_token of this PodSpec.
+
+        Automatically mount the service account name  # noqa: E501
+
+        :param automount_service_account_token: The automount_service_account_token of this PodSpec.  # noqa: E501
+        :type automount_service_account_token: bool
+        """
+
+        self._automount_service_account_token = automount_service_account_token
 
     @property
     def labels(self):
@@ -171,6 +204,29 @@ class PodSpec(object):
         """
 
         self._resources = resources
+
+    @property
+    def restart_policy(self):
+        """Gets the restart_policy of this PodSpec.  # noqa: E501
+
+        Restart Policy  # noqa: E501
+
+        :return: The restart_policy of this PodSpec.  # noqa: E501
+        :rtype: str
+        """
+        return self._restart_policy
+
+    @restart_policy.setter
+    def restart_policy(self, restart_policy):
+        """Sets the restart_policy of this PodSpec.
+
+        Restart Policy  # noqa: E501
+
+        :param restart_policy: The restart_policy of this PodSpec.  # noqa: E501
+        :type restart_policy: str
+        """
+
+        self._restart_policy = restart_policy
 
     @property
     def scheduler_name(self):

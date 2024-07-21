@@ -130,14 +130,15 @@ func (r *MiniClusterReconciler) newServicePod(
 		},
 		Spec: corev1.PodSpec{
 			// This is the headless service name
-			Subdomain:          cluster.Spec.Network.HeadlessName,
-			Hostname:           podServiceName,
-			SetHostnameAsFQDN:  &setAsFQDN,
-			Volumes:            existingVolumes,
-			RestartPolicy:      corev1.RestartPolicyOnFailure,
-			ImagePullSecrets:   getImagePullSecrets(cluster),
-			ServiceAccountName: cluster.Spec.Pod.ServiceAccountName,
-			NodeSelector:       cluster.Spec.Pod.NodeSelector,
+			Subdomain:                    cluster.Spec.Network.HeadlessName,
+			Hostname:                     podServiceName,
+			SetHostnameAsFQDN:            &setAsFQDN,
+			Volumes:                      existingVolumes,
+			ImagePullSecrets:             getImagePullSecrets(cluster),
+			RestartPolicy:                corev1.RestartPolicy(cluster.Spec.Pod.RestartPolicy),
+			ServiceAccountName:           cluster.Spec.Pod.ServiceAccountName,
+			AutomountServiceAccountToken: &cluster.Spec.Pod.AutomountServiceAccountToken,
+			NodeSelector:                 cluster.Spec.Pod.NodeSelector,
 		},
 	}
 
