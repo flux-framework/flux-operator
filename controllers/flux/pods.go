@@ -137,6 +137,7 @@ func (r *MiniClusterReconciler) newServicePod(
 			ImagePullSecrets:             getImagePullSecrets(cluster),
 			RestartPolicy:                corev1.RestartPolicy(cluster.Spec.Pod.RestartPolicy),
 			ServiceAccountName:           cluster.Spec.Pod.ServiceAccountName,
+			RuntimeClassName:             &cluster.Spec.Pod.RuntimeClassName,
 			AutomountServiceAccountToken: &cluster.Spec.Pod.AutomountServiceAccountToken,
 			NodeSelector:                 cluster.Spec.Pod.NodeSelector,
 		},

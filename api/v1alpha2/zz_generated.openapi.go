@@ -1349,6 +1349,13 @@ func schema_flux_framework_flux_operator_api_v1alpha2_PodSpec(ref common.Referen
 							Format:      "",
 						},
 					},
+					"runtimeClassName": {
+						SchemaProps: spec.SchemaProps{
+							Description: "RuntimeClassName for the pod",
+							Type:        []string{"string"},
+							Format:      "",
+						},
+					},
 					"automountServiceAccountToken": {
 						SchemaProps: spec.SchemaProps{
 							Description: "Automatically mount the service account name",

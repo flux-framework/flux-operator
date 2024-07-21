@@ -42,6 +42,7 @@ class PodSpec(object):
         'node_selector': 'dict[str, str]',
         'resources': 'dict[str, IntOrString]',
         'restart_policy': 'str',
+        'runtime_class_name': 'str',
         'scheduler_name': 'str',
         'service_account_name': 'str'
     }
@@ -53,11 +54,12 @@ class PodSpec(object):
         'node_selector': 'nodeSelector',
         'resources': 'resources',
         'restart_policy': 'restartPolicy',
+        'runtime_class_name': 'runtimeClassName',
         'scheduler_name': 'schedulerName',
         'service_account_name': 'serviceAccountName'
     }
 
-    def __init__(self, annotations=None, automount_service_account_token=None, labels=None, node_selector=None, resources=None, restart_policy=None, scheduler_name=None, service_account_name=None, local_vars_configuration=None):  # noqa: E501
+    def __init__(self, annotations=None, automount_service_account_token=None, labels=None, node_selector=None, resources=None, restart_policy=None, runtime_class_name=None, scheduler_name=None, service_account_name=None, local_vars_configuration=None):  # noqa: E501
         """PodSpec - a model defined in OpenAPI"""  # noqa: E501
         if local_vars_configuration is None:
             local_vars_configuration = Configuration.get_default_copy()
@@ -69,6 +71,7 @@ class PodSpec(object):
         self._node_selector = None
         self._resources = None
         self._restart_policy = None
+        self._runtime_class_name = None
         self._scheduler_name = None
         self._service_account_name = None
         self.discriminator = None
@@ -85,6 +88,8 @@ class PodSpec(object):
             self.resources = resources
         if restart_policy is not None:
             self.restart_policy = restart_policy
+        if runtime_class_name is not None:
+            self.runtime_class_name = runtime_class_name
         if scheduler_name is not None:
             self.scheduler_name = scheduler_name
         if service_account_name is not None:
@@ -227,6 +232,29 @@ class PodSpec(object):
         """
 
         self._restart_policy = restart_policy
+
+    @property
+    def runtime_class_name(self):
+        """Gets the runtime_class_name of this PodSpec.  # noqa: E501
+
+        RuntimeClassName for the pod  # noqa: E501
+
+        :return: The runtime_class_name of this PodSpec.  # noqa: E501
+        :rtype: str
+        """
+        return self._runtime_class_name
+
+    @runtime_class_name.setter
+    def runtime_class_name(self, runtime_class_name):
+        """Sets the runtime_class_name of this PodSpec.
+
+        RuntimeClassName for the pod  # noqa: E501
+
+        :param runtime_class_name: The runtime_class_name of this PodSpec.  # noqa: E501
+        :type runtime_class_name: str
+        """
+
+        self._runtime_class_name = runtime_class_name
 
     @property
     def scheduler_name(self):
