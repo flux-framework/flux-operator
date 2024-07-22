@@ -135,7 +135,7 @@ func (r *MiniClusterReconciler) newServicePod(
 			SetHostnameAsFQDN:            &setAsFQDN,
 			Volumes:                      existingVolumes,
 			ImagePullSecrets:             getImagePullSecrets(cluster),
-			RestartPolicy:                corev1.RestartPolicyAlways,
+			RestartPolicy:                corev1.RestartPolicyOnFailure,
 			ServiceAccountName:           cluster.Spec.Pod.ServiceAccountName,
 			AutomountServiceAccountToken: &cluster.Spec.Pod.AutomountServiceAccountToken,
 			NodeSelector:                 cluster.Spec.Pod.NodeSelector,

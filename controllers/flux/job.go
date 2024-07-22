@@ -70,7 +70,7 @@ func NewMiniClusterJob(cluster *api.MiniCluster) (*batchv1.Job, error) {
 					ImagePullSecrets:             getImagePullSecrets(cluster),
 					ServiceAccountName:           cluster.Spec.Pod.ServiceAccountName,
 					AutomountServiceAccountToken: &cluster.Spec.Pod.AutomountServiceAccountToken,
-					RestartPolicy:                corev1.RestartPolicyAlways,
+					RestartPolicy:                corev1.RestartPolicyOnFailure,
 					NodeSelector:                 cluster.Spec.Pod.NodeSelector,
 					SchedulerName:                cluster.Spec.Pod.SchedulerName,
 				},
