@@ -137,10 +137,14 @@ func (r *MiniClusterReconciler) newServicePod(
 			ImagePullSecrets:             getImagePullSecrets(cluster),
 			RestartPolicy:                corev1.RestartPolicy(cluster.Spec.Pod.RestartPolicy),
 			ServiceAccountName:           cluster.Spec.Pod.ServiceAccountName,
-			RuntimeClassName:             &cluster.Spec.Pod.RuntimeClassName,
 			AutomountServiceAccountToken: &cluster.Spec.Pod.AutomountServiceAccountToken,
 			NodeSelector:                 cluster.Spec.Pod.NodeSelector,
 		},
+	}
+
+	// Only add runClassName if defined
+	if cluster.Spec.Pod.RuntimeClassName != "" {
+		pod.Spec.RuntimeClassName = &cluster.Spec.Pod.RuntimeClassName
 	}
 
 	// Assemble existing volume mounts - they are added with getContainers

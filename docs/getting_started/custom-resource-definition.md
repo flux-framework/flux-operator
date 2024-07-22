@@ -188,7 +188,10 @@ When enabled, meaning that we use flux from a view within the container, these c
 
  - [ghcr.io/converged-computing/flux-view-rocky:tag-9](https://github.com/converged-computing/flux-views/pkgs/container/flux-view-rocky)
  - [ghcr.io/converged-computing/flux-view-rocky:tag-8](https://github.com/converged-computing/flux-views/pkgs/container/flux-view-rocky)
+ - [ghcr.io/converged-computing/flux-view-ubuntu:tag-noble](https://github.com/converged-computing/flux-views/pkgs/container/flux-view-ubuntu)
+ - [ghcr.io/converged-computing/flux-view-ubuntu:tag-jammy](https://github.com/converged-computing/flux-views/pkgs/container/flux-view-ubuntu)
  - [ghcr.io/converged-computing/flux-view-ubuntu:tag-focal](https://github.com/converged-computing/flux-views/pkgs/container/flux-view-ubuntu)
+
 
 Note that we have [arm builds](https://github.com/converged-computing/flux-views/tree/main/arm) available for each of rocky and ubuntu as well.
 If you don't want to use Flux from a view (and want to use the v1apha1 design of the Flux Operator that had the application alongside Flux) you can do that by way of disabling the flux view:
@@ -682,6 +685,34 @@ pod:
   serviceAccountName: my-service-account
 ```
 
+#### restartPolicy
+
+To customize the restartPolicy for the pod:
+
+```yaml
+pod:
+  restartPolicy: Never
+```
+
+#### runtimeClassName
+
+To add a runtime class name:
+
+```yaml
+pod:
+  runtimeClassName: nvidia
+```
+
+#### automountServiceAccountToken
+
+If you want to automatically mount a service account token:
+
+```yaml
+pod:
+  automountServiceAccountToken: true
+```
+
+
 #### nodeSelector
 
 A node selector is a set of key value pairs that helps to schedule pods to the right nodes! You can
@@ -720,10 +751,8 @@ name: rabbit
 
 #### image
 
-This is the only required attribute! You *must* provide a container base that has Flux.
-The requirements of your container are defined in the README of the [flux-hpc](https://github.com/rse-ops/flux-hpc/)
-repository. Generally speaking, you need to have Flux executables, Flux Python bindings,
-and your own executables on the path, and should be started with root with a flux user.
+You do not need to provide a container base that has Flux, but you must make sure your view (with a particular operator system) that will add Flux matches your container. We don't require you to start as root, but if you
+have a container with a non-root user, the user needs to have sudo available (to act as root).
 If you use the [fluxrm/flux-sched](https://hub.docker.com/r/fluxrm/flux-sched)
 base containers this is usually a good start.
 

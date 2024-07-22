@@ -45,8 +45,8 @@ func NewMiniClusterJob(cluster *api.MiniCluster) (*batchv1.Job, error) {
 			Labels:    cluster.Spec.JobLabels,
 		},
 
+		// Completions must be == to Parallelism to allow for scaling
 		Spec: batchv1.JobSpec{
-
 			BackoffLimit:          &backoffLimit,
 			Completions:           &cluster.Spec.Size,
 			Parallelism:           &cluster.Spec.Size,
@@ -69,7 +69,6 @@ func NewMiniClusterJob(cluster *api.MiniCluster) (*batchv1.Job, error) {
 					Volumes:                      getVolumes(cluster),
 					ImagePullSecrets:             getImagePullSecrets(cluster),
 					ServiceAccountName:           cluster.Spec.Pod.ServiceAccountName,
-					RuntimeClassName:             &cluster.Spec.Pod.RuntimeClassName,
 					AutomountServiceAccountToken: &cluster.Spec.Pod.AutomountServiceAccountToken,
 					RestartPolicy:                corev1.RestartPolicy(cluster.Spec.Pod.RestartPolicy),
 					NodeSelector:                 cluster.Spec.Pod.NodeSelector,
@@ -77,6 +76,11 @@ func NewMiniClusterJob(cluster *api.MiniCluster) (*batchv1.Job, error) {
 				},
 			},
 		},
+	}
+
+	// Only add runClassName if defined
+	if cluster.Spec.Pod.RuntimeClassName != "" {
+		job.Spec.Template.Spec.RuntimeClassName = &cluster.Spec.Pod.RuntimeClassName
 	}
 
 	// Add Affinity to map one pod / node only if the user hasn't disbaled it

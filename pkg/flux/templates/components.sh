@@ -21,7 +21,7 @@ url=$goshareUrl/wait-fs-{{ .Spec.Flux.Arch }}
 # This waiting script is intended to wait for the flux view, and then start running
 curl -L -O -s -o ./wait-fs -s ${url} {{ if .Spec.Logging.Quiet }}> /dev/null 2>&1{{ end }} || wget ${url} -q -O ./wait-fs {{ if .Spec.Logging.Quiet }}> /dev/null 2>&1{{ end }} || true
 chmod +x ./wait-fs || true
-mv ./wait-fs /usr/bin/goshare-wait-fs || true
+${SUDO} mv ./wait-fs /usr/bin/goshare-wait-fs || true
 
 # Ensure spack view is on the path, wherever it is mounted
 viewbase="{{ .ViewBase }}"
@@ -47,9 +47,9 @@ goshare-wait-fs -p ${viewbase}/flux-operator-done.txt {{ if .Spec.Logging.Quiet 
 # Copy mount software to /opt/software
 # If /opt/software already exists, we need to copy into it
 if [[ -e  "/opt/software" ]]; then
-  cp -R ${viewbase}/software/* /opt/software/ || true
+  ${SUDO} cp -R ${viewbase}/software/* /opt/software/ || true
 else
-  cp -R ${viewbase}/software /opt/software || true
+  ${SUDO} cp -R ${viewbase}/software /opt/software || true
 fi
 {{end}}
 
@@ -72,10 +72,10 @@ echo "Python root: $foundroot" {{ if .Spec.Logging.Quiet }} > /dev/null 2>&1{{ e
 
 # If we found the right python, ensure it's linked (old link does not work)
 if [[ -f "${pythonversion}" ]]; then
-   rm -rf $viewroot/bin/python3
-   rm -rf $viewroot/bin/python
-   ln -s ${pythonversion} $viewroot/lib/python  || true
-   ln -s ${pythonversion} $viewroot/lib/python3 || true
+   ${SUDO} rm -rf $viewroot/bin/python3
+   ${SUDO} rm -rf $viewroot/bin/python
+   ${SUDO} ln -s ${pythonversion} $viewroot/lib/python  || true
+   ${SUDO} ln -s ${pythonversion} $viewroot/lib/python3 || true
 fi
 
 # Ensure we use flux's python (TODO update this to use variable)
@@ -87,15 +87,16 @@ find $viewroot . -name libpython*.so* {{ if .Spec.Logging.Quiet }}> /dev/null 2>
 ls -l /mnt/flux/view/lib/libpython3.11.so.1.0 {{ if .Spec.Logging.Quiet }}> /dev/null 2>&1{{ end }}
 
 # Write an easy file we can source for the environment
-cat <<EOT >> ${viewbase}/flux-view.sh
+cat <<EOT >> ./flux-view.sh
 #!/bin/bash
 export PATH=$PATH
 export PYTHONPATH=$PYTHONPATH
 export LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:$viewroot/lib
 export fluxsocket=local://${viewroot}/run/flux/local
 EOT
+${SUDO} mv ./flux-view.sh ${viewbase}/flux-view.sh
 {{end}}
 {{define "ensure-pip"}}
-${pythonversion} -m pip --version || ${pythonversion} -m ensurepip || (wget https://bootstrap.pypa.io/get-pip.py && ${pythonversion} ./get-pip.py) {{ if .Spec.Logging.Quiet }}> /dev/null 2>&1{{ end }}
-${pythonversion} -m pip --upgrade pip {{ if .Spec.Logging.Quiet }}> /dev/null 2>&1{{ end }}
+${SUDO} ${pythonversion} -m pip --version || ${SUDO} ${pythonversion} -m ensurepip || (${SUDO} wget https://bootstrap.pypa.io/get-pip.py && ${pythonversion} ./get-pip.py) {{ if .Spec.Logging.Quiet }}> /dev/null 2>&1{{ end }}
+${SUDO} ${pythonversion} -m pip --upgrade pip {{ if .Spec.Logging.Quiet }}> /dev/null 2>&1{{ end }}
 {{end}}

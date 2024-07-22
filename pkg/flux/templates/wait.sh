@@ -6,6 +6,18 @@
 # We use the actual time command and not the wrapper, otherwise we get there is no argument -f
 {{ if .Spec.Logging.Timed }}which /usr/bin/time > /dev/null 2>&1 || (echo "/usr/bin/time is required to use logging.timed true" && exit 1);{{ end }}
 
+# Set the flux user and id from the getgo
+fluxuser=$(whoami)
+fluxuid=$(id -u $fluxuser)
+
+# Add fluxuser to sudoers living... dangerously!
+# A non root user container requires sudo to work
+SUDO=""
+if [[ "${fluxuser}" != "root" ]]; then
+  echo "${fluxuser} ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers
+  SUDO="sudo"
+fi
+
 # If any initCommand logic is defined
 {{ .Container.Commands.Init}} {{ if .Spec.Logging.Quiet }}> /dev/null{{ end }}
 
@@ -13,10 +25,6 @@
 # We include the view even for disabling flux because it generates needed config files
 {{template "wait-view" .}}
 {{ if not .Spec.Flux.Container.Disable }}{{template "paths" .}}{{ end }}
-
-# Set the flux user and id from the getgo
-fluxuser=$(whoami)
-fluxuid=$(id -u $fluxuser)
 
 # Variables we can use again
 cfg="${viewroot}/etc/flux/config"
@@ -28,19 +36,21 @@ command="{{ .Container.Command }}"
 {{ if not .Spec.Logging.Quiet }}
 echo 
 echo "Hello user ${fluxuser}"{{ end }}
-
-# Add fluxuser to sudoers living... dangerously!
-if [[ "${fluxuser}" != "root" ]]; then
-  echo "${fluxuser} ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers
-fi
 		
 # Ensure the flux user owns the curve.cert
 # We need to move the curve.cert because config map volume is read only
 curvesrc=/flux_operator/curve.cert
 curvepath=$viewroot/curve/curve.cert
 
-mkdir -p $viewroot/curve
-cp $curvesrc $curvepath
+# run directory must be owned by this user
+# and /var/lib/flux
+if [[ "${fluxuser}" != "root" ]]; then
+  ${SUDO} chown -R ${fluxuser} ${viewroot}/run/flux ${viewroot}/var/lib/flux
+fi
+
+# Prepare curve certificate!
+${SUDO} mkdir -p $viewroot/curve
+${SUDO} cp $curvesrc $curvepath
 {{ if not .Spec.Logging.Quiet }}
 echo 
 echo "🌟️ Curve Certificate"
@@ -49,9 +59,9 @@ cat ${curvepath}
 {{ end }}
 
 # Remove group and other read
-chmod o-r ${curvepath}
-chmod g-r ${curvepath}
-chown -R ${fluxuid} ${curvepath}
+${SUDO} chmod o-r ${curvepath}
+${SUDO} chmod g-r ${curvepath}
+${SUDO} chown -R ${fluxuid} ${curvepath}
 
 # If we have disabled the view, we need to use the flux here to generate resources
 {{ if .Spec.Flux.Container.Disable }}
@@ -61,7 +71,8 @@ echo
 echo "📦 Resources"
 echo "flux R encode --hosts=${hosts} --local"
 {{ end }}
-flux R encode --hosts=${hosts} --local > ${viewroot}/etc/flux/system/R
+flux R encode --hosts=${hosts} --local > /tmp/R
+${SUDO} mv /tmp/R ${viewroot}/etc/flux/system/R
 {{ if not .Spec.Logging.Quiet }}cat ${viewroot}/etc/flux/system/R{{ end }}
 {{ end }}
 
