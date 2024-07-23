@@ -597,6 +597,20 @@
         
           <li class="md-nav__item">
   <a href="https://github.com/converged-computing/flux-views/pkgs/container/flux-view-ubuntu" class="md-nav__link">
+    <span class="md-ellipsis">ghcr.<wbr>io/converged-<wbr>computing/flux-<wbr>view-<wbr>ubuntu:<wbr>tag-<wbr>noble</span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="https://github.com/converged-computing/flux-views/pkgs/container/flux-view-ubuntu" class="md-nav__link">
+    <span class="md-ellipsis">ghcr.<wbr>io/converged-<wbr>computing/flux-<wbr>view-<wbr>ubuntu:<wbr>tag-<wbr>jammy</span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="https://github.com/converged-computing/flux-views/pkgs/container/flux-view-ubuntu" class="md-nav__link">
     <span class="md-ellipsis">ghcr.<wbr>io/converged-<wbr>computing/flux-<wbr>view-<wbr>ubuntu:<wbr>tag-<wbr>focal</span>
   </a>
   
@@ -789,6 +803,27 @@
           <li class="md-nav__item">
   <a href="#serviceaccountname" class="md-nav__link">
     <span title="/getting_started/custom-resource-definition.md#serviceaccountname (reference label)" class="md-ellipsis">service<wbr>Account<wbr>Name</span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#restartpolicy" class="md-nav__link">
+    <span title="/getting_started/custom-resource-definition.md#restartpolicy (reference label)" class="md-ellipsis">restart<wbr>Policy</span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#runtimeclassname" class="md-nav__link">
+    <span title="/getting_started/custom-resource-definition.md#runtimeclassname (reference label)" class="md-ellipsis">runtime<wbr>Class<wbr>Name</span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#automountserviceaccounttoken" class="md-nav__link">
+    <span title="/getting_started/custom-resource-definition.md#automountserviceaccounttoken (reference label)" class="md-ellipsis">automount<wbr>Service<wbr>Account<wbr>Token</span>
   </a>
   
 </li>
@@ -1393,6 +1428,8 @@ As an example:</p>
 <ul>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/converged-computing/flux-views/pkgs/container/flux-view-rocky">ghcr.io/converged-computing/flux-view-rocky:tag-9</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/converged-computing/flux-views/pkgs/container/flux-view-rocky">ghcr.io/converged-computing/flux-view-rocky:tag-8</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/converged-computing/flux-views/pkgs/container/flux-view-ubuntu">ghcr.io/converged-computing/flux-view-ubuntu:tag-noble</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/converged-computing/flux-views/pkgs/container/flux-view-ubuntu">ghcr.io/converged-computing/flux-view-ubuntu:tag-jammy</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/converged-computing/flux-views/pkgs/container/flux-view-ubuntu">ghcr.io/converged-computing/flux-view-ubuntu:tag-focal</a></li>
 </ul>
 </div>
@@ -1765,6 +1802,24 @@ string format that can be parsed) and all others are considered some kind of qua
 <span class="w">  </span><span class="nt">serviceAccountName</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">my-service-account</span>
 </code></pre></div>
 </div>
+<h4 id="restartpolicy">restartPolicy<a class="headerlink" href="#restartpolicy" title="Link to this heading">¶</a></h4>
+<p>To customize the restartPolicy for the pod:</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><code><span class="nt">pod</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">restartPolicy</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Never</span>
+</code></pre></div>
+</div>
+<h4 id="runtimeclassname">runtimeClassName<a class="headerlink" href="#runtimeclassname" title="Link to this heading">¶</a></h4>
+<p>To add a runtime class name:</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><code><span class="nt">pod</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">runtimeClassName</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">nvidia</span>
+</code></pre></div>
+</div>
+<h4 id="automountserviceaccounttoken">automountServiceAccountToken<a class="headerlink" href="#automountserviceaccounttoken" title="Link to this heading">¶</a></h4>
+<p>If you want to automatically mount a service account token:</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><code><span class="nt">pod</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">automountServiceAccountToken</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+</code></pre></div>
+</div>
 <h4 id="nodeselector">nodeSelector<a class="headerlink" href="#nodeselector" title="Link to this heading">¶</a></h4>
 <p>A node selector is a set of key value pairs that helps to schedule pods to the right nodes! You can
 add nodeSelector attributes to your pod as follows:</p>
@@ -1791,10 +1846,8 @@ called “wait.sh”) on the level of the container.</p>
 </code></pre></div>
 </div>
 <h4 id="image">image<a class="headerlink" href="#image" title="Link to this heading">¶</a></h4>
-<p>This is the only required attribute! You <em>must</em> provide a container base that has Flux.
-The requirements of your container are defined in the README of the <a class="reference external" href="https://github.com/rse-ops/flux-hpc/">flux-hpc</a>
-repository. Generally speaking, you need to have Flux executables, Flux Python bindings,
-and your own executables on the path, and should be started with root with a flux user.
+<p>You do not need to provide a container base that has Flux, but you must make sure your view (with a particular operator system) that will add Flux matches your container. We don’t require you to start as root, but if you
+have a container with a non-root user, the user needs to have sudo available (to act as root).
 If you use the <a class="reference external" href="https://hub.docker.com/r/fluxrm/flux-sched">fluxrm/flux-sched</a>
 base containers this is usually a good start.</p>
 <h4 id="cores">cores<a class="headerlink" href="#cores" title="Link to this heading">¶</a></h4>
@@ -2281,7 +2334,7 @@ to the indexed job container:</p>
   <small>
     
       Last update:
-      Jul 21, 2024
+      Jul 23, 2024
     
   </small>
 </div>
