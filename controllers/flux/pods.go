@@ -135,11 +135,21 @@ func (r *MiniClusterReconciler) newServicePod(
 			SetHostnameAsFQDN:            &setAsFQDN,
 			Volumes:                      existingVolumes,
 			ImagePullSecrets:             getImagePullSecrets(cluster),
-			RestartPolicy:                corev1.RestartPolicy(cluster.Spec.Pod.RestartPolicy),
+			RestartPolicy:                corev1.RestartPolicyOnFailure,
 			ServiceAccountName:           cluster.Spec.Pod.ServiceAccountName,
 			AutomountServiceAccountToken: &cluster.Spec.Pod.AutomountServiceAccountToken,
 			NodeSelector:                 cluster.Spec.Pod.NodeSelector,
 		},
+	}
+
+	// Custom restart policy
+	if cluster.Spec.Pod.RestartPolicy != "" {
+		pod.Spec.RestartPolicy = corev1.RestartPolicy(cluster.Spec.Pod.RestartPolicy)
+	}
+
+	// Only add runClassName if defined
+	if cluster.Spec.Pod.RuntimeClassName != "" {
+		pod.Spec.RuntimeClassName = &cluster.Spec.Pod.RuntimeClassName
 	}
 
 	// Assemble existing volume mounts - they are added with getContainers

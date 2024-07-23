@@ -188,6 +188,10 @@ type PodSpec struct {
 	// +optional
 	ServiceAccountName string `json:"serviceAccountName,omitempty"`
 
+	// RuntimeClassName for the pod
+	// +optional
+	RuntimeClassName string `json:"runtimeClassName,omitempty"`
+
 	// Automatically mount the service account name
 	// +optional
 	AutomountServiceAccountToken bool `json:"automountServiceAccountToken,omitempty"`

@@ -558,6 +558,9 @@ spec:
                   restartPolicy:
                     description: Restart Policy
                     type: string
+                  runtimeClassName:
+                    description: RuntimeClassName for the pod
+                    type: string
                   schedulerName:
                     description: Scheduler name for the pod
                     type: string
