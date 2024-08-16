@@ -12,7 +12,7 @@ authors:
     given-names: Daniel
     orcid: https://orcid.org/0000-0001-6500-3227
 title: "The Flux Operator"
-version: 0.2.0
+version: 0.2.1
 identifiers:
   - type: doi
     value: 10.12688/f1000research.147989.1
