@@ -29,7 +29,7 @@ func generateHostBlock(hosts string, cluster *api.MiniCluster) string {
 	// Unless we have a bursting broker address
 	if cluster.Spec.Flux.Bursting.LeadBroker.Address != "" {
 
-		hostTemplate = `hosts = [{host="%s", bind="tcp://eth0:%s", connect="tcp://%s:%s"},
+		hostTemplate = `hosts = [{host="%s", bind="tcp://eth0:%d", connect="tcp://%s:%d"},
 		 {host="%s"}]`
 
 		hostBlock = fmt.Sprintf(
@@ -38,6 +38,7 @@ func generateHostBlock(hosts string, cluster *api.MiniCluster) string {
 			cluster.Spec.Flux.Bursting.LeadBroker.Port,
 			cluster.Spec.Flux.Bursting.LeadBroker.Address,
 			cluster.Spec.Flux.Bursting.LeadBroker.Port,
+			hosts,
 		)
 	}
 	return hostBlock
@@ -103,7 +104,8 @@ func GenerateFluxEntrypoint(cluster *api.MiniCluster) (string, error) {
 	// github.com:converged-computing/flux-views.git
 	fluxRoot := "/opt/view"
 
-	mainHost := fmt.Sprintf("%s-0", cluster.Name)
+	// Get the main host, either cluster name or custom
+	mainHost := cluster.MainHost()
 
 	// Generate hostlists, this is the lead broker
 	hosts := generateHostlist(cluster, cluster.Spec.MaxSize)

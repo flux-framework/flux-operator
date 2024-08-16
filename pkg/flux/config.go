@@ -37,6 +37,12 @@ func getRandomToken(requested string) string {
 func generateHostlist(cluster *api.MiniCluster, size int32) string {
 
 	var hosts string
+
+	// If we are given a hostlist, just return it
+	if cluster.Spec.Flux.Hostlist != "" {
+		return cluster.Spec.Flux.Hostlist
+	}
+
 	if cluster.Spec.Flux.Bursting.Hostlist != "" {
 
 		// In case 1, we are given a custom hostlist

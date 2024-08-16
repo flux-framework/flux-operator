@@ -207,6 +207,13 @@ type PodSpec struct {
 	// Resources include limits and requests
 	// +optional
 	Resources ContainerResource `json:"resources"`
+
+	// Security
+	// +optional
+	HostIPC bool `json:"hostIPC,omitempty"`
+
+	// +optional
+	HostNetwork bool `json:"hostNetwork,omitempty"`
 }
 
 // MiniClusterStatus defines the observed state of Flux
@@ -316,6 +323,10 @@ type FluxSpec struct {
 	// +optional
 	NoWaitSocket bool `json:"noWaitSocket"`
 
+	// Provide a custom hostlist - useful if hostNetwork is set to true
+	// +optional
+	Hostlist string `json:"hostlist"`
+
 	// Complete workers when they fail
 	// This is ideal if you don't want them to restart
 	// +optional
@@ -354,6 +365,10 @@ type FluxSpec struct {
 	// this is intended for bursting to remote clusters
 	//+optional
 	BrokerConfig string `json:"brokerConfig"`
+
+	// If a different primary host is indicated
+	//+optional
+	MainHost string `json:"mainHost"`
 }
 
 // FluxScheduler attributes
@@ -704,6 +719,15 @@ func uniqueExistingVolumes(containers []MiniClusterContainer) map[string]Contain
 // Consistent functions to return config map names
 func (f *MiniCluster) EntrypointConfigMapName() string {
 	return f.Name + entrypointSuffix
+}
+
+// MainHost returns the main Hostname of the cluster
+func (f *MiniCluster) MainHost() string {
+	mainHost := fmt.Sprintf("%s-0", f.Name)
+	if f.Spec.Flux.MainHost != "" {
+		mainHost = f.Spec.Flux.MainHost
+	}
+	return mainHost
 }
 
 // Validate ensures we have data that is needed, and sets defaults if needed
