@@ -549,6 +549,14 @@ func schema_flux_framework_flux_operator_api_v1alpha2_FluxSpec(ref common.Refere
 							Format:      "",
 						},
 					},
+					"hostlist": {
+						SchemaProps: spec.SchemaProps{
+							Description: "Provide a custom hostlist - useful if hostNetwork is set to true",
+							Default:     "",
+							Type:        []string{"string"},
+							Format:      "",
+						},
+					},
 					"completeWorkers": {
 						SchemaProps: spec.SchemaProps{
 							Description: "Complete workers when they fail This is ideal if you don't want them to restart",
@@ -598,6 +606,14 @@ func schema_flux_framework_flux_operator_api_v1alpha2_FluxSpec(ref common.Refere
 					"brokerConfig": {
 						SchemaProps: spec.SchemaProps{
 							Description: "Optionally provide a manually created broker config this is intended for bursting to remote clusters",
+							Default:     "",
+							Type:        []string{"string"},
+							Format:      "",
+						},
+					},
+					"mainHost": {
+						SchemaProps: spec.SchemaProps{
+							Description: "If a different primary host is indicated",
 							Default:     "",
 							Type:        []string{"string"},
 							Format:      "",
@@ -1398,6 +1414,19 @@ func schema_flux_framework_flux_operator_api_v1alpha2_PodSpec(ref common.Referen
 									},
 								},
 							},
+						},
+					},
+					"hostIPC": {
+						SchemaProps: spec.SchemaProps{
+							Description: "Security",
+							Type:        []string{"boolean"},
+							Format:      "",
+						},
+					},
+					"hostNetwork": {
+						SchemaProps: spec.SchemaProps{
+							Type:   []string{"boolean"},
+							Format: "",
 						},
 					},
 				},

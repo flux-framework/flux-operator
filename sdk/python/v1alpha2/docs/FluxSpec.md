@@ -2,6 +2,7 @@
 
 
 ## Properties
+
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
 **arch** | **str** | Change the arch string - determines the binaries that are downloaded to run the entrypoint | [optional] 
@@ -11,7 +12,9 @@ Name | Type | Description | Notes
 **connect_timeout** | **str** | Single user executable to provide to flux start | [optional] [default to '5s']
 **container** | [**FluxContainer**](FluxContainer.md) |  | [optional] 
 **curve_cert** | **str** | Optionally provide an already existing curve certificate This is not recommended in favor of providing the secret name as curveCertSecret, below | [optional] [default to '']
+**hostlist** | **str** | Provide a custom hostlist - useful if hostNetwork is set to true | [optional] [default to '']
 **log_level** | **int** | Log level to use for flux logging (only in non TestMode) | [optional] [default to 6]
+**main_host** | **str** | If a different primary host is indicated | [optional] [default to '']
 **minimal_service** | **bool** | Only expose the broker service (to reduce load on DNS) | [optional] [default to False]
 **munge_secret** | **str** | Expect a secret (named according to this string) for a munge key. This is intended for bursting. Assumed to be at /etc/munge/munge.key This is binary data. | [optional] [default to '']
 **no_wait_socket** | **bool** | Do not wait for the socket | [optional] [default to False]
@@ -20,6 +23,23 @@ Name | Type | Description | Notes
 **submit_command** | **str** | Modify flux submit to be something else | [optional] 
 **wrap** | **str** | Commands for flux start --wrap | [optional] 
 
+## Example
+
+```python
+from fluxoperator.models.flux_spec import FluxSpec
+
+# TODO update the JSON string below
+json = "{}"
+# create an instance of FluxSpec from a JSON string
+flux_spec_instance = FluxSpec.from_json(json)
+# print the JSON string representation of the object
+print(FluxSpec.to_json())
+
+# convert the object into a dict
+flux_spec_dict = flux_spec_instance.to_dict()
+# create an instance of FluxSpec from a dict
+flux_spec_from_dict = FluxSpec.from_dict(flux_spec_dict)
+```
 [[Back to Model list]](../README.md#documentation-for-models) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to README]](../README.md)
 
 

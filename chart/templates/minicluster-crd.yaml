@@ -425,11 +425,18 @@ spec:
                       This is not recommended in favor of providing the secret
                       name as curveCertSecret, below
                     type: string
+                  hostlist:
+                    description: Provide a custom hostlist - useful if hostNetwork is
+                      set to true
+                    type: string
                   logLevel:
                     default: 6
                     description: Log level to use for flux logging (only in non TestMode)
                     format: int32
                     type: integer
+                  mainHost:
+                    description: If a different primary host is indicated
+                    type: string
                   minimalService:
                     description: Only expose the broker service (to reduce load on DNS)
                     type: boolean
@@ -533,6 +540,11 @@ spec:
                     type: object
                   automountServiceAccountToken:
                     description: Automatically mount the service account name
+                    type: boolean
+                  hostIPC:
+                    description: Security
+                    type: boolean
+                  hostNetwork:
                     type: boolean
                   labels:
                     additionalProperties:

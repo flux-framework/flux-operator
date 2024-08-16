@@ -88,7 +88,6 @@ func generateEntrypointScript(
 ) (string, error) {
 
 	container := cluster.Spec.Containers[containerIndex]
-	mainHost := fmt.Sprintf("%s-0", cluster.Name)
 
 	// Ensure if we have a batch command, it gets split up
 	batchCommand := strings.Split(container.Command, "\n")
@@ -102,7 +101,7 @@ func generateEntrypointScript(
 		RequiredRanks: requiredRanks,
 		ViewBase:      cluster.Spec.Flux.Container.MountPath,
 		Container:     container,
-		MainHost:      mainHost,
+		MainHost:      cluster.MainHost(),
 		Spec:          cluster.Spec,
 		Batch:         batchCommand,
 	}
