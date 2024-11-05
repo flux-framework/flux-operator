@@ -290,6 +290,11 @@
           "type": "string",
           "default": ""
         },
+        "disableSocket": {
+          "description": "Disable specifying the socket path",
+          "type": "boolean",
+          "default": false
+        },
         "logLevel": {
           "description": "Log level to use for flux logging (only in non TestMode)",
           "type": "integer",
@@ -324,6 +329,11 @@
         "submitCommand": {
           "description": "Modify flux submit to be something else",
           "type": "string"
+        },
+        "topology": {
+          "description": "Specify a custom Topology",
+          "type": "boolean",
+          "default": false
         },
         "wrap": {
           "description": "Commands for flux start --wrap",

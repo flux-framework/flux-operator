@@ -223,8 +223,9 @@ For older versions, we have a set of example containers [rse-ops/flux-hpc](https
 that include Flux in the container. Our new bases are [rse-ops/hpc-apps](https://github.com/rse-ops/hpc-apps) that do not have flux.
 For our flux view, we take the following steps:
 
- - A sidecar (init container) is created to stage the flux view at /mnt/flux
- - A file /mnt/flux/flux-view.sh is available to source for paths, python path, and a `$fluxsocket` variable
+ - A sidecar (init container) is created to stage the flux view at /mnt/flux.
+ - A file `/mnt/flux/flux-view.sh` is available to source for paths, python path, and a `$fluxsocket` variable.
+ - Execute `/mnt/flux/flux-connect.sh` to source the above and connect.
  - All configuration files are under that root, and prepared by the init container.
 
 ### Testing

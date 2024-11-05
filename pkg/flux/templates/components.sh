@@ -95,6 +95,19 @@ export LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:$viewroot/lib
 export fluxsocket=local://${viewroot}/run/flux/local
 EOT
 ${SUDO} mv ./flux-view.sh ${viewbase}/flux-view.sh
+
+# The same, but also connect
+cat <<EOT >> ./flux-connect.sh
+#!/bin/bash
+export PATH=$PATH
+export PYTHONPATH=$PYTHONPATH
+export LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:$viewroot/lib
+export fluxsocket=local://${viewroot}/run/flux/local
+flux proxy $fluxsocket bash
+EOT
+${SUDO} mv ./flux-connect.sh ${viewbase}/flux-connect
+
+
 {{end}}
 {{define "ensure-pip"}}
 ${SUDO} ${pythonversion} -m pip --version || ${SUDO} ${pythonversion} -m ensurepip || (${SUDO} wget https://bootstrap.pypa.io/get-pip.py && ${pythonversion} ./get-pip.py) {{ if .Spec.Logging.Quiet }}> /dev/null 2>&1{{ end }}

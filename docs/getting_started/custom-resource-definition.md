@@ -257,6 +257,17 @@ spec:
 
 This can be useful for cases of autoscaling in the down direction when you need to drain a node, and then delete the pod.
 
+#### topology
+
+By default, Flux will have a flat topology with one lead broker (rank 0) and some number of children. You can customize this with the `topology` field:
+
+```yaml
+flux:
+  topology: kary:2
+```
+
+For example, you might chooes `kary:1` (or another value) or `binomial`. You can then use `flux overlay status` after connecting to your cluster to see it.
+
 #### submitCommand
 
 If you need to use a container with a different version of flux (or an older one)
