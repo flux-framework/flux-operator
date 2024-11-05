@@ -33,7 +33,7 @@
         <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
       
     
-        <link rel="stylesheet" type="text/css" href="../_static/sphinx_immaterial_theme.3625f807144f53acf.min.css?v=d143bf1f" />
+        <link rel="stylesheet" type="text/css" href="../_static/sphinx_immaterial_theme.4b4a8c74e2ff2ab5b.min.css?v=906e2c53" />
         <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=d68d0989" />
     <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
     
@@ -1002,8 +1002,9 @@ The new version (0.2.0 and later) does not have this requirement. Instead, we re
 that include Flux in the container. Our new bases are <a class="reference external" href="https://github.com/rse-ops/hpc-apps">rse-ops/hpc-apps</a> that do not have flux.
 For our flux view, we take the following steps:</p>
 <ul class="simple">
-<li><p>A sidecar (init container) is created to stage the flux view at /mnt/flux</p></li>
-<li><p>A file /mnt/flux/flux-view.sh is available to source for paths, python path, and a <code class="docutils literal notranslate"><span class="pre">$fluxsocket</span></code> variable</p></li>
+<li><p>A sidecar (init container) is created to stage the flux view at /mnt/flux.</p></li>
+<li><p>A file <code class="docutils literal notranslate"><span class="pre">/mnt/flux/flux-view.sh</span></code> is available to source for paths, python path, and a <code class="docutils literal notranslate"><span class="pre">$fluxsocket</span></code> variable.</p></li>
+<li><p>Execute <code class="docutils literal notranslate"><span class="pre">/mnt/flux/flux-connect.sh</span></code> to source the above and connect.</p></li>
 <li><p>All configuration files are under that root, and prepared by the init container.</p></li>
 </ul>
 <h3 id="testing">Testing<a class="headerlink" href="#testing" title="Link to this heading">¶</a></h3>
@@ -1080,7 +1081,7 @@ server to preview:</p>
   <small>
     
       Last update:
-      Aug 16, 2024
+      Nov 05, 2024
     
   </small>
 </div>
@@ -1157,7 +1158,7 @@ server to preview:</p>
   
     Created using
     <a href="https://www.sphinx-doc.org/" target="_blank" rel="noopener">Sphinx</a>
-    8.0.2.
+    8.1.3.
      and
     <a href="https://github.com/jbms/sphinx-immaterial/" target="_blank" rel="noopener">Sphinx-Immaterial</a>
   
