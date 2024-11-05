@@ -318,7 +318,7 @@ type FluxSpec struct {
 
 	// Specify a custom Topology
 	// +optional
-	Topology bool `json:"topology"`
+	Topology string `json:"topology"`
 
 	// Do not wait for the socket
 	// +optional

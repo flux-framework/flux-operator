@@ -332,8 +332,8 @@
         },
         "topology": {
           "description": "Specify a custom Topology",
-          "type": "boolean",
-          "default": false
+          "type": "string",
+          "default": ""
         },
         "wrap": {
           "description": "Commands for flux start --wrap",

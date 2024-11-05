@@ -44,7 +44,7 @@ class FluxSpec(BaseModel):
     option_flags: Optional[StrictStr] = Field(default='', description="Flux option flags, usually provided with -o optional - if needed, default option flags for the server These can also be set in the user interface to override here. This is only valid for a FluxRunner \"runFlux\" true", alias="optionFlags")
     scheduler: Optional[FluxScheduler] = None
     submit_command: Optional[StrictStr] = Field(default=None, description="Modify flux submit to be something else", alias="submitCommand")
-    topology: Optional[StrictBool] = Field(default=False, description="Specify a custom Topology")
+    topology: Optional[StrictStr] = Field(default='', description="Specify a custom Topology")
     wrap: Optional[StrictStr] = Field(default=None, description="Commands for flux start --wrap")
     __properties: ClassVar[List[str]] = ["arch", "brokerConfig", "bursting", "completeWorkers", "connectTimeout", "container", "curveCert", "disableSocket", "logLevel", "minimalService", "mungeSecret", "noWaitSocket", "optionFlags", "scheduler", "submitCommand", "topology", "wrap"]
 
@@ -123,7 +123,7 @@ class FluxSpec(BaseModel):
             "optionFlags": obj.get("optionFlags") if obj.get("optionFlags") is not None else '',
             "scheduler": FluxScheduler.from_dict(obj["scheduler"]) if obj.get("scheduler") is not None else None,
             "submitCommand": obj.get("submitCommand"),
-            "topology": obj.get("topology") if obj.get("topology") is not None else False,
+            "topology": obj.get("topology") if obj.get("topology") is not None else '',
             "wrap": obj.get("wrap")
         })
         return _obj

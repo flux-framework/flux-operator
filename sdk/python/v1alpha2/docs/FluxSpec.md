@@ -20,7 +20,7 @@ Name | Type | Description | Notes
 **option_flags** | **str** | Flux option flags, usually provided with -o optional - if needed, default option flags for the server These can also be set in the user interface to override here. This is only valid for a FluxRunner \&quot;runFlux\&quot; true | [optional] [default to '']
 **scheduler** | [**FluxScheduler**](FluxScheduler.md) |  | [optional] 
 **submit_command** | **str** | Modify flux submit to be something else | [optional] 
-**topology** | **bool** | Specify a custom Topology | [optional] [default to False]
+**topology** | **str** | Specify a custom Topology | [optional] [default to '']
 **wrap** | **str** | Commands for flux start --wrap | [optional] 
 
 ## Example

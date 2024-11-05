@@ -552,8 +552,8 @@ func schema_flux_framework_flux_operator_api_v1alpha2_FluxSpec(ref common.Refere
 					"topology": {
 						SchemaProps: spec.SchemaProps{
 							Description: "Specify a custom Topology",
-							Default:     false,
-							Type:        []string{"boolean"},
+							Default:     "",
+							Type:        []string{"string"},
 							Format:      "",
 						},
 					},

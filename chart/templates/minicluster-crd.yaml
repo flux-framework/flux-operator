@@ -466,7 +466,7 @@ spec:
                     type: string
                   topology:
                     description: Specify a custom Topology
-                    type: boolean
+                    type: string
                   wrap:
                     description: Commands for flux start --wrap
                     type: string
