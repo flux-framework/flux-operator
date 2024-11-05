@@ -96,9 +96,8 @@ ls .
 brokerOptions="-Scron.directory=/etc/flux/system/cron.d \
   -Stbon.fanout=256 \
   -Srundir=${viewroot}/run/flux {{ if .Spec.Interactive }}-Sbroker.rc2_none {{ end }} \
-  -Sstatedir=${STATE_DIR} \
-  -Slocal-uri=local://$viewroot/run/flux/local \
-{{ if .Spec.Flux.ConnectTimeout }}-Stbon.connect_timeout={{ .Spec.Flux.ConnectTimeout }}{{ end }} \
+  -Sstatedir=${STATE_DIR} {{ if .Spec.Flux.DisableSocket }}{{ else }}-Slocal-uri=local://$viewroot/run/flux/local \{{ end }}
+{{ if .Spec.Flux.ConnectTimeout }}-Stbon.connect_timeout={{ .Spec.Flux.ConnectTimeout }}{{ end }} {{ if .Spec.Flux.Topology }}-Stbon.topo={{ .Spec.Flux.Topology }}{{ end }} \
 {{ if .RequiredRanks }}-Sbroker.quorum={{ .RequiredRanks }}{{ end }} \
 {{ if .Spec.Logging.Zeromq }}-Stbon.zmqdebug=1{{ end }} \
 {{ if not .Spec.Logging.Quiet }} -Slog-stderr-level={{or .Spec.Flux.LogLevel 6}} {{ else }} -Slog-stderr-level=0 {{ end }} \

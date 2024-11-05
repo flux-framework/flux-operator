@@ -425,6 +425,9 @@ spec:
                       This is not recommended in favor of providing the secret
                       name as curveCertSecret, below
                     type: string
+                  disableSocket:
+                    description: Disable specifying the socket path
+                    type: boolean
                   logLevel:
                     default: 6
                     description: Log level to use for flux logging (only in non TestMode)
@@ -460,6 +463,9 @@ spec:
                     type: object
                   submitCommand:
                     description: Modify flux submit to be something else
+                    type: string
+                  topology:
+                    description: Specify a custom Topology
                     type: string
                   wrap:
                     description: Commands for flux start --wrap

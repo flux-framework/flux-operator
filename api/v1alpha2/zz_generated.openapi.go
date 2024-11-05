@@ -541,6 +541,22 @@ func schema_flux_framework_flux_operator_api_v1alpha2_FluxSpec(ref common.Refere
 							Format:      "",
 						},
 					},
+					"disableSocket": {
+						SchemaProps: spec.SchemaProps{
+							Description: "Disable specifying the socket path",
+							Default:     false,
+							Type:        []string{"boolean"},
+							Format:      "",
+						},
+					},
+					"topology": {
+						SchemaProps: spec.SchemaProps{
+							Description: "Specify a custom Topology",
+							Default:     "",
+							Type:        []string{"string"},
+							Format:      "",
+						},
+					},
 					"noWaitSocket": {
 						SchemaProps: spec.SchemaProps{
 							Description: "Do not wait for the socket",

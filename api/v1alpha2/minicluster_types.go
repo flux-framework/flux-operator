@@ -312,6 +312,14 @@ type FluxSpec struct {
 	// +optional
 	MinimalService bool `json:"minimalService"`
 
+	// Disable specifying the socket path
+	// +optional
+	DisableSocket bool `json:"disableSocket"`
+
+	// Specify a custom Topology
+	// +optional
+	Topology string `json:"topology"`
+
 	// Do not wait for the socket
 	// +optional
 	NoWaitSocket bool `json:"noWaitSocket"`
