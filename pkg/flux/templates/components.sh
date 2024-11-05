@@ -100,7 +100,7 @@ ${SUDO} mv ./flux-view.sh ${viewbase}/flux-view.sh
 cat <<EOT >> ./flux-connect.sh
 #!/bin/bash
 . ${viewbase}/flux-view.sh
-flux proxy $fluxsocket bash
+flux proxy ${fluxsocket} bash
 EOT
 ${SUDO} mv ./flux-connect.sh ${viewbase}/flux-connect.sh
 
