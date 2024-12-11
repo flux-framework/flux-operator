@@ -14,6 +14,7 @@ Name | Type | Description | Notes
 **restart_policy** | **str** | Restart Policy | [optional] 
 **runtime_class_name** | **str** | RuntimeClassName for the pod | [optional] 
 **scheduler_name** | **str** | Scheduler name for the pod | [optional] 
+**security_context** | [**PodSecurityContext**](PodSecurityContext.md) |  | [optional] 
 **service_account_name** | **str** | Service account name for the pod | [optional] 
 
 ## Example

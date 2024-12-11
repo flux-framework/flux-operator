@@ -36,6 +36,22 @@ func getPodLabels(cluster *api.MiniCluster) map[string]string {
 	return podLabels
 }
 
+// getPodSecurityContext is shared for the pod and service pods
+func getPodSecurityContext(cluster *api.MiniCluster) *corev1.PodSecurityContext {
+	sysctls := []corev1.Sysctl{}
+	for key, value := range cluster.Spec.Pod.SecurityContext.Sysctls {
+		newSysctls := corev1.Sysctl{
+			Name:  key,
+			Value: value,
+		}
+		sysctls = append(sysctls, newSysctls)
+	}
+	securityContext := &corev1.PodSecurityContext{
+		Sysctls: sysctls,
+	}
+	return securityContext
+}
+
 // ensure service containers are running, currently in one pod
 func (r *MiniClusterReconciler) ensureServicePod(
 	ctx context.Context,
@@ -139,6 +155,7 @@ func (r *MiniClusterReconciler) newServicePod(
 			ServiceAccountName:           cluster.Spec.Pod.ServiceAccountName,
 			AutomountServiceAccountToken: &cluster.Spec.Pod.AutomountServiceAccountToken,
 			NodeSelector:                 cluster.Spec.Pod.NodeSelector,
+			SecurityContext:              getPodSecurityContext(cluster),
 		},
 	}
 
