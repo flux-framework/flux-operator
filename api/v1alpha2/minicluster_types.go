@@ -188,6 +188,10 @@ type PodSpec struct {
 	// +optional
 	ServiceAccountName string `json:"serviceAccountName,omitempty"`
 
+	// PodSecurityContext
+	// +optional
+	SecurityContext PodSecurityContext `json:"securityContext,omitempty"`
+
 	// RuntimeClassName for the pod
 	// +optional
 	RuntimeClassName string `json:"runtimeClassName,omitempty"`
@@ -590,6 +594,13 @@ type SecurityContext struct {
 	// +optional
 	// +listType=atomic
 	AddCapabilities []string `json:"addCapabilities,omitempty"`
+}
+
+type PodSecurityContext struct {
+
+	// Sysctls
+	// +optional
+	Sysctls map[string]string `json:"sysctls,omitempty"`
 }
 
 type LifeCycle struct {

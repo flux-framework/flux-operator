@@ -570,6 +570,15 @@ spec:
                   schedulerName:
                     description: Scheduler name for the pod
                     type: string
+                  securityContext:
+                    description: PodSecurityContext
+                    properties:
+                      sysctls:
+                        additionalProperties:
+                          type: string
+                        description: Sysctls
+                        type: object
+                    type: object
                   serviceAccountName:
                     description: Service account name for the pod
                     type: string

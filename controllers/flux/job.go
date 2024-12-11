@@ -73,6 +73,7 @@ func NewMiniClusterJob(cluster *api.MiniCluster) (*batchv1.Job, error) {
 					RestartPolicy:                corev1.RestartPolicyOnFailure,
 					NodeSelector:                 cluster.Spec.Pod.NodeSelector,
 					SchedulerName:                cluster.Spec.Pod.SchedulerName,
+					SecurityContext:              getPodSecurityContext(cluster),
 				},
 			},
 		},

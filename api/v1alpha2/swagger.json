@@ -742,6 +742,19 @@
         }
       }
     },
+    "PodSecurityContext": {
+      "type": "object",
+      "properties": {
+        "sysctls": {
+          "description": "Sysctls",
+          "type": "object",
+          "additionalProperties": {
+            "type": "string",
+            "default": ""
+          }
+        }
+      }
+    },
     "PodSpec": {
       "description": "PodSpec controlls variables for the cluster pod",
       "type": "object",
@@ -792,6 +805,11 @@
         "schedulerName": {
           "description": "Scheduler name for the pod",
           "type": "string"
+        },
+        "securityContext": {
+          "description": "PodSecurityContext",
+          "default": {},
+          "$ref": "#/definitions/PodSecurityContext"
         },
         "serviceAccountName": {
           "description": "Service account name for the pod",
