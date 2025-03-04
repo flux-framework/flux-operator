@@ -367,6 +367,10 @@ type FluxSpec struct {
 // FluxScheduler attributes
 type FluxScheduler struct {
 
+	// Use sched-simple (no support for GPU)
+	// +optional
+	Simple bool `json:"simple"`
+
 	// Scheduler queue policy, defaults to "fcfs" can also be "easy"
 	// +optional
 	QueuePolicy string `json:"queuePolicy"`

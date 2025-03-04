@@ -351,6 +351,39 @@ And the broker.toml config will update appropriately:
 queue-policy = "easy"
 ```
 
+By default, we use the simple sched algorithm. To load fluxion, you can connect to the lead broker and load the correct modules.
+
+```bash
+kubectl exec -it flux-sample-0-7mqg5 bash
+. /mnt/flux/flux-view.sh 
+flux proxy $fluxsocket bash
+bash /mnt/flux/load-fluxion.sh 
+```
+
+Verify it is loaded - you should see two modules for fluxion, qmanager and resource.
+
+```bash
+$ flux module list
+Module                   Idle  S Service
+job-info                   21  R 
+sched-fluxion-qmanager      5  R sched
+sched-fluxion-resource      5  R 
+job-exec                   21  R 
+connector-local             0  R 
+kvs-watch                  21  R 
+heartbeat                   1  R 
+content                    20  R 
+kvs                        20  R 
+content-sqlite             20  R content-backing
+job-list                   21  R 
+job-ingest                 20  R 
+job-archive                21  R 
+resource                    5  R 
+barrier                    21  R 
+job-manager                 5  R 
+cron                       21  R 
+```
+
 You can learn more about queues [here](https://flux-framework.readthedocs.io/en/latest/guides/admin-guide.html?h=system#adding-queues). Please [open an issue](https://github.com/flux-framework/flux-operator/issues) if you want support for something that you don't see. Also note that you can set an entire [broker config](#broker-config) for more detailed customization.
 
 #### minimalService

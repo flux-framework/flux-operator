@@ -250,6 +250,11 @@
           "description": "Scheduler queue policy, defaults to \"fcfs\" can also be \"easy\"",
           "type": "string",
           "default": ""
+        },
+        "simple": {
+          "description": "Use sched-simple (no support for GPU)",
+          "type": "boolean",
+          "default": false
         }
       }
     },

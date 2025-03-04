@@ -469,6 +469,14 @@ func schema_flux_framework_flux_operator_api_v1alpha2_FluxScheduler(ref common.R
 				Description: "FluxScheduler attributes",
 				Type:        []string{"object"},
 				Properties: map[string]spec.Schema{
+					"simple": {
+						SchemaProps: spec.SchemaProps{
+							Description: "Use sched-simple (no support for GPU)",
+							Default:     false,
+							Type:        []string{"boolean"},
+							Format:      "",
+						},
+					},
 					"queuePolicy": {
 						SchemaProps: spec.SchemaProps{
 							Description: "Scheduler queue policy, defaults to \"fcfs\" can also be \"easy\"",

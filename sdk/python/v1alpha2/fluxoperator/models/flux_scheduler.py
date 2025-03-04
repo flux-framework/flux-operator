@@ -17,7 +17,7 @@ import pprint
 import re  # noqa: F401
 import json
 
-from pydantic import BaseModel, ConfigDict, Field, StrictStr
+from pydantic import BaseModel, ConfigDict, Field, StrictBool, StrictStr
 from typing import Any, ClassVar, Dict, List, Optional
 from typing import Optional, Set
 from typing_extensions import Self
@@ -27,7 +27,8 @@ class FluxScheduler(BaseModel):
     FluxScheduler attributes
     """ # noqa: E501
     queue_policy: Optional[StrictStr] = Field(default='', description="Scheduler queue policy, defaults to \"fcfs\" can also be \"easy\"", alias="queuePolicy")
-    __properties: ClassVar[List[str]] = ["queuePolicy"]
+    simple: Optional[StrictBool] = Field(default=False, description="Use sched-simple (no support for GPU)")
+    __properties: ClassVar[List[str]] = ["queuePolicy", "simple"]
 
     model_config = ConfigDict(
         populate_by_name=True,
@@ -80,7 +81,8 @@ class FluxScheduler(BaseModel):
             return cls.model_validate(obj)
 
         _obj = cls.model_validate({
-            "queuePolicy": obj.get("queuePolicy") if obj.get("queuePolicy") is not None else ''
+            "queuePolicy": obj.get("queuePolicy") if obj.get("queuePolicy") is not None else '',
+            "simple": obj.get("simple") if obj.get("simple") is not None else False
         })
         return _obj
 
