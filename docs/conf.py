@@ -27,7 +27,7 @@ FORCE_CLASSIC = FORCE_CLASSIC in ("1", "true")
 project = "Flux Operator"
 html_title = "Flux Operator"
 
-copyright = "2022-2023, Flux Developers"
+copyright = "2022-2025, Flux Developers"
 author = "@vsoch"
 
 # The full version, including alpha/beta/rc tags
