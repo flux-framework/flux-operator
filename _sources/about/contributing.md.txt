@@ -3,7 +3,7 @@
 When contributing to the Flux Operator, it is important to properly communicate the gist of the contribution.
 If it is a simple code or editorial fix, simply explaining this within the GitHub Pull Request (PR) will suffice. But if this is a larger
 fix or Enhancement, it should be first discussed with the project leader or developers.
-You can also join us on the Flux Framework Slack using the [Contact](https://flux-framework.org/) link here to get an invitiation.
+You can also join us on the Flux Framework Slack using the [Contact](https://flux-framework.org/) link here to get an invitation.
 
 ## Pull Request Process
 
