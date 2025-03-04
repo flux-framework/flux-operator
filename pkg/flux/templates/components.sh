@@ -85,6 +85,15 @@ echo "PATH is $PATH" {{ if .Spec.Logging.Quiet }}> /dev/null 2>&1{{ end }}
 
 find $viewroot . -name libpython*.so* {{ if .Spec.Logging.Quiet }}> /dev/null 2>&1{{ end }}
 ls -l /mnt/flux/view/lib/libpython3.11.so.1.0 {{ if .Spec.Logging.Quiet }}> /dev/null 2>&1{{ end }}
+{{ if .Spec.Flux.Scheduler.Simple }}{{ else }}export FLUX_RC_EXTRA=$viewroot/etc/flux/rc1.d{{ end }}
+
+# Write a script to load fluxion
+cat <<EOT >> ./load-fluxion.sh
+flux module remove sched-simple
+flux module load sched-fluxion-resource
+flux module load sched-fluxion-qmanager
+EOT
+${SUDO} mv ./load-fluxion.sh ${viewbase}/load-fluxion.sh
 
 # Write an easy file we can source for the environment
 cat <<EOT >> ./flux-view.sh

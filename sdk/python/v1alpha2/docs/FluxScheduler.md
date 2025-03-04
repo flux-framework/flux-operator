@@ -7,6 +7,7 @@ FluxScheduler attributes
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
 **queue_policy** | **str** | Scheduler queue policy, defaults to \&quot;fcfs\&quot; can also be \&quot;easy\&quot; | [optional] [default to '']
+**simple** | **bool** | Use sched-simple (no support for GPU) | [optional] [default to False]
 
 ## Example
 
