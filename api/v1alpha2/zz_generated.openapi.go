@@ -41,6 +41,7 @@ func GetOpenAPIDefinitions(ref common.ReferenceCallback) map[string]common.OpenA
 		"github.com/flux-framework/flux-operator/api/v1alpha2.MiniClusterStatus":    schema_flux_framework_flux_operator_api_v1alpha2_MiniClusterStatus(ref),
 		"github.com/flux-framework/flux-operator/api/v1alpha2.MiniClusterUser":      schema_flux_framework_flux_operator_api_v1alpha2_MiniClusterUser(ref),
 		"github.com/flux-framework/flux-operator/api/v1alpha2.Network":              schema_flux_framework_flux_operator_api_v1alpha2_Network(ref),
+		"github.com/flux-framework/flux-operator/api/v1alpha2.PodSecurityContext":   schema_flux_framework_flux_operator_api_v1alpha2_PodSecurityContext(ref),
 		"github.com/flux-framework/flux-operator/api/v1alpha2.PodSpec":              schema_flux_framework_flux_operator_api_v1alpha2_PodSpec(ref),
 		"github.com/flux-framework/flux-operator/api/v1alpha2.Secret":               schema_flux_framework_flux_operator_api_v1alpha2_Secret(ref),
 		"github.com/flux-framework/flux-operator/api/v1alpha2.SecurityContext":      schema_flux_framework_flux_operator_api_v1alpha2_SecurityContext(ref),
@@ -1320,6 +1321,34 @@ func schema_flux_framework_flux_operator_api_v1alpha2_Network(ref common.Referen
 	}
 }
 
+func schema_flux_framework_flux_operator_api_v1alpha2_PodSecurityContext(ref common.ReferenceCallback) common.OpenAPIDefinition {
+	return common.OpenAPIDefinition{
+		Schema: spec.Schema{
+			SchemaProps: spec.SchemaProps{
+				Type: []string{"object"},
+				Properties: map[string]spec.Schema{
+					"sysctls": {
+						SchemaProps: spec.SchemaProps{
+							Description: "Sysctls",
+							Type:        []string{"object"},
+							AdditionalProperties: &spec.SchemaOrBool{
+								Allows: true,
+								Schema: &spec.Schema{
+									SchemaProps: spec.SchemaProps{
+										Default: "",
+										Type:    []string{"string"},
+										Format:  "",
+									},
+								},
+							},
+						},
+					},
+				},
+			},
+		},
+	}
+}
+
 func schema_flux_framework_flux_operator_api_v1alpha2_PodSpec(ref common.ReferenceCallback) common.OpenAPIDefinition {
 	return common.OpenAPIDefinition{
 		Schema: spec.Schema{
@@ -1371,6 +1400,13 @@ func schema_flux_framework_flux_operator_api_v1alpha2_PodSpec(ref common.Referen
 							Description: "Service account name for the pod",
 							Type:        []string{"string"},
 							Format:      "",
+						},
+					},
+					"securityContext": {
+						SchemaProps: spec.SchemaProps{
+							Description: "PodSecurityContext",
+							Default:     map[string]interface{}{},
+							Ref:         ref("github.com/flux-framework/flux-operator/api/v1alpha2.PodSecurityContext"),
 						},
 					},
 					"runtimeClassName": {
@@ -1428,7 +1464,7 @@ func schema_flux_framework_flux_operator_api_v1alpha2_PodSpec(ref common.Referen
 			},
 		},
 		Dependencies: []string{
-			"k8s.io/apimachinery/pkg/util/intstr.IntOrString"},
+			"github.com/flux-framework/flux-operator/api/v1alpha2.PodSecurityContext", "k8s.io/apimachinery/pkg/util/intstr.IntOrString"},
 	}
 }
 

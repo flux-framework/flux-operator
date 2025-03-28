@@ -672,6 +672,39 @@ be adjusted if needed.
 
 Variables and attributes for each pod in the Indexed job.
 
+#### securityContext
+
+Currently, we just support setting sysctls. The following section:
+
+```yaml
+pod:
+  securityContext:
+    sysctls:
+      "net.core.somaxconn": "4096"
+```
+
+Would map to this for the minicluster pod:
+
+```yaml
+pod:
+  securityContext:
+    sysctls:
+    - name: net.core.somaxconn
+      value: "4096"
+```
+
+Note that you need to also make changes to the kubeletConfiguration to allowUnsafeSysctls.
+
+```yaml
+kind: KubeletConfiguration
+apiVersion: kubelet.config.k8s.io/v1beta1
+failSwapOn: false
+featureGates:
+  KubeletInUserNamespace: true
+allowedUnsafeSysctls:
+- "net.core*"
+```
+
 #### labels
 
 To add custom labels for your pods (in the indexed job), add a set of key value pairs (strings) to a "labels" section:

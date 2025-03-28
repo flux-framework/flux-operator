@@ -137,6 +137,7 @@ func getContainers(
 				Add: addCaps,
 			},
 		}
+
 		newContainer := corev1.Container{
 
 			// Call this the driver container, number 0

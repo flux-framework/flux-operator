@@ -19,6 +19,7 @@ import json
 
 from pydantic import BaseModel, ConfigDict, Field, StrictBool, StrictStr
 from typing import Any, ClassVar, Dict, List, Optional
+from fluxoperator.models.pod_security_context import PodSecurityContext
 from typing import Optional, Set
 from typing_extensions import Self
 
@@ -34,8 +35,9 @@ class PodSpec(BaseModel):
     restart_policy: Optional[StrictStr] = Field(default=None, description="Restart Policy", alias="restartPolicy")
     runtime_class_name: Optional[StrictStr] = Field(default=None, description="RuntimeClassName for the pod", alias="runtimeClassName")
     scheduler_name: Optional[StrictStr] = Field(default=None, description="Scheduler name for the pod", alias="schedulerName")
+    security_context: Optional[PodSecurityContext] = Field(default=None, alias="securityContext")
     service_account_name: Optional[StrictStr] = Field(default=None, description="Service account name for the pod", alias="serviceAccountName")
-    __properties: ClassVar[List[str]] = ["annotations", "automountServiceAccountToken", "labels", "nodeSelector", "resources", "restartPolicy", "runtimeClassName", "schedulerName", "serviceAccountName"]
+    __properties: ClassVar[List[str]] = ["annotations", "automountServiceAccountToken", "labels", "nodeSelector", "resources", "restartPolicy", "runtimeClassName", "schedulerName", "securityContext", "serviceAccountName"]
 
     model_config = ConfigDict(
         populate_by_name=True,
@@ -83,6 +85,9 @@ class PodSpec(BaseModel):
                 if self.resources[_key]:
                     _field_dict[_key] = self.resources[_key].to_dict()
             _dict['resources'] = _field_dict
+        # override the default output from pydantic by calling `to_dict()` of security_context
+        if self.security_context:
+            _dict['securityContext'] = self.security_context.to_dict()
         return _dict
 
     @classmethod
@@ -108,6 +113,7 @@ class PodSpec(BaseModel):
             "restartPolicy": obj.get("restartPolicy"),
             "runtimeClassName": obj.get("runtimeClassName"),
             "schedulerName": obj.get("schedulerName"),
+            "securityContext": PodSecurityContext.from_dict(obj["securityContext"]) if obj.get("securityContext") is not None else None,
             "serviceAccountName": obj.get("serviceAccountName")
         })
         return _obj
