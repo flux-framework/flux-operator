@@ -142,6 +142,11 @@ func (r *MiniClusterReconciler) newServicePod(
 		},
 	}
 
+	// Custom DNS Policy
+	if cluster.Spec.Pod.DNSPolicy != "" {
+		pod.Spec.DNSPolicy = corev1.DNSPolicy(cluster.Spec.Pod.DNSPolicy)
+	}
+
 	// Custom restart policy
 	if cluster.Spec.Pod.RestartPolicy != "" {
 		pod.Spec.RestartPolicy = corev1.RestartPolicy(cluster.Spec.Pod.RestartPolicy)
