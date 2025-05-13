@@ -763,6 +763,10 @@
           "description": "Automatically mount the service account name",
           "type": "boolean"
         },
+        "dnsPolicy": {
+          "description": "Pod DNS policy (defaults to ClusterFirst)",
+          "type": "string"
+        },
         "labels": {
           "description": "Labels for each pod",
           "type": "object",

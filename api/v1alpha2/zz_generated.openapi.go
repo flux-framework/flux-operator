@@ -1410,6 +1410,13 @@ func schema_flux_framework_flux_operator_api_v1alpha2_PodSpec(ref common.Referen
 							},
 						},
 					},
+					"dnsPolicy": {
+						SchemaProps: spec.SchemaProps{
+							Description: "Pod DNS policy (defaults to ClusterFirst)",
+							Type:        []string{"string"},
+							Format:      "",
+						},
+					},
 					"resources": {
 						SchemaProps: spec.SchemaProps{
 							Description: "Resources include limits and requests",

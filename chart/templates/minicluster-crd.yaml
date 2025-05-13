@@ -543,6 +543,9 @@ spec:
                   automountServiceAccountToken:
                     description: Automatically mount the service account name
                     type: boolean
+                  dnsPolicy:
+                    description: Pod DNS policy (defaults to ClusterFirst)
+                    type: string
                   labels:
                     additionalProperties:
                       type: string
