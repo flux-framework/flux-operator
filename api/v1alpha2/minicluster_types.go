@@ -204,6 +204,10 @@ type PodSpec struct {
 	// +optional
 	NodeSelector map[string]string `json:"nodeSelector,omitempty"`
 
+	// Pod DNS policy (defaults to ClusterFirst)
+	// +optional
+	DNSPolicy string `json:"dnsPolicy,omitempty"`
+
 	// Resources include limits and requests
 	// +optional
 	Resources ContainerResource `json:"resources"`

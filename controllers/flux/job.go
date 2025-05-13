@@ -82,6 +82,11 @@ func NewMiniClusterJob(cluster *api.MiniCluster) (*batchv1.Job, error) {
 		job.Spec.Template.Spec.RestartPolicy = corev1.RestartPolicy(cluster.Spec.Pod.RestartPolicy)
 	}
 
+	// Custom DNS Policy
+	if cluster.Spec.Pod.DNSPolicy != "" {
+		job.Spec.Template.Spec.DNSPolicy = corev1.DNSPolicy(cluster.Spec.Pod.DNSPolicy)
+	}
+
 	// Only add runClassName if defined
 	if cluster.Spec.Pod.RuntimeClassName != "" {
 		job.Spec.Template.Spec.RuntimeClassName = &cluster.Spec.Pod.RuntimeClassName
