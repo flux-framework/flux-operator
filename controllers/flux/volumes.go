@@ -114,6 +114,7 @@ func getVolumes(cluster *api.MiniCluster) []corev1.Volume {
 	// This can be a claim, secret, or config map
 	existingVolumes := getExistingVolumes(cluster.ExistingContainerVolumes())
 	volumes = append(volumes, existingVolumes...)
+	fmt.Println(volumes)
 	return volumes
 }
 
