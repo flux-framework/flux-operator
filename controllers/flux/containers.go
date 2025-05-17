@@ -61,6 +61,9 @@ func getContainers(
 	// Create the containers for the pod
 	containers := []corev1.Container{}
 
+	// Assume we can't mount the same name twice
+	seenMounts := map[string]bool{}
+
 	// Add on application and flux runner containers
 	for i, container := range specs {
 
@@ -113,7 +116,11 @@ func getContainers(
 					ReadOnly:  volume.ReadOnly,
 				}
 			}
-			mounts = append(mounts, mount)
+			_, ok := seenMounts[volumeName]
+			if !ok {
+				mounts = append(mounts, mount)
+				seenMounts[volumeName] = true
+			}
 		}
 
 		// Prepare container resources
