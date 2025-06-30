@@ -9,6 +9,10 @@ If you have any questions or issues, please [let us know](https://github.com/flu
 
 The following tutorials are provided from their respective directories (and are not documented here):
 
+### Machine Learning
+
+ - [Foundry ML](https://github.com/flux-framework/flux-operator/tree/main/examples/machine-learning/foundry)
+
 ### Simulations
 
  - [Laghos](https://github.com/flux-framework/flux-operator/blob/main/examples/simulations/laghos-demos/minicluster.yaml)
