@@ -768,6 +768,26 @@ pod:
     iam.gke.io/gke-metadata-server-enabled: "true"
 ```
 
+#### hostIPC
+
+A boolean to use the hostIPC namespace. We have not tested the used cases for this yet.
+
+```yaml
+pod:
+  hostIPC: true
+```
+
+
+#### hostPID
+
+The same, but to add `hostPID` to the pod.
+
+```yaml
+pod:
+  hostPID: true
+```
+
+
 ### containers
 
 Early on we identified that a job could include more than one container, where there might be a primary container

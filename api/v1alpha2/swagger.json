@@ -767,6 +767,14 @@
           "description": "Pod DNS policy (defaults to ClusterFirst)",
           "type": "string"
         },
+        "hostIPC": {
+          "description": "Use Host IPC",
+          "type": "boolean"
+        },
+        "hostPID": {
+          "description": "Use Host PID",
+          "type": "boolean"
+        },
         "labels": {
           "description": "Labels for each pod",
           "type": "object",

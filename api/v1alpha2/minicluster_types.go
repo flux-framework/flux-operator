@@ -208,6 +208,14 @@ type PodSpec struct {
 	// +optional
 	DNSPolicy string `json:"dnsPolicy,omitempty"`
 
+	// Use Host IPC
+	// +optional
+	HostIPC bool `json:"hostIPC,omitempty"`
+
+	// Use Host PID
+	// +optional
+	HostPID bool `json:"hostPID,omitempty"`
+
 	// Resources include limits and requests
 	// +optional
 	Resources ContainerResource `json:"resources"`
