@@ -33,7 +33,7 @@
         <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
       
     
-        <link rel="stylesheet" type="text/css" href="../_static/sphinx_immaterial_theme.02cb18745d09eea51.min.css?v=e63a8acb" />
+        <link rel="stylesheet" type="text/css" href="../_static/sphinx_immaterial_theme.c5589c0bd87d933a4.min.css?v=e642e372" />
         <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=d68d0989" />
     <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
     
@@ -838,6 +838,20 @@
           <li class="md-nav__item">
   <a href="#nodeselector" class="md-nav__link">
     <span title="/getting_started/custom-resource-definition.md#nodeselector (reference label)" class="md-ellipsis">node<wbr>Selector</span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#hostipc" class="md-nav__link">
+    <span title="/getting_started/custom-resource-definition.md#hostipc (reference label)" class="md-ellipsis">host<wbr>IPC</span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#hostpid" class="md-nav__link">
+    <span title="/getting_started/custom-resource-definition.md#hostpid (reference label)" class="md-ellipsis">host<wbr>PID</span>
   </a>
   
 </li>
@@ -1871,6 +1885,18 @@ add nodeSelector attributes to your pod as follows:</p>
 <span class="w">    </span><span class="nt">iam.gke.io/gke-metadata-server-enabled</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;true&quot;</span>
 </code></pre></div>
 </div>
+<h4 id="hostipc">hostIPC<a class="headerlink" href="#hostipc" title="Link to this heading">¶</a></h4>
+<p>A boolean to use the hostIPC namespace. We have not tested the used cases for this yet.</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><code><span class="nt">pod</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">hostIPC</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+</code></pre></div>
+</div>
+<h4 id="hostpid">hostPID<a class="headerlink" href="#hostpid" title="Link to this heading">¶</a></h4>
+<p>The same, but to add <code class="docutils literal notranslate"><span class="pre">hostPID</span></code> to the pod.</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><code><span class="nt">pod</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">hostPID</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+</code></pre></div>
+</div>
 <h3 id="containers">containers<a class="headerlink" href="#containers" title="Link to this heading">¶</a></h3>
 <p>Early on we identified that a job could include more than one container, where there might be a primary container
 running Flux, and others that provide services. Note that currently we only allow one container to be a FluxRunner,
@@ -2377,7 +2403,7 @@ to the indexed job container:</p>
   <small>
     
       Last update:
-      May 17, 2025
+      Jul 06, 2025
     
   </small>
 </div>
