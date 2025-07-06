@@ -9,6 +9,8 @@ Name | Type | Description | Notes
 **annotations** | **Dict[str, str]** | Annotations for each pod | [optional] 
 **automount_service_account_token** | **bool** | Automatically mount the service account name | [optional] 
 **dns_policy** | **str** | Pod DNS policy (defaults to ClusterFirst) | [optional] 
+**host_ipc** | **bool** | Use Host IPC | [optional] 
+**host_pid** | **bool** | Use Host PID | [optional] 
 **labels** | **Dict[str, str]** | Labels for each pod | [optional] 
 **node_selector** | **Dict[str, str]** | NodeSelectors for a pod | [optional] 
 **resources** | [**Dict[str, IntOrString]**](IntOrString.md) | Resources include limits and requests | [optional] 

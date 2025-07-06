@@ -549,6 +549,12 @@ spec:
                   dnsPolicy:
                     description: Pod DNS policy (defaults to ClusterFirst)
                     type: string
+                  hostIPC:
+                    description: Use Host IPC
+                    type: boolean
+                  hostPID:
+                    description: Use Host PID
+                    type: boolean
                   labels:
                     additionalProperties:
                       type: string

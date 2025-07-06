@@ -1417,6 +1417,20 @@ func schema_flux_framework_flux_operator_api_v1alpha2_PodSpec(ref common.Referen
 							Format:      "",
 						},
 					},
+					"hostIPC": {
+						SchemaProps: spec.SchemaProps{
+							Description: "Use Host IPC",
+							Type:        []string{"boolean"},
+							Format:      "",
+						},
+					},
+					"hostPID": {
+						SchemaProps: spec.SchemaProps{
+							Description: "Use Host PID",
+							Type:        []string{"boolean"},
+							Format:      "",
+						},
+					},
 					"resources": {
 						SchemaProps: spec.SchemaProps{
 							Description: "Resources include limits and requests",

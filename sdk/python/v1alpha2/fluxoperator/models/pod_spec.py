@@ -29,6 +29,8 @@ class PodSpec(BaseModel):
     annotations: Optional[Dict[str, StrictStr]] = Field(default=None, description="Annotations for each pod")
     automount_service_account_token: Optional[StrictBool] = Field(default=None, description="Automatically mount the service account name", alias="automountServiceAccountToken")
     dns_policy: Optional[StrictStr] = Field(default=None, description="Pod DNS policy (defaults to ClusterFirst)", alias="dnsPolicy")
+    host_ipc: Optional[StrictBool] = Field(default=None, description="Use Host IPC", alias="hostIPC")
+    host_pid: Optional[StrictBool] = Field(default=None, description="Use Host PID", alias="hostPID")
     labels: Optional[Dict[str, StrictStr]] = Field(default=None, description="Labels for each pod")
     node_selector: Optional[Dict[str, StrictStr]] = Field(default=None, description="NodeSelectors for a pod", alias="nodeSelector")
     resources: Optional[Dict[str, IntOrString]] = Field(default=None, description="Resources include limits and requests")
@@ -36,7 +38,7 @@ class PodSpec(BaseModel):
     runtime_class_name: Optional[StrictStr] = Field(default=None, description="RuntimeClassName for the pod", alias="runtimeClassName")
     scheduler_name: Optional[StrictStr] = Field(default=None, description="Scheduler name for the pod", alias="schedulerName")
     service_account_name: Optional[StrictStr] = Field(default=None, description="Service account name for the pod", alias="serviceAccountName")
-    __properties: ClassVar[List[str]] = ["annotations", "automountServiceAccountToken", "dnsPolicy", "labels", "nodeSelector", "resources", "restartPolicy", "runtimeClassName", "schedulerName", "serviceAccountName"]
+    __properties: ClassVar[List[str]] = ["annotations", "automountServiceAccountToken", "dnsPolicy", "hostIPC", "hostPID", "labels", "nodeSelector", "resources", "restartPolicy", "runtimeClassName", "schedulerName", "serviceAccountName"]
 
     model_config = ConfigDict(
         populate_by_name=True,
@@ -99,6 +101,8 @@ class PodSpec(BaseModel):
             "annotations": obj.get("annotations"),
             "automountServiceAccountToken": obj.get("automountServiceAccountToken"),
             "dnsPolicy": obj.get("dnsPolicy"),
+            "hostIPC": obj.get("hostIPC"),
+            "hostPID": obj.get("hostPID"),
             "labels": obj.get("labels"),
             "nodeSelector": obj.get("nodeSelector"),
             "resources": dict(
