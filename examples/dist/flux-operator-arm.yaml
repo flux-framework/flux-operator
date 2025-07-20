@@ -434,6 +434,13 @@ spec:
                   disableSocket:
                     description: Disable specifying the socket path
                     type: boolean
+                  environment:
+                    additionalProperties:
+                      type: string
+                    description: |-
+                      Environment
+                      If defined, set these envars for the flux view.
+                    type: object
                   logLevel:
                     default: 6
                     description: Log level to use for flux logging (only in non TestMode)

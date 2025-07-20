@@ -627,6 +627,22 @@ func schema_flux_framework_flux_operator_api_v1alpha2_FluxSpec(ref common.Refere
 							Format:      "",
 						},
 					},
+					"environment": {
+						SchemaProps: spec.SchemaProps{
+							Description: "Environment If defined, set these envars for the flux view.",
+							Type:        []string{"object"},
+							AdditionalProperties: &spec.SchemaOrBool{
+								Allows: true,
+								Schema: &spec.Schema{
+									SchemaProps: spec.SchemaProps{
+										Default: "",
+										Type:    []string{"string"},
+										Format:  "",
+									},
+								},
+							},
+						},
+					},
 				},
 			},
 		},

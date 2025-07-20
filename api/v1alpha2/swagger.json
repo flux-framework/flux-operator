@@ -300,6 +300,14 @@
           "type": "boolean",
           "default": false
         },
+        "environment": {
+          "description": "Environment If defined, set these envars for the flux view.",
+          "type": "object",
+          "additionalProperties": {
+            "type": "string",
+            "default": ""
+          }
+        },
         "logLevel": {
           "description": "Log level to use for flux logging (only in non TestMode)",
           "type": "integer",

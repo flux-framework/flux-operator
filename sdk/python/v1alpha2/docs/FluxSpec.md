@@ -13,6 +13,7 @@ Name | Type | Description | Notes
 **container** | [**FluxContainer**](FluxContainer.md) |  | [optional] 
 **curve_cert** | **str** | Optionally provide an already existing curve certificate This is not recommended in favor of providing the secret name as curveCertSecret, below | [optional] [default to '']
 **disable_socket** | **bool** | Disable specifying the socket path | [optional] [default to False]
+**environment** | **Dict[str, str]** | Environment If defined, set these envars for the flux view. | [optional] 
 **log_level** | **int** | Log level to use for flux logging (only in non TestMode) | [optional] [default to 6]
 **minimal_service** | **bool** | Only expose the broker service (to reduce load on DNS) | [optional] [default to False]
 **munge_secret** | **str** | Expect a secret (named according to this string) for a munge key. This is intended for bursting. Assumed to be at /etc/munge/munge.key This is binary data. | [optional] [default to '']
