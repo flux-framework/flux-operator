@@ -374,6 +374,11 @@ type FluxSpec struct {
 	// this is intended for bursting to remote clusters
 	//+optional
 	BrokerConfig string `json:"brokerConfig"`
+
+	// Environment
+	// If defined, set these envars for the flux view.
+	//+optional
+	Environment map[string]string `json:"environment"`
 }
 
 // FluxScheduler attributes

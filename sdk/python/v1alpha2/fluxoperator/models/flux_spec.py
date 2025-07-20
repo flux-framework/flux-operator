@@ -37,6 +37,7 @@ class FluxSpec(BaseModel):
     container: Optional[FluxContainer] = None
     curve_cert: Optional[StrictStr] = Field(default='', description="Optionally provide an already existing curve certificate This is not recommended in favor of providing the secret name as curveCertSecret, below", alias="curveCert")
     disable_socket: Optional[StrictBool] = Field(default=False, description="Disable specifying the socket path", alias="disableSocket")
+    environment: Optional[Dict[str, StrictStr]] = Field(default=None, description="Environment If defined, set these envars for the flux view.")
     log_level: Optional[StrictInt] = Field(default=6, description="Log level to use for flux logging (only in non TestMode)", alias="logLevel")
     minimal_service: Optional[StrictBool] = Field(default=False, description="Only expose the broker service (to reduce load on DNS)", alias="minimalService")
     munge_secret: Optional[StrictStr] = Field(default='', description="Expect a secret (named according to this string) for a munge key. This is intended for bursting. Assumed to be at /etc/munge/munge.key This is binary data.", alias="mungeSecret")
@@ -46,7 +47,7 @@ class FluxSpec(BaseModel):
     submit_command: Optional[StrictStr] = Field(default=None, description="Modify flux submit to be something else", alias="submitCommand")
     topology: Optional[StrictStr] = Field(default='', description="Specify a custom Topology")
     wrap: Optional[StrictStr] = Field(default=None, description="Commands for flux start --wrap")
-    __properties: ClassVar[List[str]] = ["arch", "brokerConfig", "bursting", "completeWorkers", "connectTimeout", "container", "curveCert", "disableSocket", "logLevel", "minimalService", "mungeSecret", "noWaitSocket", "optionFlags", "scheduler", "submitCommand", "topology", "wrap"]
+    __properties: ClassVar[List[str]] = ["arch", "brokerConfig", "bursting", "completeWorkers", "connectTimeout", "container", "curveCert", "disableSocket", "environment", "logLevel", "minimalService", "mungeSecret", "noWaitSocket", "optionFlags", "scheduler", "submitCommand", "topology", "wrap"]
 
     model_config = ConfigDict(
         populate_by_name=True,
@@ -116,6 +117,7 @@ class FluxSpec(BaseModel):
             "container": FluxContainer.from_dict(obj["container"]) if obj.get("container") is not None else None,
             "curveCert": obj.get("curveCert") if obj.get("curveCert") is not None else '',
             "disableSocket": obj.get("disableSocket") if obj.get("disableSocket") is not None else False,
+            "environment": obj.get("environment"),
             "logLevel": obj.get("logLevel") if obj.get("logLevel") is not None else 6,
             "minimalService": obj.get("minimalService") if obj.get("minimalService") is not None else False,
             "mungeSecret": obj.get("mungeSecret") if obj.get("mungeSecret") is not None else '',

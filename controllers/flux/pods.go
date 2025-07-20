@@ -32,6 +32,9 @@ func getPodLabels(cluster *api.MiniCluster) map[string]string {
 	}
 	podLabels := cluster.Spec.Pod.Labels
 	podLabels["namespace"] = cluster.Namespace
+
+	// Identify the pod as being created by the Flux Operator
+	podLabels["app"] = "flux-operator"
 	podLabels[podLabelAppName] = cluster.Name
 	return podLabels
 }

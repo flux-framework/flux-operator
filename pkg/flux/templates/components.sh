@@ -103,6 +103,12 @@ export PYTHONPATH=$PYTHONPATH
 export LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:$viewroot/lib
 export fluxsocket=local://${viewroot}/run/flux/local
 EOT
+
+# Extra environment added by user (can override above)
+{{ if .Spec.Flux.Environment }}{{range $key, $value := .Spec.Flux.Environment }}
+echo "export {{$key}}={{$value}}" >> ./flux-view.sh
+{{end}}{{end}}
+
 ${SUDO} mv ./flux-view.sh ${viewbase}/flux-view.sh
 
 # The same, but also connect
