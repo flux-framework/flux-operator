@@ -69,6 +69,9 @@ func getContainers(
 
 		// Allow dictating pulling on the level of the container
 		pullPolicy := corev1.PullIfNotPresent
+		if container.ImagePullPolicy != "" {
+			pullPolicy = corev1.PullPolicy(container.ImagePullPolicy)
+		}
 		if container.PullAlways {
 			pullPolicy = corev1.PullAlways
 		}
