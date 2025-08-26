@@ -539,6 +539,10 @@ type MiniClusterContainer struct {
 	// +optional
 	PullAlways bool `json:"pullAlways,omitempty"`
 
+	// Allow the user to dictate pulling directly
+	// +optional
+	ImagePullPolicy string `json:"imagePullPolicy,omitempty"`
+
 	// Ports to be exposed to other containers in the cluster
 	// We take a single list of integers and map to the same
 	// +optional

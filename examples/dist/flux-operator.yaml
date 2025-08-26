@@ -118,6 +118,9 @@ spec:
                       description: Container image must contain flux and flux-sched
                         install
                       type: string
+                    imagePullPolicy:
+                      description: Allow the user to dictate pulling directly
+                      type: string
                     imagePullSecret:
                       description: |-
                         Allow the user to pull authenticated images
@@ -657,6 +660,9 @@ spec:
                       default: ghcr.io/rse-ops/accounting:app-latest
                       description: Container image must contain flux and flux-sched
                         install
+                      type: string
+                    imagePullPolicy:
+                      description: Allow the user to dictate pulling directly
                       type: string
                     imagePullSecret:
                       description: |-
