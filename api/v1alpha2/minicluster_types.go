@@ -291,7 +291,16 @@ type ContainerVolume struct {
 
 type FluxSpec struct {
 
-	// Container base for flux
+	// Container base for flux. Options include only:
+	// ghcr.io/converged-computing/flux-view-rocky:arm-9
+	// ghcr.io/converged-computing/flux-view-rocky:arn-8
+	// ghcr.io/converged-computing/flux-view-rocky:tag-9
+	// ghcr.io/converged-computing/flux-view-rocky:tag-8
+	// ghcr.io/converged-computing/flux-view-ubuntu:tag-noble
+	// ghcr.io/converged-computing/flux-view-ubuntu:tag-jammy
+	// ghcr.io/converged-computing/flux-view-ubuntu:tag-focal
+	// ghcr.io/converged-computing/flux-view-ubuntu:arm-jammy
+	// ghcr.io/converged-computing/flux-view-ubuntu:arm-focal
 	// +optional
 	Container FluxContainer `json:"container,omitempty"`
 
