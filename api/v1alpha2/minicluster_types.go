@@ -204,6 +204,10 @@ type PodSpec struct {
 	// +optional
 	NodeSelector map[string]string `json:"nodeSelector,omitempty"`
 
+	// Tolerations for a pod
+	// +optional
+	Tolerations []Toleration `json:"tolerations,omitempty"`
+
 	// Pod DNS policy (defaults to ClusterFirst)
 	// +optional
 	DNSPolicy string `json:"dnsPolicy,omitempty"`
@@ -219,6 +223,25 @@ type PodSpec struct {
 	// Resources include limits and requests
 	// +optional
 	Resources ContainerResource `json:"resources"`
+}
+
+type Toleration struct {
+
+	// The label key to tolerate
+	// +optional
+	Key string `json:"key,omitempty"`
+
+	// The effect to have
+	// +optional
+	Effect string `json:"effect,omitempty"`
+
+	// The operator to use (e.g., Equal)
+	// +optional
+	Operator string `json:"operator,omitempty"`
+
+	// E.g., NoSchedule
+	// +optional
+	Value string `json:"value,omitempty"`
 }
 
 // MiniClusterStatus defines the observed state of Flux

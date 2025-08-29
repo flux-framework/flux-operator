@@ -611,6 +611,24 @@ spec:
                   serviceAccountName:
                     description: Service account name for the pod
                     type: string
+                  tolerations:
+                    description: Tolerations for a pod
+                    items:
+                      properties:
+                        effect:
+                          description: The effect to have
+                          type: string
+                        key:
+                          description: The label key to tolerate
+                          type: string
+                        operator:
+                          description: The operator to use (e.g., Equal)
+                          type: string
+                        value:
+                          description: E.g., NoSchedule
+                          type: string
+                      type: object
+                    type: array
                 type: object
               services:
                 description: |-

@@ -32,6 +32,18 @@ func NewMiniClusterJob(cluster *api.MiniCluster) (*batchv1.Job, error) {
 	// external sidecar service!
 	podLabels["hpa-selector"] = cluster.Name
 
+	// Add tolerations
+	tolerations := []corev1.Toleration{}
+	for _, tspec := range cluster.Spec.Pod.Tolerations {
+		toleration := corev1.Toleration{
+			Effect:   corev1.TaintEffect(tspec.Effect),
+			Key:      tspec.Key,
+			Operator: corev1.TolerationOperator(tspec.Operator),
+			Value:    tspec.Value,
+		}
+		tolerations = append(tolerations, toleration)
+	}
+
 	// This is an indexed-job
 	// TODO don't hard code type meta
 	job := &batchv1.Job{
@@ -72,6 +84,7 @@ func NewMiniClusterJob(cluster *api.MiniCluster) (*batchv1.Job, error) {
 					AutomountServiceAccountToken: &cluster.Spec.Pod.AutomountServiceAccountToken,
 					RestartPolicy:                corev1.RestartPolicyOnFailure,
 					NodeSelector:                 cluster.Spec.Pod.NodeSelector,
+					Tolerations:                  tolerations,
 					SchedulerName:                cluster.Spec.Pod.SchedulerName,
 					HostPID:                      cluster.Spec.Pod.HostPID,
 					HostIPC:                      cluster.Spec.Pod.HostIPC,
