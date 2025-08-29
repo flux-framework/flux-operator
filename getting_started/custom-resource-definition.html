@@ -843,6 +843,13 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#tolerations" class="md-nav__link">
+    <span title="/getting_started/custom-resource-definition.md#tolerations (reference label)" class="md-ellipsis">tolerations</span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#hostipc" class="md-nav__link">
     <span title="/getting_started/custom-resource-definition.md#hostipc (reference label)" class="md-ellipsis">host<wbr>IPC</span>
   </a>
@@ -1885,6 +1892,16 @@ add nodeSelector attributes to your pod as follows:</p>
 <span class="w">    </span><span class="nt">iam.gke.io/gke-metadata-server-enabled</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;true&quot;</span>
 </code></pre></div>
 </div>
+<h4 id="tolerations">tolerations<a class="headerlink" href="#tolerations" title="Link to this heading">¶</a></h4>
+<p>One or more tolerations can be added to allow scheduling the minicluster pods to nodes that have taints:</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><code><span class="nt">pod</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">tolerations</span><span class="p">:</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">key</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">cray.nnf.node</span>
+<span class="w">    </span><span class="nt">effect</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">NoSchedule</span>
+<span class="w">    </span><span class="nt">value</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;true&quot;</span>
+<span class="w">    </span><span class="nt">operator</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Equal</span>
+</code></pre></div>
+</div>
 <h4 id="hostipc">hostIPC<a class="headerlink" href="#hostipc" title="Link to this heading">¶</a></h4>
 <p>A boolean to use the hostIPC namespace. We have not tested the used cases for this yet.</p>
 <div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><code><span class="nt">pod</span><span class="p">:</span>
@@ -2403,7 +2420,7 @@ to the indexed job container:</p>
   <small>
     
       Last update:
-      Aug 27, 2025
+      Aug 29, 2025
     
   </small>
 </div>
