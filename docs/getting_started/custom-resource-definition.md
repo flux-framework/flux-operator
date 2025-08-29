@@ -768,6 +768,19 @@ pod:
     iam.gke.io/gke-metadata-server-enabled: "true"
 ```
 
+#### tolerations
+
+One or more tolerations can be added to allow scheduling the minicluster pods to nodes that have taints:
+
+```yaml
+pod:
+  tolerations:
+  - key: cray.nnf.node
+    effect: NoSchedule
+    value: "true"
+    operator: Equal
+```
+
 #### hostIPC
 
 A boolean to use the hostIPC namespace. We have not tested the used cases for this yet.
