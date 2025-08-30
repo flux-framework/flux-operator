@@ -23,6 +23,9 @@ func NewMiniClusterJob(cluster *api.MiniCluster) (*batchv1.Job, error) {
 
 	// Number of retries before marking as failed
 	backoffLimit := int32(100)
+	if cluster.Spec.BackoffLimit != 0 {
+		backoffLimit = cluster.Spec.BackoffLimit
+	}
 	completionMode := batchv1.IndexedCompletion
 	podLabels := getPodLabels(cluster)
 	setAsFQDN := false
