@@ -497,6 +497,13 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#backofflimit" class="md-nav__link">
+    <span title="/getting_started/custom-resource-definition.md#backofflimit (reference label)" class="md-ellipsis">backoff<wbr>Limit</span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#tasks" class="md-nav__link">
     <span title="/getting_started/custom-resource-definition.md#tasks (reference label)" class="md-ellipsis">tasks</span>
   </a>
@@ -1375,6 +1382,12 @@ with the broker.toml. If you don’t set this value, the maxsize will be set to 
 </code></pre></div>
 </div>
 <p>The <code class="docutils literal notranslate"><span class="pre">maxSize</span></code> must always be greater than the size, if set.</p>
+<h3 id="backofflimit">backoffLimit<a class="headerlink" href="#backofflimit" title="Link to this heading">¶</a></h3>
+<p>By default, we set this to a high value (100). Customize here to determine how many retries you want for failure.</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><code><span class="w">  </span><span class="nt">backoffLimit</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1</span>
+</code></pre></div>
+</div>
+<p>If this value is set, it must be &gt;0.</p>
 <h3 id="tasks">tasks<a class="headerlink" href="#tasks" title="Link to this heading">¶</a></h3>
 <p>The <code class="docutils literal notranslate"><span class="pre">tasks</span></code> variable under the spec is the number of tasks that each pod in the MiniCluster should be given.</p>
 <div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><code><span class="w">  </span><span class="nt">tasks</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">4</span>

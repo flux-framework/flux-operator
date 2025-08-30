@@ -69,6 +69,17 @@ with the broker.toml. If you don't set this value, the maxsize will be set to th
 
 The `maxSize` must always be greater than the size, if set. 
 
+
+### backoffLimit
+
+By default, we set this to a high value (100). Customize here to determine how many retries you want for failure.
+
+```yaml
+  backoffLimit: 1
+```
+
+If this value is set, it must be >0.
+
 ### tasks
 
 The `tasks` variable under the spec is the number of tasks that each pod in the MiniCluster should be given.
