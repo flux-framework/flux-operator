@@ -83,6 +83,10 @@ type MiniClusterSpec struct {
 	// +optional
 	MaxSize int32 `json:"maxSize,omitempty"`
 
+	// BackoffLimit is the number of retries for the job before failing
+	// +optional
+	BackoffLimit int32 `json:"backoffLimit,omitempty"`
+
 	// MinSize (minimum number of pods that must be up for Flux)
 	// Note that this option does not edit the number of tasks,
 	// so a job could run with fewer (and then not start)
@@ -782,6 +786,12 @@ func (f *MiniCluster) Validate() bool {
 	// If MaxSize is set, it must be greater than size
 	if f.Spec.MaxSize != 0 && f.Spec.MaxSize < f.Spec.Size {
 		fmt.Printf("😥️ MaxSize of cluster must be greater than size.\n")
+		return false
+	}
+
+	// BackoffLimit must be postive if set
+	if f.Spec.BackoffLimit != 0 && f.Spec.BackoffLimit < 0 {
+		fmt.Printf("😥️ BackoffLimit of cluster must be greater than 0.\n")
 		return false
 	}
 

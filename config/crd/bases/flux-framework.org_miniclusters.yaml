@@ -48,6 +48,11 @@ spec:
                     description: Save or load from this directory path
                     type: string
                 type: object
+              backoffLimit:
+                description: BackoffLimit is the number of retries for the job before
+                  failing
+                format: int32
+                type: integer
               cleanup:
                 default: false
                 description: Cleanup the pods and storage when the index broker pod
