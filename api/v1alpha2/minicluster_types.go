@@ -651,6 +651,14 @@ type SecurityContext struct {
 	// +optional
 	// +listType=atomic
 	AddCapabilities []string `json:"addCapabilities,omitempty"`
+
+	// Run as a specific uid
+	// +optional
+	RunAsGroup int64 `json:"runAsGroup,omitempty"`
+
+	// Run as a specific gid
+	// +optional
+	RunAsUser int64 `json:"runAsUser,omitempty"`
 }
 
 type LifeCycle struct {
