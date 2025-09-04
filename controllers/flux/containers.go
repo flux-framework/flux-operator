@@ -147,6 +147,16 @@ func getContainers(
 				Add: addCaps,
 			},
 		}
+
+		// RunAsUser, RunAsGroup,
+		if container.SecurityContext.RunAsUser != 0 {
+			securityContext.RunAsUser = &container.SecurityContext.RunAsUser
+		}
+		if container.SecurityContext.RunAsGroup != 0 {
+			securityContext.RunAsGroup = &container.SecurityContext.RunAsGroup
+		}
+
+		// Create the container
 		newContainer := corev1.Container{
 
 			// Call this the driver container, number 0

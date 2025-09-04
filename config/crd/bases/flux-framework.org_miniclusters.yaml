@@ -222,6 +222,14 @@ spec:
                         privileged:
                           description: Privileged container
                           type: boolean
+                        runAsGroup:
+                          description: Run as a specific uid
+                          format: int64
+                          type: integer
+                        runAsUser:
+                          description: Run as a specific gid
+                          format: int64
+                          type: integer
                       type: object
                     volumes:
                       additionalProperties:
@@ -793,6 +801,14 @@ spec:
                         privileged:
                           description: Privileged container
                           type: boolean
+                        runAsGroup:
+                          description: Run as a specific uid
+                          format: int64
+                          type: integer
+                        runAsUser:
+                          description: Run as a specific gid
+                          format: int64
+                          type: integer
                       type: object
                     volumes:
                       additionalProperties:
