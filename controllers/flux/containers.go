@@ -155,6 +155,14 @@ func getContainers(
 		if container.SecurityContext.RunAsGroup != 0 {
 			securityContext.RunAsGroup = &container.SecurityContext.RunAsGroup
 		}
+		if container.SecurityContext.RunAsNonRoot {
+			runAsNonRoot := true
+			securityContext.RunAsNonRoot = &runAsNonRoot
+		}
+		if !container.SecurityContext.AllowPrivilegeEscalation {
+			allowEscalation := false
+			securityContext.AllowPrivilegeEscalation = &allowEscalation
+		}
 
 		// Create the container
 		newContainer := corev1.Container{

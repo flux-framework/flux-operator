@@ -659,6 +659,16 @@ type SecurityContext struct {
 	// Run as a specific gid
 	// +optional
 	RunAsUser int64 `json:"runAsUser,omitempty"`
+
+	// Allow privilege escalation (defaults to true)
+	// +kubebuilder:default=true
+	// +default=true
+	// +optional
+	AllowPrivilegeEscalation bool `json:"allowPrivilegeEscalation,omitempty"`
+
+	// Run as non root (defaults to false)
+	// +optional
+	RunAsNonRoot bool `json:"runAsNonRoot,omitempty"`
 }
 
 type LifeCycle struct {
