@@ -20,8 +20,8 @@ url=$goshareUrl/wait-fs-{{ .Spec.Flux.Arch }}
 
 # This waiting script is intended to wait for the flux view, and then start running
 curl -L -O -s -o ./wait-fs -s ${url} {{ if .Spec.Logging.Quiet }}> /dev/null 2>&1{{ end }} || wget ${url} -q -O ./wait-fs {{ if .Spec.Logging.Quiet }}> /dev/null 2>&1{{ end }} || true
-chmod +x ./wait-fs || true
-${SUDO} mv ./wait-fs /usr/bin/goshare-wait-fs || true
+chmod +x ./wait-fs || true {{ if .Spec.Logging.Quiet }}> /dev/null 2>&1{{ end }}
+${SUDO} mv ./wait-fs /usr/bin/goshare-wait-fs || true {{ if .Spec.Logging.Quiet }}> /dev/null 2>&1{{ end }}
 
 # Ensure spack view is on the path, wherever it is mounted
 viewbase="{{ .ViewBase }}"

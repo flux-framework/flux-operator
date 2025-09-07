@@ -18,11 +18,102 @@ For dates before June 30, 2023 (that must be used with the corresponding GitHub 
 
 These were primarily experimental versions run for experiments like Kubecon!
 
+## Quick Start
+
+Install the Flux Operator to your cluster:
+
+```bash
+kubectl apply -f https://raw.githubusercontent.com/flux-framework/flux-operator/main/examples/dist/flux-operator.yaml
+```
+
+You can then create a simple example. Let's run lammps.
+
+```bash
+# Create the MiniCluster
+kubectl apply -f https://raw.githubusercontent.com/flux-framework/flux-operator/refs/heads/main/examples/tests/lammps/minicluster.yaml
+```
+
+Now let's get the lead broker pod log. The lead broker is connected to by workers and will show output for LAMMPS.
+
+```bash
+pod=$(kubectl get pods -l selector=lammps -o json | jq -r .items[0].metadata.name)
+echo "Found lead broker pod ${pod}"
+
+# Wait for it to be running.
+kubectl wait --for=condition=Ready pod/${pod} --timeout=300s
+
+# And stream logs!
+kubectl logs ${pod} -f
+
+# Clean up when you are done!
+kubectl delete miniclusters.flux-framework.org flux-sample
+```
+
+Now try an interactive example. Interactivity is important for when you want a more traditional feeling HPC cluster, or to debug or test execution.
+
+```bash
+# Create the MiniCluster
+kubectl apply -f https://raw.githubusercontent.com/flux-framework/flux-operator/refs/heads/main/examples/tests/lammps/interactive-minicluster.yaml
+pod=$(kubectl get pods -l selector=lammps-interactive -o json | jq -r .items[0].metadata.name)
+kubectl wait --for=condition=Ready pod/${pod} --timeout=300s
+```
+
+This time, shell into the lead broker pod, and connect to the Flux instance.
+
+```bash
+kubectl exec -it ${pod} -- bash
+```
+
+Flux is installed to a view in `/mnt/flux`, which means you don't need to package it with your application. We provide a file to source to easily get the path to the broker socket to connect to.
+
+```bash
+. /mnt/flux/flux-view.sh 
+flux proxy $fluxsocket bash
+flux resource list
+     STATE NNODES   NCORES    NGPUS NODELIST
+      free      4       32        0 flux-sample-interactive-[0-3]
+ allocated      0        0        0 
+      down      0        0        0 
+```
+
+Then run LAMMPS. You can decide on the resources (nodes and tasks) to use for your environment.
+
+```bash
+flux run -N 4 -n 4 lmp -v x 2 -v y 2 -v z 2 -in in.reaxc.hns -nocite
+```
+
+Some useful commands:
+
+```bash
+# flux job last gets the flux job id
+flux job cancel $(flux job last)
+
+# Show all jobs
+flux jobs -a
+
+# Get info on the job
+flux job info $(flux job last) 
+flux job info $(flux job last) jobspec
+
+# Attach to logs
+flux job attach $(flux job last) 
+```
+
+For more useful commands, see our [Flux cheat sheet](https://flux-framework.org/cheat-sheet/). For a suite of applications (and experiments) to easily deploy, see the [Flux Helm Apps](https://github.com/converged-computing/flux-apps-helm) repository.
+
+
 ## Install
 
 ### Quick Install
 
-We generally recommend that you install a [release](https://raw.githubusercontent.com/flux-framework/flux-operator/main/examples/dist/flux-operator.yaml), e.g.,
+We recommend install from the distribution directory:
+
+```bash
+kubectl apply -f https://raw.githubusercontent.com/flux-framework/flux-operator/main/examples/dist/flux-operator.yaml
+kubectl apply -f https://raw.githubusercontent.com/flux-framework/flux-operator/main/examples/dist/flux-operator-arm.yaml
+```
+
+You can also install a [release](https://raw.githubusercontent.com/flux-framework/flux-operator/main/examples/dist/flux-operator.yaml), e.g.,
 
 ```bash
 VERSION=0.1.0
@@ -36,19 +127,6 @@ kubectl apply -f https://github.com/flux-framework/flux-operator/releases/downlo
 
 You can also install from the current main branch "bleeding edge" latest:
 
-```bash
-kubectl apply -f https://raw.githubusercontent.com/flux-framework/flux-operator/main/examples/dist/flux-operator.yaml
-kubectl apply -f https://raw.githubusercontent.com/flux-framework/flux-operator/main/examples/dist/flux-operator-arm.yaml
-```
-
-Note that from the repository, these configs are generated with:
-
-```bash
-$ make build-config
-$ make build-config-arm
-```
-
-and then saved to the main branch or release where you retrieve it from.
 
 ### Helm Install
 

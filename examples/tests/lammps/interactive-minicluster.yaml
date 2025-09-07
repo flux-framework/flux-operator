@@ -1,16 +1,17 @@
 apiVersion: flux-framework.org/v1alpha2
 kind: MiniCluster
 metadata:
-  name: flux-sample
+  name: flux-sample-interactive
 spec:
   size: 4
   tasks: 2
+  interactive: true
   logging:
     quiet: true
 
   pod:
     labels: 
-      selector: lammps
+      selector: lammps-interactive
 
   # This is a list because a pod can support multiple containers
   containers:
