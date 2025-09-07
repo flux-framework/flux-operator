@@ -8,13 +8,14 @@ that you can install to your cluster to create and control a [Flux Framework](ht
 to launch jobs to.
 
 Read more, including user and developer guides, and project background in our 💛 [Documentation](https://flux-framework.org/flux-operator) 💛
+For a quick start to run a MiniCluster, see our [Quick Start Guide](https://flux-framework.org/flux-operator/getting_started/user-guide.html#quick-start) 💨.
+
 
 ## Resources
 
  - [Flux Apps Helm](https://github.com/converged-computing/flux-apps.helm): quickly deploy and run experiments for HPC apps in Kubernetes
  - [Kubecon 2023](https://t.co/vjRydPx1rb)
  - [HPC Knowledge Meeting 2023](https://hpckp.org/talks/cloud-and-hpc-convergence-flux-for-job-management-on-kubernetes/)
-
 
 ## Organization
 
