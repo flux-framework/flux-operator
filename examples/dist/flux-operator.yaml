@@ -577,7 +577,6 @@ spec:
                       address / node
                     type: boolean
                   headlessName:
-                    default: flux-service
                     description: Name for cluster headless service
                     type: string
                 type: object

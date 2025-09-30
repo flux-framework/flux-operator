@@ -114,8 +114,6 @@ type MiniClusterSpec struct {
 type Network struct {
 
 	// Name for cluster headless service
-	// +kubebuilder:default="flux-service"
-	// +default="flux-service"
 	// +optional
 	HeadlessName string `json:"headlessName,omitempty"`
 
@@ -825,7 +823,7 @@ func (f *MiniCluster) Validate() bool {
 
 	// Set the default headless service name
 	if f.Spec.Network.HeadlessName == "" {
-		f.Spec.Network.HeadlessName = "flux-service"
+		f.Spec.Network.HeadlessName = f.Name
 	}
 	if f.Spec.Flux.Container.Name == "" {
 		f.Spec.Flux.Container.Name = "flux-view"
