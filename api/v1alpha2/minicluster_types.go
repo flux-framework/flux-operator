@@ -308,6 +308,14 @@ type ContainerVolume struct {
 	// +optional
 	EmptyDirSizeLimit string `json:"emptyDirSizeLimit,omitempty"`
 
+	// Add a csi driver type volume
+	// +optional
+	CSIDriver string `json:"csiDriver,omitempty"`
+
+	// Add attributes for the csi driver
+	// +optional
+	CSIDriverAttributes map[string]string `json:"csiDriverAttributes"`
+
 	// +kubebuilder:default=false
 	// +default=false
 	// +optional
