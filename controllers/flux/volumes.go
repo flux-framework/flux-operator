@@ -123,7 +123,19 @@ func getExistingVolumes(existing map[string]api.ContainerVolume) []corev1.Volume
 	for volumeName, volumeMeta := range existing {
 
 		var newVolume corev1.Volume
-		if volumeMeta.SecretName != "" {
+
+		// A CSI Driver
+		if volumeMeta.CSIDriver != "" {
+			newVolume = corev1.Volume{
+				Name: volumeName,
+				VolumeSource: corev1.VolumeSource{
+					CSI: &corev1.CSIVolumeSource{
+						Driver:           volumeMeta.CSIDriver,
+						VolumeAttributes: volumeMeta.CSIDriverAttributes,
+					},
+				},
+			}
+		} else if volumeMeta.SecretName != "" {
 			newVolume = corev1.Volume{
 				Name: volumeName,
 				VolumeSource: corev1.VolumeSource{
