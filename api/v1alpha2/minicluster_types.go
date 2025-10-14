@@ -666,6 +666,10 @@ type SecurityContext struct {
 	// +optional
 	RunAsUser int64 `json:"runAsUser,omitempty"`
 
+	// The FileSystemGroup
+	// +optional
+	FSGroup int64 `json:"fsGroup,omitempty"`
+
 	// Allow privilege escalation (defaults to true)
 	// +kubebuilder:default=true
 	// +default=true

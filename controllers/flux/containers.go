@@ -149,6 +149,9 @@ func getContainers(
 		}
 
 		// RunAsUser, RunAsGroup,
+		if container.SecurityContext.FSGroup != 0 {
+			securityContext.FSGroup = &container.SecurityContext.FSGroup
+		}
 		if container.SecurityContext.RunAsUser != 0 {
 			securityContext.RunAsUser = &container.SecurityContext.RunAsUser
 		}

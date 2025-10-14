@@ -223,6 +223,10 @@ spec:
                           default: true
                           description: Allow privilege escalation (defaults to true)
                           type: boolean
+                        fsGroup:
+                          description: The FileSystemGroup
+                          format: int64
+                          type: integer
                         privileged:
                           description: Privileged container
                           type: boolean
@@ -816,6 +820,10 @@ spec:
                           default: true
                           description: Allow privilege escalation (defaults to true)
                           type: boolean
+                        fsGroup:
+                          description: The FileSystemGroup
+                          format: int64
+                          type: integer
                         privileged:
                           description: Privileged container
                           type: boolean
