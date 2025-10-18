@@ -62,17 +62,17 @@ allow-root-owner = true
 
 # Point to resource definition generated with flux-R(1).
 [resource]
-path = "%s/view/etc/flux/system/R"
+path = "%s/config/etc/flux/system/R"
 
 [bootstrap]
-curve_cert = "%s/view/curve/curve.cert"
+curve_cert = "%s/config/curve/curve.cert"
 default_port = 8050
 default_bind = "%s"
 default_connect = "%s"
 %s
 
 [archive]
-dbpath = "%s/view/var/lib/flux/job-archive.sqlite"
+dbpath = "%s/config/var/lib/flux/job-archive.sqlite"
 period = "1m"
 busytimeout = "50s"
 
@@ -117,16 +117,16 @@ cp -R /opt/view/* %s/view`,
 	)
 
 	generateHosts := `echo '📦 Flux view disabled, not generating resources here.'
-mkdir -p ${fluxroot}/etc/flux/system
+mkdir -p ${installRoot}/etc/flux/system
 `
 	if !cluster.Spec.Flux.Container.Disable {
 		generateHosts = `
 echo "flux R encode --hosts=${hosts} --local"
-flux R encode --hosts=${hosts} --local > ${fluxroot}/etc/flux/system/R
+flux R encode --hosts=${hosts} --local > ${installRoot}/etc/flux/system/R
 
 echo
 echo "📦 Resources"
-cat ${fluxroot}/etc/flux/system/R`
+cat ${installRoot}/etc/flux/system/R`
 
 		spackView = `# Now prepare to copy finished spack view over
 echo "Moving content from /opt/view to be in shared volume at %s"
@@ -146,6 +146,9 @@ cp -R /opt/software $viewroot/
 	setup := `#!/bin/sh
 fluxroot=%s
 mainHost=%s
+
+# We need to "install" config assets separately. We may not have write to /opt/view.
+installRoot=/mnt/flux/config
 echo "Hello I am hostname $(hostname) running setup."
 
 # Always use verbose, no reason to not here
@@ -159,30 +162,30 @@ export PATH=/opt/view/bin:$PATH
 mkdir -p $fluxroot/bin
 
 # Cron directory
-mkdir -p $fluxroot/etc/flux/system/cron.d
-mkdir -p $fluxroot/var/lib/flux
+mkdir -p $installRoot/etc/flux/system/cron.d
+mkdir -p $installRoot/var/lib/flux
 
 # These actions need to happen on all hosts
-mkdir -p $fluxroot/etc/flux/system
+mkdir -p $installRoot/etc/flux/system
 hosts="%s"
 
 # Echo hosts here in case the main container needs to generate
-echo "${hosts}" > ${fluxroot}/etc/flux/system/hostlist
+echo "${hosts}" > ${installRoot}/etc/flux/system/hostlist
 %s
 
 # Write the broker configuration
-mkdir -p ${fluxroot}/etc/flux/config
-cat <<EOT >> ${fluxroot}/etc/flux/config/broker.toml
+mkdir -p ${installRoot}/etc/flux/config
+cat <<EOT >> ${installRoot}/etc/flux/config/broker.toml
 %s
 EOT
 
 echo
 echo "🐸 Broker Configuration"
-cat ${fluxroot}/etc/flux/config/broker.toml
+cat ${installRoot}/etc/flux/config/broker.toml
 
 # The rundir needs to be created first, and owned by user flux
 # Along with the state directory and curve certificate
-mkdir -p ${fluxroot}/run/flux ${fluxroot}/etc/curve
+mkdir -p ${installRoot}/run/flux ${installRoot}/etc/curve
 
 # View the curve certificate
 echo "🌟️ Curve Certificate"

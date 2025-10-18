@@ -19,9 +19,30 @@ import (
 	"k8s.io/apimachinery/pkg/api/resource"
 )
 
+var (
+	spackSoftware        = "spack-software"
+	spackSoftwarePath    = "/opt/software"
+	fluxOperatorHome     = "flux-operator-home"
+	fluxOperatorHomePath = "/home/flux-operator"
+)
+
 // Shared function to return consistent set of volume mounts
 func getVolumeMounts(cluster *api.MiniCluster) []corev1.VolumeMount {
 	mounts := []corev1.VolumeMount{
+		// spack software emptyDir
+		{
+			Name:      spackSoftware,
+			MountPath: spackSoftwarePath,
+			ReadOnly:  false,
+		},
+
+		// faux flux operator home
+		{
+			Name:      fluxOperatorHome,
+			MountPath: fluxOperatorHomePath,
+			ReadOnly:  false,
+		},
+
 		// The empty volume for Flux will go here
 		{
 			Name:      cluster.Spec.Flux.Container.Name,
@@ -86,7 +107,22 @@ func getVolumes(cluster *api.MiniCluster) []corev1.Volume {
 	runnerStartScripts = append(runnerStartScripts, curveKey)
 
 	// Defaults volumes we always write - entrypoint and empty volume
+	//   /mnt/view (or custom) is for main spack view
 	volumes := []corev1.Volume{
+		// /opt/software is for spack view assets. This is hard
+		// coded as would require changing the spack view containers.
+		{
+			Name: spackSoftware,
+			VolumeSource: corev1.VolumeSource{
+				EmptyDir: &corev1.EmptyDirVolumeSource{},
+			},
+		},
+		{
+			Name: fluxOperatorHome,
+			VolumeSource: corev1.VolumeSource{
+				EmptyDir: &corev1.EmptyDirVolumeSource{},
+			},
+		},
 		{
 			Name: cluster.Spec.Flux.Container.Name,
 			VolumeSource: corev1.VolumeSource{

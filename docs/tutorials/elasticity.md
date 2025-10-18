@@ -62,7 +62,7 @@ kubectl cp ./three_bears.py flux-sample-1-99tzj:/data/three-bears.py
 And then run the example demo:
 
 ```bash
-fluxsocket=local:///mnt/flux/view/run/flux/local
+fluxsocket=local:///mnt/flux/config/run/flux/local
 kubectl exec -it flux-sample-0-pjpwn -- /bin/bash -c ". /mnt/flux/flux-view.sh && flux proxy $fluxsocket /mnt/flux/view/bin/python3.11 /data/three-bears.py"
 ```
 

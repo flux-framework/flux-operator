@@ -255,6 +255,19 @@ And then your pod containers also both need to have memory and cpu defined.  In 
 1. Ensure cpuManagerPolicy is static
 2. Create all pod containers (including the init container) in the MiniCluster to have a cpu and memory definition.
 
+Finally, the container can have a customized security context. The view is added as an init container, so this security context is for the init container.
+
+```yaml
+flux:
+  container:
+    securityContext:
+      runAsUser: 1000
+      runAsGroup: 3000
+      fsGroup: 2000
+      supplementalGroups: [4000]
+```
+
+
 ### completeWorkers
 
 By default, when a follower broker is killed it is attempted to restart. While we could use [JobBackoffPerIndex](https://kubernetes.io/blog/2023/08/21/kubernetes-1-28-jobapi-update/#backoff-limit-per-index) to prevent it from restarting under
@@ -812,6 +825,17 @@ pod:
 ```
 
 
+#### securityContext
+
+You can specify a pod security context or customize uid/gid mapping as follows:
+
+```yaml
+securityContext:
+  fsGroup: 34633
+```
+
+This maps a standard pod [securityContext](https://kubernetes.io/docs/tasks/configure-pod-container/security-context/#set-the-security-context-for-a-pod) so the same fields apply. 
+
 ### containers
 
 Early on we identified that a job could include more than one container, where there might be a primary container
@@ -897,6 +921,21 @@ resources:
 Both limits and resources are flexible to accept a string or an integer value, and you'll get an error if you
 provide something else. If you need something else, [let us know](https://github.com/flux-framework/flux-operator/issues).
 If you are requesting GPU, [this documentation](https://kubernetes.io/docs/tasks/manage-gpus/scheduling-gpus/) is helpful.
+
+
+#### securityContext
+
+You can specify a container security context or customize uid/gid mapping as follows:
+
+```yaml
+securityContext:
+    runAsUser: 1000
+    runAsGroup: 3000
+    fsGroup: 2000
+    supplementalGroups: [4000]
+```
+
+This maps a standard container [securityContext](https://kubernetes.io/docs/tasks/configure-pod-container/security-context/#set-the-security-context-for-a-pod) so the same fields apply. 
 
 #### imagePullSecret
 
