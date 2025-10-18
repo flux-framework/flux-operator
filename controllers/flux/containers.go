@@ -33,6 +33,8 @@ func getFluxContainer(
 	if err != nil {
 		return corev1.Container{}, err
 	}
+
+	// test minicluster with init security context added PLUS mount at /tmp somewhere
 	initContainer := corev1.Container{
 
 		// Call this the driver container, number 0
@@ -45,6 +47,7 @@ func getFluxContainer(
 		Stdin:           true,
 		TTY:             true,
 		Resources:       resources,
+		SecurityContext: &cluster.Spec.Flux.Container.SecurityContext,
 	}
 	return initContainer, nil
 }
@@ -136,37 +139,6 @@ func getContainers(
 			return containers, err
 		}
 
-		addCaps := []corev1.Capability{}
-		for _, cap := range container.SecurityContext.AddCapabilities {
-			addCaps = append(addCaps, corev1.Capability(cap))
-		}
-
-		securityContext := corev1.SecurityContext{
-			Privileged: &container.SecurityContext.Privileged,
-			Capabilities: &corev1.Capabilities{
-				Add: addCaps,
-			},
-		}
-
-		// RunAsUser, RunAsGroup,
-		if container.SecurityContext.FSGroup != 0 {
-			securityContext.FSGroup = &container.SecurityContext.FSGroup
-		}
-		if container.SecurityContext.RunAsUser != 0 {
-			securityContext.RunAsUser = &container.SecurityContext.RunAsUser
-		}
-		if container.SecurityContext.RunAsGroup != 0 {
-			securityContext.RunAsGroup = &container.SecurityContext.RunAsGroup
-		}
-		if container.SecurityContext.RunAsNonRoot {
-			runAsNonRoot := true
-			securityContext.RunAsNonRoot = &runAsNonRoot
-		}
-		if !container.SecurityContext.AllowPrivilegeEscalation {
-			allowEscalation := false
-			securityContext.AllowPrivilegeEscalation = &allowEscalation
-		}
-
 		// Create the container
 		newContainer := corev1.Container{
 
@@ -180,7 +152,7 @@ func getContainers(
 			TTY:             true,
 			Lifecycle:       lifecycle,
 			Resources:       resources,
-			SecurityContext: &securityContext,
+			SecurityContext: &container.SecurityContext,
 		}
 
 		// Only add command if we actually have one

@@ -11,6 +11,8 @@ SPDX-License-Identifier: Apache-2.0
 package controllers
 
 import (
+	"reflect"
+
 	batchv1 "k8s.io/api/batch/v1"
 	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
@@ -95,6 +97,15 @@ func NewMiniClusterJob(cluster *api.MiniCluster) (*batchv1.Job, error) {
 			},
 		},
 	}
+
+	// Set the security context
+	if !reflect.DeepEqual(cluster.Spec.Pod.SecurityContext, corev1.PodSecurityContext{}) {
+		securityContext := corev1.PodSecurityContext{
+			FSGroup: cluster.Spec.Pod.SecurityContext.FSGroup,
+		}
+		job.Spec.Template.Spec.SecurityContext = &securityContext
+	}
+
 	// Custom restart policy
 	if cluster.Spec.Pod.RestartPolicy != "" {
 		job.Spec.Template.Spec.RestartPolicy = corev1.RestartPolicy(cluster.Spec.Pod.RestartPolicy)

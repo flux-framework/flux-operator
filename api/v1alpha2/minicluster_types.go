@@ -13,6 +13,7 @@ package v1alpha2
 import (
 	"fmt"
 
+	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/util/intstr"
 )
@@ -225,6 +226,10 @@ type PodSpec struct {
 	// Resources include limits and requests
 	// +optional
 	Resources ContainerResource `json:"resources"`
+
+	// PodSecurity Context
+	// +optional
+	SecurityContext corev1.PodSecurityContext `json:"securityContext,omitempty"`
 }
 
 type Toleration struct {
@@ -540,6 +545,10 @@ type FluxContainer struct {
 	// +optional
 	PullAlways bool `json:"pullAlways,omitempty"`
 
+	// Security Context
+	// +optional
+	SecurityContext corev1.SecurityContext `json:"securityContext,omitempty"`
+
 	// Mount path for flux to be at (will be added to path)
 	// +kubebuilder:default="/mnt/flux"
 	// +default="/mnt/flux"
@@ -644,41 +653,7 @@ type MiniClusterContainer struct {
 	// Security Context
 	// https://kubernetes.io/docs/tasks/configure-pod-container/security-context/
 	// +optional
-	SecurityContext SecurityContext `json:"securityContext"`
-}
-
-type SecurityContext struct {
-
-	// Privileged container
-	// +optional
-	Privileged bool `json:"privileged,omitempty"`
-
-	// Capabilities to add
-	// +optional
-	// +listType=atomic
-	AddCapabilities []string `json:"addCapabilities,omitempty"`
-
-	// Run as a specific uid
-	// +optional
-	RunAsGroup int64 `json:"runAsGroup,omitempty"`
-
-	// Run as a specific gid
-	// +optional
-	RunAsUser int64 `json:"runAsUser,omitempty"`
-
-	// The FileSystemGroup
-	// +optional
-	FSGroup int64 `json:"fsGroup,omitempty"`
-
-	// Allow privilege escalation (defaults to true)
-	// +kubebuilder:default=true
-	// +default=true
-	// +optional
-	AllowPrivilegeEscalation bool `json:"allowPrivilegeEscalation,omitempty"`
-
-	// Run as non root (defaults to false)
-	// +optional
-	RunAsNonRoot bool `json:"runAsNonRoot,omitempty"`
+	SecurityContext corev1.SecurityContext `json:"securityContext,omitempty"`
 }
 
 type LifeCycle struct {
