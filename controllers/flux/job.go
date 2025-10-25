@@ -121,7 +121,7 @@ func NewMiniClusterJob(cluster *api.MiniCluster) (*batchv1.Job, error) {
 		job.Spec.Template.Spec.RuntimeClassName = &cluster.Spec.Pod.RuntimeClassName
 	}
 
-	// Add Affinity to map one pod / node only if the user hasn't disbaled it
+	// Add Affinity to map one pod / node only if the user hasn't disabled it
 	if !cluster.Spec.Network.DisableAffinity {
 		job.Spec.Template.Spec.Affinity = getAffinity(cluster)
 	}
@@ -157,7 +157,7 @@ func NewMiniClusterJob(cluster *api.MiniCluster) (*batchv1.Job, error) {
 
 // getAffinity returns to pod affinity to ensure 1 address / node
 func getAffinity(cluster *api.MiniCluster) *corev1.Affinity {
-	return &corev1.Affinity{
+	affinity := &corev1.Affinity{
 		// Prefer to schedule pods on the same zone
 		PodAffinity: &corev1.PodAffinity{
 			PreferredDuringSchedulingIgnoredDuringExecution: []corev1.WeightedPodAffinityTerm{
@@ -201,6 +201,26 @@ func getAffinity(cluster *api.MiniCluster) *corev1.Affinity {
 			},
 		},
 	}
+
+	// Add custom affinity if defined to select subset of nodes in list
+	if len(cluster.Spec.Pod.NodeAffinity) > 0 {
+		requires := []corev1.NodeSelectorRequirement{}
+		for label, values := range cluster.Spec.Pod.NodeAffinity {
+			requires = append(requires, corev1.NodeSelectorRequirement{
+				Key:      label,
+				Operator: corev1.NodeSelectorOpIn,
+				Values:   values,
+			})
+		}
+		affinity.NodeAffinity = &corev1.NodeAffinity{
+			RequiredDuringSchedulingIgnoredDuringExecution: &corev1.NodeSelector{
+				NodeSelectorTerms: []corev1.NodeSelectorTerm{
+					{MatchExpressions: requires},
+				},
+			},
+		}
+	}
+	return affinity
 }
 
 // getImagePullSecrets returns a list of secret object references for each container.

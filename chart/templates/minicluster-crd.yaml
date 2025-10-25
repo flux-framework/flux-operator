@@ -3,7 +3,7 @@ kind: CustomResourceDefinition
 metadata:
   name: miniclusters.flux-framework.org
   annotations:
-    controller-gen.kubebuilder.io/version: v0.14.0
+    controller-gen.kubebuilder.io/version: v0.19.0
   labels:
   {{- include "chart.labels" . | nindent 4 }}
 spec:
@@ -336,7 +336,6 @@ spec:
                               description: |-
                                 type indicates which kind of seccomp profile will be applied.
                                 Valid options are:
-  
   
                                 Localhost - a profile defined in a file on the node should be used.
                                 RuntimeDefault - the container runtime default profile should be used.
@@ -724,7 +723,6 @@ spec:
                                   type indicates which kind of seccomp profile will be applied.
                                   Valid options are:
   
-  
                                   Localhost - a profile defined in a file on the node should be used.
                                   RuntimeDefault - the container runtime default profile should be used.
                                   Unconfined - no profile should be applied.
@@ -916,6 +914,14 @@ spec:
                       type: string
                     description: Labels for each pod
                     type: object
+                  nodeAffinity:
+                    additionalProperties:
+                      items:
+                        type: string
+                      type: array
+                    description: NodeAffinity is for a list of values assoicated with
+                      a label
+                    type: object
                   nodeSelector:
                     additionalProperties:
                       type: string
@@ -947,11 +953,9 @@ spec:
                           Some volume types allow the Kubelet to change the ownership of that volume
                           to be owned by the pod:
   
-  
                           1. The owning GID will be the FSGroup
                           2. The setgid bit is set (new files created in the volume will be owned by FSGroup)
                           3. The permission bits are OR'd with rw-rw----
-  
   
                           If unset, the Kubelet will not modify the ownership and permissions of any volume.
                           Note that this field cannot be set when spec.os.name is windows.
@@ -1038,7 +1042,6 @@ spec:
                             description: |-
                               type indicates which kind of seccomp profile will be applied.
                               Valid options are:
-  
   
                               Localhost - a profile defined in a file on the node should be used.
                               RuntimeDefault - the container runtime default profile should be used.
@@ -1412,7 +1415,6 @@ spec:
                                 type indicates which kind of seccomp profile will be applied.
                                 Valid options are:
   
-  
                                 Localhost - a profile defined in a file on the node should be used.
                                 RuntimeDefault - the container runtime default profile should be used.
                                 Unconfined - no profile should be applied.
@@ -1535,16 +1537,8 @@ spec:
               conditions:
                 description: conditions hold the latest Flux Job and MiniCluster states
                 items:
-                  description: "Condition contains details for one aspect of the current
-                    state of this API Resource.\n---\nThis struct is intended for direct
-                    use as an array at the field path .status.conditions.  For example,\n\n\n\ttype
-                    FooStatus struct{\n\t    // Represents the observations of a foo's
-                    current state.\n\t    // Known .status.conditions.type are: \"Available\",
-                    \"Progressing\", and \"Degraded\"\n\t    // +patchMergeKey=type\n\t
-                    \   // +patchStrategy=merge\n\t    // +listType=map\n\t    // +listMapKey=type\n\t
-                    \   Conditions []metav1.Condition `json:\"conditions,omitempty\"
-                    patchStrategy:\"merge\" patchMergeKey:\"type\" protobuf:\"bytes,1,rep,name=conditions\"`\n\n\n\t
-                    \   // other fields\n\t}"
+                  description: Condition contains details for one aspect of the current
+                    state of this API Resource.
                   properties:
                     lastTransitionTime:
                       description: |-
@@ -1585,12 +1579,7 @@ spec:
                       - Unknown
                       type: string
                     type:
-                      description: |-
-                        type of condition in CamelCase or in foo.example.com/CamelCase.
-                        ---
-                        Many .condition.type values are consistent across resources like Available, but because arbitrary conditions can be
-                        useful (see .node.status.conditions), the ability to deconflict is important.
-                        The regex it matches is (dns1123SubdomainFmt/)?(qualifiedNameFmt)
+                      description: type of condition in CamelCase or in foo.example.com/CamelCase.
                       maxLength: 316
                       pattern: ^([a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*/)?(([A-Za-z0-9][-A-Za-z0-9_.]*)?[A-Za-z0-9])$
                       type: string

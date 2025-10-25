@@ -49,8 +49,6 @@ chmod o-r ${curvepath}
 chmod g-r ${curvepath}
 chown -R ${fluxuid} ${curvepath}
 
-# If we have disabled the view, we need to use the flux here to generate resources
-{{ if .Spec.Flux.Container.Disable }}
 hosts=$(cat ${configroot}/etc/flux/system/hostlist)
 {{ if not .Spec.Logging.Quiet }}
 echo
@@ -60,7 +58,6 @@ echo "flux R encode --hosts=${hosts} --local"
 flux R encode --hosts=${hosts} --local > /tmp/R
 mv /tmp/R ${configroot}/etc/flux/system/R
 {{ if not .Spec.Logging.Quiet }}cat ${configroot}/etc/flux/system/R{{ end }}
-{{ end }}
 
 # Put the state directory in /var/lib on shared view
 export STATE_DIR=${configroot}/var/lib/flux

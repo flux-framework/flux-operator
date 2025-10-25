@@ -207,6 +207,10 @@ type PodSpec struct {
 	// +optional
 	NodeSelector map[string]string `json:"nodeSelector,omitempty"`
 
+	// NodeAffinity is for a list of values assoicated with a label
+	// +optional
+	NodeAffinity map[string][]string `json:"nodeAffinity,omitempty"`
+
 	// Tolerations for a pod
 	// +optional
 	Tolerations []Toleration `json:"tolerations,omitempty"`
