@@ -9,18 +9,6 @@ echo "Flags for flux are ${flags}" {{ if .Spec.Logging.Quiet }}> /dev/null 2>&1{
 
 {{define "wait-view"}}
 
-# This is the baseurl for a wait script.
-goshareUrl=https://github.com/converged-computing/goshare/releases/download/2024-01-18
-
-# Ensure the flux volume addition is complete. We default to linux, fall back to arm
-url=$goshareUrl/wait-fs
-{{ if .Spec.Flux.Arch }}
-url=$goshareUrl/wait-fs-{{ .Spec.Flux.Arch }}
-{{ end }}
-
-# This waiting script is intended to wait for the flux view, and then start running
-curl -L -O -s -o /tmp/wait-fs -s ${url} {{ if .Spec.Logging.Quiet }}> /dev/null 2>&1{{ end }} || wget ${url} -q -O /tmp/wait-fs {{ if .Spec.Logging.Quiet }}> /dev/null 2>&1{{ end }} || true
-chmod +x /tmp/wait-fs || true {{ if .Spec.Logging.Quiet }}> /dev/null 2>&1{{ end }}
 
 # Ensure spack view is on the path, wherever it is mounted
 viewbase="{{ .ViewBase }}"
@@ -41,12 +29,8 @@ echo
 # Important to add AFTER in case software in container duplicated
 {{ if not .Spec.Flux.Container.Disable }}export PATH=$PATH:${viewbin}{{ end }}
 
-# Wait for marker (from spack.go) to indicate copy is done
-/tmp/wait-fs -p ${viewbase}/flux-operator-done.txt {{ if .Spec.Logging.Quiet }}> /dev/null 2>&1{{ end }} || true
-
 # Copy mount software to /opt/software
 # If /opt/software already exists, we need to copy into it
-# TODO need to update view containers so this works
 if [[ -e  "/opt/software" ]]; then
   cp -R ${viewbase}/software/* /opt/software/ || true
 else

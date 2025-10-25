@@ -118,13 +118,13 @@ cp -R /opt/view/* %s/view`,
 
 	if !cluster.Spec.Flux.Container.Disable {
 		spackView = `# Now prepare to copy finished spack view over
-echo "Moving content from /opt/view to be in shared volume at %s"
+echo "Moving content from /opt/view to be in shared volume at $viewroot"
 # Note that /opt/view is a symlink to here!
 view=$(ls /opt/views/._view/)
 view="/opt/views/._view/${view}"
 
 # Give a little extra wait time
-sleep 10
+# sleep 10
 
 # We have to move both of these paths, *sigh*
 cp -R ${view}/* $viewroot/view

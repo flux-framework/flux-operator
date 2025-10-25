@@ -141,6 +141,14 @@ func NewMiniClusterJob(cluster *api.MiniCluster) (*batchv1.Job, error) {
 		return job, err
 	}
 
+	// Add spack view (we need to copy back here)
+	spackVolume := corev1.VolumeMount{
+		Name:      spackSoftware,
+		MountPath: spackSoftwarePath,
+		ReadOnly:  false,
+	}
+	mounts = append(mounts, spackVolume)
+
 	// Prepare listing of containers for the MiniCluster
 	containers, err := getContainers(
 		cluster.Spec.Containers,
