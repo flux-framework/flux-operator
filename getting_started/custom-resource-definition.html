@@ -870,6 +870,13 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#securitycontext" class="md-nav__link">
+    <span title="/getting_started/custom-resource-definition.md#securitycontext (reference label)" class="md-ellipsis">security<wbr>Context</span>
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -914,6 +921,13 @@
           <li class="md-nav__item">
   <a href="#id1" class="md-nav__link">
     <span title="/getting_started/custom-resource-definition.md#id1 (reference label)" class="md-ellipsis">resources</span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#id2" class="md-nav__link">
+    <span title="/getting_started/custom-resource-definition.md#id2 (reference label)" class="md-ellipsis">security<wbr>Context</span>
   </a>
   
 </li>
@@ -1517,6 +1531,16 @@ in addition to creating your cluster with a config that specifies the cpu manage
 <li><p>Ensure cpuManagerPolicy is static</p></li>
 <li><p>Create all pod containers (including the init container) in the MiniCluster to have a cpu and memory definition.</p></li>
 </ol>
+<p>Finally, the container can have a customized security context. The view is added as an init container, so this security context is for the init container.</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><code><span class="nt">flux</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">container</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">securityContext</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">runAsUser</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1000</span>
+<span class="w">      </span><span class="nt">runAsGroup</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">3000</span>
+<span class="w">      </span><span class="nt">fsGroup</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">2000</span>
+<span class="w">      </span><span class="nt">supplementalGroups</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">4000</span><span class="p p-Indicator">]</span>
+</code></pre></div>
+</div>
 <h3 id="completeworkers">completeWorkers<a class="headerlink" href="#completeworkers" title="Link to this heading">¶</a></h3>
 <p>By default, when a follower broker is killed it is attempted to restart. While we could use <a class="reference external" href="https://kubernetes.io/blog/2023/08/21/kubernetes-1-28-jobapi-update/#backoff-limit-per-index">JobBackoffPerIndex</a> to prevent it from restarting under
 any conditions, this currently requires a feature gate (Kubernetes 1.28) so we are opting for a more simple approach. You can set <code class="docutils literal notranslate"><span class="pre">completeWorkers</span></code> to true, in which case when a lead broker is killed, it will Complete and not recreate.</p>
@@ -1927,6 +1951,13 @@ add nodeSelector attributes to your pod as follows:</p>
 <span class="w">  </span><span class="nt">hostPID</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
 </code></pre></div>
 </div>
+<h4 id="securitycontext">securityContext<a class="headerlink" href="#securitycontext" title="Link to this heading">¶</a></h4>
+<p>You can specify a pod security context or customize uid/gid mapping as follows:</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><code><span class="nt">securityContext</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">fsGroup</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">34633</span>
+</code></pre></div>
+</div>
+<p>This maps a standard pod <a class="reference external" href="https://kubernetes.io/docs/tasks/configure-pod-container/security-context/#set-the-security-context-for-a-pod">securityContext</a> so the same fields apply.</p>
 <h3 id="containers">containers<a class="headerlink" href="#containers" title="Link to this heading">¶</a></h3>
 <p>Early on we identified that a job could include more than one container, where there might be a primary container
 running Flux, and others that provide services. Note that currently we only allow one container to be a FluxRunner,
@@ -1989,6 +2020,16 @@ string format that can be parsed) and all others are considered some kind of qua
 <p>Both limits and resources are flexible to accept a string or an integer value, and you’ll get an error if you
 provide something else. If you need something else, <a class="reference external" href="https://github.com/flux-framework/flux-operator/issues">let us know</a>.
 If you are requesting GPU, <a class="reference external" href="https://kubernetes.io/docs/tasks/manage-gpus/scheduling-gpus/">this documentation</a> is helpful.</p>
+<h4 id="id2">securityContext<a class="headerlink" href="#id2" title="Link to this heading">¶</a></h4>
+<p>You can specify a container security context or customize uid/gid mapping as follows:</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><code><span class="nt">securityContext</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">runAsUser</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1000</span>
+<span class="w">    </span><span class="nt">runAsGroup</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">3000</span>
+<span class="w">    </span><span class="nt">fsGroup</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">2000</span>
+<span class="w">    </span><span class="nt">supplementalGroups</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">4000</span><span class="p p-Indicator">]</span>
+</code></pre></div>
+</div>
+<p>This maps a standard container <a class="reference external" href="https://kubernetes.io/docs/tasks/configure-pod-container/security-context/#set-the-security-context-for-a-pod">securityContext</a> so the same fields apply.</p>
 <h4 id="imagepullsecret">imagePullSecret<a class="headerlink" href="#imagepullsecret" title="Link to this heading">¶</a></h4>
 <p>If your container has a pull secret, define it as <code class="docutils literal notranslate"><span class="pre">imagePullSecret</span></code>. If it’s publicly pullable,
 you don’t need this. But we do hope you are able to practice open science and share your containers!</p>
@@ -2433,7 +2474,7 @@ to the indexed job container:</p>
   <small>
     
       Last update:
-      Oct 14, 2025
+      Oct 25, 2025
     
   </small>
 </div>
