@@ -13,4 +13,3 @@ kind: Kustomization
 images:
 - name: controller
   newName: ghcr.io/flux-framework/flux-operator
-  newTag: test

@@ -156,6 +156,7 @@ func getVolumes(cluster *api.MiniCluster) []corev1.Volume {
 // Get Existing volumes for the MiniCluster
 func getExistingVolumes(existing map[string]api.ContainerVolume) []corev1.Volume {
 	volumes := []corev1.Volume{}
+	hostPathType := corev1.HostPathDirectory
 	for volumeName, volumeMeta := range existing {
 
 		var newVolume corev1.Volume
@@ -207,7 +208,8 @@ func getExistingVolumes(existing map[string]api.ContainerVolume) []corev1.Volume
 				VolumeSource: corev1.VolumeSource{
 					// Empty path for type means no checks are done
 					HostPath: &corev1.HostPathVolumeSource{
-						Path: volumeMeta.Path,
+						Path: volumeMeta.HostPath,
+						Type: &hostPathType,
 					},
 				},
 			}

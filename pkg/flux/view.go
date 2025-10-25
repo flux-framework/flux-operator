@@ -116,18 +116,7 @@ cp -R /opt/view/* %s/view`,
 		cluster.Spec.Flux.Container.MountPath,
 	)
 
-	generateHosts := `echo '📦 Flux view disabled, not generating resources here.'
-mkdir -p ${installRoot}/etc/flux/system
-`
 	if !cluster.Spec.Flux.Container.Disable {
-		generateHosts = `
-echo "flux R encode --hosts=${hosts} --local"
-flux R encode --hosts=${hosts} --local > ${installRoot}/etc/flux/system/R
-
-echo
-echo "📦 Resources"
-cat ${installRoot}/etc/flux/system/R`
-
 		spackView = `# Now prepare to copy finished spack view over
 echo "Moving content from /opt/view to be in shared volume at %s"
 # Note that /opt/view is a symlink to here!
@@ -171,7 +160,6 @@ hosts="%s"
 
 # Echo hosts here in case the main container needs to generate
 echo "${hosts}" > ${installRoot}/etc/flux/system/hostlist
-%s
 
 # Write the broker configuration
 mkdir -p ${installRoot}/etc/flux/config
@@ -206,7 +194,6 @@ echo "Application is done."
 		fluxRoot,
 		mainHost,
 		hosts,
-		generateHosts,
 		brokerConfig,
 		cluster.Spec.Flux.Container.MountPath,
 		spackView,
