@@ -29,13 +29,6 @@ var (
 // Shared function to return consistent set of volume mounts
 func getVolumeMounts(cluster *api.MiniCluster) []corev1.VolumeMount {
 	mounts := []corev1.VolumeMount{
-		// spack software emptyDir
-		{
-			Name:      spackSoftware,
-			MountPath: spackSoftwarePath,
-			ReadOnly:  false,
-		},
-
 		// faux flux operator home
 		{
 			Name:      fluxOperatorHome,
