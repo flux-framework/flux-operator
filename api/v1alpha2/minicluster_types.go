@@ -15,7 +15,6 @@ import (
 
 	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-	"k8s.io/apimachinery/pkg/util/intstr"
 )
 
 const (
@@ -229,7 +228,7 @@ type PodSpec struct {
 
 	// Resources include limits and requests
 	// +optional
-	Resources ContainerResource `json:"resources"`
+	Resources corev1.ResourceList `json:"resources"`
 
 	// PodSecurity Context
 	// +optional
@@ -527,7 +526,7 @@ type FluxContainer struct {
 	// These must be defined for cpu and memory
 	// for the QoS to be Guaranteed
 	// +optional
-	Resources ContainerResources `json:"resources"`
+	Resources corev1.ResourceRequirements `json:"resources"`
 
 	// Allow the user to pull authenticated images
 	// By default no secret is selected. Setting
@@ -648,7 +647,7 @@ type MiniClusterContainer struct {
 
 	// Resources include limits and requests
 	// +optional
-	Resources ContainerResources `json:"resources"`
+	Resources corev1.ResourceRequirements `json:"resources"`
 
 	// More specific or detailed commands for just workers/broker
 	// +optional
@@ -715,18 +714,6 @@ type Commands struct {
 	// +optional
 	ServicePre string `json:"servicePre"`
 }
-
-// ContainerResources include limits and requests
-type ContainerResources struct {
-
-	// +optional
-	Limits ContainerResource `json:"limits"`
-
-	// +optional
-	Requests ContainerResource `json:"requests"`
-}
-
-type ContainerResource map[string]intstr.IntOrString
 
 // MiniCluster is the Schema for a Flux job launcher on K8s
 // +genclient
