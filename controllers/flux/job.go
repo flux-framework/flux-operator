@@ -125,12 +125,7 @@ func NewMiniClusterJob(cluster *api.MiniCluster) (*batchv1.Job, error) {
 	if !cluster.Spec.Network.DisableAffinity {
 		job.Spec.Template.Spec.Affinity = getAffinity(cluster)
 	}
-
-	resources, err := getPodResources(cluster)
-	if err != nil {
-		return job, err
-	}
-	job.Spec.Template.Spec.Overhead = resources
+	job.Spec.Template.Spec.Overhead = cluster.Spec.Pod.Resources
 
 	// Get volume mounts specific to operator, add on container specific ones
 	mounts := getVolumeMounts(cluster)
