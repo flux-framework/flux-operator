@@ -171,19 +171,60 @@ spec:
                     resources:
                       description: Resources include limits and requests
                       properties:
+                        claims:
+                          description: |-
+                            Claims lists the names of resources, defined in spec.resourceClaims,
+                            that are used by this container.
+  
+                            This field depends on the
+                            DynamicResourceAllocation feature gate.
+  
+                            This field is immutable. It can only be set for containers.
+                          items:
+                            description: ResourceClaim references one entry in PodSpec.ResourceClaims.
+                            properties:
+                              name:
+                                description: |-
+                                  Name must match the name of one entry in pod.spec.resourceClaims of
+                                  the Pod where this field is used. It makes that resource available
+                                  inside a container.
+                                type: string
+                              request:
+                                description: |-
+                                  Request is the name chosen for a request in the referenced claim.
+                                  If empty, everything from the claim is made available, otherwise
+                                  only the result of this request.
+                                type: string
+                            required:
+                            - name
+                            type: object
+                          type: array
+                          x-kubernetes-list-map-keys:
+                          - name
+                          x-kubernetes-list-type: map
                         limits:
                           additionalProperties:
                             anyOf:
                             - type: integer
                             - type: string
+                            pattern: ^(\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))))?$
                             x-kubernetes-int-or-string: true
+                          description: |-
+                            Limits describes the maximum amount of compute resources allowed.
+                            More info: https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/
                           type: object
                         requests:
                           additionalProperties:
                             anyOf:
                             - type: integer
                             - type: string
+                            pattern: ^(\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))))?$
                             x-kubernetes-int-or-string: true
+                          description: |-
+                            Requests describes the minimum amount of compute resources required.
+                            If Requests is omitted for a container, it defaults to Limits if that is explicitly specified,
+                            otherwise to an implementation-defined value. Requests cannot exceed Limits.
+                            More info: https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/
                           type: object
                       type: object
                     runFlux:
@@ -224,6 +265,30 @@ spec:
                             2) has CAP_SYS_ADMIN
                             Note that this field cannot be set when spec.os.name is windows.
                           type: boolean
+                        appArmorProfile:
+                          description: |-
+                            appArmorProfile is the AppArmor options to use by this container. If set, this profile
+                            overrides the pod's appArmorProfile.
+                            Note that this field cannot be set when spec.os.name is windows.
+                          properties:
+                            localhostProfile:
+                              description: |-
+                                localhostProfile indicates a profile loaded on the node that should be used.
+                                The profile must be preconfigured on the node to work.
+                                Must match the loaded name of the profile.
+                                Must be set if and only if type is "Localhost".
+                              type: string
+                            type:
+                              description: |-
+                                type indicates which kind of AppArmor profile will be applied.
+                                Valid options are:
+                                  Localhost - a profile pre-loaded on the node.
+                                  RuntimeDefault - the container runtime's default profile.
+                                  Unconfined - no AppArmor enforcement.
+                              type: string
+                          required:
+                          - type
+                          type: object
                         capabilities:
                           description: |-
                             The capabilities to add/drop when running containers.
@@ -237,6 +302,7 @@ spec:
                                   type
                                 type: string
                               type: array
+                              x-kubernetes-list-type: atomic
                             drop:
                               description: Removed capabilities
                               items:
@@ -244,6 +310,7 @@ spec:
                                   type
                                 type: string
                               type: array
+                              x-kubernetes-list-type: atomic
                           type: object
                         privileged:
                           description: |-
@@ -255,7 +322,7 @@ spec:
                         procMount:
                           description: |-
                             procMount denotes the type of proc mount to use for the containers.
-                            The default is DefaultProcMount which uses the container runtime defaults for
+                            The default value is Default which uses the container runtime defaults for
                             readonly paths and masked paths.
                             This requires the ProcMountType feature flag to be enabled.
                             Note that this field cannot be set when spec.os.name is windows.
@@ -330,7 +397,7 @@ spec:
                                 localhostProfile indicates a profile defined in a file on the node should be used.
                                 The profile must be preconfigured on the node to work.
                                 Must be a descending path, relative to the kubelet's configured seccomp profile location.
-                                Must only be set if type is "Localhost".
+                                Must be set if type is "Localhost". Must NOT be set for any other type.
                               type: string
                             type:
                               description: |-
@@ -364,12 +431,9 @@ spec:
                             hostProcess:
                               description: |-
                                 HostProcess determines if a container should be run as a 'Host Process' container.
-                                This field is alpha-level and will only be honored by components that enable the
-                                WindowsHostProcessContainers feature flag. Setting this field without the feature
-                                flag will result in errors when validating the Pod. All of a Pod's containers must
-                                have the same effective HostProcess value (it is not allowed to have a mix of HostProcess
-                                containers and non-HostProcess containers).  In addition, if HostProcess is true
-                                then HostNetwork must also be set to true.
+                                All of a Pod's containers must have the same effective HostProcess value
+                                (it is not allowed to have a mix of HostProcess containers and non-HostProcess containers).
+                                In addition, if HostProcess is true then HostNetwork must also be set to true.
                               type: boolean
                             runAsUserName:
                               description: |-
@@ -582,19 +646,60 @@ spec:
                           These must be defined for cpu and memory
                           for the QoS to be Guaranteed
                         properties:
+                          claims:
+                            description: |-
+                              Claims lists the names of resources, defined in spec.resourceClaims,
+                              that are used by this container.
+  
+                              This field depends on the
+                              DynamicResourceAllocation feature gate.
+  
+                              This field is immutable. It can only be set for containers.
+                            items:
+                              description: ResourceClaim references one entry in PodSpec.ResourceClaims.
+                              properties:
+                                name:
+                                  description: |-
+                                    Name must match the name of one entry in pod.spec.resourceClaims of
+                                    the Pod where this field is used. It makes that resource available
+                                    inside a container.
+                                  type: string
+                                request:
+                                  description: |-
+                                    Request is the name chosen for a request in the referenced claim.
+                                    If empty, everything from the claim is made available, otherwise
+                                    only the result of this request.
+                                  type: string
+                              required:
+                              - name
+                              type: object
+                            type: array
+                            x-kubernetes-list-map-keys:
+                            - name
+                            x-kubernetes-list-type: map
                           limits:
                             additionalProperties:
                               anyOf:
                               - type: integer
                               - type: string
+                              pattern: ^(\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))))?$
                               x-kubernetes-int-or-string: true
+                            description: |-
+                              Limits describes the maximum amount of compute resources allowed.
+                              More info: https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/
                             type: object
                           requests:
                             additionalProperties:
                               anyOf:
                               - type: integer
                               - type: string
+                              pattern: ^(\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))))?$
                               x-kubernetes-int-or-string: true
+                            description: |-
+                              Requests describes the minimum amount of compute resources required.
+                              If Requests is omitted for a container, it defaults to Limits if that is explicitly specified,
+                              otherwise to an implementation-defined value. Requests cannot exceed Limits.
+                              More info: https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/
                             type: object
                         type: object
                       securityContext:
@@ -610,6 +715,30 @@ spec:
                               2) has CAP_SYS_ADMIN
                               Note that this field cannot be set when spec.os.name is windows.
                             type: boolean
+                          appArmorProfile:
+                            description: |-
+                              appArmorProfile is the AppArmor options to use by this container. If set, this profile
+                              overrides the pod's appArmorProfile.
+                              Note that this field cannot be set when spec.os.name is windows.
+                            properties:
+                              localhostProfile:
+                                description: |-
+                                  localhostProfile indicates a profile loaded on the node that should be used.
+                                  The profile must be preconfigured on the node to work.
+                                  Must match the loaded name of the profile.
+                                  Must be set if and only if type is "Localhost".
+                                type: string
+                              type:
+                                description: |-
+                                  type indicates which kind of AppArmor profile will be applied.
+                                  Valid options are:
+                                    Localhost - a profile pre-loaded on the node.
+                                    RuntimeDefault - the container runtime's default profile.
+                                    Unconfined - no AppArmor enforcement.
+                                type: string
+                            required:
+                            - type
+                            type: object
                           capabilities:
                             description: |-
                               The capabilities to add/drop when running containers.
@@ -623,6 +752,7 @@ spec:
                                     type
                                   type: string
                                 type: array
+                                x-kubernetes-list-type: atomic
                               drop:
                                 description: Removed capabilities
                                 items:
@@ -630,6 +760,7 @@ spec:
                                     type
                                   type: string
                                 type: array
+                                x-kubernetes-list-type: atomic
                             type: object
                           privileged:
                             description: |-
@@ -641,7 +772,7 @@ spec:
                           procMount:
                             description: |-
                               procMount denotes the type of proc mount to use for the containers.
-                              The default is DefaultProcMount which uses the container runtime defaults for
+                              The default value is Default which uses the container runtime defaults for
                               readonly paths and masked paths.
                               This requires the ProcMountType feature flag to be enabled.
                               Note that this field cannot be set when spec.os.name is windows.
@@ -716,7 +847,7 @@ spec:
                                   localhostProfile indicates a profile defined in a file on the node should be used.
                                   The profile must be preconfigured on the node to work.
                                   Must be a descending path, relative to the kubelet's configured seccomp profile location.
-                                  Must only be set if type is "Localhost".
+                                  Must be set if type is "Localhost". Must NOT be set for any other type.
                                 type: string
                               type:
                                 description: |-
@@ -750,12 +881,9 @@ spec:
                               hostProcess:
                                 description: |-
                                   HostProcess determines if a container should be run as a 'Host Process' container.
-                                  This field is alpha-level and will only be honored by components that enable the
-                                  WindowsHostProcessContainers feature flag. Setting this field without the feature
-                                  flag will result in errors when validating the Pod. All of a Pod's containers must
-                                  have the same effective HostProcess value (it is not allowed to have a mix of HostProcess
-                                  containers and non-HostProcess containers).  In addition, if HostProcess is true
-                                  then HostNetwork must also be set to true.
+                                  All of a Pod's containers must have the same effective HostProcess value
+                                  (it is not allowed to have a mix of HostProcess containers and non-HostProcess containers).
+                                  In addition, if HostProcess is true then HostNetwork must also be set to true.
                                 type: boolean
                               runAsUserName:
                                 description: |-
@@ -932,6 +1060,7 @@ spec:
                       anyOf:
                       - type: integer
                       - type: string
+                      pattern: ^(\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))))?$
                       x-kubernetes-int-or-string: true
                     description: Resources include limits and requests
                     type: object
@@ -947,6 +1076,29 @@ spec:
                   securityContext:
                     description: PodSecurity Context
                     properties:
+                      appArmorProfile:
+                        description: |-
+                          appArmorProfile is the AppArmor options to use by the containers in this pod.
+                          Note that this field cannot be set when spec.os.name is windows.
+                        properties:
+                          localhostProfile:
+                            description: |-
+                              localhostProfile indicates a profile loaded on the node that should be used.
+                              The profile must be preconfigured on the node to work.
+                              Must match the loaded name of the profile.
+                              Must be set if and only if type is "Localhost".
+                            type: string
+                          type:
+                            description: |-
+                              type indicates which kind of AppArmor profile will be applied.
+                              Valid options are:
+                                Localhost - a profile pre-loaded on the node.
+                                RuntimeDefault - the container runtime's default profile.
+                                Unconfined - no AppArmor enforcement.
+                            type: string
+                        required:
+                        - type
+                        type: object
                       fsGroup:
                         description: |-
                           A special supplemental group that applies to all containers in a pod.
@@ -1000,6 +1152,32 @@ spec:
                           Note that this field cannot be set when spec.os.name is windows.
                         format: int64
                         type: integer
+                      seLinuxChangePolicy:
+                        description: |-
+                          seLinuxChangePolicy defines how the container's SELinux label is applied to all volumes used by the Pod.
+                          It has no effect on nodes that do not support SELinux or to volumes does not support SELinux.
+                          Valid values are "MountOption" and "Recursive".
+  
+                          "Recursive" means relabeling of all files on all Pod volumes by the container runtime.
+                          This may be slow for large volumes, but allows mixing privileged and unprivileged Pods sharing the same volume on the same node.
+  
+                          "MountOption" mounts all eligible Pod volumes with `-o context` mount option.
+                          This requires all Pods that share the same volume to use the same SELinux label.
+                          It is not possible to share the same volume among privileged and unprivileged Pods.
+                          Eligible volumes are in-tree FibreChannel and iSCSI volumes, and all CSI volumes
+                          whose CSI driver announces SELinux support by setting spec.seLinuxMount: true in their
+                          CSIDriver instance. Other volumes are always re-labelled recursively.
+                          "MountOption" value is allowed only when SELinuxMount feature gate is enabled.
+  
+                          If not specified and SELinuxMount feature gate is enabled, "MountOption" is used.
+                          If not specified and SELinuxMount feature gate is disabled, "MountOption" is used for ReadWriteOncePod volumes
+                          and "Recursive" for all other volumes.
+  
+                          This field affects only Pods that have SELinux label set, either in PodSecurityContext or in SecurityContext of all containers.
+  
+                          All Pods that use the same volume should use the same seLinuxChangePolicy, otherwise some pods can get stuck in ContainerCreating state.
+                          Note that this field cannot be set when spec.os.name is windows.
+                        type: string
                       seLinuxOptions:
                         description: |-
                           The SELinux context to be applied to all containers.
@@ -1036,7 +1214,7 @@ spec:
                               localhostProfile indicates a profile defined in a file on the node should be used.
                               The profile must be preconfigured on the node to work.
                               Must be a descending path, relative to the kubelet's configured seccomp profile location.
-                              Must only be set if type is "Localhost".
+                              Must be set if type is "Localhost". Must NOT be set for any other type.
                             type: string
                           type:
                             description: |-
@@ -1052,14 +1230,28 @@ spec:
                         type: object
                       supplementalGroups:
                         description: |-
-                          A list of groups applied to the first process run in each container, in addition
-                          to the container's primary GID.  If unspecified, no groups will be added to
-                          any container.
+                          A list of groups applied to the first process run in each container, in
+                          addition to the container's primary GID and fsGroup (if specified).  If
+                          the SupplementalGroupsPolicy feature is enabled, the
+                          supplementalGroupsPolicy field determines whether these are in addition
+                          to or instead of any group memberships defined in the container image.
+                          If unspecified, no additional groups are added, though group memberships
+                          defined in the container image may still be used, depending on the
+                          supplementalGroupsPolicy field.
                           Note that this field cannot be set when spec.os.name is windows.
                         items:
                           format: int64
                           type: integer
                         type: array
+                        x-kubernetes-list-type: atomic
+                      supplementalGroupsPolicy:
+                        description: |-
+                          Defines how supplemental groups of the first container processes are calculated.
+                          Valid values are "Merge" and "Strict". If not specified, "Merge" is used.
+                          (Alpha) Using the field requires the SupplementalGroupsPolicy feature gate to be enabled
+                          and the container runtime must implement support for this feature.
+                          Note that this field cannot be set when spec.os.name is windows.
+                        type: string
                       sysctls:
                         description: |-
                           Sysctls hold a list of namespaced sysctls used for the pod. Pods with unsupported
@@ -1079,6 +1271,7 @@ spec:
                           - value
                           type: object
                         type: array
+                        x-kubernetes-list-type: atomic
                       windowsOptions:
                         description: |-
                           The Windows specific settings applied to all containers.
@@ -1099,12 +1292,9 @@ spec:
                           hostProcess:
                             description: |-
                               HostProcess determines if a container should be run as a 'Host Process' container.
-                              This field is alpha-level and will only be honored by components that enable the
-                              WindowsHostProcessContainers feature flag. Setting this field without the feature
-                              flag will result in errors when validating the Pod. All of a Pod's containers must
-                              have the same effective HostProcess value (it is not allowed to have a mix of HostProcess
-                              containers and non-HostProcess containers).  In addition, if HostProcess is true
-                              then HostNetwork must also be set to true.
+                              All of a Pod's containers must have the same effective HostProcess value
+                              (it is not allowed to have a mix of HostProcess containers and non-HostProcess containers).
+                              In addition, if HostProcess is true then HostNetwork must also be set to true.
                             type: boolean
                           runAsUserName:
                             description: |-
@@ -1137,6 +1327,52 @@ spec:
                       type: object
                     type: array
                 type: object
+              resourceClaims:
+                description: ResourceClaims to be referenced in containers
+                items:
+                  description: |-
+                    PodResourceClaim references exactly one ResourceClaim, either directly
+                    or by naming a ResourceClaimTemplate which is then turned into a ResourceClaim
+                    for the pod.
+  
+                    It adds a name to it that uniquely identifies the ResourceClaim inside the Pod.
+                    Containers that need access to the ResourceClaim reference it with this name.
+                  properties:
+                    name:
+                      description: |-
+                        Name uniquely identifies this resource claim inside the pod.
+                        This must be a DNS_LABEL.
+                      type: string
+                    resourceClaimName:
+                      description: |-
+                        ResourceClaimName is the name of a ResourceClaim object in the same
+                        namespace as this pod.
+  
+                        Exactly one of ResourceClaimName and ResourceClaimTemplateName must
+                        be set.
+                      type: string
+                    resourceClaimTemplateName:
+                      description: |-
+                        ResourceClaimTemplateName is the name of a ResourceClaimTemplate
+                        object in the same namespace as this pod.
+  
+                        The template will be used to create a new ResourceClaim, which will
+                        be bound to this pod. When this pod is deleted, the ResourceClaim
+                        will also be deleted. The pod name and resource name, along with a
+                        generated component, will be used to form a unique name for the
+                        ResourceClaim, which will be recorded in pod.status.resourceClaimStatuses.
+  
+                        This field is immutable and no changes will be made to the
+                        corresponding ResourceClaim by the control plane after creating the
+                        ResourceClaim.
+  
+                        Exactly one of ResourceClaimName and ResourceClaimTemplateName must
+                        be set.
+                      type: string
+                  required:
+                  - name
+                  type: object
+                type: array
               services:
                 description: |-
                   Services are one or more service containers to bring up
@@ -1249,19 +1485,60 @@ spec:
                     resources:
                       description: Resources include limits and requests
                       properties:
+                        claims:
+                          description: |-
+                            Claims lists the names of resources, defined in spec.resourceClaims,
+                            that are used by this container.
+  
+                            This field depends on the
+                            DynamicResourceAllocation feature gate.
+  
+                            This field is immutable. It can only be set for containers.
+                          items:
+                            description: ResourceClaim references one entry in PodSpec.ResourceClaims.
+                            properties:
+                              name:
+                                description: |-
+                                  Name must match the name of one entry in pod.spec.resourceClaims of
+                                  the Pod where this field is used. It makes that resource available
+                                  inside a container.
+                                type: string
+                              request:
+                                description: |-
+                                  Request is the name chosen for a request in the referenced claim.
+                                  If empty, everything from the claim is made available, otherwise
+                                  only the result of this request.
+                                type: string
+                            required:
+                            - name
+                            type: object
+                          type: array
+                          x-kubernetes-list-map-keys:
+                          - name
+                          x-kubernetes-list-type: map
                         limits:
                           additionalProperties:
                             anyOf:
                             - type: integer
                             - type: string
+                            pattern: ^(\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))))?$
                             x-kubernetes-int-or-string: true
+                          description: |-
+                            Limits describes the maximum amount of compute resources allowed.
+                            More info: https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/
                           type: object
                         requests:
                           additionalProperties:
                             anyOf:
                             - type: integer
                             - type: string
+                            pattern: ^(\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))))?$
                             x-kubernetes-int-or-string: true
+                          description: |-
+                            Requests describes the minimum amount of compute resources required.
+                            If Requests is omitted for a container, it defaults to Limits if that is explicitly specified,
+                            otherwise to an implementation-defined value. Requests cannot exceed Limits.
+                            More info: https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/
                           type: object
                       type: object
                     runFlux:
@@ -1302,6 +1579,30 @@ spec:
                             2) has CAP_SYS_ADMIN
                             Note that this field cannot be set when spec.os.name is windows.
                           type: boolean
+                        appArmorProfile:
+                          description: |-
+                            appArmorProfile is the AppArmor options to use by this container. If set, this profile
+                            overrides the pod's appArmorProfile.
+                            Note that this field cannot be set when spec.os.name is windows.
+                          properties:
+                            localhostProfile:
+                              description: |-
+                                localhostProfile indicates a profile loaded on the node that should be used.
+                                The profile must be preconfigured on the node to work.
+                                Must match the loaded name of the profile.
+                                Must be set if and only if type is "Localhost".
+                              type: string
+                            type:
+                              description: |-
+                                type indicates which kind of AppArmor profile will be applied.
+                                Valid options are:
+                                  Localhost - a profile pre-loaded on the node.
+                                  RuntimeDefault - the container runtime's default profile.
+                                  Unconfined - no AppArmor enforcement.
+                              type: string
+                          required:
+                          - type
+                          type: object
                         capabilities:
                           description: |-
                             The capabilities to add/drop when running containers.
@@ -1315,6 +1616,7 @@ spec:
                                   type
                                 type: string
                               type: array
+                              x-kubernetes-list-type: atomic
                             drop:
                               description: Removed capabilities
                               items:
@@ -1322,6 +1624,7 @@ spec:
                                   type
                                 type: string
                               type: array
+                              x-kubernetes-list-type: atomic
                           type: object
                         privileged:
                           description: |-
@@ -1333,7 +1636,7 @@ spec:
                         procMount:
                           description: |-
                             procMount denotes the type of proc mount to use for the containers.
-                            The default is DefaultProcMount which uses the container runtime defaults for
+                            The default value is Default which uses the container runtime defaults for
                             readonly paths and masked paths.
                             This requires the ProcMountType feature flag to be enabled.
                             Note that this field cannot be set when spec.os.name is windows.
@@ -1408,7 +1711,7 @@ spec:
                                 localhostProfile indicates a profile defined in a file on the node should be used.
                                 The profile must be preconfigured on the node to work.
                                 Must be a descending path, relative to the kubelet's configured seccomp profile location.
-                                Must only be set if type is "Localhost".
+                                Must be set if type is "Localhost". Must NOT be set for any other type.
                               type: string
                             type:
                               description: |-
@@ -1442,12 +1745,9 @@ spec:
                             hostProcess:
                               description: |-
                                 HostProcess determines if a container should be run as a 'Host Process' container.
-                                This field is alpha-level and will only be honored by components that enable the
-                                WindowsHostProcessContainers feature flag. Setting this field without the feature
-                                flag will result in errors when validating the Pod. All of a Pod's containers must
-                                have the same effective HostProcess value (it is not allowed to have a mix of HostProcess
-                                containers and non-HostProcess containers).  In addition, if HostProcess is true
-                                then HostNetwork must also be set to true.
+                                All of a Pod's containers must have the same effective HostProcess value
+                                (it is not allowed to have a mix of HostProcess containers and non-HostProcess containers).
+                                In addition, if HostProcess is true then HostNetwork must also be set to true.
                               type: boolean
                             runAsUserName:
                               description: |-

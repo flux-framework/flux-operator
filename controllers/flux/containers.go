@@ -29,11 +29,6 @@ func getFluxContainer(
 		pullPolicy = corev1.PullAlways
 	}
 
-	resources, err := getFluxContainerResources(cluster.Spec.Flux.Container)
-	if err != nil {
-		return corev1.Container{}, err
-	}
-
 	// test minicluster with init security context added PLUS mount at /tmp somewhere
 	initContainer := corev1.Container{
 
@@ -46,7 +41,7 @@ func getFluxContainer(
 		VolumeMounts:    mounts,
 		Stdin:           true,
 		TTY:             true,
-		Resources:       resources,
+		Resources:       cluster.Spec.Flux.Container.Resources,
 		SecurityContext: &cluster.Spec.Flux.Container.SecurityContext,
 	}
 	return initContainer, nil
@@ -129,16 +124,6 @@ func getContainers(
 			}
 		}
 
-		// Prepare container resources
-		// Note that for the QoS to be guaranteed (to assign more than one per node)
-		// We need specific requests for memory and CPU, and not just on the pod, but the init container too.
-		// There is a function in API that will return True if we need resources for init,
-		// and then a static amount is defined
-		resources, err := getContainerResources(&container)
-		if err != nil {
-			return containers, err
-		}
-
 		// Create the container
 		newContainer := corev1.Container{
 
@@ -151,7 +136,7 @@ func getContainers(
 			Stdin:           true,
 			TTY:             true,
 			Lifecycle:       lifecycle,
-			Resources:       resources,
+			Resources:       container.Resources,
 			SecurityContext: &container.SecurityContext,
 		}
 
