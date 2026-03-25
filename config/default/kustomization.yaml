@@ -12,7 +12,7 @@ namePrefix: operator-
 #commonLabels:
 #  someName: someValue
 
-bases:
+resources:
 - ../crd
 - ../rbac
 - ../manager
@@ -24,11 +24,9 @@ bases:
 # [PROMETHEUS] To enable prometheus monitor, uncomment all sections with 'PROMETHEUS'.
 #- ../prometheus
 
-patchesStrategicMerge:
-# Protect the /metrics endpoint by putting it behind auth.
-# If you want your controller-manager to expose the /metrics
-# endpoint w/o any authn/z, please comment the following line.
-- manager_auth_proxy_patch.yaml
+# patchesStrategicMerge:
+# we have removed this because the image is deprecated 3/2026
+#- manager_auth_proxy_patch.yaml
 
 # Mount the controller config file for loading manager configurations
 # through a ComponentConfig type
