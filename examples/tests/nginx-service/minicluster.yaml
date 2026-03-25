@@ -18,5 +18,5 @@ spec:
 
   # This is a list because a pod can support multiple containers
   containers:
-    - image: rockylinux:9
+    - image: ubuntu:noble
       command: curl -s flux-sample-services.flux-service.default.svc.cluster.local

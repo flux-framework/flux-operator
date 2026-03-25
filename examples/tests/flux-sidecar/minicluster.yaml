@@ -8,11 +8,11 @@ spec:
   containers:
 
     # This is some main application container (job submit to flux)
-    - image: rockylinux:9
+    - image: ubuntu:noble
       runFlux: true
       command: sleep 200
 
     # This sidecar can watch / interact with the queue
-    - image: rockylinux:9
+    - image: ubuntu:noble
       name: flux-queue
       command: sleep 10 && flux proxy ${fluxsocket} flux jobs -a

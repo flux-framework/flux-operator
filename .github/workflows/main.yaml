@@ -99,12 +99,12 @@ jobs:
         test: ${{ matrix.test[0] }}
       run: |
         # Pull required base images to the host
-        docker pull ghcr.io/converged-computing/flux-view-rocky:tag-9
+        docker pull ghcr.io/converged-computing/flux-view-ubuntu:tag-noble
         if [[ "${container}" != "" ]]; then docker pull ${container}; fi
         if [[ "${test}" == "nginx-service" ]]; then docker pull nginx; fi
 
         # Load these images into Kind (makes them available to the cluster)
-        kind load docker-image ghcr.io/converged-computing/flux-view-rocky:tag-9
+        kind load docker-image ghcr.io/converged-computing/flux-view-ubuntu:tag-noble
         if [[ "${container}" != "" ]]; then kind load docker-image ${container}; fi
         if [[ "${test}" == "nginx-service" ]]; then kind load docker-image nginx; fi
 

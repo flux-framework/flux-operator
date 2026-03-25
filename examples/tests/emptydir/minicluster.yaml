@@ -9,7 +9,7 @@ spec:
 
   # This example should show all the shared memory available on the node
   containers:
-    - image: rockylinux:9
+    - image: ubuntu:noble
       command: df -h /dev/shm
       volumes:
         # This must be all lowercase!

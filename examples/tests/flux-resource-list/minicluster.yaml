@@ -13,5 +13,5 @@ spec:
 
   # This is a list because a pod can support multiple containers
   containers:
-    - image: rockylinux:9
+    - image: ubuntu:noble
       command: flux resource list
