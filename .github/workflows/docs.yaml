@@ -8,39 +8,45 @@ jobs:
   generate-docs:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v4
+    - name: Checkout gh-pages
+      uses: actions/checkout@v4
       with:
         ref: gh-pages
 
-    - name: Create conda environment
-      run: conda create --quiet -c conda-forge --name fluxdocs sphinx-material
+    - name: Set up Python 3.12
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.12'
+
+    - name: Install Build Dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install "sphinx<9.0"
+        pip install sphinx-material sphinx_immaterial==0.12.6
 
     - name: Generate Docs
       run: |
-        export PATH="/usr/share/miniconda/bin:$PATH"
         root=$PWD
-        source activate fluxdocs
+        # Clone the operator source to build docs from
         git clone https://github.com/flux-framework/flux-operator /tmp/operator
         cd /tmp/operator/docs
-        pip install -r requirements.txt
-        pip install sphinx_immaterial==0.12.6
+        
+        # Install project-specific requirements
+        if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+        
         make html
-        echo
-        echo "ls"
-        ls
-        echo
-        echo "ls _build/html"
-        ls _build/html
+        
+        # 1. Move the .git folder from the checked-out gh-pages into the new build
         mv $root/.git _build/html/.git
+        # 2. Clear the current directory
         rm -rf $root
-        mv /tmp/operator/docs/_build/html $root
-        cd ${root}
-        echo "ls $root"
-        ls .
+        # 3. Move the new build (which now contains the .git folder) back to root
+        mv _build/html $root
+        
+        cd $root
         touch .nojekyll
         git add .nojekyll || echo "Already added"
         git add .
-        ls .
 
     - name: Deploy 🚀
       if: (github.event_name != 'pull_request')    
