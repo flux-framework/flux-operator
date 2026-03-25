@@ -55,6 +55,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
+        # matrix remains the same
         test: [["post", "", 100],
                ["batch", "", 100],
                ["timed", "", 100],
@@ -75,36 +76,45 @@ jobs:
 
     steps:
     - name: Clone the code
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
 
     - name: Setup Go
-      uses: actions/setup-go@v3
+      uses: actions/setup-go@v4
       with:
         go-version: ^1.23
 
     - name: Install zeromq
       run: sudo apt-get update && sudo apt-get install -y libsodium-dev libzmq3-dev libczmq-dev
 
-    - name: Start minikube
-      uses: medyagh/setup-minikube@697f2b7aaed5f70bf2a94ee21a4ec3dde7b12f92 # v0.0.9
+    # 1. Create the Kind cluster
+    - name: Create Kind Cluster
+      uses: helm/kind-action@v1.12.0
+      with:
+        cluster_name: kind
 
-    - name: Pull Docker Containers to MiniKube
+    # 2. Build and Load Images
+    - name: Prepare Images and Deploy
       env:
         container: ${{ matrix.test[1] }}
-        test: ${{ matrix[0] }}
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        test: ${{ matrix.test[0] }}
       run: |
-        export SHELL=/bin/bash
-        eval $(minikube -p minikube docker-env)
-        if [[ "${container}" != "" ]]; then
-            minikube ssh docker pull ${container}
-        fi
-        if [[ "${test}" == "nginx-service" ]]; then
-            minikube ssh docker pull nginx
-        fi
-        minikube ssh docker pull ghcr.io/converged-computing/flux-view-rocky:tag-9
-        make deploy-local
-        minikube image load ghcr.io/flux-framework/flux-operator:test
+        # Pull required base images to the host
+        docker pull ghcr.io/converged-computing/flux-view-rocky:tag-9
+        if [[ "${container}" != "" ]]; then docker pull ${container}; fi
+        if [[ "${test}" == "nginx-service" ]]; then docker pull nginx; fi
+
+        # Load these images into Kind (makes them available to the cluster)
+        kind load docker-image ghcr.io/converged-computing/flux-view-rocky:tag-9
+        if [[ "${container}" != "" ]]; then kind load docker-image ${container}; fi
+        if [[ "${test}" == "nginx-service" ]]; then kind load docker-image nginx; fi
+
+        # Build the local operator image
+        make deploy-local 
+        
+        # Load the operator image into Kind
+        kind load docker-image ghcr.io/flux-framework/flux-operator:test
+
+        # Apply the manifests
         kubectl apply -f examples/dist/flux-operator-local.yaml
 
     - name: Test ${{ matrix.test[0] }}
