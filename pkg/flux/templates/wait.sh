@@ -88,9 +88,9 @@ brokerOptions="-Scron.directory=${configroot}/etc/flux/system/cron.d \
 {{ if not .Spec.Logging.Quiet }} -Slog-stderr-level={{or .Spec.Flux.LogLevel 6}} {{ else }} -Slog-stderr-level=0 {{ end }} \
   -Slog-stderr-mode=local"
 
-
 # Run an interactive cluster, giving no command to flux start
 function run_interactive_cluster() {
+    echo "🧠 Running in interactive mode" {{ if .Spec.Logging.Quiet }}> /dev/null 2>&1{{ end }}
     echo "🌀 flux broker --config-path ${cfg} ${brokerOptions}"
     flux broker --config-path ${cfg} ${brokerOptions}
 }
