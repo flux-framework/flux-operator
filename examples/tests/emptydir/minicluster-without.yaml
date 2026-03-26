@@ -9,5 +9,5 @@ spec:
 
   # This example shows the default shared memory (64M) without the empty dir
   containers:
-    - image: rockylinux:9
+    - image: ubuntu:noble
       command: df -h /dev/shm

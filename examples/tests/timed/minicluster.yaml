@@ -13,7 +13,7 @@ spec:
 
   # This is a list because a pod can support multiple containers
   containers:
-    - image: rockylinux:9
+    - image: ubuntu:noble
       command: echo hello world
-      commands:
-        pre: dnf install -y time
+#      commands:
+#        pre: dnf install -y time

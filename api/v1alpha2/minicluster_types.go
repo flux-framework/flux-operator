@@ -536,8 +536,8 @@ type FluxContainer struct {
 	// +optional
 	ImagePullSecret string `json:"imagePullSecret"`
 
-	// +kubebuilder:default="ghcr.io/converged-computing/flux-view-rocky:tag-9"
-	// +default="ghcr.io/converged-computing/flux-view-rocky:tag-9"
+	// +kubebuilder:default="ghcr.io/converged-computing/flux-view-ubuntu:tag-noble"
+	// +default="ghcr.io/converged-computing/flux-view-ubuntu:tag-noble"
 	Image string `json:"image,omitempty"`
 
 	// Allow the user to dictate pulling
@@ -810,7 +810,7 @@ func (f *MiniCluster) Validate() bool {
 		f.Spec.Flux.Container.MountPath = "/mnt/flux"
 	}
 	if f.Spec.Flux.Container.Image == "" {
-		f.Spec.Flux.Container.Image = "ghcr.io/converged-computing/flux-view-rocky:tag-9"
+		f.Spec.Flux.Container.Image = "ghcr.io/converged-computing/flux-view-ubuntu:tag-noble"
 	}
 	if f.Spec.Flux.Scheduler.QueuePolicy == "" {
 		f.Spec.Flux.Scheduler.QueuePolicy = "fcfs"

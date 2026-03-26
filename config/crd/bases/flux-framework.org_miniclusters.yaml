@@ -556,7 +556,7 @@ spec:
                           the main application container has flux
                         type: boolean
                       image:
-                        default: ghcr.io/converged-computing/flux-view-rocky:tag-9
+                        default: ghcr.io/converged-computing/flux-view-ubuntu:tag-noble
                         type: string
                       imagePullSecret:
                         description: |-

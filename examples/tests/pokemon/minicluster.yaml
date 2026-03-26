@@ -5,6 +5,9 @@ metadata:
 spec:
   # Number of pods to create for MiniCluster
   size: 4
+  flux:
+    container:
+      image: ghcr.io/converged-computing/flux-view-ubuntu:tag-jammy
 
   # suppress all output except for test run
   logging:
