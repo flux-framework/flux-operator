@@ -1,0 +1,10 @@
+# Run this from this directory!
+# kind create cluster -f kind-config.yaml
+# kubectl apply -f ./examples/dist/flux-operator.yaml
+apiVersion: kind.x-k8s.io/v1alpha4
+kind: Cluster
+nodes:
+   - role: control-plane
+     extraMounts:
+      - hostPath: "."
+        containerPath: /tmp/workflow
