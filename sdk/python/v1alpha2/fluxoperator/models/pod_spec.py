@@ -19,6 +19,7 @@ import json
 
 from pydantic import BaseModel, ConfigDict, Field, StrictBool, StrictStr
 from typing import Any, ClassVar, Dict, List, Optional
+from fluxoperator.models.toleration import Toleration
 from typing import Optional, Set
 from typing_extensions import Self
 
@@ -32,13 +33,16 @@ class PodSpec(BaseModel):
     host_ipc: Optional[StrictBool] = Field(default=None, description="Use Host IPC", alias="hostIPC")
     host_pid: Optional[StrictBool] = Field(default=None, description="Use Host PID", alias="hostPID")
     labels: Optional[Dict[str, StrictStr]] = Field(default=None, description="Labels for each pod")
+    node_affinity: Optional[Dict[str, List[StrictStr]]] = Field(default=None, description="NodeAffinity is for a list of values assoicated with a label", alias="nodeAffinity")
     node_selector: Optional[Dict[str, StrictStr]] = Field(default=None, description="NodeSelectors for a pod", alias="nodeSelector")
-    resources: Optional[Dict[str, IntOrString]] = Field(default=None, description="Resources include limits and requests")
+    resources: Optional[Dict[str, K8sIoApimachineryPkgApiResourceQuantity]] = Field(default=None, description="Resources include limits and requests")
     restart_policy: Optional[StrictStr] = Field(default=None, description="Restart Policy", alias="restartPolicy")
     runtime_class_name: Optional[StrictStr] = Field(default=None, description="RuntimeClassName for the pod", alias="runtimeClassName")
     scheduler_name: Optional[StrictStr] = Field(default=None, description="Scheduler name for the pod", alias="schedulerName")
+    security_context: Optional[K8sIoApiCoreV1PodSecurityContext] = Field(default=None, alias="securityContext")
     service_account_name: Optional[StrictStr] = Field(default=None, description="Service account name for the pod", alias="serviceAccountName")
-    __properties: ClassVar[List[str]] = ["annotations", "automountServiceAccountToken", "dnsPolicy", "hostIPC", "hostPID", "labels", "nodeSelector", "resources", "restartPolicy", "runtimeClassName", "schedulerName", "serviceAccountName"]
+    tolerations: Optional[List[Toleration]] = Field(default=None, description="Tolerations for a pod")
+    __properties: ClassVar[List[str]] = ["annotations", "automountServiceAccountToken", "dnsPolicy", "hostIPC", "hostPID", "labels", "nodeAffinity", "nodeSelector", "resources", "restartPolicy", "runtimeClassName", "schedulerName", "securityContext", "serviceAccountName", "tolerations"]
 
     model_config = ConfigDict(
         populate_by_name=True,
@@ -86,6 +90,16 @@ class PodSpec(BaseModel):
                 if self.resources[_key]:
                     _field_dict[_key] = self.resources[_key].to_dict()
             _dict['resources'] = _field_dict
+        # override the default output from pydantic by calling `to_dict()` of security_context
+        if self.security_context:
+            _dict['securityContext'] = self.security_context.to_dict()
+        # override the default output from pydantic by calling `to_dict()` of each item in tolerations (list)
+        _items = []
+        if self.tolerations:
+            for _item in self.tolerations:
+                if _item:
+                    _items.append(_item.to_dict())
+            _dict['tolerations'] = _items
         return _dict
 
     @classmethod
@@ -104,9 +118,10 @@ class PodSpec(BaseModel):
             "hostIPC": obj.get("hostIPC"),
             "hostPID": obj.get("hostPID"),
             "labels": obj.get("labels"),
+            "nodeAffinity": obj.get("nodeAffinity"),
             "nodeSelector": obj.get("nodeSelector"),
             "resources": dict(
-                (_k, IntOrString.from_dict(_v))
+                (_k, K8sIoApimachineryPkgApiResourceQuantity.from_dict(_v))
                 for _k, _v in obj["resources"].items()
             )
             if obj.get("resources") is not None
@@ -114,7 +129,9 @@ class PodSpec(BaseModel):
             "restartPolicy": obj.get("restartPolicy"),
             "runtimeClassName": obj.get("runtimeClassName"),
             "schedulerName": obj.get("schedulerName"),
-            "serviceAccountName": obj.get("serviceAccountName")
+            "securityContext": K8sIoApiCoreV1PodSecurityContext.from_dict(obj["securityContext"]) if obj.get("securityContext") is not None else None,
+            "serviceAccountName": obj.get("serviceAccountName"),
+            "tolerations": [Toleration.from_dict(_item) for _item in obj["tolerations"]] if obj.get("tolerations") is not None else None
         })
         return _obj
 

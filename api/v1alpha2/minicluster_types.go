@@ -212,6 +212,7 @@ type PodSpec struct {
 
 	// Tolerations for a pod
 	// +optional
+	// +listType=atomic
 	Tolerations []Toleration `json:"tolerations,omitempty"`
 
 	// Pod DNS policy (defaults to ClusterFirst)
@@ -975,7 +976,7 @@ func (f *MiniCluster) validateExistingVolumes(existing map[string]ContainerVolum
 type MiniClusterList struct {
 	metav1.TypeMeta `json:",inline"`
 	metav1.ListMeta `json:"metadata,omitempty"`
-	Items           []MiniCluster `json:"items"`
+	Items []MiniCluster `json:"items"`
 }
 
 func init() {

@@ -28,6 +28,8 @@ class ContainerVolume(BaseModel):
     """ # noqa: E501
     claim_name: Optional[StrictStr] = Field(default=None, description="Claim name if the existing volume is a PVC", alias="claimName")
     config_map_name: Optional[StrictStr] = Field(default=None, description="Config map name if the existing volume is a config map You should also define items if you are using this", alias="configMapName")
+    csi_driver: Optional[StrictStr] = Field(default=None, description="Add a csi driver type volume", alias="csiDriver")
+    csi_driver_attributes: Optional[Dict[str, StrictStr]] = Field(default=None, description="Add attributes for the csi driver", alias="csiDriverAttributes")
     empty_dir: Optional[StrictBool] = Field(default=False, alias="emptyDir")
     empty_dir_medium: Optional[StrictStr] = Field(default=None, description="Add an empty directory custom type", alias="emptyDirMedium")
     empty_dir_size_limit: Optional[StrictStr] = Field(default=None, description="Add an empty directory sizeLimit", alias="emptyDirSizeLimit")
@@ -36,7 +38,7 @@ class ContainerVolume(BaseModel):
     path: Optional[StrictStr] = Field(default=None, description="Path and claim name are always required if a secret isn't defined")
     read_only: Optional[StrictBool] = Field(default=False, alias="readOnly")
     secret_name: Optional[StrictStr] = Field(default=None, description="An existing secret", alias="secretName")
-    __properties: ClassVar[List[str]] = ["claimName", "configMapName", "emptyDir", "emptyDirMedium", "emptyDirSizeLimit", "hostPath", "items", "path", "readOnly", "secretName"]
+    __properties: ClassVar[List[str]] = ["claimName", "configMapName", "csiDriver", "csiDriverAttributes", "emptyDir", "emptyDirMedium", "emptyDirSizeLimit", "hostPath", "items", "path", "readOnly", "secretName"]
 
     model_config = ConfigDict(
         populate_by_name=True,
@@ -91,6 +93,8 @@ class ContainerVolume(BaseModel):
         _obj = cls.model_validate({
             "claimName": obj.get("claimName"),
             "configMapName": obj.get("configMapName"),
+            "csiDriver": obj.get("csiDriver"),
+            "csiDriverAttributes": obj.get("csiDriverAttributes"),
             "emptyDir": obj.get("emptyDir") if obj.get("emptyDir") is not None else False,
             "emptyDirMedium": obj.get("emptyDirMedium"),
             "emptyDirSizeLimit": obj.get("emptyDirSizeLimit"),
