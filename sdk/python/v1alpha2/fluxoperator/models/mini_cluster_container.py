@@ -20,11 +20,9 @@ import json
 from pydantic import BaseModel, ConfigDict, Field, StrictBool, StrictInt, StrictStr
 from typing import Any, ClassVar, Dict, List, Optional
 from fluxoperator.models.commands import Commands
-from fluxoperator.models.container_resources import ContainerResources
 from fluxoperator.models.container_volume import ContainerVolume
 from fluxoperator.models.life_cycle import LifeCycle
 from fluxoperator.models.secret import Secret
-from fluxoperator.models.security_context import SecurityContext
 from typing import Optional, Set
 from typing_extensions import Self
 
@@ -38,6 +36,7 @@ class MiniClusterContainer(BaseModel):
     commands: Optional[Commands] = None
     environment: Optional[Dict[str, StrictStr]] = Field(default=None, description="Key/value pairs for the environment")
     image: Optional[StrictStr] = Field(default='ghcr.io/rse-ops/accounting:app-latest', description="Container image must contain flux and flux-sched install")
+    image_pull_policy: Optional[StrictStr] = Field(default=None, description="Allow the user to dictate pulling directly", alias="imagePullPolicy")
     image_pull_secret: Optional[StrictStr] = Field(default='', description="Allow the user to pull authenticated images By default no secret is selected. Setting this with the name of an already existing imagePullSecret will specify that secret in the pod spec.", alias="imagePullSecret")
     launcher: Optional[StrictBool] = Field(default=False, description="Indicate that the command is a launcher that will ask for its own jobs (and provided directly to flux start)")
     life_cycle: Optional[LifeCycle] = Field(default=None, alias="lifeCycle")
@@ -46,13 +45,13 @@ class MiniClusterContainer(BaseModel):
     no_wrap_entrypoint: Optional[StrictBool] = Field(default=False, description="Do not wrap the entrypoint to wait for flux, add to path, etc?", alias="noWrapEntrypoint")
     ports: Optional[List[StrictInt]] = Field(default=None, description="Ports to be exposed to other containers in the cluster We take a single list of integers and map to the same")
     pull_always: Optional[StrictBool] = Field(default=False, description="Allow the user to dictate pulling By default we pull if not present. Setting this to true will indicate to pull always", alias="pullAlways")
-    resources: Optional[ContainerResources] = None
+    resources: Optional[K8sIoApiCoreV1ResourceRequirements] = None
     run_flux: Optional[StrictBool] = Field(default=False, description="Application container intended to run flux (broker)", alias="runFlux")
     secrets: Optional[Dict[str, Secret]] = Field(default=None, description="Secrets that will be added to the environment The user is expected to create their own secrets for the operator to find")
-    security_context: Optional[SecurityContext] = Field(default=None, alias="securityContext")
+    security_context: Optional[K8sIoApiCoreV1SecurityContext] = Field(default=None, alias="securityContext")
     volumes: Optional[Dict[str, ContainerVolume]] = Field(default=None, description="Existing volumes that can be mounted")
     working_dir: Optional[StrictStr] = Field(default='', description="Working directory to run command from", alias="workingDir")
-    __properties: ClassVar[List[str]] = ["batch", "batchRaw", "command", "commands", "environment", "image", "imagePullSecret", "launcher", "lifeCycle", "logs", "name", "noWrapEntrypoint", "ports", "pullAlways", "resources", "runFlux", "secrets", "securityContext", "volumes", "workingDir"]
+    __properties: ClassVar[List[str]] = ["batch", "batchRaw", "command", "commands", "environment", "image", "imagePullPolicy", "imagePullSecret", "launcher", "lifeCycle", "logs", "name", "noWrapEntrypoint", "ports", "pullAlways", "resources", "runFlux", "secrets", "securityContext", "volumes", "workingDir"]
 
     model_config = ConfigDict(
         populate_by_name=True,
@@ -137,6 +136,7 @@ class MiniClusterContainer(BaseModel):
             "commands": Commands.from_dict(obj["commands"]) if obj.get("commands") is not None else None,
             "environment": obj.get("environment"),
             "image": obj.get("image") if obj.get("image") is not None else 'ghcr.io/rse-ops/accounting:app-latest',
+            "imagePullPolicy": obj.get("imagePullPolicy"),
             "imagePullSecret": obj.get("imagePullSecret") if obj.get("imagePullSecret") is not None else '',
             "launcher": obj.get("launcher") if obj.get("launcher") is not None else False,
             "lifeCycle": LifeCycle.from_dict(obj["lifeCycle"]) if obj.get("lifeCycle") is not None else None,
@@ -145,7 +145,7 @@ class MiniClusterContainer(BaseModel):
             "noWrapEntrypoint": obj.get("noWrapEntrypoint") if obj.get("noWrapEntrypoint") is not None else False,
             "ports": obj.get("ports"),
             "pullAlways": obj.get("pullAlways") if obj.get("pullAlways") is not None else False,
-            "resources": ContainerResources.from_dict(obj["resources"]) if obj.get("resources") is not None else None,
+            "resources": K8sIoApiCoreV1ResourceRequirements.from_dict(obj["resources"]) if obj.get("resources") is not None else None,
             "runFlux": obj.get("runFlux") if obj.get("runFlux") is not None else False,
             "secrets": dict(
                 (_k, Secret.from_dict(_v))
@@ -153,7 +153,7 @@ class MiniClusterContainer(BaseModel):
             )
             if obj.get("secrets") is not None
             else None,
-            "securityContext": SecurityContext.from_dict(obj["securityContext"]) if obj.get("securityContext") is not None else None,
+            "securityContext": K8sIoApiCoreV1SecurityContext.from_dict(obj["securityContext"]) if obj.get("securityContext") is not None else None,
             "volumes": dict(
                 (_k, ContainerVolume.from_dict(_v))
                 for _k, _v in obj["volumes"].items()

@@ -17,18 +17,20 @@ import pprint
 import re  # noqa: F401
 import json
 
-from pydantic import BaseModel, ConfigDict, Field, StrictBool, StrictStr
+from pydantic import BaseModel, ConfigDict, Field, StrictStr
 from typing import Any, ClassVar, Dict, List, Optional
 from typing import Optional, Set
 from typing_extensions import Self
 
-class Network(BaseModel):
+class Toleration(BaseModel):
     """
-    Network
+    Toleration
     """ # noqa: E501
-    disable_affinity: Optional[StrictBool] = Field(default=None, description="Disable affinity rules that guarantee one network address / node", alias="disableAffinity")
-    headless_name: Optional[StrictStr] = Field(default=None, description="Name for cluster headless service", alias="headlessName")
-    __properties: ClassVar[List[str]] = ["disableAffinity", "headlessName"]
+    effect: Optional[StrictStr] = Field(default=None, description="The effect to have")
+    key: Optional[StrictStr] = Field(default=None, description="The label key to tolerate")
+    operator: Optional[StrictStr] = Field(default=None, description="The operator to use (e.g., Equal)")
+    value: Optional[StrictStr] = Field(default=None, description="E.g., NoSchedule")
+    __properties: ClassVar[List[str]] = ["effect", "key", "operator", "value"]
 
     model_config = ConfigDict(
         populate_by_name=True,
@@ -48,7 +50,7 @@ class Network(BaseModel):
 
     @classmethod
     def from_json(cls, json_str: str) -> Optional[Self]:
-        """Create an instance of Network from a JSON string"""
+        """Create an instance of Toleration from a JSON string"""
         return cls.from_dict(json.loads(json_str))
 
     def to_dict(self) -> Dict[str, Any]:
@@ -73,7 +75,7 @@ class Network(BaseModel):
 
     @classmethod
     def from_dict(cls, obj: Optional[Dict[str, Any]]) -> Optional[Self]:
-        """Create an instance of Network from a dict"""
+        """Create an instance of Toleration from a dict"""
         if obj is None:
             return None
 
@@ -81,8 +83,10 @@ class Network(BaseModel):
             return cls.model_validate(obj)
 
         _obj = cls.model_validate({
-            "disableAffinity": obj.get("disableAffinity"),
-            "headlessName": obj.get("headlessName")
+            "effect": obj.get("effect"),
+            "key": obj.get("key"),
+            "operator": obj.get("operator"),
+            "value": obj.get("value")
         })
         return _obj
 

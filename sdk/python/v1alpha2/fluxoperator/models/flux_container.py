@@ -19,7 +19,6 @@ import json
 
 from pydantic import BaseModel, ConfigDict, Field, StrictBool, StrictStr
 from typing import Any, ClassVar, Dict, List, Optional
-from fluxoperator.models.container_resources import ContainerResources
 from typing import Optional, Set
 from typing_extensions import Self
 
@@ -28,15 +27,16 @@ class FluxContainer(BaseModel):
     A FluxContainer is equivalent to a MiniCluster container but has a different default image
     """ # noqa: E501
     disable: Optional[StrictBool] = Field(default=False, description="Disable the sidecar container, assuming that the main application container has flux")
-    image: Optional[StrictStr] = 'ghcr.io/converged-computing/flux-view-rocky:tag-9'
+    image: Optional[StrictStr] = 'ghcr.io/converged-computing/flux-view-ubuntu:tag-noble'
     image_pull_secret: Optional[StrictStr] = Field(default='', description="Allow the user to pull authenticated images By default no secret is selected. Setting this with the name of an already existing imagePullSecret will specify that secret in the pod spec.", alias="imagePullSecret")
     mount_path: Optional[StrictStr] = Field(default='/mnt/flux', description="Mount path for flux to be at (will be added to path)", alias="mountPath")
     name: Optional[StrictStr] = Field(default='flux-view', description="Container name is only required for non flux runners")
     pull_always: Optional[StrictBool] = Field(default=False, description="Allow the user to dictate pulling By default we pull if not present. Setting this to true will indicate to pull always", alias="pullAlways")
     python_path: Optional[StrictStr] = Field(default='', description="Customize python path for flux", alias="pythonPath")
-    resources: Optional[ContainerResources] = None
+    resources: Optional[K8sIoApiCoreV1ResourceRequirements] = None
+    security_context: Optional[K8sIoApiCoreV1SecurityContext] = Field(default=None, alias="securityContext")
     working_dir: Optional[StrictStr] = Field(default='', description="Working directory to run command from", alias="workingDir")
-    __properties: ClassVar[List[str]] = ["disable", "image", "imagePullSecret", "mountPath", "name", "pullAlways", "pythonPath", "resources", "workingDir"]
+    __properties: ClassVar[List[str]] = ["disable", "image", "imagePullSecret", "mountPath", "name", "pullAlways", "pythonPath", "resources", "securityContext", "workingDir"]
 
     model_config = ConfigDict(
         populate_by_name=True,
@@ -80,6 +80,9 @@ class FluxContainer(BaseModel):
         # override the default output from pydantic by calling `to_dict()` of resources
         if self.resources:
             _dict['resources'] = self.resources.to_dict()
+        # override the default output from pydantic by calling `to_dict()` of security_context
+        if self.security_context:
+            _dict['securityContext'] = self.security_context.to_dict()
         return _dict
 
     @classmethod
@@ -93,13 +96,14 @@ class FluxContainer(BaseModel):
 
         _obj = cls.model_validate({
             "disable": obj.get("disable") if obj.get("disable") is not None else False,
-            "image": obj.get("image") if obj.get("image") is not None else 'ghcr.io/converged-computing/flux-view-rocky:tag-9',
+            "image": obj.get("image") if obj.get("image") is not None else 'ghcr.io/converged-computing/flux-view-ubuntu:tag-noble',
             "imagePullSecret": obj.get("imagePullSecret") if obj.get("imagePullSecret") is not None else '',
             "mountPath": obj.get("mountPath") if obj.get("mountPath") is not None else '/mnt/flux',
             "name": obj.get("name") if obj.get("name") is not None else 'flux-view',
             "pullAlways": obj.get("pullAlways") if obj.get("pullAlways") is not None else False,
             "pythonPath": obj.get("pythonPath") if obj.get("pythonPath") is not None else '',
-            "resources": ContainerResources.from_dict(obj["resources"]) if obj.get("resources") is not None else None,
+            "resources": K8sIoApiCoreV1ResourceRequirements.from_dict(obj["resources"]) if obj.get("resources") is not None else None,
+            "securityContext": K8sIoApiCoreV1SecurityContext.from_dict(obj["securityContext"]) if obj.get("securityContext") is not None else None,
             "workingDir": obj.get("workingDir") if obj.get("workingDir") is not None else ''
         })
         return _obj

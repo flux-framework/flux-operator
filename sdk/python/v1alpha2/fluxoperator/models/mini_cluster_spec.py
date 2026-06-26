@@ -33,6 +33,7 @@ class MiniClusterSpec(BaseModel):
     MiniCluster is an HPC cluster in Kubernetes you can control Either to submit a single job (and go away) or for a persistent single- or multi- user cluster
     """ # noqa: E501
     archive: Optional[MiniClusterArchive] = None
+    backoff_limit: Optional[StrictInt] = Field(default=None, description="BackoffLimit is the number of retries for the job before failing", alias="backoffLimit")
     cleanup: Optional[StrictBool] = Field(default=False, description="Cleanup the pods and storage when the index broker pod is complete")
     containers: List[MiniClusterContainer] = Field(description="Containers is one or more containers to be created in a pod. There should only be one container to run flux with runFlux")
     deadline_seconds: Optional[StrictInt] = Field(default=31500000, description="Should the job be limited to a particular number of seconds? Approximately one year. This cannot be zero or job won't start", alias="deadlineSeconds")
@@ -48,7 +49,7 @@ class MiniClusterSpec(BaseModel):
     share_process_namespace: Optional[StrictBool] = Field(default=False, description="Share process namespace?", alias="shareProcessNamespace")
     size: Optional[StrictInt] = Field(default=1, description="Size (number of job pods to run, size of minicluster in pods) This is also the minimum number required to start Flux")
     tasks: Optional[StrictInt] = Field(default=1, description="Total number of CPUs being run across entire cluster")
-    __properties: ClassVar[List[str]] = ["archive", "cleanup", "containers", "deadlineSeconds", "flux", "interactive", "jobLabels", "logging", "maxSize", "minSize", "network", "pod", "services", "shareProcessNamespace", "size", "tasks"]
+    __properties: ClassVar[List[str]] = ["archive", "backoffLimit", "cleanup", "containers", "deadlineSeconds", "flux", "interactive", "jobLabels", "logging", "maxSize", "minSize", "network", "pod", "services", "shareProcessNamespace", "size", "tasks"]
 
     model_config = ConfigDict(
         populate_by_name=True,
@@ -131,6 +132,7 @@ class MiniClusterSpec(BaseModel):
 
         _obj = cls.model_validate({
             "archive": MiniClusterArchive.from_dict(obj["archive"]) if obj.get("archive") is not None else None,
+            "backoffLimit": obj.get("backoffLimit"),
             "cleanup": obj.get("cleanup") if obj.get("cleanup") is not None else False,
             "containers": [MiniClusterContainer.from_dict(_item) for _item in obj["containers"]] if obj.get("containers") is not None else None,
             "deadlineSeconds": obj.get("deadlineSeconds") if obj.get("deadlineSeconds") is not None else 31500000,

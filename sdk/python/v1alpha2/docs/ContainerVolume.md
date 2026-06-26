@@ -7,6 +7,8 @@ Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
 **claim_name** | **str** | Claim name if the existing volume is a PVC | [optional] 
 **config_map_name** | **str** | Config map name if the existing volume is a config map You should also define items if you are using this | [optional] 
+**csi_driver** | **str** | Add a csi driver type volume | [optional] 
+**csi_driver_attributes** | **Dict[str, str]** | Add attributes for the csi driver | [optional] 
 **empty_dir** | **bool** |  | [optional] [default to False]
 **empty_dir_medium** | **str** | Add an empty directory custom type | [optional] 
 **empty_dir_size_limit** | **str** | Add an empty directory sizeLimit | [optional] 

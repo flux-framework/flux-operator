@@ -6,7 +6,7 @@
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
 **disable_affinity** | **bool** | Disable affinity rules that guarantee one network address / node | [optional] 
-**headless_name** | **str** | Name for cluster headless service | [optional] [default to 'flux-service']
+**headless_name** | **str** | Name for cluster headless service | [optional] 
 
 ## Example
 

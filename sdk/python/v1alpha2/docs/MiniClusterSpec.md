@@ -7,6 +7,7 @@ MiniCluster is an HPC cluster in Kubernetes you can control Either to submit a s
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
 **archive** | [**MiniClusterArchive**](MiniClusterArchive.md) |  | [optional] 
+**backoff_limit** | **int** | BackoffLimit is the number of retries for the job before failing | [optional] 
 **cleanup** | **bool** | Cleanup the pods and storage when the index broker pod is complete | [optional] [default to False]
 **containers** | [**List[MiniClusterContainer]**](MiniClusterContainer.md) | Containers is one or more containers to be created in a pod. There should only be one container to run flux with runFlux | 
 **deadline_seconds** | **int** | Should the job be limited to a particular number of seconds? Approximately one year. This cannot be zero or job won&#39;t start | [optional] [default to 31500000]
