@@ -891,6 +891,44 @@ Providing (or not providing) a command is going to dictate the behavior of your 
     command: lmp -v x 2 -v y 2 -v z 2 -in in.reaxc.hns -nocite
 ```
 
+The `command` is the primary way to define your workload. If instead of an
+executable already baked into your container you want to provide script content
+inline, use [script](#script). For a batch workload, use [batch](#batch). Only
+one of `command`, `script`, or `batch` may be set for a flux runner.
+
+#### script
+
+`script` is a convenience form of `command`: rather than baking an executable
+into your image, you provide the script content directly and the operator writes
+it to a file and runs that file as the command. It is a special case of
+`command` (same run path — submit, or `flux start` under [launcher](#launcher)
+mode) for when you don't want to build a container just to carry a script.
+
+```yaml
+    script: |
+      #!/bin/bash
+      flux run -N2 hostname
+      flux run -n4 my-analysis --input /data/in.csv
+```
+
+#### batch
+
+`batch` defines a batch workload. When set, the content is written verbatim to a
+file and run with `flux batch`. Provide the batch script exactly as you want it
+executed — the operator does not split lines or wrap them in `flux submit`, so
+you have full control (including `#flux:` directives).
+
+```yaml
+    batch: |
+      #!/bin/bash
+      #flux: -N2
+      flux submit -n2 app-step-one
+      flux submit -n2 app-step-two
+      flux queue idle
+```
+
+Note that `batch` and [launcher](#launcher) are mutually exclusive.
+
 #### resources
 
 Resources can include limits and requests. Known keys include "memory" and "cpu" (should be provided in some
@@ -1221,26 +1259,13 @@ Note that the output is recommended to be a shared volume so all pods can write 
 If you can't use the filesystem for saving output, it's recommended to have some other
 service used in your jobs to send output.
 
-#### batchRaw
-
-By default, the commands you provide to batch will be wrapped in flux submit, and with `--output` and `--flags waitable` added.
-This works for a set of commands that are intended to be launched as such, but if you want custom logic in your script (such
-as using flux exec or flux filemap) you can set batchRaw to true, and then provide the full flux directives in your
-minicluster.yaml. As an example, here is using [flux filemap](https://flux-framework.readthedocs.io/projects/flux-core/en/latest/man1/flux-filemap.html) 
-to copy data from the broker to all nodes in a batch job, and run the job.
-
-```yaml
-command: |
-  flux filemap map -C /data mpi.sif
-  flux exec -x 0 -r all flux filemap get -C /data
-  flux submit singularity exec /data/mpi.sif /opt/mpitest
-  flux exec -x 0 -r all rm -rf /data
-  flux queue idle
-  flux filemap unmap
-```
-
-See our [staging tutorial](../tutorials/staging.md) for more details on how this works! You could use it for a Singularity container (that needs to be seen by 
-all nodes) or for data.
+> **Note:** earlier versions had a `batchRaw` boolean to opt out of wrapping each
+> batch line in `flux submit`. That behavior is now the default and only mode —
+> `batch` content is written verbatim and handed to `flux batch`, so you provide
+> the full flux directives yourself. See the [batch](#batch) section above and
+> the [staging tutorial](../tutorials/staging.md) for an example using
+> [flux filemap](https://flux-framework.readthedocs.io/projects/flux-core/en/latest/man1/flux-filemap.html)
+> to copy data across nodes.
 
 #### diagnostics
 

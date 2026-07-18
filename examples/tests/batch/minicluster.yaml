@@ -14,8 +14,14 @@ spec:
   containers:
     - image: ubuntu:noble
 
-      # Commands should be submit as batch
-      batch: true
+      # The batch content is written verbatim and run with flux batch.
+      # Provide your own flux submit lines (they are not wrapped for you).
+      batch: |
+        #!/bin/bash
+        flux submit --output=/tmp/fluxout/job-0.out echo hello world 1
+        flux submit --output=/tmp/fluxout/job-1.out echo hello world 2
+        flux submit --output=/tmp/fluxout/job-2.out echo hello world 3
+        flux queue idle
 
       # List the contents before exiting
       commands:
@@ -27,12 +33,3 @@ spec:
       volumes:
         data:
           path: /tmp/fluxout
-
-      # This command, as a batch command, will be written to a script and given to flux batch
-      command: |
-          echo hello world 1
-          echo hello world 2
-          echo hello world 3
-          echo hello world 4
-          echo hello world 5
-          echo hello world 6

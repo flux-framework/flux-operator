@@ -39,10 +39,16 @@ fi
 {{end}}
 
 {{define "custom-script"}}
-{{ if .Container.Commands.Script }}
-cat <<EOF > /tmp/custom-entrypoint.sh
+{{ if .Container.Script }}
+cat <<'CUSTOMSCRIPTEOF' > /tmp/custom-entrypoint.sh
+{{ .Container.Script }}
+CUSTOMSCRIPTEOF
+chmod +x /tmp/custom-entrypoint.sh
+command="/bin/bash /tmp/custom-entrypoint.sh"
+{{ else if .Container.Commands.Script }}
+cat <<'CUSTOMSCRIPTEOF' > /tmp/custom-entrypoint.sh
 {{ .Container.Commands.Script }}
-EOF
+CUSTOMSCRIPTEOF
 chmod +x /tmp/custom-entrypoint.sh
 command="/bin/bash /tmp/custom-entrypoint.sh"
 {{end}}

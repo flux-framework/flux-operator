@@ -586,6 +586,13 @@ type MiniClusterContainer struct {
 	// +optional
 	Command string `json:"command"`
 
+	// Script is a convenience form of command: instead of baking an executable
+	// into your image, provide the script content here and the operator writes
+	// it to a file and runs that file as the command. It is a special case of
+	// command (same run path: submit, or flux start under launcher mode).
+	// +optional
+	Script string `json:"script"`
+
 	// Allow the user to dictate pulling
 	// By default we pull if not present. Setting
 	// this to true will indicate to pull always
@@ -618,13 +625,12 @@ type MiniClusterContainer struct {
 	// +optional
 	Launcher bool `json:"launcher"`
 
-	// Indicate that the command is a batch job that will be written to a file to submit
+	// Batch indicates a batch workload: if non-empty, the content is written
+	// to a file verbatim and run with `flux batch`. Provide the batch script
+	// exactly as you want it executed (e.g. your own flux submit lines); the
+	// operator does not split or wrap it.
 	// +optional
-	Batch bool `json:"batch"`
-
-	// Don't wrap batch commands in flux submit (provide custom logic myself)
-	// +optional
-	BatchRaw bool `json:"batchRaw"`
+	Batch string `json:"batch"`
 
 	// Log output directory
 	// +optional
@@ -899,7 +905,7 @@ func (f *MiniCluster) Validate() bool {
 		fmt.Printf("🤓 %s.FluxRunner %t\n", name, container.RunFlux)
 
 		// Launcher mode does not work with batch
-		if container.Launcher && container.Batch {
+		if container.Launcher && container.Batch != "" {
 			fmt.Printf("😥️ %s is indicated for batch and launcher, choose one.\n", name)
 			return false
 		}
@@ -916,10 +922,23 @@ func (f *MiniCluster) Validate() bool {
 			}
 		}
 
-		// If a custom script is provided AND a command, no go
-		if (container.Commands.Script != "" && container.Command != "") && container.RunFlux {
-			fmt.Printf("😥️ %s has both a script and command provided, choose one\n", name)
-			return false
+		// command, script, and batch are three ways to define the same
+		// workload -- at most one may be provided for a flux runner.
+		if container.RunFlux {
+			ways := 0
+			if container.Command != "" {
+				ways += 1
+			}
+			if container.Script != "" || container.Commands.Script != "" {
+				ways += 1
+			}
+			if container.Batch != "" {
+				ways += 1
+			}
+			if ways > 1 {
+				fmt.Printf("😥️ %s sets more than one of command, script, or batch, choose one\n", name)
+				return false
+			}
 		}
 	}
 	if fluxRunners != 1 {

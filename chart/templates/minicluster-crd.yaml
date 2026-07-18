@@ -66,13 +66,12 @@ spec:
                 items:
                   properties:
                     batch:
-                      description: Indicate that the command is a batch job that will
-                        be written to a file to submit
-                      type: boolean
-                    batchRaw:
-                      description: Don't wrap batch commands in flux submit (provide
-                        custom logic myself)
-                      type: boolean
+                      description: |-
+                        Batch indicates a batch workload: if non-empty, the content is written
+                        to a file verbatim and run with `flux batch`. Provide the batch script
+                        exactly as you want it executed (e.g. your own flux submit lines); the
+                        operator does not split or wrap it.
+                      type: string
                     command:
                       description: Single user executable to provide to flux start
                       type: string
@@ -199,6 +198,13 @@ spec:
                     runFlux:
                       description: Application container intended to run flux (broker)
                       type: boolean
+                    script:
+                      description: |-
+                        Script is a convenience form of command: instead of baking an executable
+                        into your image, provide the script content here and the operator writes
+                        it to a file and runs that file as the command. It is a special case of
+                        command (same run path: submit, or flux start under launcher mode).
+                      type: string
                     secrets:
                       additionalProperties:
                         description: |-
@@ -1166,13 +1172,12 @@ spec:
                 items:
                   properties:
                     batch:
-                      description: Indicate that the command is a batch job that will
-                        be written to a file to submit
-                      type: boolean
-                    batchRaw:
-                      description: Don't wrap batch commands in flux submit (provide
-                        custom logic myself)
-                      type: boolean
+                      description: |-
+                        Batch indicates a batch workload: if non-empty, the content is written
+                        to a file verbatim and run with `flux batch`. Provide the batch script
+                        exactly as you want it executed (e.g. your own flux submit lines); the
+                        operator does not split or wrap it.
+                      type: string
                     command:
                       description: Single user executable to provide to flux start
                       type: string
@@ -1299,6 +1304,13 @@ spec:
                     runFlux:
                       description: Application container intended to run flux (broker)
                       type: boolean
+                    script:
+                      description: |-
+                        Script is a convenience form of command: instead of baking an executable
+                        into your image, provide the script content here and the operator writes
+                        it to a file and runs that file as the command. It is a special case of
+                        command (same run path: submit, or flux start under launcher mode).
+                      type: string
                     secrets:
                       additionalProperties:
                         description: |-
