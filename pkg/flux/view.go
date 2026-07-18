@@ -117,18 +117,29 @@ cp -R /opt/view/* %s/view`,
 	)
 
 	if !cluster.Spec.Flux.Container.Disable {
-		spackView = `# Now prepare to copy finished spack view over
+		spackView = `# Now prepare to copy finished view over
 echo "Moving content from /opt/view to be in shared volume at $viewroot"
-# Note that /opt/view is a symlink to here!
-view=$(ls /opt/views/._view/)
-view="/opt/views/._view/${view}"
+if [ -f /opt/view.tar.gz ]; then
+  # conda-pack view: a single relocatable tarball. Extract it into the shared
+  # volume and run conda-unpack to rewrite prefixes to the new path.
+  echo "Detected a conda-pack view (/opt/view.tar.gz); extracting + relocating"
+  mkdir -p $viewroot/view
+  tar -xzf /opt/view.tar.gz -C $viewroot/view
+  $viewroot/view/bin/conda-unpack
+else
+  # spack view: relocatable via $ORIGIN RPATHs. Move the view symlinks and the
+  # software tree they point at.
+  # Note that /opt/view is a symlink to here!
+  view=$(ls /opt/views/._view/)
+  view="/opt/views/._view/${view}"
 
-# Give a little extra wait time
-# sleep 10
+  # Give a little extra wait time
+  # sleep 10
 
-# We have to move both of these paths, *sigh*
-cp -R ${view}/* $viewroot/view
-cp -R /opt/software $viewroot/
+  # We have to move both of these paths, *sigh*
+  cp -R ${view}/* $viewroot/view
+  cp -R /opt/software $viewroot/
+fi
 `
 	}
 
