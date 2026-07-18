@@ -81,8 +81,9 @@ export PYTHONPATH=${PYTHONPATH:-""}:{{ if .Spec.Flux.Container.PythonPath }}{{ .
 echo "PYTHONPATH is ${PYTHONPATH}" {{ if .Spec.Logging.Quiet }}> /dev/null 2>&1{{ end }}
 echo "PATH is $PATH" {{ if .Spec.Logging.Quiet }}> /dev/null 2>&1{{ end }}
 
-find $viewroot . -name libpython*.so* {{ if .Spec.Logging.Quiet }}> /dev/null 2>&1{{ end }}
-ls -l /mnt/flux/view/lib/libpython3.11.so.1.0 {{ if .Spec.Logging.Quiet }}> /dev/null 2>&1{{ end }}
+# (diagnostic) show the python shared library actually present in the view,
+# whatever its version -- never hard-code a version or the mount path here.
+ls -l $viewroot/lib/libpython*.so* {{ if .Spec.Logging.Quiet }}> /dev/null 2>&1{{ end }} || true
 {{ if .Spec.Flux.Scheduler.Simple }}{{ else }}export FLUX_RC_EXTRA=$viewroot/etc/flux/rc1.d{{ end }}
 
 # Write a script to load fluxion

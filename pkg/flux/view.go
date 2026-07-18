@@ -117,18 +117,35 @@ cp -R /opt/view/* %s/view`,
 	)
 
 	if !cluster.Spec.Flux.Container.Disable {
-		spackView = `# Now prepare to copy finished spack view over
+		spackView = `# Now prepare to copy the finished view over
 echo "Moving content from /opt/view to be in shared volume at $viewroot"
-# Note that /opt/view is a symlink to here!
-view=$(ls /opt/views/._view/)
-view="/opt/views/._view/${view}"
+if [ -f /opt/view.tar.gz ]; then
+  # Packaged view: a single tarball prefix. Extract it into the shared volume,
+  # then run the view's own relocation hook (if it ships one) so it can fix up
+  # absolute paths for the new location. The operator stays agnostic to HOW a
+  # view relocates: it just runs ./relocate. (A conda-pack view, for example,
+  # ships a ./relocate that does its fixup; a spack tarball might need none.)
+  echo "Detected a packaged view (/opt/view.tar.gz); extracting to $viewroot/view"
+  mkdir -p $viewroot/view
+  tar -xzf /opt/view.tar.gz -C $viewroot/view
+  if [ -x $viewroot/view/relocate ]; then
+    echo "Running view relocation hook"
+    ( cd $viewroot/view && ./relocate )
+  fi
+else
+  # spack view: relocatable via $ORIGIN RPATHs. Move the view symlinks and the
+  # software tree they point at.
+  # Note that /opt/view is a symlink to here!
+  view=$(ls /opt/views/._view/)
+  view="/opt/views/._view/${view}"
 
-# Give a little extra wait time
-# sleep 10
+  # Give a little extra wait time
+  # sleep 10
 
-# We have to move both of these paths, *sigh*
-cp -R ${view}/* $viewroot/view
-cp -R /opt/software $viewroot/
+  # We have to move both of these paths, *sigh*
+  cp -R ${view}/* $viewroot/view
+  cp -R /opt/software $viewroot/
+fi
 `
 	}
 

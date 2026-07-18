@@ -205,6 +205,57 @@ When enabled, meaning that we use flux from a view within the container, these c
 
 
 Note that we have [arm builds](https://github.com/converged-computing/flux-views/tree/main/arm) available for each of rocky and ubuntu as well.
+
+##### How a view is organized
+
+A flux view is a **relocatable prefix** that the operator copies out of the flux
+container into a shared volume at `<mountPath>/view` (default `/mnt/flux/view`),
+where your application container then finds Flux. A spack view is the reference
+implementation, but **anything that satisfies the contract below works** — spack
+"with this logic", a [conda-pack](https://conda.github.io/conda-pack/)'d
+environment, or a hand-rolled prefix.
+
+**1. Layout.** Under the view root the operator expects a standard prefix:
+
+| Path | Purpose |
+| --- | --- |
+| `bin/` | executables, including `flux` and `pythonX.Y`; added to `PATH` |
+| `lib/` | shared libraries (`libflux-*`, `libpython*`, the fluxion modules); added to `LD_LIBRARY_PATH` |
+| `lib/pythonX.Y/site-packages/` | Python packages, i.e. the flux bindings; added to `PYTHONPATH` |
+| `etc/flux/rc1.d/` | broker rc scripts (used when loading fluxion) |
+
+The Python version is **discovered, not hard-coded**: the operator globs
+`lib/python3.*` to find the version and derives `PYTHONPATH` (and the
+`python3`/`python` symlinks) from it, so a view with Python 3.11 or 3.12 both
+work. If your Python lives somewhere non-standard, set
+`flux.container.pythonPath` explicitly (as in the example above).
+
+**2. Relocatability.** The view is built at `/opt/view` but *runs* at
+`<mountPath>/view` — a different absolute path — so the prefix must survive the
+move. Two mechanisms are supported, and the operator auto-detects which by
+inspecting the container:
+
+- **spack view** (default): binaries use `$ORIGIN`-relative RPATHs and relocate
+  in place. The operator moves the spack view directory
+  (`/opt/views/._view/<hash>`) together with its software tree (`/opt/software`).
+- **packaged view**: the container ships a single `/opt/view.tar.gz`. The operator
+  extracts it into the shared volume and, if the extracted view contains an
+  executable `relocate` script at its root, runs it. This hook is the view's own
+  responsibility and the operator is agnostic to what it does — a
+  [conda-pack](https://conda.github.io/conda-pack/) build, for example, provides
+  a `relocate` that calls `conda-unpack`; another build might `patchelf` its
+  RPATHs or need no hook at all.
+
+If you bring your own build, produce **one of these two**: an
+`$ORIGIN`-relocatable spack layout, or a `/opt/view.tar.gz` that (if it isn't
+already relocatable in place) carries a `relocate` hook at the view root. A plain
+prefix copied with `cp` will **not** work, because its absolute build path
+(`/opt/view`) is baked into RPATHs and script shebangs and would dangle at the
+new location. See
+[flux-views](https://github.com/converged-computing/flux-views) for reference
+builds.
+
+
 If you don't want to use Flux from a view (and want to use the v1apha1 design of the Flux Operator that had the application alongside Flux) you can do that by way of disabling the flux view:
 
 ```yaml
