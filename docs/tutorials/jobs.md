@@ -70,56 +70,25 @@ you'll likely need to do that when you shell in.
 ## 4. Submit batch jobs
 
 If you are submitting many jobs, you are better off providing them to flux at once as a batch submission.
-This way, we won't stress any Kubernetes APIs to submit multiple. To do this, you can define a command as before,
-but then set batch to true. Here is the "containers" section of a MiniCluster crd:
+This way, we won't stress any Kubernetes APIs to submit multiple. To do this, set `batch` to the batch
+script content. The content is written verbatim to a file and run with `flux batch` — you provide the
+`flux submit` lines yourself (they are not wrapped or numbered for you), which gives you full control over
+flags, output paths, and `#flux:` directives. Here is the "containers" section of a MiniCluster crd:
 
 ```yaml
 containers:
   - image: rockylinux:9
 
-    # Indicate this should be a batch job
-    batch: true
-
-    # This command, as a batch command, will be written to a script and given to flux batch
-    command: |
-      echo hello world 1
-      echo hello world 2
-      echo hello world 3
-      echo hello world 4
-      echo hello world 5
-      echo hello world 6
+    # The batch content is written verbatim and run with flux batch.
+    batch: |
+      #!/bin/bash
+      flux submit --output=/tmp/fluxout/job-1.out echo hello world 1
+      flux submit --output=/tmp/fluxout/job-2.out echo hello world 2
+      flux submit --output=/tmp/fluxout/job-3.out echo hello world 3
+      flux queue idle
 ```
 
-By default, output will be written to "/tmp/fluxout" for each of .out and .err files, and the
-jobs are numbered by the order you provide above.
-
-```console
-> /tmp/fluxout
-job-0.err  job-1.out  job-3.err  job-4.out  job-6.err  job-7.out  job-9.err
-job-0.out  job-2.err  job-3.out  job-5.err  job-6.out  job-8.err  job-9.out
-job-1.err  job-2.out  job-4.err  job-5.out  job-7.err  job-8.out
-```
-
-To change this path:
-
-```yaml
-containers:
-  - image: rockylinux:9
-
-    # Indicate this should be a batch job
-    batch: true
-    logs: /tmp/another-out
-
-    # This command, as a batch command, will be written to a script and given to flux batch
-    command: |
-      echo hello world 1
-      echo hello world 2
-      echo hello world 3
-      echo hello world 4
-      echo hello world 5
-      echo hello world 6
-```
-
-Note that the output is recommended to be a shared volume so all pods can write to it.
-If you can't use the filesystem for saving output, it's recommended to have some other
-service used in your jobs to send output.
+Because you write the `flux submit` lines yourself, you control exactly where each job's output goes
+(via `--output`/`--error`) and any per-job flags. Set the output to a shared volume so all pods can write
+to it. If you can't use the filesystem for saving output, it's recommended to have some other service used
+in your jobs to send output.

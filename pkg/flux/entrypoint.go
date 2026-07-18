@@ -13,7 +13,6 @@ package flux
 import (
 	"bytes"
 	"fmt"
-	"strings"
 
 	api "github.com/flux-framework/flux-operator/api/v1alpha2"
 )
@@ -90,9 +89,6 @@ func generateEntrypointScript(
 	container := cluster.Spec.Containers[containerIndex]
 	mainHost := fmt.Sprintf("%s-0", cluster.Name)
 
-	// Ensure if we have a batch command, it gets split up
-	batchCommand := strings.Split(container.Command, "\n")
-
 	// Required quorum - might be smaller than initial list if size != maxsize
 	// This used to be a range, now it's a size
 	requiredRanks := getRequiredRanks(cluster)
@@ -104,7 +100,6 @@ func generateEntrypointScript(
 		Container:     container,
 		MainHost:      mainHost,
 		Spec:          cluster.Spec,
-		Batch:         batchCommand,
 	}
 
 	// Wrap the named template to identify it later

@@ -36,8 +36,9 @@ spec:
   containers:
     - image: ghcr.io/rse-ops/singularity:tag-mamba
 
-      # original command: mpirun -n 4 singularity exec ./mpi.sif /opt/mpitest    
-      command: |
+      # The batch script is written verbatim and run with flux batch.
+      # (Previously this used command + batch: true + batchRaw: true.)
+      batch: |
         flux filemap map -C /data mpi.sif
         flux exec -x 0 -r all flux filemap get -C /data
         flux submit -n 4 --output /tmp/fluxout/job.out --error /tmp/fluxout/job.out --flags waitable singularity exec /data/mpi.sif /opt/mpitest
@@ -59,10 +60,6 @@ spec:
         data:
           path: /tmp/fluxout
 
-      # Batch, and don't wrap in flux submit (we will do this)
-      batch: true
-      batchRaw: true
-
       fluxUser:
         name: fluxuser
        
@@ -76,9 +73,9 @@ Let's break down the above!
 
 ### Staging
 
-The staging (and then running a subsequent job) happens in the batch script. Note that we have also set "batchRaw" to true,
-which tells the Flux operator "Don't wrap our commands in submits." This means we need to write the entire batch script
-on our own. It's a bit like an expert mode! Let's go through it in detail:
+The staging (and then running a subsequent job) happens in the batch script. Because `batch` content is
+written verbatim and handed to `flux batch`, you write the entire batch script yourself — the operator does
+not wrap your lines in `flux submit`. It's a bit like an expert mode! Let's go through it in detail:
 
 ```bash
 # Make mpi.sif in /data available to other nodes via mmap

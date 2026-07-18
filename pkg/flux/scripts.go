@@ -45,9 +45,6 @@ type WaitTemplate struct {
 	// Broker initial quorum that must be online to start
 	// This is used if the cluster MaxSize > Size
 	RequiredRanks string
-
-	// Batch commands split up
-	Batch []string
 }
 
 // combineTemplates into one common start

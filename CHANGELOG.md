@@ -14,6 +14,7 @@ and **Merged pull requests**. Critical items to know are:
 The versions coincide with releases on pip. Only major versions will be released as tags on Github.
 
 ## [0.0.x](https://github.com/flux-framework/flux-operator/tree/main) (0.0.x)
+ - clean up container workload interface: `batch` is now a string (script content run with `flux batch`), added top-level `script` (convenience over `command`, written to a file), removed `batchRaw` and the newline-split/`flux submit` wrapping of batch commands (0.x.x)
  - refactor design to allow for any base image, v1alpha2 release (0.2.0)
   - control of volumes removed (only support for existing volumes)
  - fluxoperator-gen command added and restructure for more modular generation (0.1.1)

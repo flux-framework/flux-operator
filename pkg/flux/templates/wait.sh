@@ -113,16 +113,11 @@ fi{{ end }}
 # Start flux with the original entrypoint
 if [ $(hostname) == "${mainHost}" ]; then
     
-    # If it's a batch job, we write the script for the broker to run
+    # If it's a batch job, write the user's batch script verbatim for flux batch
     {{ if .Container.Batch }}rm -rf flux-job.batch
-    echo "#!/bin/bash
-{{ if .Container.BatchRaw }}{{range $index, $line := .Batch}}{{ if $line }}{{$line}}{{ end }}
-{{ end }}
-{{ else }}{{range $index, $line := .Batch}}{{ if $line }}flux submit --flags waitable --error=${FLUX_OUTPUT_DIR}/job-{{$index}}.err --output=${FLUX_OUTPUT_DIR}/job-{{$index}}.out {{$line}}{{ end }}
-{{ end }}
-flux queue idle
-flux jobs -a{{ end }}
-" >> flux-job.batch
+    cat <<'FLUXBATCHEOF' > flux-job.batch
+{{ .Container.Batch }}
+FLUXBATCHEOF
     chmod +x flux-job.batch
     chown -R ${fluxuid} flux-job.batch{{ end }}
 
