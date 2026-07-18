@@ -591,8 +591,9 @@ a job.</p>
 <span class="w">  </span><span class="nt">containers</span><span class="p">:</span>
 <span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">image</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ghcr.io/rse-ops/singularity:tag-mamba</span>
 
-<span class="w">      </span><span class="c1"># original command: mpirun -n 4 singularity exec ./mpi.sif /opt/mpitest    </span>
-<span class="w">      </span><span class="nt">command</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">|</span>
+<span class="w">      </span><span class="c1"># The batch script is written verbatim and run with flux batch.</span>
+<span class="w">      </span><span class="c1"># (Previously this used command + batch: true + batchRaw: true.)</span>
+<span class="w">      </span><span class="nt">batch</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">|</span>
 <span class="w">        </span><span class="no">flux filemap map -C /data mpi.sif</span>
 <span class="w">        </span><span class="no">flux exec -x 0 -r all flux filemap get -C /data</span>
 <span class="w">        </span><span class="no">flux submit -n 4 --output /tmp/fluxout/job.out --error /tmp/fluxout/job.out --flags waitable singularity exec /data/mpi.sif /opt/mpitest</span>
@@ -614,10 +615,6 @@ a job.</p>
 <span class="w">        </span><span class="nt">data</span><span class="p">:</span>
 <span class="w">          </span><span class="nt">path</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">/tmp/fluxout</span>
 
-<span class="w">      </span><span class="c1"># Batch, and don&#39;t wrap in flux submit (we will do this)</span>
-<span class="w">      </span><span class="nt">batch</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
-<span class="w">      </span><span class="nt">batchRaw</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
-
 <span class="w">      </span><span class="nt">fluxUser</span><span class="p">:</span>
 <span class="w">        </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">fluxuser</span>
 <span class="w">       </span>
@@ -628,9 +625,9 @@ a job.</p>
 </div>
 <p>Let’s break down the above!</p>
 <h3 id="id1">Staging<a class="headerlink" href="#id1" title="Link to this heading">¶</a></h3>
-<p>The staging (and then running a subsequent job) happens in the batch script. Note that we have also set “batchRaw” to true,
-which tells the Flux operator “Don’t wrap our commands in submits.” This means we need to write the entire batch script
-on our own. It’s a bit like an expert mode! Let’s go through it in detail:</p>
+<p>The staging (and then running a subsequent job) happens in the batch script. Because <code class="docutils literal notranslate"><span class="pre">batch</span></code> content is
+written verbatim and handed to <code class="docutils literal notranslate"><span class="pre">flux</span> <span class="pre">batch</span></code>, you write the entire batch script yourself — the operator does
+not wrap your lines in <code class="docutils literal notranslate"><span class="pre">flux</span> <span class="pre">submit</span></code>. It’s a bit like an expert mode! Let’s go through it in detail:</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><code><span class="c1"># Make mpi.sif in /data available to other nodes via mmap</span>
 flux<span class="w"> </span>filemap<span class="w"> </span>map<span class="w"> </span>-C<span class="w"> </span>/data<span class="w"> </span>mpi.sif
 
@@ -711,7 +708,7 @@ Remember the mapping will only work if the directory is not shared. You could al
   <small>
     
       Last update:
-      Jun 28, 2026
+      Jul 18, 2026
     
   </small>
 </div>
